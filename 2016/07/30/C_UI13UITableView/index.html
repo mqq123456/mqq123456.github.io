@@ -84,34 +84,22 @@
 
 
 
-<meta name="description" content="MARK: - 懒加载
+<meta name="description" content="我们为什么要实现单元格的复用机制
 
-lazy var tableView:UITableView = {
-let tableView = UITableView(frame: CGRectZero, style: UITableViewStyle.Plain)
-tableView.delegate = self
-tableView.dataSource = self
-tableView.backgroun">
+单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存单元格的复用机制原理一开始的时候我们创建了桌面最多能显示的单元格数，cell当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格因此我们就做到了只生成了屏幕范围可">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Swfit学习－懒加载">
-<meta property="og:url" content="http://yoursite.com/2016/07/28/second/index.html">
+<meta property="og:title" content="UITableView">
+<meta property="og:url" content="http://yoursite.com/2016/07/30/C_UI13UITableView/index.html">
 <meta property="og:site_name" content="Men的博客">
-<meta property="og:description" content="MARK: - 懒加载
+<meta property="og:description" content="我们为什么要实现单元格的复用机制
 
-lazy var tableView:UITableView = {
-let tableView = UITableView(frame: CGRectZero, style: UITableViewStyle.Plain)
-tableView.delegate = self
-tableView.dataSource = self
-tableView.backgroun">
-<meta property="og:updated_time" content="2016-07-28T08:26:28.000Z">
+单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存单元格的复用机制原理一开始的时候我们创建了桌面最多能显示的单元格数，cell当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格因此我们就做到了只生成了屏幕范围可">
+<meta property="og:updated_time" content="2016-07-30T16:00:01.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Swfit学习－懒加载">
-<meta name="twitter:description" content="MARK: - 懒加载
+<meta name="twitter:title" content="UITableView">
+<meta name="twitter:description" content="我们为什么要实现单元格的复用机制
 
-lazy var tableView:UITableView = {
-let tableView = UITableView(frame: CGRectZero, style: UITableViewStyle.Plain)
-tableView.delegate = self
-tableView.dataSource = self
-tableView.backgroun">
+单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存单元格的复用机制原理一开始的时候我们创建了桌面最多能显示的单元格数，cell当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格因此我们就做到了只生成了屏幕范围可">
 
 
 
@@ -132,9 +120,9 @@ tableView.backgroun">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/07/28/second/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/07/30/C_UI13UITableView/"/>
 
-  <title> Swfit学习－懒加载 | Men的博客 </title>
+  <title> UITableView | Men的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -244,7 +232,7 @@ tableView.backgroun">
             
             
               
-                Swfit学习－懒加载
+                UITableView
               
             
           </h1>
@@ -256,8 +244,8 @@ tableView.backgroun">
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-28T11:02:25+08:00" content="2016-07-28">
-              2016-07-28
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
             </time>
           </span>
 
@@ -285,25 +273,44 @@ tableView.backgroun">
 
       
         <blockquote>
-<p>MARK: - 懒加载</p>
+<p>我们为什么要实现单元格的复用机制</p>
 </blockquote>
-<p>lazy var tableView:UITableView = {</p>
-<p>let tableView = UITableView(frame: CGRectZero, style: UITableViewStyle.Plain)</p>
-<p>tableView.delegate = self</p>
-<p>tableView.dataSource = self</p>
-<p>tableView.backgroundColor = Color_GlobalBackground</p>
-<p>tableView.showsHorizontalScrollIndicator = false</p>
-<p>tableView.showsVerticalScrollIndicator = false</p>
-<p>tableView.separatorStyle = UITableViewCellSeparatorStyle.None</p>
-<p>tableView.sectionFooterHeight = 0.0001</p>
-<p>tableView.sectionHeaderHeight = 0.0001</p>
-<p>tableView.registerNib(UINib(nibName: “BaseStrategyCell”, bundle: NSBundle.mainBundle()), forCellReuseIdentifier: cellReuseIdentifier)</p>
-<p>return tableView</p>
-<p>}()</p>
-<p>lazy var dataArray:NSMutableArray = {</p>
-<p>var dataArray = NSMutableArray();</p>
-<p>return dataArray</p>
-<p>}()</p>
+<p>单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存<br>单元格的复用机制原理<br>一开始的时候我们创建了桌面最多能显示的单元格数，cell<br>当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格<br>因此我们就做到了只生成了屏幕范围可显示的单元格个数，就实现滑动表格试图时，以后不会再init alloc单元格cell了，从而实现了节省内存的原理<br>单元格的复用机制<br>-(UITableViewCell <em>)tableView:(UITableView </em>)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath<br>{</p>
+<p>定义一个cell标示符，用以区分不同的cell<br>以后有不同风格的cell就可以使用了<br>static NSString <em>cellID=@”cell”;<br>从cell复用池中拿到可用的cell<br>UITableViewCell </em>cell=[tableView dequeueReusableCellWithIdentifier:cellID];<br>检测，拿到一个可用的cell<br>if(cell ==nil)<br>{<br>创建新的cell<br>cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];<br>}</p>
+<p><3>显示分组数据<br>显示每段       多少section数据<br>-(NSInteger)numberOfSectionsInTableView:(UITableView <em>)tableView<br>{<br>return _dataArray.count;<br>}<br>告诉表格每段要显示多少行<br>重要参数：section每次传入制定序号<br>-(NSInteger)tableView:(UITableView </em>)tableView numberOfRowsInSection:(NSInteger)section<br>{<br>NSArray *array=_dataArray[section];<br>return array.count;<br>}</3></p>
+<blockquote>
+<p>单元格行的高度</p>
+</blockquote>
+<p>//通过这个方法可以指定任意行的高度。<br>-(CGFloat)tableView:(UITableView <em>)tableView heightForRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{<br>    return 44.0f;<br>}</p>
+<p>单元格的背景<br>单元格的内容视图contentView</p>
+<blockquote>
+<p>某行选中的事件处理</p>
+</blockquote>
+<p>-(void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{}<br>//某行被取消选中了<br>-(void)tableView:(UITableView <em>)tableView didDeselectRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{<br>NSLog(@”被取消选中了”);<br>}</p>
+<blockquote>
+<p>添加头部视图和尾部视图</p>
+</blockquote>
+<p>//    添加头部试图<br>UIImageView <em>imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];<br>imageView.image=[UIImage imageNamed:@”fenjing.jpg”];<br>_tableView.tableHeaderView=imageView;<br>//    添加尾部试图<br>UIImageView </em>footImage=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 150)];<br>footImage.image=[UIImage imageNamed:@”head2.jpg”];<br>_tableView.tableFooterView=footImage;</p>
+<blockquote>
+<p>表格视图的编辑(难点)</p>
+</blockquote>
+<p><1>单元格的删除操作[重点, 必须掌握]</1></p>
+<p><2>单元格的增加操作</2></p>
+<p><3>单元格的移动操作</3></p>
+<p><4>多行选中和多行删除操作</4></p>
+<p>2.表格视图的设置</p>
+<p><1>设置表格的索引</1></p>
+<p><2>设置段头和段尾</2></p>
+<p><3>表格的分割线</3></p>
+<p>3.表格视图的搜索</p>
+<p><1>添加搜索条 UISearchBar–&gt;tableHeaderView</1></p>
+<p>4.表格视图控制器</p>
+<blockquote>
+<p>cell的定制</p>
+</blockquote>
+<p>1.我们使用MVC模式实现cell的定制。<br>什么是MVC模式<br>V是：VIew视图     作用：展示数据，接收用户交互<br>C是：Controller控制器<br>作用：负责把数据从Model中拿出来放到View上。<br>根据View的操作区修改数据。<br>M是：Model模型    作用：存储和表示数据</p>
+<p>理解：简单理解为每个界面分为三层——Model，VIew，Controller<br>效果：让开发变得更简单，可维护性更强，可扩展性更强，可阅读性更强<br>下面我们就具体看一下MVC模式应该怎么设计，在MVC模式下如何定制cell<br>1.Model的设计<br>这里：你要建立数据模型，存储数据（数据模型：就是oc中的类）<br>现在获取的数据本质上是原始数据，<br>以后原始数据有很多中  plist  JSON  数据库  文本文件<br>注意：不要直接使用原始数据<br>把所有的原始数据存储到数据模型Model<br>将解析数据存储到Model中<br>建立数组接收每个Model对象。</p>
+<p>2.cell的定制<br>就是将cell上所有的空间全部封装成一个类。<br>在这个类里，我们创建这些控件，设置相应的坐标<br>将这些类添加到self.contentView</p>
 
       
     </div>
@@ -329,12 +336,16 @@ tableView.backgroun">
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/07/30/C_UI9UITabBarController/" rel="next" title="UITabBarController">
+                <i class="fa fa-chevron-left"></i> UITabBarController
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/07/28/A_C1终端的一些常用命令/" rel="prev" title="终端的一些常用命令">
-                终端的一些常用命令 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/07/30/B_OC10继承和类别/" rel="prev" title="继承和类别">
+                继承和类别 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
