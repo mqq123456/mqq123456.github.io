@@ -228,202 +228,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net10事件处理简介/" itemprop="url">
-                  事件处理简介
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>1&gt; 事件处理简介</p>
-<ul>
-<li>PPT简介</li>
-<li>3大事件：主要了解触摸事件。</li>
-<li>什么是响应者对象</li>
-<li>为什么继承UIResponder就能处理事件</li>
-<li>想处理触摸事件，应该怎么办</li>
-</ul>
-<p>2&gt;  01-view拖拽演练</p>
-<ul>
-<li>为什么要自定义view：系统自带不能处理事件</li>
-<li>演示触摸事件方法,触摸的完整过程。</li>
-<li>介绍参数(NSSet,UITouch,UIEvent)</li>
-<li>重点UITouch，<br>1.触摸事件方法中的UITouch都是同一个对象，因为一根手指对应一个UITouch.当手指移动或者抬起，并不会产生一个新的UITouch对象给你，而是改变UITouch里面的属性，<br>1.默认三个方法里面只能获取到一个手指，为什么。UIView不支持多点触控<br>2.怎么才能有两个手指，两个手指同时按，并且视图支持多点触控<br>3.UITouch的tapCount有什么用？可以判断用户当前是双击还是单击<br>4.UITouch的phase有什么用? 根据这个属性，判断当前需要调用哪个处理事件方法，begin,move,end<br>程序思路：</li>
-<li>在TouchMove里面做事情-为什么?因为用户手指在视图上移动的时候才需要移动视图。</li>
-<li>获取用户当前的位置，获取用户之前的位置，就知道用户从哪移动到哪,这个位置也是视图移动的位置</li>
-<li>当前视图的位置 = 上一次视图的位置 + 手指的偏移量</li>
-</ul>
-<p>3&gt; 02-事件传递</p>
-<ul>
-<li>PPT简介</li>
-<li>事件，加入到一个由谁管理的事件队列中?UIApplication</li>
-<li>为什么用队列，不用栈。队列先进先出，意味着先产生的事件，先处理。</li>
-<li>代码验证事件谁处理</li>
-<li>PPT上这么多view，验证哪个view处理事件。这么多view，都需要监重写一个方法，搞个父类。</li>
-<li>一个view能处理事件，意味着事件传递给他了，那怎么传递? 事件是由父控件传递给子控件。</li>
-<li>父控件不处理事件，子控件也不能。蓝色不接收事件，黄色也不会接收事件? 为什么，因为事件是从父控件传递给子控件的。父控件都没有事件，怎么传给子控件。</li>
-<li>代码验证view不能处理事件</li>
-<li>一个view怎么不能处理事件。userInteractionEnabled = NO，hidden = YES，alpha &lt;= 0.01</li>
-<li>代码验证UIImageView不允许交互</li>
-<li>UIImageView默认不允许用户交互，因此默认它上面的子控件不能接收事件。</li>
-<li>怎么找到最合适的View？通过一个递归。</li>
-<li>第一个接收事件的控件是谁?窗口</li>
-<li>当事件传递给窗口的时候，就会让窗口去找最合适的view,1&gt; 判断自己能不能接收事件 2&gt; 点在不在窗口上 3&gt; 去找比自己更合适的view，从后往前遍历子控件，拿到子控件后，把事件传递给这个子控件 4&gt; 子控件拿到事件之后，又会做同样的判断，一直递归去找，直到找到最合适的view.</li>
-<li>事件传递的目的何在?找到最合适的view,把事件交给他。</li>
-</ul>
-<p>4&gt; 03-hitText方法和pointInside方法(复制:02-事件传递代码)</p>
-<ul>
-<li>（了解hitText）学习一个方法必须了解：什么时候调用和这个方法有什么用</li>
-</ul>
-<ol>
-<li>hitText什么时候调用:当一个事件传递给一个控件的时候，控件就会调用这个方法</li>
-<li>hitText作用: 寻找到最合适的view。</li>
-</ol>
-<ul>
-<li>（回顾下事件传递），UIApplication -&gt; UIWindow</li>
-<li>UIWindow去寻找最合适的view? [UIWindow hitTest:withEvent:]里面做了什么事情？<br>1&gt; 判断窗口能不能处理事件? 如果不能，意味着窗口不是最合适的view，而且也不会去寻找比自己更合适的view,直接返回nil,通知UIApplication，没有最合适的view。<br>2&gt; 判断点在不在窗口<br>3&gt; 遍历自己的子控件，寻找有没有比自己更合适的view<br>4&gt; 如果子控件不接收事件，意味着子控件没有找到最合适的view,然后返回nil,告诉窗口没有找到更合适的view,窗口就知道没有比自己更合适的view,就自己处理事件。</li>
-<li>验证下hitTest方法返回nil，里面的子控件能处理事件吗？ 重写根控制器view的hitTest:withEvent:方法，</li>
-<li>验证这个方法是否真能找到最合适的view？</li>
-<li>如果点击屏幕任何一个地方，都是白色的view，怎么做。直接返回白色的view,就不会继续去找白色view的子控件了。</li>
-<li>介绍pointInside方法</li>
-<li>pointInside作用：判断一个点在不在一个控件上</li>
-<li>point参数:方法调用者坐标系上的点，PPT画图分析原理。</li>
-<li>这节课的重点：学习完了pointInside,就能实现下hitTest方法底层是怎么做的了。</li>
-</ul>
-<p>5&gt; 04-hitText练习</p>
-<ul>
-<li>分析思路：如果一个点，同时在黄色view和按钮上，由按钮处理事件，怎么做?</li>
-<li>分析事件传递: 当黄色按钮要处理事件，首先事件得传递到他身上</li>
-<li>重写hitTest方法：事件传递到某个控件，调用什么方法?hitTest</li>
-<li>返回nil什么意思？如果直接返回nil，意味着黄色的view，没有找到最合适的view,他的父控件，就会遍历下一个控件，也就是按钮，询问按钮是不是最合适的view.</li>
-<li>判断点在不在按钮上，在就交给他处理。</li>
-<li>pointInside实现。</li>
-</ul>
-<p>5&gt; 响应者链条(复制:02-事件传递代码)</p>
-<ul>
-<li>PPT简介</li>
-<li>touch默认做法:自己不处理事件，交给上一个响应者处理touch事件。</li>
-<li>响应者链条，点击绿色的view,如果不处理事件，就会往上传递。</li>
-<li>验证touch的默认做法 先恢复所有view的默认做法</li>
-<li>监听黄色点击，蓝色点击。</li>
-<li>黄色调用默认做法，事件传递给谁处理?蓝色</li>
-<li>得出结论：1&gt; touch的默认做法：自己不处理，交给上一个响应者。 2&gt; 上一个响应者默认是父控件</li>
-<li>两个view怎么同时处理事件?一个view处理方法，在调用父类默认的做法</li>
-<li>把事件传递给白色的view，怎么做?</li>
-<li>总结下事件传递的完整过程.</li>
-<li>把事件传递给控制器，测试白色view的上一个响应者是否是控制器。</li>
-<li>回顾响应者链条</li>
-</ul>
-<p>6&gt; 抽屉效果<br>添加子视图</p>
-<ul>
-<li>简单的滑动效果</li>
-<li>监听控制器处理事件方法</li>
-<li>获取x轴偏移量</li>
-<li>改变主视图的frame</li>
-<li>利用KVO做视图切换<br>往左移动，显示右边，隐藏左边<br>往右移动，显示左边，隐藏右边</li>
-<li>复杂的滑动效果，PPT讲解（根据手指每移动一点，x轴的偏移量算出当前视图的frame）<br>假设x移到320时，y移动到60，算出没移动一点x，移动多少y<br>offsetY = offsetX <em> 60 / 320  手指每移动一点，x轴偏移量多少，y偏移多少<br>为了好看，x移动到320，距离上下的高度需要保持一致，而且有一定的比例去缩放他的尺寸。<br>怎么根据之前的frame，算出当前的frame,touchMove只能拿到之前的frame.<br>当前的高度 = 之前的高度 </em> 这个比例<br>缩放比例：当前的高度/之前的高度  (screenH - 2 <em> offsetY) / screenH<br>当前的宽度也一样求。<br>y值，计算比较特殊，不能直接用之前的y,加上offsetY,往左滑动，主视图应该往下走，但是offsetX是负数，导致主视图会往上走。<br>y = （screenH - 当前的高度）</em> 0.5<br>getCurrentFrameWithOffsetX</li>
-<li>定位(滑动松开手指的时候，移动到目标点)<br>移动到左右目标点，根据偏移量 = 当前目标点的x - 之前视图的x，计算移动到目标点的frame<br>还原：当没有移动到目标点，就把主视图还原。</li>
-<li>复位（当主视图不在原始的位置，点击屏幕，恢复原来位置）<br>判断手指是否移动，移动的时候就自动定位，不需要手动复位。</li>
-</ul>
-<p>7&gt; 手势识别<br>使用UIImageView原因：之前既能看见图片，又能监听点击的只有UIButton,学了手势，我们的UIImageView也可以。</p>
-<ul>
-<li>tap(代理：左边不能点，右边能点)</li>
-<li>longPress(allowableMovement:触发之前，最大的移动范围)<blockquote>
-<p>默认调用两次，开始一次，结束一次。</p>
-</blockquote>
-</li>
-<li>swipe:(一个手势只能识别一个方向)</li>
-<li>旋转：<br>基于上一次旋转</li>
-<li>复位：(手势的取值都是相对最原始的位置，我们应该是需要相对上一次，因此每次调用，就复位一下，每次都是从零开始旋转角度)<br>缩放：复位</li>
-<li>如何同时支持旋转和缩放？默认不支持多个手指，<br>Simultaneously：同时<br>当使用一个手势的时候会调用代理的Simultaneously方法，询问是否支持多个手势</li>
-<li>pan<br>获取平移的位置：translationInView<br>复位：setTranslation:inView: 需要传一个view，因为点的位置跟坐标系有关系，看他是基于哪个坐标系被清空的。</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/31/D_Net9IOS程序的启动过程/" itemprop="url">
                   Info.plist,pch,UIApplication,IOS程序的启动过程
                 </a>
@@ -502,6 +306,124 @@
 <p>四大对象关系图</p>
 </blockquote>
 <p>UIApplication<br>delegate<br>HMAppDelegate<br>window<br>UIViewController<br>view<br>UIWindow<br>rootViewController<br>xib\storyboard\代码</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net7SVN/" itemprop="url">
+                  svn
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>介绍</p>
+</blockquote>
+<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
+<blockquote>
+<p>svn 服务端和客户端模型</p>
+</blockquote>
+<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a href="http://192.168.88.8/download/softwares/svn" target="_blank" rel="external">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a href="http://192.168.88.10/svn" target="_blank" rel="external">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi ~/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 <em>.a 即可<br>global-ignores = </em>.o <em>.lo </em>.la <em>.al .libs </em>.so <em>.so.[0-9]</em> <em>.pyc </em>.pyo <em>~.nib </em>.so <em>.pbxuser </em>.mode<em> </em>.perspective* .DS_Store xcuserdata project.xcworkspace</p>
+<ol>
+<li>svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数</li>
+<li>svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co</li>
+<li>svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a href="http://1000phone.cn/stuproj" target="_blank" rel="external">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)</li>
+<li>svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</li>
+</ol>
+<hr>
+<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser</p>
+<h2 id="M-common-db-php"><a href="#M-common-db-php" class="headerlink" title="M common_db.php"></a>M common_db.php</h2><p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题</p>
+<h2 id="M-showcompileinfo-php"><a href="#M-showcompileinfo-php" class="headerlink" title="M showcompileinfo.php"></a>M showcompileinfo.php</h2><p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php</p>
+<ol>
+<li>svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中</li>
+<li>svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件</li>
+<li>svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改</li>
+<li>svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit</li>
+<li>svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a href="http://1000phone.cn/stuproj/ios1212/test1234" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a href="http://1000phone.cn/stuproj/ios1212/myproject2" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</li>
+</ol>
 
           
         
@@ -674,8 +596,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net15加速计/" itemprop="url">
-                  加速计
+                <a class="post-title-link" href="/2016/07/31/D_Net8UIDynamic/" itemprop="url">
+                  UIDynamic
                 </a>
               
             
@@ -718,12 +640,33 @@
       
         
           
-            <p>● 加速计的作用<br>● 用于检测设备的运动(比如摇晃)<br>● 加速计的经典应用场景 ● 摇一摇<br>● 计步器<br>加速计的原理<br>● 检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用,哪个方向运动了) ● 根据加速度数值,就可以判断出在各个方向上的作用力度<br>加速计程序的开发<br>● 加速计程序的开发<br>● 在iOS4以前:使用UIAccelerometer,用法非常简单(到了iOS5就已经过<br>期)<br>● 从iOS4开始:CoreMotion.framework<br>● 虽然UIAccelerometer已经过期,但由于其用法极其简单,很多程序里面都 还有残留<br>UIAccelerometer的使用步骤<br>● 获得单例对象<br>UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];<br>● 设置代理 accelerometer.delegate = self;<br>● 设置采样间隔<br>accelerometer.updateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 实现代理方法</p>
+            <blockquote>
+<p>简单介绍</p>
+</blockquote>
+<p>1.什么是UIDynamic<br>UIDynamic是从iOS 7开始引入的一种新技术，隶属于UIKit框架<br>可以认为是一种物理引擎，能模拟和仿真现实生活中的物理现象<br>如：重力、弹性碰撞等现象</p>
+<p>2.物理引擎的价值<br>广泛用于游戏开发，经典成功案例是“愤怒的小鸟”<br>让开发人员可以在远离物理学公式的情况下，实现炫酷的物理仿真效果<br>提高了游戏开发效率，产生更多优秀好玩的物理仿真游戏</p>
+<p>3.知名的2D物理引擎<br>Box2d<br>Chipmunk</p>
+<blockquote>
+<p>使用步骤</p>
+</blockquote>
+<p>要想使用UIDynamic来实现物理仿真效果，大致的步骤如下<br>（1）创建一个物理仿真器（顺便设置仿真范围）<br>（2）创建相应的物理仿真行为（顺便添加物理仿真元素）<br>（3）将物理仿真行为添加到物理仿真器中  开始仿真</p>
+<blockquote>
+<p>相关说明</p>
+</blockquote>
+<p>1.三个概念<br>（1）谁要进行物理仿真？<br>　　物理仿真元素（Dynamic Item）</p>
+<p>（2）执行怎样的物理仿真效果？怎样的动画效果？<br>　　物理仿真行为（Dynamic Behavior） </p>
+<p>（3）让物理仿真元素执行具体的物理仿真行为<br>　　物理仿真器（Dynamic Animator）</p>
+<p>2.物理仿真元素<br>注意：<br>不是任何对象都能做物理仿真元素<br>不是任何对象都能进行物理仿真</p>
+<p>物理仿真元素要素：<br>任何遵守了UIDynamicItem协议的对象<br>UIView默认已经遵守了UIDynamicItem协议，因此任何UI控件都能做物理仿真<br>UICollectionViewLayoutAttributes类默认也遵守UIDynamicItem协议</p>
+<p>3.物理仿真行为<br>（1）UIDynamic提供了以下几种物理仿真行为<br>UIGravityBehavior：重力行为<br>UICollisionBehavior：碰撞行为<br>UISnapBehavior：捕捉行为<br>UIPushBehavior：推动行为<br>UIAttachmentBehavior：附着行为<br>UIDynamicItemBehavior：动力元素行为</p>
+<p>（2）物理仿真行为须知<br>上述所有物理仿真行为都继承自UIDynamicBehavior<br>所有的UIDynamicBehavior都可以独立进行<br>组合使用多种行为时，可以实现一些比较复杂的效果</p>
+<p>4.物理仿真器<br>（1）物理仿真器须知<br>它可以让物理仿真元素执行物理仿真行为<br>它是UIDynamicAnimator类型的对象</p>
+<p>（2）UIDynamicAnimator的初始化</p>
 <ul>
-<li>(void)accelerometer:(UIAccelerometer <em>)accelerometer didAccelerate:<br>(UIAcceleration </em>)acceleration<br>// acceleration中的x、y、z三个属性分别代表每个轴上的加速度<br>Core Motion<br>● 在iOS4之前,加速度计由UIAccelerometer类来负责采集数据<br>● 随着iPhone4的推出<br>● 加速度计全面升级,并引入了陀螺仪<br>● 与Motion(运动)相关的编程成为重头戏<br>● 苹果特地在iOS4中增加了专门处理Motion的框架-CoreMotion.framework<br>● Core Motion不仅能够提供实时的加速度值和旋转速度值,更重要的是,苹果 在其中集成了很多牛逼的算法<br>Core Motion获取数据的两种方式<br>● push<br>● 实时采集所有数据(采集频率高)<br>● pull<br>● 在有需要的时候,再主动去采集数据<br>Core Motion的使用步骤(push)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) {<br>// 加速计可用 }<br>● 设置采样间隔<br>mgr.accelerometerUpdateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 开始采样(采样到数据就会调用handler,handler会在queue中执行)</li>
-<li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue <em>)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager </em>mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
-<li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 检测到摇动 </em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /** 摇动取消(被中断) </em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 摇动结束 </em>/<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a href="https://github.com/Shmoopi/iOS-System-Services" target="_blank" rel="external">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a href="https://github.com/erica/uidevice-extension" target="_blank" rel="external">https://github.com/erica/uidevice-extension</a></li>
+<li>(instancetype)initWithReferenceView:(UIView *)view;<br>view参数：是一个参照视图，表示物理仿真的范围</li>
 </ul>
+<p>5.物理仿真器的说明<br>（1）UIDynamicAnimator的常见方法<br>　　- (void)addBehavior:(UIDynamicBehavior <em>)behavior;  　　//添加1个物理仿真行为<br>　　- (void)removeBehavior:(UIDynamicBehavior </em>)behavior;　　//移除1个物理仿真行为<br>　　- (void)removeAllBehaviors;  　　//移除之前添加过的所有物理仿真行为</p>
+<p>（2）UIDynamicAnimator的常见属性<br>　　@property (nonatomic, readonly) UIView<em> referenceView;  //参照视图<br>　　@property (nonatomic, readonly, copy) NSArray</em> behaviors;//添加到物理仿真器中的所有物理仿真行为<br>　　@property (nonatomic, readonly, getter = isRunning) BOOL running;//是否正在进行物理仿真<br>　　@property (nonatomic, assign) id <uidynamicanimatordelegate> delegate;//代理对象（能监听物理仿真器的仿真过程，比如开始和结束）</uidynamicanimatordelegate></p>
 
           
         
@@ -828,6 +771,105 @@
 <p>// 开启距离感应功能<br>[UIDevice currentDevice].proximityMonitoringEnabled = YES; // 监听距离感应的通知<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(proximityChange:) name:UIDeviceProximityStateDidChangeNotification object:nil];</p>
 <ul>
 <li>(void)proximityChange:(NSNotificationCenter *)notification { if ([UIDevice currentDevice].proximityState == YES) { NSLog(@”某个物体靠近了设备屏幕”); // 屏幕会自动锁住<br>} else {<br>NSLog(@”某个物体远离了设备屏幕”); // 屏幕会自动解锁<br>} }</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net15加速计/" itemprop="url">
+                  加速计
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>● 加速计的作用<br>● 用于检测设备的运动(比如摇晃)<br>● 加速计的经典应用场景 ● 摇一摇<br>● 计步器<br>加速计的原理<br>● 检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用,哪个方向运动了) ● 根据加速度数值,就可以判断出在各个方向上的作用力度<br>加速计程序的开发<br>● 加速计程序的开发<br>● 在iOS4以前:使用UIAccelerometer,用法非常简单(到了iOS5就已经过<br>期)<br>● 从iOS4开始:CoreMotion.framework<br>● 虽然UIAccelerometer已经过期,但由于其用法极其简单,很多程序里面都 还有残留<br>UIAccelerometer的使用步骤<br>● 获得单例对象<br>UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];<br>● 设置代理 accelerometer.delegate = self;<br>● 设置采样间隔<br>accelerometer.updateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 实现代理方法</p>
+<ul>
+<li>(void)accelerometer:(UIAccelerometer <em>)accelerometer didAccelerate:<br>(UIAcceleration </em>)acceleration<br>// acceleration中的x、y、z三个属性分别代表每个轴上的加速度<br>Core Motion<br>● 在iOS4之前,加速度计由UIAccelerometer类来负责采集数据<br>● 随着iPhone4的推出<br>● 加速度计全面升级,并引入了陀螺仪<br>● 与Motion(运动)相关的编程成为重头戏<br>● 苹果特地在iOS4中增加了专门处理Motion的框架-CoreMotion.framework<br>● Core Motion不仅能够提供实时的加速度值和旋转速度值,更重要的是,苹果 在其中集成了很多牛逼的算法<br>Core Motion获取数据的两种方式<br>● push<br>● 实时采集所有数据(采集频率高)<br>● pull<br>● 在有需要的时候,再主动去采集数据<br>Core Motion的使用步骤(push)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) {<br>// 加速计可用 }<br>● 设置采样间隔<br>mgr.accelerometerUpdateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 开始采样(采样到数据就会调用handler,handler会在queue中执行)</li>
+<li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue <em>)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager </em>mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
+<li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 检测到摇动 </em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /** 摇动取消(被中断) </em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 摇动结束 </em>/<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a href="https://github.com/Shmoopi/iOS-System-Services" target="_blank" rel="external">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a href="https://github.com/erica/uidevice-extension" target="_blank" rel="external">https://github.com/erica/uidevice-extension</a></li>
 </ul>
 
           
@@ -1143,8 +1185,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net16蓝牙/" itemprop="url">
-                  蓝牙
+                <a class="post-title-link" href="/2016/07/31/D_Net12Autolayout/" itemprop="url">
+                  Autolayout
                 </a>
               
             
@@ -1187,22 +1229,11 @@
       
         
           
-            <p>● iOS中提供了4个框架用于实现蓝牙连接<br>● GameKit.framework(用法简单)<br>• 只能用于iOS设备之间的连接,多用于游戏(比如五子棋对战),从iOS7开始过期<br>● MultipeerConnectivity.framework<br>• 只能用于iOS设备之间的连接,从iOS7开始引入,主要用于文件共享(仅限于沙盒的文<br>件)<br>● ExternalAccessory.framework<br>• 可用于第三方蓝牙设备交互,但是蓝牙设备必须经过苹果MFi认证(国内较少)<br>● CoreBluetooth.framework(时下热门)<br>• 可用于第三方蓝牙设备交互,必须要支持蓝牙4.0<br>● 硬件至少是4s,系统至少是iOS6<br>● 蓝牙4.0以低功耗著称,一般也叫BLE(Bluetooth Low Energy) • 目前应用比较多的案例:运动手坏、嵌入式设备、智能家居<br> GameKit的蓝牙开发步骤<br>● 显示可以连接的蓝牙设备列表<br>GKPeerPickerController *ppc = [[GKPeerPickerController alloc] init]; ppc.delegate = self;<br>[ppc show];<br>● 在代理方法中监控蓝牙的连接</p>
-<ul>
-<li>(void)peerPickerController:(GKPeerPickerController <em>)picker<br>didConnectPeer:(NSString </em>)peerID toSession:(GKSession *)session { NSLog(@”连接到设备:%@”, peerID);<br>// 关闭蓝牙设备显示界面<br>[picker dismiss];<br>// 设置接收到蓝牙数据后的监听器<br>[session setDataReceiveHandler:self withContext:nil]; // 保存session<br>self.session = session;<br>}<br>GameKit的蓝牙开发步骤<br>● 处理接收到的蓝牙数据</li>
-<li>(void) receiveData:(NSData <em>)data fromPeer:(NSString </em>)peer<br>inSession: (GKSession <em>)session context:(void </em>)context {<br>}<br>● 利用GKSession给其他设备发送数据 ● 给指定的连接设备发送数据</li>
-<li>(BOOL)sendData:(NSData <em>) data toPeers:(NSArray </em>)peers<br>withDataMode:(GKSendDataMode)mode error:(NSError **)error;<br>● 给所有连接的设备发送数据</li>
-<li>(BOOL)sendDataToAllPeers:(NSData <em>) data withDataMode:<br>(GKSendDataMode)mode error:(NSError *</em>)error;<br>GameKit的蓝牙开发注意<br>● 只能用于iOS设备之间的连接<br>● 只能用于同一个应用程序之间的连接 ● 最好别利用蓝牙发送比较大的数据<br>Core Bluetooth<br>● Core Bluetooth测试比较麻烦,正常情况下,得至少有2台真实的蓝牙4.0设备<br>● 如何让iOS模拟器也能测试蓝牙4.0程序?<br>● 买一个CSR蓝牙4.0 USB适配器,插在Mac上<br>● 在终端输入sudo nvram bluetoothHostControllerSwitchBehavior=”never”<br>● 重启Mac<br>● 用Xcode 4.6调试代码,将程序跑在iOS 6.1的模拟器上 (苹果把iOS 7.0模拟器对BLE的支持移除掉了)<br>● Core Bluetooth的使用场景<br>● 运动手环、智能家居、嵌入式设备等等(金融刷卡器、心电测量器)<br>Core Bluetooth的核心结构图<br>Core Bluetooth的基本常识<br>● 每个蓝牙4.0设备都是通过服务(Service)和特征(Characteristic)来展示自 己的<br>● 一个设备必然包含一个或多个服务,每个服务下面又包含若干个特征 ● 特征是与外界交互的最小单位<br>• 比如说,一台蓝牙4.0设备,用特征A来描述自己的出厂信息,用特征B来收发 数据<br>● 服务和特征都是用UUID来唯一标识的,通过UUID就能区别不同的服务和特征 ● 设备里面各个服务(service)和特征(characteristic)的功能,均由蓝牙设备硬件厂<br>商提供,比如哪些是用来交互(读写),哪些可获取模块信息(只读)等<br>Core Bluetooth的开发步骤<br>● 建立中心设备<br>● 扫描外设(Discover Peripheral)<br>● 连接外设(Connect Peripheral)<br>● 扫描外设中的服务和特征(Discover Services And Characteristics)<br>● 利用特征与外设做数据交互(Explore And Interact)<br>● 断开连接(Disconnect)<br>蓝牙的现状<br>● 绝大多数智能手机支持蓝牙 4.0(BLE)<br>● 蓝牙芯片发展迅速,在性能和效率方面都有很大提高,且不断变得更小更便宜<br>● iBeacon + 蓝牙,前景一片光明<br>● 应用之一:室内导航<br>● Estimote公司为iBeacon提供基站<br>● 3个iBeacon基站的预购价格为99美元(约合人民币610元)<br>● Estimote公司推出的iBeacon基站的最远传输距离为50m,但是他们推荐在10m 范围内的使用效果最好<br>● 一块纽扣电池就能为一个iBeacon基站提供长达 2 年的使用寿命,而且是在设 备不断对外发射信号的情况下</li>
-</ul>
-<p>GameKit框架简介<br>● 使用GameKit框架,可以在游戏中增加对等连接,又称对端连接或点 对点连接,Peer To Peer。<br>● 使用GameKit框架中的对等网络连接API,可以在游戏玩家之间建立一 个对等网络,并在游戏/应用实例之间交换数据。<br>● GameKit框架可以使用蓝牙在玩家之间创建网络,玩家甚至不需要连 接到互联网,就可以彼此对战。<br>通过蓝牙实现对等网络连接<br>为玩家双方呈现一个GKPeerPickerController,提供了一个标准的 用户界面连接两台设备<br>ViewControoler遵循GKPeerPickerControllerDelegate协议,处理来 自GKPeerPickerController(对端选择器)的信息<br>建立连接后,使用GKSession类可以向对端设备发送数据<br>在receiveData:fromPeer:inSession:context代理方法中编写代码来处 理接收到的数据<br>蓝牙对等网络演练——发送照片(1)<br>● 演练目标:通过蓝牙彼此发送照片 ● 演练步骤:<br>● 1. 基于照片选择项目进行扩展,仅从照片库选择照片<br>● ●</p>
-<ol>
-<li>添加GameKit框架 3. 创建对等连接<br>● 3.1 实例化对端选择器<br>● 3.2 设置代理,并遵循协议<br>● 3.3 显示对端选择器</li>
-<li>连接建立代理方法 peerPickerController:didConnectPeer:toSession:<br>4.1记录对端连接会话 4.2 设置数据接收处理 4.3 关闭对端选择器<br>●<br>● ● ●<br>蓝牙对等网络演练——发送照片(2)<br>● 发送数据方法<br>[_peerSession sendDataToAllPeers:data<br>withDataMode:GKSendDataReliable error:&amp;error]; ● 接收数据方法</li>
-</ol>
-<ul>
-<li>(void)receiveData:(NSData <em>)data fromPeer:<br>(NSString </em>)peer inSession: (GKSession <em>)session<br>context:(void </em>)context;<br>蓝牙对等网络——发送自定义对象<br>● 如果要通过网络发送自定义对象,需要使用NSKeyedArchiver方法归档 自定义对象,然后再发送归档后的NSData<br>● 自定义对象需要遵从NSCoding协议,并实现相应的归档和恢复方法 ● 接收端接收到数据之后,使用NSKeyedUnarchiver方法恢复数据</li>
-</ul>
-<p>人生就像卫生纸,没事的时候,尽量少扯; 时间就像卫生纸,看着挺多,用着用着就 没了…</p>
+            <p>如果使用autolayout来约束控件, 那fraem就失效了, 官方也不建议我们再设置frame了</p>
+<p>宽度: 100<br>高度: 100<br>水平居中: X<br>垂直居中: Y<br>注意: 如果利用autolayout约束一个控件, 和我们以前使用frame约束控件一样, 必须设置宽度/高度/X/Y , 如果缺少某一个约束就会报错, 报错有可能会引发一些未知的bug</p>
+<p>如果有红色警告:<br>代表缺少约束<br>如果有黄色警告:<br>代表控件当前的位置大小和约束的位置大小不一样</p>
+<p>距离顶部: 20 相当于设置了Y<br>距离左边:20 相当于设置了X<br>距离右边:20 相当于设置了宽度<br>距离底部:20 相当于设置了高度</p>
+<p>注意:<br>在使用Autolayout时,最好给每个控件起一个名称, 方便阅读</p>
 
           
         
@@ -1301,126 +1332,6 @@
 <li>(void)pause; 停止</li>
 <li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
 </ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net8UIDynamic/" itemprop="url">
-                  UIDynamic
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>简单介绍</p>
-</blockquote>
-<p>1.什么是UIDynamic<br>UIDynamic是从iOS 7开始引入的一种新技术，隶属于UIKit框架<br>可以认为是一种物理引擎，能模拟和仿真现实生活中的物理现象<br>如：重力、弹性碰撞等现象</p>
-<p>2.物理引擎的价值<br>广泛用于游戏开发，经典成功案例是“愤怒的小鸟”<br>让开发人员可以在远离物理学公式的情况下，实现炫酷的物理仿真效果<br>提高了游戏开发效率，产生更多优秀好玩的物理仿真游戏</p>
-<p>3.知名的2D物理引擎<br>Box2d<br>Chipmunk</p>
-<blockquote>
-<p>使用步骤</p>
-</blockquote>
-<p>要想使用UIDynamic来实现物理仿真效果，大致的步骤如下<br>（1）创建一个物理仿真器（顺便设置仿真范围）<br>（2）创建相应的物理仿真行为（顺便添加物理仿真元素）<br>（3）将物理仿真行为添加到物理仿真器中  开始仿真</p>
-<blockquote>
-<p>相关说明</p>
-</blockquote>
-<p>1.三个概念<br>（1）谁要进行物理仿真？<br>　　物理仿真元素（Dynamic Item）</p>
-<p>（2）执行怎样的物理仿真效果？怎样的动画效果？<br>　　物理仿真行为（Dynamic Behavior） </p>
-<p>（3）让物理仿真元素执行具体的物理仿真行为<br>　　物理仿真器（Dynamic Animator）</p>
-<p>2.物理仿真元素<br>注意：<br>不是任何对象都能做物理仿真元素<br>不是任何对象都能进行物理仿真</p>
-<p>物理仿真元素要素：<br>任何遵守了UIDynamicItem协议的对象<br>UIView默认已经遵守了UIDynamicItem协议，因此任何UI控件都能做物理仿真<br>UICollectionViewLayoutAttributes类默认也遵守UIDynamicItem协议</p>
-<p>3.物理仿真行为<br>（1）UIDynamic提供了以下几种物理仿真行为<br>UIGravityBehavior：重力行为<br>UICollisionBehavior：碰撞行为<br>UISnapBehavior：捕捉行为<br>UIPushBehavior：推动行为<br>UIAttachmentBehavior：附着行为<br>UIDynamicItemBehavior：动力元素行为</p>
-<p>（2）物理仿真行为须知<br>上述所有物理仿真行为都继承自UIDynamicBehavior<br>所有的UIDynamicBehavior都可以独立进行<br>组合使用多种行为时，可以实现一些比较复杂的效果</p>
-<p>4.物理仿真器<br>（1）物理仿真器须知<br>它可以让物理仿真元素执行物理仿真行为<br>它是UIDynamicAnimator类型的对象</p>
-<p>（2）UIDynamicAnimator的初始化</p>
-<ul>
-<li>(instancetype)initWithReferenceView:(UIView *)view;<br>view参数：是一个参照视图，表示物理仿真的范围</li>
-</ul>
-<p>5.物理仿真器的说明<br>（1）UIDynamicAnimator的常见方法<br>　　- (void)addBehavior:(UIDynamicBehavior <em>)behavior;  　　//添加1个物理仿真行为<br>　　- (void)removeBehavior:(UIDynamicBehavior </em>)behavior;　　//移除1个物理仿真行为<br>　　- (void)removeAllBehaviors;  　　//移除之前添加过的所有物理仿真行为</p>
-<p>（2）UIDynamicAnimator的常见属性<br>　　@property (nonatomic, readonly) UIView<em> referenceView;  //参照视图<br>　　@property (nonatomic, readonly, copy) NSArray</em> behaviors;//添加到物理仿真器中的所有物理仿真行为<br>　　@property (nonatomic, readonly, getter = isRunning) BOOL running;//是否正在进行物理仿真<br>　　@property (nonatomic, assign) id <uidynamicanimatordelegate> delegate;//代理对象（能监听物理仿真器的仿真过程，比如开始和结束）</uidynamicanimatordelegate></p>
 
           
         
