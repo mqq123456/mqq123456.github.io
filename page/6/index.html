@@ -228,6 +228,118 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/30/B_OC6文件和目录管理类/" itemprop="url">
+                  OC文件和目录管理类
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:38:40+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>NSFileManager 文件或目录管理类(重点)</p>
+</blockquote>
+<p>1.1 创建NSFileManager的对象<br>//创建对象<br>//默认用于创建对象方法<br>//defaultManager创建出对象都是同一个对象<br>//单例模式: 有时候想让让一个类只能创建一个对象<br>NSFileManager <em>fm = [NSFileManager defaultManager];<br>1.2 获取目录下的所有文件和目录<br>//(2)知道某个目录下都有哪些文件和目录<br>//细节: 不会显示子目录<br>NSArray </em>array = [fm contentsOfDirectoryAtPath:@”/Users/mac/Desktop/dir” error:nil];<br>//显示所有文件包括子目录<br>array = [fm subpathsOfDirectoryAtPath:@”/Users/mac/Desktop/dir” error:nil];<br>1.3 创建目录, 创建文件<br>实例: 创建 /Users/mac/Desktop/dir/hello<br>//参数2: 表示是否创建中间目录<br>BOOL b;<br>b = [fm createDirectoryAtPath:@”/Users/mac/Desktop/dir/hello” withIntermediateDirectories:YES attributes:nil error:nil];<br>NSLog(@”b = %d”,b);<br>b = [fm createFileAtPath:@”/Users/mac/Desktop/dir/saozi.txt” contents:nil attributes:nil];<br>NSLog(@”b = %d”,b);<br>1.4 复制文件, 移动文件, 删除文件<br>//参数1: 源文件<br>//参数2: 目标文件<br>b = [fm copyItemAtPath:@”/Users/mac/Desktop/dir/saozi.txt” toPath:@”/Users/mac/Desktop/dir/hanzi.txt” error:nil];<br>//移动文件<br>BOOL b = [fm moveItemAtPath:@”/Users/mac/Desktop/dir/saozi.txt” toPath:@”/Users/mac/Desktop/dir/hello/saozi.txt” error:nil];<br>BOOL b = [fm removeItemAtPath:@”/Users/mac/Desktop/dir/hanzi.txt” error:nil];<br>1.5 判断文件是否存在<br>//(5)判断文件是否存在<br>BOOL b =[fm fileExistsAtPath:@”/Users/mac/Desktop/dir/dict.txt”];</p>
+<blockquote>
+<p>文件读写操作 NSFileHandle</p>
+</blockquote>
+<p>2.1 打开文件<br> 细节：打开应选择的模式；<br> 1.为了写文件fileHandleForWritingAtPath<br> 2.为了读文件fileHandleForReadingAtPath<br>(1)创建对象打开文件<br>NSFileHandle <em>fh = [NSFileHandle fileHandleForReadingAtPath:@”/Users/mac/Desktop/dir/123.txt”];<br>if(fh == nil)<br>{<br>    NSLog(@”文件打开失败”);<br>    return 1;<br>}<br>2.2 读取文件数据<br>//(2)读取文件数据<br>//读取指定长度的数据<br>//一直读取直到文件末尾<br>//  NSData 表示二进制的数据<br>NSData </em>data = [fh readDataOfLength:100];<br>//读取出得二进制数据转化为字符串<br>NSString <em>info  =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];<br>2.3 写文件<br>//写入数据<br>NSString </em>str = @”好吃不过饺子,hao wan bu guo sao zi”;<br>//转化<br>NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];<br>//清空文件内容<br>//[fh truncateFileAtOffset:0];<br>//文件读写位置设置到文件的末尾<br>[fh seekToEndOfFile];<br>[fh writeData:data];</p>
+<p>2.4 移动文件读写位置<br>//文件读写位置设置到文件的末尾<br>[fh seekToEndOfFile];</p>
+<blockquote>
+<p>NSValue和NSNumber的使用</p>
+</blockquote>
+<p>int a=10;<br>int b=20;<br>//完成了基本数据类型到对象转化<br>NSNumber <em>num1 = [NSNumber numberWithInt:a];<br>NSNumber </em>num2 = [NSNumber numberWithInt:b];<br>NSArray *array = [[NSArray alloc] initWithObjects:num1,num2,nil];<br>//需求: 把一个结构体变量存储到NSArray中?<br>//思考:   把一个结构体变量转化为对象 NSValue<br>typedef struct Person{<br>    int age;<br>    float height;<br>}Person;<br>Person zhangsan = {18,1.77};</p>
+<p>//作用: 把C的类型的数据转化为NSValue类型<br>//参数1:  数据的地址<br>//参数2:  数据的类型<br>//@encode作用把类型转化为字符串<br>NSValue <em>value = [[NSValue alloc] initWithBytes:&amp;zhangsan objCType:@encode(Person)];<br>NSMutableArray </em>marr = [[NSMutableArray alloc] init];<br>[marr addObject:value];</p>
+<p>Person newPerson;<br>//从NSValue中解析出存储的数据<br>[value getValue:&amp;newPerson];</p>
+<blockquote>
+<p>NSDate的使用</p>
+</blockquote>
+<p>(1)获取当前时间<br>NSDate <em>date = [NSDate date];<br>//时区概念 +8区<br>(2)时间格式化输出<br>NSDateFormatter </em>df = [[NSDateFormatter alloc] init];<br>//设置时间的格式<br>[df setDateFormat:@”yyyy/MM/dd HH:mm:ss S”];<br>NSString <em>dateString = [df stringFromDate:date];<br>(3)获取年,月,日<br> 设置需要的格式<br>(4)计算某个操作所消耗的时间–计算时间差<br>NSDate </em>beginDate = [NSDate date];<br>long sum=0;<br>for (long i=0; i&lt;1000000000; i++) {<br>    sum = sum+i;<br>}<br>NSDate *endDate = [NSDate date];<br>double interval = [endDate timeIntervalSinceDate:beginDate];</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/30/B_OC5setter和getter方法/" itemprop="url">
                   OC @property
                 </a>
@@ -1259,156 +1371,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/28/A_C1终端的一些常用命令/" itemprop="url">
-                  终端的一些常用命令
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-28T11:02:25+08:00" content="2016-07-28">
-              2016-07-28
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>文件系统 : </p>
-</blockquote>
-<p>在类unix中，一切皆文件，无论是文档，u盘，摄像机，音响等<br>设备，只要连接到类unix系统，在系统本身看来都可以通过操作<br>文件的方式来操作该设备。而所做的这些操作自然是在终端中了<br>文件系统是模仿树的结构设计的。<br>自然界的树只有一个根，树根连带主干是一部分，主干上面还有<br>可多的分支，分支上又有小分支和树叶。<br>类unix上的文件系统也是如此，也有一个根目录（目录即文件夹）<br>根目录下有一些分支目录，分支目录里还有一些小的分支目录，<br>小的分支目录里面还可能有一些更小的分支目录和文件，所有的<br>分支目录都可以看成树枝，所有的文件都可以看成是树叶。</p>
-<blockquote>
-<p>pwd 显示当前目录的绝对路径</p>
-</blockquote>
-<p>所谓绝对路径就是从根目录（／）开始的这个路径<br>相对路径就是相对与当前的这个路径而言</p>
-<blockquote>
-<p>ls  显示当前目录（文件夹）里的一些文件或目录的名字</p>
-</blockquote>
-<p>这些文件或者目录都是可见的。一般目录里还会有隐藏文件或隐藏目录，这些文件和目<br>录是以.为开头的。若是想要显示所有文件和目录（包括隐藏的文件和隐            藏的目录）。那么要用到   ls   -a  还有一个常用的命令是 ls  -l  和 ls -al</p>
-<blockquote>
-<p>cd  切换一个目录 </p>
-</blockquote>
-<p>cd命令后可加一个相对路径也可以加一个绝对路径。<br>咱们每创建一个新目录，那么这个目录里面是会默认生成两个新目录，名字分别是.和 ..。<br>的意义是当前文件，而..是当前目录的上一级目录（或者管它叫当前目录的父目录）</p>
-<blockquote>
-<p>cp  拷贝一个文件或者目录</p>
-</blockquote>
-<p>touch  新创建一个空文件<br>$ touch   已存在文件的目录<br>相当于把该文件时间戳更新，文件内容并未改变<br>$ touch  newfile<br>newfile就是那个新创建的空文件的名字</p>
-<blockquote>
-<p>rm   删除一个文件，或者删除一个目录</p>
-</blockquote>
-<p>删除一个文件就是<br>$ rm   filename<br>删除一个目录<br>$ rm －r dirname</p>
-<blockquote>
-<p>tab键   补全功能:</p>
-</blockquote>
-<p>补全文件或文件夹的名字，也可以补全目录下的相关文件</p>
-<blockquote>
-<p>open  在终端以文件夹窗口的形式来打开某个目录或文件，也可以打开应用程序</p>
-</blockquote>
-<p>小技巧：当以文件夹窗口的形式找到文件或者目录后，想要在终端中打开，很方便的<br>一个操作就是把该文件或者目录拖拽到终端窗口即可获得其绝对路径</p>
-<blockquote>
-<p>vim 编辑器</p>
-</blockquote>
-<p>1）vim 可以打开一个已经存在的文件，这种情况下它是<br>vim  文件名<br>如果vim后面跟的名字的文件并不存在，那么vim进文件之后保存<br>退出就相当于创建了一个新文件。</p>
-<blockquote>
-<p>vim 有3中模式：命令模式 ， 插入模式（编辑模式），可视模式</p>
-</blockquote>
-<p>（1）命令模式，就是我可以键入各种命令（前提是这些命令都是被支持的）<br>一般输入命令要用 “：命令名字”<br>：w         表示保存该文件<br>：q          表示退出该文件<br>：q！      表示强制退出并且不保存该文件<br>：wq       表示保存并且退出该文件<br>：wq！   表示保存修改并且强制退出该文件</p>
-<p>（2）编辑模式<br>当处于编辑模式的时候我们可以任意更改该文件内容<br>（3）可视模式<br>一般用于修改代码格式要用到，例如代码风格对齐要用到，用法为：<br>（4）当用vim打开一个文件的时候它会默认进入到命令模式，如果我要修改该文件那么就需要键入“i”键，切换到编辑模式。那么从编辑模式切换到命令模式我们是用ESC键。如果想要通过命令模式切换到可视模式，需要在命令模式下键入 “v”键。想要从可视模式切回命令模式依然是用ESC键。</p>
-<blockquote>
-<p>命令模式下我们经常会用到一些命令</p>
-</blockquote>
-<p>“a”在当前光标位置后插入文本（内容），并且会自动切入到编辑模式<br>“o”在当前光标所在行的下一行另起一行，并且切入到编辑模式<br>“O”在当前光标所在行的上一行另起一行,并且切入到了编辑模式<br>“x”要删除一个字符那么把光标移动到该字符，然后点下‘x’<br>“dd”其实是连续按两次‘d’键，作用是删除光标所在行整行内容<br>“4dd”相当于删除从光标所在行往下数4行内容<br>“yy”是复制光标所在行一整行内容<br>“4yy” 相当于复制从光标所在行往下数4行内容<br>“p”如果误删除了某几行那么我们可以用‘p’键把删除的内容再粘回来<br>具体做就是在光标的下一行位置插入几行的内容<br>“u”撤消之前的一步操作,若是想撤消之前多步操作就是多点几回‘u’</p>
-<blockquote>
-<p>光标移动</p>
-</blockquote>
-<p>“$”将光标移动到当前行的行尾<br>“^”将光标移动到当前行的第一个非空白字符位置<br>“G”将光标定位到最后一行上<br>“gg”将光标移动到第一行<br>“:set number”显示行号<br>“:set nonumber”把已经显示出的行号去掉</p>
-<blockquote>
-<p>简单搜索</p>
-</blockquote>
-<p>“/string”用于搜索一个字串string。<br>要查找上次查找的字符串的下一个位置使用“n”命令。<br>vim编辑器的配置文件，该配置文件的名字是唯一的“.vimrc”。<br>$ vim  .vimrc<br>syntax on<br>set number<br>set showmatch<br>set tabstop=4<br>set shiftwidth=4<br>set softtabstop=4<br>set smartindent<br>注意：.vimrc这个文件必须是存放在家目录（不一定是/home那个目录，一般新打开一个终端，命令行会默认在某一个目录下，该目录就是家目录）</p>
-<blockquote>
-<p>格言：</p>
-</blockquote>
-<p>在这个世界上，唯一不变的规律是这个世界一直在变。一定要不断提高<br>自己以适应这个变化的世界。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1454,7 +1416,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">61</span>
+              <span class="site-state-item-count">62</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
