@@ -228,6 +228,104 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/31/D_Net17音频/" itemprop="url">
+                  音频
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL <em>url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID </em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘<em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} \;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL </em>)url error:(NSError <strong>)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError </strong>)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
+<ul>
+<li>(void)pause; 停止</li>
+<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/31/D_Net16蓝牙/" itemprop="url">
                   蓝牙
                 </a>
@@ -288,104 +386,6 @@
 <li>(void)receiveData:(NSData <em>)data fromPeer:<br>(NSString </em>)peer inSession: (GKSession <em>)session<br>context:(void </em>)context;<br>蓝牙对等网络——发送自定义对象<br>● 如果要通过网络发送自定义对象,需要使用NSKeyedArchiver方法归档 自定义对象,然后再发送归档后的NSData<br>● 自定义对象需要遵从NSCoding协议,并实现相应的归档和恢复方法 ● 接收端接收到数据之后,使用NSKeyedUnarchiver方法恢复数据</li>
 </ul>
 <p>人生就像卫生纸,没事的时候,尽量少扯; 时间就像卫生纸,看着挺多,用着用着就 没了…</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net17音频/" itemprop="url">
-                  音频
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL <em>url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID </em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘<em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} \;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL </em>)url error:(NSError <strong>)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError </strong>)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
-<ul>
-<li>(void)pause; 停止</li>
-<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
-</ul>
 
           
         
@@ -639,110 +639,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net13分享学习网站/" itemprop="url">
-                  分享学习网站
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>游戏开发相关：</p>
-<p><a href="http://www.gameres.com/" target="_blank" rel="external">http://www.gameres.com/</a>    想学游戏的这个网站绝对不能错过，个人感觉挺不错的<br><a href="http://xyq.baike.163.com/ziliao/" target="_blank" rel="external">http://xyq.baike.163.com/ziliao/</a>      SLG 游戏系统策划<br><a href="http://www.gamedev.net/page/index.html" target="_blank" rel="external">http://www.gamedev.net/page/index.html</a>  国外<br><a href="http://ns.codingnow.com/" target="_blank" rel="external">http://ns.codingnow.com/</a>     网易梦幻西游后端主程序  大神</p>
-<p>安全相关：<br><a href="http://bbs.pediy.com/" target="_blank" rel="external">http://bbs.pediy.com/</a> 看雪学院  国内重量级</p>
-<p>iOS相关：</p>
-<p><a href="http://blog.devtang.com/" target="_blank" rel="external">http://blog.devtang.com/</a>   网易iOS </p>
-<p><a href="http://beyondvincent.com/blog/archives/" target="_blank" rel="external">http://beyondvincent.com/blog/archives/</a><br><a href="http://github.ibireme.com/github/list/ios/" target="_blank" rel="external">http://github.ibireme.com/github/list/ios/</a>      收集git 上各种优秀项目</p>
-<p>Swift学习:<br><a href="https://github.com/CocoaChina-editors/Welcome-to-Swift" target="_blank" rel="external">https://github.com/CocoaChina-editors/Welcome-to-Swift</a><br><a href="https://github.com/numbbbbb/the-swift-programming-language-in-chinese" target="_blank" rel="external">https://github.com/numbbbbb/the-swift-programming-language-in-chinese</a>  </p>
-<p>热门IT社区<br>www.csdn.net<br>www.cnblogs.com<br>www.51cto.com<br><a href="http://www.oschina.net/" target="_blank" rel="external">http://www.oschina.net/</a> </p>
-<p><a href="http://tool.oschina.net/apidocs/#J" target="_blank" rel="external">http://tool.oschina.net/apidocs/#J</a>    在线API 各种技术文档 </p>
-<p><a href="http://www.juming.com/Csdn/#jieguo" target="_blank" rel="external">http://www.juming.com/Csdn/#jieguo</a>  免CSDN下载器</p>
-<p><a href="http://www.cnpaf.net/class/rfcall/" target="_blank" rel="external">http://www.cnpaf.net/class/rfcall/</a>       网络协议详解大全</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/31/D_Net11应用程序互相跳转/" itemprop="url">
                   应用程序互相跳转
                 </a>
@@ -817,6 +713,104 @@
 <ul>
 <li>(BOOL)application:(UIApplication <em>)application openURL:(NSURL </em>)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</li>
 </ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net12Autolayout/" itemprop="url">
+                  Autolayout
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>如果使用autolayout来约束控件, 那fraem就失效了, 官方也不建议我们再设置frame了</p>
+<p>宽度: 100<br>高度: 100<br>水平居中: X<br>垂直居中: Y<br>注意: 如果利用autolayout约束一个控件, 和我们以前使用frame约束控件一样, 必须设置宽度/高度/X/Y , 如果缺少某一个约束就会报错, 报错有可能会引发一些未知的bug</p>
+<p>如果有红色警告:<br>代表缺少约束<br>如果有黄色警告:<br>代表控件当前的位置大小和约束的位置大小不一样</p>
+<p>距离顶部: 20 相当于设置了Y<br>距离左边:20 相当于设置了X<br>距离右边:20 相当于设置了宽度<br>距离底部:20 相当于设置了高度</p>
+<p>注意:<br>在使用Autolayout时,最好给每个控件起一个名称, 方便阅读</p>
 
           
         
@@ -1286,8 +1280,8 @@ NSLog(@&quot;sub num=%d&quot;,_num);
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net5KVC和KVO/" itemprop="url">
-                  KVC和KVO
+                <a class="post-title-link" href="/2016/07/31/D_Net3GCD/" itemprop="url">
+                  GCD
                 </a>
               
             
@@ -1331,26 +1325,38 @@ NSLog(@&quot;sub num=%d&quot;,_num);
         
           
             <blockquote>
-<p> 什么是KVC?<br>//  Key Value Coding的简写, 称为键值编码<br>//  作用: 访问对象中属性的一种方式, 通过字符串为关键字访问属性</p>
-<p>KVC的基本使用<br>//  问题: setValue:forUndefinedKey:</p>
-<p>KeyPath的使用</p>
+<p>什么是GCD</p>
 </blockquote>
-<p>// 4.常用方法<br>//  setValuesForKeysWithDictionary:</p>
-<p>//总结: 开发中常用<br>//1. setValuesForKeysWithDictionary方法<br>//2. 当对象没有对应属性出现错误怎么解决</p>
-<p>//KVC常用用途把网络上字典转化为model<br>NSDictionary <em>dict = @{@”speed”:@(100),@”temp”:@”test”};<br>for(NSString </em>key in dict)<br>{<br>[car setValue:dict[key] forKey:key];<br>}</p>
-<p>//设置car中engine对象的power属性<br>[car setValue:@(100) forKeyPath:@”engine.power”];</p>
-<p>//把字典中各个属性的值赋给对象对应的属性或实例变量<br>[car setValuesForKeysWithDictionary:dict2];</p>
+<p>Grand Central Dispach–<br>好用：1.简单<br>基于block c函数接口<br>功能强大：支持多核心编程<br>支持高级编程功能</p>
 <blockquote>
-<p>什么是KVO</p>
+<p>创建和使用</p>
 </blockquote>
-<p>//  Key Value Observing的简写, 键值监听<br>//  作用: 需要监视一个属性的变化, 变化了之后做出处理</p>
+<p>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</p>
 <blockquote>
-<p>KVO的基本使用</p>
+<p>创建和使用</p>
 </blockquote>
-<p>// 常用<br>//  项目监听一个属性的变化, 并在界面上显示, 使用KVO<br>//  实例: 监听和显示下载进度<br>//KVO<br>//效果: 当speed有了变化之后执行self中observeValueForKeyPath方法<br>[car addObserver:self forKeyPath:@”speed” options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];<br>监听的实现<br>-(void)observeValueForKeyPath:(NSString <em>)keyPath ofObject:(id)object change:(NSDictionary </em>)change context:(void *)context<br>{<br>double newSpeed = [[object valueForKeyPath:keyPath] doubleValue];</p>
-<p>NSLog(@”newSpeed = %f”,newSpeed);<br>}<br>程序完成的时候要移除监听<br>-(void)dealloc<br>{<br>//移除监听<br>//[car removeObserver:self forKeyPath:@”speed”];<br>}</p>
-<p>KVC 与 KVO 是 Objective C 的关键概念，个人认为必须理解的东西，下面是实例讲解。<br>Key-Value Coding (KVC)<br>KVC，即是指 NSKeyValueCoding，一个非正式的 Protocol，提供一种机制来间接访问对象的属性。KVO 就是基于 KVC 实现的关键技术之一。<br>一个对象拥有某些属性。比如说，一个 Person 对象有一个 name 和一个 address 属性。以 KVC 说法，Person 对象分别有一个 value 对应他的 name 和 address 的 key。 key 只是一个字符串，它对应的值可以是任意类型的对象。从最基础的层次上看，KVC 有两个方法：一个是设置 key 的值，另一个是获取 key 的值。如下面的例子：</p>
-<p>KVO这种编码方式使用起来很简单，很适用与datamodel修改后，引发的UIVIew的变化这种情况，就像上边的例子那样，当更改属性的值后，监听对象会立即得到通知。</p>
+<p>//开启一个新的线程<br>//queue<br>//三种：main——queue主线程队列<br>//globle——queue全局队列。异步任务加载这里<br>//自定义的<br>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>}<br>});<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”B=%d”,i);<br>}<br>});</p>
+<blockquote>
+<p>模拟网络数据下载</p>
+</blockquote>
+<p>[self simulaterNetworkDataDownload];</p>
+<blockquote>
+<p>延迟执行，延时5s执行</p>
+</blockquote>
+<p>[self delayRunCode];</p>
+<blockquote>
+<p>有的代码指向执行一次</p>
+</blockquote>
+<p>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];</p>
+<blockquote>
+<p>多个任务同时执行，等待所有任务结束</p>
+</blockquote>
+<p>//    模拟迅雷多路下载后关机<br>[self simulaterThreadDownload];</p>
+<p>}<br>-(void)simulaterThreadDownload<br>{<br>dispatch_group_t group=dispatch_group_create();</p>
+<p>//任务添加<br>dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;30; i++)<br>{<br>NSLog(@” B=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>});<br>//先是所有任务执行完成<br>dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>NSLog(@”所有的任务执行完成”);<br>});<br>}<br>-(void)runOneCode<br>{<br>static dispatch_once_t onceToken;<br>dispatch_once(&amp;onceToken, ^{<br>NSLog(@”这句话我只说一次”);<br>});<br>}<br>-(void)delayRunCode<br>{<br>dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br>NSLog(@”我是一只小小小小鸟,永远永远也飞不高”);<br>});</p>
+<p>}<br>-(void)simulaterNetworkDataDownload<br>{<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];<br>[self.view addSubview:_progressView];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>注意：不要再主线程里更新UI<br>//            _progressView.progress+=0.01;</p>
+<p>dispatch_async(dispatch_get_main_queue(), ^{<br>_progressView.progress+=0.01;<br>});<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>NSLog(@”下载完成”);<br>});</p>
+<p>}</p>
 
           
         
