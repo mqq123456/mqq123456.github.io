@@ -228,6 +228,133 @@
             
               
                 
+                <a class="post-title-link" href="/2016/08/03/M_5Swfit编程思想的转换/" itemprop="url">
+                  Swfit编程思想的转换
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-03T15:03:04+08:00" content="2016-08-03">
+              2016-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>原来的代码+原来的思想+Swift. 哪里出错了呢?<br>最理想的情况当然就是从一个100%的Swift项目开始.如果你能做到,很好.但是多数情况下,我们有着已存在的代码,却很想开始使用Swift语言,那我们应该从哪里开始呢?</p>
+<p>为什么?<br>回过来说一下:你为什么想用Swift写程序呢?原因有很多:Swift语言是编程语言的新星;有着更棒的语法;Swift是苹果向我们推荐的iOS开发语言.<br>在将来,Swift的关注度会继续增加,并且Swift将成为开发OSX和iOS程序最适合,最受支持,最简便的编程语言.</p>
+<p>SwiftAwesomeness</p>
+<p>正如上图,这就是未来Swfit的趋势,那你又能做什么来从Swift方式开始呢?</p>
+<p>Swift方式<br>有许多方面需要考虑,但我们先讨论下两大内容: 安全性和值语义.</p>
+<p>安全性<br>Nil是Objective-C中很棒的存在:你可以发消息给nil,系统运行时会不会Crash,继续保持响应.</p>
+<p>然而Swift中的nil是很不一样的,通常其类型机制会阻止你试图使用nil调用方法或者访问一个内容为nil的属性.虽然你可以避开这个类型机制,但这样做就如同在C语言中使用指向null的指针一样糟糕:你将容易在运行时掉入陷阱,使你的应用Crash.</p>
+<p>在Swift中,所有都是类型安全的.一个String类型的字符串就是字符串,且不会为nil.理解上类似于C++的引用而不是C中的指针,因为它们永远不会为nil.</p>
+<p>可选变量<br>在可选变量中,nil是可以使用的.一个可选类型的字符串变量可以是一个字符串,也可以为nil.你每次都要检查是什么.不然你可以强制解包这个可选变量,或者改变它成一个隐式解包的可选变量,这意味着成为一个可选类型但表现跟一个真正的值一样,一旦它是nil,这个app就会Crash</p>
+<p>unwarp<br>Cocoa里充满了可选类型的变量,这代表着每次你所持有的数据,都不得不检查内部真正的内容</p>
+<p>这在想法上是一个巨大的提升,你要明白不应该有机会向nil发送消息.在一个强类型语言机制里,要么它是nil,要么就是某个值.如果它在程序运行时未知的,就需要检查,不要试着强制解包它</p>
+<p>将可选变量想做一个箱子:箱子里可以什么都没有(为nill),也可以有个值.但你在解包或者拆箱这个可选变量之前总是需要检查它,就像你会问在这个可选变量内部到底是什么?</p>
+<p>box<br>在Swift已经有大量的其他例子显示了Swift语言的安全性:初始化方法,更少未定义的行为,内存安全.Nil安全是Swift语言面世以来相当常见的对语言安全性的体现.</p>
+<p>值类型<br>值类型在Swift随处可见.显而易见,Obejctvie-C有着像NSInteger的基本数据类型,和像CGRect结构体.但是许多像NSString,NSArray等等都是类,为引用类型.</p>
+<p>在Swfit中,一个完全不同的地方就在于它的标准库都有超过80个结构体,只有4个类,可以通过浏览头文件看到.</p>
+<p>字符串,数字,集合这些类型在Swift都是值类型.这就意味着如果你有一个可变的Swfit字符串,把它传入一个函数,你将得到的是字符串的拷贝.再次说明下,这可不是一件糟糕的事:我们在一直使用Objective-C中,有copy和mutableCopy.这对于多数普遍类型的新默认行为是一个巨大的提升.</p>
+<p>桥接<br>Swift被设计出来当然要能与Objective-C很好协同工作,由于Cocoa是为Objective-C建立的,所以这是很有必要的.所有这些Cocoa APIs 几乎都能被Swfit调用,这意味着你自定义的Objective-C类也能很好桥接到Swift类</p>
+<p>这里就有问题出现了:以Swift开始,添加Objective-C,如何正像期望一样调用从Objective-C桥接到Swfit方法</p>
+<p>Swift 到 Objective-C<br>Swiftz中有许多特性比如原生的结构体,加强的枚举等等,不能完全地桥接到Objective-C,这就意味着你使用Swift最新特性来写最新和最好的Swift框架,许多框架你就不能在Objective-C上使用.</p>
+<p>即使你限制自己只用Swift一些能兼容的特性写程序,你也不能让Swift的类继承自Objective-C的类.你可以借鉴table views或collection views的模式,使用代理和布局对象来解决这个问题,但你要始终记得如果你Swfit的API需要继承,默认在Objective-C不可见的.</p>
+<p>如果你用@objc<br>标记了你的类和协议,那么他们在Obejctive-C在就是可用的.dynamic<br>修饰符也显示使用了@objc<br>使得在Objective-C语言上可用,但它也使得你所限定的属性或者方法使用了Objective-C动态分发.</p>
+<p>Swift 到 Objective-C</p>
+<p>如果你想要使用swizzle或者其他动态特性,你将需要使用dynamic<br>标识符,仅仅@objc<br>不能保证它是使用objc_msgSend()<br>方法使得可能方法仍是编译过的或者内联的.<br>再一次强调:只有具有兼容性的特性才能工作.如果你在Swfit枚举对象中实现一个方法,它不会桥接过去,如果你的枚举存储不是int而是其他类型,它也不会桥接过去.</p>
+<p>Objective-C 到 Swift: Nullability<br>Objective-C转向Swift有许多好的方面来优化.你给在Objective-C中属性,参数,和返回值的类型添加标注.<br>_Null_unspecified(default)</p>
+<p>桥接为一个在Swift显示解包的可选值<br>_Nonnull</p>
+<p>变量值不会为nil;桥接为一个常规的引用<br>_Nullable</p>
+<p>变量值可以为nil;桥接为一个可选变量<br>如果你标注了你Obejctive-C代码, 在Swift中将会有很好的类型转变.即使你没有接触过Swfit,当你写Objective-C时这些标注会在你代码完成后出现.并且如果你声明一个方法参数为_Nonnull<br>而你传入了nil,你就会得到一个编译警告.<br>这是很好的练习来开始添加这些标注.在你使用已存在的API时会有所有帮助,让你更容易地开始使用Swfit.</p>
+<p>Objective-C 到 Swift: Lightweight Generics<br>轻量泛型是Swfit2新出来的特性.那些NSArray,NSDictionary,NSSet能存储任何原来的NSObject对象的集合类型需要大量的转换.在Objective-C中不会出现这样的问题,但记得在Swfit的所有都安全相关,正确的转换需要大量的类型检查.你应该先检测类型,而不是强制转换.<br>现在有了泛型,这意味着你写的Objective-C代码会是这样的:<br>NSArray<nsstring *=""> * _Nonnull<br>这是一个将存储NSString对象的NSArray.有着Nullability标注,你会明白这数组本身不能为nil;你将总能得到一个数组.如果你之前写过Java或C++你应该会熟悉这样的泛型写法.</nsstring></p>
+<p>而这个桥接到Swfit后会是这个样子的:[String]<br>一个简洁的Swfit的存储String的数组.</p>
+<p>小小的提醒: 轻量泛型只对基础集合的array, dictionary, sets 起作用</p>
+<p>需要跨的坑<br>我简易完全用Swfit开始新项目,如果你需要第三方库,这不会影响你用Swfit还是Obejctive-C,你都能调用.如果你已经有了存在的项目代码,想开始引入Swfit代码,尝试Obejctive-C向Swfit方法的保证桥接.例如已经实例化的视图控制器,视图在Swfit工作正常;它们都起源于NSObject,所以需要的话你能访问它们通过Objective-C.</p>
+<p>Bridge</p>
+<p>还有其他方面:Swfit泛型,枚举的存储不仅仅是整型,内嵌类型,结构体等等,这些需要等到你完全入门100%Swift,不要灰心,那天会比你所想的提前到来.</p>
+<p>在那之前,继续友好地使用Obejctive-C,做好使用Swfit的准备.下面资源可以帮助你完成这一转变.</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/03/M_6Swift什么时候使用类？ 什么时候使用结构体？/" itemprop="url">
                   Swift什么时候使用类？ 什么时候使用结构体？
                 </a>
@@ -289,389 +416,6 @@
 <p>let 小B = 克隆人()<br>print(小A.身高) // = 180<br>什么时候使用类？ 什么时候使用结构体？<br>注意：虽说赋值时候值类型表面上经常要执行拷贝现象，但 Swift 在管理所有的值拷贝会确保性能最优化，所以我们没有必要去回避赋值来确保性能最优化。<br>/* 什么时候使用类？ 什么时候使用结构体？<br>一般情况下，可以：<br>1⃣ 把类看成是物体<br>如： 人、车、动物、商店等..一般跟生物沾边多<br>比如一个人有少属性，虽有不同人种，但是他们很多属性都是一样的，使用类的继承关系，很好描述人这一类东东…</p>
 <p>2⃣ 把结构体看作值<br>如：位置（经纬度）、坐标、温度等..一般跟物理沾边多<br>结构体比类更加 “轻量级”，因为结构体的内存空间是开在系统的栈中，而类则开在系统的堆中。当然对于小程序来说，可以忽略不计。</p>
 <p>还有什么时候使用也不是绝对的，因为他们都有很多类似的地方，也看个人习惯思维爱好之类。何况现在 Swift</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/03/M_5Swfit_initializer/" itemprop="url">
-                  initializer
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-03T15:03:04+08:00" content="2016-08-03">
-              2016-08-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>designated initializer<br>convenience initializer<br>required 关键字<br>protocol中的initializer<br>Designated Initializer</p>
-<blockquote>
-<p>当我们创建一个class的时候，如果这个class拥有未初始化的非Optional属性，则必须提供一个构造器(称为designated initializer)。这句话有两个重点：<br>1.未初始化；2.非Optional属性。<br>比较一下下面几种写法：</p>
-</blockquote>
-<p>//A<br>class Person {<br>let name : String = “”<br>}<br>//B<br>class Person {<br>let name : String<br>}<br>//C<br>class Person {<br>var name : String?<br>}<br>//D<br>class Person {<br>let name : String?<br>}<br>A,C都可以正常编译，B,D会报错(error: class ‘Person’ has no initializers)。因为Swift不允许非Optional变量在没有初始化的情况下使用或者访问，这样会造成潜在的风险，于是Swift编译器对构造器做了严格的限制:类必须提供一个designated initializer，并且初始化所有未初始化的非Optional属性</p>
-<p>A,B两种写法中，let换成var结果是一样的。但是D比较特殊，在Swift中，常量在访问和使用之前必须初始化(哪怕是Optional)</p>
-<p>var p : String?<br>print(p)<br>//正常编译<br>let p : String?<br>print(p)<br>//报错：error: constant ‘p’ used before being initialized<br>由此可见我们上面的描述并不准确，应当是未初始化的非Optional属性或Optinal常量。不过一般我们不会声明一个Optional常量，另外这么说也是在太过拗口，所以就简单称之为未初始化的非Optional属性吧(下文也会这样表述)。</p>
-<p>同样，在子类初始化过程中，Swift也做了严格的限制</p>
-<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}<br>首先，Engineer必须调用super.init，如果你这样写：</p>
-<p>init(name: String, title: String) {<br>self.title = title<br>self.name = name<br>}<br>不好意思，self.name是常量，不可修改。即便我们将let name : String改为var name : String，仍会报错，而且是两个：</p>
-<p>error: super.init isn’t called on all paths before returning from initializer<br>error: use of ‘self’ in property access ‘name’ before super.init initializes self<br>从这两个错误信息可以看出，在子类的构造器中，父类的成员变量必须通过父类的designated initializer进行初始化。也就是说，我们必须调用super.init（第一个error），而且在调用super.init之前不能使用和访问任何父类的成员变量（第二个error）。</p>
-<p>其次,super.init必须在子类所有未初始化的非Optional属性初始化之后调用。</p>
-<p>这跟我们以前所了解的不同，例如在JAVA的构造器中我们会先调用super.init。Swift之所以这样做，同样是为了安全性。<br>假设我们要求在初始化一个Person之后，立刻输出一些信息用来debug：</p>
-<p>class Person {<br>var name : String<br>init(name : String){<br>self.name = name<br>printDescription()<br>}</p>
-<p>func printDescription() -&gt; () {<br>print(“name=(name)”)<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
-<p>override func printDescription() -&gt; () {<br>print(“name=(name), title=(title)”)<br>}<br>}<br>如果在Engineer的init中，我们首先调用super.init，那么我们就会在初始化title之前执行子类的printDescription方法，这是Swift所不允许的。</p>
-<p>Convenience Initializer<br>一个类可以提供多个designated initializer，但是designated initializer不可以调用designated initializer。<br>如果需要提供一个依赖designated initializer的构造器，需要添加关键字convenience，称为convenience initializer。<br>在上面的例子中，假设我们从文件中读取人的信息，读取到的是“名字;职位;联系方式”格式的字符串。我们需要写一个构造器方法从这串文字中解析出相应的信息。</p>
-<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}</p>
-<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}<br>因为新的构造器调用了self.init，因此需要添加关键字convenience，否则会报错：error: designated initializer for ‘Person’ cannot delegate (with ‘self.init’); did you mean this to be a convenience initializer?</p>
-<p>一个类可以拥有多个convenience initializer，而且convenience initializer可以调用其他convenience initializer。<br>convenience initializer有以下约束：</p>
-<p>必须调用当前类的designated initializer，调用父类的designated initializer是不行的。<br>只有当前类可以使用（子类也可以使用，不过需要特殊处理。见下文）。<br>Required 关键字<br>如果父类中的构造器需要在子类中重写，可以使用required关键字。子类必须重写父类中标记为required的构造器方法(不管是designated initializer还是convenience initializer)。<br>上面的例子中，init(convertFromLiteral value : String)并不适合子类，所以我们加上required关键字，编译器会提示我们Engineer没有实现required initializer。</p>
-<p>class Engineer: Person {<br>var title : String</p>
-<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
-<p>required convenience init(convertFromLiteral value : String){<br>var name = “”<br>var title = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>}else if(title.characters.count == 0){<br>title = component<br>break<br>}<br>}<br>self.init(name: name, title: title)<br>}<br>}<br>上文提到了convenience initializer只有当前类才能使用，Swift不允许子类通过父类构造器进行初始化是显而易见的。convenience initializer实际上更像一个方法，如果我们将某个convenience initializer所依赖的designated initializer标记为required，就相当于告诉了编译器我们的子类一定重写了这个designated initializer。也就是说，如果我们的子类通过这个convenience initializer进行初始化，最终会执行子类中重写的designated initializer。</p>
-<p>说这么一大堆，用代码看的更清楚：</p>
-<p>class Person {<br>let name : String<br>required init(name : String){<br>self.name = name<br>}</p>
-<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}</p>
-<p>class Engineer: Person {<br>var title : String</p>
-<p>required init(name: String) {<br>self.title = “unknow”<br>super.init(name: name)<br>}</p>
-<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}</p>
-<p>let peter = Person.init(convertFromLiteral: “peter;”)<br>print(peter.name)<br>let tom = Engineer.init(convertFromLiteral: “tom;”)<br>print(tom.name + “, “ + tom.title)<br>将父类中convenience initializer所依赖的designated initializer标记为required，我们就可以通过该convenience initializer初始化子类了。</p>
-<p>Protocol中的Initializer<br>Swift提供了很多包涵构造器的protocol，如StringLiteralConvertible，DictionaryLiteralConvertible，ArrayLiteralConvertible等。</p>
-<p>如果我们想通过如下方式初始化，我们就需要用到StringLiteralConvertible</p>
-<p>let peter : Person = “Peter”<br>代码如下：</p>
-<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
-<p>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
-<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
-<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
-<p>let peter : Person = “Peter”<br>是不是很cool？</p>
-<p>需要注意的是，Swfit很好的控制了构造器的作用域（默认情况下，convenience initializer是子类不可见的），但是protocol中的方法是子类可见的。所以protocol中的构造器方法都必须声明为required。<br>如果实现protocol的是一个final类，那么则没必要再是required，因为它不会有子类。<br>等一下，如果Person是第三方库中的类呢？<br>你可能会说没问题啊，我们可以通过extension实现StringLiteralConvertible</p>
-<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
-<p>}</p>
-<p>extension Person: StringLiteralConvertible{<br>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
-<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
-<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
-<p>let peter : Person = “Peter”<br>真是这样吗？Sorry!!!</p>
-<p>首先，required initializer必须在类中声明。所以上面的required关键字要不得<br>其次，protocol中的构造器方法必须声明为required，除非Person是final的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/01/M_4Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器/" itemprop="url">
-                  Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-01T10:47:16+08:00" content="2016-08-01">
-              2016-08-01
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>存储属性</p>
-</blockquote>
-<p>Swift中的存储属性就是以前学习OC中的普通属性<br>在结构体或者类中定义的属性, 默认就是存储属性<br>struct Person {<br>var name: String<br>var age: Int<br>}<br>var p:Person = Person(name: “cdh”, age: 20)</p>
-<blockquote>
-<p>常量存储属性</p>
-</blockquote>
-<p>常量存储属性只能在定义时或构造时修改<br>构造好一个对象之后不能对常量存储属性进行修改<br>struct Person1 {<br>var name: String<br>var age: Int<br>let card: String // 身份证<br>}<br>var p1: Person1 = Person1(name: “cdh”, age: 20, card: “123456”)<br>p1.name = “CDH”<br>p1.age = 50<br>//构造好对象之后不能修改常量存储属性<br>//以下写法是错误的<br>//p1.card = “56789”</p>
-<p>结构体和枚举是值类型<br>因此不能修改结构体常量中的属性<br>不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>类是引用类型<br>可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>struct Person2 {<br>var name: String<br>var age: Int<br>}<br>let p2: Person2 = Person2(name: “cdh”, age: 20)<br>//因为结构体是值类型, 所以不能修改结构体常量中的属性<br>//不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>//以下写法错误<br>//p2.name = “CDH” //不能修改结构体常量对象的值<br>//以下写法错误<br>//p2 = Person2(name: “CDH”, age: 50)</p>
-<p>class Person3 {<br>var name: String = “cdh”<br>var age: Int = 20<br>}<br>let p3:Person3 = Person3()<br>//可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>p3.name = “CDH”<br>//不可以修改类常量的指向<br>//以下写法是错误的<br>//p3 = Person4()</p>
-<blockquote>
-<p>延迟存储属性</p>
-</blockquote>
-<p>Swift语言中所有的存储属性必须有初始值, 也就是当构造完一个对象后, 对象中所有的存储属性必须有初始值<br>但是也有例外, 其中延迟存储属性可以将属性的初始化推迟到该属性第一次被调用的时候<br>这个延时属性对应于 OC中的懒加载的概念<br>苹果的设计思想:希望所有的对象在使用时才真正加载到内存中<br>和OC不同的是swift有专门的关键字来实现懒加载<br>lazy关键字可以用于定义某一个属性懒加载<br>懒加载应用场景:<br>有可能不会用到<br>依赖于其它值<br>class Line {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    如果不是lazy属性,定义的时候对象还没有初始化,所以不能访问self<br>//    如果加上lazy,代表使用时才会加载,也就是使用到length属性时才会调用self<br>//    而访问一个类的属性必须通过对象方法<br>//    所以访问时对象已经初始化完成了,可以使用self<br>lazy var length: Double = self.getLenght()<br>//    通过闭包懒加载<br>lazy var container: Array<anyobject> = {<br>print(“懒加载”)<br>var arrM = []<br>return arrM as [AnyObject]<br>}()<br>func getLenght() -&gt;Double<br>{<br>print(“懒加载”)<br>return end - start<br>}<br>}<br>var line = Line()<br>line.end = 150.0<br>print(“创建对象完毕”)<br>print(line.length)<br>var arrM = line.container<br>arrM.append(“1”)<br>arrM.append(5)<br>print(arrM)<br>//输出结果:<br>//创建对象完毕<br>//懒加载<br>//150.0<br>//懒加载<br>//[1, 5]</anyobject></p>
-<blockquote>
-<p>计算属性</p>
-</blockquote>
-<p>1.Swift中的计算属性不直接存储值<br>跟存储属性不同,没有任何的”后端存储与之对应”<br>2.计算属性用于计算, 可以实现setter和getter这两种计算方法<br>3.枚举不可以有存储属性, 但是允许有计算属性<br>setter 对象.属性 = 值<br>getter var value = 对象.属性<br>struct Rect {<br>var origion: (x: Double, y: Double) = (0, 0)<br>var size: (w: Double, h: Double) = (0, 0)<br>//    由于center的值是通过起点和宽高计算出来的, 所以没有必要提供一个存储属性<br>var center: (x: Double, y: Double) {<br>get{<br>return (origion.x + size.w/2, origion.y + size.h/2)<br>}<br>set{<br>//            注意: 计算属性不具备存储功能, 所以不能给计算属性赋值<br>//            如果赋值会发生运行时错误<br>//            注意: setter可以自己传递一个参数, 也可以使用系统默认的参数newValue<br>//            如果要使用系统自带的参数, 必须删除自定义参数<br>origion.x = newValue.x - size.w / 2<br>origion.y = newValue.y - size.h / 2<br>}<br>}<br>}<br>var r = Rect()<br>r.origion = (0, 0)<br>r.size = (100, 100)<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果: center.x = 50.0 center.y = 50.0<br>r.center = (100, 100)<br>print(“origion.x = (r.origion.x) origion.y = (r.origion.y)”)<br>//输出结果: origion.x = 50.0 origion.y = 50.0<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果:center.x = 100.0 center.y = 100.0</p>
-<blockquote>
-<p>只读计算属性</p>
-</blockquote>
-<p>对应OC中的readonly属性<br>所谓的只读属性就是只提供了getter方法, 没有提供setter方法<br>class Line1 {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    只读属性, 只读属性必须是变量var, 不能是常量let<br>//    例如想获取长度<br>//    只能通过计算获得, 而不需要外界设置, 可以设置为只读计算属性<br>var length: Double{<br>//        只读属性的简写, 可以省略get{}<br>return end - start<br>}<br>}<br>var line1 = Line1()<br>line1.end = 100<br>print(line1.length)<br>//输出结果: 100.0<br>//错误,不可设置只读属性<br>line1.length = 100</p>
-<blockquote>
-<p>属性观察器</p>
-</blockquote>
-<p>类似OC中的KVO<br>可以用于监听属性什么时候被修改, 只有属性被修改才会调用<br>有两种属性观察器:<br>1.willSet, 在设置新值之前调用<br>2.didSet, 在设置新值之后调用<br>可以直接为除计算属性和lazy属性之外的存储属性添加属性观察器<br>但是可以在继承类中为父类的计算属性提供属性观察器<br>因为在计算属性中也可以监听到属性的改变<br>所以给计算属性添加属性观察器没有任何意义<br>class Line2 {<br>var start:Double = 0.0{<br>willSet{<br>print(“willSet newValue = (newValue)”)<br>}<br>didSet{<br>print(“didSet oldValue = (oldValue)”)<br>}<br>}<br>var end: Double = 0.0<br>}<br>var l2 = Line2()<br>l2.start = 10.0<br>//输出结果:<br>//willSet newValue = 10.0<br>//didSet oldValue = 0.0<br>//开发中使用didSet较多</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/08/01/M_1Swfit和OC的区别/" itemprop="url">
-                  Swfit和OC的区别
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-01T10:47:16+08:00" content="2016-08-01">
-              2016-08-01
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>初始化</p>
-</blockquote>
-<p>let myTableView: UITableView = UITableView(frame: CGRectZero, style: .Grouped)</p>
-<blockquote>
-<p>可失败初始化</p>
-</blockquote>
-<p>if let image = UIImage(contentsOfFile: “MyImage.png”) {<br>// loaded the image successfully<br>} else {<br>// could not load the image<br>}</p>
-<blockquote>
-<p>访问属性方法</p>
-</blockquote>
-<p>在 Swift 中访问和设置 Objective-C 对象的属性时，使用点语法</p>
-<blockquote>
-<p>id 兼容性（id Compatibility）</p>
-</blockquote>
-<p>Swift 包含一个叫做AnyObject的协议类型，表示任意类型的对象，就像 Objective-C 中的id一样。AnyObject协议允许你编写类型安全的 Swift 代码同时维持无类型对象的灵活性。因为AnyObject协议保证了这种安全，Swift 将id对象导入为AnyObject。<br>对于 Swift 中的强制类型转换，从AnyObject类型的对象转换成明确的类型并不会保证成功，所以它会返回一个可选的值。而你需通过检查该值的类型来确认转换是否成功。<br>//Swift<br>let userDefaults = NSUserDefaults.standardUserDefaults()<br>let lastRefreshDate: AnyObject? = userDefaults.objectForKey(“LastRefreshDate”)<br>if let date = lastRefreshDate as? NSDate {<br>println(“(date.timeIntervalSinceReferenceDate)”)<br>}<br>当然，如果你能确定这个对象的类型（并且确定不是nil），你可以添加as操作符强制调用。</p>
-<p>let myDate = lastRefreshDate as NSDate<br>let timeInterval = myDate.timeIntervalSinceReferenceDate</p>
-<blockquote>
-<p>扩展（Extensions）</p>
-</blockquote>
-<p>你也可以使用扩展来增加属性（包括类的属性与静态属性）。然而，这些属性必须是通过计算才能获取的，扩展不会为类，结构体，枚举添加存储属性。下面这个例子为CGRect类增加了一个叫area的属性。<br>//Swift<br>extension CGRect {<br>var area: CGFloat {<br>return width * height<br>}<br>}<br>let rect = CGRect(x: 0.0, y: 0.0, width: 10.0, height: 50.0)<br>let area = rect.area<br>// area: CGFloat = 500.0</p>
-<blockquote>
-<p>比较对象</p>
-</blockquote>
-<p>当比较两个 Swift 中的对象时，可以使用两种方式。第一种，使用（==），判断两个对象内容是否相同。第二种，使用(===)，判断常量或者变量是否为同一个对象的实例。</p>
-<p>Swift 与 Objective-C 一般使用 == 与 === 操作符来做比较。Swift 的 == 操作符为源自 NSObject 的对象提供了默认的实现。在实现 == 操作符时，Swift 调用 NSObject 定义的 isEqual: 方法。<br>Swift 类型兼容性<br>当你在 Swift 中创建了一个继承自 Objective-C 类的子类时，该类以及该类的成员-属性，方法，下标和构造器，便会在 Objective-C 中自动可用。在某些情况下，你需要更细粒度的控制如何将 Swift API 暴漏给 Objective-C。如果你的 Swift 类没有继承自 Objective-C 的类，又或者你想更改暴漏给 Objective-C 代码的接口符号名称，你便可以使用@objc属性。如果你正在使用如键值观察的 API 来动态替换方法的实现，也可以通过使用dynamic修饰符来获得对 Objective-C 运行时被自动派发的成员的访问。</p>
-<p>轻量级泛型<br>使用轻量级泛型参数的 Objective-C 声明类型，如NSArray，NSSet以及NSDictionary，在被导入到 Swift 时会附带上他们内容保存的类型。</p>
-<p>例如，考虑下面的 Objective-C 属性声明：</p>
-<p>@property NSArray<nsdate *=""><em> dates;<br>@property NSSet&lt;NSString </em>&gt;<em> words;<br>@property NSDictionary&lt;KeyType: NSURL </em>, NSData <em>&gt;</em> cachedData;<br>下面是 Swift 导入后：</nsdate></p>
-<p>var dates: [NSDate]<br>var words: Set<string><br>var cachedData: [NSURL: NSData]</string></p>
-<p>参考资料<br><a href="http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note" target="_blank" rel="external">http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note</a></p>
 
           
         
@@ -1137,8 +881,251 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net10事件处理简介/" itemprop="url">
-                  事件处理简介
+                <a class="post-title-link" href="/2016/08/01/M_1Swfit和OC的区别/" itemprop="url">
+                  Swfit和OC的区别
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-01T10:47:16+08:00" content="2016-08-01">
+              2016-08-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>初始化</p>
+</blockquote>
+<p>let myTableView: UITableView = UITableView(frame: CGRectZero, style: .Grouped)</p>
+<blockquote>
+<p>可失败初始化</p>
+</blockquote>
+<p>if let image = UIImage(contentsOfFile: “MyImage.png”) {<br>// loaded the image successfully<br>} else {<br>// could not load the image<br>}</p>
+<blockquote>
+<p>访问属性方法</p>
+</blockquote>
+<p>在 Swift 中访问和设置 Objective-C 对象的属性时，使用点语法</p>
+<blockquote>
+<p>id 兼容性（id Compatibility）</p>
+</blockquote>
+<p>Swift 包含一个叫做AnyObject的协议类型，表示任意类型的对象，就像 Objective-C 中的id一样。AnyObject协议允许你编写类型安全的 Swift 代码同时维持无类型对象的灵活性。因为AnyObject协议保证了这种安全，Swift 将id对象导入为AnyObject。<br>对于 Swift 中的强制类型转换，从AnyObject类型的对象转换成明确的类型并不会保证成功，所以它会返回一个可选的值。而你需通过检查该值的类型来确认转换是否成功。<br>//Swift<br>let userDefaults = NSUserDefaults.standardUserDefaults()<br>let lastRefreshDate: AnyObject? = userDefaults.objectForKey(“LastRefreshDate”)<br>if let date = lastRefreshDate as? NSDate {<br>println(“(date.timeIntervalSinceReferenceDate)”)<br>}<br>当然，如果你能确定这个对象的类型（并且确定不是nil），你可以添加as操作符强制调用。</p>
+<p>let myDate = lastRefreshDate as NSDate<br>let timeInterval = myDate.timeIntervalSinceReferenceDate</p>
+<blockquote>
+<p>扩展（Extensions）</p>
+</blockquote>
+<p>你也可以使用扩展来增加属性（包括类的属性与静态属性）。然而，这些属性必须是通过计算才能获取的，扩展不会为类，结构体，枚举添加存储属性。下面这个例子为CGRect类增加了一个叫area的属性。<br>//Swift<br>extension CGRect {<br>var area: CGFloat {<br>return width * height<br>}<br>}<br>let rect = CGRect(x: 0.0, y: 0.0, width: 10.0, height: 50.0)<br>let area = rect.area<br>// area: CGFloat = 500.0</p>
+<blockquote>
+<p>比较对象</p>
+</blockquote>
+<p>当比较两个 Swift 中的对象时，可以使用两种方式。第一种，使用（==），判断两个对象内容是否相同。第二种，使用(===)，判断常量或者变量是否为同一个对象的实例。</p>
+<p>Swift 与 Objective-C 一般使用 == 与 === 操作符来做比较。Swift 的 == 操作符为源自 NSObject 的对象提供了默认的实现。在实现 == 操作符时，Swift 调用 NSObject 定义的 isEqual: 方法。<br>Swift 类型兼容性<br>当你在 Swift 中创建了一个继承自 Objective-C 类的子类时，该类以及该类的成员-属性，方法，下标和构造器，便会在 Objective-C 中自动可用。在某些情况下，你需要更细粒度的控制如何将 Swift API 暴漏给 Objective-C。如果你的 Swift 类没有继承自 Objective-C 的类，又或者你想更改暴漏给 Objective-C 代码的接口符号名称，你便可以使用@objc属性。如果你正在使用如键值观察的 API 来动态替换方法的实现，也可以通过使用dynamic修饰符来获得对 Objective-C 运行时被自动派发的成员的访问。</p>
+<p>轻量级泛型<br>使用轻量级泛型参数的 Objective-C 声明类型，如NSArray，NSSet以及NSDictionary，在被导入到 Swift 时会附带上他们内容保存的类型。</p>
+<p>例如，考虑下面的 Objective-C 属性声明：</p>
+<p>@property NSArray<nsdate *=""><em> dates;<br>@property NSSet&lt;NSString </em>&gt;<em> words;<br>@property NSDictionary&lt;KeyType: NSURL </em>, NSData <em>&gt;</em> cachedData;<br>下面是 Swift 导入后：</nsdate></p>
+<p>var dates: [NSDate]<br>var words: Set<string><br>var cachedData: [NSURL: NSData]</string></p>
+<p>参考资料<br><a href="http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note" target="_blank" rel="external">http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/08/01/M_4Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器/" itemprop="url">
+                  Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-01T10:47:16+08:00" content="2016-08-01">
+              2016-08-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>存储属性</p>
+</blockquote>
+<p>Swift中的存储属性就是以前学习OC中的普通属性<br>在结构体或者类中定义的属性, 默认就是存储属性<br>struct Person {<br>var name: String<br>var age: Int<br>}<br>var p:Person = Person(name: “cdh”, age: 20)</p>
+<blockquote>
+<p>常量存储属性</p>
+</blockquote>
+<p>常量存储属性只能在定义时或构造时修改<br>构造好一个对象之后不能对常量存储属性进行修改<br>struct Person1 {<br>var name: String<br>var age: Int<br>let card: String // 身份证<br>}<br>var p1: Person1 = Person1(name: “cdh”, age: 20, card: “123456”)<br>p1.name = “CDH”<br>p1.age = 50<br>//构造好对象之后不能修改常量存储属性<br>//以下写法是错误的<br>//p1.card = “56789”</p>
+<p>结构体和枚举是值类型<br>因此不能修改结构体常量中的属性<br>不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>类是引用类型<br>可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>struct Person2 {<br>var name: String<br>var age: Int<br>}<br>let p2: Person2 = Person2(name: “cdh”, age: 20)<br>//因为结构体是值类型, 所以不能修改结构体常量中的属性<br>//不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>//以下写法错误<br>//p2.name = “CDH” //不能修改结构体常量对象的值<br>//以下写法错误<br>//p2 = Person2(name: “CDH”, age: 50)</p>
+<p>class Person3 {<br>var name: String = “cdh”<br>var age: Int = 20<br>}<br>let p3:Person3 = Person3()<br>//可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>p3.name = “CDH”<br>//不可以修改类常量的指向<br>//以下写法是错误的<br>//p3 = Person4()</p>
+<blockquote>
+<p>延迟存储属性</p>
+</blockquote>
+<p>Swift语言中所有的存储属性必须有初始值, 也就是当构造完一个对象后, 对象中所有的存储属性必须有初始值<br>但是也有例外, 其中延迟存储属性可以将属性的初始化推迟到该属性第一次被调用的时候<br>这个延时属性对应于 OC中的懒加载的概念<br>苹果的设计思想:希望所有的对象在使用时才真正加载到内存中<br>和OC不同的是swift有专门的关键字来实现懒加载<br>lazy关键字可以用于定义某一个属性懒加载<br>懒加载应用场景:<br>有可能不会用到<br>依赖于其它值<br>class Line {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    如果不是lazy属性,定义的时候对象还没有初始化,所以不能访问self<br>//    如果加上lazy,代表使用时才会加载,也就是使用到length属性时才会调用self<br>//    而访问一个类的属性必须通过对象方法<br>//    所以访问时对象已经初始化完成了,可以使用self<br>lazy var length: Double = self.getLenght()<br>//    通过闭包懒加载<br>lazy var container: Array<anyobject> = {<br>print(“懒加载”)<br>var arrM = []<br>return arrM as [AnyObject]<br>}()<br>func getLenght() -&gt;Double<br>{<br>print(“懒加载”)<br>return end - start<br>}<br>}<br>var line = Line()<br>line.end = 150.0<br>print(“创建对象完毕”)<br>print(line.length)<br>var arrM = line.container<br>arrM.append(“1”)<br>arrM.append(5)<br>print(arrM)<br>//输出结果:<br>//创建对象完毕<br>//懒加载<br>//150.0<br>//懒加载<br>//[1, 5]</anyobject></p>
+<blockquote>
+<p>计算属性</p>
+</blockquote>
+<p>1.Swift中的计算属性不直接存储值<br>跟存储属性不同,没有任何的”后端存储与之对应”<br>2.计算属性用于计算, 可以实现setter和getter这两种计算方法<br>3.枚举不可以有存储属性, 但是允许有计算属性<br>setter 对象.属性 = 值<br>getter var value = 对象.属性<br>struct Rect {<br>var origion: (x: Double, y: Double) = (0, 0)<br>var size: (w: Double, h: Double) = (0, 0)<br>//    由于center的值是通过起点和宽高计算出来的, 所以没有必要提供一个存储属性<br>var center: (x: Double, y: Double) {<br>get{<br>return (origion.x + size.w/2, origion.y + size.h/2)<br>}<br>set{<br>//            注意: 计算属性不具备存储功能, 所以不能给计算属性赋值<br>//            如果赋值会发生运行时错误<br>//            注意: setter可以自己传递一个参数, 也可以使用系统默认的参数newValue<br>//            如果要使用系统自带的参数, 必须删除自定义参数<br>origion.x = newValue.x - size.w / 2<br>origion.y = newValue.y - size.h / 2<br>}<br>}<br>}<br>var r = Rect()<br>r.origion = (0, 0)<br>r.size = (100, 100)<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果: center.x = 50.0 center.y = 50.0<br>r.center = (100, 100)<br>print(“origion.x = (r.origion.x) origion.y = (r.origion.y)”)<br>//输出结果: origion.x = 50.0 origion.y = 50.0<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果:center.x = 100.0 center.y = 100.0</p>
+<blockquote>
+<p>只读计算属性</p>
+</blockquote>
+<p>对应OC中的readonly属性<br>所谓的只读属性就是只提供了getter方法, 没有提供setter方法<br>class Line1 {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    只读属性, 只读属性必须是变量var, 不能是常量let<br>//    例如想获取长度<br>//    只能通过计算获得, 而不需要外界设置, 可以设置为只读计算属性<br>var length: Double{<br>//        只读属性的简写, 可以省略get{}<br>return end - start<br>}<br>}<br>var line1 = Line1()<br>line1.end = 100<br>print(line1.length)<br>//输出结果: 100.0<br>//错误,不可设置只读属性<br>line1.length = 100</p>
+<blockquote>
+<p>属性观察器</p>
+</blockquote>
+<p>类似OC中的KVO<br>可以用于监听属性什么时候被修改, 只有属性被修改才会调用<br>有两种属性观察器:<br>1.willSet, 在设置新值之前调用<br>2.didSet, 在设置新值之后调用<br>可以直接为除计算属性和lazy属性之外的存储属性添加属性观察器<br>但是可以在继承类中为父类的计算属性提供属性观察器<br>因为在计算属性中也可以监听到属性的改变<br>所以给计算属性添加属性观察器没有任何意义<br>class Line2 {<br>var start:Double = 0.0{<br>willSet{<br>print(“willSet newValue = (newValue)”)<br>}<br>didSet{<br>print(“didSet oldValue = (oldValue)”)<br>}<br>}<br>var end: Double = 0.0<br>}<br>var l2 = Line2()<br>l2.start = 10.0<br>//输出结果:<br>//willSet newValue = 10.0<br>//didSet oldValue = 0.0<br>//开发中使用didSet较多</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net15加速计/" itemprop="url">
+                  加速计
                 </a>
               
             
@@ -1181,108 +1168,11 @@
       
         
           
-            <p>1&gt; 事件处理简介</p>
+            <p>● 加速计的作用<br>● 用于检测设备的运动(比如摇晃)<br>● 加速计的经典应用场景 ● 摇一摇<br>● 计步器<br>加速计的原理<br>● 检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用,哪个方向运动了) ● 根据加速度数值,就可以判断出在各个方向上的作用力度<br>加速计程序的开发<br>● 加速计程序的开发<br>● 在iOS4以前:使用UIAccelerometer,用法非常简单(到了iOS5就已经过<br>期)<br>● 从iOS4开始:CoreMotion.framework<br>● 虽然UIAccelerometer已经过期,但由于其用法极其简单,很多程序里面都 还有残留<br>UIAccelerometer的使用步骤<br>● 获得单例对象<br>UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];<br>● 设置代理 accelerometer.delegate = self;<br>● 设置采样间隔<br>accelerometer.updateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 实现代理方法</p>
 <ul>
-<li>PPT简介</li>
-<li>3大事件：主要了解触摸事件。</li>
-<li>什么是响应者对象</li>
-<li>为什么继承UIResponder就能处理事件</li>
-<li>想处理触摸事件，应该怎么办</li>
-</ul>
-<p>2&gt;  01-view拖拽演练</p>
-<ul>
-<li>为什么要自定义view：系统自带不能处理事件</li>
-<li>演示触摸事件方法,触摸的完整过程。</li>
-<li>介绍参数(NSSet,UITouch,UIEvent)</li>
-<li>重点UITouch，<br>1.触摸事件方法中的UITouch都是同一个对象，因为一根手指对应一个UITouch.当手指移动或者抬起，并不会产生一个新的UITouch对象给你，而是改变UITouch里面的属性，<br>1.默认三个方法里面只能获取到一个手指，为什么。UIView不支持多点触控<br>2.怎么才能有两个手指，两个手指同时按，并且视图支持多点触控<br>3.UITouch的tapCount有什么用？可以判断用户当前是双击还是单击<br>4.UITouch的phase有什么用? 根据这个属性，判断当前需要调用哪个处理事件方法，begin,move,end<br>程序思路：</li>
-<li>在TouchMove里面做事情-为什么?因为用户手指在视图上移动的时候才需要移动视图。</li>
-<li>获取用户当前的位置，获取用户之前的位置，就知道用户从哪移动到哪,这个位置也是视图移动的位置</li>
-<li>当前视图的位置 = 上一次视图的位置 + 手指的偏移量</li>
-</ul>
-<p>3&gt; 02-事件传递</p>
-<ul>
-<li>PPT简介</li>
-<li>事件，加入到一个由谁管理的事件队列中?UIApplication</li>
-<li>为什么用队列，不用栈。队列先进先出，意味着先产生的事件，先处理。</li>
-<li>代码验证事件谁处理</li>
-<li>PPT上这么多view，验证哪个view处理事件。这么多view，都需要监重写一个方法，搞个父类。</li>
-<li>一个view能处理事件，意味着事件传递给他了，那怎么传递? 事件是由父控件传递给子控件。</li>
-<li>父控件不处理事件，子控件也不能。蓝色不接收事件，黄色也不会接收事件? 为什么，因为事件是从父控件传递给子控件的。父控件都没有事件，怎么传给子控件。</li>
-<li>代码验证view不能处理事件</li>
-<li>一个view怎么不能处理事件。userInteractionEnabled = NO，hidden = YES，alpha &lt;= 0.01</li>
-<li>代码验证UIImageView不允许交互</li>
-<li>UIImageView默认不允许用户交互，因此默认它上面的子控件不能接收事件。</li>
-<li>怎么找到最合适的View？通过一个递归。</li>
-<li>第一个接收事件的控件是谁?窗口</li>
-<li>当事件传递给窗口的时候，就会让窗口去找最合适的view,1&gt; 判断自己能不能接收事件 2&gt; 点在不在窗口上 3&gt; 去找比自己更合适的view，从后往前遍历子控件，拿到子控件后，把事件传递给这个子控件 4&gt; 子控件拿到事件之后，又会做同样的判断，一直递归去找，直到找到最合适的view.</li>
-<li>事件传递的目的何在?找到最合适的view,把事件交给他。</li>
-</ul>
-<p>4&gt; 03-hitText方法和pointInside方法(复制:02-事件传递代码)</p>
-<ul>
-<li>（了解hitText）学习一个方法必须了解：什么时候调用和这个方法有什么用</li>
-</ul>
-<ol>
-<li>hitText什么时候调用:当一个事件传递给一个控件的时候，控件就会调用这个方法</li>
-<li>hitText作用: 寻找到最合适的view。</li>
-</ol>
-<ul>
-<li>（回顾下事件传递），UIApplication -&gt; UIWindow</li>
-<li>UIWindow去寻找最合适的view? [UIWindow hitTest:withEvent:]里面做了什么事情？<br>1&gt; 判断窗口能不能处理事件? 如果不能，意味着窗口不是最合适的view，而且也不会去寻找比自己更合适的view,直接返回nil,通知UIApplication，没有最合适的view。<br>2&gt; 判断点在不在窗口<br>3&gt; 遍历自己的子控件，寻找有没有比自己更合适的view<br>4&gt; 如果子控件不接收事件，意味着子控件没有找到最合适的view,然后返回nil,告诉窗口没有找到更合适的view,窗口就知道没有比自己更合适的view,就自己处理事件。</li>
-<li>验证下hitTest方法返回nil，里面的子控件能处理事件吗？ 重写根控制器view的hitTest:withEvent:方法，</li>
-<li>验证这个方法是否真能找到最合适的view？</li>
-<li>如果点击屏幕任何一个地方，都是白色的view，怎么做。直接返回白色的view,就不会继续去找白色view的子控件了。</li>
-<li>介绍pointInside方法</li>
-<li>pointInside作用：判断一个点在不在一个控件上</li>
-<li>point参数:方法调用者坐标系上的点，PPT画图分析原理。</li>
-<li>这节课的重点：学习完了pointInside,就能实现下hitTest方法底层是怎么做的了。</li>
-</ul>
-<p>5&gt; 04-hitText练习</p>
-<ul>
-<li>分析思路：如果一个点，同时在黄色view和按钮上，由按钮处理事件，怎么做?</li>
-<li>分析事件传递: 当黄色按钮要处理事件，首先事件得传递到他身上</li>
-<li>重写hitTest方法：事件传递到某个控件，调用什么方法?hitTest</li>
-<li>返回nil什么意思？如果直接返回nil，意味着黄色的view，没有找到最合适的view,他的父控件，就会遍历下一个控件，也就是按钮，询问按钮是不是最合适的view.</li>
-<li>判断点在不在按钮上，在就交给他处理。</li>
-<li>pointInside实现。</li>
-</ul>
-<p>5&gt; 响应者链条(复制:02-事件传递代码)</p>
-<ul>
-<li>PPT简介</li>
-<li>touch默认做法:自己不处理事件，交给上一个响应者处理touch事件。</li>
-<li>响应者链条，点击绿色的view,如果不处理事件，就会往上传递。</li>
-<li>验证touch的默认做法 先恢复所有view的默认做法</li>
-<li>监听黄色点击，蓝色点击。</li>
-<li>黄色调用默认做法，事件传递给谁处理?蓝色</li>
-<li>得出结论：1&gt; touch的默认做法：自己不处理，交给上一个响应者。 2&gt; 上一个响应者默认是父控件</li>
-<li>两个view怎么同时处理事件?一个view处理方法，在调用父类默认的做法</li>
-<li>把事件传递给白色的view，怎么做?</li>
-<li>总结下事件传递的完整过程.</li>
-<li>把事件传递给控制器，测试白色view的上一个响应者是否是控制器。</li>
-<li>回顾响应者链条</li>
-</ul>
-<p>6&gt; 抽屉效果<br>添加子视图</p>
-<ul>
-<li>简单的滑动效果</li>
-<li>监听控制器处理事件方法</li>
-<li>获取x轴偏移量</li>
-<li>改变主视图的frame</li>
-<li>利用KVO做视图切换<br>往左移动，显示右边，隐藏左边<br>往右移动，显示左边，隐藏右边</li>
-<li>复杂的滑动效果，PPT讲解（根据手指每移动一点，x轴的偏移量算出当前视图的frame）<br>假设x移到320时，y移动到60，算出没移动一点x，移动多少y<br>offsetY = offsetX <em> 60 / 320  手指每移动一点，x轴偏移量多少，y偏移多少<br>为了好看，x移动到320，距离上下的高度需要保持一致，而且有一定的比例去缩放他的尺寸。<br>怎么根据之前的frame，算出当前的frame,touchMove只能拿到之前的frame.<br>当前的高度 = 之前的高度 </em> 这个比例<br>缩放比例：当前的高度/之前的高度  (screenH - 2 <em> offsetY) / screenH<br>当前的宽度也一样求。<br>y值，计算比较特殊，不能直接用之前的y,加上offsetY,往左滑动，主视图应该往下走，但是offsetX是负数，导致主视图会往上走。<br>y = （screenH - 当前的高度）</em> 0.5<br>getCurrentFrameWithOffsetX</li>
-<li>定位(滑动松开手指的时候，移动到目标点)<br>移动到左右目标点，根据偏移量 = 当前目标点的x - 之前视图的x，计算移动到目标点的frame<br>还原：当没有移动到目标点，就把主视图还原。</li>
-<li>复位（当主视图不在原始的位置，点击屏幕，恢复原来位置）<br>判断手指是否移动，移动的时候就自动定位，不需要手动复位。</li>
-</ul>
-<p>7&gt; 手势识别<br>使用UIImageView原因：之前既能看见图片，又能监听点击的只有UIButton,学了手势，我们的UIImageView也可以。</p>
-<ul>
-<li>tap(代理：左边不能点，右边能点)</li>
-<li>longPress(allowableMovement:触发之前，最大的移动范围)<blockquote>
-<p>默认调用两次，开始一次，结束一次。</p>
-</blockquote>
-</li>
-<li>swipe:(一个手势只能识别一个方向)</li>
-<li>旋转：<br>基于上一次旋转</li>
-<li>复位：(手势的取值都是相对最原始的位置，我们应该是需要相对上一次，因此每次调用，就复位一下，每次都是从零开始旋转角度)<br>缩放：复位</li>
-<li>如何同时支持旋转和缩放？默认不支持多个手指，<br>Simultaneously：同时<br>当使用一个手势的时候会调用代理的Simultaneously方法，询问是否支持多个手势</li>
-<li>pan<br>获取平移的位置：translationInView<br>复位：setTranslation:inView: 需要传一个view，因为点的位置跟坐标系有关系，看他是基于哪个坐标系被清空的。</li>
+<li>(void)accelerometer:(UIAccelerometer <em>)accelerometer didAccelerate:<br>(UIAcceleration </em>)acceleration<br>// acceleration中的x、y、z三个属性分别代表每个轴上的加速度<br>Core Motion<br>● 在iOS4之前,加速度计由UIAccelerometer类来负责采集数据<br>● 随着iPhone4的推出<br>● 加速度计全面升级,并引入了陀螺仪<br>● 与Motion(运动)相关的编程成为重头戏<br>● 苹果特地在iOS4中增加了专门处理Motion的框架-CoreMotion.framework<br>● Core Motion不仅能够提供实时的加速度值和旋转速度值,更重要的是,苹果 在其中集成了很多牛逼的算法<br>Core Motion获取数据的两种方式<br>● push<br>● 实时采集所有数据(采集频率高)<br>● pull<br>● 在有需要的时候,再主动去采集数据<br>Core Motion的使用步骤(push)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) {<br>// 加速计可用 }<br>● 设置采样间隔<br>mgr.accelerometerUpdateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 开始采样(采样到数据就会调用handler,handler会在queue中执行)</li>
+<li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue <em>)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager </em>mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
+<li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 检测到摇动 </em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /** 摇动取消(被中断) </em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 摇动结束 </em>/<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a href="https://github.com/Shmoopi/iOS-System-Services" target="_blank" rel="external">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a href="https://github.com/erica/uidevice-extension" target="_blank" rel="external">https://github.com/erica/uidevice-extension</a></li>
 </ul>
 
           
@@ -1333,8 +1223,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net18SQLite/" itemprop="url">
-                  SQLite
+                <a class="post-title-link" href="/2016/07/31/D_Net8UIDynamic/" itemprop="url">
+                  UIDynamic
                 </a>
               
             
@@ -1378,73 +1268,32 @@
         
           
             <blockquote>
-<p>iOS中的数据存储方式</p>
+<p>简单介绍</p>
 </blockquote>
-<p>● Plist(NSArray\NSDictionary)<br>● Preference(偏好设置\NSUserDefaults)<br>● NSCoding(NSKeyedArchiver\NSkeyedUnarchiver)<br>● SQLite3<br>● Core Data</p>
+<p>1.什么是UIDynamic<br>UIDynamic是从iOS 7开始引入的一种新技术，隶属于UIKit框架<br>可以认为是一种物理引擎，能模拟和仿真现实生活中的物理现象<br>如：重力、弹性碰撞等现象</p>
+<p>2.物理引擎的价值<br>广泛用于游戏开发，经典成功案例是“愤怒的小鸟”<br>让开发人员可以在远离物理学公式的情况下，实现炫酷的物理仿真效果<br>提高了游戏开发效率，产生更多优秀好玩的物理仿真游戏</p>
+<p>3.知名的2D物理引擎<br>Box2d<br>Chipmunk</p>
 <blockquote>
-<p>SQLite</p>
+<p>使用步骤</p>
 </blockquote>
-<p>● 什么是SQLite<br>● SQLite是一款轻型的嵌入式数据库<br>● 它占用资源非常的低,在嵌入式设备中,可能只需要几百K的内存就够了<br>● 它的处理速度比Mysql、PostgreSQL这两款著名的数据库都还快<br>● 什么是数据库<br>● 数据库(Database)是按照数据结构来组织、存储和管理数据的仓库<br>● 数据库可以分为2大种类 • 关系型数据库(主流)<br>• 对象型数据库<br>● 常用关系型数据库<br>● PC端:Oracle、MySQL、SQL Server、Access、DB2、Sybase<br>● 嵌入式\移动客户端:SQLite</p>
+<p>要想使用UIDynamic来实现物理仿真效果，大致的步骤如下<br>（1）创建一个物理仿真器（顺便设置仿真范围）<br>（2）创建相应的物理仿真行为（顺便添加物理仿真元素）<br>（3）将物理仿真行为添加到物理仿真器中  开始仿真</p>
 <blockquote>
-<p>如何存储数据</p>
+<p>相关说明</p>
 </blockquote>
-<p>● 数据库是如何存储数据的<br>● 数据库的存储结构和excel很像,以表(table)为单位<br>● 数据库存储数据的步骤<br>● 新建一张表(table)<br>● 添加多个字段(column,列,属性)<br>● 添加多行记录(row,record,每行存放多个字段对应的值)</p>
-<blockquote>
-<p>SQL语句</p>
-</blockquote>
-<p>● 如何在程序运行过程中操作数据库中的数据<br>● 那得先学会使用SQL语句<br>● 什么是SQL<br>● SQL(structured query language):结构化查询语言<br>● SQL是一种对关系型数据库中的数据进行定义和操作的语言<br>● SQL语言简洁,语法简单,好学好用<br>● 什么是SQL语句<br>● 使用SQL语言编写出来的句子\代码,就是SQL语句<br>● 在程序运行过程中,要想操作(增删改查,CRUD)数据库中的数据,必须使 用SQL语句</p>
-<blockquote>
-<p>SQL语句的特点</p>
-</blockquote>
-<p>● 不区分大小写(比如数据库认为user和UsEr是一样的)<br>● 每条语句都必须以分号 ; 结尾<br>● SQL中的常用关键字有<br>● select、insert、update、delete、from、create、where、desc、order、by、grou<br>p、table、alter、view、index等等</p>
-<blockquote>
-<p>SQL语句的种类</p>
-</blockquote>
-<p>● 数据库中不可以使用关键字来命名表、字段<br>数据定义语句(DDL:Data Definition Language)<br>● 包括create和drop等操作<br>● 在数据库中创建新表或删除表(create table或 drop table)<br>● 数据操作语句(DML:Data Manipulation Language)<br>● 包括insert、update、delete等操作<br>● 上面的3种操作分别用于添加、修改、删除表中的数据<br>● 数据查询语句(DQL:Data Query Language)<br>● 可以用于查询获得表中的数据<br>● 关键字select是DQL(也是所有SQL)用得最多的操作<br>● 其他DQL常用的关键字有where,order by,group by和having</p>
-<blockquote>
-<p>创表</p>
-</blockquote>
-<p>● 格式<br>● create table 表名 (字段名1 字段类型1, 字段名2 字段类型2, …) ;<br>● create table if not exists 表名 (字段名1 字段类型1, 字段名2 字段类型2, …) ;<br>● 示例<br>● create table t_student (id integer, name text, age inetger, score real) ;</p>
-<blockquote>
-<p>字段类型</p>
-</blockquote>
-<p>● SQLite将数据划分为以下几种存储类型:<br>● integer : 整型值<br>● real : 浮点值<br>● text : 文本字符串<br>● blob : 二进制数据(比如文件)<br>● 实际上SQLite是无类型的<br>● 就算声明为integer类型,还是能存储字符串文本(主键除外)<br>● 建表时声明啥类型或者不声明类型都可以,也就意味着创表语句可以这么写:<br>• create table t_student(name, age);<br>● 为了保持良好的编程规范、方便程序员之间的交流,编写建表语句的时候最好 加上每个字段的具体类型</p>
-<blockquote>
-<p>删表</p>
-</blockquote>
-<p>● 格式<br>● drop table 表名 ;<br>● drop table if exists 表名 ;<br>● 示例<br>● drop table t_student ;</p>
-<blockquote>
-<p>插入数据(insert)</p>
-</blockquote>
-<p>● 格式<br>● insert into 表名 (字段1, 字段2, …) values (字段1的值, 字段2的值, …) ;<br>● 示例<br>● insert into t_student (name, age) values (‘mj’, 10) ;<br>● 注意<br>● 数据库中的字符串内容应该用单引号 ’ 括住</p>
-<blockquote>
-<p>更新数据(update)</p>
-</blockquote>
-<p>● 格式<br>● update 表名 set 字段1 = 字段1的值, 字段2 = 字段2的值, … ;<br>● 示例<br>● update t_student set name = ‘jack’, age = 20 ;<br>● 注意<br>● 上面的示例会将t_student表中所有记录的name都改为jack,age都改为20</p>
-<blockquote>
-<p>删除数据(delete)</p>
-</blockquote>
-<p>● 格式<br>● delete from 表名 ;<br>● 示例<br>● delete from t_student ;<br>● 注意<br>● 上面的示例会将t_student表中所有记录都删掉</p>
-<blockquote>
-<p>条件语句</p>
-</blockquote>
-<p>● 如果只想更新或者删除某些固定的记录,那就必须在DML语句后加上一些条件<br>● 条件语句的常见格式<br>● where字段=某个值; //不能用两个=<br>● where字段is某个值; //is相当于=<br>● where 字段 != 某个值 ;<br>● where字段isnot某个值; //isnot相当于!=<br>● where字段&gt;某个值;<br>● where 字段1 = 某个值 and 字段2 &gt; 某个值 ; // and相当于C语言中的 &amp;&amp;<br>● where字段1=某个值or字段2=某个值; // or相当于C语言中的||</p>
-<blockquote>
-<p>排序</p>
-</blockquote>
-<p>● 查询出来的结果可以用order by进行排序<br>● select <em> from t_student order by 字段 ;<br>• select </em> from t_student order by age ;<br>● 默认是按照升序排序(由小到大),也可以变为降序(由大到小)<br>● select <em> from t_student order by age desc ; //降序<br>● select </em> from t_student order by age asc ; // 升序(默认)<br>● 也可以用多个字段进行排序<br>● select * from t_student order by age asc, height desc ;</p>
-<blockquote>
-<p>limit</p>
-</blockquote>
-<p>● 使用limit可以精确地控制查询结果的数量,比如每次只查询10条数据<br>● 格式<br>● select <em> from 表名 limit 数值1, 数值2 ;<br>● 示例<br>● select </em> from t_student limit 4, 8 ;<br>• 可以理解为:跳过最前面4条语句,然后取8条记录<br>• 先按照年龄排序(升序),年龄相等就按照身高排序(降序)</p>
-<blockquote>
-<p>简单约束</p>
-</blockquote>
-<p>● 建表时可以给特定的字段设置一些约束条件,常见的约束有<br>● not null :规定字段的值不能为null<br>● unique :规定字段的值必须唯一<br>● default :指定字段的默认值 (建议:尽量给字段设定严格的约束,以保证数据的规范性)<br>● 示例<br>● create table t_student (id integer, name text not null unique, age integer not null<br>default 1) ;<br>• name字段不能为null,并且唯一<br>• age字段不能为null,并且默认为1</p>
-<blockquote>
-<p>主键约束</p>
-</blockquote>
-<p>● 如果t_student表中就name和age两个字段,而且有些记录的name和age字段的 值都一样时,那么就没法区分这些数据,造成数据库的记录不唯一,这样就不 方便管理数据<br>● 良好的数据库编程规范应该要保证每条记录的唯一性,为此,增加了主键约束<br>● 也就是说,每张表都必须有一个主键,用来标识记录的唯一性<br>● 什么是主键<br>● 主键(Primary Key,简称PK)用来唯一地标识某一条记录<br>● 例如t_student可以增加一个id字段作为主键,相当于人的身份证<br>● 主键可以是一个字段或多个字段<br>主键的设计原则<br>● 主键应当是对用户没有意义的 ● 永远也不要更新主键<br>● 主键不应包含动态变化的数据 ● 主键应当由计算机自动生成<br> 主键的声明<br>● 在创表的时候用primary key声明一个主键<br>● create table t_student (id integer primary key, name text, age integer) ;<br>● integer类型的id作为t_student表的主键<br>● 主键字段<br>● 只要声明为primary key,就说明是一个主键字段<br>● 主键字段默认就包含了not null 和 unique 两个约束<br>● 如果想要让主键自动增长(必须是integer类型),应该增加autoincrement<br>● create table t_student (id integer primary key autoincrement, name text, age integer) ;</p>
+<p>1.三个概念<br>（1）谁要进行物理仿真？<br>　　物理仿真元素（Dynamic Item）</p>
+<p>（2）执行怎样的物理仿真效果？怎样的动画效果？<br>　　物理仿真行为（Dynamic Behavior） </p>
+<p>（3）让物理仿真元素执行具体的物理仿真行为<br>　　物理仿真器（Dynamic Animator）</p>
+<p>2.物理仿真元素<br>注意：<br>不是任何对象都能做物理仿真元素<br>不是任何对象都能进行物理仿真</p>
+<p>物理仿真元素要素：<br>任何遵守了UIDynamicItem协议的对象<br>UIView默认已经遵守了UIDynamicItem协议，因此任何UI控件都能做物理仿真<br>UICollectionViewLayoutAttributes类默认也遵守UIDynamicItem协议</p>
+<p>3.物理仿真行为<br>（1）UIDynamic提供了以下几种物理仿真行为<br>UIGravityBehavior：重力行为<br>UICollisionBehavior：碰撞行为<br>UISnapBehavior：捕捉行为<br>UIPushBehavior：推动行为<br>UIAttachmentBehavior：附着行为<br>UIDynamicItemBehavior：动力元素行为</p>
+<p>（2）物理仿真行为须知<br>上述所有物理仿真行为都继承自UIDynamicBehavior<br>所有的UIDynamicBehavior都可以独立进行<br>组合使用多种行为时，可以实现一些比较复杂的效果</p>
+<p>4.物理仿真器<br>（1）物理仿真器须知<br>它可以让物理仿真元素执行物理仿真行为<br>它是UIDynamicAnimator类型的对象</p>
+<p>（2）UIDynamicAnimator的初始化</p>
+<ul>
+<li>(instancetype)initWithReferenceView:(UIView *)view;<br>view参数：是一个参照视图，表示物理仿真的范围</li>
+</ul>
+<p>5.物理仿真器的说明<br>（1）UIDynamicAnimator的常见方法<br>　　- (void)addBehavior:(UIDynamicBehavior <em>)behavior;  　　//添加1个物理仿真行为<br>　　- (void)removeBehavior:(UIDynamicBehavior </em>)behavior;　　//移除1个物理仿真行为<br>　　- (void)removeAllBehaviors;  　　//移除之前添加过的所有物理仿真行为</p>
+<p>（2）UIDynamicAnimator的常见属性<br>　　@property (nonatomic, readonly) UIView<em> referenceView;  //参照视图<br>　　@property (nonatomic, readonly, copy) NSArray</em> behaviors;//添加到物理仿真器中的所有物理仿真行为<br>　　@property (nonatomic, readonly, getter = isRunning) BOOL running;//是否正在进行物理仿真<br>　　@property (nonatomic, assign) id <uidynamicanimatordelegate> delegate;//代理对象（能监听物理仿真器的仿真过程，比如开始和结束）</uidynamicanimatordelegate></p>
 
           
         
@@ -1494,8 +1343,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net11应用程序互相跳转/" itemprop="url">
-                  应用程序互相跳转
+                <a class="post-title-link" href="/2016/07/31/D_Net7SVN/" itemprop="url">
+                  svn
                 </a>
               
             
@@ -1538,36 +1387,31 @@
       
         
           
-            <ol>
-<li>应用场景</li>
-</ol>
-<p>1） 使用第三方用户登录，需要用户授权，还需要”返回到调用的程序，同时返回授权的用户名”</p>
-<p>2） 应用程序推广，网易彩票，设置－推荐应用－有很多应用程序图标<br>－如果本机已经安装过，会直接跳转到另外一个应用程序<br>－软件的广告，推广结果，后续会有一些列的金钱上的结算</p>
-<p>3)    支付宝，第三方支付，淘宝，电话费充值。。。</p>
+            <blockquote>
+<p>介绍</p>
+</blockquote>
+<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
+<blockquote>
+<p>svn 服务端和客户端模型</p>
+</blockquote>
+<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a href="http://192.168.88.8/download/softwares/svn" target="_blank" rel="external">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a href="http://192.168.88.10/svn" target="_blank" rel="external">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi ~/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 <em>.a 即可<br>global-ignores = </em>.o <em>.lo </em>.la <em>.al .libs </em>.so <em>.so.[0-9]</em> <em>.pyc </em>.pyo <em>~.nib </em>.so <em>.pbxuser </em>.mode<em> </em>.perspective* .DS_Store xcuserdata project.xcworkspace</p>
 <ol>
-<li>要打开本机上的其他应用程序，需要设置schemes，自定义的协议头，可以打开其他的应用程序</li>
+<li>svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数</li>
+<li>svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co</li>
+<li>svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a href="http://1000phone.cn/stuproj" target="_blank" rel="external">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)</li>
+<li>svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</li>
 </ol>
-<p>跳转的代码如下：</p>
-<ul>
-<li>(IBAction)openWangyi:(id)sender<br>{<br>// 跳转到其他应用程序<br>// schemes: 网易的scheme wangyi<br>NSURL *url = [NSURL URLWithString:@”wangyi://view?newsid=201410130001”];</li>
-</ul>
-<p>// 判断本机是否安装了目标程序<br>if ([[UIApplication sharedApplication] canOpenURL:url]) {<br>[[UIApplication sharedApplication] openURL:url];<br>} else {<br>NSLog(@”没有安装，可以再给定下载地址，前往”);<br>}<br>}</p>
+<hr>
+<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser</p>
+<h2 id="M-common-db-php"><a href="#M-common-db-php" class="headerlink" title="M common_db.php"></a>M common_db.php</h2><p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题</p>
+<h2 id="M-showcompileinfo-php"><a href="#M-showcompileinfo-php" class="headerlink" title="M showcompileinfo.php"></a>M showcompileinfo.php</h2><p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php</p>
 <ol>
-<li>新浪微博的授权界面说明：</li>
+<li>svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中</li>
+<li>svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件</li>
+<li>svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改</li>
+<li>svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit</li>
+<li>svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a href="http://1000phone.cn/stuproj/ios1212/test1234" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a href="http://1000phone.cn/stuproj/ios1212/myproject2" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</li>
 </ol>
-<p>1&gt;    在新浪微博中，本身不能直接跳转到该界面<br>2&gt; 用其他应用程序打开时，如果scheme时weibo://oaauth，直接进入此界面<br>3&gt; 如果直接点击，返回，返回调用放应用程序<br>4&gt; 如果点击表格行中的用户名，直接返回用户信息给调用应用程序</p>
-<ol>
-<li>如果要返回调用的应用程序，需要知道调用我们的应用程序的scheme</li>
-</ol>
-<p>/<strong> 只要是由其他应用程序打开的，就会调用此方法 */<br>/</strong> URL 就是其他应用程序，打开当前程序使用的URL */</p>
-<ul>
-<li>(BOOL)application:(UIApplication <em>)application handleOpenURL:(NSURL </em>)url</li>
-</ul>
-<p>/**<br>openURL 是打开当前应用程序的url<br>sourceApplication 是当开当前应用程序的源程序的BundleId</p>
-<p>提示：一旦重写了新方法，旧方法就不再被执行<br>但是：很多第三方框架，都建议两个方法全都写<br>*/</p>
-<ul>
-<li>(BOOL)application:(UIApplication <em>)application openURL:(NSURL </em>)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</li>
-</ul>
 
           
         
