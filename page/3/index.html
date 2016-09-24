@@ -898,6 +898,129 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/31/D_Net11应用程序互相跳转/" itemprop="url">
+                  应用程序互相跳转
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ol>
+<li>应用场景</li>
+</ol>
+<p>1） 使用第三方用户登录，需要用户授权，还需要”返回到调用的程序，同时返回授权的用户名”</p>
+<p>2） 应用程序推广，网易彩票，设置－推荐应用－有很多应用程序图标<br>－如果本机已经安装过，会直接跳转到另外一个应用程序<br>－软件的广告，推广结果，后续会有一些列的金钱上的结算</p>
+<p>3)    支付宝，第三方支付，淘宝，电话费充值。。。</p>
+<ol>
+<li>要打开本机上的其他应用程序，需要设置schemes，自定义的协议头，可以打开其他的应用程序</li>
+</ol>
+<p>跳转的代码如下：</p>
+<ul>
+<li>(IBAction)openWangyi:(id)sender<br>{<br>// 跳转到其他应用程序<br>// schemes: 网易的scheme wangyi<br>NSURL *url = [NSURL URLWithString:@”wangyi://view?newsid=201410130001”];</li>
+</ul>
+<p>// 判断本机是否安装了目标程序<br>if ([[UIApplication sharedApplication] canOpenURL:url]) {<br>[[UIApplication sharedApplication] openURL:url];<br>} else {<br>NSLog(@”没有安装，可以再给定下载地址，前往”);<br>}<br>}</p>
+<ol>
+<li>新浪微博的授权界面说明：</li>
+</ol>
+<p>1&gt;    在新浪微博中，本身不能直接跳转到该界面<br>2&gt; 用其他应用程序打开时，如果scheme时weibo://oaauth，直接进入此界面<br>3&gt; 如果直接点击，返回，返回调用放应用程序<br>4&gt; 如果点击表格行中的用户名，直接返回用户信息给调用应用程序</p>
+<ol>
+<li>如果要返回调用的应用程序，需要知道调用我们的应用程序的scheme</li>
+</ol>
+<p>/<strong> 只要是由其他应用程序打开的，就会调用此方法 */<br>/</strong> URL 就是其他应用程序，打开当前程序使用的URL */</p>
+<ul>
+<li>(BOOL)application:(UIApplication <em>)application handleOpenURL:(NSURL </em>)url</li>
+</ul>
+<p>/**<br>openURL 是打开当前应用程序的url<br>sourceApplication 是当开当前应用程序的源程序的BundleId</p>
+<p>提示：一旦重写了新方法，旧方法就不再被执行<br>但是：很多第三方框架，都建议两个方法全都写<br>*/</p>
+<ul>
+<li>(BOOL)application:(UIApplication <em>)application openURL:(NSURL </em>)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/31/D_Net10事件处理简介/" itemprop="url">
                   事件处理简介
                 </a>
@@ -1044,129 +1167,6 @@
 <li>复位：(手势的取值都是相对最原始的位置，我们应该是需要相对上一次，因此每次调用，就复位一下，每次都是从零开始旋转角度)<br>缩放：复位</li>
 <li>如何同时支持旋转和缩放？默认不支持多个手指，<br>Simultaneously：同时<br>当使用一个手势的时候会调用代理的Simultaneously方法，询问是否支持多个手势</li>
 <li>pan<br>获取平移的位置：translationInView<br>复位：setTranslation:inView: 需要传一个view，因为点的位置跟坐标系有关系，看他是基于哪个坐标系被清空的。</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net11应用程序互相跳转/" itemprop="url">
-                  应用程序互相跳转
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <ol>
-<li>应用场景</li>
-</ol>
-<p>1） 使用第三方用户登录，需要用户授权，还需要”返回到调用的程序，同时返回授权的用户名”</p>
-<p>2） 应用程序推广，网易彩票，设置－推荐应用－有很多应用程序图标<br>－如果本机已经安装过，会直接跳转到另外一个应用程序<br>－软件的广告，推广结果，后续会有一些列的金钱上的结算</p>
-<p>3)    支付宝，第三方支付，淘宝，电话费充值。。。</p>
-<ol>
-<li>要打开本机上的其他应用程序，需要设置schemes，自定义的协议头，可以打开其他的应用程序</li>
-</ol>
-<p>跳转的代码如下：</p>
-<ul>
-<li>(IBAction)openWangyi:(id)sender<br>{<br>// 跳转到其他应用程序<br>// schemes: 网易的scheme wangyi<br>NSURL *url = [NSURL URLWithString:@”wangyi://view?newsid=201410130001”];</li>
-</ul>
-<p>// 判断本机是否安装了目标程序<br>if ([[UIApplication sharedApplication] canOpenURL:url]) {<br>[[UIApplication sharedApplication] openURL:url];<br>} else {<br>NSLog(@”没有安装，可以再给定下载地址，前往”);<br>}<br>}</p>
-<ol>
-<li>新浪微博的授权界面说明：</li>
-</ol>
-<p>1&gt;    在新浪微博中，本身不能直接跳转到该界面<br>2&gt; 用其他应用程序打开时，如果scheme时weibo://oaauth，直接进入此界面<br>3&gt; 如果直接点击，返回，返回调用放应用程序<br>4&gt; 如果点击表格行中的用户名，直接返回用户信息给调用应用程序</p>
-<ol>
-<li>如果要返回调用的应用程序，需要知道调用我们的应用程序的scheme</li>
-</ol>
-<p>/<strong> 只要是由其他应用程序打开的，就会调用此方法 */<br>/</strong> URL 就是其他应用程序，打开当前程序使用的URL */</p>
-<ul>
-<li>(BOOL)application:(UIApplication <em>)application handleOpenURL:(NSURL </em>)url</li>
-</ul>
-<p>/**<br>openURL 是打开当前应用程序的url<br>sourceApplication 是当开当前应用程序的源程序的BundleId</p>
-<p>提示：一旦重写了新方法，旧方法就不再被执行<br>但是：很多第三方框架，都建议两个方法全都写<br>*/</p>
-<ul>
-<li>(BOOL)application:(UIApplication <em>)application openURL:(NSURL </em>)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</li>
 </ul>
 
           
