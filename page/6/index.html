@@ -321,8 +321,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/30/B_OC9内存管理/" itemprop="url">
-                  内存管理
+                <a class="post-title-link" href="/2016/07/30/B_OC7plist,归档和Json/" itemprop="url">
+                  plist,归档和Json
                 </a>
               
             
@@ -366,57 +366,44 @@
         
           
             <blockquote>
-<p>OC中的内存管理</p>
+<p>数据持久化简介</p>
 </blockquote>
-<p>alloc+init 方式创建对象, 一般情况下在堆上上,使用完一定要释放<br>手动内存管理<br>自动内存管理(自动引用计数-ARC)<br>如何内存管理方式切换到手动内存管理?<br>工程配置–&gt;TARGETS-&gt;Build Setting-&gt; 搜索 counting,  设置为NO</p>
+<p>文件:    最常用的最基础的存储数据的方式<br>plist,xml,json    表示数据的某种格式<br>数据库:        海量的数据(省上所有人的电话信息)存储到数据库中<br>SQL Server 2000, mysql, Oracle<br>云端存储:        数据都存储的网络上, 安全性好, 跨设备,跨平台</p>
 <blockquote>
-<p>内存管理中常用的方法</p>
+<p>plist文件</p>
 </blockquote>
-<p>alloc+init<br>//1.alloc+init<br>//alloc: 为对象申请空间,把这块空间全部初始化为0<br>//alloc申请的对象一般情况下都在堆空间,必须考虑释放的问题<br>//init 初始化这个对象<br>Dog *princess = [[Dog alloc] init];<br>dealloc+release<br>retain+retainCount</p>
+<p>用途比较多<br>本质上来说是 Property List file, 属性列表文件<br>存储格式:  数据都是由字典,数组,字符串构成的<br>2.2 如何创建plist文件<br>File-&gt;OS X-Resource–&gt; Proerty List<br>2.3 plist文件的读取和写入<br>//如何读取这个plist文件???<br>NSString <em>path = @”/Users/mac/Desktop/oc7-持久化存储/PlistUseDemo/PlistUseDemo/student.plist”;<br>//plist根结点只有两种类型, 数组和字典<br>//  分别使用NSArray和NSDictionary读取plist<br>NSDictionary </em>dict = [[NSDictionary alloc] initWithContentsOfFile:path];<br>//输出所有的班级的信息<br>//NSArray <em>classList = [dict valueForKey:@”classes”];<br>NSArray </em>classList = dict[@”classes”];<br>for (NSDictionary *classDict in classList) {<br>}<br>//  可以把一个数组或者字典写入到plist中<br>//参数1: 传入一个路径<br>//参数2: 表示是否安全的写入<br>[classList writeToFile:@”/Users/mac/Desktop/classList.plist” atomically:YES];</p>
 <blockquote>
-<p>引用计数这种内存管理方式</p>
+<p>归档</p>
 </blockquote>
-<p>//获取对象被使用的次数<br>NSLog(@”count=%lu”,princess.retainCount);<br>//以后内存管理中有问题的<br>//retain: 让对象引用次数+1<br>//retain的对象也要release<br>[p release];<br>NSLog(@”count=%lu”,princess.retainCount);<br>//释放放在最后<br>//release作用:<br>//  如果retainCount&gt;1 说明有多个人在使用这个对象,不会释放,对象引用次数-1<br>//  如果retianCount==1<br>//  最后使用的”人”释放这个对象<br>//      调用dealloc真正释放对象<br>[princess release];<br>NSMutableString <em>str = [[NSMutableString alloc] initWithString:@”的麻烦了看什么地方了开始免费立刻马上离开父母萨洛克没放到里面是打发来看马萨拉蒂方面撒地方可拉伸的佛罗伦萨地方了”];<br>//特别值得注意的问题<br>//  最好千万不要在对象release之后使用对象<br>//什么是释放:<br>//  释放是失去了这块内存的使用权(内存还在)<br>//      一旦释放, 别人有可能使用这块内存<br>//      咱们在使用的就会出现问题<br>//[princess show];<br>copy+mutableCopy<br>//问题:<br>//  retain两个指针, 只有一个对象<br>//  copy复制这个对象<br>//  效果:  两个指针指向不同的对象<br>//  copy 返回不可变对象<br>//  mutableCopy返回可变对象<br>NSMutableString </em>pname = [name mutableCopy];</p>
+<p>使用归档, 可以直接把一个对象保存到文件中</p>
+<p>//归档的使用<br>//作用: 对象保存到文件中<br>//相比plist: plist使用简单, 不能存储自定义对象<br>//  归档可以存储任意类型对象<br>NSArray <em>array = [[NSArray alloc] initWithObjects:@”小二”,@”三少”,@”四娘”,@”跳舞大神”, nil];<br>//通过归档的形式存储到文件中<br>//设置文件名<br>NSString </em>path = @”/Users/mac/Desktop/people.data”;<br>//NSKeyedArchiver专门用于归档的类<br>//参数1: 传入需要保存的对象<br>//参数2: 传入文件路径<br>BOOL b = [NSKeyedArchiver archiveRootObject:array toFile:path];<br>//把对象从文件中恢复出来===解档<br>//参数1: 传入保存了对象文件<br>//返回值: 返回保存的对象<br>//  类型原来存储的是什么类型, 用什么类型接收<br>NSArray <em>readArray = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>for(NSString </em>str in readArray)<br>{<br>}</p>
 <blockquote>
-<p>内存管理原则:黄金法则<br>如果你对一个对象使用了 alloc,retain,copy/mutableCopy, 使用完这个对象之后需要调用对应的realese或autorelease<br>代码中alloc和release成对出现的retain和release也是成对出现的</p>
+<p>自定义对象的归档和解档</p>
+</blockquote>
+<p>//归档<br>NSString <em>path = @”/Users/mac/Desktop/dog.data”;<br>//<em>**</em></em>  自定义的对象不能直接归档, 会出现崩溃<br>//<strong>*</strong>  需要告诉系统我们对象应该如何归档<br>//          自己类中添加一些指定的方法</p>
+<p>[NSKeyedArchiver archiveRootObject:huaer toFile:path];</p>
+<p>//解档刚才存入的对象<br>Dog *newDog = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>NSLog(@”–&gt; %@ %@ %f %@”,<br>      newDog.nickname,<br>      newDog.gender,<br>      newDog.weight,<br>      newDog.type);</p>
+<p>//告诉系统, 这个对象应该如何编码<br>//  如果没有加这个方法,自定义对象归档的时候会奔溃</p>
+<ul>
+<li>(void)encodeWithCoder:(NSCoder *)aCoder<br>{<br>  //把类中的对象指定一个key, 编码到文件中<br>  [aCoder encodeObject:self.nickname forKey:@”nickname”];<br>  [aCoder encodeObject:self.gender forKey:@”gender”];<br>  [aCoder encodeObject:[NSNumber numberWithFloat:self.weight] forKey:@”weight”];<br>  [aCoder encodeObject:self.type forKey:@”type”];</li>
+</ul>
+<p>}</p>
+<p>//告诉系统, 这个对象应该如何解码<br>//  如果没有加这个方法,自定义对象解档的时候会奔溃</p>
+<ul>
+<li><p>(id)initWithCoder:(NSCoder *)aDecoder<br>{<br>  if (self = [super init]) {</p>
+<pre><code>//对数据进行解码操作
+self.nickname = [aDecoder decodeObjectForKey:@&quot;nickname&quot;];
+self.gender = [aDecoder decodeObjectForKey:@&quot;gender&quot;];
+self.weight = [[aDecoder decodeObjectForKey:@&quot;weight&quot;] floatValue];
+self.type = [aDecoder decodeObjectForKey:@&quot;type&quot;];
+</code></pre><p>  }<br>  return self;<br>}</p>
+</li>
+</ul>
 <blockquote>
-<p>代码中出现的各种内存管理情况</p>
+<p>Json解析</p>
 </blockquote>
-</blockquote>
-<p>(0)如果在方法内部定义了一个对象指针,指向了alloc申请的对象<br>需要在方法结束前释放这个对象</p>
-<blockquote>
-<p>init中为对象指针(类的实例变量)的申请对象</p>
-</blockquote>
-<p>需要在dealloc方法中释放 (重点)<br>//需求: 创建车的同时添加引擎<br>-(id)init<br>{<br>if(self = [super init])<br>{<br>//考虑到释放问题<br>//类中对象指针一般在init中申请对象<br>//  在dealloc中释放对象<br>_engine = [[Engine alloc] init];<br>//NSString *str = [[NSString alloc] init];<br>//[str release];<br>}<br>return self;<br>}<br>-(void)dealloc<br>{<br>NSLog(@”Car dealloc”);<br>[_engine release];<br>//这句放在最后<br>[super dealloc];<br>}</p>
-<blockquote>
-<p>对象指针的setter方法</p>
-</blockquote>
-<p>//_engine实现设置方法<br>-(void)setEngine:(Engine *)engine<br>{<br>//以前的写法<br>//_engine = engine;<br>//传入的指针和保存指针相同,返回即可<br>if(_engine == engine)<br>{<br>return;<br>}<br>//旧的对象不用了, 立即释放<br>[_engine release];<br>//多一个指针指向engine对象<br>//引用次数+1,调用retian方法<br>_engine = [engine retain];<br>}</p>
-<blockquote>
-<p>对象指针的getter方法</p>
-</blockquote>
-<p>//_engine实现获取方法<br>-(Engine *)engine<br>{<br>//以前的实现<br>//return _engine;<br>//retain: 返回的对象类外的指针指向, 多了一个使用, 引用+1<br>//  autorelease谁使用,谁释放<br>//      不能用release, 立即使用<br>return [[_engine retain] autorelease];<br>}</p>
-<blockquote>
-<p>各种实例变量的property (重点)</p>
-</blockquote>
-<p>//使用property实例变量添加getter和setter<br>// 一般情况, NSString 使用copy作为属性修饰符<br>//copy, 把传入的字符串拷贝一个份新的<br>//字符串,字典,数组用copy最好<br>@property (copy) NSString <em>type;<br>//assign表示直接赋值, 不retain也不copy<br>//  默认是assign, assgin可以不写<br>//@property (assign) float price;<br>@property float price;<br>//retain表示实现的setter中添加retain,getter也会添加retain<br>@property (retain) Engine </em>engine;</p>
-<p>//代理设计模式中<br>//  代理的属性修饰符必须是assgin,不能是retain,否则会引起无法释放的问题<br>@property (assign) id delegate;</p>
-<blockquote>
-<p>取消线程保护 nonautomic</p>
-</blockquote>
-<p>//nonatomic取消多线程保护<br>//1.什么是多线程(多任务)<br>// 迅雷下载(界面响应用户点击,下载数据)<br>//2.为啥要加这一句啊<br>//  多线程保护比较耗时, 取消提供代码速度<br>@property (nonatomic) float speed;</p>
-<blockquote>
-<p>类方法创建对象如何写?</p>
-</blockquote>
-<p>//类方法创建的对象无需释放, 也不能释放<br>创建对象的方法,类方法<br>+(id)car<br>{<br>//干两件事情<br>Car *car = [[Car alloc] init];<br>//if(car)<br>//{<br>//设置car的属性<br>//}<br>//alloc和autorelease对应起来<br>return [car autorelease];<br>}</p>
-<blockquote>
-<p>数组中的添加对象内存管理  NSArray</p>
-</blockquote>
-<p>//数组被释放的时候会给数组中每个对象发送release<br>[array release];</p>
-<blockquote>
-<p>字符串的内存管理</p>
-</blockquote>
-<p>//  特点: 特立独行,有性格<br>//字符串常量的引用数是极大值,不需要释放<br>//总结:<br>以alloc创建的字符串最后使用release释放<br>字符串常量和以类方法创建的字符串不需要释放</p>
+<p>Javascript Object Notation 简写<br>网络常用一种表示数据或交换数据的格式<br>4.2 Json数据格式<br>[]表示一个数组, 对应NSArray<br>{}表示一个字典, 对应NSDictionary<br>key:value  表示一个键值对<br>“str”    表示一个字符串   NSString<br>90        表示一个数字       NSNumber<br>,  表示并列的数据<br>4.3 Json格式的读取和使用<br>//如何解析JSON, 解析后如何获取其中数据<br>NSString <em>path = @”/Users/mac/Desktop/1422带课/oc7-持久化存储/topic.txt”;<br>//JSON先读取到程序中(NSString,NSData)<br>NSData </em>data = [[NSData alloc] initWithContentsOfFile:path];<br>//OC提供专门用于JSON解析的类<br>//NSJSONSerialization<br>//功能: 把NSData类型JSON数据转化为字典或者数组<br>//参数1: 需要解析的JSON数据<br>//参数2: 传入一个选项<br>//参数3: 错误<br>//返回值: 如果JSON顶层结点是[],用NSArray接收<br>//       如果顶层结点是{}, 用NSDictionary接收<br>NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];</p>
 
           
         
