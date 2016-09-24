@@ -633,119 +633,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/30/C_UI3UIImageView/" itemprop="url">
-                  UIImageView
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
-              2016-07-30
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>声明</p>
-</blockquote>
-<p>UIImageView *imageView = [[UIImageView alloc] init];<br>iphone5s 320x568<br>细节: 显示图片根据frame缩放</p>
-<blockquote>
-<p>设置位置</p>
-</blockquote>
-<p>imageView.frame = CGRectMake(0, 0, 320, 568);</p>
-<blockquote>
-<p>添加图片</p>
-</blockquote>
-<p>（注意：image是UIImageView的必备属性 ）<br>imageView.image = [UIImage imageNamed:@”back2.jpg”];</p>
-<blockquote>
-<p>显示到桌面</p>
-</blockquote>
-<p>[self.window addSubview:imageView];</p>
-<blockquote>
-<p>在设置背景图片时的拉伸问题</p>
-</blockquote>
-<p>图片拉伸中的问题。图片是向左向上拉伸的。<br>拉伸的距离相当于图片最顶端和最左边向里多少距离的位置向上向左拉伸<br>UIImageView *im=[[UIImageView alloc]initWithFrame:CGRectMake(100, 200, 100, 100)];<br>im.image=[[UIImage imageNamed:@”logo_title”]stretchableImageWithLeftCapWidth:4 topCapHeight:4];</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/30/C_UI1Label/" itemprop="url">
                   UILabel
                 </a>
@@ -1003,8 +890,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/30/C_UI8UINavigationController/" itemprop="url">
-                  UINavigationController
+                <a class="post-title-link" href="/2016/07/30/C_UI9UITabBarController/" itemprop="url">
+                  UITabBarController
                 </a>
               
             
@@ -1048,42 +935,37 @@
         
           
             <blockquote>
-<p>如何是用导航控制器显示第一个界面</p>
+<p>如何使用标签栏控制器实现多界面的切换</p>
 </blockquote>
-<p>创建导航控制器，把试图控制器放入导航控制器进行管理<br>UINavigationController *nc=[[UINavigationController alloc]initWithRootViewController:fvc];<br>试图控制器设置为导航控制器的根试图控制器<br>self.window.rootViewController=nc;</p>
+<p>创建多个试图控制器<br>创建一个标签栏控制器<br>UITabBarController *tbc=[[UITabBarController alloc]init];<br>把前面创建的试图控制器放入标签栏控制器中管理<br>tbc.viewControllers=@[frist,second,thir,fou,fiv,six];<br>标签栏一般同时最多显示5个界面，如果大于5个，最后一个标签项变成more中，</p>
 <blockquote>
-<p>切换到下一个界面</p>
+<p>标签栏上标签项的设置</p>
 </blockquote>
-<p>先创建下一个界面<br>使用pushViewController切换过去<br>[self.navigationController pushViewController:svc animated:YES];<br>3.返回上一个界面<br>使用 popToViewController 返回过去<br>[self.navigationController popToViewController:svc Animated:YES];<br>4.从任意界面，返回根试图控制器<br>使用popToRootViewControllerAnimated<br>[self.navigationController popToRootViewControllerAnimated:YES];<br>5.从当前界面返回以前push的任意界面<br>使用popToViewController:array[1]<br>将每个试图放入数组中<br>NSArray *array=self.navigationController.viewControllers;<br>[self.navigationController popToViewController:array[1] animated:YES];</p>
+<p>可以在标签栏上设置文本和图片<br>注意：标签栏显示该界面的时候从tabBarItem中取出需要的title和Image<br>fvc.tabBarItem.title=@”Limt”;<br>fvc.tabBarItem.image=[UIImage imageNamed:@”tabbar_limitfree”];<br>自己创建标签项。<br>UITabBarItem *item=[[UITabBarItem alloc]initWithTabBarSystemItem:UITabBarSystemItemBookmarks tag:100];<br>fvc.tabBarItem=item;<br>可以控制图片拉伸和上下移动<br>fvc.tabBarItem.imageInsets=UIEdgeInsetsMake(10, 0, 0, 0);<br>设置徽标。<br>fvc.tabBarItem.badgeValue=@”10”;</p>
 <blockquote>
-<p>设置导航控制器的标题</p>
+<p>标签栏的设置</p>
 </blockquote>
-<p>fvc.title=@”第一界面”;</p>
+<p>设置色调<br>tab.tabBar.barTintColor=[UIColor yellowColor];<br>设置背景图<br>tab.tabBar.backgroundImage=[UIImage imageNamed:@”tabbar_bg”];<br>设置标签被选中状态颜色<br>tab.tabBar.selectedImageTintColor=[UIColor purpleColor];</p>
 <blockquote>
-<p>在导航栏上添加一个按钮(不是添加UIButton)</p>
+<p>标签栏控制器的 时间处理</p>
 </blockquote>
-<p>创建文本按钮initWithTitle<br>UIBarButtonItem <em>leftItem=[[UIBarButtonItem alloc]initWithTitle:@”分类” style:UIBarButtonItemStylePlain target:self action:@selector(changeCategory:)];<br>创建系统样式按钮initWithBarButtonSystemItem<br>UIBarButtonItem </em>leftItem=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(changeCategory:)];<br>创建自定义图片按钮initWithCustomView<br>UIButton <em>button=[UIButton buttonWithType:UIButtonTypeCustom];<br>button.frame=CGRectMake(0, 0, 35, 30);<br>[button setBackgroundImage:[UIImage imageNamed:@”main_left_nav”] forState:UIControlStateNormal];<br>UIBarButtonItem </em>leftItem=[[UIBarButtonItem alloc]initWithCustomView:button];<br>self.navigationItem.leftBarButtonItem=leftItem;</p>
+<p>想要禁止选择某个标签项<br>当某个试图被选择的时候执行，返回yes执行，返回no不执行<br>-(BOOL)tabBarController:(UITabBarController <em>)tabBarController shouldSelectViewController:(UIViewController </em>)viewController<br>选择了某个标签项进行处理<br>当某个试图被选中的时候执行<br>-(void)tabBarController:(UITabBarController <em>)tabBarController didSelectViewController:(UIViewController </em>)viewController</p>
 <blockquote>
-<p>设置界面左上角返回按钮。</p>
+<p>标签栏定制</p>
 </blockquote>
-<p>UIBarButtonItem *backItem=[[UIBarButtonItem alloc]initWithTitle:@”返回” style:UIBarButtonItemStylePlain target:self action:nil];<br>self.navigationItem.backBarButtonItem=backItem;</p>
+<p>核心：隐藏系统原来的标签栏，添加上自己定义的View；<br>创建一个标签栏控制器（TabBarContorller类）<br>把系统的替换成自己创建的tabBarContorller<br>1.先隐藏标签栏<br>self.tabBar.hidden=YES;<br>2.创建自己的标签栏。tabBar<br>获得屏幕的大小尺寸<br>CGSize size=[UIScreen mainScreen].bounds.size;<br>UIView <em>tabBar=[[UIView alloc]initWithFrame:CGRectMake(0, size.height-49, size.width, 49)];<br>tabBar.backgroundColor=[UIColor colorWithRed:1 green:1 blue:1 alpha:0.5];<br>[self.view addSubview:tabBar];<br>点击事件中实现切换界面的功能。<br>int index=button.tag-100;<br>index表示按钮的序号<br>selectedIndex表示被选中的序号。<br>self.selectedIndex=index;<br>获取被选择界面的序号<br>NSUserDefaults </em>ud=[NSUserDefaults standardUserDefaults];<br>int index=[ud integerForKey:@”selectedIndex”];<br>tab.selectedIndex=index;</p>
 <blockquote>
-<p>设置导航栏的背景</p>
+<p>保存被选择界面的序号</p>
 </blockquote>
-<p>设置导航条的色调barTintColor<br>self.navigationController.navigationBar.barTintColor=[UIColor grayColor];</p>
+<p>NSUserDefaults  系统提供保存数据一种机制（单例）<br>NSUserDefaults *ud=[NSUserDefaults standardUserDefaults];<br>[ud setInteger:self.selectedIndex forKey:@”selectedIndex”];<br>tbc.selectedIndex = index;</p>
 <blockquote>
-<p>设置导航条的背景图片setBackgroundImage</p>
+<p>隐藏状态栏</p>
 </blockquote>
-<p>[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@”header_bg”] forBarMetrics:UIBarMetricsDefault];<br>UIBarMetricsDefault,<br>UIBarMetricsLandscapePhone,<br>UIBarMetricsDefaultPrompt = 101,<br>注意：导航条的大小：默认高度44个点。<br>导航条的图片高度要么是44，只会覆盖导航条<br>要么是64，不仅覆盖导航条，还会覆盖状态栏</p>
+<p>先设置plist文件中的<br>View controller-based=NO；<br>[UIApplication sharedApplication].statusBarHidden=NO;</p>
 <blockquote>
-<p>隐藏导航栏</p>
+<p>设置状态栏文字为白色</p>
 </blockquote>
-<p>self.navigationController.navigationBar.hidden=YES;</p>
-<blockquote>
-<p>工具栏的使用</p>
-</blockquote>
-<p>添加工具栏（不是添加，是显示）<br>[self.navigationController setToolbarHidden:NO];<br>self.navigationController.toolbarHidden=NO;<br>工具栏上添加的控件只能是UIBarButtonItem<br>UIBarButtonItem <em>item=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(dealTooBarClick:)];<br>UIBarButtonItem </em>item1=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(dealTooBarClick:)];<br>UIBarButtonItem <em>item2=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dealTooBarClick:)];<br>self.toolbarItems=@[item,item1,item2];<br>为了分割三个Item，创建特殊item<br>相当于弹簧，弹开每个控件。UIBarButtonSystemItemFlexibleSpace<br>UIBarButtonItem </em>spse=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];<br>可以自己设置宽度的间隔。UIBarButtonSystemItemFixedSpace<br>UIBarButtonItem *flex=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];<br>flex.width=50;<br>self.toolbarItems=@[item,flex,item1,flex,item2];</p>
-<p>注意：自动布局。self.view就是导航条以下的范围 。<br>self.automaticallyAdjustsScrollViewInsets=YES;<br>导航控制器：UINavigationController<br>导航条：navigationBar<br>导航条上的按钮控件：UIBarButtonItem<br>工具栏：Toolbar<br>注意：工具栏上的控件只能使用UIBarButtonItem设置</p>
+<p>只有两种颜色<br>default是黑色<br>LightContent为白色。<br>[UIApplication sharedApplication].statusBarStyle=UIStatusBarStyleLightContent;<br>[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@”header_bg”] forBarMetrics:UIBarMetricsDefault];</p>
 
           
         
@@ -1507,6 +1389,99 @@
 
 
     
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC8协议、代理/" itemprop="url">
+                  协议、代理
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
   </section>
 
   
@@ -1552,7 +1527,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">64</span>
+              <span class="site-state-item-count">63</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
