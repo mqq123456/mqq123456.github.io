@@ -228,124 +228,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net7SVN/" itemprop="url">
-                  svn
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>介绍</p>
-</blockquote>
-<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
-<blockquote>
-<p>svn 服务端和客户端模型</p>
-</blockquote>
-<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a href="http://192.168.88.8/download/softwares/svn" target="_blank" rel="external">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a href="http://192.168.88.10/svn" target="_blank" rel="external">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi ~/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 <em>.a 即可<br>global-ignores = </em>.o <em>.lo </em>.la <em>.al .libs </em>.so <em>.so.[0-9]</em> <em>.pyc </em>.pyo <em>~.nib </em>.so <em>.pbxuser </em>.mode<em> </em>.perspective* .DS_Store xcuserdata project.xcworkspace</p>
-<ol>
-<li>svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数</li>
-<li>svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co</li>
-<li>svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a href="http://1000phone.cn/stuproj" target="_blank" rel="external">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)</li>
-<li>svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</li>
-</ol>
-<hr>
-<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser</p>
-<h2 id="M-common-db-php"><a href="#M-common-db-php" class="headerlink" title="M common_db.php"></a>M common_db.php</h2><p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题</p>
-<h2 id="M-showcompileinfo-php"><a href="#M-showcompileinfo-php" class="headerlink" title="M showcompileinfo.php"></a>M showcompileinfo.php</h2><p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php</p>
-<ol>
-<li>svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中</li>
-<li>svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件</li>
-<li>svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改</li>
-<li>svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit</li>
-<li>svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a href="http://1000phone.cn/stuproj/ios1212/test1234" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a href="http://1000phone.cn/stuproj/ios1212/myproject2" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/31/D_Net18SQLite/" itemprop="url">
                   SQLite
                 </a>
@@ -1334,8 +1216,113 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net1NSThread/" itemprop="url">
-                  NSThread
+                <a class="post-title-link" href="/2016/07/31/D_Net14传感器/" itemprop="url">
+                  传感器
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>iPhone5中内置的传感器有<br>● 运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 环境光传感器(Ambient Light Sensor)<br>● 距离传感器(Proximity Sensor)<br>● 磁力计传感器(Magnetometer Sensor)<br>● 内部温度传感器(Internal Temperature Sensor)<br>● 湿度传感器(Moisture Sensor)<br>● 陀螺仪(Gyroscope)<br>● … …<br>环境光传感器(Ambient Light Sensor)<br>● 是iOS、Mac设备中最为古老的传感器成员<br>● 它能够让你在使用 Mac、iPhone、iPad时,眼睛更为舒适<br>● 从一个明亮的室外走入相对黑暗的室内后,iOS设备会自动调低亮度,让屏幕显得不再那 么光亮刺眼<br>● 当你使用iPhone拍照时,闪光灯会在一定条件下自动开启<br>● 几乎所有的Mac 都带有背光键盘,当周围光线弱到一定条件时,会自动开启键盘背光<br> 距离传感器(Proximity Sensor)<br>● 用于检测是否有其他物体靠近设备屏幕<br>● 当你打电话或接电话时将电话屏幕贴近耳边,iPhone会自动关闭屏幕 ,好处是<br>● 节省电量<br>● 防止耳朵或面部不小心触摸屏幕而引发一些不想要的意外操作<br>● 题外话:利用距离传感器,能找出很多电视剧的穿帮镜头<br>磁力计传感器(Magnetometer Sensor)<br>● 可以感应地球磁场, 获得方向信息, 使位置服务数据更精准 ● 可以用于电子罗盘和导航应用<br>● iPad的Smart Cover盒盖睡眠操作就是基于磁力计传感器<br>内部温度传感器(Internal Temperature Sensor)<br>● 从 iPad一代开始,iOS设备都加入了一个内部温度传感器,用于检测内部组件 温度,当温度超过系统设定的阈值时,会出现以下提示<br>● 内部温度传感器,对于提升iOS设备自身安全性与稳定性有很大的帮助<br>湿度传感器(Moisture Sensor)<br>● 湿度传感器跟其他基于微电子的传感器不同,是一个简单的物理传感器 ● 简单来说,湿度传感器就是一张遇水变红的试纸<br>● Apple的维修人员就是通过检测试纸是否变红,来判断设备是否进水 (设备进水不在保修范围之内)<br>陀螺仪(Gyroscope)<br>● 陀螺仪是随着iPhone4的上市首次出现在iOS设备上的传感器 ● 陀螺仪可以用于检测设备的持握方式<br>● 陀螺仪的原理是检测设备在X、Y、Z轴上所旋转的角速度<br>● 陀螺仪在赛车类游戏中有重大作用: ● 模拟汽车驾驶时方向盘旋转的动作<br>● 使得这类游戏的操控体验更为真实<br>运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 最早出现在iOS设备上的传感器之一<br>● 加速计用于检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用)<br>● 加速计可以用于检测设备的摇晃,经典应用场景 ● 摇一摇<br>● 计步器</p>
+<blockquote>
+<p>传感器总结</p>
+</blockquote>
+<p>传感器类型<br>作用<br>环境光传感器<br>感应周边环境光线的强弱(自动调节屏幕亮度)<br>距离传感器<br>感应是否有其他物体靠近设备屏幕(打电话自动锁屏)<br>磁力计传感器<br>感应周边的磁场(合盖锁屏)<br>内部温度传感器<br>感应设备内部的温度(提醒用户降温,防止损伤设备)<br>湿度传感器<br>感应设备是否进水(方便维修人员)<br>陀螺仪<br>感应设备的持握方式(赛车类游戏)<br>加速计<br>感应设备的运动(摇一摇、计步器)</p>
+<blockquote>
+<p>距离传感器的使用</p>
+</blockquote>
+<p>// 开启距离感应功能<br>[UIDevice currentDevice].proximityMonitoringEnabled = YES; // 监听距离感应的通知<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(proximityChange:) name:UIDeviceProximityStateDidChangeNotification object:nil];</p>
+<ul>
+<li>(void)proximityChange:(NSNotificationCenter *)notification { if ([UIDevice currentDevice].proximityState == YES) { NSLog(@”某个物体靠近了设备屏幕”); // 屏幕会自动锁住<br>} else {<br>NSLog(@”某个物体远离了设备屏幕”); // 屏幕会自动解锁<br>} }</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net2NSOperation/" itemprop="url">
+                  NSOperation
                 </a>
               
             
@@ -1379,34 +1366,14 @@
         
           
             <blockquote>
-<p>什么是NSThread？</p>
+<p>NSOperation、NSOperationQueue</p>
 </blockquote>
-<p>NSThread 是ios提供的操作和使用线程的一个类<br>线程：<br>进程：理解，活着的程序，是程序执行的一个操作系统实体</p>
+<p>//对于NSThread的封装，提供了更为方便的使用接口<br>//支持block</p>
 <blockquote>
-<p>NSThread的创建线程</p>
+<p>创建和使用</p>
 </blockquote>
-<p>//每个线程执行对应一个方法<br>NSThread *thread1=[[NSThread alloc]initWithTarget:self selector:@selector(thread1:) object:nil];<br>//启动线程<br>[thread1 start];</p>
-<p>//以类方法创建线程<br>//    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];<br>//可以实现同时执行的效果，以前都是先执行A后执行B，现在有了多线程，可以实现同时执行</p>
-<blockquote>
-<p>为什么要实行线程</p>
-</blockquote>
-<p>//UI界面中如果直接执行耗时任务的，界面会卡死，为了能让界面执行耗时任务的时候继续反应，使用新的线程去执行耗时任务<br>//应用场合：下载网络文件，同时执行多个任务，加载大文件，加载大数据<br>//3.为什么要实行线程<br>UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(100, 100, 100, 30);<br>[button setTitle:@”耗时任务” forState:UIControlStateNormal];<br>[self.view addSubview:button];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>-(void)btnClick:(UIButton </em>)button<br>{<br>    //暂停5秒<br>    //    [NSThread sleepForTimeInterval:5];<br>    //    [self dealThread2:nil];<br>    //    如果直接执行的话UI界面会卡死，没有反应<br>    //开启一个新的线程执行<br>    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];</p>
+<p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation <em>operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation </em>bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation <em>bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue </em>queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
 <p>}</p>
-<p>//4.监控线程的执行完成<br>//如何知道那个线程执行接收，使用block–以后要学<br>//4.监控线程的执行完成<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealThreadExit:) name:NSThreadWillExitNotification object:nil];<br>-(void)dealThreadExit:(NSNotification *)no<br>{<br>    NSLog(@”线程执行完成”);<br>    NSLog(@”ui=%@”,no.userInfo);<br>}<br>//5.线程的控制，线程同步<br>//遇到情况：多个线程访问同一块数据<br>//如何解决：<br>//a+10   1.先从内存拿出，修改，再放回去<br>//访问数据的时候加锁<br>//5.线程的控制，线程同步<br>_lock=[[NSLock alloc]init];</p>
-<p>[NSThread detachNewThreadSelector:@selector(addFunc:) toTarget:self withObject:nil];<br>[NSThread detachNewThreadSelector:@selector(subFunc) toTarget:self withObject:nil];</p>
-<p>[self setAddBlock:^(NSString *mmm){<br>    NSLog(@”hbbbgeregour====%@”,mmm);<br>}];</p>
-<p>#pragma mark - 线程同步<br>-(void)addFunc:(NSThread *)th<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        [_lock lock];<br>        _num++;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        [_lock unlock];</p>
-<pre><code>}
-NSLog(@&quot;add num=%d&quot;,_num);
-if (self.addBlock)
-{
-    self.addBlock(@&quot;add&quot;);
-}
-</code></pre><p>}<br>-(void)subFunc<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        //        [_lock lock];<br>        _num–;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        //        [_lock unlock];</p>
-<pre><code>}
-NSLog(@&quot;sub num=%d&quot;,_num);
-</code></pre><p>}</p>
-<p>//6.UI主线程如何操作UI？<br>//ui主线程，<br>//    工作子线程<br>//    注意：不要在子线程中直接操作UI，交给主线程UI；<br>[self howToUpDateUIInSubThread];<br>-(void)howToUpDateUIInSubThread<br>{<br>    _progress =[[UIProgressView alloc]initWithFrame:CGRectMake(10, 200, 300, 20)];<br>    [self.view addSubview:_progress];<br>    //添加一个按钮<br>    UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>    button.frame=CGRectMake(100, 300, 100, 30);<br>    [button setTitle:@”下载文件” forState:UIControlStateNormal];<br>    [self.view addSubview:button];<br>    [button addTarget:self action:@selector(startDownloadClick:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)startDownloadClick:(UIButton </em>)button<br>{<br>    [NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:nil];<br>}<br>-(void)download:(NSThread <em>)thread<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //更新UI<br>        //        _progress.progress+=0.01;<br>        //在主线程中执行一个方法<br>        [self performSelectorOnMainThread:@selector(upDateUI) withObject:nil waitUntilDone:NO];<br>        [NSThread sleepForTimeInterval:0.001];<br>        NSLog(@”进度为%f%%”,_progress.progress</em>100);<br>    }<br>}<br>-(void)upDateUI<br>{<br>    _progress.progress+=0.001;<br>}</p>
 
           
         
