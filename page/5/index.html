@@ -326,124 +326,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net7SVN/" itemprop="url">
-                  svn
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>介绍</p>
-</blockquote>
-<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
-<blockquote>
-<p>svn 服务端和客户端模型</p>
-</blockquote>
-<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a href="http://192.168.88.8/download/softwares/svn" target="_blank" rel="external">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a href="http://192.168.88.10/svn" target="_blank" rel="external">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi ~/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 <em>.a 即可<br>global-ignores = </em>.o <em>.lo </em>.la <em>.al .libs </em>.so <em>.so.[0-9]</em> <em>.pyc </em>.pyo <em>~.nib </em>.so <em>.pbxuser </em>.mode<em> </em>.perspective* .DS_Store xcuserdata project.xcworkspace</p>
-<ol>
-<li>svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数</li>
-<li>svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co</li>
-<li>svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a href="http://1000phone.cn/stuproj" target="_blank" rel="external">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)</li>
-<li>svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</li>
-</ol>
-<hr>
-<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser</p>
-<h2 id="M-common-db-php"><a href="#M-common-db-php" class="headerlink" title="M common_db.php"></a>M common_db.php</h2><p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题</p>
-<h2 id="M-showcompileinfo-php"><a href="#M-showcompileinfo-php" class="headerlink" title="M showcompileinfo.php"></a>M showcompileinfo.php</h2><p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php</p>
-<ol>
-<li>svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中</li>
-<li>svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件</li>
-<li>svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改</li>
-<li>svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit</li>
-<li>svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a href="http://1000phone.cn/stuproj/ios1212/test1234" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a href="http://1000phone.cn/stuproj/ios1212/myproject2" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</li>
-</ol>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/31/D_Net15加速计/" itemprop="url">
                   加速计
                 </a>
@@ -494,6 +376,335 @@
 <li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue <em>)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager </em>mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
 <li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 检测到摇动 </em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /** 摇动取消(被中断) </em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 摇动结束 </em>/<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a href="https://github.com/Shmoopi/iOS-System-Services" target="_blank" rel="external">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a href="https://github.com/erica/uidevice-extension" target="_blank" rel="external">https://github.com/erica/uidevice-extension</a></li>
 </ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net14传感器/" itemprop="url">
+                  传感器
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>iPhone5中内置的传感器有<br>● 运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 环境光传感器(Ambient Light Sensor)<br>● 距离传感器(Proximity Sensor)<br>● 磁力计传感器(Magnetometer Sensor)<br>● 内部温度传感器(Internal Temperature Sensor)<br>● 湿度传感器(Moisture Sensor)<br>● 陀螺仪(Gyroscope)<br>● … …<br>环境光传感器(Ambient Light Sensor)<br>● 是iOS、Mac设备中最为古老的传感器成员<br>● 它能够让你在使用 Mac、iPhone、iPad时,眼睛更为舒适<br>● 从一个明亮的室外走入相对黑暗的室内后,iOS设备会自动调低亮度,让屏幕显得不再那 么光亮刺眼<br>● 当你使用iPhone拍照时,闪光灯会在一定条件下自动开启<br>● 几乎所有的Mac 都带有背光键盘,当周围光线弱到一定条件时,会自动开启键盘背光<br> 距离传感器(Proximity Sensor)<br>● 用于检测是否有其他物体靠近设备屏幕<br>● 当你打电话或接电话时将电话屏幕贴近耳边,iPhone会自动关闭屏幕 ,好处是<br>● 节省电量<br>● 防止耳朵或面部不小心触摸屏幕而引发一些不想要的意外操作<br>● 题外话:利用距离传感器,能找出很多电视剧的穿帮镜头<br>磁力计传感器(Magnetometer Sensor)<br>● 可以感应地球磁场, 获得方向信息, 使位置服务数据更精准 ● 可以用于电子罗盘和导航应用<br>● iPad的Smart Cover盒盖睡眠操作就是基于磁力计传感器<br>内部温度传感器(Internal Temperature Sensor)<br>● 从 iPad一代开始,iOS设备都加入了一个内部温度传感器,用于检测内部组件 温度,当温度超过系统设定的阈值时,会出现以下提示<br>● 内部温度传感器,对于提升iOS设备自身安全性与稳定性有很大的帮助<br>湿度传感器(Moisture Sensor)<br>● 湿度传感器跟其他基于微电子的传感器不同,是一个简单的物理传感器 ● 简单来说,湿度传感器就是一张遇水变红的试纸<br>● Apple的维修人员就是通过检测试纸是否变红,来判断设备是否进水 (设备进水不在保修范围之内)<br>陀螺仪(Gyroscope)<br>● 陀螺仪是随着iPhone4的上市首次出现在iOS设备上的传感器 ● 陀螺仪可以用于检测设备的持握方式<br>● 陀螺仪的原理是检测设备在X、Y、Z轴上所旋转的角速度<br>● 陀螺仪在赛车类游戏中有重大作用: ● 模拟汽车驾驶时方向盘旋转的动作<br>● 使得这类游戏的操控体验更为真实<br>运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 最早出现在iOS设备上的传感器之一<br>● 加速计用于检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用)<br>● 加速计可以用于检测设备的摇晃,经典应用场景 ● 摇一摇<br>● 计步器</p>
+<blockquote>
+<p>传感器总结</p>
+</blockquote>
+<p>传感器类型<br>作用<br>环境光传感器<br>感应周边环境光线的强弱(自动调节屏幕亮度)<br>距离传感器<br>感应是否有其他物体靠近设备屏幕(打电话自动锁屏)<br>磁力计传感器<br>感应周边的磁场(合盖锁屏)<br>内部温度传感器<br>感应设备内部的温度(提醒用户降温,防止损伤设备)<br>湿度传感器<br>感应设备是否进水(方便维修人员)<br>陀螺仪<br>感应设备的持握方式(赛车类游戏)<br>加速计<br>感应设备的运动(摇一摇、计步器)</p>
+<blockquote>
+<p>距离传感器的使用</p>
+</blockquote>
+<p>// 开启距离感应功能<br>[UIDevice currentDevice].proximityMonitoringEnabled = YES; // 监听距离感应的通知<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(proximityChange:) name:UIDeviceProximityStateDidChangeNotification object:nil];</p>
+<ul>
+<li>(void)proximityChange:(NSNotificationCenter *)notification { if ([UIDevice currentDevice].proximityState == YES) { NSLog(@”某个物体靠近了设备屏幕”); // 屏幕会自动锁住<br>} else {<br>NSLog(@”某个物体远离了设备屏幕”); // 屏幕会自动解锁<br>} }</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net13分享学习网站/" itemprop="url">
+                  分享学习网站
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>游戏开发相关：</p>
+<p><a href="http://www.gameres.com/" target="_blank" rel="external">http://www.gameres.com/</a>    想学游戏的这个网站绝对不能错过，个人感觉挺不错的<br><a href="http://xyq.baike.163.com/ziliao/" target="_blank" rel="external">http://xyq.baike.163.com/ziliao/</a>      SLG 游戏系统策划<br><a href="http://www.gamedev.net/page/index.html" target="_blank" rel="external">http://www.gamedev.net/page/index.html</a>  国外<br><a href="http://ns.codingnow.com/" target="_blank" rel="external">http://ns.codingnow.com/</a>     网易梦幻西游后端主程序  大神</p>
+<p>安全相关：<br><a href="http://bbs.pediy.com/" target="_blank" rel="external">http://bbs.pediy.com/</a> 看雪学院  国内重量级</p>
+<p>iOS相关：</p>
+<p><a href="http://blog.devtang.com/" target="_blank" rel="external">http://blog.devtang.com/</a>   网易iOS </p>
+<p><a href="http://beyondvincent.com/blog/archives/" target="_blank" rel="external">http://beyondvincent.com/blog/archives/</a><br><a href="http://github.ibireme.com/github/list/ios/" target="_blank" rel="external">http://github.ibireme.com/github/list/ios/</a>      收集git 上各种优秀项目</p>
+<p>Swift学习:<br><a href="https://github.com/CocoaChina-editors/Welcome-to-Swift" target="_blank" rel="external">https://github.com/CocoaChina-editors/Welcome-to-Swift</a><br><a href="https://github.com/numbbbbb/the-swift-programming-language-in-chinese" target="_blank" rel="external">https://github.com/numbbbbb/the-swift-programming-language-in-chinese</a>  </p>
+<p>热门IT社区<br>www.csdn.net<br>www.cnblogs.com<br>www.51cto.com<br><a href="http://www.oschina.net/" target="_blank" rel="external">http://www.oschina.net/</a> </p>
+<p><a href="http://tool.oschina.net/apidocs/#J" target="_blank" rel="external">http://tool.oschina.net/apidocs/#J</a>    在线API 各种技术文档 </p>
+<p><a href="http://www.juming.com/Csdn/#jieguo" target="_blank" rel="external">http://www.juming.com/Csdn/#jieguo</a>  免CSDN下载器</p>
+<p><a href="http://www.cnpaf.net/class/rfcall/" target="_blank" rel="external">http://www.cnpaf.net/class/rfcall/</a>       网络协议详解大全</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net8UIDynamic/" itemprop="url">
+                  UIDynamic
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>简单介绍</p>
+</blockquote>
+<p>1.什么是UIDynamic<br>UIDynamic是从iOS 7开始引入的一种新技术，隶属于UIKit框架<br>可以认为是一种物理引擎，能模拟和仿真现实生活中的物理现象<br>如：重力、弹性碰撞等现象</p>
+<p>2.物理引擎的价值<br>广泛用于游戏开发，经典成功案例是“愤怒的小鸟”<br>让开发人员可以在远离物理学公式的情况下，实现炫酷的物理仿真效果<br>提高了游戏开发效率，产生更多优秀好玩的物理仿真游戏</p>
+<p>3.知名的2D物理引擎<br>Box2d<br>Chipmunk</p>
+<blockquote>
+<p>使用步骤</p>
+</blockquote>
+<p>要想使用UIDynamic来实现物理仿真效果，大致的步骤如下<br>（1）创建一个物理仿真器（顺便设置仿真范围）<br>（2）创建相应的物理仿真行为（顺便添加物理仿真元素）<br>（3）将物理仿真行为添加到物理仿真器中  开始仿真</p>
+<blockquote>
+<p>相关说明</p>
+</blockquote>
+<p>1.三个概念<br>（1）谁要进行物理仿真？<br>　　物理仿真元素（Dynamic Item）</p>
+<p>（2）执行怎样的物理仿真效果？怎样的动画效果？<br>　　物理仿真行为（Dynamic Behavior） </p>
+<p>（3）让物理仿真元素执行具体的物理仿真行为<br>　　物理仿真器（Dynamic Animator）</p>
+<p>2.物理仿真元素<br>注意：<br>不是任何对象都能做物理仿真元素<br>不是任何对象都能进行物理仿真</p>
+<p>物理仿真元素要素：<br>任何遵守了UIDynamicItem协议的对象<br>UIView默认已经遵守了UIDynamicItem协议，因此任何UI控件都能做物理仿真<br>UICollectionViewLayoutAttributes类默认也遵守UIDynamicItem协议</p>
+<p>3.物理仿真行为<br>（1）UIDynamic提供了以下几种物理仿真行为<br>UIGravityBehavior：重力行为<br>UICollisionBehavior：碰撞行为<br>UISnapBehavior：捕捉行为<br>UIPushBehavior：推动行为<br>UIAttachmentBehavior：附着行为<br>UIDynamicItemBehavior：动力元素行为</p>
+<p>（2）物理仿真行为须知<br>上述所有物理仿真行为都继承自UIDynamicBehavior<br>所有的UIDynamicBehavior都可以独立进行<br>组合使用多种行为时，可以实现一些比较复杂的效果</p>
+<p>4.物理仿真器<br>（1）物理仿真器须知<br>它可以让物理仿真元素执行物理仿真行为<br>它是UIDynamicAnimator类型的对象</p>
+<p>（2）UIDynamicAnimator的初始化</p>
+<ul>
+<li>(instancetype)initWithReferenceView:(UIView *)view;<br>view参数：是一个参照视图，表示物理仿真的范围</li>
+</ul>
+<p>5.物理仿真器的说明<br>（1）UIDynamicAnimator的常见方法<br>　　- (void)addBehavior:(UIDynamicBehavior <em>)behavior;  　　//添加1个物理仿真行为<br>　　- (void)removeBehavior:(UIDynamicBehavior </em>)behavior;　　//移除1个物理仿真行为<br>　　- (void)removeAllBehaviors;  　　//移除之前添加过的所有物理仿真行为</p>
+<p>（2）UIDynamicAnimator的常见属性<br>　　@property (nonatomic, readonly) UIView<em> referenceView;  //参照视图<br>　　@property (nonatomic, readonly, copy) NSArray</em> behaviors;//添加到物理仿真器中的所有物理仿真行为<br>　　@property (nonatomic, readonly, getter = isRunning) BOOL running;//是否正在进行物理仿真<br>　　@property (nonatomic, assign) id <uidynamicanimatordelegate> delegate;//代理对象（能监听物理仿真器的仿真过程，比如开始和结束）</uidynamicanimatordelegate></p>
 
           
         
@@ -670,6 +881,104 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/31/D_Net17音频/" itemprop="url">
+                  音频
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL <em>url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID </em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘<em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} \;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL </em>)url error:(NSError <strong>)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError </strong>)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
+<ul>
+<li>(void)pause; 停止</li>
+<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/31/D_Net16蓝牙/" itemprop="url">
                   蓝牙
                 </a>
@@ -730,104 +1039,6 @@
 <li>(void)receiveData:(NSData <em>)data fromPeer:<br>(NSString </em>)peer inSession: (GKSession <em>)session<br>context:(void </em>)context;<br>蓝牙对等网络——发送自定义对象<br>● 如果要通过网络发送自定义对象,需要使用NSKeyedArchiver方法归档 自定义对象,然后再发送归档后的NSData<br>● 自定义对象需要遵从NSCoding协议,并实现相应的归档和恢复方法 ● 接收端接收到数据之后,使用NSKeyedUnarchiver方法恢复数据</li>
 </ul>
 <p>人生就像卫生纸,没事的时候,尽量少扯; 时间就像卫生纸,看着挺多,用着用着就 没了…</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net17音频/" itemprop="url">
-                  音频
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL <em>url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID </em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘<em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} \;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL </em>)url error:(NSError <strong>)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError </strong>)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
-<ul>
-<li>(void)pause; 停止</li>
-<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
-</ul>
 
           
         
@@ -1038,8 +1249,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net8UIDynamic/" itemprop="url">
-                  UIDynamic
+                <a class="post-title-link" href="/2016/07/31/D_Net7SVN/" itemprop="url">
+                  svn
                 </a>
               
             
@@ -1083,259 +1294,30 @@
         
           
             <blockquote>
-<p>简单介绍</p>
+<p>介绍</p>
 </blockquote>
-<p>1.什么是UIDynamic<br>UIDynamic是从iOS 7开始引入的一种新技术，隶属于UIKit框架<br>可以认为是一种物理引擎，能模拟和仿真现实生活中的物理现象<br>如：重力、弹性碰撞等现象</p>
-<p>2.物理引擎的价值<br>广泛用于游戏开发，经典成功案例是“愤怒的小鸟”<br>让开发人员可以在远离物理学公式的情况下，实现炫酷的物理仿真效果<br>提高了游戏开发效率，产生更多优秀好玩的物理仿真游戏</p>
-<p>3.知名的2D物理引擎<br>Box2d<br>Chipmunk</p>
+<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
 <blockquote>
-<p>使用步骤</p>
+<p>svn 服务端和客户端模型</p>
 </blockquote>
-<p>要想使用UIDynamic来实现物理仿真效果，大致的步骤如下<br>（1）创建一个物理仿真器（顺便设置仿真范围）<br>（2）创建相应的物理仿真行为（顺便添加物理仿真元素）<br>（3）将物理仿真行为添加到物理仿真器中  开始仿真</p>
-<blockquote>
-<p>相关说明</p>
-</blockquote>
-<p>1.三个概念<br>（1）谁要进行物理仿真？<br>　　物理仿真元素（Dynamic Item）</p>
-<p>（2）执行怎样的物理仿真效果？怎样的动画效果？<br>　　物理仿真行为（Dynamic Behavior） </p>
-<p>（3）让物理仿真元素执行具体的物理仿真行为<br>　　物理仿真器（Dynamic Animator）</p>
-<p>2.物理仿真元素<br>注意：<br>不是任何对象都能做物理仿真元素<br>不是任何对象都能进行物理仿真</p>
-<p>物理仿真元素要素：<br>任何遵守了UIDynamicItem协议的对象<br>UIView默认已经遵守了UIDynamicItem协议，因此任何UI控件都能做物理仿真<br>UICollectionViewLayoutAttributes类默认也遵守UIDynamicItem协议</p>
-<p>3.物理仿真行为<br>（1）UIDynamic提供了以下几种物理仿真行为<br>UIGravityBehavior：重力行为<br>UICollisionBehavior：碰撞行为<br>UISnapBehavior：捕捉行为<br>UIPushBehavior：推动行为<br>UIAttachmentBehavior：附着行为<br>UIDynamicItemBehavior：动力元素行为</p>
-<p>（2）物理仿真行为须知<br>上述所有物理仿真行为都继承自UIDynamicBehavior<br>所有的UIDynamicBehavior都可以独立进行<br>组合使用多种行为时，可以实现一些比较复杂的效果</p>
-<p>4.物理仿真器<br>（1）物理仿真器须知<br>它可以让物理仿真元素执行物理仿真行为<br>它是UIDynamicAnimator类型的对象</p>
-<p>（2）UIDynamicAnimator的初始化</p>
-<ul>
-<li>(instancetype)initWithReferenceView:(UIView *)view;<br>view参数：是一个参照视图，表示物理仿真的范围</li>
-</ul>
-<p>5.物理仿真器的说明<br>（1）UIDynamicAnimator的常见方法<br>　　- (void)addBehavior:(UIDynamicBehavior <em>)behavior;  　　//添加1个物理仿真行为<br>　　- (void)removeBehavior:(UIDynamicBehavior </em>)behavior;　　//移除1个物理仿真行为<br>　　- (void)removeAllBehaviors;  　　//移除之前添加过的所有物理仿真行为</p>
-<p>（2）UIDynamicAnimator的常见属性<br>　　@property (nonatomic, readonly) UIView<em> referenceView;  //参照视图<br>　　@property (nonatomic, readonly, copy) NSArray</em> behaviors;//添加到物理仿真器中的所有物理仿真行为<br>　　@property (nonatomic, readonly, getter = isRunning) BOOL running;//是否正在进行物理仿真<br>　　@property (nonatomic, assign) id <uidynamicanimatordelegate> delegate;//代理对象（能监听物理仿真器的仿真过程，比如开始和结束）</uidynamicanimatordelegate></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net11应用程序互相跳转/" itemprop="url">
-                  应用程序互相跳转
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <ol>
-<li>应用场景</li>
-</ol>
-<p>1） 使用第三方用户登录，需要用户授权，还需要”返回到调用的程序，同时返回授权的用户名”</p>
-<p>2） 应用程序推广，网易彩票，设置－推荐应用－有很多应用程序图标<br>－如果本机已经安装过，会直接跳转到另外一个应用程序<br>－软件的广告，推广结果，后续会有一些列的金钱上的结算</p>
-<p>3)    支付宝，第三方支付，淘宝，电话费充值。。。</p>
+<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a href="http://192.168.88.8/download/softwares/svn" target="_blank" rel="external">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a href="http://192.168.88.10/svn" target="_blank" rel="external">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi ~/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 <em>.a 即可<br>global-ignores = </em>.o <em>.lo </em>.la <em>.al .libs </em>.so <em>.so.[0-9]</em> <em>.pyc </em>.pyo <em>~.nib </em>.so <em>.pbxuser </em>.mode<em> </em>.perspective* .DS_Store xcuserdata project.xcworkspace</p>
 <ol>
-<li>要打开本机上的其他应用程序，需要设置schemes，自定义的协议头，可以打开其他的应用程序</li>
+<li>svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数</li>
+<li>svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co</li>
+<li>svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a href="http://1000phone.cn/stuproj" target="_blank" rel="external">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)</li>
+<li>svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</li>
 </ol>
-<p>跳转的代码如下：</p>
-<ul>
-<li>(IBAction)openWangyi:(id)sender<br>{<br>// 跳转到其他应用程序<br>// schemes: 网易的scheme wangyi<br>NSURL *url = [NSURL URLWithString:@”wangyi://view?newsid=201410130001”];</li>
-</ul>
-<p>// 判断本机是否安装了目标程序<br>if ([[UIApplication sharedApplication] canOpenURL:url]) {<br>[[UIApplication sharedApplication] openURL:url];<br>} else {<br>NSLog(@”没有安装，可以再给定下载地址，前往”);<br>}<br>}</p>
+<hr>
+<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser</p>
+<h2 id="M-common-db-php"><a href="#M-common-db-php" class="headerlink" title="M common_db.php"></a>M common_db.php</h2><p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题</p>
+<h2 id="M-showcompileinfo-php"><a href="#M-showcompileinfo-php" class="headerlink" title="M showcompileinfo.php"></a>M showcompileinfo.php</h2><p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php</p>
 <ol>
-<li>新浪微博的授权界面说明：</li>
+<li>svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中</li>
+<li>svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件</li>
+<li>svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改</li>
+<li>svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit</li>
+<li>svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a href="http://1000phone.cn/stuproj/ios1212/test1234" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a href="http://1000phone.cn/stuproj/ios1212/myproject2" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</li>
 </ol>
-<p>1&gt;    在新浪微博中，本身不能直接跳转到该界面<br>2&gt; 用其他应用程序打开时，如果scheme时weibo://oaauth，直接进入此界面<br>3&gt; 如果直接点击，返回，返回调用放应用程序<br>4&gt; 如果点击表格行中的用户名，直接返回用户信息给调用应用程序</p>
-<ol>
-<li>如果要返回调用的应用程序，需要知道调用我们的应用程序的scheme</li>
-</ol>
-<p>/<strong> 只要是由其他应用程序打开的，就会调用此方法 */<br>/</strong> URL 就是其他应用程序，打开当前程序使用的URL */</p>
-<ul>
-<li>(BOOL)application:(UIApplication <em>)application handleOpenURL:(NSURL </em>)url</li>
-</ul>
-<p>/**<br>openURL 是打开当前应用程序的url<br>sourceApplication 是当开当前应用程序的源程序的BundleId</p>
-<p>提示：一旦重写了新方法，旧方法就不再被执行<br>但是：很多第三方框架，都建议两个方法全都写<br>*/</p>
-<ul>
-<li>(BOOL)application:(UIApplication <em>)application openURL:(NSURL </em>)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net13分享学习网站/" itemprop="url">
-                  分享学习网站
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>游戏开发相关：</p>
-<p><a href="http://www.gameres.com/" target="_blank" rel="external">http://www.gameres.com/</a>    想学游戏的这个网站绝对不能错过，个人感觉挺不错的<br><a href="http://xyq.baike.163.com/ziliao/" target="_blank" rel="external">http://xyq.baike.163.com/ziliao/</a>      SLG 游戏系统策划<br><a href="http://www.gamedev.net/page/index.html" target="_blank" rel="external">http://www.gamedev.net/page/index.html</a>  国外<br><a href="http://ns.codingnow.com/" target="_blank" rel="external">http://ns.codingnow.com/</a>     网易梦幻西游后端主程序  大神</p>
-<p>安全相关：<br><a href="http://bbs.pediy.com/" target="_blank" rel="external">http://bbs.pediy.com/</a> 看雪学院  国内重量级</p>
-<p>iOS相关：</p>
-<p><a href="http://blog.devtang.com/" target="_blank" rel="external">http://blog.devtang.com/</a>   网易iOS </p>
-<p><a href="http://beyondvincent.com/blog/archives/" target="_blank" rel="external">http://beyondvincent.com/blog/archives/</a><br><a href="http://github.ibireme.com/github/list/ios/" target="_blank" rel="external">http://github.ibireme.com/github/list/ios/</a>      收集git 上各种优秀项目</p>
-<p>Swift学习:<br><a href="https://github.com/CocoaChina-editors/Welcome-to-Swift" target="_blank" rel="external">https://github.com/CocoaChina-editors/Welcome-to-Swift</a><br><a href="https://github.com/numbbbbb/the-swift-programming-language-in-chinese" target="_blank" rel="external">https://github.com/numbbbbb/the-swift-programming-language-in-chinese</a>  </p>
-<p>热门IT社区<br>www.csdn.net<br>www.cnblogs.com<br>www.51cto.com<br><a href="http://www.oschina.net/" target="_blank" rel="external">http://www.oschina.net/</a> </p>
-<p><a href="http://tool.oschina.net/apidocs/#J" target="_blank" rel="external">http://tool.oschina.net/apidocs/#J</a>    在线API 各种技术文档 </p>
-<p><a href="http://www.juming.com/Csdn/#jieguo" target="_blank" rel="external">http://www.juming.com/Csdn/#jieguo</a>  免CSDN下载器</p>
-<p><a href="http://www.cnpaf.net/class/rfcall/" target="_blank" rel="external">http://www.cnpaf.net/class/rfcall/</a>       网络协议详解大全</p>
 
           
         
@@ -1409,7 +1391,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">85</span>
+              <span class="site-state-item-count">86</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

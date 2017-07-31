@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2017/07/25/M_Swift24搜索framework/" itemprop="url">
-                  Swift编写framework
+                <a class="post-title-link" href="/2017/07/28/M_Swift28php接口开发/" itemprop="url">
+                  使用CodeIgniter开发接口
                 </a>
               
             
@@ -242,8 +242,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-07-25T15:23:07+08:00" content="2017-07-25">
-              2017-07-25
+            <time itemprop="dateCreated" datetime="2017-07-28T17:39:21+08:00" content="2017-07-28">
+              2017-07-28
             </time>
           </span>
 
@@ -272,7 +272,23 @@
       
         
           
-            <p>前段时间，公司比较清闲，没啥事做的我，想着总要搞点东西，也不能好高骛远，所以就拿以前一个简单的项目做了一下练兵，以前要求写一个搜索的框架，然后就模仿着高德的搜索SDK进行了编写，不知道高德内部代码是什么样子的，但是，外部的接口还是尽量跟高德表现的比较一致了，既然oc能写，那么为什么不用swift试试呢？于是，我差不多用了一个星期的时间，将一套swift版本的framework编写完成，总算是也没白瞎了这些天的时间，下面来分析下swift版本的SDK开发过程吧<br>一开始的时候，我完全按照oc版本的接口进行了定义，API类，delegate啦，等等写了一堆，然后进行实现，然后觉得越写越麻烦。为什么不能向AFN那样直接用block形式进行回调呢？于是这个版本就这么快的修改了<br>一开始我的类基本上是API，OBj文件，然后request类进行参数拼接，API类进行请求，设置代理，response类进行数据解析，通过代理回调。<br>后来，直接变成 OBj文件，直接就是request类拼参数，发起请求，response类解析，通过block回调，瞬间感觉代码整洁很多，而且使用接口的时候也特别简单了。<br>其实最大一个问题是，我不知道怎么使用md5加密，用swift3尝试了好久都得不到结果，最后没有办法，只能用oc的类混编了，如果以后有能力的话，我想最好还是改成用swift<br>分享一下接口调用情况<br>/// 实例化请求类<br>let request = InputTipsSearchRequest()<br>request.center = LatLon(latitude:39.998623 , longitude: 116.473228)<br>request.keywords = “北京”<br>request.city = “北京”<br>/// 发起请求<br>request.inputSearchRequest({ (response) in<br>    /// block回调<br>    print(“请求成功”)<br>}) { (error) in<br>    print(error.localizedDescription)<br>}</p>
+            <p>今天研究了一下php接口开发，想法是，用LMAP的方式，写服务端，提供客户端使用的接口，今天进行简单的尝试，希望对以后有帮助<br>1.apach启动<br>sudo apachectl start;<br>sudo apachectl restart;</p>
+<p>2.遇到问题：没有权限，修改httpd.conf。<br>百度 添加sudo sudo来临时提供管理员权限，比如使用命令“sudo vi httpd.conf”打开编辑文件。</p>
+<p>3.用php写json，返回json数据，写了半天，<br>看来还是不会写，希望慢慢的能有进步吧。</p>
+<p>4.mysql 启动命令sudo /usr/local/mysql/support-files/mysql.server start (stop)</p>
+<p>由此看来，sudo命令是很有用的，当我们执行某种操作系统提示诸如“operation not permitted”等权限不足信息时，我们很多时候都可以在命令前面加上sudo来解决权限不足问题。比如当我们从Linux服务器上下载某一个文件或上传某一个文件有可能提示这个，也有肯能直接上传不成功但是什么都没提示；这时你就应该想想是不是账号的权限不足，加个sudo试试。</p>
+<p>5.mysql连接数据库出现错误<br>mysqli::real_connect(): (HY000/2002): No such file or directory<br>将’localhost’修改为’127.0.0.1’之后链接正常</p>
+<p>6.php输出数组<br>foreach</p>
+<p>7.至此，LMAP的组合已经成立，下一步，用php操纵数据库，实现增删改查操作。<br>并输出正确的json，应用与移动端。</p>
+<blockquote>
+<p>insert<br>public function insert($name,$password) {<br>$this-&gt;load-&gt;database();<br>// 查找数据<br>$sql = “SELECT name FROM user where name = ?”;<br>$user = $this-&gt;db-&gt;query($sql,$name);<br>$user = $user-&gt;result_array();//再查询一次数据库<br>// 如果数据不存在，插入数据<br>if (count($user) == 0) {       //数量为0，即表示用户不存在<br>$sql1 = ‘INSERT INTO user (name, password) VALUES (?,?)’;<br>$this-&gt;db-&gt;query($sql1,array($name,$password));//插入<br>$id = $this-&gt;db-&gt;insert_id();//获取插入的行号，即id<br>$user = $this-&gt;db-&gt;query($sql,$name);<br>if (count($user) != 0) {//如果有数据，即表明插入成功<br>$viewArray = array(“status” =&gt; “ok”,”data”=&gt; $user-&gt;result_array());<br>exit(json_encode($viewArray));<br>}<br>}else{ // 插入失败，数据库已存在数据<br>$viewArray = array(“status” =&gt; “error”,”errorMsg”=&gt; “user exist”);<br>exit(json_encode($viewArray));<br>}</p>
+<p>delete<br>public function delete($name) {<br>$this-&gt;load-&gt;database();<br>//查找数据<br>$sql = “SELECT name FROM user where name = ?”;<br>$res = $this-&gt;db-&gt;query($sql,$name);<br>$res = $res-&gt;result_array();<br>if (count($res) != 0 ) {<br>// 删除数据<br>$sql = ‘DELETE FROM user WHERE name = ?’;<br>$this-&gt;db-&gt;query($sql,$name);<br>$viewArray = array(“status” =&gt; “ok”);<br>exit(json_encode($viewArray));<br>}else{<br>// 数据不存在<br>$viewArray = array(“status” =&gt; “error”,”errorMsg”=&gt; “user not exist”);<br>exit(json_encode($viewArray));<br>}</p>
+</blockquote>
+<p>}</p>
+<blockquote>
+<p>update<br>public function update($id,$password) {<br>$this-&gt;load-&gt;database();<br>//查找数据<br>$sql = “SELECT id FROM user where id = ?”;<br>$res = $this-&gt;db-&gt;query($sql,$id);<br>$res = $res-&gt;result_array();<br>if (count($res) != 0 ) {<br>// 更新数据<br>$sql = “UPDATE user SET password = ? WHERE id = ‘$id’”;<br>$res = $this-&gt;db-&gt;query($sql,$password);<br>if ($res) {<br>$viewArray = array(“status” =&gt; “ok”);<br>exit(json_encode($viewArray));<br>}<br>}else{<br>// 数据不存在<br>$viewArray = array(“status” =&gt; “error”,”errorMsg”=&gt; “user not exist”);<br>exit(json_encode($viewArray));<br>}<br>}</p>
+<p>select<br>public function select()<br>{<br>$this-&gt;load-&gt;database();<br>$query=$this-&gt;db-&gt;query(“select * from user”);<br>$array = $query-&gt;result();<br>return $array;<br>}</p>
+</blockquote>
 
           
         
@@ -416,8 +432,8 @@
             
               
                 
-                <a class="post-title-link" href="/2017/04/14/M_Swift26车计划/" itemprop="url">
-                  车计划
+                <a class="post-title-link" href="/2017/07/25/M_Swift24搜索framework/" itemprop="url">
+                  Swift编写framework
                 </a>
               
             
@@ -430,8 +446,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-04-14T17:31:02+08:00" content="2017-04-14">
-              2017-04-14
+            <time itemprop="dateCreated" datetime="2017-07-25T15:23:07+08:00" content="2017-07-25">
+              2017-07-25
             </time>
           </span>
 
@@ -460,7 +476,7 @@
       
         
           
-            <p>是的，就要考驾驶证，做个规划，因为，我这是一边上班，一边学驾照，家里还有刚出生的孩子，此时，真的觉得很多事情是会很分心，但是怎么办啊，我也不知道怎么办了，总是要又点条理才行，现在工作上不忙，但是在工作上的时间是固定的，我总不能就这样闲着，什么事都不做吧，一天到晚的就等一个邮件，等一个下班吧，着不是我想要的，我不能这样搞了，我要好好工作了。<br>是的，说到好好工作，也并非如此，毕竟很多事情要忙，我也需要分身，所以说应该是怎么样合理安排自己的时间才是最重要的，每天早上来到公司，我们就要面临一天的工作，那么合理安排好今天要做什么，这才是本次计划的重点，前段时间算是很好的了解了一下其他的语言，java，Android，php，js，微信小程序啦，都看了一下,但是，说实话，只是泛泛的了解，真的要做的话，还是需要一定行业项目积累的，抱歉，我没有。。。<br>话说前几日，苹果果断的封闭了热更新，真的让人很头疼，那么怎么办啊。其实就目前来说，热更新算是一个比较成熟的社区了，如果苹果这样封杀的话，会对很多公司造成极大的影响，也不利于科学技术的进步，我觉得，苹果应该是禁止不了的，但是，肯定有办法能够得到一个双方都满意的结果的，大公司肯定会权衡利弊的，但是就目前来说，热更新觉得不适合我们去学习，我们还是本分点的话<br>但是另一个重要的东西就不得不提了，机器学习，这很重要，其实我觉得这个跟数据挖掘有很多类似的东西，都是属于数据整合方向的，如果这个方向上有突飞猛进的进步的话，应该又会有互联网巨头站出来，但是目前来说，很有可能是被现有的互联网公司垄断的，数据肯定都会是他们的，但是我想说的是，现在所有的公司都重视了线下的重要性，所以说，互联网再牛逼也还是需要实体经济支撑的，对于数据来说，其最终的根源也是来自于线下，所以说现在的互联网公司竞争最激烈的也就是线下。<br>说了半天，本来是说我自己的事情的，结果拖泥带水的说了一堆，那么我这个车计划要怎么实施尼？想来想去，1.保持现有的工作不变，该忙的时候一定要忙起来，2.积极学习现有的知识，如Android，Swfit，php，java，把这几个知识再巩固一下，每天想着学习一样，来回学习，反复巩固，肯定会有收获。3.避免盲目，减少不必要的心思，特被是现在流行的买车，买房，现在看来还不切实际，一定要控制自己，不要去浏览类似的新闻。4.维护自己的博客，社区，朋友圈，这个也是很重要的一面，我觉得，是时候开放自己，既然自己已经写了，那么就要有发布出来的勇气。5.积极掌握驾车技术，防止考试紧张情况，不要一味的考虑拿到驾照的时间，根据驾校的安排，一步一步的来。6.紧盯孩子成长，孩子还小，成长也是一个慢速的过程，要有耐心，同时要找准自己的落脚点，为孩子未来开辟生存空间。7.驾照学习完之后的事情也要尽快做准备，争取做到一分耕耘，一分收获。</p>
+            <p>前段时间，公司比较清闲，没啥事做的我，想着总要搞点东西，也不能好高骛远，所以就拿以前一个简单的项目做了一下练兵，以前要求写一个搜索的框架，然后就模仿着高德的搜索SDK进行了编写，不知道高德内部代码是什么样子的，但是，外部的接口还是尽量跟高德表现的比较一致了，既然oc能写，那么为什么不用swift试试呢？于是，我差不多用了一个星期的时间，将一套swift版本的framework编写完成，总算是也没白瞎了这些天的时间，下面来分析下swift版本的SDK开发过程吧<br>一开始的时候，我完全按照oc版本的接口进行了定义，API类，delegate啦，等等写了一堆，然后进行实现，然后觉得越写越麻烦。为什么不能向AFN那样直接用block形式进行回调呢？于是这个版本就这么快的修改了<br>一开始我的类基本上是API，OBj文件，然后request类进行参数拼接，API类进行请求，设置代理，response类进行数据解析，通过代理回调。<br>后来，直接变成 OBj文件，直接就是request类拼参数，发起请求，response类解析，通过block回调，瞬间感觉代码整洁很多，而且使用接口的时候也特别简单了。<br>其实最大一个问题是，我不知道怎么使用md5加密，用swift3尝试了好久都得不到结果，最后没有办法，只能用oc的类混编了，如果以后有能力的话，我想最好还是改成用swift<br>分享一下接口调用情况<br>/// 实例化请求类<br>let request = InputTipsSearchRequest()<br>request.center = LatLon(latitude:39.998623 , longitude: 116.473228)<br>request.keywords = “北京”<br>request.city = “北京”<br>/// 发起请求<br>request.inputSearchRequest({ (response) in<br>    /// block回调<br>    print(“请求成功”)<br>}) { (error) in<br>    print(error.localizedDescription)<br>}</p>
 
           
         
@@ -604,8 +620,102 @@
             
               
                 
-                <a class="post-title-link" href="/2017/03/23/N_Android3学习项目1/" itemprop="url">
-                  安卓学习项目1
+                <a class="post-title-link" href="/2017/04/14/M_Swift26车计划/" itemprop="url">
+                  车计划
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-04-14T17:31:02+08:00" content="2017-04-14">
+              2017-04-14
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>是的，就要考驾驶证，做个规划，因为，我这是一边上班，一边学驾照，家里还有刚出生的孩子，此时，真的觉得很多事情是会很分心，但是怎么办啊，我也不知道怎么办了，总是要又点条理才行，现在工作上不忙，但是在工作上的时间是固定的，我总不能就这样闲着，什么事都不做吧，一天到晚的就等一个邮件，等一个下班吧，着不是我想要的，我不能这样搞了，我要好好工作了。<br>是的，说到好好工作，也并非如此，毕竟很多事情要忙，我也需要分身，所以说应该是怎么样合理安排自己的时间才是最重要的，每天早上来到公司，我们就要面临一天的工作，那么合理安排好今天要做什么，这才是本次计划的重点，前段时间算是很好的了解了一下其他的语言，java，Android，php，js，微信小程序啦，都看了一下,但是，说实话，只是泛泛的了解，真的要做的话，还是需要一定行业项目积累的，抱歉，我没有。。。<br>话说前几日，苹果果断的封闭了热更新，真的让人很头疼，那么怎么办啊。其实就目前来说，热更新算是一个比较成熟的社区了，如果苹果这样封杀的话，会对很多公司造成极大的影响，也不利于科学技术的进步，我觉得，苹果应该是禁止不了的，但是，肯定有办法能够得到一个双方都满意的结果的，大公司肯定会权衡利弊的，但是就目前来说，热更新觉得不适合我们去学习，我们还是本分点的话<br>但是另一个重要的东西就不得不提了，机器学习，这很重要，其实我觉得这个跟数据挖掘有很多类似的东西，都是属于数据整合方向的，如果这个方向上有突飞猛进的进步的话，应该又会有互联网巨头站出来，但是目前来说，很有可能是被现有的互联网公司垄断的，数据肯定都会是他们的，但是我想说的是，现在所有的公司都重视了线下的重要性，所以说，互联网再牛逼也还是需要实体经济支撑的，对于数据来说，其最终的根源也是来自于线下，所以说现在的互联网公司竞争最激烈的也就是线下。<br>说了半天，本来是说我自己的事情的，结果拖泥带水的说了一堆，那么我这个车计划要怎么实施尼？想来想去，1.保持现有的工作不变，该忙的时候一定要忙起来，2.积极学习现有的知识，如Android，Swfit，php，java，把这几个知识再巩固一下，每天想着学习一样，来回学习，反复巩固，肯定会有收获。3.避免盲目，减少不必要的心思，特被是现在流行的买车，买房，现在看来还不切实际，一定要控制自己，不要去浏览类似的新闻。4.维护自己的博客，社区，朋友圈，这个也是很重要的一面，我觉得，是时候开放自己，既然自己已经写了，那么就要有发布出来的勇气。5.积极掌握驾车技术，防止考试紧张情况，不要一味的考虑拿到驾照的时间，根据驾校的安排，一步一步的来。6.紧盯孩子成长，孩子还小，成长也是一个慢速的过程，要有耐心，同时要找准自己的落脚点，为孩子未来开辟生存空间。7.驾照学习完之后的事情也要尽快做准备，争取做到一分耕耘，一分收获。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/03/23/N_Android7Java中一些类的理解/" itemprop="url">
+                  安卓学习一些类的理解
                 </a>
               
             
@@ -648,11 +758,10 @@
       
         
           
-            <p>最近闲着没事，买了本安卓的书，想学习一下安卓《第一行代码－安卓》<br>这本书真的还是挺简单的，比较适合入门级看，其中书中介绍的知识都是用代码的形式展示给我们了，我感同身受，怎么不去跟着作者写一下呢？所以我大概用了一个星期的时间，跟着作者将这本书学习了一半，UI上的知识有了更加深刻的了解吧，希望在以后的道路上能够用的到，废话少说，现在就来介绍一下我的学习成果吧<br>到目前为止，我一共创建了5个安卓学习的应用程序，只是简单的编写，希望能够给自己的道路上留下宝贵的财富，</p>
+            <p>安卓学习还在进行，学习总是不是太深，对于一些东西一知半解的，总感觉不行，这里记录一下吧，希望这样能够加深一下理解</p>
 <hr>
-<p>项目介绍<br>1.<a href="https://github.com/mqq123456/andioidTest" target="_blank" rel="external">andioidTest，一个简单的安卓介绍 </a><br>2.<a href="https://github.com/mqq123456/ActivityTest" target="_blank" rel="external">ActivityTest，关于安卓活动的介绍 </a><br>3.[ActivityLifeCycleTest，活动的生命周期介绍] (<a href="https://github.com/mqq123456/ActivityLifeCycleTest" target="_blank" rel="external">https://github.com/mqq123456/ActivityLifeCycleTest</a>)<br>4.<a href="https://github.com/mqq123456/UITest" target="_blank" rel="external">UITest，安卓UI控件和布局的介绍 </a><br>5.[FragmentTest，安卓碎片介绍] (<a href="https://github.com/mqq123456/FragmentTest" target="_blank" rel="external">https://github.com/mqq123456/FragmentTest</a>)<br>6.[FragmentBestPractice，安卓碎片适配小应用，（暂时存在问题）] (<a href="https://github.com/mqq123456/FragmentBestPractice" target="_blank" rel="external">https://github.com/mqq123456/FragmentBestPractice</a>)</p>
-<hr>
-<p>我会陆续将这些东西上传svn，作为自己学习成果的一部分，虽然没有什么实际价值，但是留个纪念也总是好的，毕竟，那些青春（时光）没有荒废，谢谢。</p>
+<p>1.FileOutputStream ,FileInputStream<br>InputStream和OutputStream是抽象类，是所有字节输入流和输出流的父类。这里，我们首        先要分清楚两个概念：<br>▪    InputStream(输入流):输入流是用来读入数据的。- - - &gt; &gt; &gt;读入<br>▪    OutputStream(输出流):输出流是用来写出数据的。- - - &gt; &gt; &gt;写出<br>2.BufferedReader和BufferedWriter<br>BufferedReader和BufferedWriter大致来说就是一个属于读取文本文件一个属于写入文本文件。<br>当BufferedReader进行读取文本文件时，会先尽量从文件中读入字符数据并置入缓冲区，<br>然后如果使用read()方法，会先从缓冲区中进行读取。<br>如果缓冲区数据不足才会再从文件中读取。<br>使用BufferedWriter进行写入数据时，并不会先输出到目的地而是先存储到缓冲区中。<br>如果缓冲区中的数据满了，才会一次对目的地进行写出。</p>
+<p>3.String ,StringBuffer ,StringBuilder<br>String 字符串常量<br>StringBuffer 字符串变量（线程安全）<br>StringBuilder 字符串变量（非线程安全）<br>简要的说， String 类型和 StringBuffer 类型的主要性能区别其实在于 String 是不可变的对象, 因此在每次对 String 类型进行改变的时候其实都等同于生成了一个新的 String 对象，然后将指针指向新的 String 对象，所以经常改变内容的字符串最好不要用 String ，因为每次生成对象都会对系统性能产生影响，特别当内存中无引用对象多了以后， JVM 的 GC 就会开始工作，那速度是一定会相当慢的。<br>而如果是使用 StringBuffer 类则结果就不一样了，每次结果都会对 StringBuffer 对象本身进行操作，而不是生成新的对象，再改变对象引用。所以在一般情况下我们推荐使用 StringBuffer ，特别是字符串对象经常改变的情况下。而在某些特别情况下， String 对象的字符串拼接其实是被 JVM 解释成了 StringBuffer 对象的拼接，所以这些时候 String 对象的速度并不会比 StringBuffer 对象慢，而特别是以下的字符串对象生成中， String 效率是远要比 StringBuffer 快的<br>StringBuilder一个可变的字符序列是5.0新增的。此类提供一个与 StringBuffer 兼容的 API，但不保证同步。该类被设计用作 StringBuffer 的一个简易替换，用在字符串缓冲区被单个线程使用的时候（这种情况很普遍）。如果可能，建议优先采用该类，因为在大多数实现中，它比 StringBuffer 要快。两者的方法基本相同。</p>
 
           
         
@@ -936,6 +1045,104 @@
             
               
                 
+                <a class="post-title-link" href="/2017/03/23/N_Android3学习项目1/" itemprop="url">
+                  安卓学习项目1
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-03-23T10:57:11+08:00" content="2017-03-23">
+              2017-03-23
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近闲着没事，买了本安卓的书，想学习一下安卓《第一行代码－安卓》<br>这本书真的还是挺简单的，比较适合入门级看，其中书中介绍的知识都是用代码的形式展示给我们了，我感同身受，怎么不去跟着作者写一下呢？所以我大概用了一个星期的时间，跟着作者将这本书学习了一半，UI上的知识有了更加深刻的了解吧，希望在以后的道路上能够用的到，废话少说，现在就来介绍一下我的学习成果吧<br>到目前为止，我一共创建了5个安卓学习的应用程序，只是简单的编写，希望能够给自己的道路上留下宝贵的财富，</p>
+<hr>
+<p>项目介绍<br>1.<a href="https://github.com/mqq123456/andioidTest" target="_blank" rel="external">andioidTest，一个简单的安卓介绍 </a><br>2.<a href="https://github.com/mqq123456/ActivityTest" target="_blank" rel="external">ActivityTest，关于安卓活动的介绍 </a><br>3.[ActivityLifeCycleTest，活动的生命周期介绍] (<a href="https://github.com/mqq123456/ActivityLifeCycleTest" target="_blank" rel="external">https://github.com/mqq123456/ActivityLifeCycleTest</a>)<br>4.<a href="https://github.com/mqq123456/UITest" target="_blank" rel="external">UITest，安卓UI控件和布局的介绍 </a><br>5.[FragmentTest，安卓碎片介绍] (<a href="https://github.com/mqq123456/FragmentTest" target="_blank" rel="external">https://github.com/mqq123456/FragmentTest</a>)<br>6.[FragmentBestPractice，安卓碎片适配小应用，（暂时存在问题）] (<a href="https://github.com/mqq123456/FragmentBestPractice" target="_blank" rel="external">https://github.com/mqq123456/FragmentBestPractice</a>)</p>
+<hr>
+<p>我会陆续将这些东西上传svn，作为自己学习成果的一部分，虽然没有什么实际价值，但是留个纪念也总是好的，毕竟，那些青春（时光）没有荒废，谢谢。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2017/03/23/N_Android1安卓线性布局/" itemprop="url">
                   Android线性布局
                 </a>
@@ -1026,199 +1233,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/23/N_Android5学习阶段2/" itemprop="url">
-                  安卓学习项目2
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-03-23T10:57:11+08:00" content="2017-03-23">
-              2017-03-23
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>废话少说，安卓《第一行代码》我继续学习写了很多，也受益颇深，这里记录下这段时间的收获，希望对以后有用吧。</p>
-<hr>
-<p>项目介绍<br>1.<a href="https://github.com/mqq123456/BroadCastTest" target="_blank" rel="external">android广播学习</a><br>2.<a href="https://github.com/mqq123456/BroadcastBestPractice" target="_blank" rel="external">android广播学习实践</a><br>3.[android 数据存储，持久化学习] (<a href="https://github.com/mqq123456/FilePersistenceTest" target="_blank" rel="external">https://github.com/mqq123456/FilePersistenceTest</a>)<br>4.<a href="https://github.com/mqq123456/RuntimePermissionTest" target="_blank" rel="external">android 运行时权限学习</a><br>5.[android 内容提供者学习] (<a href="https://github.com/mqq123456/ProviderTest" target="_blank" rel="external">https://github.com/mqq123456/ProviderTest</a>)<br>6.<a href="https://github.com/mqq123456/NotificationTest" target="_blank" rel="external">android 通知学习</a><br>7.<a href="https://github.com/mqq123456/PlayAudioTest" target="_blank" rel="external">android 媒体播放学习</a><br>8.[android 网络学习] (<a href="https://github.com/mqq123456/InternetTest" target="_blank" rel="external">https://github.com/mqq123456/InternetTest</a>)<br>9.<a href="https://github.com/mqq123456/AniordThridTest" target="_blank" rel="external">android 线程学习</a><br>10.[android 服务学习] (<a href="https://github.com/mqq123456/ServiceTest" target="_blank" rel="external">https://github.com/mqq123456/ServiceTest</a>)<br>11.[android 服务实践] (<a href="https://github.com/mqq123456/ServiceBestPractice" target="_blank" rel="external">https://github.com/mqq123456/ServiceBestPractice</a>)<br>11.[android MaterialDesignTest] (<a href="https://github.com/mqq123456/MaterialDesignTest" target="_blank" rel="external">https://github.com/mqq123456/MaterialDesignTest</a>)<br>11.[android 百度地图实践] (<a href="https://github.com/mqq123456/LBSTest" target="_blank" rel="external">https://github.com/mqq123456/LBSTest</a>)<br>11.[android 实践CoolWeather] (<a href="https://github.com/mqq123456/CoolWeather" target="_blank" rel="external">https://github.com/mqq123456/CoolWeather</a>)</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/23/N_Android7Java中一些类的理解/" itemprop="url">
-                  安卓学习一些类的理解
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-03-23T10:57:11+08:00" content="2017-03-23">
-              2017-03-23
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>安卓学习还在进行，学习总是不是太深，对于一些东西一知半解的，总感觉不行，这里记录一下吧，希望这样能够加深一下理解</p>
-<hr>
-<p>1.FileOutputStream ,FileInputStream<br>InputStream和OutputStream是抽象类，是所有字节输入流和输出流的父类。这里，我们首        先要分清楚两个概念：<br>▪    InputStream(输入流):输入流是用来读入数据的。- - - &gt; &gt; &gt;读入<br>▪    OutputStream(输出流):输出流是用来写出数据的。- - - &gt; &gt; &gt;写出<br>2.BufferedReader和BufferedWriter<br>BufferedReader和BufferedWriter大致来说就是一个属于读取文本文件一个属于写入文本文件。<br>当BufferedReader进行读取文本文件时，会先尽量从文件中读入字符数据并置入缓冲区，<br>然后如果使用read()方法，会先从缓冲区中进行读取。<br>如果缓冲区数据不足才会再从文件中读取。<br>使用BufferedWriter进行写入数据时，并不会先输出到目的地而是先存储到缓冲区中。<br>如果缓冲区中的数据满了，才会一次对目的地进行写出。</p>
-<p>3.String ,StringBuffer ,StringBuilder<br>String 字符串常量<br>StringBuffer 字符串变量（线程安全）<br>StringBuilder 字符串变量（非线程安全）<br>简要的说， String 类型和 StringBuffer 类型的主要性能区别其实在于 String 是不可变的对象, 因此在每次对 String 类型进行改变的时候其实都等同于生成了一个新的 String 对象，然后将指针指向新的 String 对象，所以经常改变内容的字符串最好不要用 String ，因为每次生成对象都会对系统性能产生影响，特别当内存中无引用对象多了以后， JVM 的 GC 就会开始工作，那速度是一定会相当慢的。<br>而如果是使用 StringBuffer 类则结果就不一样了，每次结果都会对 StringBuffer 对象本身进行操作，而不是生成新的对象，再改变对象引用。所以在一般情况下我们推荐使用 StringBuffer ，特别是字符串对象经常改变的情况下。而在某些特别情况下， String 对象的字符串拼接其实是被 JVM 解释成了 StringBuffer 对象的拼接，所以这些时候 String 对象的速度并不会比 StringBuffer 对象慢，而特别是以下的字符串对象生成中， String 效率是远要比 StringBuffer 快的<br>StringBuilder一个可变的字符序列是5.0新增的。此类提供一个与 StringBuffer 兼容的 API，但不保证同步。该类被设计用作 StringBuffer 的一个简易替换，用在字符串缓冲区被单个线程使用的时候（这种情况很普遍）。如果可能，建议优先采用该类，因为在大多数实现中，它比 StringBuffer 要快。两者的方法基本相同。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1264,7 +1278,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">85</span>
+              <span class="site-state-item-count">86</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

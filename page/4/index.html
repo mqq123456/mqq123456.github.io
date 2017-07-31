@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/08/03/M_6Swift什么时候使用类？ 什么时候使用结构体？/" itemprop="url">
-                  Swift什么时候使用类？ 什么时候使用结构体？
+                <a class="post-title-link" href="/2016/08/08/M_7Swift_mj/" itemprop="url">
+                  Swift MJ
                 </a>
               
             
@@ -242,8 +242,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-03T15:03:04+08:00" content="2016-08-03">
-              2016-08-03
+            <time itemprop="dateCreated" datetime="2016-08-08T11:57:08+08:00" content="2016-08-08">
+              2016-08-08
             </time>
           </span>
 
@@ -272,24 +272,97 @@
       
         
           
-            <p>在Swfit中,什么时候用结构体，什么时候用类？</p>
-<p>到底是用类的做法优于用结构体，还是用结构体的做法优于类。函数式编程倾向于值类型，面向对象编程更喜欢类。<br>在Swift 中，类和结构体有许多不同的特性。下面是两者不同的总结：</p>
-<p>类支持继承，结构体不支持。<br>类是引用类型，结构体是值类型<br>并没有通用的规则决定结构体和类哪一个更好用。一般的建议是使用最小的工具来完成你的目标，但是有一个好的经验是多使用结构体，除非你用了继承和引用语义。想要了解更多，点击这里。</p>
-<p>注意：在运行时，结构体的在性能方面更优于类，原因是结构体的方法调用是静态绑定，而类的方法调用是动态实现的。这就是尽可能得使用结构体代替类的又一个好的原因。</p>
-<p>class 与 struct 的主要区别：类是引用类型，而结构体是值类型。</p>
-<p>class 引用类型<br>//类 - 引用类型</p>
-<p>class 未成型人类 {<br>var 身高 = 168<br>init() { }</p>
-<p>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
-<p>let 小华 = 未成型人类()</p>
-<p>let 大明 = 未成型人类(身高: 200)<br>let 黑仔 = 大明<br>let 高佬 = 大明<br>高佬.身高 += 10<br>print(大明.身高) // = 210</p>
-<p>let 小高 = 高佬<br>小高.身高 += 10<br>print(大明.身高) // = 220</p>
-<p>struct 值类型<br>//结构体 - 值类型</p>
-<p>struct 克隆人 {<br>var 身高 = 180<br>init() { }<br>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
-<p>var 小A = 克隆人()<br>小A.身高 = 122<br>let cokeA = 小A<br>print(cokeA.身高) // = 122<br>print(小A.身高) // = 122</p>
-<p>let 小B = 克隆人()<br>print(小A.身高) // = 180<br>什么时候使用类？ 什么时候使用结构体？<br>注意：虽说赋值时候值类型表面上经常要执行拷贝现象，但 Swift 在管理所有的值拷贝会确保性能最优化，所以我们没有必要去回避赋值来确保性能最优化。<br>/* 什么时候使用类？ 什么时候使用结构体？<br>一般情况下，可以：<br>1⃣ 把类看成是物体<br>如： 人、车、动物、商店等..一般跟生物沾边多<br>比如一个人有少属性，虽有不同人种，但是他们很多属性都是一样的，使用类的继承关系，很好描述人这一类东东…</p>
-<p>2⃣ 把结构体看作值<br>如：位置（经纬度）、坐标、温度等..一般跟物理沾边多<br>结构体比类更加 “轻量级”，因为结构体的内存空间是开在系统的栈中，而类则开在系统的堆中。当然对于小程序来说，可以忽略不计。</p>
-<p>还有什么时候使用也不是绝对的，因为他们都有很多类似的地方，也看个人习惯思维爱好之类。何况现在 Swift</p>
+            <p>1.swift界面编写规范，代理和UI分别放在extension中<br>2.类的属性，可以使用setvauleforkeywithDict：，但是必须重写父类的方法forundifne<br>3.swift闭包写法，block()-&gt;(){<br>}<br>4.swift闭包的声明 ：block(()-&gt;())();<br>5.swift闭包避免循环引用：<br>block(［weak self］)-&gt;(){<br>}<br>5.自定义构造函数<br>6.swift定义log<br>buying seeing 里面找 swift flag，添加标记<br>func FDLog<t>(message: T, file: String = #file, funcName: String = #function,lineNum: Int = #line) {</t></p>
+<pre><code>#if DEBUG
+    let fileName = (file as NSString).lastPathComponent
+    print(&quot;\(fileName):(\(lineNum))-\(message)&quot;);
+#endif
+</code></pre><p>}</p>
+<p>7.swift字符串转类<br>命名空间<br> //获取命名空间<br>        guard let name =   NSBundle.mainBundle().infoDictionary![“CFBundleName”] as? String else {<br>                DDLog(“获取BundleName失败”)<br>                return;<br>            }<br>        //拼接命名空间<br>        let clas :AnyClass?  = NSClassFromString(name + “.” + childControllerString)<br>        //将命名空间转化为UITableViewController类型<br>        guard let childControllerClas   = clas as? UITableViewController.Type else {<br>               DDLog(“转换类型失败”)<br>               return<br>            }</p>
+<p>swift异常处理<br>如果在调用系统某个方法时，该方法最后有一个throws，说明该方法会剖出异常，如果一个方法会剖出异常，那么需要对该异常进行处理<br>在swift中提供三种处理异常的方式<br>1.try方式：程序员手动捕捉异常<br>do｛<br>try a<br>｝ cash ｛<br>／／异常对象的处理<br>｝<br>2.try？方式（常用）系统帮助我们处理异常，如果该方法出现异常，则该方法返回nil，若果没有异常，则返回对应的对象<br>guard let a ＝ try？b else｛<br>return<br>｝<br>方式三：try！方法（不建议使用，非常危险），直接告诉系统，该方法没有异常，注意：如果该方法有异常，那么程序会直接报错，奔溃<br>let a ＝ try！b</p>
+<p>swift中类方法就是以class开头的方法<br>扩展系统的类，就是扩展系统init方法，构造函数</p>
+<p>// convenience : 便利,使用convenience修饰的构造函数叫做便利构造函数<br>// 遍历构造函数通常用在对系统的类进行构造函数的扩充时使用<br>/<em><br> 遍历构造函数的特点<br> 1.遍历构造函数通常都是写在extension里面<br> 2.遍历构造函数init前面需要加载convenience<br> 3.在遍历构造函数中需要明确的调用self.init()
+ </em>/<br>convenience init (imageName : String, bgImageName : String) {<br>    self.init()</p>
+<pre><code>事件监听
+事件监听的本质发送消息，但是发送消息是OC的特性
+将方法包装成@SEL－－》类中查找方法列表－－》根据@SEL找到imp指针（函数指针）－－》执行函数
+如果swift中将一个函数声明称private，那么该函数不会被添加到方法列表中
+@objc private func loginBtnClick() ｛｝
+我们通常在swfit中添加@objc，标示这是一个OC的方法。
+如果在private前面加上@objc，那么该方法依然后被添加到方法列表中
 
+
+创建动画。设置动画的属性
+// 1.创建动画
+let rotationAnim = CABasicAnimation(keyPath: &quot;transform.rotation.z&quot;)
+
+// 2.设置动画的属性
+rotationAnim.fromValue = 0
+rotationAnim.toValue = M_PI * 2
+rotationAnim.repeatCount = MAXFLOAT
+rotationAnim.duration = 5
+rotationAnim.removedOnCompletion = false
+
+// 3.将动画添加到layer中
+rotationView.layer.addAnimation(rotationAnim, forKey: nil)
+removedOnCompletion：默认为YES，代表动画执行完毕后就从图层上移除，图形会恢复到动画执行前的状态。如果想让图层保持显示动画执行后的状态，那就设置为NO，不过还要设置fillMode为kCAFillModeForwards .
+// MARK:- 重写init函数
+override init(frame: CGRect) {
+    super.init(frame : frame)
+
+    setImage(UIImage(named: &quot;navigationbar_arrow_down&quot;), forState: .Normal)
+    setImage(UIImage(named: &quot;navigationbar_arrow_up&quot;), forState: .Selected)
+    setTitleColor(UIColor.blackColor(), forState: .Normal)
+    sizeToFit()
+}
+
+// swift中规定:重写控件的init(frame方法)或者init()方法,必须重写init?(coder aDecoder: NSCoder)
+required init?(coder aDecoder: NSCoder) {
+    fatalError(&quot;init(coder:) has not been implemented&quot;)
+}
+
+swift中可以直接修改控件的x，y，with，height值
+
+设置modal样式
+// 1.创建弹出的控制器
+let popoverVc = PopoverViewController()
+
+// 2.设置控制器的modal样式
+popoverVc.modalPresentationStyle = .Custom
+
+// 3.设置转场的代理
+popoverVc.transitioningDelegate = popoverAnimator
+popoverAnimator.presentedFrame = CGRect(x: 100, y: 100, width: 180, height: 250)
+
+
+
+// MARK:- 自定义构造函数
+// 注意:如果自定义了一个构造函数,但是没有对默认构造函数init()进行重写,那么自定义的构造函数会覆盖默认的init()构造函数
+init(callBack : (presented : Bool) -&gt; ()) {
+    self.callBack = callBack
+}
+
+注意：在闭包中如果使用当前对象的属性或者调用方法也需要加self
+／／两个地方的self使用：
+1.如果在一个函数中出现奇异的地方
+2.在闭包中使用当前对象的属性和方法也要添加self，注意循环引用的解决
+private lazy var popoverAnimator : PopoverAnimator = PopoverAnimator {[weak self] (presented) -&gt; () in
+    self?.titleBtn.selected = presented
+}
+
+swift使用pods
+注意：要大开user_frameworks!的注释部分
+
+swift中计算属性的使用
+很多情况下我们可以给一个变量一个计算属性，，当使用这个变量的时候，初始化这个变量的时候就可以获得计算后的值
+
+// ?? : 如果??前面的可选类型有值,那么将前面的可选类型进行解包并且赋值
+// 如果??前面的可选类型为nil,那么直接使用??后面的值
+let url = NSURL(string: profileURLString ?? &quot;&quot;)
+iconView.sd_setImageWithURL(url, placeholderImage: UIImage(named: “avatar_default_big&quot;))
+
+                                                           textVIew属性hasText()的使用
+</code></pre>
           
         
       
@@ -416,6 +489,116 @@
 <p>Bridge</p>
 <p>还有其他方面:Swfit泛型,枚举的存储不仅仅是整型,内嵌类型,结构体等等,这些需要等到你完全入门100%Swift,不要灰心,那天会比你所想的提前到来.</p>
 <p>在那之前,继续友好地使用Obejctive-C,做好使用Swfit的准备.下面资源可以帮助你完成这一转变.</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/08/03/M_6Swift什么时候使用类？ 什么时候使用结构体？/" itemprop="url">
+                  Swift什么时候使用类？ 什么时候使用结构体？
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-03T15:03:04+08:00" content="2016-08-03">
+              2016-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在Swfit中,什么时候用结构体，什么时候用类？</p>
+<p>到底是用类的做法优于用结构体，还是用结构体的做法优于类。函数式编程倾向于值类型，面向对象编程更喜欢类。<br>在Swift 中，类和结构体有许多不同的特性。下面是两者不同的总结：</p>
+<p>类支持继承，结构体不支持。<br>类是引用类型，结构体是值类型<br>并没有通用的规则决定结构体和类哪一个更好用。一般的建议是使用最小的工具来完成你的目标，但是有一个好的经验是多使用结构体，除非你用了继承和引用语义。想要了解更多，点击这里。</p>
+<p>注意：在运行时，结构体的在性能方面更优于类，原因是结构体的方法调用是静态绑定，而类的方法调用是动态实现的。这就是尽可能得使用结构体代替类的又一个好的原因。</p>
+<p>class 与 struct 的主要区别：类是引用类型，而结构体是值类型。</p>
+<p>class 引用类型<br>//类 - 引用类型</p>
+<p>class 未成型人类 {<br>var 身高 = 168<br>init() { }</p>
+<p>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
+<p>let 小华 = 未成型人类()</p>
+<p>let 大明 = 未成型人类(身高: 200)<br>let 黑仔 = 大明<br>let 高佬 = 大明<br>高佬.身高 += 10<br>print(大明.身高) // = 210</p>
+<p>let 小高 = 高佬<br>小高.身高 += 10<br>print(大明.身高) // = 220</p>
+<p>struct 值类型<br>//结构体 - 值类型</p>
+<p>struct 克隆人 {<br>var 身高 = 180<br>init() { }<br>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
+<p>var 小A = 克隆人()<br>小A.身高 = 122<br>let cokeA = 小A<br>print(cokeA.身高) // = 122<br>print(小A.身高) // = 122</p>
+<p>let 小B = 克隆人()<br>print(小A.身高) // = 180<br>什么时候使用类？ 什么时候使用结构体？<br>注意：虽说赋值时候值类型表面上经常要执行拷贝现象，但 Swift 在管理所有的值拷贝会确保性能最优化，所以我们没有必要去回避赋值来确保性能最优化。<br>/* 什么时候使用类？ 什么时候使用结构体？<br>一般情况下，可以：<br>1⃣ 把类看成是物体<br>如： 人、车、动物、商店等..一般跟生物沾边多<br>比如一个人有少属性，虽有不同人种，但是他们很多属性都是一样的，使用类的继承关系，很好描述人这一类东东…</p>
+<p>2⃣ 把结构体看作值<br>如：位置（经纬度）、坐标、温度等..一般跟物理沾边多<br>结构体比类更加 “轻量级”，因为结构体的内存空间是开在系统的栈中，而类则开在系统的堆中。当然对于小程序来说，可以忽略不计。</p>
+<p>还有什么时候使用也不是绝对的，因为他们都有很多类似的地方，也看个人习惯思维爱好之类。何况现在 Swift</p>
 
           
         
@@ -724,132 +907,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/08/01/M_2Swift枚举/" itemprop="url">
-                  枚举,枚举原始值,枚举相关值,switch提取枚举关联值
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-01T10:47:16+08:00" content="2016-08-01">
-              2016-08-01
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>Swift枚举基本概念</p>
-</blockquote>
-<p>Swift中的枚举比OC中的枚举强大, 因为Swift中的枚举是一等类型,<br>它可以像类和结构体一样增加属性和方法<br>enum Method{<br>case 枚举值<br>}</p>
-<ol>
-<li>枚举的基本使用<br>我们注意到，swift 的每个枚举项前面，都使用一个 case 关键字来标识。除了每行声明一个枚举项，也可以将这些枚举项放在一行中声明，每项之间用逗号分隔。<br>enum Menthod1 {<br>case Add, Sub, Mul, Div<br>}<br>可以使用枚举类型变量或常量接收枚举值<br>var m: Method = .Add<br>注意: 如果变量或常量没有指定类型, 那么前面必须加上该值属于哪个枚举类型<br>// var m1 =  .Add //直接报错<br>var m1 = Method.Add //正确写法<br>3.原始值<br>OC中枚举的本质就是整数, 所以OC中的枚举是有原始值的,默认是从0开始<br>而Swift中的枚举默认是没有原始值的, 但是可以在定义时告诉系统让枚举有原始值和OC中的枚举一样, 也可以指定原始值, 后面的值默认+1 , 但必须指定枚举的类型, 并且一定是 Int 类型<br>Swift中的枚举除了可以指定整形以外还可以指定其它类型, 但是如果指定其它类型, 必须给所有枚举值赋值, 因为不能自动递增<br>// 指定了枚举原始值类型为 Int , 所以并且给第一个枚举值定义了原始值, 则后面的值默认 +1<br>enum Method3: Int{<br>case Add = 5, Sub, Mul, Div<br>}<br>// 自定的枚举原始值的类型不是 Int , 所以后面的值不会默认 +1,<br>// 后面的也需要手动赋值<br>enum Method4: Double{<br>case Add = 5.0, Sub = 6.0, Mul = 6.1, Div = 8.0<br>}<br>原始值转换为枚举值<br>enum Method5: String{<br>case Add = “add”, Sub = “sub”, Mul = “mul”, Div = “div”<br>}<br>获取枚举原始值<br>rawValue代表将枚举值转换为原始值, 注意老版本中转换为原始值的方法名叫toRaw<br>Method4.Sub.rawValue<br>print(Method4.Sub.rawValue)<br>// 输出结果: 6.0<br>通过原始值创建枚举值<br>原始值区分大小写<br>返回的是一个可选值,因为原始值对应的枚举值不一定存在<br>老版本中为fromRaw(“add”)<br>let m2 = Method5(rawValue: “add”)<br>print(m2)</li>
-</ol>
-<p>func chooseMethod(op:String){<br>// 由于返回是可选类型, 所以有可能为nil, 最好使用可选绑定<br>if let opE = Method5(rawValue: op){<br>switch (opE){<br>case .Add:<br>print(“加法”)<br>case .Sub:<br>print(“减法”)<br>case .Mul:<br>print(“除法”)<br>case .Div:<br>print(“乘法”)<br>}<br>}<br>}</p>
-<ol>
-<li>枚举相关值<br>在 Swift 中，我们还可以定义这样的枚举类型，它的每一个枚举项都有一个附加信息，来扩充这个枚举项的信息表示，这又叫做关联值。加入我们有一个枚举类型 Shape 来表示形状。<br>enum lineSegmentDescriptor{<br>case StartAndEndPattern(start:Double, end:Double)<br>case StartAndLengthPattern(start: Double, length:Double)<br>}</li>
-</ol>
-<p>var lsd = lineSegmentDescriptor.StartAndLengthPattern(start: 0.0, length: 100.0)<br>lsd = lineSegmentDescriptor.StartAndEndPattern(start: 0.0, end: 50.0)</p>
-<p>print(lsd)<br>// 输出结果: StartAndEndPattern(0.0, 50.0)<br>利用switch提取枚举关联值<br>switch lsd {<br>case let .StartAndEndPattern(s, e):<br>print(“start = (s) end = (e)”)<br>case .StartAndLengthPattern(let s, let l):<br>print(“start = (s) lenght = (l)”)<br>}<br>// 输出结果: start = 0.0 end = 50.0</p>
-<blockquote>
-<p>嵌套枚举(Nesting Enums)</p>
-</blockquote>
-<p>如果你有特定子类型的需求，可以对enum进行嵌套。这样就允许你为实际的enum中包含其他明确信息的enum。以RPG游戏中的每个角色为例，每个角色能够拥有武器，因此所有角色都可以获取同一个武器集合。而游戏中的其他实例则无法获取这些武器(比如食人魔,它们仅使用棍棒)。<br>enum Character {<br>enum Weapon {<br>case Bow<br>case Sword<br>case Lance<br>case Dagger<br>}<br>enum Helmet {<br>case Wooden<br>case Iron<br>case Diamond<br>}<br>case Thief<br>case Warrior<br>case Knight<br>}</p>
-<blockquote>
-<p>属性(Properties)</p>
-</blockquote>
-<p>尽管增加一个存储属性到枚举中不被允许，但你依然能够创建计算属性。当然，计算属性的内容都是建立在枚举值下或者枚举关联值得到的。<br>enum Device {<br>case iPad, iPhone<br>var year: Int {<br>switch self {<br>case iPhone: return 2007<br>case iPad: return 2010<br>}<br>}</p>
-<blockquote>
-<p>静态方法(Static Methods)</p>
-</blockquote>
-<p>你也能够为枚举创建一些静态方法(static methods)。换言之通过一个非枚举类型来创建一个枚举。在这个示例中,我们需要考虑用户有时将苹果设备叫错的情况(比如AppleWatch叫成iWatch)，需要返回一个合适的名称。<br>enum Device {<br>case AppleWatch<br>static func fromSlang(term: String) -&gt; Device? {<br>if term == “iWatch” {<br>return .AppleWatch<br>}<br>return nil<br>}<br>}<br>print (Device.fromSlang(“iWatch”))</p>
-<blockquote>
-<p>可变方法(Mutating Methods)</p>
-</blockquote>
-<p>方法可以声明为mutating。这样就允许改变隐藏参数self的case值了3。<br>enum TriStateSwitch {<br>case Off, Low, High<br>mutating func next() {<br>switch self {<br>case Off:<br>self = Low<br>case Low:<br>self = High<br>case High:<br>self = Off<br>}<br>}<br>}<br>var ovenLight = TriStateSwitch.Low<br>ovenLight.next()<br>// ovenLight 现在等于.On<br>ovenLight.next()<br>// ovenLight 现在等于.Off</p>
-<blockquote>
-<p>小结</p>
-</blockquote>
-<p>枚举声明的类型是囊括可能状态的有限集，且可以具有附加值。通过内嵌(nesting),方法(method),关联值(associated values)和模式匹配(pattern matching),枚举可以分层次地定义任何有组织的数据。<br>现在我们已经对这个定义更加清晰了。确实，如果我们添加关联值和嵌套，enum就看起来就像一个封闭的、简化的struct。相比较struct，前者优势体现在能够为分类与层次结构编码。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/08/01/M_1Swift和OC的区别/" itemprop="url">
                   Swift和OC的区别
                 </a>
@@ -926,6 +983,124 @@
 <p>var dates: [NSDate]<br>var words: Set<string><br>var cachedData: [NSURL: NSData]</string></p>
 <p>参考资料<br><a href="http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note" target="_blank" rel="external">http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note</a></p>
 
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/08/01/H_1Htmlhtml、css、js文件加载顺序及执行情况/" itemprop="url">
+                  html、css、js文件加载顺序及执行情况
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-01T10:47:16+08:00" content="2016-08-01">
+              2016-08-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>HTML页面加载和解析流程 </p>
+<ol>
+<li><p>用户输入网址（假设是个html页面，并且是第一次访问），浏览器向服务器发出请求，服务器返回html文件。 </p>
+</li>
+<li><p>浏览器开始载入html代码，发现<head>标签内有一个<link>标签引用外部CSS文件。 </head></p>
+</li>
+<li><p>浏览器又发出CSS文件的请求，服务器返回这个CSS文件。 </p>
+</li>
+<li><p>浏览器继续载入html中<body>部分的代码，并且CSS文件已经拿到手了，可以开始渲染页面了。 </body></p>
+</li>
+<li><p>浏览器在代码中发现一个<img>标签引用了一张图片，向服务器发出请求。此时浏览器不会等到图片下载完，而是继续渲染后面的代码。 </p>
+</li>
+<li><p>服务器返回图片文件，由于图片占用了一定面积，影响了后面段落的排布，因此浏览器需要回过头来重新渲染这部分代码。 </p>
+</li>
+<li><p>浏览器发现了一个包含一行Javascript代码的<script>标签，赶快运行它。 </p>
+</li>
+<li><p>Javascript脚本执行了这条语句，它命令浏览器隐藏掉代码中的某个<style>（style.display=”none”）。杯具啊，突然就少了这么一个元素，浏览器不得不重新渲染这部分代码。 </p>
+</li>
+<li><p>终于等到了</html>的到来，浏览器泪流满面…… </p>
+</li>
+<li><p>等等，还没完，用户点了一下界面中的“换肤”按钮，Javascript让浏览器换了一下＜link＞标签的CSS路径。 </p>
+</li>
+<li><p>浏览器召集了在座的各位<div><span><ul><li>们，“大伙儿收拾收拾行李，咱得重新来过……”，浏览器向服务器请求了新的CSS文件，重新渲染页面。</p>
+</li>
+</ol>
+</script></p></li></ol>
           
         
       
@@ -1146,8 +1321,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/08/01/H_1Htmlhtml、css、js文件加载顺序及执行情况/" itemprop="url">
-                  html、css、js文件加载顺序及执行情况
+                <a class="post-title-link" href="/2016/08/01/M_2Swift枚举/" itemprop="url">
+                  枚举,枚举原始值,枚举相关值,switch提取枚举关联值
                 </a>
               
             
@@ -1190,32 +1365,40 @@
       
         
           
-            <p>HTML页面加载和解析流程 </p>
+            <blockquote>
+<p>Swift枚举基本概念</p>
+</blockquote>
+<p>Swift中的枚举比OC中的枚举强大, 因为Swift中的枚举是一等类型,<br>它可以像类和结构体一样增加属性和方法<br>enum Method{<br>case 枚举值<br>}</p>
 <ol>
-<li><p>用户输入网址（假设是个html页面，并且是第一次访问），浏览器向服务器发出请求，服务器返回html文件。 </p>
-</li>
-<li><p>浏览器开始载入html代码，发现<head>标签内有一个<link>标签引用外部CSS文件。 </head></p>
-</li>
-<li><p>浏览器又发出CSS文件的请求，服务器返回这个CSS文件。 </p>
-</li>
-<li><p>浏览器继续载入html中<body>部分的代码，并且CSS文件已经拿到手了，可以开始渲染页面了。 </body></p>
-</li>
-<li><p>浏览器在代码中发现一个<img>标签引用了一张图片，向服务器发出请求。此时浏览器不会等到图片下载完，而是继续渲染后面的代码。 </p>
-</li>
-<li><p>服务器返回图片文件，由于图片占用了一定面积，影响了后面段落的排布，因此浏览器需要回过头来重新渲染这部分代码。 </p>
-</li>
-<li><p>浏览器发现了一个包含一行Javascript代码的<script>标签，赶快运行它。 </p>
-</li>
-<li><p>Javascript脚本执行了这条语句，它命令浏览器隐藏掉代码中的某个<style>（style.display=”none”）。杯具啊，突然就少了这么一个元素，浏览器不得不重新渲染这部分代码。 </p>
-</li>
-<li><p>终于等到了</html>的到来，浏览器泪流满面…… </p>
-</li>
-<li><p>等等，还没完，用户点了一下界面中的“换肤”按钮，Javascript让浏览器换了一下＜link＞标签的CSS路径。 </p>
-</li>
-<li><p>浏览器召集了在座的各位<div><span><ul><li>们，“大伙儿收拾收拾行李，咱得重新来过……”，浏览器向服务器请求了新的CSS文件，重新渲染页面。</p>
-</li>
+<li>枚举的基本使用<br>我们注意到，swift 的每个枚举项前面，都使用一个 case 关键字来标识。除了每行声明一个枚举项，也可以将这些枚举项放在一行中声明，每项之间用逗号分隔。<br>enum Menthod1 {<br>case Add, Sub, Mul, Div<br>}<br>可以使用枚举类型变量或常量接收枚举值<br>var m: Method = .Add<br>注意: 如果变量或常量没有指定类型, 那么前面必须加上该值属于哪个枚举类型<br>// var m1 =  .Add //直接报错<br>var m1 = Method.Add //正确写法<br>3.原始值<br>OC中枚举的本质就是整数, 所以OC中的枚举是有原始值的,默认是从0开始<br>而Swift中的枚举默认是没有原始值的, 但是可以在定义时告诉系统让枚举有原始值和OC中的枚举一样, 也可以指定原始值, 后面的值默认+1 , 但必须指定枚举的类型, 并且一定是 Int 类型<br>Swift中的枚举除了可以指定整形以外还可以指定其它类型, 但是如果指定其它类型, 必须给所有枚举值赋值, 因为不能自动递增<br>// 指定了枚举原始值类型为 Int , 所以并且给第一个枚举值定义了原始值, 则后面的值默认 +1<br>enum Method3: Int{<br>case Add = 5, Sub, Mul, Div<br>}<br>// 自定的枚举原始值的类型不是 Int , 所以后面的值不会默认 +1,<br>// 后面的也需要手动赋值<br>enum Method4: Double{<br>case Add = 5.0, Sub = 6.0, Mul = 6.1, Div = 8.0<br>}<br>原始值转换为枚举值<br>enum Method5: String{<br>case Add = “add”, Sub = “sub”, Mul = “mul”, Div = “div”<br>}<br>获取枚举原始值<br>rawValue代表将枚举值转换为原始值, 注意老版本中转换为原始值的方法名叫toRaw<br>Method4.Sub.rawValue<br>print(Method4.Sub.rawValue)<br>// 输出结果: 6.0<br>通过原始值创建枚举值<br>原始值区分大小写<br>返回的是一个可选值,因为原始值对应的枚举值不一定存在<br>老版本中为fromRaw(“add”)<br>let m2 = Method5(rawValue: “add”)<br>print(m2)</li>
 </ol>
-</script></p></li></ol>
+<p>func chooseMethod(op:String){<br>// 由于返回是可选类型, 所以有可能为nil, 最好使用可选绑定<br>if let opE = Method5(rawValue: op){<br>switch (opE){<br>case .Add:<br>print(“加法”)<br>case .Sub:<br>print(“减法”)<br>case .Mul:<br>print(“除法”)<br>case .Div:<br>print(“乘法”)<br>}<br>}<br>}</p>
+<ol>
+<li>枚举相关值<br>在 Swift 中，我们还可以定义这样的枚举类型，它的每一个枚举项都有一个附加信息，来扩充这个枚举项的信息表示，这又叫做关联值。加入我们有一个枚举类型 Shape 来表示形状。<br>enum lineSegmentDescriptor{<br>case StartAndEndPattern(start:Double, end:Double)<br>case StartAndLengthPattern(start: Double, length:Double)<br>}</li>
+</ol>
+<p>var lsd = lineSegmentDescriptor.StartAndLengthPattern(start: 0.0, length: 100.0)<br>lsd = lineSegmentDescriptor.StartAndEndPattern(start: 0.0, end: 50.0)</p>
+<p>print(lsd)<br>// 输出结果: StartAndEndPattern(0.0, 50.0)<br>利用switch提取枚举关联值<br>switch lsd {<br>case let .StartAndEndPattern(s, e):<br>print(“start = (s) end = (e)”)<br>case .StartAndLengthPattern(let s, let l):<br>print(“start = (s) lenght = (l)”)<br>}<br>// 输出结果: start = 0.0 end = 50.0</p>
+<blockquote>
+<p>嵌套枚举(Nesting Enums)</p>
+</blockquote>
+<p>如果你有特定子类型的需求，可以对enum进行嵌套。这样就允许你为实际的enum中包含其他明确信息的enum。以RPG游戏中的每个角色为例，每个角色能够拥有武器，因此所有角色都可以获取同一个武器集合。而游戏中的其他实例则无法获取这些武器(比如食人魔,它们仅使用棍棒)。<br>enum Character {<br>enum Weapon {<br>case Bow<br>case Sword<br>case Lance<br>case Dagger<br>}<br>enum Helmet {<br>case Wooden<br>case Iron<br>case Diamond<br>}<br>case Thief<br>case Warrior<br>case Knight<br>}</p>
+<blockquote>
+<p>属性(Properties)</p>
+</blockquote>
+<p>尽管增加一个存储属性到枚举中不被允许，但你依然能够创建计算属性。当然，计算属性的内容都是建立在枚举值下或者枚举关联值得到的。<br>enum Device {<br>case iPad, iPhone<br>var year: Int {<br>switch self {<br>case iPhone: return 2007<br>case iPad: return 2010<br>}<br>}</p>
+<blockquote>
+<p>静态方法(Static Methods)</p>
+</blockquote>
+<p>你也能够为枚举创建一些静态方法(static methods)。换言之通过一个非枚举类型来创建一个枚举。在这个示例中,我们需要考虑用户有时将苹果设备叫错的情况(比如AppleWatch叫成iWatch)，需要返回一个合适的名称。<br>enum Device {<br>case AppleWatch<br>static func fromSlang(term: String) -&gt; Device? {<br>if term == “iWatch” {<br>return .AppleWatch<br>}<br>return nil<br>}<br>}<br>print (Device.fromSlang(“iWatch”))</p>
+<blockquote>
+<p>可变方法(Mutating Methods)</p>
+</blockquote>
+<p>方法可以声明为mutating。这样就允许改变隐藏参数self的case值了3。<br>enum TriStateSwitch {<br>case Off, Low, High<br>mutating func next() {<br>switch self {<br>case Off:<br>self = Low<br>case Low:<br>self = High<br>case High:<br>self = Off<br>}<br>}<br>}<br>var ovenLight = TriStateSwitch.Low<br>ovenLight.next()<br>// ovenLight 现在等于.On<br>ovenLight.next()<br>// ovenLight 现在等于.Off</p>
+<blockquote>
+<p>小结</p>
+</blockquote>
+<p>枚举声明的类型是囊括可能状态的有限集，且可以具有附加值。通过内嵌(nesting),方法(method),关联值(associated values)和模式匹配(pattern matching),枚举可以分层次地定义任何有组织的数据。<br>现在我们已经对这个定义更加清晰了。确实，如果我们添加关联值和嵌套，enum就看起来就像一个封闭的、简化的struct。相比较struct，前者优势体现在能够为分类与层次结构编码。</p>
+
           
         
       
@@ -1439,111 +1622,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net14传感器/" itemprop="url">
-                  传感器
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>iPhone5中内置的传感器有<br>● 运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 环境光传感器(Ambient Light Sensor)<br>● 距离传感器(Proximity Sensor)<br>● 磁力计传感器(Magnetometer Sensor)<br>● 内部温度传感器(Internal Temperature Sensor)<br>● 湿度传感器(Moisture Sensor)<br>● 陀螺仪(Gyroscope)<br>● … …<br>环境光传感器(Ambient Light Sensor)<br>● 是iOS、Mac设备中最为古老的传感器成员<br>● 它能够让你在使用 Mac、iPhone、iPad时,眼睛更为舒适<br>● 从一个明亮的室外走入相对黑暗的室内后,iOS设备会自动调低亮度,让屏幕显得不再那 么光亮刺眼<br>● 当你使用iPhone拍照时,闪光灯会在一定条件下自动开启<br>● 几乎所有的Mac 都带有背光键盘,当周围光线弱到一定条件时,会自动开启键盘背光<br> 距离传感器(Proximity Sensor)<br>● 用于检测是否有其他物体靠近设备屏幕<br>● 当你打电话或接电话时将电话屏幕贴近耳边,iPhone会自动关闭屏幕 ,好处是<br>● 节省电量<br>● 防止耳朵或面部不小心触摸屏幕而引发一些不想要的意外操作<br>● 题外话:利用距离传感器,能找出很多电视剧的穿帮镜头<br>磁力计传感器(Magnetometer Sensor)<br>● 可以感应地球磁场, 获得方向信息, 使位置服务数据更精准 ● 可以用于电子罗盘和导航应用<br>● iPad的Smart Cover盒盖睡眠操作就是基于磁力计传感器<br>内部温度传感器(Internal Temperature Sensor)<br>● 从 iPad一代开始,iOS设备都加入了一个内部温度传感器,用于检测内部组件 温度,当温度超过系统设定的阈值时,会出现以下提示<br>● 内部温度传感器,对于提升iOS设备自身安全性与稳定性有很大的帮助<br>湿度传感器(Moisture Sensor)<br>● 湿度传感器跟其他基于微电子的传感器不同,是一个简单的物理传感器 ● 简单来说,湿度传感器就是一张遇水变红的试纸<br>● Apple的维修人员就是通过检测试纸是否变红,来判断设备是否进水 (设备进水不在保修范围之内)<br>陀螺仪(Gyroscope)<br>● 陀螺仪是随着iPhone4的上市首次出现在iOS设备上的传感器 ● 陀螺仪可以用于检测设备的持握方式<br>● 陀螺仪的原理是检测设备在X、Y、Z轴上所旋转的角速度<br>● 陀螺仪在赛车类游戏中有重大作用: ● 模拟汽车驾驶时方向盘旋转的动作<br>● 使得这类游戏的操控体验更为真实<br>运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 最早出现在iOS设备上的传感器之一<br>● 加速计用于检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用)<br>● 加速计可以用于检测设备的摇晃,经典应用场景 ● 摇一摇<br>● 计步器</p>
-<blockquote>
-<p>传感器总结</p>
-</blockquote>
-<p>传感器类型<br>作用<br>环境光传感器<br>感应周边环境光线的强弱(自动调节屏幕亮度)<br>距离传感器<br>感应是否有其他物体靠近设备屏幕(打电话自动锁屏)<br>磁力计传感器<br>感应周边的磁场(合盖锁屏)<br>内部温度传感器<br>感应设备内部的温度(提醒用户降温,防止损伤设备)<br>湿度传感器<br>感应设备是否进水(方便维修人员)<br>陀螺仪<br>感应设备的持握方式(赛车类游戏)<br>加速计<br>感应设备的运动(摇一摇、计步器)</p>
-<blockquote>
-<p>距离传感器的使用</p>
-</blockquote>
-<p>// 开启距离感应功能<br>[UIDevice currentDevice].proximityMonitoringEnabled = YES; // 监听距离感应的通知<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(proximityChange:) name:UIDeviceProximityStateDidChangeNotification object:nil];</p>
-<ul>
-<li>(void)proximityChange:(NSNotificationCenter *)notification { if ([UIDevice currentDevice].proximityState == YES) { NSLog(@”某个物体靠近了设备屏幕”); // 屏幕会自动锁住<br>} else {<br>NSLog(@”某个物体远离了设备屏幕”); // 屏幕会自动解锁<br>} }</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1589,7 +1667,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">85</span>
+              <span class="site-state-item-count">86</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
