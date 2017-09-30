@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/30/A_C2语言常用运算符和表达式/" itemprop="url">
-                  C 语言常用运算符和表达式
+                <a class="post-title-link" href="/2016/07/30/B_OC9内存管理/" itemprop="url">
+                  内存管理
                 </a>
               
             
@@ -242,7 +242,7 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T20:46:41+08:00" content="2016-07-30">
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
               2016-07-30
             </time>
           </span>
@@ -273,32 +273,57 @@
         
           
             <blockquote>
-<p>一  表达式和语句，关系运算符和逻辑运算符</p>
+<p>OC中的内存管理</p>
 </blockquote>
-<p>1）表达式是由运算符和操作符组合构成的，简单表达式能够构成复杂表达式 下面列举的都是表达式<br>常量表达式：5                            该表达式值为5<br>加法表达式：5+4                       该表达式值为9<br>赋值表达式：n=4+5                   该表达式值为9<br>关系表达式：9&gt;5                       该表达式值为1<br>逻辑表达式：5&gt;4&amp;&amp;4&lt;3          该表达式值为0<br>注意：每一个表达式肯定有一个确定的值<br>2）语句:表达式后面加一个分号就构成了语句，不是所有语句都合法 一个语句是一条完整的计算机指令<br>注意: 语句有单条语句和复合语句之分，复合语句是多条语句用花括号括起来，功能相当于单条语句。<br>3）关系运算符：<br>关系表达式为真，值为1；关系表达式为假，值为0. 即表达式的值非0即1，非1即0。<br>4）逻辑运算符<br>逻辑运算符的值可以为0或者非0<br>（1） &amp;&amp;<br>有一个表达式为假，整个复合表达式的为假，即值为0。<br>所有表达式都为真，整个复合表达式的为真，即值为非0.<br>（2） ||<br>有一个表达式为真，整个复合表达式就为真，即值为非0<br>所有表达式都为假，整个复合表达式才为假，即值为0<br>（3）  !         逻辑非<br>非假即为真<br>非真即为假</p>
+<p>alloc+init 方式创建对象, 一般情况下在堆上上,使用完一定要释放<br>手动内存管理<br>自动内存管理(自动引用计数-ARC)<br>如何内存管理方式切换到手动内存管理?<br>工程配置–&gt;TARGETS-&gt;Build Setting-&gt; 搜索 counting,  设置为NO</p>
 <blockquote>
-<p>二  分支结构</p>
+<p>内存管理中常用的方法</p>
 </blockquote>
-<p>程序在执行的过程中所有语句都遵循一个原则：<br>源程序自上而下自动执行每一条语句，这是计算机设计的时候就决定的。顺序结构是程序执行的基础，分支结构与循环结构是建立在顺序执行结构之上的。<br>1）if(表达式)<br>{<br>statements;<br>}<br>表达式为真，则执行statements,执行完statements,即结束判断语句，<br>继续执行下面的语句。<br>若表达式为假，不执行statements而继续执行if判断语句下面的语句<br>2）if(表达式)<br>{<br>statements1;<br>}<br>else<br>{<br>statements2;<br>}<br>表达式为真则执行statements1,否则执行statements2，而且只能执行<br>两者其中之一，绝不可能两条语句都执行。<br>statements1或者statements2执行完其中之一后还要继续执行if判断语<br>句的下一条语句。<br>4）switch(表达式)            表达式是一个可变的<br>{<br>case 常量表达式1：<br>statements1；<br>break;<br>case 常量表达式2:<br>statements2;<br>break;<br>:<br>:<br>:<br>default:<br>statements_default;<br>}<br>扫描与表达式匹配的项，一旦匹配执行后面对应语句，执行完直接退出<br>switch结构，如果没有找到与表达式匹配的项，就执行default那个标<br>签对应的语句，之后退出switch结构。<br>注意：<br>（1）表达式必须是可变的<br>（2）case后面的标签必须是常量<br>（3）每一个常量标签后面都有一个冒号（:）<br>（4）每一个标签后面语句都要有一句break;<br>不用break;有时会很有用，看情况要不要break；<br>一般情况下执行完要退出switch的只能用break来退出。如果没有break，那么switch会先查找与表达式匹配的标签之后不再检 查标签是否与表达式匹配而顺次执行下去，直到执行完整个switch剩下的部分。有时我们也可以利用switch这个特性来实现我们的代码功能。<br>（5）default语句就相当于if…else if…else结构里的最后一个else,对选项的逻辑完整性有一定的作用，一般写上为好。</p>
+<p>alloc+init<br>//1.alloc+init<br>//alloc: 为对象申请空间,把这块空间全部初始化为0<br>//alloc申请的对象一般情况下都在堆空间,必须考虑释放的问题<br>//init 初始化这个对象<br>Dog *princess = [[Dog alloc] init];<br>dealloc+release<br>retain+retainCount</p>
 <blockquote>
-<p>三  循环控制结构：已明确知道执行循环次数和不确定具体执行循环次数</p>
+<p>引用计数这种内存管理方式</p>
 </blockquote>
-<p>1）for(表达式1;表达式2；表达式3)<br>{<br>statements;//循环体<br>}<br>for循环的有点：不容易漏掉一些必须的条件。<br>表达式1：仅仅只在进入循环的时候执行一次，给计数器赋一个初值<br>表达式2：每一次进入循环体执行代码的之前，都要判断该表达式是否为真<br>若为真则进循环，否则结束循环<br>表达式3: 每成功执行一次循环体，循环计数器都要递变以趋近于循环结束<br>注意：步长的增加和循环结束判断条件都可以很灵活的使用。</p>
+<p>//获取对象被使用的次数<br>NSLog(@”count=%lu”,princess.retainCount);<br>//以后内存管理中有问题的<br>//retain: 让对象引用次数+1<br>//retain的对象也要release<br>[p release];<br>NSLog(@”count=%lu”,princess.retainCount);<br>//释放放在最后<br>//release作用:<br>//  如果retainCount&gt;1 说明有多个人在使用这个对象,不会释放,对象引用次数-1<br>//  如果retianCount==1<br>//  最后使用的”人”释放这个对象<br>//      调用dealloc真正释放对象<br>[princess release];<br>NSMutableString <em>str = [[NSMutableString alloc] initWithString:@”的麻烦了看什么地方了开始免费立刻马上离开父母萨洛克没放到里面是打发来看马萨拉蒂方面撒地方可拉伸的佛罗伦萨地方了”];<br>//特别值得注意的问题<br>//  最好千万不要在对象release之后使用对象<br>//什么是释放:<br>//  释放是失去了这块内存的使用权(内存还在)<br>//      一旦释放, 别人有可能使用这块内存<br>//      咱们在使用的就会出现问题<br>//[princess show];<br>copy+mutableCopy<br>//问题:<br>//  retain两个指针, 只有一个对象<br>//  copy复制这个对象<br>//  效果:  两个指针指向不同的对象<br>//  copy 返回不可变对象<br>//  mutableCopy返回可变对象<br>NSMutableString </em>pname = [name mutableCopy];</p>
 <blockquote>
-<p>2）while(表达式)</p>
-</blockquote>
-<p>{<br>statements;//循环体<br>}<br>如果表达式为真，则进入循环执行循环体，否则结束循环<br>注意：<br>（1）循环在开始前，要给循环作个铺垫。例如,确定循环的次数，我还需要知道循环计数器是从那个数值开始的<br>（2）循环体内必须要包含让while循环趋近于结束循环的递变</p>
+<p>内存管理原则:黄金法则<br>如果你对一个对象使用了 alloc,retain,copy/mutableCopy, 使用完这个对象之后需要调用对应的realese或autorelease<br>代码中alloc和release成对出现的retain和release也是成对出现的</p>
 <blockquote>
-<p>3）do</p>
+<p>代码中出现的各种内存管理情况</p>
 </blockquote>
-<p>{<br>statements;//循环体<br>}while(表达式);<br>do…while()语句与while()循环功能差不多，的不同是：do…while()是一个出口条件判断循环，这就导致do…while结构在第一次执行循环体的时候是没有经过任何条件判断的，即第一次循环肯定执行一次。而while()循环是一个入口条件判断循环，即在每一次执行循环体之前都要做一次判断。<br>注意：do…while()循环后有分号，这点跟while()和for循环都是不一样的。</p>
+</blockquote>
+<p>(0)如果在方法内部定义了一个对象指针,指向了alloc申请的对象<br>需要在方法结束前释放这个对象</p>
 <blockquote>
-<p>4）break和continue</p>
+<p>init中为对象指针(类的实例变量)的申请对象</p>
 </blockquote>
-<p>（1）break;可以跳出（结束）switch()或者循环控制结构，下面看一个break退出循环</p>
+<p>需要在dealloc方法中释放 (重点)<br>//需求: 创建车的同时添加引擎<br>-(id)init<br>{<br>if(self = [super init])<br>{<br>//考虑到释放问题<br>//类中对象指针一般在init中申请对象<br>//  在dealloc中释放对象<br>_engine = [[Engine alloc] init];<br>//NSString *str = [[NSString alloc] init];<br>//[str release];<br>}<br>return self;<br>}<br>-(void)dealloc<br>{<br>NSLog(@”Car dealloc”);<br>[_engine release];<br>//这句放在最后<br>[super dealloc];<br>}</p>
 <blockquote>
-<p>经验之谈：要以计算机的思维模式去思考怎么写出符合需求的代码</p>
+<p>对象指针的setter方法</p>
 </blockquote>
+<p>//_engine实现设置方法<br>-(void)setEngine:(Engine *)engine<br>{<br>//以前的写法<br>//_engine = engine;<br>//传入的指针和保存指针相同,返回即可<br>if(_engine == engine)<br>{<br>return;<br>}<br>//旧的对象不用了, 立即释放<br>[_engine release];<br>//多一个指针指向engine对象<br>//引用次数+1,调用retian方法<br>_engine = [engine retain];<br>}</p>
+<blockquote>
+<p>对象指针的getter方法</p>
+</blockquote>
+<p>//_engine实现获取方法<br>-(Engine *)engine<br>{<br>//以前的实现<br>//return _engine;<br>//retain: 返回的对象类外的指针指向, 多了一个使用, 引用+1<br>//  autorelease谁使用,谁释放<br>//      不能用release, 立即使用<br>return [[_engine retain] autorelease];<br>}</p>
+<blockquote>
+<p>各种实例变量的property (重点)</p>
+</blockquote>
+<p>//使用property实例变量添加getter和setter<br>// 一般情况, NSString 使用copy作为属性修饰符<br>//copy, 把传入的字符串拷贝一个份新的<br>//字符串,字典,数组用copy最好<br>@property (copy) NSString <em>type;<br>//assign表示直接赋值, 不retain也不copy<br>//  默认是assign, assgin可以不写<br>//@property (assign) float price;<br>@property float price;<br>//retain表示实现的setter中添加retain,getter也会添加retain<br>@property (retain) Engine </em>engine;</p>
+<p>//代理设计模式中<br>//  代理的属性修饰符必须是assgin,不能是retain,否则会引起无法释放的问题<br>@property (assign) id delegate;</p>
+<blockquote>
+<p>取消线程保护 nonautomic</p>
+</blockquote>
+<p>//nonatomic取消多线程保护<br>//1.什么是多线程(多任务)<br>// 迅雷下载(界面响应用户点击,下载数据)<br>//2.为啥要加这一句啊<br>//  多线程保护比较耗时, 取消提供代码速度<br>@property (nonatomic) float speed;</p>
+<blockquote>
+<p>类方法创建对象如何写?</p>
+</blockquote>
+<p>//类方法创建的对象无需释放, 也不能释放<br>创建对象的方法,类方法<br>+(id)car<br>{<br>//干两件事情<br>Car *car = [[Car alloc] init];<br>//if(car)<br>//{<br>//设置car的属性<br>//}<br>//alloc和autorelease对应起来<br>return [car autorelease];<br>}</p>
+<blockquote>
+<p>数组中的添加对象内存管理  NSArray</p>
+</blockquote>
+<p>//数组被释放的时候会给数组中每个对象发送release<br>[array release];</p>
+<blockquote>
+<p>字符串的内存管理</p>
+</blockquote>
+<p>//  特点: 特立独行,有性格<br>//字符串常量的引用数是极大值,不需要释放<br>//总结:<br>以alloc创建的字符串最后使用release释放<br>字符串常量和以类方法创建的字符串不需要释放</p>
 
           
         
@@ -348,8 +373,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/28/A_C1终端的一些常用命令/" itemprop="url">
-                  终端的一些常用命令
+                <a class="post-title-link" href="/2016/07/30/C_UI8UINavigationController/" itemprop="url">
+                  UINavigationController
                 </a>
               
             
@@ -362,8 +387,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-28T11:02:25+08:00" content="2016-07-28">
-              2016-07-28
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
             </time>
           </span>
 
@@ -393,62 +418,42 @@
         
           
             <blockquote>
-<p>文件系统 : </p>
+<p>如何是用导航控制器显示第一个界面</p>
 </blockquote>
-<p>在类unix中，一切皆文件，无论是文档，u盘，摄像机，音响等<br>设备，只要连接到类unix系统，在系统本身看来都可以通过操作<br>文件的方式来操作该设备。而所做的这些操作自然是在终端中了<br>文件系统是模仿树的结构设计的。<br>自然界的树只有一个根，树根连带主干是一部分，主干上面还有<br>可多的分支，分支上又有小分支和树叶。<br>类unix上的文件系统也是如此，也有一个根目录（目录即文件夹）<br>根目录下有一些分支目录，分支目录里还有一些小的分支目录，<br>小的分支目录里面还可能有一些更小的分支目录和文件，所有的<br>分支目录都可以看成树枝，所有的文件都可以看成是树叶。</p>
+<p>创建导航控制器，把试图控制器放入导航控制器进行管理<br>UINavigationController *nc=[[UINavigationController alloc]initWithRootViewController:fvc];<br>试图控制器设置为导航控制器的根试图控制器<br>self.window.rootViewController=nc;</p>
 <blockquote>
-<p>pwd 显示当前目录的绝对路径</p>
+<p>切换到下一个界面</p>
 </blockquote>
-<p>所谓绝对路径就是从根目录（／）开始的这个路径<br>相对路径就是相对与当前的这个路径而言</p>
+<p>先创建下一个界面<br>使用pushViewController切换过去<br>[self.navigationController pushViewController:svc animated:YES];<br>3.返回上一个界面<br>使用 popToViewController 返回过去<br>[self.navigationController popToViewController:svc Animated:YES];<br>4.从任意界面，返回根试图控制器<br>使用popToRootViewControllerAnimated<br>[self.navigationController popToRootViewControllerAnimated:YES];<br>5.从当前界面返回以前push的任意界面<br>使用popToViewController:array[1]<br>将每个试图放入数组中<br>NSArray *array=self.navigationController.viewControllers;<br>[self.navigationController popToViewController:array[1] animated:YES];</p>
 <blockquote>
-<p>ls  显示当前目录（文件夹）里的一些文件或目录的名字</p>
+<p>设置导航控制器的标题</p>
 </blockquote>
-<p>这些文件或者目录都是可见的。一般目录里还会有隐藏文件或隐藏目录，这些文件和目<br>录是以.为开头的。若是想要显示所有文件和目录（包括隐藏的文件和隐            藏的目录）。那么要用到   ls   -a  还有一个常用的命令是 ls  -l  和 ls -al</p>
+<p>fvc.title=@”第一界面”;</p>
 <blockquote>
-<p>cd  切换一个目录 </p>
+<p>在导航栏上添加一个按钮(不是添加UIButton)</p>
 </blockquote>
-<p>cd命令后可加一个相对路径也可以加一个绝对路径。<br>咱们每创建一个新目录，那么这个目录里面是会默认生成两个新目录，名字分别是.和 ..。<br>的意义是当前文件，而..是当前目录的上一级目录（或者管它叫当前目录的父目录）</p>
+<p>创建文本按钮initWithTitle<br>UIBarButtonItem <em>leftItem=[[UIBarButtonItem alloc]initWithTitle:@”分类” style:UIBarButtonItemStylePlain target:self action:@selector(changeCategory:)];<br>创建系统样式按钮initWithBarButtonSystemItem<br>UIBarButtonItem </em>leftItem=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(changeCategory:)];<br>创建自定义图片按钮initWithCustomView<br>UIButton <em>button=[UIButton buttonWithType:UIButtonTypeCustom];<br>button.frame=CGRectMake(0, 0, 35, 30);<br>[button setBackgroundImage:[UIImage imageNamed:@”main_left_nav”] forState:UIControlStateNormal];<br>UIBarButtonItem </em>leftItem=[[UIBarButtonItem alloc]initWithCustomView:button];<br>self.navigationItem.leftBarButtonItem=leftItem;</p>
 <blockquote>
-<p>cp  拷贝一个文件或者目录</p>
+<p>设置界面左上角返回按钮。</p>
 </blockquote>
-<p>touch  新创建一个空文件<br>$ touch   已存在文件的目录<br>相当于把该文件时间戳更新，文件内容并未改变<br>$ touch  newfile<br>newfile就是那个新创建的空文件的名字</p>
+<p>UIBarButtonItem *backItem=[[UIBarButtonItem alloc]initWithTitle:@”返回” style:UIBarButtonItemStylePlain target:self action:nil];<br>self.navigationItem.backBarButtonItem=backItem;</p>
 <blockquote>
-<p>rm   删除一个文件，或者删除一个目录</p>
+<p>设置导航栏的背景</p>
 </blockquote>
-<p>删除一个文件就是<br>$ rm   filename<br>删除一个目录<br>$ rm －r dirname</p>
+<p>设置导航条的色调barTintColor<br>self.navigationController.navigationBar.barTintColor=[UIColor grayColor];</p>
 <blockquote>
-<p>tab键   补全功能:</p>
+<p>设置导航条的背景图片setBackgroundImage</p>
 </blockquote>
-<p>补全文件或文件夹的名字，也可以补全目录下的相关文件</p>
+<p>[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@”header_bg”] forBarMetrics:UIBarMetricsDefault];<br>UIBarMetricsDefault,<br>UIBarMetricsLandscapePhone,<br>UIBarMetricsDefaultPrompt = 101,<br>注意：导航条的大小：默认高度44个点。<br>导航条的图片高度要么是44，只会覆盖导航条<br>要么是64，不仅覆盖导航条，还会覆盖状态栏</p>
 <blockquote>
-<p>open  在终端以文件夹窗口的形式来打开某个目录或文件，也可以打开应用程序</p>
+<p>隐藏导航栏</p>
 </blockquote>
-<p>小技巧：当以文件夹窗口的形式找到文件或者目录后，想要在终端中打开，很方便的<br>一个操作就是把该文件或者目录拖拽到终端窗口即可获得其绝对路径</p>
+<p>self.navigationController.navigationBar.hidden=YES;</p>
 <blockquote>
-<p>vim 编辑器</p>
+<p>工具栏的使用</p>
 </blockquote>
-<p>1）vim 可以打开一个已经存在的文件，这种情况下它是<br>vim  文件名<br>如果vim后面跟的名字的文件并不存在，那么vim进文件之后保存<br>退出就相当于创建了一个新文件。</p>
-<blockquote>
-<p>vim 有3中模式：命令模式 ， 插入模式（编辑模式），可视模式</p>
-</blockquote>
-<p>（1）命令模式，就是我可以键入各种命令（前提是这些命令都是被支持的）<br>一般输入命令要用 “：命令名字”<br>：w         表示保存该文件<br>：q          表示退出该文件<br>：q！      表示强制退出并且不保存该文件<br>：wq       表示保存并且退出该文件<br>：wq！   表示保存修改并且强制退出该文件</p>
-<p>（2）编辑模式<br>当处于编辑模式的时候我们可以任意更改该文件内容<br>（3）可视模式<br>一般用于修改代码格式要用到，例如代码风格对齐要用到，用法为：<br>（4）当用vim打开一个文件的时候它会默认进入到命令模式，如果我要修改该文件那么就需要键入“i”键，切换到编辑模式。那么从编辑模式切换到命令模式我们是用ESC键。如果想要通过命令模式切换到可视模式，需要在命令模式下键入 “v”键。想要从可视模式切回命令模式依然是用ESC键。</p>
-<blockquote>
-<p>命令模式下我们经常会用到一些命令</p>
-</blockquote>
-<p>“a”在当前光标位置后插入文本（内容），并且会自动切入到编辑模式<br>“o”在当前光标所在行的下一行另起一行，并且切入到编辑模式<br>“O”在当前光标所在行的上一行另起一行,并且切入到了编辑模式<br>“x”要删除一个字符那么把光标移动到该字符，然后点下‘x’<br>“dd”其实是连续按两次‘d’键，作用是删除光标所在行整行内容<br>“4dd”相当于删除从光标所在行往下数4行内容<br>“yy”是复制光标所在行一整行内容<br>“4yy” 相当于复制从光标所在行往下数4行内容<br>“p”如果误删除了某几行那么我们可以用‘p’键把删除的内容再粘回来<br>具体做就是在光标的下一行位置插入几行的内容<br>“u”撤消之前的一步操作,若是想撤消之前多步操作就是多点几回‘u’</p>
-<blockquote>
-<p>光标移动</p>
-</blockquote>
-<p>“$”将光标移动到当前行的行尾<br>“^”将光标移动到当前行的第一个非空白字符位置<br>“G”将光标定位到最后一行上<br>“gg”将光标移动到第一行<br>“:set number”显示行号<br>“:set nonumber”把已经显示出的行号去掉</p>
-<blockquote>
-<p>简单搜索</p>
-</blockquote>
-<p>“/string”用于搜索一个字串string。<br>要查找上次查找的字符串的下一个位置使用“n”命令。<br>vim编辑器的配置文件，该配置文件的名字是唯一的“.vimrc”。<br>$ vim  .vimrc<br>syntax on<br>set number<br>set showmatch<br>set tabstop=4<br>set shiftwidth=4<br>set softtabstop=4<br>set smartindent<br>注意：.vimrc这个文件必须是存放在家目录（不一定是/home那个目录，一般新打开一个终端，命令行会默认在某一个目录下，该目录就是家目录）</p>
-<blockquote>
-<p>格言：</p>
-</blockquote>
-<p>在这个世界上，唯一不变的规律是这个世界一直在变。一定要不断提高<br>自己以适应这个变化的世界。</p>
+<p>添加工具栏（不是添加，是显示）<br>[self.navigationController setToolbarHidden:NO];<br>self.navigationController.toolbarHidden=NO;<br>工具栏上添加的控件只能是UIBarButtonItem<br>UIBarButtonItem <em>item=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(dealTooBarClick:)];<br>UIBarButtonItem </em>item1=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(dealTooBarClick:)];<br>UIBarButtonItem <em>item2=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dealTooBarClick:)];<br>self.toolbarItems=@[item,item1,item2];<br>为了分割三个Item，创建特殊item<br>相当于弹簧，弹开每个控件。UIBarButtonSystemItemFlexibleSpace<br>UIBarButtonItem </em>spse=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];<br>可以自己设置宽度的间隔。UIBarButtonSystemItemFixedSpace<br>UIBarButtonItem *flex=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];<br>flex.width=50;<br>self.toolbarItems=@[item,flex,item1,flex,item2];</p>
+<p>注意：自动布局。self.view就是导航条以下的范围 。<br>self.automaticallyAdjustsScrollViewInsets=YES;<br>导航控制器：UINavigationController<br>导航条：navigationBar<br>导航条上的按钮控件：UIBarButtonItem<br>工具栏：Toolbar<br>注意：工具栏上的控件只能使用UIBarButtonItem设置</p>
 
           
         
@@ -498,8 +503,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/28/second/" itemprop="url">
-                  Swfit学习－懒加载
+                <a class="post-title-link" href="/2016/07/30/B_OC10继承和类别/" itemprop="url">
+                  继承和类别
                 </a>
               
             
@@ -512,8 +517,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-28T11:02:25+08:00" content="2016-07-28">
-              2016-07-28
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
             </time>
           </span>
 
@@ -543,28 +548,888 @@
         
           
             <blockquote>
-<p>MARK: - 懒加载</p>
+<p>继承</p>
+<p>什么是继承,继承如何实现?</p>
 </blockquote>
-<p>lazy var tableView:UITableView = {</p>
-<p>let tableView = UITableView(frame: CGRectZero, style: UITableViewStyle.Plain)</p>
-<p>tableView.delegate = self</p>
-<p>tableView.dataSource = self</p>
-<p>tableView.backgroundColor = Color_GlobalBackground</p>
-<p>tableView.showsHorizontalScrollIndicator = false</p>
-<p>tableView.showsVerticalScrollIndicator = false</p>
-<p>tableView.separatorStyle = UITableViewCellSeparatorStyle.None</p>
-<p>tableView.sectionFooterHeight = 0.0001</p>
-<p>tableView.sectionHeaderHeight = 0.0001</p>
-<p>tableView.registerNib(UINib(nibName: “BaseStrategyCell”, bundle: NSBundle.mainBundle()), forCellReuseIdentifier: cellReuseIdentifier)</p>
-<p>return tableView</p>
-<p>}()</p>
-<p>lazy var dataArray:NSMutableArray = {</p>
-<p>var dataArray = NSMutableArray();</p>
-<p>return dataArray</p>
-<p>}()</p>
-<p>关键字和标点符号<br>下面这些被保留的关键字不允许用作标识符，除非使用反引号转义，具体描述请参考 标识符。除了 inout、var 以及 let 之外的关键字可以用作某个函数声明或者函数调用当中的外部参数名，不用添加反引号转义。</p>
-<p>用在声明中的关键字： associatedtype、class、deinit、enum、extension、func、import、init、inout、internal、let、operator、private、protocol、public、static、struct、subscript、typealias 以及 var。<br>用在语句中的关键字：break、case、continue、default、defer、do、else、fallthrough、for、guard、if、in、repeat、return、switch、where 以及 while。<br>用在表达式和类型中的关键字：as、catch、dynamicType、false、is、nil、rethrows、super、self、Self、throw、throws、true、try、#column、#file、#function 以及 #line。<br>用在模式中的关键字：_。<br>以井字号 (#) 开头的关键字：#available、#column、#else#elseif、#endif、#file、#function、#if、#line 以及 #selector。<br>特定上下文中被保留的关键字： associativity、convenience、dynamic、didSet、final、get、infix、indirect、lazy、left、mutating、none、nonmutating、optional、override、postfix、precedence、prefix、Protocol、required、right、set、Type、unowned、weak 以及 willSet。这些关键字在特定上下文之外可以被用做标识符。</p>
-<p>Swift是一门支持多编程范式的语言，既支持面向对象编程，也支持面向协议编程，同时还支持函数式编程。在项目开发过程中，控制器和视图部分由于使用系统框架，应更多采用面向对象编程的方式；而模型或业务逻辑等自定义类型部分，则应优先考虑面向协议编程。<br>cd /Users/heqin/men123456.github.io<br>npm install hexo -server –save<br>hexo server<br>hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</p>
+<p>总结: 继承的语法 @interface Student : Person<br>作用- 子类拥有父类的属性和方法<br>语法: 定义了Student, 继承与Person<br>Student子类, Person父类<br>学生信息管理系统<br>人       Person人       属性: 名字,性别,年龄<br>学生    Student学生    属性: 名字,性别,年龄, 学号, OC成绩</p>
+<blockquote>
+<p>继承后的重写</p>
+</blockquote>
+<p>子类拥有父类所有的方法<br>如果子类中重写了从父类继承下来的方法<br>优先执行重写后的方法</p>
+<blockquote>
+<p>继承后的权限</p>
+</blockquote>
+<p>总结:    子类能访问父类公有和受保护的属性和方法<br>不能访问私有的, 想要访问, 使用父类<br>getter和setter间接访问<br>只写@property,没有写对应的实例变量<br>权限是私有的private</p>
+<blockquote>
+<p>父类指针和子类指针如何相互指向?</p>
+</blockquote>
+<p>(赋值兼容原则)<br>总结: 父类指针可以指向父类对象, 还有子类对象<br>子类指针只能指向它自己的对象, 不能指向父类对象<br>NSString —-&gt; NSMutableString<br>NSArray —–&gt; NSMutableArray</p>
+<blockquote>
+<p>init方法 super和self, NSObject</p>
+</blockquote>
+<p>NSObject是oc中所有类的根类<br>提供了重要的方法alloc init<br>self 在方法中表示当前对象,类方法中表示当前类<br>super 一般用super执行父类的方法</p>
+<blockquote>
+<p>isKindClassOf和isMemberClassOf</p>
+</blockquote>
+<p>判断一个对象是不是某个类的实例?<br>总结:<br>isKindOfClass 判断一个对象是否是这个类及其子类的实例<br>isMemberOfClass 判断一个对象是不是某个类的实例</p>
+<blockquote>
+<p>类别Category</p>
+<p>什么是类别?, 类别的作用</p>
+</blockquote>
+<p>需求: 有些类, 缺少我们需要一些方法<br>但是我没有类的源代码, 添加一个方法<br>实例: NSMutableString 添加一个reverse方法<br>类别是OC语法, 能给系统或自定义的类添加一个方法</p>
+<blockquote>
+<p>类别基本使用(语法)</p>
+</blockquote>
+<p>使用类别, 需要包含类别头文件</p>
+<p>#import “NSMutableString+Extension.h”<br>@interface NSMutableString (Extension)<br>需要添加的方法的声明<br>-(void)reverseString<br>{<br>//逆序当前字符串 self<br>NSMutableString *mstr = [[NSMutableString alloc] init];<br>for (long i=self.length-1; i&gt;=0; i–) {<br>[mstr appendFormat:@”%C”,[self characterAtIndex:i]];<br>}<br>self.string = mstr;<br>}<br>[self setString mstr]<br>self.string=mstr;<br>//    NSLog(@”%p”,self);<br>//    当前对象指针。</p>
+<blockquote>
+<p>类别的限制(使用注意事项)</p>
+</blockquote>
+<p>(1) 系统中已经有function方法, 添加类别,类别中也有function方法<br>总结: 类别中得方法如果在类中已经存在<br>优先使用类别中得方法<br>(2) 类别能给一个类添加方法? 能不能添加实例变量?<br>总结: 类别中不能添加实例变量</p>
+<blockquote>
+<p>类别和继承有什么区别? 在什么情况下使用类别,或继承</p>
+</blockquote>
+<p>总结: 一般情况下<br>有一个类, 缺少一些方法, 扩展这个类, 使用类别添加方法<br>@intereface Dog (Ext)<br>有一个类, 缺少方法, 缺少属性, 使用继承, 在子类中添加方法和属性<br>@intereface Dog : NSObject</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC8协议、代理/" itemprop="url">
+                  协议、代理
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC7plist,归档和Json/" itemprop="url">
+                  plist,归档和Json
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>数据持久化简介</p>
+</blockquote>
+<p>文件:    最常用的最基础的存储数据的方式<br>plist,xml,json    表示数据的某种格式<br>数据库:        海量的数据(省上所有人的电话信息)存储到数据库中<br>SQL Server 2000, mysql, Oracle<br>云端存储:        数据都存储的网络上, 安全性好, 跨设备,跨平台</p>
+<blockquote>
+<p>plist文件</p>
+</blockquote>
+<p>用途比较多<br>本质上来说是 Property List file, 属性列表文件<br>存储格式:  数据都是由字典,数组,字符串构成的<br>2.2 如何创建plist文件<br>File-&gt;OS X-Resource–&gt; Proerty List<br>2.3 plist文件的读取和写入<br>//如何读取这个plist文件???<br>NSString <em>path = @”/Users/mac/Desktop/oc7-持久化存储/PlistUseDemo/PlistUseDemo/student.plist”;<br>//plist根结点只有两种类型, 数组和字典<br>//  分别使用NSArray和NSDictionary读取plist<br>NSDictionary </em>dict = [[NSDictionary alloc] initWithContentsOfFile:path];<br>//输出所有的班级的信息<br>//NSArray <em>classList = [dict valueForKey:@”classes”];<br>NSArray </em>classList = dict[@”classes”];<br>for (NSDictionary *classDict in classList) {<br>}<br>//  可以把一个数组或者字典写入到plist中<br>//参数1: 传入一个路径<br>//参数2: 表示是否安全的写入<br>[classList writeToFile:@”/Users/mac/Desktop/classList.plist” atomically:YES];</p>
+<blockquote>
+<p>归档</p>
+</blockquote>
+<p>使用归档, 可以直接把一个对象保存到文件中</p>
+<p>//归档的使用<br>//作用: 对象保存到文件中<br>//相比plist: plist使用简单, 不能存储自定义对象<br>//  归档可以存储任意类型对象<br>NSArray <em>array = [[NSArray alloc] initWithObjects:@”小二”,@”三少”,@”四娘”,@”跳舞大神”, nil];<br>//通过归档的形式存储到文件中<br>//设置文件名<br>NSString </em>path = @”/Users/mac/Desktop/people.data”;<br>//NSKeyedArchiver专门用于归档的类<br>//参数1: 传入需要保存的对象<br>//参数2: 传入文件路径<br>BOOL b = [NSKeyedArchiver archiveRootObject:array toFile:path];<br>//把对象从文件中恢复出来===解档<br>//参数1: 传入保存了对象文件<br>//返回值: 返回保存的对象<br>//  类型原来存储的是什么类型, 用什么类型接收<br>NSArray <em>readArray = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>for(NSString </em>str in readArray)<br>{<br>}</p>
+<blockquote>
+<p>自定义对象的归档和解档</p>
+</blockquote>
+<p>//归档<br>NSString <em>path = @”/Users/mac/Desktop/dog.data”;<br>//<em>**</em></em>  自定义的对象不能直接归档, 会出现崩溃<br>//<strong>*</strong>  需要告诉系统我们对象应该如何归档<br>//          自己类中添加一些指定的方法</p>
+<p>[NSKeyedArchiver archiveRootObject:huaer toFile:path];</p>
+<p>//解档刚才存入的对象<br>Dog *newDog = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>NSLog(@”–&gt; %@ %@ %f %@”,<br>      newDog.nickname,<br>      newDog.gender,<br>      newDog.weight,<br>      newDog.type);</p>
+<p>//告诉系统, 这个对象应该如何编码<br>//  如果没有加这个方法,自定义对象归档的时候会奔溃</p>
+<ul>
+<li>(void)encodeWithCoder:(NSCoder *)aCoder<br>{<br>  //把类中的对象指定一个key, 编码到文件中<br>  [aCoder encodeObject:self.nickname forKey:@”nickname”];<br>  [aCoder encodeObject:self.gender forKey:@”gender”];<br>  [aCoder encodeObject:[NSNumber numberWithFloat:self.weight] forKey:@”weight”];<br>  [aCoder encodeObject:self.type forKey:@”type”];</li>
+</ul>
+<p>}</p>
+<p>//告诉系统, 这个对象应该如何解码<br>//  如果没有加这个方法,自定义对象解档的时候会奔溃</p>
+<ul>
+<li><p>(id)initWithCoder:(NSCoder *)aDecoder<br>{<br>  if (self = [super init]) {</p>
+<pre><code>//对数据进行解码操作
+self.nickname = [aDecoder decodeObjectForKey:@&quot;nickname&quot;];
+self.gender = [aDecoder decodeObjectForKey:@&quot;gender&quot;];
+self.weight = [[aDecoder decodeObjectForKey:@&quot;weight&quot;] floatValue];
+self.type = [aDecoder decodeObjectForKey:@&quot;type&quot;];
+</code></pre><p>  }<br>  return self;<br>}</p>
+</li>
+</ul>
+<blockquote>
+<p>Json解析</p>
+</blockquote>
+<p>Javascript Object Notation 简写<br>网络常用一种表示数据或交换数据的格式<br>4.2 Json数据格式<br>[]表示一个数组, 对应NSArray<br>{}表示一个字典, 对应NSDictionary<br>key:value  表示一个键值对<br>“str”    表示一个字符串   NSString<br>90        表示一个数字       NSNumber<br>,  表示并列的数据<br>4.3 Json格式的读取和使用<br>//如何解析JSON, 解析后如何获取其中数据<br>NSString <em>path = @”/Users/mac/Desktop/1422带课/oc7-持久化存储/topic.txt”;<br>//JSON先读取到程序中(NSString,NSData)<br>NSData </em>data = [[NSData alloc] initWithContentsOfFile:path];<br>//OC提供专门用于JSON解析的类<br>//NSJSONSerialization<br>//功能: 把NSData类型JSON数据转化为字典或者数组<br>//参数1: 需要解析的JSON数据<br>//参数2: 传入一个选项<br>//参数3: 错误<br>//返回值: 如果JSON顶层结点是[],用NSArray接收<br>//       如果顶层结点是{}, 用NSDictionary接收<br>NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC6文件和目录管理类/" itemprop="url">
+                  OC文件和目录管理类
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:38:40+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>NSFileManager 文件或目录管理类(重点)</p>
+</blockquote>
+<p>1.1 创建NSFileManager的对象<br>//创建对象<br>//默认用于创建对象方法<br>//defaultManager创建出对象都是同一个对象<br>//单例模式: 有时候想让让一个类只能创建一个对象<br>NSFileManager <em>fm = [NSFileManager defaultManager];<br>1.2 获取目录下的所有文件和目录<br>//(2)知道某个目录下都有哪些文件和目录<br>//细节: 不会显示子目录<br>NSArray </em>array = [fm contentsOfDirectoryAtPath:@”/Users/mac/Desktop/dir” error:nil];<br>//显示所有文件包括子目录<br>array = [fm subpathsOfDirectoryAtPath:@”/Users/mac/Desktop/dir” error:nil];<br>1.3 创建目录, 创建文件<br>实例: 创建 /Users/mac/Desktop/dir/hello<br>//参数2: 表示是否创建中间目录<br>BOOL b;<br>b = [fm createDirectoryAtPath:@”/Users/mac/Desktop/dir/hello” withIntermediateDirectories:YES attributes:nil error:nil];<br>NSLog(@”b = %d”,b);<br>b = [fm createFileAtPath:@”/Users/mac/Desktop/dir/saozi.txt” contents:nil attributes:nil];<br>NSLog(@”b = %d”,b);<br>1.4 复制文件, 移动文件, 删除文件<br>//参数1: 源文件<br>//参数2: 目标文件<br>b = [fm copyItemAtPath:@”/Users/mac/Desktop/dir/saozi.txt” toPath:@”/Users/mac/Desktop/dir/hanzi.txt” error:nil];<br>//移动文件<br>BOOL b = [fm moveItemAtPath:@”/Users/mac/Desktop/dir/saozi.txt” toPath:@”/Users/mac/Desktop/dir/hello/saozi.txt” error:nil];<br>BOOL b = [fm removeItemAtPath:@”/Users/mac/Desktop/dir/hanzi.txt” error:nil];<br>1.5 判断文件是否存在<br>//(5)判断文件是否存在<br>BOOL b =[fm fileExistsAtPath:@”/Users/mac/Desktop/dir/dict.txt”];</p>
+<blockquote>
+<p>文件读写操作 NSFileHandle</p>
+</blockquote>
+<p>2.1 打开文件<br> 细节：打开应选择的模式；<br> 1.为了写文件fileHandleForWritingAtPath<br> 2.为了读文件fileHandleForReadingAtPath<br>(1)创建对象打开文件<br>NSFileHandle <em>fh = [NSFileHandle fileHandleForReadingAtPath:@”/Users/mac/Desktop/dir/123.txt”];<br>if(fh == nil)<br>{<br>    NSLog(@”文件打开失败”);<br>    return 1;<br>}<br>2.2 读取文件数据<br>//(2)读取文件数据<br>//读取指定长度的数据<br>//一直读取直到文件末尾<br>//  NSData 表示二进制的数据<br>NSData </em>data = [fh readDataOfLength:100];<br>//读取出得二进制数据转化为字符串<br>NSString <em>info  =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];<br>2.3 写文件<br>//写入数据<br>NSString </em>str = @”好吃不过饺子,hao wan bu guo sao zi”;<br>//转化<br>NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];<br>//清空文件内容<br>//[fh truncateFileAtOffset:0];<br>//文件读写位置设置到文件的末尾<br>[fh seekToEndOfFile];<br>[fh writeData:data];</p>
+<p>2.4 移动文件读写位置<br>//文件读写位置设置到文件的末尾<br>[fh seekToEndOfFile];</p>
+<blockquote>
+<p>NSValue和NSNumber的使用</p>
+</blockquote>
+<p>int a=10;<br>int b=20;<br>//完成了基本数据类型到对象转化<br>NSNumber <em>num1 = [NSNumber numberWithInt:a];<br>NSNumber </em>num2 = [NSNumber numberWithInt:b];<br>NSArray *array = [[NSArray alloc] initWithObjects:num1,num2,nil];<br>//需求: 把一个结构体变量存储到NSArray中?<br>//思考:   把一个结构体变量转化为对象 NSValue<br>typedef struct Person{<br>    int age;<br>    float height;<br>}Person;<br>Person zhangsan = {18,1.77};</p>
+<p>//作用: 把C的类型的数据转化为NSValue类型<br>//参数1:  数据的地址<br>//参数2:  数据的类型<br>//@encode作用把类型转化为字符串<br>NSValue <em>value = [[NSValue alloc] initWithBytes:&amp;zhangsan objCType:@encode(Person)];<br>NSMutableArray </em>marr = [[NSMutableArray alloc] init];<br>[marr addObject:value];</p>
+<p>Person newPerson;<br>//从NSValue中解析出存储的数据<br>[value getValue:&amp;newPerson];</p>
+<blockquote>
+<p>NSDate的使用</p>
+</blockquote>
+<p>(1)获取当前时间<br>NSDate <em>date = [NSDate date];<br>//时区概念 +8区<br>(2)时间格式化输出<br>NSDateFormatter </em>df = [[NSDateFormatter alloc] init];<br>//设置时间的格式<br>[df setDateFormat:@”yyyy/MM/dd HH:mm:ss S”];<br>NSString <em>dateString = [df stringFromDate:date];<br>(3)获取年,月,日<br> 设置需要的格式<br>(4)计算某个操作所消耗的时间–计算时间差<br>NSDate </em>beginDate = [NSDate date];<br>long sum=0;<br>for (long i=0; i&lt;1000000000; i++) {<br>    sum = sum+i;<br>}<br>NSDate *endDate = [NSDate date];<br>double interval = [endDate timeIntervalSinceDate:beginDate];</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC5setter和getter方法/" itemprop="url">
+                  OC @property
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:32:03+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>OC是一门面向对象的语言<br>面向对象: 封装, 继承,    多态</p>
+<p>能不能让编译器自动生成getter和setter方法的原型?</p>
+</blockquote>
+<p>使用 @property帮我们生成getter和setter方法的声明<br>(1)形式1<br>//以名字name为例<br>-(void)setName:(NSString <em>)n;<br>-(NSString </em>)name;<br>(2)形式2<br>@property NSString * name;</p>
+<blockquote>
+<p>能不能让编译器自动生成getter和setter方法的实现(早期版本)</p>
+</blockquote>
+<p>使用 @synthesize 帮我们生成getter和setter方法的实现<br>(1)形式1<br>//以名字name为例<br>//name的设置方法<br>-(void)setName:(NSString <em>)n<br>{<br>    NSLog(@”setName”);<br>    name = n;<br>}<br>//name的获取方法<br>-(NSString </em>)name<br>{<br>    //返回name是实例变量name<br>    return name;<br>}<br>(2)形式2<br>@synthesize name;</p>
+<blockquote>
+<p>实例变量设置为只读的</p>
+</blockquote>
+<p>@property (readonly) NSString *sex;</p>
+<blockquote>
+<p>指定getter方法和setter方法的方法名?</p>
+</blockquote>
+<p>@property (getter = isShow,<br>           setter = changeShow:) BOOL show;</p>
+<blockquote>
+<p>不同类型的实例变量的property如何写</p>
+</blockquote>
+<p>对于字符串和对象有特殊的处理<br>添加property<br>nonatomic 作用取消线程保护,提高代码执行速度<br>@property (nonatomic) int age;<br>copy 表示拷贝对象<br>@property (nonatomic,copy) NSString <em>name;<br>retin 表示持有对象<br>@property (nonatomic,retain) Eye </em>eye;</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC4字典/" itemprop="url">
+                  OC字典
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:26:06+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p> 创建初始化</p>
+</blockquote>
+<p>//参数格式: value1,key1,  value2,key2, …..<br>NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:<br>@”zhangsan,B,13611112222”, @”zhangsan”,<br>@”lisi,G,1101101101110”, @”lisi”,<br>nil];</p>
+<blockquote>
+<p>使用其中对象</p>
+</blockquote>
+<p>NSString *str = [dict objectForKey:@”lisi”];</p>
+<blockquote>
+<p>快速遍历</p>
+</blockquote>
+<p>//细节1: 使用forin获取到的都是key,不是值<br>//细节2: 使用字典, 存进去是某个顺序, 取出来不一定是这个顺序<br>for (NSString <em>key in dict) {<br>NSString </em>value = [dict objectForKey:key];<br>NSLog(@”key = %@, value = %@”,key,value);<br>}</p>
+<blockquote>
+<p>==NSMutableDictionary==</p>
+</blockquote>
+<p>NSMutableDictionary类继承与NSDictionary</p>
+<blockquote>
+<p>创建对象</p>
+</blockquote>
+<p>NSMutableDictionary *mdict = [[NSMutableDictionary alloc] init];</p>
+<blockquote>
+<p>添加或替换</p>
+</blockquote>
+<p>//细节: 如果这个key不存在, 相当于字典中添加一个对象<br>//如果key存在, 则会覆盖这个key对应的值<br>[mdict setValue:@”zhangsan,27” forKey:@”zs”];<br>[mdict setValue:@”lisi,30” forKey:@”ls”];</p>
+<blockquote>
+<p>移除对象</p>
+</blockquote>
+<p>[mdict removeObjectForKey:@”ww”];<br>[mdict removeAllObjects];</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC3数组/" itemprop="url">
+                  OC数组
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:20:54+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p> 创建初始化</p>
+</blockquote>
+<p>NSArray <em>array = [[NSArray alloc] initWithObjects:@”z”,@”l”,@”w”,nil];<br>NSArray </em>array2 = [[NSArray alloc] initWithArray:array];<br>NSString *str1 = [array objectAtIndex:1];    //不要越界,会崩溃</p>
+<blockquote>
+<p>快速遍历</p>
+</blockquote>
+<p>long count = array.count;<br>for(long i=0; i&lt;count; i++)<br>for(NSString *s  in  array)</p>
+<blockquote>
+<p>查找指定对象</p>
+</blockquote>
+<p>long loc = [array indexOfObject:@”lishi”];</p>
+<blockquote>
+<p>==NSMutableArray==</p>
+</blockquote>
+<p>NSMutableArray继承自NSArray, 使用NSArray的所有方法</p>
+<blockquote>
+<p>创建对象</p>
+</blockquote>
+<p>NSMutableArray <em>marr = [[NSMutableArray alloc] init];<br>NSMutableArray </em>marr = [NSMutableArray array];</p>
+<blockquote>
+<p>添加对象</p>
+</blockquote>
+<p>[marr addObject:str1];</p>
+<blockquote>
+<p>插入对象</p>
+</blockquote>
+<p>[marr insertObject:@”zhuge” atIndex:0];</p>
+<blockquote>
+<p>移除对象</p>
+</blockquote>
+<p>[marr removeObject:@”zhuge”];<br>[marr removeObjectAtIndex:0];</p>
+<blockquote>
+<p>替换对象</p>
+</blockquote>
+<p>[marr replaceObjectAtIndex:0 withObject:@”ouyang”];</p>
+<blockquote>
+<p>排序</p>
+</blockquote>
+<p>[marr sortUsingSelector:@selector(mycompare:)];</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC2字符串/" itemprop="url">
+                  OC字符串
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:16:02+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>创建字符串对象</p>
+</blockquote>
+<p>NSString <em>str = @”hello world”;<br>//从C的字符串创建一个字符串对象<br>NSString </em>str2 = [[NSString alloc] initWithUTF8String:”tian qi bu cuo o”];<br>NSString <em>str2 = [NSString<br>                  stringWithUTF8String:”tian qi bu cuo o”];<br>//从其他数据生成字符串对象<br>NSString </em>str3 = [[NSString alloc] initWithFormat:@”zhangsan %d %c”,age,sex];<br>//从另外一个字符串对象,创建字符串对象<br>NSString *str4 = [[NSString alloc] initWithString:str3];</p>
+<blockquote>
+<p>计算长度</p>
+</blockquote>
+<p>long length=[str length]</p>
+<blockquote>
+<p>比较字符串</p>
+</blockquote>
+<p>BOOL a=[str1 isEqualToString str2];<br>int r=[str1 compare str2];</p>
+<blockquote>
+<p>查找子串</p>
+</blockquote>
+<p>NSRstring range=[str rangeOfString substr];</p>
+<blockquote>
+<p>提取字符和字符串</p>
+</blockquote>
+<p>unichar c=[str characterAtInder :4]<br>NSString *subetring=[str substringWithRange:range];</p>
+<blockquote>
+<p>转换</p>
+</blockquote>
+<p>int num=[str intValue]</p>
+<blockquote>
+<p>从文件生成字符串</p>
+</blockquote>
+<p>NSString <em>str10=@”/Users/student/Desktopdict.txt”;<br>NSString </em>f=[[NSString alloc]initWithContentsOfFile:str10 encoding:NSUTF8StringEncoding error:<br>             nil];</p>
+<blockquote>
+<p>==NSMutableString==</p>
+</blockquote>
+<p><1> 创建对象</1></p>
+<p><2> 复制(设置字符串)</2></p>
+<p><3> 连接(附加)</3></p>
+<p><4> 插入</4></p>
+<p><5> 删除</5></p>
+<p><6> 替换</6></p>
+<blockquote>
+<p>== 字符串处理相关</p>
+</blockquote>
+<p><1> 字符串分割    , 使用NSString的componentsSeparatedByString<br>NSArray *arr = [str componentsSeparatedByString:@” “];</1></p>
+<p><2> 数组合并为字符串 ,使用NSArray的componentsJoinedByString<br>NSString *comStr = [arr componentsJoinedByString:@”—“];</2></p>
 
           
         
@@ -597,7 +1462,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span>
+    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -638,7 +1503,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">93</span>
+              <span class="site-state-item-count">107</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

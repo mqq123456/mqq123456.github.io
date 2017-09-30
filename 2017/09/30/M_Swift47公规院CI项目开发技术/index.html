@@ -1,0 +1,536 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="这几天用CI写了一下服务端,现在是html，js和php都用上了，写一下使用感受吧。先从html说：html已经是很熟悉了，但是具体使用什么标签可能还是不行，更多的是参考别人的代码，或者从别人网页上查看代码，然后去编写，特别是css，我对css不是特别感冒，感觉一个好的css就是一个设计师，一个web设计师我觉得拥有css技能，那么这个工程师就很牛逼了。总算是能够连抄再捡的写完了web界面，感觉一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CI项目开发难点">
+<meta property="og:url" content="http://yoursite.com/2017/09/30/M_Swift47公规院CI项目开发技术/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="这几天用CI写了一下服务端,现在是html，js和php都用上了，写一下使用感受吧。先从html说：html已经是很熟悉了，但是具体使用什么标签可能还是不行，更多的是参考别人的代码，或者从别人网页上查看代码，然后去编写，特别是css，我对css不是特别感冒，感觉一个好的css就是一个设计师，一个web设计师我觉得拥有css技能，那么这个工程师就很牛逼了。总算是能够连抄再捡的写完了web界面，感觉一">
+<meta property="og:updated_time" content="2017-09-30T06:42:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CI项目开发难点">
+<meta name="twitter:description" content="这几天用CI写了一下服务端,现在是html，js和php都用上了，写一下使用感受吧。先从html说：html已经是很熟悉了，但是具体使用什么标签可能还是不行，更多的是参考别人的代码，或者从别人网页上查看代码，然后去编写，特别是css，我对css不是特别感冒，感觉一个好的css就是一个设计师，一个web设计师我觉得拥有css技能，那么这个工程师就很牛逼了。总算是能够连抄再捡的写完了web界面，感觉一">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/30/M_Swift47公规院CI项目开发技术/"/>
+
+  <title> CI项目开发难点 | Men的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Men的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">欢迎光临！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            博文
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                CI项目开发难点
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-09-30T10:21:11+08:00" content="2017-09-30">
+              2017-09-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这几天用CI写了一下服务端,现在是html，js和php都用上了，写一下使用感受吧。<br>先从html说：html已经是很熟悉了，但是具体使用什么标签可能还是不行，更多的是参考别人的代码，或者从别人网页上查看代码，然后去编写，特别是css，我对css不是特别感冒，感觉一个好的css就是一个设计师，一个web设计师我觉得拥有css技能，那么这个工程师就很牛逼了。总算是能够连抄再捡的写完了web界面，感觉一些界面也能够根据自己的意愿进行编写。怎么说html上的问题呢，我觉得都还好，毕竟写的难看一点，也能写的出来，但是真的要写的好的话，确实需要有一定的美工基础，所以说美工学是要好好研究的，至少是下一代孩子，哈哈。<br>再说说js吧，我感觉至少目前来讲，js在web上的使用是偏简单的，基本上写一个方法，然后调用就可以了，没有太多技术含量，而且感觉js语法比较清晰，写起来比较舒服，基本上没有遇到太大的问题，用ajax发起网络请求也比较顺利，感觉还是挺简单的，但是估计要做一些加密算法之类的操作的话，会比较的麻烦，但是到目前来讲，这部分还是比较偏简单的。<br>最后说php吧，我用CI这个框架，之前也是了解了一下，这次用起来也是比较顺手了，至少我最但心的一些配置的修改没有发生，我也比较好进行开发，controller和model的逻辑我非常清楚，所以说写起来也非常清晰，但是最让我纠结的问题还是出来了，一开始是请求链接的问题，最后发现，可以修改一下配置项，解除一些特殊字符限制，然后就是空怎么搞，最后解决办法是使用字符串，这下算是把链接搞定了，但是感觉也是很勉强。好吧，就先这样吧，然后就是说php代码的编写，我感觉php最尴尬的就是变量名称，变量每次使用的时候都要用$,这真的让我很不适应，因为，我们每次都是在声明变量的时候用var或者let了，但是在此使用的时候就不用再写var，php就让我很尴尬，我每次都要用$以至于我每次写的时候都要很仔细，很下心，每次都害怕把美元符号给漏掉，这真的让开发者很头疼，应为对于sublime这种编辑工具来说，没有报错信息，其实所有的脚本语言都没有编辑工具就能测试出错误的，这也是脚本语言的通病吧，也许写习惯了ios，真的有点不适应，又一次我出差，我发现一个同事写c++的时候，他竟然使用了xcode，令我很兴奋，我突然发现ios开发是这么的幸福，其实苹果给我们创造了这么好的开发工具，我们在开发中也就不会有那么多的问题，特别是像一个大型一点的软件，真的很需要一个统筹一点的工具来进行维护，如果像sublime这样的工具来说，是的，我们写代码的时候是没有问题，但是当我们调试代码的时候，我们的问题就会很多，xcode在整个项目范畴确实要比很多开发工具要先进很多，我之前学习Android的时候，我使用过 Android Studio，一开始的时候也还是不是很熟悉，甚至到现在我都还是不太熟悉那个软件，总是感觉不太适应。<br>废话说了那么多，还有最严重的一个问题是mysql的问题，我发现我能写mysql，但是真的，有的时候你发现mysql语句如此简单，但是当你一条语句无法完成你的查询的时候，真的就问题很严重了，因为你没有做过，你不知道怎么样会效率高，你甚至都不知道服务器能不能扛起这么大的操作量，真的让我很担心，不过没有办法，确实就是这样。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/08/M_Swift39项目感想/" rel="next" title="公规院交通大数据">
+                <i class="fa fa-chevron-left"></i> 公规院交通大数据
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/30/M_Swift46公规院CI项目展示/" rel="prev" title="CI项目展示">
+                CI项目展示 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/12388663?v=3&u=20e1503339de9acf72fc1184728c2afca6ae9b4a&s=140"
+               alt="门乾强" />
+          <p class="site-author-name" itemprop="name">门乾强</p>
+          <p class="site-description motion-element" itemprop="description">博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">107</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
