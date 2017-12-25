@@ -228,6 +228,320 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/31/D_Net7SVN/" itemprop="url">
+                  svn
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>介绍</p>
+</blockquote>
+<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
+<blockquote>
+<p>svn 服务端和客户端模型</p>
+</blockquote>
+<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a href="http://192.168.88.8/download/softwares/svn" target="_blank" rel="external">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a href="http://192.168.88.10/svn" target="_blank" rel="external">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi ~/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 <em>.a 即可<br>global-ignores = </em>.o <em>.lo </em>.la <em>.al .libs </em>.so <em>.so.[0-9]</em> <em>.pyc </em>.pyo <em>~.nib </em>.so <em>.pbxuser </em>.mode<em> </em>.perspective* .DS_Store xcuserdata project.xcworkspace</p>
+<ol>
+<li>svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数</li>
+<li>svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co</li>
+<li>svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a href="http://1000phone.cn/stuproj" target="_blank" rel="external">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)</li>
+<li>svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</li>
+</ol>
+<hr>
+<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser</p>
+<h2 id="M-common-db-php"><a href="#M-common-db-php" class="headerlink" title="M common_db.php"></a>M common_db.php</h2><p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题</p>
+<h2 id="M-showcompileinfo-php"><a href="#M-showcompileinfo-php" class="headerlink" title="M showcompileinfo.php"></a>M showcompileinfo.php</h2><p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php</p>
+<ol>
+<li>svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中</li>
+<li>svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件</li>
+<li>svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改</li>
+<li>svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit</li>
+<li>svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a href="http://1000phone.cn/stuproj/ios1212/test1234" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a href="http://1000phone.cn/stuproj/ios1212/myproject2" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net10事件处理简介/" itemprop="url">
+                  事件处理简介
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>1&gt; 事件处理简介</p>
+<ul>
+<li>PPT简介</li>
+<li>3大事件：主要了解触摸事件。</li>
+<li>什么是响应者对象</li>
+<li>为什么继承UIResponder就能处理事件</li>
+<li>想处理触摸事件，应该怎么办</li>
+</ul>
+<p>2&gt;  01-view拖拽演练</p>
+<ul>
+<li>为什么要自定义view：系统自带不能处理事件</li>
+<li>演示触摸事件方法,触摸的完整过程。</li>
+<li>介绍参数(NSSet,UITouch,UIEvent)</li>
+<li>重点UITouch，<br>1.触摸事件方法中的UITouch都是同一个对象，因为一根手指对应一个UITouch.当手指移动或者抬起，并不会产生一个新的UITouch对象给你，而是改变UITouch里面的属性，<br>1.默认三个方法里面只能获取到一个手指，为什么。UIView不支持多点触控<br>2.怎么才能有两个手指，两个手指同时按，并且视图支持多点触控<br>3.UITouch的tapCount有什么用？可以判断用户当前是双击还是单击<br>4.UITouch的phase有什么用? 根据这个属性，判断当前需要调用哪个处理事件方法，begin,move,end<br>程序思路：</li>
+<li>在TouchMove里面做事情-为什么?因为用户手指在视图上移动的时候才需要移动视图。</li>
+<li>获取用户当前的位置，获取用户之前的位置，就知道用户从哪移动到哪,这个位置也是视图移动的位置</li>
+<li>当前视图的位置 = 上一次视图的位置 + 手指的偏移量</li>
+</ul>
+<p>3&gt; 02-事件传递</p>
+<ul>
+<li>PPT简介</li>
+<li>事件，加入到一个由谁管理的事件队列中?UIApplication</li>
+<li>为什么用队列，不用栈。队列先进先出，意味着先产生的事件，先处理。</li>
+<li>代码验证事件谁处理</li>
+<li>PPT上这么多view，验证哪个view处理事件。这么多view，都需要监重写一个方法，搞个父类。</li>
+<li>一个view能处理事件，意味着事件传递给他了，那怎么传递? 事件是由父控件传递给子控件。</li>
+<li>父控件不处理事件，子控件也不能。蓝色不接收事件，黄色也不会接收事件? 为什么，因为事件是从父控件传递给子控件的。父控件都没有事件，怎么传给子控件。</li>
+<li>代码验证view不能处理事件</li>
+<li>一个view怎么不能处理事件。userInteractionEnabled = NO，hidden = YES，alpha &lt;= 0.01</li>
+<li>代码验证UIImageView不允许交互</li>
+<li>UIImageView默认不允许用户交互，因此默认它上面的子控件不能接收事件。</li>
+<li>怎么找到最合适的View？通过一个递归。</li>
+<li>第一个接收事件的控件是谁?窗口</li>
+<li>当事件传递给窗口的时候，就会让窗口去找最合适的view,1&gt; 判断自己能不能接收事件 2&gt; 点在不在窗口上 3&gt; 去找比自己更合适的view，从后往前遍历子控件，拿到子控件后，把事件传递给这个子控件 4&gt; 子控件拿到事件之后，又会做同样的判断，一直递归去找，直到找到最合适的view.</li>
+<li>事件传递的目的何在?找到最合适的view,把事件交给他。</li>
+</ul>
+<p>4&gt; 03-hitText方法和pointInside方法(复制:02-事件传递代码)</p>
+<ul>
+<li>（了解hitText）学习一个方法必须了解：什么时候调用和这个方法有什么用</li>
+</ul>
+<ol>
+<li>hitText什么时候调用:当一个事件传递给一个控件的时候，控件就会调用这个方法</li>
+<li>hitText作用: 寻找到最合适的view。</li>
+</ol>
+<ul>
+<li>（回顾下事件传递），UIApplication -&gt; UIWindow</li>
+<li>UIWindow去寻找最合适的view? [UIWindow hitTest:withEvent:]里面做了什么事情？<br>1&gt; 判断窗口能不能处理事件? 如果不能，意味着窗口不是最合适的view，而且也不会去寻找比自己更合适的view,直接返回nil,通知UIApplication，没有最合适的view。<br>2&gt; 判断点在不在窗口<br>3&gt; 遍历自己的子控件，寻找有没有比自己更合适的view<br>4&gt; 如果子控件不接收事件，意味着子控件没有找到最合适的view,然后返回nil,告诉窗口没有找到更合适的view,窗口就知道没有比自己更合适的view,就自己处理事件。</li>
+<li>验证下hitTest方法返回nil，里面的子控件能处理事件吗？ 重写根控制器view的hitTest:withEvent:方法，</li>
+<li>验证这个方法是否真能找到最合适的view？</li>
+<li>如果点击屏幕任何一个地方，都是白色的view，怎么做。直接返回白色的view,就不会继续去找白色view的子控件了。</li>
+<li>介绍pointInside方法</li>
+<li>pointInside作用：判断一个点在不在一个控件上</li>
+<li>point参数:方法调用者坐标系上的点，PPT画图分析原理。</li>
+<li>这节课的重点：学习完了pointInside,就能实现下hitTest方法底层是怎么做的了。</li>
+</ul>
+<p>5&gt; 04-hitText练习</p>
+<ul>
+<li>分析思路：如果一个点，同时在黄色view和按钮上，由按钮处理事件，怎么做?</li>
+<li>分析事件传递: 当黄色按钮要处理事件，首先事件得传递到他身上</li>
+<li>重写hitTest方法：事件传递到某个控件，调用什么方法?hitTest</li>
+<li>返回nil什么意思？如果直接返回nil，意味着黄色的view，没有找到最合适的view,他的父控件，就会遍历下一个控件，也就是按钮，询问按钮是不是最合适的view.</li>
+<li>判断点在不在按钮上，在就交给他处理。</li>
+<li>pointInside实现。</li>
+</ul>
+<p>5&gt; 响应者链条(复制:02-事件传递代码)</p>
+<ul>
+<li>PPT简介</li>
+<li>touch默认做法:自己不处理事件，交给上一个响应者处理touch事件。</li>
+<li>响应者链条，点击绿色的view,如果不处理事件，就会往上传递。</li>
+<li>验证touch的默认做法 先恢复所有view的默认做法</li>
+<li>监听黄色点击，蓝色点击。</li>
+<li>黄色调用默认做法，事件传递给谁处理?蓝色</li>
+<li>得出结论：1&gt; touch的默认做法：自己不处理，交给上一个响应者。 2&gt; 上一个响应者默认是父控件</li>
+<li>两个view怎么同时处理事件?一个view处理方法，在调用父类默认的做法</li>
+<li>把事件传递给白色的view，怎么做?</li>
+<li>总结下事件传递的完整过程.</li>
+<li>把事件传递给控制器，测试白色view的上一个响应者是否是控制器。</li>
+<li>回顾响应者链条</li>
+</ul>
+<p>6&gt; 抽屉效果<br>添加子视图</p>
+<ul>
+<li>简单的滑动效果</li>
+<li>监听控制器处理事件方法</li>
+<li>获取x轴偏移量</li>
+<li>改变主视图的frame</li>
+<li>利用KVO做视图切换<br>往左移动，显示右边，隐藏左边<br>往右移动，显示左边，隐藏右边</li>
+<li>复杂的滑动效果，PPT讲解（根据手指每移动一点，x轴的偏移量算出当前视图的frame）<br>假设x移到320时，y移动到60，算出没移动一点x，移动多少y<br>offsetY = offsetX <em> 60 / 320  手指每移动一点，x轴偏移量多少，y偏移多少<br>为了好看，x移动到320，距离上下的高度需要保持一致，而且有一定的比例去缩放他的尺寸。<br>怎么根据之前的frame，算出当前的frame,touchMove只能拿到之前的frame.<br>当前的高度 = 之前的高度 </em> 这个比例<br>缩放比例：当前的高度/之前的高度  (screenH - 2 <em> offsetY) / screenH<br>当前的宽度也一样求。<br>y值，计算比较特殊，不能直接用之前的y,加上offsetY,往左滑动，主视图应该往下走，但是offsetX是负数，导致主视图会往上走。<br>y = （screenH - 当前的高度）</em> 0.5<br>getCurrentFrameWithOffsetX</li>
+<li>定位(滑动松开手指的时候，移动到目标点)<br>移动到左右目标点，根据偏移量 = 当前目标点的x - 之前视图的x，计算移动到目标点的frame<br>还原：当没有移动到目标点，就把主视图还原。</li>
+<li>复位（当主视图不在原始的位置，点击屏幕，恢复原来位置）<br>判断手指是否移动，移动的时候就自动定位，不需要手动复位。</li>
+</ul>
+<p>7&gt; 手势识别<br>使用UIImageView原因：之前既能看见图片，又能监听点击的只有UIButton,学了手势，我们的UIImageView也可以。</p>
+<ul>
+<li>tap(代理：左边不能点，右边能点)</li>
+<li>longPress(allowableMovement:触发之前，最大的移动范围)<blockquote>
+<p>默认调用两次，开始一次，结束一次。</p>
+</blockquote>
+</li>
+<li>swipe:(一个手势只能识别一个方向)</li>
+<li>旋转：<br>基于上一次旋转</li>
+<li>复位：(手势的取值都是相对最原始的位置，我们应该是需要相对上一次，因此每次调用，就复位一下，每次都是从零开始旋转角度)<br>缩放：复位</li>
+<li>如何同时支持旋转和缩放？默认不支持多个手指，<br>Simultaneously：同时<br>当使用一个手势的时候会调用代理的Simultaneously方法，询问是否支持多个手势</li>
+<li>pan<br>获取平移的位置：translationInView<br>复位：setTranslation:inView: 需要传一个view，因为点的位置跟坐标系有关系，看他是基于哪个坐标系被清空的。</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/31/D_Net9IOS程序的启动过程/" itemprop="url">
                   Info.plist,pch,UIApplication,IOS程序的启动过程
                 </a>
@@ -824,6 +1138,104 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/31/D_Net17音频/" itemprop="url">
+                  音频
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL <em>url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID </em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘<em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} \;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL </em>)url error:(NSError <strong>)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError </strong>)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
+<ul>
+<li>(void)pause; 停止</li>
+<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/31/D_Net16蓝牙/" itemprop="url">
                   蓝牙
                 </a>
@@ -884,104 +1296,6 @@
 <li>(void)receiveData:(NSData <em>)data fromPeer:<br>(NSString </em>)peer inSession: (GKSession <em>)session<br>context:(void </em>)context;<br>蓝牙对等网络——发送自定义对象<br>● 如果要通过网络发送自定义对象,需要使用NSKeyedArchiver方法归档 自定义对象,然后再发送归档后的NSData<br>● 自定义对象需要遵从NSCoding协议,并实现相应的归档和恢复方法 ● 接收端接收到数据之后,使用NSKeyedUnarchiver方法恢复数据</li>
 </ul>
 <p>人生就像卫生纸,没事的时候,尽量少扯; 时间就像卫生纸,看着挺多,用着用着就 没了…</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net17音频/" itemprop="url">
-                  音频
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL <em>url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID </em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘<em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} \;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL </em>)url error:(NSError <strong>)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError </strong>)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
-<ul>
-<li>(void)pause; 停止</li>
-<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
-</ul>
 
           
         
@@ -1132,258 +1446,6 @@ NSLog(@&quot;sub num=%d&quot;,_num);
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net3GCD/" itemprop="url">
-                  GCD
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>什么是GCD</p>
-</blockquote>
-<p>Grand Central Dispach–<br>好用：1.简单<br>基于block c函数接口<br>功能强大：支持多核心编程<br>支持高级编程功能</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>//开启一个新的线程<br>//queue<br>//三种：main——queue主线程队列<br>//globle——queue全局队列。异步任务加载这里<br>//自定义的<br>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>}<br>});<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”B=%d”,i);<br>}<br>});</p>
-<blockquote>
-<p>模拟网络数据下载</p>
-</blockquote>
-<p>[self simulaterNetworkDataDownload];</p>
-<blockquote>
-<p>延迟执行，延时5s执行</p>
-</blockquote>
-<p>[self delayRunCode];</p>
-<blockquote>
-<p>有的代码指向执行一次</p>
-</blockquote>
-<p>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];</p>
-<blockquote>
-<p>多个任务同时执行，等待所有任务结束</p>
-</blockquote>
-<p>//    模拟迅雷多路下载后关机<br>[self simulaterThreadDownload];</p>
-<p>}<br>-(void)simulaterThreadDownload<br>{<br>dispatch_group_t group=dispatch_group_create();</p>
-<p>//任务添加<br>dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;30; i++)<br>{<br>NSLog(@” B=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>});<br>//先是所有任务执行完成<br>dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>NSLog(@”所有的任务执行完成”);<br>});<br>}<br>-(void)runOneCode<br>{<br>static dispatch_once_t onceToken;<br>dispatch_once(&amp;onceToken, ^{<br>NSLog(@”这句话我只说一次”);<br>});<br>}<br>-(void)delayRunCode<br>{<br>dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br>NSLog(@”我是一只小小小小鸟,永远永远也飞不高”);<br>});</p>
-<p>}<br>-(void)simulaterNetworkDataDownload<br>{<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];<br>[self.view addSubview:_progressView];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>注意：不要再主线程里更新UI<br>//            _progressView.progress+=0.01;</p>
-<p>dispatch_async(dispatch_get_main_queue(), ^{<br>_progressView.progress+=0.01;<br>});<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>NSLog(@”下载完成”);<br>});</p>
-<p>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net4AVAudioPlayer/" itemprop="url">
-                  AVAudioPlayer
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>创建播放器对象</p>
-</blockquote>
-<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”lalala.mp3” ofType:nil];<br>_player =[[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:path] error:nil];<br>//预加准备<br>[_player prepareToPlay];</p>
-<p>//添加一个按钮：开始播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>[_player play];<br>}];</p>
-<p>//添加一个按钮：停止播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 150, 100, 30) title:@”暂停” action:^(UIButton *button) {<br>[_player pause];<br>}];<br>//滑块控件<br>_slider=[[UISlider alloc]initWithFrame:CGRectMake(100, 200, 100, 30)];<br>[self.view addSubview:_slider];<br>[_slider addTarget:self action:@selector(dealSlider:) forControlEvents:UIControlEventValueChanged];<br>_slider.value=1;<br>进度条<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(50, 50, 200, 20)];<br>[self.view addSubview:_progressView];<br>[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dealTimer:) userInfo:nil repeats:YES];</p>
-<p>}</p>
-<p>-(void)dealTimer:(NSTimer <em>)t<br>{<br>_progressView.progress=_player.currentTime / _player.duration;<br>}<br>-(void)dealSlider:(UISlider </em>)s<br>{<br>_player.volume=s.value;<br>}</p>
-<blockquote>
-<p>网络音乐的播放</p>
-</blockquote>
-<p>1.使用AudioStreamer.h开源库<br>配置开源库<br>创建对象<br>{<br>AudioStreamer *_streamer;<br>}</p>
-<p>NSString <em>urlString=@”<a href="http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061" target="_blank" rel="external">http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061</a>“;<br>//    如果是self调用时的警告可以<br>//    __weak UIViewController </em>vc=self;</p>
-<p>__block typeof (_streamer) t=_streamer;</p>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>t =[[AudioStreamer alloc]initWithURL:[NSURL URLWithString:urlString]];<br>[t start];<br>}];</p>
-<blockquote>
-<p>播放本地视频文件</p>
-</blockquote>
-<p>//1、配置<br>//添加mediaPlayer<br>//如何播放在线视频文件</p>
-<p>#import “ViewController.h”</p>
-<p>#import <mediaplayer mediaplayer.h=""></mediaplayer></p>
-<p>#import “UIView+ZJQuickControl.h”</p>
-<ul>
-<li>(void)viewDidLoad<br>{<br>[super viewDidLoad];</li>
-</ul>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {</p>
-<p>NSString <em>path=[[NSBundle mainBundle]pathForResource:@”dzs.mp4” ofType:nil];<br>MPMoviePlayerViewController </em>mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL fileURLWithPath:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
-<blockquote>
-<p>播放在线视频</p>
-</blockquote>
-<p>//<a href="http://quiet.local/baoman.mp4" target="_blank" rel="external">http://quiet.local/baoman.mp4</a></p>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放网络mp4” action:^(UIButton *button) {</p>
-<p>NSString <em>path=@”<a href="http://quiet.local/baoman.mp4" target="_blank" rel="external">http://quiet.local/baoman.mp4</a>“;<br>MPMoviePlayerViewController </em>mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL URLWithString:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1429,7 +1491,7 @@ NSLog(@&quot;sub num=%d&quot;,_num);
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">132</span>
+              <span class="site-state-item-count">134</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
