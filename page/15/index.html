@@ -228,138 +228,6 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/30/B_OC7plist,归档和Json/" itemprop="url">
-                  plist,归档和Json
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
-              2016-07-30
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>数据持久化简介</p>
-</blockquote>
-<p>文件:    最常用的最基础的存储数据的方式<br>plist,xml,json    表示数据的某种格式<br>数据库:        海量的数据(省上所有人的电话信息)存储到数据库中<br>SQL Server 2000, mysql, Oracle<br>云端存储:        数据都存储的网络上, 安全性好, 跨设备,跨平台</p>
-<blockquote>
-<p>plist文件</p>
-</blockquote>
-<p>用途比较多<br>本质上来说是 Property List file, 属性列表文件<br>存储格式:  数据都是由字典,数组,字符串构成的<br>2.2 如何创建plist文件<br>File-&gt;OS X-Resource–&gt; Proerty List<br>2.3 plist文件的读取和写入<br>//如何读取这个plist文件???<br>NSString <em>path = @”/Users/mac/Desktop/oc7-持久化存储/PlistUseDemo/PlistUseDemo/student.plist”;<br>//plist根结点只有两种类型, 数组和字典<br>//  分别使用NSArray和NSDictionary读取plist<br>NSDictionary </em>dict = [[NSDictionary alloc] initWithContentsOfFile:path];<br>//输出所有的班级的信息<br>//NSArray <em>classList = [dict valueForKey:@”classes”];<br>NSArray </em>classList = dict[@”classes”];<br>for (NSDictionary *classDict in classList) {<br>}<br>//  可以把一个数组或者字典写入到plist中<br>//参数1: 传入一个路径<br>//参数2: 表示是否安全的写入<br>[classList writeToFile:@”/Users/mac/Desktop/classList.plist” atomically:YES];</p>
-<blockquote>
-<p>归档</p>
-</blockquote>
-<p>使用归档, 可以直接把一个对象保存到文件中</p>
-<p>//归档的使用<br>//作用: 对象保存到文件中<br>//相比plist: plist使用简单, 不能存储自定义对象<br>//  归档可以存储任意类型对象<br>NSArray <em>array = [[NSArray alloc] initWithObjects:@”小二”,@”三少”,@”四娘”,@”跳舞大神”, nil];<br>//通过归档的形式存储到文件中<br>//设置文件名<br>NSString </em>path = @”/Users/mac/Desktop/people.data”;<br>//NSKeyedArchiver专门用于归档的类<br>//参数1: 传入需要保存的对象<br>//参数2: 传入文件路径<br>BOOL b = [NSKeyedArchiver archiveRootObject:array toFile:path];<br>//把对象从文件中恢复出来===解档<br>//参数1: 传入保存了对象文件<br>//返回值: 返回保存的对象<br>//  类型原来存储的是什么类型, 用什么类型接收<br>NSArray <em>readArray = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>for(NSString </em>str in readArray)<br>{<br>}</p>
-<blockquote>
-<p>自定义对象的归档和解档</p>
-</blockquote>
-<p>//归档<br>NSString <em>path = @”/Users/mac/Desktop/dog.data”;<br>//<em>**</em></em>  自定义的对象不能直接归档, 会出现崩溃<br>//<strong>*</strong>  需要告诉系统我们对象应该如何归档<br>//          自己类中添加一些指定的方法</p>
-<p>[NSKeyedArchiver archiveRootObject:huaer toFile:path];</p>
-<p>//解档刚才存入的对象<br>Dog *newDog = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>NSLog(@”–&gt; %@ %@ %f %@”,<br>      newDog.nickname,<br>      newDog.gender,<br>      newDog.weight,<br>      newDog.type);</p>
-<p>//告诉系统, 这个对象应该如何编码<br>//  如果没有加这个方法,自定义对象归档的时候会奔溃</p>
-<ul>
-<li>(void)encodeWithCoder:(NSCoder *)aCoder<br>{<br>  //把类中的对象指定一个key, 编码到文件中<br>  [aCoder encodeObject:self.nickname forKey:@”nickname”];<br>  [aCoder encodeObject:self.gender forKey:@”gender”];<br>  [aCoder encodeObject:[NSNumber numberWithFloat:self.weight] forKey:@”weight”];<br>  [aCoder encodeObject:self.type forKey:@”type”];</li>
-</ul>
-<p>}</p>
-<p>//告诉系统, 这个对象应该如何解码<br>//  如果没有加这个方法,自定义对象解档的时候会奔溃</p>
-<ul>
-<li><p>(id)initWithCoder:(NSCoder *)aDecoder<br>{<br>  if (self = [super init]) {</p>
-<pre><code>//对数据进行解码操作
-self.nickname = [aDecoder decodeObjectForKey:@&quot;nickname&quot;];
-self.gender = [aDecoder decodeObjectForKey:@&quot;gender&quot;];
-self.weight = [[aDecoder decodeObjectForKey:@&quot;weight&quot;] floatValue];
-self.type = [aDecoder decodeObjectForKey:@&quot;type&quot;];
-</code></pre><p>  }<br>  return self;<br>}</p>
-</li>
-</ul>
-<blockquote>
-<p>Json解析</p>
-</blockquote>
-<p>Javascript Object Notation 简写<br>网络常用一种表示数据或交换数据的格式<br>4.2 Json数据格式<br>[]表示一个数组, 对应NSArray<br>{}表示一个字典, 对应NSDictionary<br>key:value  表示一个键值对<br>“str”    表示一个字符串   NSString<br>90        表示一个数字       NSNumber<br>,  表示并列的数据<br>4.3 Json格式的读取和使用<br>//如何解析JSON, 解析后如何获取其中数据<br>NSString <em>path = @”/Users/mac/Desktop/1422带课/oc7-持久化存储/topic.txt”;<br>//JSON先读取到程序中(NSString,NSData)<br>NSData </em>data = [[NSData alloc] initWithContentsOfFile:path];<br>//OC提供专门用于JSON解析的类<br>//NSJSONSerialization<br>//功能: 把NSData类型JSON数据转化为字典或者数组<br>//参数1: 需要解析的JSON数据<br>//参数2: 传入一个选项<br>//参数3: 错误<br>//返回值: 如果JSON顶层结点是[],用NSArray接收<br>//       如果顶层结点是{}, 用NSDictionary接收<br>NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/30/B_OC9内存管理/" itemprop="url">
                   内存管理
                 </a>
@@ -550,6 +418,138 @@ self.type = [aDecoder decodeObjectForKey:@&quot;type&quot;];
         
           
             
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC7plist,归档和Json/" itemprop="url">
+                  plist,归档和Json
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>数据持久化简介</p>
+</blockquote>
+<p>文件:    最常用的最基础的存储数据的方式<br>plist,xml,json    表示数据的某种格式<br>数据库:        海量的数据(省上所有人的电话信息)存储到数据库中<br>SQL Server 2000, mysql, Oracle<br>云端存储:        数据都存储的网络上, 安全性好, 跨设备,跨平台</p>
+<blockquote>
+<p>plist文件</p>
+</blockquote>
+<p>用途比较多<br>本质上来说是 Property List file, 属性列表文件<br>存储格式:  数据都是由字典,数组,字符串构成的<br>2.2 如何创建plist文件<br>File-&gt;OS X-Resource–&gt; Proerty List<br>2.3 plist文件的读取和写入<br>//如何读取这个plist文件???<br>NSString <em>path = @”/Users/mac/Desktop/oc7-持久化存储/PlistUseDemo/PlistUseDemo/student.plist”;<br>//plist根结点只有两种类型, 数组和字典<br>//  分别使用NSArray和NSDictionary读取plist<br>NSDictionary </em>dict = [[NSDictionary alloc] initWithContentsOfFile:path];<br>//输出所有的班级的信息<br>//NSArray <em>classList = [dict valueForKey:@”classes”];<br>NSArray </em>classList = dict[@”classes”];<br>for (NSDictionary *classDict in classList) {<br>}<br>//  可以把一个数组或者字典写入到plist中<br>//参数1: 传入一个路径<br>//参数2: 表示是否安全的写入<br>[classList writeToFile:@”/Users/mac/Desktop/classList.plist” atomically:YES];</p>
+<blockquote>
+<p>归档</p>
+</blockquote>
+<p>使用归档, 可以直接把一个对象保存到文件中</p>
+<p>//归档的使用<br>//作用: 对象保存到文件中<br>//相比plist: plist使用简单, 不能存储自定义对象<br>//  归档可以存储任意类型对象<br>NSArray <em>array = [[NSArray alloc] initWithObjects:@”小二”,@”三少”,@”四娘”,@”跳舞大神”, nil];<br>//通过归档的形式存储到文件中<br>//设置文件名<br>NSString </em>path = @”/Users/mac/Desktop/people.data”;<br>//NSKeyedArchiver专门用于归档的类<br>//参数1: 传入需要保存的对象<br>//参数2: 传入文件路径<br>BOOL b = [NSKeyedArchiver archiveRootObject:array toFile:path];<br>//把对象从文件中恢复出来===解档<br>//参数1: 传入保存了对象文件<br>//返回值: 返回保存的对象<br>//  类型原来存储的是什么类型, 用什么类型接收<br>NSArray <em>readArray = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>for(NSString </em>str in readArray)<br>{<br>}</p>
+<blockquote>
+<p>自定义对象的归档和解档</p>
+</blockquote>
+<p>//归档<br>NSString <em>path = @”/Users/mac/Desktop/dog.data”;<br>//<em>**</em></em>  自定义的对象不能直接归档, 会出现崩溃<br>//<strong>*</strong>  需要告诉系统我们对象应该如何归档<br>//          自己类中添加一些指定的方法</p>
+<p>[NSKeyedArchiver archiveRootObject:huaer toFile:path];</p>
+<p>//解档刚才存入的对象<br>Dog *newDog = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>NSLog(@”–&gt; %@ %@ %f %@”,<br>      newDog.nickname,<br>      newDog.gender,<br>      newDog.weight,<br>      newDog.type);</p>
+<p>//告诉系统, 这个对象应该如何编码<br>//  如果没有加这个方法,自定义对象归档的时候会奔溃</p>
+<ul>
+<li>(void)encodeWithCoder:(NSCoder *)aCoder<br>{<br>  //把类中的对象指定一个key, 编码到文件中<br>  [aCoder encodeObject:self.nickname forKey:@”nickname”];<br>  [aCoder encodeObject:self.gender forKey:@”gender”];<br>  [aCoder encodeObject:[NSNumber numberWithFloat:self.weight] forKey:@”weight”];<br>  [aCoder encodeObject:self.type forKey:@”type”];</li>
+</ul>
+<p>}</p>
+<p>//告诉系统, 这个对象应该如何解码<br>//  如果没有加这个方法,自定义对象解档的时候会奔溃</p>
+<ul>
+<li><p>(id)initWithCoder:(NSCoder *)aDecoder<br>{<br>  if (self = [super init]) {</p>
+<pre><code>//对数据进行解码操作
+self.nickname = [aDecoder decodeObjectForKey:@&quot;nickname&quot;];
+self.gender = [aDecoder decodeObjectForKey:@&quot;gender&quot;];
+self.weight = [[aDecoder decodeObjectForKey:@&quot;weight&quot;] floatValue];
+self.type = [aDecoder decodeObjectForKey:@&quot;type&quot;];
+</code></pre><p>  }<br>  return self;<br>}</p>
+</li>
+</ul>
+<blockquote>
+<p>Json解析</p>
+</blockquote>
+<p>Javascript Object Notation 简写<br>网络常用一种表示数据或交换数据的格式<br>4.2 Json数据格式<br>[]表示一个数组, 对应NSArray<br>{}表示一个字典, 对应NSDictionary<br>key:value  表示一个键值对<br>“str”    表示一个字符串   NSString<br>90        表示一个数字       NSNumber<br>,  表示并列的数据<br>4.3 Json格式的读取和使用<br>//如何解析JSON, 解析后如何获取其中数据<br>NSString <em>path = @”/Users/mac/Desktop/1422带课/oc7-持久化存储/topic.txt”;<br>//JSON先读取到程序中(NSString,NSData)<br>NSData </em>data = [[NSData alloc] initWithContentsOfFile:path];<br>//OC提供专门用于JSON解析的类<br>//NSJSONSerialization<br>//功能: 把NSData类型JSON数据转化为字典或者数组<br>//参数1: 需要解析的JSON数据<br>//参数2: 传入一个选项<br>//参数3: 错误<br>//返回值: 如果JSON顶层结点是[],用NSArray接收<br>//       如果顶层结点是{}, 用NSDictionary接收<br>NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];</p>
+
           
         
       
