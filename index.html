@@ -1552,8 +1552,8 @@ BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(c
             
               
                 
-                <a class="post-title-link" href="/2018/07/26/M_Swift91算法之数学计算/" itemprop="url">
-                  算法之数学计算
+                <a class="post-title-link" href="/2018/07/29/M_Swift100Runtime相关方法的副本/" itemprop="url">
+                  Runtime
                 </a>
               
             
@@ -1566,8 +1566,8 @@ BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(c
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-26T11:30:02+08:00" content="2018-07-26">
-              2018-07-26
+            <time itemprop="dateCreated" datetime="2018-07-29T11:48:50+08:00" content="2018-07-29">
+              2018-07-29
             </time>
           </span>
 
@@ -1596,50 +1596,64 @@ BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(c
       
         
           
-            <h2 id="二分法查找"><a href="#二分法查找" class="headerlink" title="二分法查找"></a>二分法查找</h2><pre><code>function binarySeach( arr,val,leftIndex,rightIndex ){
-    //找到中间的值
-    var midIndex = Math.floor((leftIndex+rightIndex)/2);
-    var midval=arr[midIndex];
-    //console.log(midval );
-    if( leftIndex &gt; rightIndex ){
-        console.log(&quot;前一位是&quot;,midval );
-        console.log(&quot;下标：&quot;,midIndex);
-        return ;
-    }
-    if( midval &gt; val ){
-        binarySeach(arr,val,leftIndex,midIndex-1);
-    }else if(midval &lt; val){
-        binarySeach(arr,val,midIndex+1,rightIndex);
-    }else{
-        console.log(&quot;找到了,下标为:&quot;+midIndex);
-        return;
-    }
+            <p>今天有时间，真的是好好研究了一下Runtime，这里就汇总一下吧<br>Runtime我们常用的功能</p>
+<h2 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1.基本概念"></a>1.基本概念</h2><pre><code>Objective-C 从三种不同的层级上与 Runtime 系统进行交互，
+分别是通过 Objective-C 源代码，
+通过 Foundation 框架的NSObject类定义的方法，
+通过对 runtime 函数的直接调用。
+RunTime简称运行时,就是系统在运行的时候的一些机制，其中最主要的是消息机制。
+每一个oc的方法，底层必然有一个与之对应的runtime方法。
+</code></pre><h2 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h2><h3 id="获取属性列表"><a href="#获取属性列表" class="headerlink" title="获取属性列表"></a>获取属性列表</h3><pre><code>objc_property_t *propertyList = class_copyPropertyList([self class], &amp;count);
+for (unsigned int i=0; i&lt;count; i++) {
+const char *propertyName = property_getName(propertyList[i]);
+NSLog(@&quot;property----&gt;%@&quot;, [NSString stringWithUTF8String:propertyName]);
 }
-var arr=[1,3,12,21,24,44,54,67];
-binarySeach(arr,25,0,arr.length-1);
-</code></pre><h2 id="求两个数的最大公约数，递归"><a href="#求两个数的最大公约数，递归" class="headerlink" title="求两个数的最大公约数，递归"></a>求两个数的最大公约数，递归</h2><pre><code>function Gcd(var a, var b)
- {
-      if(a&lt;=0||b&lt;=0)
-          return -1;
-     else if(a&gt;b)
-         return Gcd(a-b, b);
-     else if(a&lt;b)
-         return Gcd(a, b-a);
-     else
-         return a;
- }
-// 最小公倍数 两个整数的乘积 / 最大公约数
-// a* b/gcd(a,b)
-</code></pre><h2 id="斐波那契数列"><a href="#斐波那契数列" class="headerlink" title="斐波那契数列"></a>斐波那契数列</h2><pre><code>function Fibonacci(int n) {
-    if(n &lt; 0){
-        return 0;
-    }
-    if(n == 0){
-        return 0;
-    }else if(n == 1){
-        return 1;
-    }else return Fibonacci(n-1)+ Fibonacci(n-2);
+</code></pre><h3 id="获取方法列表"><a href="#获取方法列表" class="headerlink" title="获取方法列表"></a>获取方法列表</h3><pre><code>Method *methodList = class_copyMethodList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Method method = methodList[i];
+NSLog(@&quot;method----&gt;%@&quot;, NSStringFromSelector(method_getName(method)));
 }
+</code></pre><h3 id="获取成员变量列表"><a href="#获取成员变量列表" class="headerlink" title="获取成员变量列表"></a>获取成员变量列表</h3><pre><code>Ivar *ivarList = class_copyIvarList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Ivar myIvar = ivarList[i];
+const char *ivarName = ivar_getName(myIvar);
+NSLog(@&quot;Ivar----&gt;%@&quot;, [NSString stringWithUTF8String:ivarName]);
+}
+</code></pre><h3 id="获取协议列表"><a href="#获取协议列表" class="headerlink" title="获取协议列表"></a>获取协议列表</h3><pre><code>__unsafe_unretained Protocol **protocolList = class_copyProtocolList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Protocol *myProtocal = protocolList[i];
+const char *protocolName = protocol_getName(myProtocal);
+NSLog(@&quot;protocol----&gt;%@&quot;, [NSString stringWithUTF8String:protocolName]);
+}
+</code></pre><h3 id="获得类方法"><a href="#获得类方法" class="headerlink" title="获得类方法"></a>获得类方法</h3><pre><code>Class PersonClass = object_getClass([Person class]);
+SEL oriSEL = @selector(test1);
+Method oriMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
+</code></pre><h3 id="获取实例方法"><a href="#获取实例方法" class="headerlink" title="获取实例方法"></a>获取实例方法</h3><pre><code>Class PersonClass = object_getClass([xiaoming class]);
+SEL oriSEL = @selector(test2);
+Method cusMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
+</code></pre><h3 id="添加一个实例变量"><a href="#添加一个实例变量" class="headerlink" title="添加一个实例变量"></a>添加一个实例变量</h3><pre><code>/*
+参数一、类名
+参数二、属性名称
+参数三、开辟字节长度
+参数四、对其方式
+参数五、参数类型 “@” 官方解释 An object (whether statically typed or typed id) （对象 静态类型或者id类型） 具体类型可参照官方文档
+return: BOOL 是否添加成功
+*/
+BOOL isSuccess = class_addIvar(MyClass, &quot;addIvar&quot;, sizeof(NSString *), 0, &quot;@&quot;);
+</code></pre><h3 id="添加方法"><a href="#添加方法" class="headerlink" title="添加方法"></a>添加方法</h3><pre><code>/*
+参数一、类名
+参数二、SEL 添加的方法名字
+参数三、IMP指针 (IMP就是Implementation的缩写，它是指向一个方法实现的指针，每一个方法都有一个对应的IMP)
+参数四、其中types参数为&quot;i@:@“，按顺序分别表示：具体类型可参照官方文档
+i 返回值类型int，若是v则表示void
+@ 参数id(self)
+: SEL(_cmd)
+@ id(str)
+V@:表示返回值是void 带有SEL参数 （An object (whether statically typed or typed id)）
+*/
+BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+</code></pre><h3 id="替换方法"><a href="#替换方法" class="headerlink" title="替换方法"></a>替换方法</h3><pre><code>class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+</code></pre><h3 id="交换方法"><a href="#交换方法" class="headerlink" title="交换方法"></a>交换方法</h3><pre><code>method_exchangeImplementations(oriMethod, cusMethod);
 </code></pre>
           
         
@@ -1713,7 +1727,7 @@ binarySeach(arr,25,0,arr.length-1);
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">167</span>
+              <span class="site-state-item-count">168</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
