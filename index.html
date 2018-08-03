@@ -848,6 +848,559 @@ NSRunloop，对CFRunLoop的封装
             
               
                 
+                <a class="post-title-link" href="/2018/08/01/M_Swift99Runtime理解/" itemprop="url">
+                  理解Runtime
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-01T09:16:13+08:00" content="2018-08-01">
+              2018-08-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="什么是isa指针"><a href="#什么是isa指针" class="headerlink" title="什么是isa指针"></a>什么是isa指针</h2><pre><code>每个对象都有一个标识对象类的isa实例变量。运行时使用此指针来确定对象需要时的实际类。
+1、 id类型是一个objc_object结构体的指针。
+2、objc_object结构体包含一个Class 类型的变量isa。
+3、 Class是objc_class结构体的指针。
+</code></pre><h3 id="为什么说类也是对象"><a href="#为什么说类也是对象" class="headerlink" title="为什么说类也是对象"></a>为什么说类也是对象</h3><pre><code>类被定义为objc_class结构体，objc_class结构体继承自objc_objct,对象是用 objc_object 结构体表示的，所以类也是对象。在应用程序中，类对象只会被创建一份。在objc_class结构体中定义了对象的method list，protocal，ivar list等，表示对象的行为。
+oc中的类和元类也是一样，都是结构体构成的，由于类的结构体定义继承自objc_object所以其也是一个对象，并且具有对象的isa特征。
+这也就解释了为什么id类型可以指向OC中任意对象类型了。
+
+永远不要用用isa来判断一个类的继承关系，而是应该用class方法来判断类的实例。
+struct objc_class {
+    Class isa  //所属类的指针
+    Class super_class//指向父类的指针                                        
+    const char *name    //类名                                     
+    long version            // 版本                                 
+    long info                   //供运行期使用的一些位标识。                             
+    long instance_size      //实例大小                                 
+    struct objc_ivar_list *ivars       //成员变量数组                      
+    struct objc_method_list **methodLists  //方法列表                  
+    struct objc_cache *cache//指向最近使用的方法.用于方法调用的优化                            
+    struct objc_protocol_list *protocols//协议的数组                     
+}
+</code></pre><h2 id="类也是对象，他是meteClass-元类-的实例。"><a href="#类也是对象，他是meteClass-元类-的实例。" class="headerlink" title="类也是对象，他是meteClass(元类)的实例。"></a>类也是对象，他是meteClass(元类)的实例。</h2><pre><code>实例对象在运行时被表示成objc_object类型结构体，结构体内部有个isa指针指向objc_class结构体。
+objc_class内部保存了类的变量和方法列表以及其他一些信息，并且还有一个isa指针。这个isa指针会指向meteClass(元类)，元类里保存了这个类的类方法列表。
+为了完整性，其实元类里也有一个isa指针，这个isa指针，指向的是根元类，根元类的isa指针指向自己
+实例对象--(runtime)--&gt;objc_object--(isa)--&gt;objc_class--(isa)--&gt;元类--isa--&gt;根元类--isa--&gt;自己。
+当我们调用某个类的方法时，如果这个类的方法列表里没有该方法，则会去找这个类的父类的方法列表。这种机制就是通过objc_class的第二个变量super_class指针实现的。并且这种继承关系会扩展到元类
+</code></pre><h2 id="meta-class"><a href="#meta-class" class="headerlink" title="meta class"></a>meta class</h2><pre><code>既然类是对象，那类对象也是其他类的实例，所以runtime中设计了meta class， 通过meta class来创建类对象，所以类对象的isa指向对应的meta class。而meta class也是一个对象，所有元类的isa都指向其根元类，根元类的isa指针指向自己，通过这种设计，isa的整体结构形成了一个闭环。
+类和元类都有自己的继承体系，但它们都有共同的根父类NSObject，而NSObject的父类指向nil。需要注意的是上图Root Class（Class）是NSObject类对象，而Root Class（Meta）是NSObject的元类对象。
+对于像NSObject这样的类来说，它其实代表的是一个类对象，本质上还是一个普通的实例对象，类对象的self指针应该指向的是这个类对象自身。
+</code></pre><h2 id="id"><a href="#id" class="headerlink" title="id"></a>id</h2><pre><code>objc_msgSend第一个参数类型为id，大家对它都不陌生，它是一个指向类实例的指针：
+typedef struct objc_object *id;
+那objc_object又是啥呢：
+struct objc_object { Class isa; };
+objc_object结构体包含一个isa指针，根据isa指针就可以顺藤摸瓜找到对象所属的类。
+PS:isa指针不总是指向实例对象所属的类，不能依靠它来确定类型，而是应该用class方法来确定实例对象的类。因为KVO的实现机理就是将被观察对象的isa指针指向一个中间类而不是真实的类，这是一种叫做 isa-swizzling 的技术
+</code></pre><h2 id="ivars-methodLists"><a href="#ivars-methodLists" class="headerlink" title="ivars methodLists"></a>ivars methodLists</h2><pre><code>在objc_class结构体中：ivars是objc_ivar_list指针；methodLists是指向objc_method_list指针的指针。也就是说可以动态修改 *methodLists 的值来添加成员方法，这也是Category实现的原理.
+</code></pre><h2 id="IMP："><a href="#IMP：" class="headerlink" title="IMP："></a>IMP：</h2><pre><code>在runtime中IMP本质上就是一个函数指针，其定义如下，在IMP中有两个默认的参数id和SEL，id也就是方法的self这个objc_msgSend()函数传递的参数一样；。
+</code></pre><h2 id="Method："><a href="#Method：" class="headerlink" title="Method："></a>Method：</h2><pre><code>用来表示方法，其中包含SEL和IMP
+</code></pre><h2 id="Property："><a href="#Property：" class="headerlink" title="Property："></a>Property：</h2><pre><code>在runtime中定义了属性的结构体，用来表示对象中定义的属性。@property修饰符用来修饰属性，修饰后的属性为objc_property_t类型，其本质是property_t结构体
+原来UIViewController的结构体中增加了childViewControllers属性，这个时候和子类的内存偏移就发生了 冲突，只不过，runtime有检测内存地址冲突的机制，在类生成实例变量时，会判断实例变量是否有地址冲突，如果发生冲突则调整对象的地址偏移。
+</code></pre><h2 id="内存布局："><a href="#内存布局：" class="headerlink" title="内存布局："></a>内存布局：</h2><pre><code>类的本质时结构体，在结构体中包含一些成员变量，如method list，ivar list等，这些都是结构体的一部分，method protocol，property的实现这些都可以放到类中，所有对象调用同一份即可，但对象的成员变量不可以放在一起，因为每个对象的成员变量值都是不同的。
+创建实例对象时，会根据其对应的Class分配内存，内存构成是ivar+isa_t.并且实例变量不只是包含当前class的ivars，也会包含其继承链的ivars，ivars的内存布局在编译时就已经决定，运行时需要根据ivars内存布局创建对象，所以runtime不能动态修改ivars，会破坏已有的内存布局。
+也不是所有对象都不能修改ivars，如果是通过runtime动态创建的类，时可以修改ivars的。
+</code></pre><h2 id="不能向编译后得到的类中增加实例变量"><a href="#不能向编译后得到的类中增加实例变量" class="headerlink" title="不能向编译后得到的类中增加实例变量"></a>不能向编译后得到的类中增加实例变量</h2><pre><code>因为编译后的类已经注册在runtime中，类结构体中的objc_ivar_list实例变量的链表和instance_size实例变量的内存大小已经确定，同时runtime会调用class_setIvarLayout或class_WeakIvarLayout来处理strong weak引用，所以不能向存在的类中添加实例变量
+运行时创建的类时可以添加实例变量，调用class_addIvar函数，但是得在调用objc_allocateClassPari之后，objc_registerClassPair之前，原因同上。
+</code></pre><h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>（返回值时对象，是标量，结构体）
+如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0地址返回，所以不会出现任何错误
+如果返还类型是对象，那么返还nil如果是标量，那么是0，结构体为0，其他为返回值是为定义的。
+</code></pre><h2 id="ivar读写"><a href="#ivar读写" class="headerlink" title="ivar读写"></a>ivar读写</h2><pre><code>实例变量的isa_t指针会指向其所属的类，对象中并不会包含method，property，protocol，ivar等信息，这些信息在编译时都保存在只读结构体class_ro_t中。在class_ro_t中ivar时const只读的，在image load时copy到class_rw_t中时，是不会copy ivars的，并且class_rw_t中并没有定义ivars的字段。
+在防伪某个成员变量时，直接通过isa_t找到对应的objc_class并通过其class_ro_t的ivar list做地址偏移，查找对应的对象内存，正是由于这种方式，所以对象的内存地址是固定不可改变的。
+</code></pre><h2 id="方法传参："><a href="#方法传参：" class="headerlink" title="方法传参："></a>方法传参：</h2><pre><code>当调用实例变量的方法时，会通过objc_msgSend（）发起调用。调用是会传入self和SEL，函数内部通过isa在类的内部查找方法列表对应的IMP，传入对应的参数并发起调用，如果调用的方法涉及到当前对象的成员变量的访问，这是就是通过objc_msgSend()内部，通过类的ivar list判断地址偏移，取出ivar并传入调用的IMP中的。
+</code></pre><h2 id="isa-t"><a href="#isa-t" class="headerlink" title="isa_t:"></a>isa_t:</h2><pre><code>对于对象指针也是一样，在oc1.0时，isa时一个真的指针，指向一堆区的地址，而在oc2.0时代，一个指针长度时八个字节也就是64位，在64位中直接存储着对象的信息。当查找对象所属的类时，直接在isa指针中进行位运算即可，而且由于在栈区进行操作，查找速度非常快。
+例如，isa_t本质时一个结构体，如果创建结构体再用指针指向这个结构体，内存占用是很大的，但是Tagged Pointer特性中，直接把结构体的值都存储到指针中，这样就相当节省内存了。
+苹果不允许直接访问isa指针，和Tagged Pointer也是有关系的，因为tagged Pointer的情况下，isa并不是一个指针指向另一块内存区，而是直接表示对象的值，所以通过直接访问isa获取到的信息是错误的。
+</code></pre><h2 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a>SEL</h2><pre><code>它是selector在Objc中的表示类型（Swift中是Selector类）。selector是方法选择器，可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
+typedef struct objc_selector *SEL;
+其实它就是个映射到方法的C字符串，你可以用 Objc 编译器命令@selector()或者 Runtime 系统的sel_registerName函数来获得一个SEL类型的方法选择器。
+常见来两个相同的类，并定规两个相同的方法，通过@selector获取SEL并打印，我们发现SEL都是同一个对象，地址都是相同的，不同类的相同SEL是同一个对象。
+在runtime中维护一个SEL列表，这个表不按照类存储，只要相同SEL就算作一个，并存储到表中。
+</code></pre><h2 id="Category"><a href="#Category" class="headerlink" title="Category"></a>Category</h2><pre><code>类别（category）主要有三个作用
+1.将类的实现分散到多个不同文件或多个不同框架中
+2.创建对私有方法的向前引用
+3.向对象添加非正式协议
+和Category相似的还有Extension，二者的区别是Extension在编译期就直接和原类编译在一起了，而Category是在运行时添加到原类中。
+如果一个类添加Category后，并且重写其原有方法，这样会导致Category的方法覆盖原有类的方法，但是load方法是例外，category和原有类的load方法都会被执行。
+在有过个Category和原类方法重名的情况下，怎么样在一个Category方法被调用后，调用所有Category和原类的方法？
+可以在一个Category方法被调用后，便利方法列表，并调用其他同名方法，但是需要注意一点是，便利过程不能再调用自己的方法，否则会导致递归调用，为了避免这个问题，可以在调用前判断被调用的方法IMP是否是当前方法的IMP
+怎么样在任何一个Category的方法被调用后，只调用元类方法呢？
+根据上面方法调用的分析，Runtime在调用方法时会有限所有Category调用，所以可以倒叙便利方法列表，只便利第一个方法即可，这个方法就是元类的方法。
+</code></pre><h2 id="如何在Category中添加变量"><a href="#如何在Category中添加变量" class="headerlink" title="如何在Category中添加变量"></a>如何在Category中添加变量</h2><pre><code>@interface TestObject (Category)
+@property (nonatomic, strong) NSObject *object; @end
+#import &lt;objc/runtime.h&gt;
+#import &lt;objc/message.h&gt;
+static void *const kAssociatedObjectKey = (void *)&amp;kAssociatedObjectKey;
+@implementation TestObject (Category)
+- (NSObject *)object {
+    return objc_getAssociatedObject(self, kAssociatedObjectKey);
+}
+- (void)setObject:(NSObject *)object {
+    objc_setAssociatedObject(self, kAssociatedObjectKey, object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+从原码中可以看出，所有通过associated添加的属性，都是被单独存放在一个哈希表AssociationsHashMap中，objc_setAssociatedObject和 objc_getAssociatedObject本质上就是操作这个哈希表，通过对哈希表进行映射来存取对象。
+</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><pre><code>将一条消息发送给一个不能处理的对象会引起崩溃，但是在崩溃之前，系统给响应对象一次处理异常的机会。
+当发送一条对象不能处理的消息，产生crash之前，系统会调用响应者的forwardIMvocation方法，并传入一个NSInvocation对象，NSInvocation中包含原始消息及参数，这个方法之后方法未实现的时候才会调用。
+你可以实现forwardInvocation方法，将消息转发给另一个对象，forwardInvocation方法是一个动态方法，在响应者无法响应方法时，会调用forwardInvocation方法，可以重写这个方法，实现消息转发。
+</code></pre><h2 id="Method-Swizzling-："><a href="#Method-Swizzling-：" class="headerlink" title="Method Swizzling ："></a>Method Swizzling ：</h2><pre><code>你在swizzlingViewDidLoad方法中又调用[self swizzlingViewDidLoad];，这难道不会产生递归调用吗？
+其实不会，Method Swizzling ：实现原理理解为方法互换，假设我们将A，B两个方法进行互换，向A发消息时执行的是B的方法，向B发消息时执行的是A方法，所以再调用[self swizzlingViewDidLoad];又回到原类的方法中了。
+对于NSArray 􏴯 NSMutableArray 􏴯 NSDictionary 􏴯 NSMutableDictionary 等类进行Method Swizzling ，实现方式按照上面例子来做，但是你发现Method Swizzling 根本不起作用
+这是因为Method Swizzling 对NSArray这些类簇是不起作用的，因为这些类簇，其实是一种抽象工厂的设计模式，抽象工厂内部有很多其他继承自身当前类的子类，抽象工厂类会根据不同情况，创建不同的抽象对象来进行使用。例如我们调用NSArray的objectAtIndex方法，这个类会在方法内部判断，内部创建不同抽象类进行操作。
+所以也就是我们对NSArray进行操作其实是对父类进行操作，在NSArray内部会创建其子类进行执行操作，真正执行操作的并不是NSArray自身，所以我们应该对其真身进行操作。
+如果进行Method Swizzling中的类有继承关系，并且swizzling了同一个方法，这样会导致父类的Swizzling失效。必须要证Method Swizzling方法只执行一次。
+</code></pre><h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>无论何时，要调用objc_msgSend函数，必须要将函数强制转换成合适的函数指针类型才能调用。
+其实编译器会根据情况在objc_msgSend, objc_msgSend_stret, objc_msgSendSuper, 或 objc_msgSendSuper_stret四个方法中选择一个来调用。
+</code></pre><h2 id="KVO-KVC的实现原理"><a href="#KVO-KVC的实现原理" class="headerlink" title="KVO KVC的实现原理"></a>KVO KVC的实现原理</h2><pre><code>https://blog.csdn.net/u014247354/article/details/78403567
+apple使用isa混写（isa-swizzling）来实现KVO。当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying A的新类，该类继承自对象A的本类，且KVO为NSKVONotifying A重写观察属性的setter方法，setter方法会负责在调用原setter方法之前之后，通知所有观察对象属性值的更改情况。
+观察者观察的属性，只有遵循KVO变更属性值的方式才会执行KVO的回调方法，例如是否执行setter方法，活着是否使用KVC赋值。如果赋值没有通过setter方法或者KVC，而是直接修改属性对应的成员变量，例如：仅调用_name = @&quot;newName&quot; ,这时时不会触发kvo机制，更加不会调用回调方法的。所以使用KVO机制的前提是遵循KVO的属性设置方式来变更属性值。
+KVC实现原理
+1.检查是否存在key，如果有，就是用这些方法返回值
+2.检查是否存在名为setkey的方法，并使用它做设置值。对于getkey和setkey方法，经大写key
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/31/M_Swift97Runtime_isa_swizzling/" itemprop="url">
+                  iOS isa-swizzling
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-31T16:32:01+08:00" content="2018-07-31">
+              2018-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>添加Observer
+通过runtime偷偷实现了一个子类，并且以NSKVONotifying_+类名来命名
+将之前那个对象的isa指针指向了这个子类。
+重写了观察的对象setter方法，并且在重写的中添加了willChangeValueForKey:以及didChangeValueForKey:
+移除Observer
+只是简单的将其的isa指向原来的类对象中
+然后我们在分析一下， 在真正调用的setAge:的情况下, 根据消息机制我们知道它先通过isa找到对应对象的类， 也就是现在NSKVONotifying_Person, 然后再去找setAge:，由于NSKVONotifying_Person这个对象重写了这个方法， 那么就会直接取当前的实现， 也就是带有willChangeValueForKey:以及didChangeValueForKey:， 那么自然就实现了对KVO的实现了。
+
+KVC主要通过isa-swizzling，来实现。
+
+
+
+[site setValue:@&quot;sitename&quot; forKey:@&quot;name&quot;];
+
+编译器处理成：
+SEL sel = sel_get_uid (&quot;setValue:forKey:&quot;);
+IMP method = objc_msg_lookup (site-&gt;isa,sel);
+method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
+
+我们上面提到过Method Swizzling的实现原理就是对类的Dispatch Table进行操作，每进行一次Swizzling就交换一次SEL和IMP(可以理解为函数指针)，如果Swizzling被执行了多次，就相当于SEL和IMP被交换了多次。这就会导致第一次执行成功交换了、第二次执行又换回去了、第三次执行.....这样换来换去的结果，能不能成功就看运气了😄，这也是好多人说Method Swizzling不好用的原因之一。
+为了避免这样的原因出现，我们可以通过GCD的dispatch_once函数来解决，利用dispatch_once函数内代码只会执行一次的特性。
+使用 Method Swizzling 编程就好比切菜时使用锋利的刀，一些人因为担心切到自己所以害怕锋利的刀具，可是事实上，使用钝刀往往更容易出事，而利刀更为安全。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/31/M_Swift98Runtime常见作用/" itemprop="url">
+                  Runtime常见作用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-31T15:14:05+08:00" content="2018-07-31">
+              2018-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="动态的添加对象的成员变量和方法"><a href="#动态的添加对象的成员变量和方法" class="headerlink" title="动态的添加对象的成员变量和方法"></a>动态的添加对象的成员变量和方法</h2><pre><code>class_addMethod([self.person class], @selector(guess), (IMP)guessAnswer, &quot;v@:&quot;);
+参数说明
+&gt;(IMP)guessAnswer 意思是guessAnswer的地址指针;
+&gt;&quot;v@:&quot; 意思是，v代表无返回值void，如果是i则代表int；@代表 id sel; : 代表 SEL _cmd;
+&gt;“v@:@@” 意思是，两个参数的没有返回值。  
+</code></pre><h2 id="动态交换两个方法的实现"><a href="#动态交换两个方法的实现" class="headerlink" title="动态交换两个方法的实现"></a>动态交换两个方法的实现</h2><pre><code>交换方法之后，以后每次调用这两个方法都会交换方法的实现
+Method m1 = class_getInstanceMethod([self.person class], @selector(sayName));
+Method m2 = class_getInstanceMethod([self.person class], @selector(saySex));
+method_exchangeImplementations(m1, m2);
+</code></pre><h2 id="拦截并替换方法"><a href="#拦截并替换方法" class="headerlink" title="拦截并替换方法"></a>拦截并替换方法</h2><pre><code>我们要改变这个方法的实现，但是又不能去动它的源代码(正如一些开源库出现问题的时候)，这个时候runtime就派上用场了
+我们先增加一个tool类，然后写一个我们自己实现的方法-change，
+通过runtime把test1替换成change。
+Class PersionClass = object_getClass([Person class]);
+Class toolClass = object_getClass([tool class]);
+////源方法的SEL和Method
+SEL oriSEL = @selector(test1);
+Method oriMethod = class_getInstanceMethod(PersionClass, oriSEL);
+////交换方法的SEL和Method
+SEL cusSEL = @selector(change);
+Method cusMethod = class_getInstanceMethod(toolClass, cusSEL);
+////先尝试給源方法添加实现，这里是为了避免源方法没有实现的情况
+BOOL addSucc = class_addMethod(PersionClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+if (addSucc) {
+    // 添加成功：将源方法的实现替换到交换方法的实现     
+    class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+}else {
+    //添加失败：说明源方法已经有实现，直接将两个方法的实现交换即
+    method_exchangeImplementations(oriMethod, cusMethod);  
+}
+</code></pre><h2 id="在方法上增加额外功能"><a href="#在方法上增加额外功能" class="headerlink" title="在方法上增加额外功能"></a>在方法上增加额外功能</h2><pre><code>有这样一个场景，出于某些需求，我们需要跟踪记录APP中按钮的点击次数和频率等数据，怎么解决？当然通过继承按钮类或者通过类别实现是一个办法，但是带来其他问题比如别人不一定会去实例化你写的子类，或者其他类别也实现了点击方法导致不确定会调用哪一个，runtime可以这样解决，
+实现场景二、我们app经常会遇到一些cash，我们可以通过runtime拦截替换这些方法，从而保证不会崩溃，例如如下列举
+    NSArray+NSRangeException
+    NSDictionary+NSRangeException
+    NSMutableAttributedString+NSRangeException
+    NSMutableString+NSRangeException
+    NSNull+Exception
+    NSObject+Swizzling
+    NSString+NSRangeException
+    UINavigationController+Consistent
+load方法会在类第一次加载的时候被调用,调用的时间比较靠前，适合在这个方法里做方法交换,方法交换应该被保证，在程序中只会执行一次。
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        Class selfClass = [self class];
+        SEL oriSEL = @selector(sendAction:to:forEvent:);
+        Method oriMethod = class_getInstanceMethod(selfClass, oriSEL);
+        SEL cusSEL = @selector(mySendAction:to:forEvent:);
+        Method cusMethod = class_getInstanceMethod(selfClass, cusSEL);
+        BOOL addSucc = class_addMethod(selfClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+        if (addSucc) {
+            class_replaceMethod(selfClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+        }else {
+            method_exchangeImplementations(oriMethod, cusMethod);
+        }
+    });
+}
+- (void)mySendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event {
+    [[Tool sharedManager] addCount];
+    [self mySendAction:action to:target forEvent:event];
+}
+</code></pre><h2 id="实现NSCoding的自动归档和解档"><a href="#实现NSCoding的自动归档和解档" class="headerlink" title="实现NSCoding的自动归档和解档"></a>实现NSCoding的自动归档和解档</h2><pre><code>- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    unsigned int count = 0;
+    Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
+    for (int i = 0; i&lt;count; i++) {
+        // 取出i位置对应的成员变量
+        Ivar ivar = ivars[i];
+        // 查看成员变量
+        const char *name = ivar_getName(ivar);
+        // 归档
+        NSString *key = [NSString stringWithUTF8String:name];
+        id value = [self valueForKey:key];
+        [encoder encodeObject:value forKey:key];
+    }
+    free(ivars);
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (self = [super init]) {
+        unsigned int count = 0;
+        Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
+        for (int i = 0; i&lt;count; i++) {
+            // 取出i位置对应的成员变量
+            Ivar ivar = ivars[i];
+            // 查看成员变量
+            const char *name = ivar_getName(ivar);
+            // 归档
+            NSString *key = [NSString stringWithUTF8String:name];
+            id value = [decoder decodeObjectForKey:key];
+            // 设置到成员变量身上
+            [self setValue:value forKey:key];
+        }
+        free(ivars);
+    }
+    return self;
+}
+</code></pre><h2 id="实现字典转模型的自动转换"><a href="#实现字典转模型的自动转换" class="headerlink" title="实现字典转模型的自动转换"></a>实现字典转模型的自动转换</h2><pre><code>字典转模型的应用可以说是每个app必然会使用的场景,虽然实现的方式略有不同，但是原理都是一致的：遍历模型中所有属性，根据模型的属性名，去字典中查找key，取出对应的值，给模型的属性赋值。
+像几个出名的开源库：JSONModel,MJExtension等都是通过这种方式实现的。
+// 创建对应模型对象
+id objc = [[self alloc] init];
+unsigned int count = 0;
+// 1.获取成员属性数组
+Ivar *ivarList = class_copyIvarList(self, &amp;count);
+// 2.遍历所有的成员属性名,一个一个去字典中取出对应的value给模型属性赋值
+for (int i = 0; i &lt; count; i++) {
+    // 2.1 获取成员属性
+    Ivar ivar = ivarList[i];
+    // 2.2 获取成员属性名 C -&gt; OC 字符串
+    NSString *ivarName = [NSString stringWithUTF8String:ivar_getName(ivar)];
+    // 2.3 _成员属性名 =&gt; 字典key
+    NSString *key = [ivarName substringFromIndex:1];
+    // 2.4 去字典中取出对应value给模型属性赋值
+    id value = dict[key];
+    // 获取成员属性类型
+    NSString *ivarType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
+}
+如果模型比较简单，只有NSString，NSNumber等，这样就可以搞定了。但是如果模型含有NSArray，或者NSDictionary等，那么我们还需要进行第二步转换。
+if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![ivarType containsString:@&quot;NS&quot;]) { 
+    //  是字典对象,并且属性名对应类型是自定义类型
+    // 处理类型字符串 @\&quot;User\&quot; -&gt; User
+    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;@&quot; withString:@&quot;&quot;];
+    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;\&quot;&quot; withString:@&quot;&quot;];
+    // 自定义对象,并且值是字典
+    // value:user字典 -&gt; User模型
+    // 获取模型(user)类对象
+    Class modalClass = NSClassFromString(ivarType);
+    // 字典转模型
+    if (modalClass) {
+        // 字典转模型 user
+        value = [modalClass objectWithDict:value];
+    }
+}
+if ([value isKindOfClass:[NSArray class]]) {
+    // 判断对应类有没有实现字典数组转模型数组的协议
+    if ([self respondsToSelector:@selector(arrayContainModelClass)]) {
+        // 转换成id类型，就能调用任何对象的方法
+        id idSelf = self;
+        // 获取数组中字典对应的模型
+        NSString *type =  [idSelf arrayContainModelClass][key];
+        // 生成模型
+        Class classModel = NSClassFromString(type);
+        NSMutableArray *arrM = [NSMutableArray array];
+        // 遍历字典数组，生成模型数组
+        for (NSDictionary *dict in value) {
+            // 字典转模型
+            id model =  [classModel objectWithDict:dict];
+            [arrM addObject:model];
+        }
+        // 把模型数组赋值给value
+        value = arrM;
+    }
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/26/M_Swift91算法之数学计算/" itemprop="url">
                   算法之数学计算
                 </a>
@@ -1230,379 +1783,6 @@ function heapSort(arr) {
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/26/M_Swift92算法之数组操作/" itemprop="url">
-                  算法之数组操作
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-26T09:46:15+08:00" content="2018-07-26">
-              2018-07-26
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="数组去重"><a href="#数组去重" class="headerlink" title="数组去重"></a>数组去重</h2><pre><code>// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
-function unique(arr) {
-    var res = [arr[0]];
-    for (var i = 0; i &lt; arr.length; i++) {
-        var repeat = false;
-        for (var j = 0; j &lt; res.length; i++) {
-            if (arr[i] == res[j]) {
-                repeat = true;
-                break;
-            }
-        }
-        if (!repeat) {
-            res.push(arr[i]);
-        }
-    }
-    return res;
-}
-// 思路：每次取出原数组的元素，然后再对象中访问这个属性，如果存在就说明重复
-function unique(arr) {
-    var res = [];
-    var json = {};
-    for (var i = 0; i &lt; arr.length; i++) {
-        if (!json[arr[i]]) {
-            res.push(arr[i]);
-            json[arr[i]] = 1;
-        }
-    }
-    return res;
-}
-// 利用下标查询
-function unique(arr) {
-    var newArr = [arr[0]];
-    for (var i = 0; i &lt; arr.length; i++) {
-        if (newArr.indexOf(arr[i]) == -1) {
-            newArr.push(arr[i]);
-        }
-    }
-    return newArr;
-}
-
-// 两个数组中相同的元素和不同的元素
-// 合并两数组，并删除重复元素(代码类似于数组去重，只不过都是比较两个数组)
-</code></pre><h2 id="对数组进行反转"><a href="#对数组进行反转" class="headerlink" title="对数组进行反转"></a>对数组进行反转</h2><pre><code>function reverae(arr) {
-    var j = arr.length - 1;
-    for (var i = 0; i &lt; arr.length; i++) {
-        var temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-        j--;
-    }
-}
-</code></pre><h2 id="获取数组中连续的元素"><a href="#获取数组中连续的元素" class="headerlink" title="获取数组中连续的元素"></a>获取数组中连续的元素</h2><pre><code>function fn(arr){
-  var result = [],
-      i = 0;
-  result[i] = [arr[0]];
-  arr.reduce(function(prev, cur){
-    cur-prev === 1 ? result[i].push(cur) : result[++i] = [cur];
-    return cur;
-  });
-  return result;
-}
-</code></pre><h2 id="数组合并-先排序，再合并"><a href="#数组合并-先排序，再合并" class="headerlink" title="数组合并(先排序，再合并)"></a>数组合并(先排序，再合并)</h2><pre><code>// 合并两个有序数组
-function mergeOrder(arr1,arr2) {
-    var result = arr1 +arr2;
-    var m = 0;
-    var n = 0;
-    for (var i = 0; i &lt; result.length; i++) {
-        if (m == arr1.length) {
-            result[i] = arr2[n++];
-        }else if (n==arr2.length) {
-            result[i] = arr1[m++];
-        }else{
-            if (arr1[m] &lt; arr2[n]) {
-                result[i] = arr1[m++];
-            }else{
-                result[i] = arr2[n++];
-            }
-        }
-
-    }
-    return result;
-}
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/03/N_Android15与时俱进/" itemprop="url">
-                  Android与时俱进
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T16:44:08+08:00" content="2018-07-03">
-              2018-07-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Toolbar，SearchView，SlidingPaneLayout，RecyclerView，RecyclerView.Adapter，LinearLayoutManager，GridLayoutManager，StaggeredGridLayoutManager，SwipeRefreshLayout，导航视图NavigationView，画廊Gallery，图像切换ImageSwitcher，卡片视图CardView，视频播放方式：使用MediaPlayer结合SurfaceView进行播放<br>VideoView结合MediaController<br>MediaRecorder/MediaPlayer<br>屏幕捕捉：给屏幕截图用到了ImageReader，它的常用方法说明如下：<br>把用户在屏幕上的操作行为录制成视频，我们称之为录屏<br>集合动画AnimationSet，属性动画组合AnimatorSet，插值器和估值器<br>水波图形RippleDrawable，水波动画RippleView<br>矢量图形VectorDrawable，组标签group，根标签vector，路径标签path<br>协调布局CoordinatorLayout，应用栏布局AppBarLayout<br>可折叠工具栏布局CollapsingToolbarLayout<br>自定义行为Behavior<br>文本输入布局TextInputLayout</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/03/N_Android16进阶/" itemprop="url">
-                  Android进阶
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T15:52:53+08:00" content="2018-07-03">
-              2018-07-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>接口interface</p>
-<p>interface是一些功能的集合，但它只定义了对象必须实现的成员，而不包含成员的实现代码，成员的具体代码由实现接口的类提供。Android对接口的使用场景主要有三类：事件监听器接口、对象序列化结构、线程类相关接口。<br>事件监听器接口</p>
-<p>这类接口名称一般以Listener或者CallBack结尾，监听器定义了事件触发时应该进行的操作方法，具体操作步骤需要自定义实现。常见的监听器接口有：<br>对象序列化接口<br>线程类相关接口<br>抽象类abtract class<br>部分基础控件<br>适配器<br>适配器在实际使用时都要派生重写，所以sdk里的适配器类都是抽象类或接口，包括：<br>1、列表适配器，如ListAdapter、SpinnerAdapter、BaseAdapter等等；<br>2、页面适配器，如PagerAdapter、FragmentPagerAdapter、FragmentStatePagerAdapter等等</p>
-<p>静态static<br>静态方法<br>1、静态方法中只能调用静态方法，不能调用非静态方法；<br>静态变量在运行时一般无需修改，如果在运行时修改了变量值，可能会得到非预期的结果。<br>2、静态方法中只能使用静态的类变量，不能使用非静态的类变量；<br>3、静态方法中不能使用this和super，即使this后面跟的是静态类变量也不行；<br>静态类<br>静态类指的是名称前加了static修饰符的类，一般用于开放给外部使用的类中内部类，这样就可以通过“上级类的类名.内部类的类名”来访问。比如说AlertDialog类的内部类Builder，可通过AlertDialog.Builder来调用；再比如Build类的内部类VERSION，可通过Build.VERSION来调用。<br>终态final</p>
-<p>单例模式有三个特点；<br>1、某个类只能有一个实例；<br>2、它要自行创建这个实例；<br>3、它只有唯一途径向整个系统提供这个实例。<br>public class SingletonInner {</p>
-<p>private static class SingletonHolder {<br>private static SingletonInner instance = new SingletonInner();<br>}</p>
-<p>private SingletonInner() {<br>}</p>
-<p>public static SingletonInner getInstance() {<br>return SingletonHolder.instance;<br>}</p>
-<p>}<br>类工厂</p>
-<p>类工厂的输入参数为类名，这得用模板来表示了。类工厂用的就比较多，比如java的容器类ArrayList、HashMap等等都用到了类工厂</p>
-<p>策略模式<br>装饰模式</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1648,7 +1828,7 @@ function mergeOrder(arr1,arr2) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">163</span>
+              <span class="site-state-item-count">166</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
