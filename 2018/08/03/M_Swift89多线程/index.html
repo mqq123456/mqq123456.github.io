@@ -1,0 +1,619 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU，则它根本不可能真正同时进行一个以上的线程，它只能把CPU运行时间划分为若干了时间段，再将时间段分配给各个线程执行，在一个时间段的线程代码运行时，其他线程处于挂起状。这种方式我们称之为并发。
+2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，两个线程互相不抢占">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程">
+<meta property="og:url" content="http://yoursite.com/2018/08/03/M_Swift89多线程/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU，则它根本不可能真正同时进行一个以上的线程，它只能把CPU运行时间划分为若干了时间段，再将时间段分配给各个线程执行，在一个时间段的线程代码运行时，其他线程处于挂起状。这种方式我们称之为并发。
+2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，两个线程互相不抢占">
+<meta property="og:updated_time" content="2018-08-03T06:57:09.077Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程">
+<meta name="twitter:description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU，则它根本不可能真正同时进行一个以上的线程，它只能把CPU运行时间划分为若干了时间段，再将时间段分配给各个线程执行，在一个时间段的线程代码运行时，其他线程处于挂起状。这种方式我们称之为并发。
+2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，两个线程互相不抢占">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/03/M_Swift89多线程/"/>
+
+  <title> 多线程 | Men的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Men的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">欢迎光临！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            博文
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                多线程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-03T10:06:32+08:00" content="2018-08-03">
+              2018-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="并发和并行的区别"><a href="#并发和并行的区别" class="headerlink" title="并发和并行的区别"></a>并发和并行的区别</h2><pre><code>1.并发，当有多个线程在操作时，如果系统只有一个CPU，则它根本不可能真正同时进行一个以上的线程，它只能把CPU运行时间划分为若干了时间段，再将时间段分配给各个线程执行，在一个时间段的线程代码运行时，其他线程处于挂起状。这种方式我们称之为并发。
+2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，两个线程互相不抢占cpu资源，可以同时进行，这种方式称为并行。
+区别：并发和并行是既相似又有区别的两个概念，并行是指两个活着多个时间在同一时刻发生；而并发是指两个或多个事件同一时间间隔内发生。
+</code></pre><h2 id="你理解的多线程"><a href="#你理解的多线程" class="headerlink" title="你理解的多线程"></a>你理解的多线程</h2><h3 id="第一种：pthread"><a href="#第一种：pthread" class="headerlink" title="第一种：pthread"></a>第一种：pthread</h3><pre><code>a.特点：
+    1）一套通用的多线程API
+    2）适用于Unix\Linux\Windows等系统
+    3）跨平台\可移植
+    4）使用难度大
+b.使用语言：c语言
+c.使用频率：几乎不用
+d.线程生命周期：由程序员进行管理
+</code></pre><h3 id="第二种：NSThread"><a href="#第二种：NSThread" class="headerlink" title="第二种：NSThread"></a>第二种：NSThread</h3><pre><code>a.特点：
+    1）使用更加面向对象
+    2）简单易用，可直接操作线程对象
+    b.使用语言：OC语言
+    c.使用频率：偶尔使用
+    d.线程生命周期：由程序员进行管理
+</code></pre><h3 id="第三种：GCD"><a href="#第三种：GCD" class="headerlink" title="第三种：GCD"></a>第三种：GCD</h3><pre><code>a.特点：
+    1）旨在替代NSThread等线程技术
+    2）充分利用设备的多核（自动）
+b.使用语言：C语言
+c.使用频率：经常使用
+d.线程生命周期：自动管理
+</code></pre><h3 id="第四种：NSOperation"><a href="#第四种：NSOperation" class="headerlink" title="第四种：NSOperation"></a>第四种：NSOperation</h3><pre><code>a.特点：
+    1）基于GCD（底层是GCD）
+    2）比GCD多了一些更简单实用的功能
+    3）使用更加面向对象
+b.使用语言：OC语言
+c.使用频率：经常使用
+d.线程生命周期：自动管理
+</code></pre><h2 id="多线程的原理"><a href="#多线程的原理" class="headerlink" title="多线程的原理"></a>多线程的原理</h2><pre><code>同一时间，CPU只能处理1条线程，只有1条线程在工作（执行）
+多线程并发（同时）执行，其实是CPU快速地在多条线程之间调度（切换）
+如果CPU调度线程的时间足够快，就造成了多线程并发执行的假象
+思考：如果线程非常非常多，会发生什么情况？
+CPU会在N多线程之间调度，CPU会累死，消耗大量的CPU资源
+每条线程被调度执行的频次会降低（线程的执行效率降低）
+</code></pre><h2 id="多线程的优点"><a href="#多线程的优点" class="headerlink" title="多线程的优点"></a>多线程的优点</h2><pre><code>能适当提高程序的执行效率    
+能适当提高资源利用率（CPU、内存利用率）
+</code></pre><h2 id="多线程的缺点"><a href="#多线程的缺点" class="headerlink" title="多线程的缺点"></a>多线程的缺点</h2><pre><code>开启线程需要占用一定的内存空间（默认情况下，主线程占用1M，子线程占用512KB），如果开启大量的线程，会占用大量的内存空间，降低程序的性能
+线程越多，CPU在调度线程上的开销就越大
+程序设计更加复杂：比如线程之间的通信、多线程的数据共享
+</code></pre><h2 id="你更倾向于哪一种？"><a href="#你更倾向于哪一种？" class="headerlink" title="你更倾向于哪一种？"></a>你更倾向于哪一种？</h2><h3 id="倾向于GCD："><a href="#倾向于GCD：" class="headerlink" title="倾向于GCD："></a>倾向于GCD：</h3><pre><code>GCD
+技术是一个轻量的，底层实现隐藏的神奇技术，我们能够通过GCD和block轻松实现多线程编程，有时候，GCD相比其他系统提供的多线程方法更加有效，当然，有时候GCD不是最佳选择，另一个多线程编程的技术
+NSOprationQueue 让我们能够将后台线程以队列方式依序执行，并提供更多操作的入口，这和 GCD 的实现有些类似。
+这种类似不是一个巧合，在早期，MacOX
+与 iOS 的程序都普遍采用Operation
+Queue来进行编写后台线程代码，而之后出现的GCD技术大体是依照前者的原则来实现的，而随着GCD的普及，在iOS 4 与 MacOS X
+10.6以后，Operation Queue的底层实现都是用GCD来实现的。
+那这两者直接有什么区别呢？
+1.GCD是底层的C语言构成的API，而NSOperationQueue及相关对象是Objc的对象。在GCD中，在队列中执行的是由block构成的任务，这是一个轻量级的数据结构；而Operation作为一个对象，为我们提供了更多的选择；
+2.在NSOperationQueue中，我们可以随时取消已经设定要准备执行的任务(当然，已经开始的任务就无法阻止了)，而GCD没法停止已经加入queue的block(其实是有的，但需要许多复杂的代码)；
+3.NSOperation能够方便地设置依赖关系，我们可以让一个Operation依赖于另一个Operation，这样的话尽管两个Operation处于同一个并行队列中，但前者会直到后者执行完毕后再执行；
+4.我们能将KVO应用在NSOperation中，可以监听一个Operation是否完成或取消，这样子能比GCD更加有效地掌控我们执行的后台任务；
+5.在NSOperation中，我们能够设置NSOperation的priority优先级，能够使同一个并行队列中的任务区分先后地执行，而在GCD中，我们只能区分不同任务队列的优先级，如果要区分block任务的优先级，也需要大量的复杂代码；
+6.我们能够对NSOperation进行继承，在这之上添加成员变量与成员方法，提高整个代码的复用度，这比简单地将block任务排入执行队列更有自由度，能够在其之上添加更多自定制的功能。
+总的来说，Operationqueue提供了更多你在编写多线程程序时需要的功能，并隐藏了许多线程调度，线程取消与线程优先级的复杂代码，为我们提供简单的API入口。从编程原则来说，一般我们需要尽可能的使用高等级、封装完美的API，在必须时才使用底层API。但是我认为当我们的需求能够以更简单的底层代码完成的时候，简洁的GCD或许是个更好的选择，而Operationqueue 为我们提供能更多的选择。
+</code></pre><h3 id="倾向于：NSOperation"><a href="#倾向于：NSOperation" class="headerlink" title="倾向于：NSOperation"></a>倾向于：NSOperation</h3><pre><code>NSOperation相对于GCD：
+1，NSOperation拥有更多的函数可用，具体查看api。NSOperationQueue 是在GCD基础上实现的，只不过是GCD更高一层的抽象。
+2，在NSOperationQueue中，可以建立各个NSOperation之间的依赖关系。
+3，NSOperationQueue支持KVO。可以监测operation是否正在执行（isExecuted）、是否结束（isFinished），是否取消（isCanceld）
+4，GCD 只支持FIFO 的队列，而NSOperationQueue可以调整队列的执行顺序（通过调整权重）。NSOperationQueue可以方便的管理并发、NSOperation之间的优先级。
+使用NSOperation的情况：各个操作之间有依赖关系、操作需要取消暂停、并发管理、控制操作之间优先级，限制同时能执行的线程数量.让线程在某时刻停止/继续等。
+使用GCD的情况：一般的需求很简单的多线程操作，用GCD都可以了，简单高效。
+从编程原则来说，一般我们需要尽可能的使用高等级、封装完美的API，在必须时才使用底层API。
+当需求简单，简洁的GCD或许是个更好的选择，而Operation queue 为我们提供能更多的选择。
+</code></pre><h2 id="ios-几种线程锁"><a href="#ios-几种线程锁" class="headerlink" title="ios 几种线程锁"></a>ios 几种线程锁</h2><pre><code>https://www.jianshu.com/p/35dd92bcfe8c
+@synchronized
+NSLock 对象锁
+NSRecursiveLock 递归锁
+NSConditionLock 条件锁
+pathread_mutex 互斥锁（c语言）
+dispatch_semaphore 信号量实现加锁 （GCD）
+OSSpinLock (不建议使用)
+追问一：自旋和互斥对比？
+相同点：都能保证同一时间只有一个线程访问共享资源。都能保证线程安全。
+不同点：
+互斥锁：如果共享数据已经有其他线程加锁了，线程会进入休眠状态等待锁。一旦被访问的资源被解锁，则等待资源的线程会被唤醒。
+自旋锁：如果共享数据已经有其他线程加锁了，线程会以死循环的方式等待锁，一旦被访问的资源被解锁，则等待资源的线程会立即执行。
+自旋锁的效率高于互斥锁。
+由于自旋时不释放CPU，因而持有自旋锁的线程应该尽快释放自旋锁，否则等待该自旋锁的线程会一直在哪里自旋，这就会浪费CPU时间。
+持有自旋锁的线程在sleep之前应该释放自旋锁以便其他可以获得该自旋锁。内核编程中，如果持有自旋锁的代码sleep了就可能导致整个系统挂起。
+</code></pre><h2 id="GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><a href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）" class="headerlink" title="GCD的一些常用的函数？（group， barrier，信号量 线程同步）"></a>GCD的一些常用的函数？（group， barrier，信号量 线程同步）</h2><p>延迟函数dispatch_after<br>一次性 dispatch_once<br>dispatch_get_global_queue</p>
+<ol>
+<li>dispatch_group_async<br>dispatch_group_notify<br>dispatch_set_target_queue： 主要用来给新建的queue设置优先级<br>dispatch_group_notify dispatch group可以在group中的dispatch queue都执行完后，通过其回调<br>dispatch_barrier_async是一个可以让代签任务等待其他任务完成再执行的函数</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/26/M_Swift91算法之数学计算/" rel="next" title="算法之数学计算">
+                <i class="fa fa-chevron-left"></i> 算法之数学计算
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/12388663?v=3&u=20e1503339de9acf72fc1184728c2afca6ae9b4a&s=140"
+               alt="门乾强" />
+          <p class="site-author-name" itemprop="name">门乾强</p>
+          <p class="site-description motion-element" itemprop="description">博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">159</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发和并行的区别"><span class="nav-number">1.</span> <span class="nav-text">并发和并行的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你理解的多线程"><span class="nav-number">2.</span> <span class="nav-text">你理解的多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一种：pthread"><span class="nav-number">2.1.</span> <span class="nav-text">第一种：pthread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二种：NSThread"><span class="nav-number">2.2.</span> <span class="nav-text">第二种：NSThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三种：GCD"><span class="nav-number">2.3.</span> <span class="nav-text">第三种：GCD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四种：NSOperation"><span class="nav-number">2.4.</span> <span class="nav-text">第四种：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的原理"><span class="nav-number">3.</span> <span class="nav-text">多线程的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的优点"><span class="nav-number">4.</span> <span class="nav-text">多线程的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的缺点"><span class="nav-number">5.</span> <span class="nav-text">多线程的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你更倾向于哪一种？"><span class="nav-number">6.</span> <span class="nav-text">你更倾向于哪一种？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于GCD："><span class="nav-number">6.1.</span> <span class="nav-text">倾向于GCD：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于：NSOperation"><span class="nav-number">6.2.</span> <span class="nav-text">倾向于：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios-几种线程锁"><span class="nav-number">7.</span> <span class="nav-text">ios 几种线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><span class="nav-number">8.</span> <span class="nav-text">GCD的一些常用的函数？（group， barrier，信号量 线程同步）</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
