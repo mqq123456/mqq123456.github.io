@@ -1401,6 +1401,157 @@ if ([value isKindOfClass:[NSArray class]]) {
             
               
                 
+                <a class="post-title-link" href="/2018/07/29/M_Swift100Runtime相关方法/" itemprop="url">
+                  Runtime
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-29T11:48:50+08:00" content="2018-07-29">
+              2018-07-29
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>今天有时间，真的是好好研究了一下Runtime，这里就汇总一下吧<br>Runtime我们常用的功能</p>
+<h2 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1.基本概念"></a>1.基本概念</h2><pre><code>Objective-C 从三种不同的层级上与 Runtime 系统进行交互，
+分别是通过 Objective-C 源代码，
+通过 Foundation 框架的NSObject类定义的方法，
+通过对 runtime 函数的直接调用。
+RunTime简称运行时,就是系统在运行的时候的一些机制，其中最主要的是消息机制。
+每一个oc的方法，底层必然有一个与之对应的runtime方法。
+</code></pre><h2 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h2><h3 id="获取属性列表"><a href="#获取属性列表" class="headerlink" title="获取属性列表"></a>获取属性列表</h3><pre><code>objc_property_t *propertyList = class_copyPropertyList([self class], &amp;count);
+for (unsigned int i=0; i&lt;count; i++) {
+const char *propertyName = property_getName(propertyList[i]);
+NSLog(@&quot;property----&gt;%@&quot;, [NSString stringWithUTF8String:propertyName]);
+}
+</code></pre><h3 id="获取方法列表"><a href="#获取方法列表" class="headerlink" title="获取方法列表"></a>获取方法列表</h3><pre><code>Method *methodList = class_copyMethodList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Method method = methodList[i];
+NSLog(@&quot;method----&gt;%@&quot;, NSStringFromSelector(method_getName(method)));
+}
+</code></pre><h3 id="获取成员变量列表"><a href="#获取成员变量列表" class="headerlink" title="获取成员变量列表"></a>获取成员变量列表</h3><pre><code>Ivar *ivarList = class_copyIvarList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Ivar myIvar = ivarList[i];
+const char *ivarName = ivar_getName(myIvar);
+NSLog(@&quot;Ivar----&gt;%@&quot;, [NSString stringWithUTF8String:ivarName]);
+}
+</code></pre><h3 id="获取协议列表"><a href="#获取协议列表" class="headerlink" title="获取协议列表"></a>获取协议列表</h3><pre><code>__unsafe_unretained Protocol **protocolList = class_copyProtocolList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Protocol *myProtocal = protocolList[i];
+const char *protocolName = protocol_getName(myProtocal);
+NSLog(@&quot;protocol----&gt;%@&quot;, [NSString stringWithUTF8String:protocolName]);
+}
+</code></pre><h3 id="获得类方法"><a href="#获得类方法" class="headerlink" title="获得类方法"></a>获得类方法</h3><pre><code>Class PersonClass = object_getClass([Person class]);
+SEL oriSEL = @selector(test1);
+Method oriMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
+</code></pre><h3 id="获取实例方法"><a href="#获取实例方法" class="headerlink" title="获取实例方法"></a>获取实例方法</h3><pre><code>Class PersonClass = object_getClass([xiaoming class]);
+SEL oriSEL = @selector(test2);
+Method cusMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
+</code></pre><h3 id="添加一个实例变量"><a href="#添加一个实例变量" class="headerlink" title="添加一个实例变量"></a>添加一个实例变量</h3><pre><code>/*
+参数一、类名
+参数二、属性名称
+参数三、开辟字节长度
+参数四、对其方式
+参数五、参数类型 “@” 官方解释 An object (whether statically typed or typed id) （对象 静态类型或者id类型） 具体类型可参照官方文档
+return: BOOL 是否添加成功
+*/
+BOOL isSuccess = class_addIvar(MyClass, &quot;addIvar&quot;, sizeof(NSString *), 0, &quot;@&quot;);
+</code></pre><h3 id="添加方法"><a href="#添加方法" class="headerlink" title="添加方法"></a>添加方法</h3><pre><code>/*
+参数一、类名
+参数二、SEL 添加的方法名字
+参数三、IMP指针 (IMP就是Implementation的缩写，它是指向一个方法实现的指针，每一个方法都有一个对应的IMP)
+参数四、其中types参数为&quot;i@:@“，按顺序分别表示：具体类型可参照官方文档
+i 返回值类型int，若是v则表示void
+@ 参数id(self)
+: SEL(_cmd)
+@ id(str)
+V@:表示返回值是void 带有SEL参数 （An object (whether statically typed or typed id)）
+*/
+BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+</code></pre><h3 id="替换方法"><a href="#替换方法" class="headerlink" title="替换方法"></a>替换方法</h3><pre><code>class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+</code></pre><h3 id="交换方法"><a href="#交换方法" class="headerlink" title="交换方法"></a>交换方法</h3><pre><code>method_exchangeImplementations(oriMethod, cusMethod);
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/26/M_Swift91算法之数学计算/" itemprop="url">
                   算法之数学计算
                 </a>
@@ -1517,272 +1668,6 @@ binarySeach(arr,25,0,arr.length-1);
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/26/M_Swift90算法之排序/" itemprop="url">
-                  算法之排序
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-26T11:06:22+08:00" content="2018-07-26">
-              2018-07-26
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h2><pre><code>思想：相邻连个之间，较小的放前面
-function maopao(arr) {
-    for (var i = 0; i &lt; arr.length; i++) {
-        for (var j = 0; j &lt; arr.length; j++) {
-            if (arr[i] &gt; arr[j]) {
-                var temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
-            }
-        }
-    }
-}
-</code></pre><h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h2><pre><code>每便利一次，选择一个最小的放最前面
-function xuanze(arr) {
-    for (var i = 0; i &lt; arr.length; i++) {
-        var min = i;
-        for (var j = 0; j &lt; arr.length; j++) {
-            if (arr[j] &lt;arr[i]) {
-                min = j;
-            }
-        }
-        if (min != i) {
-            var temp = arr[i];
-            arr[i] = arr[min];
-            arr[min] = arr[i];
-        }
-    }
-}
-</code></pre><h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><pre><code>function insertSort(arr) {
-    var len = arr.length;
-    var preIndex,current;
-    for (var i = 1; i &lt; len; i++) {
-        preIndex = i -1;
-        current = arr[i];
-        while(preIndex &gt;=0 &amp;&amp; arr[preIndex] &gt; current) {
-            arr[preIndex +1] = arr[preIndex];
-            preIndex --;
-        }
-        arr[preIndex +1] = current;
-    }
-}
-</code></pre><h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h2><pre><code>希尔排序也是一种插入排序
-不同之处在于，它会优先比较距离较远的元素。希尔排序的核心在于间隔序列的设定。
-function shellSort(arr) {
-    var len = arr.length;
-    var temp,gap =1;
-    while(gap &lt; len/3){
-        gap = gap *3 +1;
-    }
-    for (gap; gap&gt; 0; gap = Math.floor(gap/3)) {
-        for (var i = gap; i &lt; len; i++) {
-            temp = arr[i];
-            for (var j = i - gap; j &gt;0 &amp;&amp; arr[j] &gt; temp; j -= gap) {
-                arr[j+gap] = arr[j];
-            }
-            arr[j+gap] = temp;
-        }
-    }
-    return arr;
-}
-</code></pre><h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><pre><code>作为一种典型的分而治之思想的算法应用
-function mergeSort(arr) {  //采用自上而下的递归方法
-    var len = arr.length;
-    if(len &lt; 2) {
-        return arr;
-    }
-    var middle = Math.floor(len / 2),
-        left = arr.slice(0, middle),
-        right = arr.slice(middle);
-    return merge(mergeSort(left), mergeSort(right));
-}
-
-function merge(left, right)
-{
-    var result = [];
-
-    while (left.length&gt;0 &amp;&amp; right.length&gt;0) {
-        if (left[0] &lt;= right[0]) {
-            result.push(left.shift());
-        } else {
-            result.push(right.shift());
-        }
-    }
-
-    while (left.length)
-        result.push(left.shift());
-
-    while (right.length)
-        result.push(right.shift());
-
-    return result;
-}
-</code></pre><h2 id="快速排序（Quick-Sort）"><a href="#快速排序（Quick-Sort）" class="headerlink" title="快速排序（Quick Sort）"></a>快速排序（Quick Sort）</h2><pre><code>分而治之思想在排序算法。本质上来看，快速排序应该算是在冒泡排序基础上的递归分治法。
-先是把第一个挖出来，作为基值；然后先是从右向左，对比基值，如果如果小，那么放到坑里；然后在从左往右对比基值，如果大，那么放到坑里；当换完一轮了后，把基值放到坑里；然后在根据基值，分左右两组，递归排序；
-function quickSort(arr, left, right) {
-    var len = arr.length,
-        partitionIndex,
-        left = typeof left != &apos;number&apos; ? 0 : left,
-        right = typeof right != &apos;number&apos; ? len - 1 : right;
-
-    if (left &lt; right) {
-        partitionIndex = partition(arr, left, right);
-        quickSort(arr, left, partitionIndex-1);
-        quickSort(arr, partitionIndex+1, right);
-    }
-    return arr;
-}
-
-function partition(arr, left ,right) {     //分区操作
-    var pivot = left,                      //设定基准值（pivot）
-        index = pivot + 1;
-    for (var i = index; i &lt;= right; i++) {
-        if (arr[i] &lt; arr[pivot]) {
-            swap(arr, i, index);
-            index++;
-        }        
-    }
-    swap(arr, pivot, index - 1);
-    return index-1;
-}
-
-function swap(arr, i, j) {
-    var temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-}
-</code></pre><h2 id="堆排序（Heap-Sort）"><a href="#堆排序（Heap-Sort）" class="headerlink" title="堆排序（Heap Sort）"></a>堆排序（Heap Sort）</h2><pre><code>堆排序可以说是一种利用堆的概念来排序的选择排序。分为两种方法：
-大顶堆：每个节点的值都大于或等于其子节点的值，在堆排序算法中用于升序排列
-小顶堆：每个节点的值都小于或等于其子节点的值，在堆排序算法中用于降序排列
-var len;    //因为声明的多个函数都需要数据长度，所以把len设置成为全局变量
-
-function buildMaxHeap(arr) {   //建立大顶堆
-    len = arr.length;
-    for (var i = Math.floor(len/2); i &amp;gt;= 0; i--) {
-        heapify(arr, i);
-    }
-}
-
-function heapify(arr, i) {     //堆调整
-    var left = 2 * i + 1,
-        right = 2 * i + 2,
-        largest = i;
-
-    if (left &lt; len &amp;&amp; arr[left] &gt; arr[largest]) {
-        largest = left;
-    }
-
-    if (right &lt; len &amp;&amp; arr[right] &gt; arr[largest]) {
-        largest = right;
-    }
-
-    if (largest != i) {
-        swap(arr, i, largest);
-        heapify(arr, largest);
-    }
-}
-
-function swap(arr, i, j) {
-    var temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-}
-
-function heapSort(arr) {
-    buildMaxHeap(arr);
-
-    for (var i = arr.length-1; i &gt; 0; i--) {
-        swap(arr, 0, i);
-        len--;
-        heapify(arr, 0);
-    }
-    return arr;
-}
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1828,7 +1713,7 @@ function heapSort(arr) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">166</span>
+              <span class="site-state-item-count">167</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

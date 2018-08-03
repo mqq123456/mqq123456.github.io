@@ -228,6 +228,272 @@
             
               
                 
+                <a class="post-title-link" href="/2018/07/26/M_Swift90算法之排序/" itemprop="url">
+                  算法之排序
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-26T11:06:22+08:00" content="2018-07-26">
+              2018-07-26
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h2><pre><code>思想：相邻连个之间，较小的放前面
+function maopao(arr) {
+    for (var i = 0; i &lt; arr.length; i++) {
+        for (var j = 0; j &lt; arr.length; j++) {
+            if (arr[i] &gt; arr[j]) {
+                var temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+</code></pre><h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h2><pre><code>每便利一次，选择一个最小的放最前面
+function xuanze(arr) {
+    for (var i = 0; i &lt; arr.length; i++) {
+        var min = i;
+        for (var j = 0; j &lt; arr.length; j++) {
+            if (arr[j] &lt;arr[i]) {
+                min = j;
+            }
+        }
+        if (min != i) {
+            var temp = arr[i];
+            arr[i] = arr[min];
+            arr[min] = arr[i];
+        }
+    }
+}
+</code></pre><h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><pre><code>function insertSort(arr) {
+    var len = arr.length;
+    var preIndex,current;
+    for (var i = 1; i &lt; len; i++) {
+        preIndex = i -1;
+        current = arr[i];
+        while(preIndex &gt;=0 &amp;&amp; arr[preIndex] &gt; current) {
+            arr[preIndex +1] = arr[preIndex];
+            preIndex --;
+        }
+        arr[preIndex +1] = current;
+    }
+}
+</code></pre><h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h2><pre><code>希尔排序也是一种插入排序
+不同之处在于，它会优先比较距离较远的元素。希尔排序的核心在于间隔序列的设定。
+function shellSort(arr) {
+    var len = arr.length;
+    var temp,gap =1;
+    while(gap &lt; len/3){
+        gap = gap *3 +1;
+    }
+    for (gap; gap&gt; 0; gap = Math.floor(gap/3)) {
+        for (var i = gap; i &lt; len; i++) {
+            temp = arr[i];
+            for (var j = i - gap; j &gt;0 &amp;&amp; arr[j] &gt; temp; j -= gap) {
+                arr[j+gap] = arr[j];
+            }
+            arr[j+gap] = temp;
+        }
+    }
+    return arr;
+}
+</code></pre><h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><pre><code>作为一种典型的分而治之思想的算法应用
+function mergeSort(arr) {  //采用自上而下的递归方法
+    var len = arr.length;
+    if(len &lt; 2) {
+        return arr;
+    }
+    var middle = Math.floor(len / 2),
+        left = arr.slice(0, middle),
+        right = arr.slice(middle);
+    return merge(mergeSort(left), mergeSort(right));
+}
+
+function merge(left, right)
+{
+    var result = [];
+
+    while (left.length&gt;0 &amp;&amp; right.length&gt;0) {
+        if (left[0] &lt;= right[0]) {
+            result.push(left.shift());
+        } else {
+            result.push(right.shift());
+        }
+    }
+
+    while (left.length)
+        result.push(left.shift());
+
+    while (right.length)
+        result.push(right.shift());
+
+    return result;
+}
+</code></pre><h2 id="快速排序（Quick-Sort）"><a href="#快速排序（Quick-Sort）" class="headerlink" title="快速排序（Quick Sort）"></a>快速排序（Quick Sort）</h2><pre><code>分而治之思想在排序算法。本质上来看，快速排序应该算是在冒泡排序基础上的递归分治法。
+先是把第一个挖出来，作为基值；然后先是从右向左，对比基值，如果如果小，那么放到坑里；然后在从左往右对比基值，如果大，那么放到坑里；当换完一轮了后，把基值放到坑里；然后在根据基值，分左右两组，递归排序；
+function quickSort(arr, left, right) {
+    var len = arr.length,
+        partitionIndex,
+        left = typeof left != &apos;number&apos; ? 0 : left,
+        right = typeof right != &apos;number&apos; ? len - 1 : right;
+
+    if (left &lt; right) {
+        partitionIndex = partition(arr, left, right);
+        quickSort(arr, left, partitionIndex-1);
+        quickSort(arr, partitionIndex+1, right);
+    }
+    return arr;
+}
+
+function partition(arr, left ,right) {     //分区操作
+    var pivot = left,                      //设定基准值（pivot）
+        index = pivot + 1;
+    for (var i = index; i &lt;= right; i++) {
+        if (arr[i] &lt; arr[pivot]) {
+            swap(arr, i, index);
+            index++;
+        }        
+    }
+    swap(arr, pivot, index - 1);
+    return index-1;
+}
+
+function swap(arr, i, j) {
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+</code></pre><h2 id="堆排序（Heap-Sort）"><a href="#堆排序（Heap-Sort）" class="headerlink" title="堆排序（Heap Sort）"></a>堆排序（Heap Sort）</h2><pre><code>堆排序可以说是一种利用堆的概念来排序的选择排序。分为两种方法：
+大顶堆：每个节点的值都大于或等于其子节点的值，在堆排序算法中用于升序排列
+小顶堆：每个节点的值都小于或等于其子节点的值，在堆排序算法中用于降序排列
+var len;    //因为声明的多个函数都需要数据长度，所以把len设置成为全局变量
+
+function buildMaxHeap(arr) {   //建立大顶堆
+    len = arr.length;
+    for (var i = Math.floor(len/2); i &amp;gt;= 0; i--) {
+        heapify(arr, i);
+    }
+}
+
+function heapify(arr, i) {     //堆调整
+    var left = 2 * i + 1,
+        right = 2 * i + 2,
+        largest = i;
+
+    if (left &lt; len &amp;&amp; arr[left] &gt; arr[largest]) {
+        largest = left;
+    }
+
+    if (right &lt; len &amp;&amp; arr[right] &gt; arr[largest]) {
+        largest = right;
+    }
+
+    if (largest != i) {
+        swap(arr, i, largest);
+        heapify(arr, largest);
+    }
+}
+
+function swap(arr, i, j) {
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+function heapSort(arr) {
+    buildMaxHeap(arr);
+
+    for (var i = arr.length-1; i &gt; 0; i--) {
+        swap(arr, 0, i);
+        len--;
+        heapify(arr, 0);
+    }
+    return arr;
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/26/M_Swift92算法之数组操作/" itemprop="url">
                   算法之数组操作
                 </a>
@@ -1271,100 +1537,6 @@ function mergeOrder(arr1,arr2) {
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/05/M_Swift87小思考/" itemprop="url">
-                  小思考
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-05T10:30:15+08:00" content="2018-06-05">
-              2018-06-05
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>今天也是没有什么重要的事情，昨天晚上的苹果开发者大会，发布了很多操作系统的优化，没有一件硬件产品，所以，我想，这个世界可能真的就是在变慢，这样感觉也挺好，起码，我们一时半会还没有被淘汰，但是，当我们没有事情的时候，我们应该干点什么呢，我想，是不是应该写一个app去实现一些东西，这个真的是一个我一直以来都想要去尝试的东西，因为搞这个开发。真的是你闲下来的时候就会手痒痒，这真的是一个让人头疼的问题，但是，其实创新是一件最让人头疼的问题，这就是一个麻烦了，我想我是否能够做一个东西，能够清楚的了解很多东西，就像是一些游戏，我能清楚的知道这个东西应该是什么，应该怎么做，应该怎么样去做，我想做一个工具类的东西，比如说现在高考就要结束了，那么大学是哪个好，专业选哪个好，真的是一个让人头疼的问题，那么我们能不能用一个攻略的东西，让这个事情变的好一点，我想是不是应该有个东西叫做百事通，这个真的是一个让人头疼的问题。<br>我突然想到一个很有意思的问题，既然现在游戏这么火爆，微信又凭借一个朋友圈火爆四射，那么我们能不能就是来模仿一个微信和王者荣耀，就模仿一把腾讯如何。<br>现在简单的想法是这样的，我们做一个类似微信发现页面的功能，内容是王者荣耀，这样就能够很好的通用性，然后再加上很多直播等内容的丰富，能不能做到比王者荣耀助手好很多的功能，我现在看王者荣耀助手，感觉很无聊，感觉一点都没有用，还有就是你的很多功能不能得到很好的发展。<br>现在我定义一下，这么一个app，他首先的定位是工具类。然后能够直播，然后能够慢动作分析。<br>我想现在像nba一样，一场比赛都会有很多慢动作分析，那么我们能不能分析局势啊，我们能不能把王者荣耀做在沙盘上进行演示？？<br>还有一个最重要的问题就是，腾讯肯定不会为我们提供这么多的权限，我们也不可能得到王者荣耀用户数据，比如账号名称，等等<br>但是，我们有英雄，就像我们是一个NBA球迷一样，你肯定有支持的球队，或者你肯定有喜欢的球员，那么这就是一个入手点。<br>我们是一个荣耀爱好者，那么你肯定就会有你喜欢玩的位置，喜欢玩的英雄。那么这就是入手点。<br>好了，应用有了，那么你能为英雄做什么呢？这就是我们的功能，说白了，每个爱好者都是想玩好游戏，但是全部的游戏攻略都普遍存在一个问题，就是对游戏认知太浅，感觉就不是一个会玩的玩家写出来的东西，这真的是一个让人头疼的问题。我也不是一个会玩的玩家，我怎么写这些东西呢？？<br>还有就是我们怎么样才能写好一本书，我曾经多次强调过，一个好的app就应该是一本书，一本很有诱惑的书，你打开之后就爱不释手的感觉，这真的很重要。但是我这个认知比较浅的人，真的能做到吗？<br>好了，也许大千网友能做到，就好了，认知很重要。我可以向所有人发起这个认知活动，应该是有好心人能够给到一个最好的答案。应该有钱就有人出来贡献吧。<br>好了，人物已经出来了，但是，就像书一样，我看完了，那么我下次再看的时候又能给我带来什么呢？更可怕的是，有的时候有些人根本不喜欢看第二遍。<br>这是一个问题，我想我们可以通过很多友好的东西来去做这些东西，我们可以添加一些东西，比如说书签，可以让用户自己编写一些东西，让用户能够更清楚的认识到自己的不足。<br>就像打篮球一样，我们每次都想找几个人打，每次打完，都没有发现自己有什么进步，这真的让人头疼。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1410,7 +1582,7 @@ function mergeOrder(arr1,arr2) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">166</span>
+              <span class="site-state-item-count">167</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
