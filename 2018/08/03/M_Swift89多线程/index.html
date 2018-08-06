@@ -92,7 +92,7 @@
 <meta property="og:site_name" content="Men的博客">
 <meta property="og:description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU，则它根本不可能真正同时进行一个以上的线程，它只能把CPU运行时间划分为若干了时间段，再将时间段分配给各个线程执行，在一个时间段的线程代码运行时，其他线程处于挂起状。这种方式我们称之为并发。
 2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，两个线程互相不抢占">
-<meta property="og:updated_time" content="2018-08-03T06:57:09.077Z">
+<meta property="og:updated_time" content="2018-08-06T11:05:03.299Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多线程">
 <meta name="twitter:description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU，则它根本不可能真正同时进行一个以上的线程，它只能把CPU运行时间划分为若干了时间段，再将时间段分配给各个线程执行，在一个时间段的线程代码运行时，其他线程处于挂起状。这种方式我们称之为并发。
@@ -352,9 +352,21 @@ OSSpinLock (不建议使用)
 持有自旋锁的线程在sleep之前应该释放自旋锁以便其他可以获得该自旋锁。内核编程中，如果持有自旋锁的代码sleep了就可能导致整个系统挂起。
 </code></pre><h2 id="GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><a href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）" class="headerlink" title="GCD的一些常用的函数？（group， barrier，信号量 线程同步）"></a>GCD的一些常用的函数？（group， barrier，信号量 线程同步）</h2><p>延迟函数dispatch_after<br>一次性 dispatch_once<br>dispatch_get_global_queue</p>
 <ol>
-<li>dispatch_group_async<br>dispatch_group_notify<br>dispatch_set_target_queue： 主要用来给新建的queue设置优先级<br>dispatch_group_notify dispatch group可以在group中的dispatch queue都执行完后，通过其回调<br>dispatch_barrier_async是一个可以让代签任务等待其他任务完成再执行的函数</li>
+<li>dispatch_group_async<br>dispatch_group_notify<br>dispatch_set_target_queue： 主要用来给新建的queue设置优先级<br>dispatch_group_notify dispatch group可以在group中的dispatch queue都执行完后，通过其回调<br>dispatch_barrier_async是一个可以让代签任务等待其他任务完成再执行的函数<h1 id="是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？"><a href="#是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？" class="headerlink" title="是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？"></a>是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？</h1>GCD是纯C语言的API 。NSOperationQueue是基于GCD的OC的封装。<br>GCD只支持FIFO队列，NSOperationQueue可以方便设置执行顺序，设置最大的并发数量。<br>NSOperationQueue可是方便的设置operation之间的依赖关系，GCD则需要很多代码。<br>NSOperationQueue支持KVO，可以检测operation是否正在执行（isExecuted）,是否结束（isFinished）,是否取消（isCanceled）<br>GCD的执行速度比NSOperationQueue快。<br>使用场合：<br>任务之间不太相互依赖：GCD<br>任务之间有依赖或要监听任务的执行情况：NSOperationQueue</li>
 </ol>
-
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><pre><code>-(void)clickButton {
+    dispatch_sync(dispath_get_main_queue(), ^(void){
+        NSLog(&quot;test&quot;);
+    });
+}
+以上代码座位一个UIButton的响应方法有什么问题，能看到log吗？
+原因如下：
+在ios使用 dispatch_sync(dispatch_get_main_queue()^(){block体})；
+dispath向主队列加一个同步的block；
+此时主队列在等待    dispatch_sync(dispatch_get_main_queue()，^(){block体})；执行
+dispatch_sync在等待主队列执行完毕。
+造成死锁。
+</code></pre>
       
     </div>
 
@@ -457,7 +469,7 @@ OSSpinLock (不建议使用)
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">168</span>
+              <span class="site-state-item-count">170</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -489,7 +501,7 @@ OSSpinLock (不建议使用)
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发和并行的区别"><span class="nav-number">1.</span> <span class="nav-text">并发和并行的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你理解的多线程"><span class="nav-number">2.</span> <span class="nav-text">你理解的多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一种：pthread"><span class="nav-number">2.1.</span> <span class="nav-text">第一种：pthread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二种：NSThread"><span class="nav-number">2.2.</span> <span class="nav-text">第二种：NSThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三种：GCD"><span class="nav-number">2.3.</span> <span class="nav-text">第三种：GCD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四种：NSOperation"><span class="nav-number">2.4.</span> <span class="nav-text">第四种：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的原理"><span class="nav-number">3.</span> <span class="nav-text">多线程的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的优点"><span class="nav-number">4.</span> <span class="nav-text">多线程的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的缺点"><span class="nav-number">5.</span> <span class="nav-text">多线程的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你更倾向于哪一种？"><span class="nav-number">6.</span> <span class="nav-text">你更倾向于哪一种？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于GCD："><span class="nav-number">6.1.</span> <span class="nav-text">倾向于GCD：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于：NSOperation"><span class="nav-number">6.2.</span> <span class="nav-text">倾向于：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios-几种线程锁"><span class="nav-number">7.</span> <span class="nav-text">ios 几种线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><span class="nav-number">8.</span> <span class="nav-text">GCD的一些常用的函数？（group， barrier，信号量 线程同步）</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发和并行的区别"><span class="nav-number">1.</span> <span class="nav-text">并发和并行的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你理解的多线程"><span class="nav-number">2.</span> <span class="nav-text">你理解的多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一种：pthread"><span class="nav-number">2.1.</span> <span class="nav-text">第一种：pthread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二种：NSThread"><span class="nav-number">2.2.</span> <span class="nav-text">第二种：NSThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三种：GCD"><span class="nav-number">2.3.</span> <span class="nav-text">第三种：GCD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四种：NSOperation"><span class="nav-number">2.4.</span> <span class="nav-text">第四种：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的原理"><span class="nav-number">3.</span> <span class="nav-text">多线程的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的优点"><span class="nav-number">4.</span> <span class="nav-text">多线程的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的缺点"><span class="nav-number">5.</span> <span class="nav-text">多线程的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你更倾向于哪一种？"><span class="nav-number">6.</span> <span class="nav-text">你更倾向于哪一种？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于GCD："><span class="nav-number">6.1.</span> <span class="nav-text">倾向于GCD：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于：NSOperation"><span class="nav-number">6.2.</span> <span class="nav-text">倾向于：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios-几种线程锁"><span class="nav-number">7.</span> <span class="nav-text">ios 几种线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><span class="nav-number">8.</span> <span class="nav-text">GCD的一些常用的函数？（group， barrier，信号量 线程同步）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？"><span class="nav-number"></span> <span class="nav-text">是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题分析"><span class="nav-number">1.</span> <span class="nav-text">问题分析</span></a></li></ol></div>
             
           </div>
         </section>

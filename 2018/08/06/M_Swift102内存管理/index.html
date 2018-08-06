@@ -1,0 +1,573 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="内存管理简述一下OC的内存管理方式包括alloc，retain，copy，release，autorelease，delalloc这些方法理解
+OC中每个对象都有一个与之对应的整数，叫“引用计数器”，当一个对象在创建之后它的引用计数器值加1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器值自动在原来的基础上加1，当调用这个对象的release方法之后它的引用计数器值减">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Men的博客">
+<meta property="og:url" content="http://yoursite.com/2018/08/06/M_Swift102内存管理/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="内存管理简述一下OC的内存管理方式包括alloc，retain，copy，release，autorelease，delalloc这些方法理解
+OC中每个对象都有一个与之对应的整数，叫“引用计数器”，当一个对象在创建之后它的引用计数器值加1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器值自动在原来的基础上加1，当调用这个对象的release方法之后它的引用计数器值减">
+<meta property="og:updated_time" content="2018-08-06T11:00:49.595Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Men的博客">
+<meta name="twitter:description" content="内存管理简述一下OC的内存管理方式包括alloc，retain，copy，release，autorelease，delalloc这些方法理解
+OC中每个对象都有一个与之对应的整数，叫“引用计数器”，当一个对象在创建之后它的引用计数器值加1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器值自动在原来的基础上加1，当调用这个对象的release方法之后它的引用计数器值减">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/06/M_Swift102内存管理/"/>
+
+  <title>  | Men的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Men的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">欢迎光临！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            博文
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-06T18:53:33+08:00" content="2018-08-06">
+              2018-08-06
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><h1 id="简述一下OC的内存管理方式"><a href="#简述一下OC的内存管理方式" class="headerlink" title="简述一下OC的内存管理方式"></a>简述一下OC的内存管理方式</h1><pre><code>包括alloc，retain，copy，release，autorelease，delalloc这些方法理解
+OC中每个对象都有一个与之对应的整数，叫“引用计数器”，当一个对象在创建之后它的引用计数器值加1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器值自动在原来的基础上加1，当调用这个对象的release方法之后它的引用计数器值减1，如果一个对象的引用计数器值为0，则系统会自动调用这个对象的dealloc方法来销毁这个对象。
+在alloc的时候调用了allocWithZone分配了内存
+alloc、retain、new、copy方法之后引用计数器值自动在原来的基础上加1
+</code></pre><h1 id="用MRC写一个setter方法"><a href="#用MRC写一个setter方法" class="headerlink" title="用MRC写一个setter方法"></a>用MRC写一个setter方法</h1><pre><code>给一个Person类中有一个成员变量NSString *name；给此成员变量写setter方法（非arc）
+- (void)setName:(NSString *)name {
+    if(_name != name) {
+        [name retain];
+        [_name relrase];
+        _name = name;
+    }
+}
+</code></pre><h1 id="描述autorelease对象释放时机，"><a href="#描述autorelease对象释放时机，" class="headerlink" title="描述autorelease对象释放时机，"></a>描述autorelease对象释放时机，</h1><pre><code>在没有手加Autorelease Pool的情况下，Autorelease对象是在当前的runloop迭代结束时释放的，而它能够释放的原因是系统在每个runloop迭代中都加入了自动释放池Push和Pop
+</code></pre><h1 id="简述autorelrasePool的工作机制"><a href="#简述autorelrasePool的工作机制" class="headerlink" title="简述autorelrasePool的工作机制"></a>简述autorelrasePool的工作机制</h1><pre><code>每一个线程创建的时候就会有一个autorelease pool的创建，并且在线程退出的时候，清空整个autorelease pool。（ps:如果在子线程中设置一个循环，autorelease对象确实无法释放）
+所以子线程的autorelease对象，要么在子线程中设置runloop清楚
+RutoreleasePoolPage
+{
+magic_t const magic;
+id *next;
+pthread_t const thread;
+AutoreleasePoolPage *const parent;
+AutoreleasePoolPage *child;
+uint32_t const depth;
+uint32_t hiwat;
+}
+AutoreleasePool并没有单独的结构，而是由若干个AutoreleasePoolPage以双向链表的形式组合而成（分别对应结构中的parent指针和child指针）
+AutoreleasePool是按线程一一对应的（结构中的thread指针指向当前线程）
+AutoreleasePoolPage每个对象会开辟4096字节内存（也就是虚拟内存一页的大小），除了上面的实例变量所占空间，剩下的空间全部用来储存autorelease对象的地址
+上面的id *next指针作为游标指向栈顶最新add进来的autorelease对象的下一个位置
+一个AutoreleasePoolPage的空间被占满时，会新建一个AutoreleasePoolPage对象，连接链表，后来的autorelease对象在新的page加入
+runtime 黑魔法之Thread Local Storage
+Thread Local Storage（TLS）线程局部存储，目的很简单，将一块内存作为某个线程专有的存储，以key-value的形式进行读写，比如在非arm架构下，使用pthread提供的方法实现：
+在返回值身上调用objc_autoreleaseReturnValue方法时，runtime将这个返回值object储存在TLS中，然后直接返回这个object（不调用autorelease）；同时，在外部接收这个返回值的objc_retainAutoreleasedReturnValue里，发现TLS中正好存了这个对象，那么直接返回这个object（不调用retain）。
+于是乎，调用方和被调方利用TLS做中转，很有默契的免去了对返回值的内存管理。
+于是问题又来了，假如被调方和主调方只有一边是ARC环境编译的该咋办？（比如我们在ARC环境下用了非ARC编译的第三方库，或者反之）
+只能动用更高级的黑魔法。
+黑魔法之__builtin_return_address
+这个内建函数原型是char *__builtin_return_address(int level)，作用是得到函数的返回地址，参数表示层数，如__builtin_return_address(0)表示当前函数体返回地址，传1是调用这个函数的外层函数的返回值地址，以此类推。
+如果一个函数返回前知道调用方是ARC还是非ARC，就有机会对于不同情况做不同的处理
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/03/M_Swift103事件响应顺序/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/12388663?v=3&u=20e1503339de9acf72fc1184728c2afca6ae9b4a&s=140"
+               alt="门乾强" />
+          <p class="site-author-name" itemprop="name">门乾强</p>
+          <p class="site-description motion-element" itemprop="description">博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">170</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存管理"><span class="nav-number">1.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简述一下OC的内存管理方式"><span class="nav-number">2.</span> <span class="nav-text">简述一下OC的内存管理方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用MRC写一个setter方法"><span class="nav-number">3.</span> <span class="nav-text">用MRC写一个setter方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#描述autorelease对象释放时机，"><span class="nav-number">4.</span> <span class="nav-text">描述autorelease对象释放时机，</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简述autorelrasePool的工作机制"><span class="nav-number">5.</span> <span class="nav-text">简述autorelrasePool的工作机制</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
