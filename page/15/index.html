@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net6CoreLocation/" itemprop="url">
-                  CoreLocation
+                <a class="post-title-link" href="/2016/07/31/D_Net2NSOperation/" itemprop="url">
+                  NSOperation
                 </a>
               
             
@@ -272,179 +272,15 @@
       
         
           
-            <hr>
-<p>CLLocationManager 定位管理者<br>CLLocation 代表位置(经度/纬度/高度/速度/路线等)<br>CLHeading  代表移动方向<br>CLRegion   代表一个区域</p>
-<blockquote>
-<p>CLCircularRegion  圆形区域<br>CLBeaconRegion 蓝牙信号区域</p>
-</blockquote>
-<p>返回定位服务是否可用<br>[CLLocationManager locationServicesEnabled];<br>返回延迟定位更新是否可用<br>[CLLocationManager deferredLocationUpdatesAvailable];<br>返回重大位置改变监听是否可用<br>[CLLocationManager significantLocationChangeMonitoringAvailable];<br>返回是否支持磁力计算方向<br>[CLLocationManager headingAvailable];<br>返回蓝牙信号范围服务是否可用<br>[CLLocationManager isRangingAvailable];</p>
-<hr>
-<p>设置是否可以暂停定位来节省电池电量, YES不需要定位数据时自动暂停定位<br>// mgr.pausesLocationUpdatesAutomatically</p>
-<hr>
-<p>每隔多少米定位一次, 只有水平方向超过该值时才会重新定位<br>// mgr.distanceFilter = 100;</p>
-<hr>
-<p>定位精确度<br>// mgr.desiredAccuracy;<br>kCLDistanceFilterNone;<br>kCLLocationAccuracyBestForNavigation 导航级最佳精准<br>kCLLocationAccuracyBest; 最佳精准<br>kCLLocationAccuracyNearestTenMeters; 10米误差<br>kCLLocationAccuracyHundredMeters; 百米胡茬<br>kCLLocationAccuracyKilometer;  千米误差<br>kCLLocationAccuracyThreeKilometers; 3千米误差</p>
-<hr>
-<p>定位数据的用途<br>// mgr.activityType;<br>CLActivityTypeOther 作为普通用途<br>CLActivityTypeAutomotiveNavigation  作为车辆导航<br>CLActivityTypeFitness  作为不行<br>CLActivityTypeOtherNavigation 作为其它导航</p>
-<hr>
-<p>// CLLocation<br>location.coordinate; 坐标, 包含经纬度<br>location.altitude; 设备海拔高度 单位是米<br>location.course; 设置前进方向 0表示北 90东 180南 270西<br>location.horizontalAccuracy; 水平精准度<br>location.verticalAccuracy; 垂直精准度<br>location.timestamp; 定位信息返回的时间<br>location.speed; 设备移动速度 单位是米/秒, 适用于行车速度而不太适用于不行<br>/<em><br>可以设置模拟器模拟速度<br>bicycle ride 骑车移动<br>run 跑动<br>freeway drive 高速公路驾车
-</em>/</p>
-<hr>
-<p>// CLAuthorizationStatus<br>用户从未选择过权限<br>kCLAuthorizationStatusNotDetermined<br>无法使用定位服务，该状态用户无法改变<br>kCLAuthorizationStatusRestricted<br>用户拒绝该应用使用定位服务，或是定位服务总开关处于关闭状态<br>kCLAuthorizationStatusDenied<br>已经授权（废弃）<br>kCLAuthorizationStatusAuthorized<br>用户允许该程序无论何时都可以使用地理信息<br>kCLAuthorizationStatusAuthorizedAlways<br>用户同意程序在可见时使用地理位置<br>kCLAuthorizationStatusAuthorizedWhenInUse</p>
-<hr>
-<p>// 计算两个位置之间的距离, 单位是米<br>[newLocation distanceFromLocation:self.prevLocation];</p>
-<hr>
-<p>获取方向信息不会提示用户(不需要授权), 因为不会泄露隐私<br>// [self.mgr startUpdatingHeading];</p>
-<p>magneticHeading 设备与磁北的相对角度<br>trueHeading 设置与真北的相对角度, 必须和定位一起使用, iOS需要设置的位置来计算真北<br>真北始终指向地理北极点<br>磁北对应随着时间变化的地球磁场北极<br>@interface ViewController ()<cllocationmanagerdelegate><br>{<br>//创建对象<br>CLLocationManager *_manager;<br>}</cllocationmanagerdelegate></p>
-<p>//获取当前经度<br>_manager =[[CLLocationManager alloc]init];<br>//设置代理<br>_manager.delegate=self;</p>
-<p>开始定位<br>[self startLocation];</p>
-<p>#pragma mark - 开始定位<br>-(void)startLocation<br>{<br>//判断定位服务是否可用<br>if (![CLLocationManager locationServicesEnabled]) {<br>NSLog(@”定位服务不可用”);</p>
-<p>}</p>
-<p>//设置精确度<br>_manager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;<br>//距离变化敏感程度<br>_manager.distanceFilter=1000;<br>//开始定位<br>[_manager startUpdatingLocation];<br>}</p>
-<p>#pragma mark - 协议提供的代理方法，当位置更新的时候执行<br>-(void)locationManager:(CLLocationManager <em>)manager didUpdateLocations:(NSArray </em>)locations<br>{<br>//地址：经纬度</p>
-<p>//获取地址对象(包含经纬度)<br>CLLocation *location=manager.location;<br>//获取当前经纬度<br>CLLocationCoordinate2D coordinate=location.coordinate;<br>//输出经纬度<br>NSLog(@”long=%f lan=%f”,coordinate.longitude,coordinate.latitude);</p>
-<p>}  </p>
-<p>方向服务<br>//    [self testHeading];</p>
-<p>#pragma mark - 方向服务<br>-(void)testHeading<br>{<br>if (![CLLocationManager headingAvailable]) {<br>NSLog(@”方向服务不可用”);<br>return;<br>}<br>[_manager startUpdatingHeading];<br>}</p>
-<p>#pragma mark - 代理方法，当方向更新的时候开始执行<br>-(void)locationManager:(CLLocationManager <em>)manager didUpdateHeading:(CLHeading </em>)newHeading<br>{</p>
-<p>NSLog(@”磁极方向= %f”,newHeading.magneticHeading);<br>NSLog(@”地理方向 = %f”,newHeading.trueHeading);<br>}</p>
-<p>地址编码和地址反编码<br>[self testGeoCoder];</p>
-<p>#pragma mark - 地址编码和地址反编码<br>-(void)testGeoCoder<br>{<br>//知道地址，获取经纬度===地址编码<br>CLGeocoder <em>geocoCoder=[[CLGeocoder alloc]init];<br>[geocoCoder geocodeAddressString:@”兴美生活广场” completionHandler:^(NSArray </em>placemarks, NSError <em>error) {<br>//返回placemarks<br>for (CLPlacemark </em>mark in placemarks)<br>{<br>NSLog(@”mark=%@”,mark );<br>}<br>}];<br>//地址反编码，知道经纬度，获取地址，<br>CLLocation *location=[[CLLocation alloc]initWithLatitude:40.03708400 longitude:116.37059500];</p>
-<p>CLGeocoder <em>reverseGeocoCoder=[[CLGeocoder alloc]init];<br>[reverseGeocoCoder reverseGeocodeLocation:location completionHandler:^(NSArray </em>placemarks, NSError <em>error) {<br>for (CLPlacemark </em>mark in placemarks)<br>{<br>NSLog(@”地址反编码=%@”,mark );</p>
-<p>}<br>}];</p>
-<p>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/30/C_UI13UITableView/" itemprop="url">
-                  UITableView
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
-              2016-07-30
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
             <blockquote>
-<p>我们为什么要实现单元格的复用机制</p>
+<p>NSOperation、NSOperationQueue</p>
 </blockquote>
-<p>单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存<br>单元格的复用机制原理<br>一开始的时候我们创建了桌面最多能显示的单元格数，cell<br>当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格<br>因此我们就做到了只生成了屏幕范围可显示的单元格个数，就实现滑动表格试图时，以后不会再init alloc单元格cell了，从而实现了节省内存的原理<br>单元格的复用机制<br>-(UITableViewCell <em>)tableView:(UITableView </em>)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath<br>{</p>
-<p>定义一个cell标示符，用以区分不同的cell<br>以后有不同风格的cell就可以使用了<br>static NSString <em>cellID=@”cell”;<br>从cell复用池中拿到可用的cell<br>UITableViewCell </em>cell=[tableView dequeueReusableCellWithIdentifier:cellID];<br>检测，拿到一个可用的cell<br>if(cell ==nil)<br>{<br>创建新的cell<br>cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];<br>}</p>
-<p><3>显示分组数据<br>显示每段       多少section数据<br>-(NSInteger)numberOfSectionsInTableView:(UITableView <em>)tableView<br>{<br>return _dataArray.count;<br>}<br>告诉表格每段要显示多少行<br>重要参数：section每次传入制定序号<br>-(NSInteger)tableView:(UITableView </em>)tableView numberOfRowsInSection:(NSInteger)section<br>{<br>NSArray *array=_dataArray[section];<br>return array.count;<br>}</3></p>
+<p>//对于NSThread的封装，提供了更为方便的使用接口<br>//支持block</p>
 <blockquote>
-<p>单元格行的高度</p>
+<p>创建和使用</p>
 </blockquote>
-<p>//通过这个方法可以指定任意行的高度。<br>-(CGFloat)tableView:(UITableView <em>)tableView heightForRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{<br>    return 44.0f;<br>}</p>
-<p>单元格的背景<br>单元格的内容视图contentView</p>
-<blockquote>
-<p>某行选中的事件处理</p>
-</blockquote>
-<p>-(void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{}<br>//某行被取消选中了<br>-(void)tableView:(UITableView <em>)tableView didDeselectRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{<br>NSLog(@”被取消选中了”);<br>}</p>
-<blockquote>
-<p>添加头部视图和尾部视图</p>
-</blockquote>
-<p>//    添加头部试图<br>UIImageView <em>imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];<br>imageView.image=[UIImage imageNamed:@”fenjing.jpg”];<br>_tableView.tableHeaderView=imageView;<br>//    添加尾部试图<br>UIImageView </em>footImage=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 150)];<br>footImage.image=[UIImage imageNamed:@”head2.jpg”];<br>_tableView.tableFooterView=footImage;</p>
-<blockquote>
-<p>表格视图的编辑(难点)</p>
-</blockquote>
-<p><1>单元格的删除操作[重点, 必须掌握]</1></p>
-<p><2>单元格的增加操作</2></p>
-<p><3>单元格的移动操作</3></p>
-<p><4>多行选中和多行删除操作</4></p>
-<p>2.表格视图的设置</p>
-<p><1>设置表格的索引</1></p>
-<p><2>设置段头和段尾</2></p>
-<p><3>表格的分割线</3></p>
-<p>3.表格视图的搜索</p>
-<p><1>添加搜索条 UISearchBar–&gt;tableHeaderView</1></p>
-<p>4.表格视图控制器</p>
-<blockquote>
-<p>cell的定制</p>
-</blockquote>
-<p>1.我们使用MVC模式实现cell的定制。<br>什么是MVC模式<br>V是：VIew视图     作用：展示数据，接收用户交互<br>C是：Controller控制器<br>作用：负责把数据从Model中拿出来放到View上。<br>根据View的操作区修改数据。<br>M是：Model模型    作用：存储和表示数据</p>
-<p>理解：简单理解为每个界面分为三层——Model，VIew，Controller<br>效果：让开发变得更简单，可维护性更强，可扩展性更强，可阅读性更强<br>下面我们就具体看一下MVC模式应该怎么设计，在MVC模式下如何定制cell<br>1.Model的设计<br>这里：你要建立数据模型，存储数据（数据模型：就是oc中的类）<br>现在获取的数据本质上是原始数据，<br>以后原始数据有很多中  plist  JSON  数据库  文本文件<br>注意：不要直接使用原始数据<br>把所有的原始数据存储到数据模型Model<br>将解析数据存储到Model中<br>建立数组接收每个Model对象。</p>
-<p>2.cell的定制<br>就是将cell上所有的空间全部封装成一个类。<br>在这个类里，我们创建这些控件，设置相应的坐标<br>将这些类添加到self.contentView</p>
+<p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation <em>operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation </em>bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation <em>bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue </em>queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
+<p>}</p>
 
           
         
@@ -876,6 +712,105 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/30/C_UI5UIViewController/" itemprop="url">
+                  UIViewController
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>简单的理解一个界面就是一个UIViewContorller</p>
+<p>如何使用UIViewContorller实现多界面的切换</p>
+</blockquote>
+<p>1.登陆界面：<br>先创建LoginViewController对象<br>将对象设置为window的rootViewController视图控制器 (主视图控制器)<br>2.跳转到下一个界面（设置按钮触发点击事件）<br>先创建下一个界面 MainViewController.的对象———mvc<br>使用presentViewController切换到下一个界面<br>参数1:跳转到界面mcv<br>参数2:是否实现动画效果。<br>参数3:block<br>[self presentViewController:mvc animated:YES completion:nil];<br>3.返回上一个界面<br>同样是设置按钮，点击按钮触发事件。<br>释放掉原来的界面，显示出上一个界面。dismissViewControllerAnimated</p>
+<h1 id="self-dismissViewControllerAnimated-YES-completion-nil"><a href="#self-dismissViewControllerAnimated-YES-completion-nil" class="headerlink" title="[self dismissViewControllerAnimated:YES completion:nil];"></a>[self dismissViewControllerAnimated:YES completion:nil];</h1><p>4.设置打开动画<br>mvc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;<br>翻转  UIModalTransitionStyleFlipHorizontal<br>交错  UIModalTransitionStyleCrossDissolve<br>翻页  UIModalTransitionStylePartialCurl</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/30/C_UI6UITextField/" itemprop="url">
                   UITextField
                 </a>
@@ -1004,105 +939,6 @@
 <p>设置输入框的背景图background</p>
 </blockquote>
 <p>细节：添加背景图要吧边框类型设置为无边框<br>textField.borderStyle=UITextBorderStyleNone;<br>textField.background=[[UIImage imageNamed:@”table-cell-bg-highlighted”]stretchableImageWithLeftCapWidth:8 topCapHeight:0];<br>图片拉伸中的问题。图片是向左向上拉伸的。<br>拉伸的距离相当于图片最顶端和最左边向里多少距离的位置向上向左拉伸</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/30/C_UI5UIViewController/" itemprop="url">
-                  UIViewController
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
-              2016-07-30
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>简单的理解一个界面就是一个UIViewContorller</p>
-<p>如何使用UIViewContorller实现多界面的切换</p>
-</blockquote>
-<p>1.登陆界面：<br>先创建LoginViewController对象<br>将对象设置为window的rootViewController视图控制器 (主视图控制器)<br>2.跳转到下一个界面（设置按钮触发点击事件）<br>先创建下一个界面 MainViewController.的对象———mvc<br>使用presentViewController切换到下一个界面<br>参数1:跳转到界面mcv<br>参数2:是否实现动画效果。<br>参数3:block<br>[self presentViewController:mvc animated:YES completion:nil];<br>3.返回上一个界面<br>同样是设置按钮，点击按钮触发事件。<br>释放掉原来的界面，显示出上一个界面。dismissViewControllerAnimated</p>
-<h1 id="self-dismissViewControllerAnimated-YES-completion-nil"><a href="#self-dismissViewControllerAnimated-YES-completion-nil" class="headerlink" title="[self dismissViewControllerAnimated:YES completion:nil];"></a>[self dismissViewControllerAnimated:YES completion:nil];</h1><p>4.设置打开动画<br>mvc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;<br>翻转  UIModalTransitionStyleFlipHorizontal<br>交错  UIModalTransitionStyleCrossDissolve<br>翻页  UIModalTransitionStylePartialCurl</p>
 
           
         
@@ -1478,6 +1314,131 @@
 <p>在按钮上添加UIImageView</p>
 </blockquote>
 <p>1.声明<br>UIImageView *imageView = [[UIImageView alloc] init];<br>2.设置位置（注意以父视图为准）<br>imageView.frame = CGRectMake(0, 0, 150, 30);<br>3.添加图片<br>imageView.image = [UIImage imageNamed:@”back2.jpg”];<br>4.添加到按钮上<br>[imagebutton addSubview:imageView];</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/C_UI1Label/" itemprop="url">
+                  UILabel
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>创建UIlabel</p>
+</blockquote>
+<p>UILabel *label=[[UILabel alloc]init];</p>
+<blockquote>
+<p>坐标</p>
+</blockquote>
+<p>label.frame=CGRectMake(100, 100, 200, 30);</p>
+<blockquote>
+<p>文本</p>
+</blockquote>
+<p>label.text=@”我是标签～”;</p>
+<blockquote>
+<p>颜色</p>
+</blockquote>
+<p>1.文字颜色<br>label.textColor=[UIColor orangeColor];<br>2.三原色设置颜色。<br>label.textColor = [UIColor colorWithRed:0.6 green:0.3 blue:0.5 alpha:1];<br>3.设置高亮文字颜色<br>highlightedTextColor<br>4.标签背景颜色<br>label.backgroundColor=[UIColor orangeColor];</p>
+<blockquote>
+<p>字体lable.font</p>
+</blockquote>
+<p>label.font = [UIFont systemFontOfSize:17];<br>粗体加设置大小。<br>label.font = [UIFont boldSystemFontOfSize:20];<br>自定义字体<br>label.font = [UIFont fontWithName:@”Arial” size:17];<br>根据label宽度设置字体大小<br>adjustFontSizeToFitWidth<br>显示所有字体<br>NSLog(@”所有字体%@”,[UIFont familyNames]);</p>
+<blockquote>
+<p>对其方式</p>
+</blockquote>
+<p>设置标签的背景颜色backgroundColor<br>label.backgroundColor=[UIColor grayColor];<br>靠右对其，默认靠左对其textAlignment<br>label.textAlignment = NSTextAlignmentRight;<br>如何显示多行文本<br>0表示任意多行。labe.numberOfLines<br>label.numberOfLines = 0;</p>
+<blockquote>
+<p>设置阴影</p>
+</blockquote>
+<p>设置阴影颜色shadowColor<br>label.shadowColor = [UIColor redColor];<br>设置阴影偏移shadowOffset<br>label.shadowOffset = CGSizeMake(3, 3);</p>
+<blockquote>
+<p>设置窗口显示的文本sizeToFit</p>
+</blockquote>
+<p>自动适应文本作用：文本有多大，标签就有多大<br>[label sizeToFit];<br>最大显示行数<br>numberOflines<br>当内容超出宽度模式<br>lineBreakMode</p>
 
           
         
