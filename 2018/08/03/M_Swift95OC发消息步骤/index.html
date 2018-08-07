@@ -84,28 +84,37 @@
 
 
 
-<meta name="description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，有垃圾回收，就不考虑 retain，release这些函数
-2.检测这个target是不是nil对象，ObjC的特性允许对一个nil对象发消息而不会崩溃
-3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，先从缓存中找，完了跳到对应函数执行
+<meta name="description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，
+有垃圾回收，就不考虑 retain，release这些函数
+2.检测这个target是不是nil对象，
+ObjC的特性允许对一个nil对象发消息而不会崩溃
+3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
+先从缓存中找，完了跳到对应函数执行
 4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到超类的">
+5.如果方法列表找不到，就到">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OC发消息步骤">
 <meta property="og:url" content="http://yoursite.com/2018/08/03/M_Swift95OC发消息步骤/index.html">
 <meta property="og:site_name" content="Men的博客">
-<meta property="og:description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，有垃圾回收，就不考虑 retain，release这些函数
-2.检测这个target是不是nil对象，ObjC的特性允许对一个nil对象发消息而不会崩溃
-3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，先从缓存中找，完了跳到对应函数执行
+<meta property="og:description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，
+有垃圾回收，就不考虑 retain，release这些函数
+2.检测这个target是不是nil对象，
+ObjC的特性允许对一个nil对象发消息而不会崩溃
+3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
+先从缓存中找，完了跳到对应函数执行
 4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到超类的">
-<meta property="og:updated_time" content="2018-08-03T02:17:43.776Z">
+5.如果方法列表找不到，就到">
+<meta property="og:updated_time" content="2018-08-07T03:05:01.585Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OC发消息步骤">
-<meta name="twitter:description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，有垃圾回收，就不考虑 retain，release这些函数
-2.检测这个target是不是nil对象，ObjC的特性允许对一个nil对象发消息而不会崩溃
-3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，先从缓存中找，完了跳到对应函数执行
+<meta name="twitter:description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，
+有垃圾回收，就不考虑 retain，release这些函数
+2.检测这个target是不是nil对象，
+ObjC的特性允许对一个nil对象发消息而不会崩溃
+3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
+先从缓存中找，完了跳到对应函数执行
 4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到超类的">
+5.如果方法列表找不到，就到">
 
 
 
@@ -278,23 +287,32 @@
       
 
       
-        <pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，有垃圾回收，就不考虑 retain，release这些函数
-2.检测这个target是不是nil对象，ObjC的特性允许对一个nil对象发消息而不会崩溃
-3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，先从缓存中找，完了跳到对应函数执行
+        <pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
+有垃圾回收，就不考虑 retain，release这些函数
+2.检测这个target是不是nil对象，
+ObjC的特性允许对一个nil对象发消息而不会崩溃
+3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
+先从缓存中找，完了跳到对应函数执行
 4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到超类的方法分发列表找，一直找到NSObject
+5.如果方法列表找不到，就到超类的方法分发列表找，
+一直找到NSObject
 6.如果还找不到，就开始进行动态方法解析，调用
 +(Bool)resolveInstanceMethod(SEL)selector；（实例方法）
 +(Bool)resolveClassMethod(SEL)selector；（类方法）
-该方法的参数就是那个位置的选择子（方法），其返回值为bool，表示这个类能否新增一个实例方法用于处理该未知的方法
+该方法的参数就是那个位置的选择子（方法），其返回值为bool，
+表示这个类能否新增一个实例方法用于处理该未知的方法
 一般用这个方法可以动态的添加方法
-7.如果还是找不到，那么运行系统就会问，能不能把这条消息转发给其他的接受者处理。调用
+7.如果还是找不到，那么运行系统就会问，
+能不能把这条消息转发给其他的接受者处理。调用
 +(id)forwardingTargetForSelector(SEL)selector；
-当前接收者如果能找到备选对象，那么将其返回，如果找不到，返回nil
-8.如果还是找不到，那么会创建一个NSInvocation对象，把这个尚未处理的那条消息有关的全部细节都封装其中，此对象包含选择子，目标对象及参数，并调用下面的方法进行消息转发
+当前接收者如果能找到备选对象，那么将其返回，
+如果找不到，返回nil
+8.如果还是找不到，那么会创建一个NSInvocation对象，
+把这个尚未处理的那条消息有关的全部细节都封装其中，
+此对象包含选择子，目标对象及参数，
+并调用下面的方法进行消息转发
 -（void）forwardInvocation：(NSInvocation *)invocation；
 9.如果最后都没有出来的话，那么就抛出异常
-//isa指针指向Meta Class，因为Objc的类的本身也是一个Object，为了处理这个关系，r       untime就创造了Meta Class，当给类发送[NSObject alloc]这样消息时，实际上是把这个消息发给了Class Object
 </code></pre>
       
     </div>

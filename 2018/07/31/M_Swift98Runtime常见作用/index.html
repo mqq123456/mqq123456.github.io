@@ -96,7 +96,7 @@
 参数说明
 &amp;gt;(IMP)guessAnswer 意思是guessAnswer的地址指针;
 &amp;gt;&amp;quot;v@:&amp;quot; 意思是，v代表无返回值void，如果是i则代表int；">
-<meta property="og:updated_time" content="2018-08-03T02:18:48.501Z">
+<meta property="og:updated_time" content="2018-08-07T06:24:43.551Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Runtime常见作用">
 <meta name="twitter:description" content="动态的添加对象的成员变量和方法class_addMethod([self.person class], @selector(guess), (IMP)guessAnswer, &amp;quot;v@:&amp;quot;);
@@ -284,7 +284,9 @@
 Method m1 = class_getInstanceMethod([self.person class], @selector(sayName));
 Method m2 = class_getInstanceMethod([self.person class], @selector(saySex));
 method_exchangeImplementations(m1, m2);
-</code></pre><h2 id="拦截并替换方法"><a href="#拦截并替换方法" class="headerlink" title="拦截并替换方法"></a>拦截并替换方法</h2><pre><code>我们要改变这个方法的实现，但是又不能去动它的源代码(正如一些开源库出现问题的时候)，这个时候runtime就派上用场了
+</code></pre><h2 id="拦截并替换方法"><a href="#拦截并替换方法" class="headerlink" title="拦截并替换方法"></a>拦截并替换方法</h2><pre><code>我们要改变这个方法的实现，但是又不能去动它的源代码
+(正如一些开源库出现问题的时候)，
+这个时候runtime就派上用场了
 我们先增加一个tool类，然后写一个我们自己实现的方法-change，
 通过runtime把test1替换成change。
 Class PersionClass = object_getClass([Person class]);
@@ -304,8 +306,13 @@ if (addSucc) {
     //添加失败：说明源方法已经有实现，直接将两个方法的实现交换即
     method_exchangeImplementations(oriMethod, cusMethod);  
 }
-</code></pre><h2 id="在方法上增加额外功能"><a href="#在方法上增加额外功能" class="headerlink" title="在方法上增加额外功能"></a>在方法上增加额外功能</h2><pre><code>有这样一个场景，出于某些需求，我们需要跟踪记录APP中按钮的点击次数和频率等数据，怎么解决？当然通过继承按钮类或者通过类别实现是一个办法，但是带来其他问题比如别人不一定会去实例化你写的子类，或者其他类别也实现了点击方法导致不确定会调用哪一个，runtime可以这样解决，
-实现场景二、我们app经常会遇到一些cash，我们可以通过runtime拦截替换这些方法，从而保证不会崩溃，例如如下列举
+</code></pre><h2 id="在方法上增加额外功能"><a href="#在方法上增加额外功能" class="headerlink" title="在方法上增加额外功能"></a>在方法上增加额外功能</h2><pre><code>有这样一个场景，出于某些需求，我们需要跟踪记录APP
+中按钮的点击次数和频率等数据，怎么解决？当然通过继承按钮
+类或者通过类别实现是一个办法，但是带来其他问题比如别人不
+一定会去实例化你写的子类，或者其他类别也实现了点击方法导
+致不确定会调用哪一个，runtime可以这样解决，
+实现场景二、我们app经常会遇到一些cash，我们可以通过
+runtime拦截替换这些方法，从而保证不会崩溃，例如如下列举
     NSArray+NSRangeException
     NSDictionary+NSRangeException
     NSMutableAttributedString+NSRangeException
@@ -314,7 +321,9 @@ if (addSucc) {
     NSObject+Swizzling
     NSString+NSRangeException
     UINavigationController+Consistent
-load方法会在类第一次加载的时候被调用,调用的时间比较靠前，适合在这个方法里做方法交换,方法交换应该被保证，在程序中只会执行一次。
+load方法会在类第一次加载的时候被调用,调用的时间比较靠前，
+适合在这个方法里做方法交换,方法交换应该被保证，
+在程序中只会执行一次。
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&amp;onceToken, ^{
@@ -372,14 +381,19 @@ load方法会在类第一次加载的时候被调用,调用的时间比较靠前
     }
     return self;
 }
-</code></pre><h2 id="实现字典转模型的自动转换"><a href="#实现字典转模型的自动转换" class="headerlink" title="实现字典转模型的自动转换"></a>实现字典转模型的自动转换</h2><pre><code>字典转模型的应用可以说是每个app必然会使用的场景,虽然实现的方式略有不同，但是原理都是一致的：遍历模型中所有属性，根据模型的属性名，去字典中查找key，取出对应的值，给模型的属性赋值。
-像几个出名的开源库：JSONModel,MJExtension等都是通过这种方式实现的。
+</code></pre><h2 id="实现字典转模型的自动转换"><a href="#实现字典转模型的自动转换" class="headerlink" title="实现字典转模型的自动转换"></a>实现字典转模型的自动转换</h2><pre><code>字典转模型的应用可以说是每个app必然会使用的场景,
+虽然实现的方式略有不同，但是原理都是一致的：遍历模型中所有
+属性，根据模型的属性名，去字典中查找key，取出对应的值，
+给模型的属性赋值。
+像几个出名的开源库：JSONModel,MJExtension等都是通过这
+种方式实现的。
 // 创建对应模型对象
 id objc = [[self alloc] init];
 unsigned int count = 0;
 // 1.获取成员属性数组
 Ivar *ivarList = class_copyIvarList(self, &amp;count);
-// 2.遍历所有的成员属性名,一个一个去字典中取出对应的value给模型属性赋值
+// 2.遍历所有的成员属性名,一个一个去字典中取出对应的
+value给模型属性赋值
 for (int i = 0; i &lt; count; i++) {
     // 2.1 获取成员属性
     Ivar ivar = ivarList[i];
@@ -392,7 +406,8 @@ for (int i = 0; i &lt; count; i++) {
     // 获取成员属性类型
     NSString *ivarType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
 }
-如果模型比较简单，只有NSString，NSNumber等，这样就可以搞定了。但是如果模型含有NSArray，或者NSDictionary等，那么我们还需要进行第二步转换。
+如果模型比较简单，只有NSString，NSNumber等，
+这样就可以搞定了。但是如果模型含有NSArray，或者NSDictionary等，那么我们还需要进行第二步转换。
 if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![ivarType containsString:@&quot;NS&quot;]) { 
     //  是字典对象,并且属性名对应类型是自定义类型
     // 处理类型字符串 @\&quot;User\&quot; -&gt; User

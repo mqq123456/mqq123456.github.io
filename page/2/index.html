@@ -277,7 +277,8 @@
 分别是通过 Objective-C 源代码，
 通过 Foundation 框架的NSObject类定义的方法，
 通过对 runtime 函数的直接调用。
-RunTime简称运行时,就是系统在运行的时候的一些机制，其中最主要的是消息机制。
+RunTime简称运行时,就是系统在运行的时候的一些机制，
+其中最主要的是消息机制。
 每一个oc的方法，底层必然有一个与之对应的runtime方法。
 </code></pre><h2 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h2><h3 id="获取属性列表"><a href="#获取属性列表" class="headerlink" title="获取属性列表"></a>获取属性列表</h3><pre><code>objc_property_t *propertyList = class_copyPropertyList([self class], &amp;count);
 for (unsigned int i=0; i&lt;count; i++) {
@@ -1020,22 +1021,41 @@ function mergeOrder(arr1,arr2) {
 </code></pre><h2 id="NStimer准吗"><a href="#NStimer准吗" class="headerlink" title="NStimer准吗?"></a>NStimer准吗?</h2><pre><code>谈谈你的看法?如果不不准该 怎样实现⼀一个精确的NSTimer?  
 1.不准
 2.不准的原因如下: 
-    1、NSTimer加在main runloop中，模式是NSDefaultRunLoopMode，main负 责所有主线程事件，例例如UI界⾯面的操作，复杂的运算，这样在同⼀一个runloop中timer就会产⽣生阻塞。  
+    1、NSTimer加在main runloop中，模式是NSDefaultRunLoopMode，main负 责所有主线程事件，
+    例例如UI界⾯面的操作，复杂的运算，这样在同⼀一个
+    runloop中timer就会产⽣生阻塞。  
     2、模式的改变。主线程的 RunLoop ⾥里里有两个预置的 Mode:
     kCFRunLoopDefaultMode 和 UITrackingRunLoopMode。
-    当你创建⼀一个 Timer 并加到 DefaultMode 时，Timer 会得到重复回调，但此时 滑动⼀一个ScrollView时，RunLoop 会将 mode 切换为 TrackingRunLoopMode，这时 Timer 就不不会被回调，并且也不不会影响到滑动操 作。所以就会影响到NSTimer不不准的情况。 
+    当你创建⼀一个 Timer 并加到 DefaultMode 时，
+    Timer 会得到重复回调，但此时 滑动⼀一个ScrollView
+    时，RunLoop 会将 mode 切换为 TrackingRunLoopMode，
+    这时 Timer 就不不会被回调，并且也不不会影响到滑
+    动操 作。所以就会影响到NSTimer不不准的情况。 
 </code></pre><h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><pre><code>⽅方法⼀一: 
-1、在主线程中进⾏行行NSTimer操作，但是将NSTimer实例例加到main runloop的特 定mode(模式)中。避免被复杂运算操作或者UI界⾯面刷新所⼲干扰。 
-self.timer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(showTime) userInfo:nil repeats:YES]; 
-[[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes]; 
-2、在⼦子线程中进⾏行行NSTimer的操作，再在主线程中修改UI界⾯面显示操作结 果; 
-⼀一开始的时候系统就为我们将主线程的main runloop隐式的启动了了。 
-在创建线程的时候，可以主动获取当前线程的runloop。每个⼦子线程对应⼀一个 runloop
+1、在主线程中进⾏行行NSTimer操作，但是将NSTimer
+实例例加到main runloop的特 定mode(模式)中。
+避免被复杂运算操作或者UI界⾯面刷新所⼲干扰。 
+self.timer = [NSTimer timerWithTimeInterval
+:1 target:self selector:@selector(showTime)
+userInfo:nil repeats:YES]; 
+[[NSRunLoop currentRunLoop] addTimer:
+self.timer forMode:NSRunLoopCommonModes]; 
+2、在⼦子线程中进⾏行行NSTimer的操作，
+再在主线程中修改UI界⾯面显示操作结 果; 
+⼀一开始的时候系统就为我们将主线程的main
+runloop隐式的启动了了。 
+在创建线程的时候，可以主动获取当前线程的runloop。
+每个⼦子线程对应⼀一个 runloop
 ⽅方法⼆: 
-使⽤用mach内核级的函数可以使⽤用mach_absolute_time()获取到CPU的tickcount 的计数值，可以通过”mach_timebase_info”函数获取到纳秒级的精确度 。然后 使⽤用mach_wait_until(uint64_t deadline)函数，直到指定的时间之后，就可以
-执⾏行行指定任务了了。  ⽅方法三:直接使⽤用GCD替代
+使⽤用mach内核级的函数可以使⽤用mach_absolute_time()
+获取到CPU的tickcount 的计数值，可以通过
+”mach_timebase_info”函数获取到纳秒级的精确度 。
+然后 使⽤用mach_wait_until(uint64_t deadline)
+函数，直到指定的时间之后，就可以执⾏行行指定任务了了。 
+⽅方法三:直接使⽤用GCD替代
 </code></pre><h2 id="应用优化"><a href="#应用优化" class="headerlink" title="应用优化"></a>应用优化</h2><pre><code>一、首页启动速度   
-    启动过程中做的事情越少越好、不在UI线程上作耗时的操作、在合适的时机开始后台任务、尽量减小包的大小
+    启动过程中做的事情越少越好、不在UI线程上作耗时的
+    操作、在合适的时机开始后台任务、尽量减小包的大小
 二、页面浏览速度
     json的处理、数据压缩、内容缓存、算法的优化
 三、操作流畅度优化：
@@ -1043,7 +1063,8 @@ self.timer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(sho
 四、数据库的优化：
     数据库设计上面的重构、查询语句的优化、分库分表
 五、服务器端和客户端的交互优化：
-    客户端尽量减少请求、服务端尽量做多的逻辑处理、通信协议的优化
+    客户端尽量减少请求、服务端尽量做多的逻辑
+    处理、通信协议的优化
 六、非技术性能优化
     产品逻辑性、代码规范、界面交互规范等
 </code></pre>
