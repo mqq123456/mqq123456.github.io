@@ -93,7 +93,7 @@ alloc、retain、new、copy方法之后引用计数器值自动在原
 数器值">
 <meta property="og:type" content="article">
 <meta property="og:title" content="内存管理">
-<meta property="og:url" content="http://yoursite.com/2018/08/06/M_Swift102内存管理/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/08/06/M_Swift98内存管理/index.html">
 <meta property="og:site_name" content="Men的博客">
 <meta property="og:description" content="简述一下OC的内存管理方式包括alloc，retain，copy，release，autorelease，
 delalloc这些方法理解
@@ -102,7 +102,7 @@ OC中每个对象都有一个与之对应的整数，叫“引用计数器”，
 alloc、retain、new、copy方法之后引用计数器值自动在原
 来的基础上加1，当调用这个对象的release方法之后它的引用计
 数器值">
-<meta property="og:updated_time" content="2018-08-07T06:35:46.378Z">
+<meta property="og:updated_time" content="2018-08-07T06:51:08.099Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="内存管理">
 <meta name="twitter:description" content="简述一下OC的内存管理方式包括alloc，retain，copy，release，autorelease，
@@ -132,7 +132,7 @@ alloc、retain、new、copy方法之后引用计数器值自动在原
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/06/M_Swift102内存管理/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/08/06/M_Swift98内存管理/"/>
 
   <title> 内存管理 | Men的博客 </title>
 </head>
@@ -357,6 +357,11 @@ ARC编译的第三方库，或者反之）
 ，传1是调用这个函数的外层函数的返回值地址，以此类推。
 如果一个函数返回前知道调用方是ARC还是非ARC，就有机会对
 于不同情况做不同的处理
+</code></pre><h1 id="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"><a href="#在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因" class="headerlink" title="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"></a>在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因</h1><pre><code>类有一个成员变量_timer，给_timer设置的target为这个类本身。这样类保留_timer，_timer又保留了这个类，就会出现循环引用的问题，最后导致类无法正确释放。
+
+解决这个问题的方式也很简单，当类的使用者能够确定不需要使用这个计时器时，就调用
+[_timer invalidate];
+_timer = nil;
 </code></pre>
       
     </div>
@@ -382,13 +387,17 @@ ARC编译的第三方库，或者反之）
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/03/M_Swift103事件响应顺序/" rel="next" title="iOS事件响应顺序">
-                <i class="fa fa-chevron-left"></i> iOS事件响应顺序
+              <a href="/2018/08/06/M_Swift106判断类相同/" rel="next" title="判断类相同">
+                <i class="fa fa-chevron-left"></i> 判断类相同
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/07/M_Swift104Category/" rel="prev" title="Category">
+                Category <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -456,7 +465,7 @@ ARC编译的第三方库，或者反之）
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">170</span>
+              <span class="site-state-item-count">173</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -488,7 +497,7 @@ ARC编译的第三方库，或者反之）
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简述一下OC的内存管理方式"><span class="nav-number">1.</span> <span class="nav-text">简述一下OC的内存管理方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用MRC写一个setter方法"><span class="nav-number">2.</span> <span class="nav-text">用MRC写一个setter方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#描述autorelease对象释放时机，"><span class="nav-number">3.</span> <span class="nav-text">描述autorelease对象释放时机，</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简述autorelrasePool的工作机制"><span class="nav-number">4.</span> <span class="nav-text">简述autorelrasePool的工作机制</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简述一下OC的内存管理方式"><span class="nav-number">1.</span> <span class="nav-text">简述一下OC的内存管理方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用MRC写一个setter方法"><span class="nav-number">2.</span> <span class="nav-text">用MRC写一个setter方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#描述autorelease对象释放时机，"><span class="nav-number">3.</span> <span class="nav-text">描述autorelease对象释放时机，</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简述autorelrasePool的工作机制"><span class="nav-number">4.</span> <span class="nav-text">简述autorelrasePool的工作机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"><span class="nav-number">5.</span> <span class="nav-text">在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因</span></a></li></ol></div>
             
           </div>
         </section>

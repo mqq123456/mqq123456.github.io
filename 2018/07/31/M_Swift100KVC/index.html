@@ -84,31 +84,34 @@
 
 
 
-<meta name="description" content="ANF包括如下模块网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
-网络状态监听模块(Reachability)
-网络通信安全策略模块(Security)
-网络通信信息序列化/反序列化模块(Serialization)
-对于iOS UIKit库的扩展(UIKit)
-SDWebImage 概论1.提供了一个UIImageView的category用来加载">
+<meta name="description" content="它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+相关方法-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setVa">
 <meta property="og:type" content="article">
-<meta property="og:title" content="AFN SD做了哪些优化">
-<meta property="og:url" content="http://yoursite.com/2018/08/03/M_Swift93AFN_SDWebImage/index.html">
+<meta property="og:title" content="KVC">
+<meta property="og:url" content="http://yoursite.com/2018/07/31/M_Swift100KVC/index.html">
 <meta property="og:site_name" content="Men的博客">
-<meta property="og:description" content="ANF包括如下模块网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
-网络状态监听模块(Reachability)
-网络通信安全策略模块(Security)
-网络通信信息序列化/反序列化模块(Serialization)
-对于iOS UIKit库的扩展(UIKit)
-SDWebImage 概论1.提供了一个UIImageView的category用来加载">
-<meta property="og:updated_time" content="2018-08-07T06:25:28.122Z">
+<meta property="og:description" content="它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+相关方法-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setVa">
+<meta property="og:updated_time" content="2018-08-07T08:38:24.439Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AFN SD做了哪些优化">
-<meta name="twitter:description" content="ANF包括如下模块网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
-网络状态监听模块(Reachability)
-网络通信安全策略模块(Security)
-网络通信信息序列化/反序列化模块(Serialization)
-对于iOS UIKit库的扩展(UIKit)
-SDWebImage 概论1.提供了一个UIImageView的category用来加载">
+<meta name="twitter:title" content="KVC">
+<meta name="twitter:description" content="它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+相关方法-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setVa">
 
 
 
@@ -129,9 +132,9 @@ SDWebImage 概论1.提供了一个UIImageView的category用来加载">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/03/M_Swift93AFN_SDWebImage/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/31/M_Swift100KVC/"/>
 
-  <title> AFN SD做了哪些优化 | Men的博客 </title>
+  <title> KVC | Men的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -241,7 +244,7 @@ SDWebImage 概论1.提供了一个UIImageView的category用来加载">
             
             
               
-                AFN SD做了哪些优化
+                KVC
               
             
           </h1>
@@ -253,8 +256,8 @@ SDWebImage 概论1.提供了一个UIImageView的category用来加载">
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-08-03T10:09:03+08:00" content="2018-08-03">
-              2018-08-03
+            <time itemprop="dateCreated" datetime="2018-07-31T16:32:01+08:00" content="2018-07-31">
+              2018-07-31
             </time>
           </span>
 
@@ -281,40 +284,46 @@ SDWebImage 概论1.提供了一个UIImageView的category用来加载">
       
 
       
-        <h2 id="ANF包括如下模块"><a href="#ANF包括如下模块" class="headerlink" title="ANF包括如下模块"></a>ANF包括如下模块</h2><pre><code>网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
-网络状态监听模块(Reachability)
-网络通信安全策略模块(Security)
-网络通信信息序列化/反序列化模块(Serialization)
-对于iOS UIKit库的扩展(UIKit)
-</code></pre><h2 id="SDWebImage-概论"><a href="#SDWebImage-概论" class="headerlink" title="SDWebImage 概论"></a>SDWebImage 概论</h2><pre><code>1.提供了一个UIImageView的category用来加载网
-络图片并且对网络图片的缓存进行管理
-2.采用异步方式来下载网络图片
-3.采用异步方式，使用memory＋disk来缓存网
-络图片，自动管理缓存。
-4.支持GIF动画
-5.支持WebP格式
-6.同一个URL的网络图片不会被重复下载
-7.失效的URL不会被无限重试
-8.耗时操作都在子线程，确保不会阻塞主线程
-9.使用GCD和ARC
-10.支持Arm64
-13.图片解码处理在一个 NSOperationQueue 完成，
-不会拖慢主线程 UI。如果有需要对下载的图片进行二次处理，
-最好也在这里完成，效率会好很多。
-</code></pre><h1 id="简述自己经常使用第三方库和其优缺点"><a href="#简述自己经常使用第三方库和其优缺点" class="headerlink" title="简述自己经常使用第三方库和其优缺点"></a>简述自己经常使用第三方库和其优缺点</h1><pre><code>AFNetworking使用简单易懂明快方便，一直在更新且活力不错，
-最近版早早已经支持iOS7了。但AFNetworking必须使用ARC，
-对于要支持iOS4的应用来说不适用。
-ASI似乎很久没有更新了，可以不用ARC，如果要支持iOS4，
-ASI较好，但如果要支持iOS7，ASI就不行了
-ASI 性能更好些，应为用的是CFNetwork的接口，
-比NSURL更底层。
-SDWebImage 对gif的处理主要是在UIImage+GIF
-这个文件里面，利用ImageIO函数创建二进制数据，如下：
-由于SDWebImage通过动图数组来实现动态，
-造成内存不能及时释放
-SDWebimage -静态图片加载 产生拉伸，
-如下图黄色表示拉伸，
-</code></pre>
+        <pre><code>它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+</code></pre><h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><pre><code>-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setValue: (id) value  forKey: (NSString*) key
+</code></pre><h2 id="访问过程"><a href="#访问过程" class="headerlink" title="访问过程"></a>访问过程</h2><pre><code>1.接收器中如果有key访问器
+（或getKey、isKey、_key、_getKey、setKey）则使用它。
+2.没有访问器时，使用接收器的类方法
+accessInstanceVariablesDirectly来查询。返回YES时，如果存在实例
+变量key（或_key、isKey、_isKey等）则返回或设置其值。使用引用计数管
+理方式时，实例变量如果为对象，则旧值会被自动释放，新值被保存并代入。
++(BOOL)accessInstanceVariablesDirectly
+通常定义为返回YES，可以在子类中改变。该类方法返回YES时，使用键值编码
+可以访问该类的实例变量。返回NO时不可以访问。只要该方法返回YES，实例变
+量的可视属性即使有@private修饰，也可以访问。
+3.既没有访问器也没有实例变量时，将引起接收器调用方法
+valueForUndefinedKey:或setValue:forUndefinedKey:。
+-(id) valueForUndefinedKey: (NSStirng *) key
+不能取得键字符串对应的值时，从方法valueForKey：中调用该方法。默认情
+况下，该方法的执行会触发NSUndefinedKeyException。不过，通过在子类
+中修改定义，就可以返回其他对象。
+- (void) setValue:(id)value forUndefinedKey:(NSString *) key
+不能设置键字符串key对应的属性值时，从方法setValue:forKey中调用该方
+法。默认情况下，该方法的执行会触发异常NSUndefinedKeyException。不
+过，通过在子类中修改定义，可以返回其他对象。
+4.   如果该返回值不是对象，则返回被适当的对象包装的值；设置值时也应先
+包装成相应的对象。
+属性为对象时，该对象还可能持有属性。这时候可以用“.”连接表示键的字符
+串，这种表示方式称为键路径。只要能找到对象，点和键多长都没有关系。
+- (id)valueForKeyPath:(NSString *) keyPath
+以点切分键路径，并使用第一个键向接收器发送valueForKey：方法。然后，
+再使用键路径的下一个键，向得到的对象发送valueForKey：方法，如此反复
+操作，返回最后获得的对象。
+- (void)setValue:(id) value forKeyPath:(NSString *) keyPath
+与valueForKeyPath：方法一样取出对象，这里只对路径中的最后一个键调用
+setValue：forKey：方法，并设定属性值为value。
+</code></pre><h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="KVC提供了验证Key对应的Value是否可用的方法："><a href="#KVC提供了验证Key对应的Value是否可用的方法：" class="headerlink" title="KVC提供了验证Key对应的Value是否可用的方法："></a>KVC提供了验证Key对应的Value是否可用的方法：</h3><pre><code>(BOOL)validateValue:(inout id *)ioValue forKey:(NSString *)inKey error:(out NSError **)outError;  
+</code></pre><h3 id="KVC对数值和结构体型属性的支持"><a href="#KVC对数值和结构体型属性的支持" class="headerlink" title="KVC对数值和结构体型属性的支持"></a>KVC对数值和结构体型属性的支持</h3>
       
     </div>
 
@@ -339,16 +348,16 @@ SDWebimage -静态图片加载 产生拉伸，
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/03/M_Swift89多线程/" rel="next" title="多线程">
-                <i class="fa fa-chevron-left"></i> 多线程
+              <a href="/2018/07/31/M_Swift96Runtime常见作用/" rel="next" title="Runtime常见作用">
+                <i class="fa fa-chevron-left"></i> Runtime常见作用
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/08/03/M_Swift103事件响应顺序/" rel="prev" title="iOS事件响应顺序">
-                iOS事件响应顺序 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/08/01/M_Swift94Runtime理解/" rel="prev" title="理解Runtime">
+                理解Runtime <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -417,7 +426,7 @@ SDWebimage -静态图片加载 产生拉伸，
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">170</span>
+              <span class="site-state-item-count">173</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -449,7 +458,7 @@ SDWebimage -静态图片加载 产生拉伸，
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ANF包括如下模块"><span class="nav-number">1.</span> <span class="nav-text">ANF包括如下模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDWebImage-概论"><span class="nav-number">2.</span> <span class="nav-text">SDWebImage 概论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简述自己经常使用第三方库和其优缺点"><span class="nav-number"></span> <span class="nav-text">简述自己经常使用第三方库和其优缺点</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#相关方法"><span class="nav-number">1.</span> <span class="nav-text">相关方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问过程"><span class="nav-number">2.</span> <span class="nav-text">访问过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Other"><span class="nav-number">3.</span> <span class="nav-text">Other</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#KVC提供了验证Key对应的Value是否可用的方法："><span class="nav-number">3.1.</span> <span class="nav-text">KVC提供了验证Key对应的Value是否可用的方法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KVC对数值和结构体型属性的支持"><span class="nav-number">3.2.</span> <span class="nav-text">KVC对数值和结构体型属性的支持</span></a></li></ol></li></ol></div>
             
           </div>
         </section>

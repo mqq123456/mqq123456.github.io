@@ -1,0 +1,624 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="KVO实现原理apple使用isa混写（isa-swizzling）来实现KVO。
+当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying 
+A的新类，该类继承自对象A的本类，
+且KVO为NSKVONotifying A重写观察属性的setter方法，
+setter方法会负责在调用原setter方法之前之后，
+通知所有观察对象属性值的更改情况。
+对象注册为观察者时，isa指针">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KVO">
+<meta property="og:url" content="http://yoursite.com/2018/08/07/M_Swift105KVO/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="KVO实现原理apple使用isa混写（isa-swizzling）来实现KVO。
+当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying 
+A的新类，该类继承自对象A的本类，
+且KVO为NSKVONotifying A重写观察属性的setter方法，
+setter方法会负责在调用原setter方法之前之后，
+通知所有观察对象属性值的更改情况。
+对象注册为观察者时，isa指针">
+<meta property="og:updated_time" content="2018-08-07T08:10:59.540Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KVO">
+<meta name="twitter:description" content="KVO实现原理apple使用isa混写（isa-swizzling）来实现KVO。
+当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying 
+A的新类，该类继承自对象A的本类，
+且KVO为NSKVONotifying A重写观察属性的setter方法，
+setter方法会负责在调用原setter方法之前之后，
+通知所有观察对象属性值的更改情况。
+对象注册为观察者时，isa指针">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/07/M_Swift105KVO/"/>
+
+  <title> KVO | Men的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Men的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">欢迎光临！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            博文
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                KVO
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-07T15:45:34+08:00" content="2018-08-07">
+              2018-08-07
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="KVO实现原理"><a href="#KVO实现原理" class="headerlink" title="KVO实现原理"></a>KVO实现原理</h2><pre><code>apple使用isa混写（isa-swizzling）来实现KVO。
+当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying 
+A的新类，该类继承自对象A的本类，
+且KVO为NSKVONotifying A重写观察属性的setter方法，
+setter方法会负责在调用原setter方法之前之后，
+通知所有观察对象属性值的更改情况。
+对象注册为观察者时，isa指针指向新子类，那么这个被观察的对象就神奇地
+变成新子类的对象了。） 因而在该对象上对 setter 的调用就会调用已重
+写的 setter，从而激活键值通知机制。
+子类setter方法剖析：KVO的键值观察通知依赖于 NSObject 的两个方法
+:willChangeValueForKey:和 didChangevlueForKey:，
+在存取数值的前后分别调用2个方法：被观察属性发生改变之前，
+willChangeValueForKey:被调用，通知系统该 keyPath 的属性值即将
+变更；当改变发生后， didChangeValueForKey: 被调用，通知系统该
+keyPath 的属性值已经变更；之
+后observeValueForKey:ofObject:change:context:
+也会被调用。且重写观察属性的setter 方法这种继承方式的注入是
+在运行时而不是编译时实现的。
+观察者观察的属性，只有遵循KVO变更属性值的方式才会执行KVO
+的回调方法，例如是否执行setter方法，或着是否使用KVC
+赋值。如果赋值没有通过setter方法或者KVC，而是直接修改属
+性对应的成员变量，例如：仅调用_name = @&quot;newName&quot; ,这
+时时不会触发kvo机制，更加不会调用回调方法的。所以使用
+KVO机制的前提是遵循KVO的属性设置方式来变更属性值。
+</code></pre><h2 id="为什么要用子类监听setter方法，而不用分类呢？"><a href="#为什么要用子类监听setter方法，而不用分类呢？" class="headerlink" title="为什么要用子类监听setter方法，而不用分类呢？"></a>为什么要用子类监听setter方法，而不用分类呢？</h2><pre><code>原因是当你用分类监听setter方法的时候，原类中setter方法就不会走了，这样不好，所以苹果使用了子类监听setter方法。
+</code></pre><h2 id="isa-swizzling为什么不会出现递归"><a href="#isa-swizzling为什么不会出现递归" class="headerlink" title="isa-swizzling为什么不会出现递归"></a>isa-swizzling为什么不会出现递归</h2><pre><code>你在swizzlingViewDidLoad方法中又调用[self
+swizzlingViewDidLoad];，这难道不会产生递归调用吗？
+其实不会，Method Swizzling ：实现原理理解为方法互换，
+假设我们将A，B两个方法进行互换，向A发消息时执行的是B的方
+法，向B发消息时执行的是A方法，所以再调用[self
+swizzlingViewDidLoad];又回到原类的方法中了。
+</code></pre><h2 id="为什么要保证只执行一次Method-Swizzling"><a href="#为什么要保证只执行一次Method-Swizzling" class="headerlink" title="为什么要保证只执行一次Method Swizzling"></a>为什么要保证只执行一次Method Swizzling</h2><pre><code>我们上面提到过Method Swizzling的实现原理就是对类的Dispatch
+Table进行操作，每进行一次Swizzling就交换一次SEL和IMP(可以理解为
+函数指针)，如果Swizzling被执行了多次，就相当于SEL和IMP被交换了多
+次。这就会导致第一次执行成功交换了、第二次执行又换回去了、第三次执
+行.....这样换来换去的结果，能不能成功就看运气了😄，这也是好多人说
+Method Swizzling不好用的原因之一。
+为了避免这样的原因出现，我们可以通过GCD的dispatch_once函数来解决，
+利用dispatch_once函数内代码只会执行一次的特性。
+</code></pre><h2 id="Method-Swizzling为什么对类簇不起作用"><a href="#Method-Swizzling为什么对类簇不起作用" class="headerlink" title="Method Swizzling为什么对类簇不起作用"></a>Method Swizzling为什么对类簇不起作用</h2><pre><code>对于NSArray 􏴯 NSMutableArray 􏴯 NSDictionary 􏴯
+NSMutableDictionary 等类进行Method Swizzling ，实现
+方式按照上面例子来做，但是你发现Method Swizzling 根本不
+起作用
+这是因为Method Swizzling 对NSArray这些类簇是不起作
+用的，因为这些类簇，其实是一种抽象工厂的设计模式，抽象工厂内
+部有很多其他继承自身当前类的子类，抽象工厂类会根据不同情况，
+创建不同的抽象对象来进行使用。例如我们调用NSArray的
+objectAtIndex方法，这个类会在方法内部判断，内部创建不同抽
+象类进行操作。
+所以也就是我们对NSArray进行操作其实是对父类进行操作，在
+NSArray内部会创建其子类进行执行操作，真正执行操作的并不是
+NSArray自身，所以我们应该对其真身进行操作。
+如果进行Method Swizzling中的类有继承关系，并且
+swizzling了同一个方法，这样会导致父类的Swizzling失效。必
+须要证Method Swizzling方法只执行一次。
+</code></pre><h2 id="KVC与KVO的不同"><a href="#KVC与KVO的不同" class="headerlink" title="KVC与KVO的不同"></a>KVC与KVO的不同</h2><pre><code>KVC(键值编码)，即Key-Value Coding，一个非正式的Protocol，
+使用字符串(键)访问一个对象实例变量的机制。而不是通过调用Setter
+、Getter方法等显式的存取方式去问。
+KVO(键值监听)，即Key-Value Observing，它提供一种机制,
+当指定的对象的属性被修改后,对象就会接受到通知，前提是执行了
+setter方法、或者使用了KVC赋值。
+</code></pre><h2 id="KVO和notification-通知-的区别"><a href="#KVO和notification-通知-的区别" class="headerlink" title="KVO和notification(通知)的区别"></a>KVO和notification(通知)的区别</h2><pre><code>notification比KVO多了发送通知的一步。两者都是一对多，
+但是对象之间直接的交互，notification明显得多，需要
+notificationCenter来做为中间交互。而KVO如我们介绍的，设置观察者-&gt;
+处理属性变化，至于中间通知这一环，则隐秘多了，只留一句“交由系统通知”，
+具体的可参照以上实现过程的剖析。
+notification的优点是监听不局限于属性的变化，还可以对多种多样的状态
+变化进行监听，监听范围广，例如键盘、前后台等系统通知的使用也更显灵活方
+便。
+</code></pre><h2 id="KVO和delegate-通知-的区别"><a href="#KVO和delegate-通知-的区别" class="headerlink" title="KVO和delegate(通知)的区别"></a>KVO和delegate(通知)的区别</h2><pre><code>和delegate一样，KVO和NSNotification的作用都是类与类之间的通信。
+但是与delegate不同的是：
+这两个都是负责发送接收通知，剩下的事情由系统处理，所以不用返回值；而
+delegate 则需要通信的对象通过变量(代理)联系；
+delegate一般是一对一，而这两个可以一对多。
+</code></pre><h2 id="KVO和线程关系"><a href="#KVO和线程关系" class="headerlink" title="KVO和线程关系"></a>KVO和线程关系</h2><pre><code>总结:接收通知代码 由 发出通知线程决定, KVO也一样
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/07/M_Swift104Category/" rel="next" title="Category">
+                <i class="fa fa-chevron-left"></i> Category
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/12388663?v=3&u=20e1503339de9acf72fc1184728c2afca6ae9b4a&s=140"
+               alt="门乾强" />
+          <p class="site-author-name" itemprop="name">门乾强</p>
+          <p class="site-description motion-element" itemprop="description">博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">173</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO实现原理"><span class="nav-number">1.</span> <span class="nav-text">KVO实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要用子类监听setter方法，而不用分类呢？"><span class="nav-number">2.</span> <span class="nav-text">为什么要用子类监听setter方法，而不用分类呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isa-swizzling为什么不会出现递归"><span class="nav-number">3.</span> <span class="nav-text">isa-swizzling为什么不会出现递归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要保证只执行一次Method-Swizzling"><span class="nav-number">4.</span> <span class="nav-text">为什么要保证只执行一次Method Swizzling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method-Swizzling为什么对类簇不起作用"><span class="nav-number">5.</span> <span class="nav-text">Method Swizzling为什么对类簇不起作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVC与KVO的不同"><span class="nav-number">6.</span> <span class="nav-text">KVC与KVO的不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和notification-通知-的区别"><span class="nav-number">7.</span> <span class="nav-text">KVO和notification(通知)的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和delegate-通知-的区别"><span class="nav-number">8.</span> <span class="nav-text">KVO和delegate(通知)的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和线程关系"><span class="nav-number">9.</span> <span class="nav-text">KVO和线程关系</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

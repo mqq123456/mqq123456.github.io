@@ -228,7 +228,355 @@
             
               
                 
-                <a class="post-title-link" href="/2018/08/06/M_Swift102内存管理/" itemprop="url">
+                <a class="post-title-link" href="/2018/08/07/M_Swift105KVO/" itemprop="url">
+                  KVO
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-07T15:45:34+08:00" content="2018-08-07">
+              2018-08-07
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="KVO实现原理"><a href="#KVO实现原理" class="headerlink" title="KVO实现原理"></a>KVO实现原理</h2><pre><code>apple使用isa混写（isa-swizzling）来实现KVO。
+当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying 
+A的新类，该类继承自对象A的本类，
+且KVO为NSKVONotifying A重写观察属性的setter方法，
+setter方法会负责在调用原setter方法之前之后，
+通知所有观察对象属性值的更改情况。
+对象注册为观察者时，isa指针指向新子类，那么这个被观察的对象就神奇地
+变成新子类的对象了。） 因而在该对象上对 setter 的调用就会调用已重
+写的 setter，从而激活键值通知机制。
+子类setter方法剖析：KVO的键值观察通知依赖于 NSObject 的两个方法
+:willChangeValueForKey:和 didChangevlueForKey:，
+在存取数值的前后分别调用2个方法：被观察属性发生改变之前，
+willChangeValueForKey:被调用，通知系统该 keyPath 的属性值即将
+变更；当改变发生后， didChangeValueForKey: 被调用，通知系统该
+keyPath 的属性值已经变更；之
+后observeValueForKey:ofObject:change:context:
+也会被调用。且重写观察属性的setter 方法这种继承方式的注入是
+在运行时而不是编译时实现的。
+观察者观察的属性，只有遵循KVO变更属性值的方式才会执行KVO
+的回调方法，例如是否执行setter方法，或着是否使用KVC
+赋值。如果赋值没有通过setter方法或者KVC，而是直接修改属
+性对应的成员变量，例如：仅调用_name = @&quot;newName&quot; ,这
+时时不会触发kvo机制，更加不会调用回调方法的。所以使用
+KVO机制的前提是遵循KVO的属性设置方式来变更属性值。
+</code></pre><h2 id="为什么要用子类监听setter方法，而不用分类呢？"><a href="#为什么要用子类监听setter方法，而不用分类呢？" class="headerlink" title="为什么要用子类监听setter方法，而不用分类呢？"></a>为什么要用子类监听setter方法，而不用分类呢？</h2><pre><code>原因是当你用分类监听setter方法的时候，原类中setter方法就不会走了，这样不好，所以苹果使用了子类监听setter方法。
+</code></pre><h2 id="isa-swizzling为什么不会出现递归"><a href="#isa-swizzling为什么不会出现递归" class="headerlink" title="isa-swizzling为什么不会出现递归"></a>isa-swizzling为什么不会出现递归</h2><pre><code>你在swizzlingViewDidLoad方法中又调用[self
+swizzlingViewDidLoad];，这难道不会产生递归调用吗？
+其实不会，Method Swizzling ：实现原理理解为方法互换，
+假设我们将A，B两个方法进行互换，向A发消息时执行的是B的方
+法，向B发消息时执行的是A方法，所以再调用[self
+swizzlingViewDidLoad];又回到原类的方法中了。
+</code></pre><h2 id="为什么要保证只执行一次Method-Swizzling"><a href="#为什么要保证只执行一次Method-Swizzling" class="headerlink" title="为什么要保证只执行一次Method Swizzling"></a>为什么要保证只执行一次Method Swizzling</h2><pre><code>我们上面提到过Method Swizzling的实现原理就是对类的Dispatch
+Table进行操作，每进行一次Swizzling就交换一次SEL和IMP(可以理解为
+函数指针)，如果Swizzling被执行了多次，就相当于SEL和IMP被交换了多
+次。这就会导致第一次执行成功交换了、第二次执行又换回去了、第三次执
+行.....这样换来换去的结果，能不能成功就看运气了😄，这也是好多人说
+Method Swizzling不好用的原因之一。
+为了避免这样的原因出现，我们可以通过GCD的dispatch_once函数来解决，
+利用dispatch_once函数内代码只会执行一次的特性。
+</code></pre><h2 id="Method-Swizzling为什么对类簇不起作用"><a href="#Method-Swizzling为什么对类簇不起作用" class="headerlink" title="Method Swizzling为什么对类簇不起作用"></a>Method Swizzling为什么对类簇不起作用</h2><pre><code>对于NSArray 􏴯 NSMutableArray 􏴯 NSDictionary 􏴯
+NSMutableDictionary 等类进行Method Swizzling ，实现
+方式按照上面例子来做，但是你发现Method Swizzling 根本不
+起作用
+这是因为Method Swizzling 对NSArray这些类簇是不起作
+用的，因为这些类簇，其实是一种抽象工厂的设计模式，抽象工厂内
+部有很多其他继承自身当前类的子类，抽象工厂类会根据不同情况，
+创建不同的抽象对象来进行使用。例如我们调用NSArray的
+objectAtIndex方法，这个类会在方法内部判断，内部创建不同抽
+象类进行操作。
+所以也就是我们对NSArray进行操作其实是对父类进行操作，在
+NSArray内部会创建其子类进行执行操作，真正执行操作的并不是
+NSArray自身，所以我们应该对其真身进行操作。
+如果进行Method Swizzling中的类有继承关系，并且
+swizzling了同一个方法，这样会导致父类的Swizzling失效。必
+须要证Method Swizzling方法只执行一次。
+</code></pre><h2 id="KVC与KVO的不同"><a href="#KVC与KVO的不同" class="headerlink" title="KVC与KVO的不同"></a>KVC与KVO的不同</h2><pre><code>KVC(键值编码)，即Key-Value Coding，一个非正式的Protocol，
+使用字符串(键)访问一个对象实例变量的机制。而不是通过调用Setter
+、Getter方法等显式的存取方式去问。
+KVO(键值监听)，即Key-Value Observing，它提供一种机制,
+当指定的对象的属性被修改后,对象就会接受到通知，前提是执行了
+setter方法、或者使用了KVC赋值。
+</code></pre><h2 id="KVO和notification-通知-的区别"><a href="#KVO和notification-通知-的区别" class="headerlink" title="KVO和notification(通知)的区别"></a>KVO和notification(通知)的区别</h2><pre><code>notification比KVO多了发送通知的一步。两者都是一对多，
+但是对象之间直接的交互，notification明显得多，需要
+notificationCenter来做为中间交互。而KVO如我们介绍的，设置观察者-&gt;
+处理属性变化，至于中间通知这一环，则隐秘多了，只留一句“交由系统通知”，
+具体的可参照以上实现过程的剖析。
+notification的优点是监听不局限于属性的变化，还可以对多种多样的状态
+变化进行监听，监听范围广，例如键盘、前后台等系统通知的使用也更显灵活方
+便。
+</code></pre><h2 id="KVO和delegate-通知-的区别"><a href="#KVO和delegate-通知-的区别" class="headerlink" title="KVO和delegate(通知)的区别"></a>KVO和delegate(通知)的区别</h2><pre><code>和delegate一样，KVO和NSNotification的作用都是类与类之间的通信。
+但是与delegate不同的是：
+这两个都是负责发送接收通知，剩下的事情由系统处理，所以不用返回值；而
+delegate 则需要通信的对象通过变量(代理)联系；
+delegate一般是一对一，而这两个可以一对多。
+</code></pre><h2 id="KVO和线程关系"><a href="#KVO和线程关系" class="headerlink" title="KVO和线程关系"></a>KVO和线程关系</h2><pre><code>总结:接收通知代码 由 发出通知线程决定, KVO也一样
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/07/M_Swift104Category/" itemprop="url">
+                  Category
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-07T15:24:48+08:00" content="2018-08-07">
+              2018-08-07
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Objective-C中category的实现原理和runtime有什么关系？"><a href="#Objective-C中category的实现原理和runtime有什么关系？" class="headerlink" title="Objective-C中category的实现原理和runtime有什么关系？"></a>Objective-C中category的实现原理和runtime有什么关系？</h1><pre><code>在runtime层，category用结构体category_t
+Objective-C 中的 Category 就是对装饰模式的一种具
+体实现。它的主要作用是在不改变原有类的前提下，动态地
+给这个类添加一些方法。在 Objective-C 中的具体体现为：
+实例（类）方法、属性和协议。是的，在 Objective-C 
+中可以用 Category 来实现协议
+将 Category 和它的主类（或元类）注册到哈希表中；
+如果主类（或元类）已实现，那么重建它的方法列表。
+Category 中的实例方法和属性被整合到主类中；
+而类方法则被整合到元类中。
+另外，对协议的处理比较特殊，Category 中的协议被同
+时整合到了主类和元类中。
+我们注意到，不管是哪种情况，最终都是通过调用 
+static void remethodizeClass(Class cls) 
+函数来重新整理类的数据的。
+这个函数的主要作用是将 Category 中的方法、属性和协议
+整合到类（主类或元类）中，更新类的数据字段 data() 中
+method_lists（或 method_list）、properties 和
+protocols 的值。进一步，我们通过
+attachCategoryMethods 函数的源码可以找到真正处理
+Category 方法的 attachMethodLists 函数：
+</code></pre><h2 id="category结构体的定义"><a href="#category结构体的定义" class="headerlink" title="category结构体的定义"></a>category结构体的定义</h2><pre><code>struct category_t {
+    const char *name;     //类的名字（name）
+    classref_t cls;       //类（cls）
+    struct method_list_t *instanceMethods; 
+    //category中所有给类添加的实例方法的列表（instanceMethods）
+    struct method_list_t *classMethods; 
+    //category中所有添加的类方法的列表（classMethods）
+    struct protocol_list_t *protocols; 
+    //category实现的所有协议的列表（protocols）
+    struct property_list_t *instanceProperties;
+    //category中添加的所有属性（instanceProperties）
+}
+</code></pre><h2 id="类别（category）主要有三个作用"><a href="#类别（category）主要有三个作用" class="headerlink" title="类别（category）主要有三个作用"></a>类别（category）主要有三个作用</h2><pre><code>1.将类的实现分散到多个不同文件或多个不同框架中
+2.创建对私有方法的向前引用
+3.向对象添加非正式协议
+</code></pre><h2 id="类别和Extension区别"><a href="#类别和Extension区别" class="headerlink" title="类别和Extension区别"></a>类别和Extension区别</h2><pre><code>和Category相似的还有Extension，二者的区别是Extension
+在编译期就直接和原类编译在一起了，而Category是在
+运行时添加到原类中。
+</code></pre><h2 id="类别为什么不能添加实例变量"><a href="#类别为什么不能添加实例变量" class="headerlink" title="类别为什么不能添加实例变量"></a>类别为什么不能添加实例变量</h2><pre><code>category是无法添加实例变量的（因为在运行期，对象的内存布局已
+经确定，如果添加实例变量就会破坏类的内部布局，这对编译型语言来
+说是灾难性的）。
+</code></pre><h2 id="类别重写类中方法"><a href="#类别重写类中方法" class="headerlink" title="类别重写类中方法"></a>类别重写类中方法</h2><pre><code>1)、category的方法没有“完全替换掉”原来类已经有的方法，也就是说如果
+category和原来类都有methodA，那么category附加完成之后，类的方法列
+表里会有两个methodA
+2)、category的方法被放到了新方法列表的前面，而原来类的方法被放到了新
+方法列表的后面，这也就是我们平常所说的category的方法会“覆盖”掉原来类
+的同名方法，这是因为运行时在查找方法的时候是顺着方法列表的顺序查找的，
+它只要一找到对应名字的方法，就会罢休^_^，殊不知后面可能还有一样名字的
+方法。
+重写其原有方法，会导致Category的方法覆盖原有类的方法，
+但是load方法是例外，category和原有类的load方法都会被执行。
+</code></pre><h2 id="如何在重写后，保证原类方法会调用"><a href="#如何在重写后，保证原类方法会调用" class="headerlink" title="如何在重写后，保证原类方法会调用"></a>如何在重写后，保证原类方法会调用</h2><pre><code>可以在一个Category方法被调用后，便利方法列表，
+并调用其他同名方法，但是需要注意一点是，便利过程不能
+再调用自己的方法，否则会导致递归调用，为了避免这个问题，
+可以在调用前判断被调用的方法IMP是否是当前方法的IMP
+</code></pre><h2 id="如何在重写后，保证只调用原类方法"><a href="#如何在重写后，保证只调用原类方法" class="headerlink" title="如何在重写后，保证只调用原类方法"></a>如何在重写后，保证只调用原类方法</h2><pre><code>根据上面方法调用的分析，Runtime在调用方法时会优先所
+有Category调用，所以可以倒叙便利方法列表，只便利第一
+个方法即可，这个方法就是元类的方法。
+</code></pre><h2 id="如何在Category中添加变量"><a href="#如何在Category中添加变量" class="headerlink" title="如何在Category中添加变量"></a>如何在Category中添加变量</h2><pre><code>关联对象来实现。我们可以看到所有的关联对象都由
+AssociationsManager管理
+AssociationsManager里面是由一个静态AssociationsHashMap来存储
+所有的关联对象的。这相当于把所有对象的关联对象都存在一个全局map里面。
+而map的的key是这个对象的指针地址（任意两个不同对象的指针地址一定是不
+同的），而这个map的value又是另外一个AssociationsHashMap，里面保
+存了关联对象的kv对。
+@interface TestObject (Category)
+@property (nonatomic, strong) NSObject *object; @end
+#import &lt;objc/runtime.h&gt;
+#import &lt;objc/message.h&gt;
+static void *const kAssociatedObjectKey = 
+(void *)&amp;kAssociatedObjectKey;
+@implementation TestObject (Category)
+- (NSObject *)object {
+return objc_getAssociatedObject(
+self, kAssociatedObjectKey);
+}
+- (void)setObject:(NSObject *)object {
+objc_setAssociatedObject(self,
+kAssociatedObjectKey, object,
+OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+从原码中可以看出，所有通过associated添加的属性，
+都是被单独存放在一个哈希表AssociationsHashMap中，
+objc_setAssociatedObject和
+objc_getAssociatedObject本质上就是操作这个哈希表，
+通过对哈希表进行映射来存取对象。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/06/M_Swift98内存管理/" itemprop="url">
                   内存管理
                 </a>
               
@@ -345,6 +693,131 @@ ARC编译的第三方库，或者反之）
 ，传1是调用这个函数的外层函数的返回值地址，以此类推。
 如果一个函数返回前知道调用方是ARC还是非ARC，就有机会对
 于不同情况做不同的处理
+</code></pre><h1 id="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"><a href="#在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因" class="headerlink" title="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"></a>在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因</h1><pre><code>类有一个成员变量_timer，给_timer设置的target为这个类本身。这样类保留_timer，_timer又保留了这个类，就会出现循环引用的问题，最后导致类无法正确释放。
+
+解决这个问题的方式也很简单，当类的使用者能够确定不需要使用这个计时器时，就调用
+[_timer invalidate];
+_timer = nil;
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/06/M_Swift106判断类相同/" itemprop="url">
+                  判断类相同
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-06T16:34:11+08:00" content="2018-08-06">
+              2018-08-06
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>1.判断两个指针是否相等，若相等，则均指向同一对象，所以受测的对象也必定
+相等。NSObject的isEqual:方法默认是比较两个对象指向的地址是否相等，
+直接比较两个对象是否相等，实际上比较的是两个对象的指针是否相等。
+2.判断两对象所属的类，若属于同一类
+3.hash
+比较得时候最好是先计算其哈希码，再进行比较。
+4.isEqualToString
+如果isEqual判断两个对象相等，那么hash方法也必须返回同一个值，
+但是，如果两个对象的hash方法返回同一个值，
+那么isEqual方法未必会认为两个方法相同
+需要实现&lt;NSCopying&gt;
+实现isEqual:方法的同时，要实现hash方法！ 
+- (BOOL)isEqual:(id)object {
+if (self == object) return YES;
+if (![object isKindOfClass:[Person class]]) return NO;
+    return [self.name isEqualToString:[object name]];
+}
+用于判断两个字符串是否相等的方法，当然还有isEqualToArray:   isEqualToDictionary: 
+5.深度等同性判定
+NSArray 的检测方式需要先比较两个数组所包含的个数是否相同，
+若相同，则在每个对应未知的两个对象身上调用其“isEqual:&quot;方法。
+如果对应位置上的对象均相等，那么这两个数组就相等。
+6.NSSet中可变类的等同性比较
+非常复杂，只写结论了：如果把一个对象放入set之后又修改其内容，
+那么后面的行为将很难预料，使用过程中一定以注意，
+以免得到的不是自己想要的结果
+7.两个对象中的各个字段是否相等
 </code></pre>
           
         
@@ -560,7 +1033,7 @@ withEvent:(UIEvent *)event后，其实我们的点击后调
             
               
                 
-                <a class="post-title-link" href="/2018/08/03/M_Swift93AFN_SDWebImage/" itemprop="url">
+                <a class="post-title-link" href="/2018/08/03/M_Swift102AFN_SDWebImage/" itemprop="url">
                   AFN SD做了哪些优化
                 </a>
               
@@ -604,11 +1077,17 @@ withEvent:(UIEvent *)event后，其实我们的点击后调
       
         
           
-            <h2 id="ANF包括如下模块"><a href="#ANF包括如下模块" class="headerlink" title="ANF包括如下模块"></a>ANF包括如下模块</h2><pre><code>网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
+            <h2 id="AFN包括如下模块"><a href="#AFN包括如下模块" class="headerlink" title="AFN包括如下模块"></a>AFN包括如下模块</h2><pre><code>网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
 网络状态监听模块(Reachability)
 网络通信安全策略模块(Security)
 网络通信信息序列化/反序列化模块(Serialization)
 对于iOS UIKit库的扩展(UIKit)
+</code></pre><h2 id="AFN优点"><a href="#AFN优点" class="headerlink" title="AFN优点"></a>AFN优点</h2><pre><code>AFNetworking内置支持JSON,plist文件和XML文件的解析,使用比
+较方便我们能够有效的控制并观察一个网络请求的创建、进行、取消、
+完成、暂停恢复、异常等问题及状态
+可以帮助我们轻松友好的完成请求的创建、响应的系列化,网络状态的监控以
+及安全策略以及每一个请求operation的管理(operation的相互依赖或
+状态改变)。 
 </code></pre><h2 id="SDWebImage-概论"><a href="#SDWebImage-概论" class="headerlink" title="SDWebImage 概论"></a>SDWebImage 概论</h2><pre><code>1.提供了一个UIImageView的category用来加载网
 络图片并且对网络图片的缓存进行管理
 2.采用异步方式来下载网络图片
@@ -624,19 +1103,13 @@ withEvent:(UIEvent *)event后，其实我们的点击后调
 13.图片解码处理在一个 NSOperationQueue 完成，
 不会拖慢主线程 UI。如果有需要对下载的图片进行二次处理，
 最好也在这里完成，效率会好很多。
-</code></pre><h1 id="简述自己经常使用第三方库和其优缺点"><a href="#简述自己经常使用第三方库和其优缺点" class="headerlink" title="简述自己经常使用第三方库和其优缺点"></a>简述自己经常使用第三方库和其优缺点</h1><pre><code>AFNetworking使用简单易懂明快方便，一直在更新且活力不错，
-最近版早早已经支持iOS7了。但AFNetworking必须使用ARC，
-对于要支持iOS4的应用来说不适用。
-ASI似乎很久没有更新了，可以不用ARC，如果要支持iOS4，
-ASI较好，但如果要支持iOS7，ASI就不行了
-ASI 性能更好些，应为用的是CFNetwork的接口，
-比NSURL更底层。
+</code></pre><h1 id="AFN、SD缺点"><a href="#AFN、SD缺点" class="headerlink" title="AFN、SD缺点"></a>AFN、SD缺点</h1><pre><code>最近版早早已经支持NSURLSession了，但是不支持iOS7以下系统。
+且AFNetworking必须使用ARC
 SDWebImage 对gif的处理主要是在UIImage+GIF
 这个文件里面，利用ImageIO函数创建二进制数据，如下：
 由于SDWebImage通过动图数组来实现动态，
-造成内存不能及时释放
-SDWebimage -静态图片加载 产生拉伸，
-如下图黄色表示拉伸，
+会造成内存不能及时释放
+SDWebimage -静态图片加载会产生拉伸
 </code></pre>
           
         
@@ -686,7 +1159,7 @@ SDWebimage -静态图片加载 产生拉伸，
             
               
                 
-                <a class="post-title-link" href="/2018/08/03/M_Swift89多线程/" itemprop="url">
+                <a class="post-title-link" href="/2018/08/03/M_Swift93多线程/" itemprop="url">
                   多线程
                 </a>
               
@@ -782,21 +1255,7 @@ CPU会在N多线程之间调度，CPU会累死，消耗大量的CPU资源
 空间，降低程序的性能
 线程越多，CPU在调度线程上的开销就越大
 程序设计更加复杂：比如线程之间的通信、多线程的数据共享
-</code></pre><h2 id="你更倾向于哪一种？"><a href="#你更倾向于哪一种？" class="headerlink" title="你更倾向于哪一种？"></a>你更倾向于哪一种？</h2><h3 id="倾向于GCD："><a href="#倾向于GCD：" class="headerlink" title="倾向于GCD："></a>倾向于GCD：</h3><pre><code>GCD
-技术是一个轻量的，底层实现隐藏的神奇技术，我们能够通过GCD
-和block轻松实现多线程编程，有时候，GCD相比其他系统提供的
-多线程方法更加有效，当然，有时候GCD不是最佳选择，另一个
-多线程编程的技术
-NSOprationQueue 让我们能够将后台线程以队列方式依
-序执行，并提供更多操作的入口，这和 GCD 的实现有些类似。
-这种类似不是一个巧合，在早期，MacOX
-与 iOS 的程序都普遍采用Operation
-Queue来进行编写后台线程代码，而之后出现的GCD技术大体是
-依照前者的原则来实现的，而随着GCD的普及，在iOS 4 与
-MacOS X
-10.6以后，Operation Queue的底层实现都是用GCD来实现的。
-那这两者直接有什么区别呢？
-1.GCD是底层的C语言构成的API，而NSOperationQueue及
+</code></pre><h2 id="GCD和NSOperation区别，你更倾向于哪一种？"><a href="#GCD和NSOperation区别，你更倾向于哪一种？" class="headerlink" title="GCD和NSOperation区别，你更倾向于哪一种？"></a>GCD和NSOperation区别，你更倾向于哪一种？</h2><h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><pre><code>1.GCD是底层的C语言构成的API，而NSOperationQueue及
 相关对象是Objc的对象。在GCD中，在队列中执行的是由block
 构成的任务，这是一个轻量级的数据结构；而Operation作为一
 个对象，为我们提供了更多的选择；
@@ -824,34 +1283,47 @@ block任务的优先级，也需要大量的复杂代码；
 是我认为当我们的需求能够以更简单的底层代码完成的时候，简洁的
 GCD或许是个更好的选择，而Operationqueue 为我们提供能更多
 的选择。
-</code></pre><h3 id="倾向于：NSOperation"><a href="#倾向于：NSOperation" class="headerlink" title="倾向于：NSOperation"></a>倾向于：NSOperation</h3><pre><code>NSOperation相对于GCD：
-1，NSOperation拥有更多的函数可用，具体查看api。NSOperationQueue 是在GCD基础上实现的，只不过是
-GCD更高一层的抽象。
-2，在NSOperationQueue中，可以建立各个NSOperation之间
-的依赖关系。
-3，NSOperationQueue支持KVO。可以监测operation
-是否正在执行（isExecuted）、是否结束（isFinished），
-是否取消（isCanceld）
-4，GCD 只支持FIFO 的队列，而NSOperationQueue可以调
+</code></pre><h3 id="倾向于GCD："><a href="#倾向于GCD：" class="headerlink" title="倾向于GCD："></a>倾向于GCD：</h3><pre><code>1.GCD是纯C语言的API，轻量级 。
+2.GCD的执行速度比NSOperationQueue快。
+3.代码更底层简洁
+</code></pre><h3 id="倾向于：NSOperation"><a href="#倾向于：NSOperation" class="headerlink" title="倾向于：NSOperation"></a>倾向于：NSOperation</h3><pre><code>NSOperation拥有更多的函数可用
+NSOperationQueue可以方便的设置operation之间的依
+赖关系，GCD则需要很多代码。
+NSOperationQueue支持KVO，可以检测operation是
+否正在执行（isExecuted）,是否结束（isFinished）,
+是否取消（isCanceled）
+GCD 只支持FIFO 的队列，NSOperationQueue可以调
 整队列的执行顺序（通过调整权重）。NSOperationQueue可
 以方便的管理并发、NSOperation之间的优先级。
-使用NSOperation的情况：各个操作之间有依赖关系、操作需
-要取消暂停、并发管理、控制操作之间优先级，限制同时能执行
-的线程数量.让线程在某时刻停止/继续等。
-使用GCD的情况：一般的需求很简单的多线程操作，用GCD都可
-以了，简单高效。
-从编程原则来说，一般我们需要尽可能的使用高等级、封装完美
-的API，在必须时才使用底层API。
-当需求简单，简洁的GCD或许是个更好的选择，而Operation
-queue 为我们提供能更多的选择。
-</code></pre><h2 id="ios-几种线程锁"><a href="#ios-几种线程锁" class="headerlink" title="ios 几种线程锁"></a>ios 几种线程锁</h2><pre><code>https://www.jianshu.com/p/35dd92bcfe8c
-@synchronized
-NSLock 对象锁
-NSRecursiveLock 递归锁
-NSConditionLock 条件锁
-pathread_mutex 互斥锁（c语言）
-dispatch_semaphore 信号量实现加锁 （GCD）
-OSSpinLock (不建议使用)
+</code></pre><h3 id="使用场合："><a href="#使用场合：" class="headerlink" title="使用场合："></a>使用场合：</h3><pre><code>任务之间不太相互依赖，一般的需求很简单的多线程操作，
+用GCD都可以了，简单高效。
+任务之间有依赖或要监听任务的执行情况用 NSOperationQueue
+</code></pre><h2 id="ios-几种线程锁"><a href="#ios-几种线程锁" class="headerlink" title="ios 几种线程锁"></a>ios 几种线程锁</h2><pre><code>锁是最常用的同步工具。一段代码段在同一个时间只能允许被一个线程访问
+，比如一个线程A进入加锁代码之后由于已经加锁，另一个线程B就无法访问，
+只有等待前一个线程A执行完加锁代码后解锁，B线程才能访问加锁代码。
+@synchronized 一个对象层面的锁，锁住了整个对象，底层使用了互斥递归锁来实现
+pathread_mutex 互斥锁（c语言）和信号量的实现原理类似，也是阻塞线程并进入睡眠，需要进行上下文切换。
+NSLock 对象锁-简单的互斥锁（内部封装了一个 pthread_mutex）
+NSCondition （封装了一个互斥锁和条件变量。互斥锁保证线程安全，条件
+变量保证执行顺序）同样实现了NSLocking协议，
+所以它和NSLock一样，也有NSLocking协议的lock和unlock方法，
+可以当做NSLock来使用解决线程同步问题，用法完全一样。NSCondition
+提供更高级的用法。wait和signal
+NSCondition和NSLock、@synchronized等是不同的是，
+NSCondition可以给每个线程分别加锁，加锁后不影响其他线程进入临界区。
+这是非常强大。
+NSConditionLock （借助 NSCondition 来实现，本质是生产者-消费者模型）
+也可以像NSCondition一样做多线程之间的任务等待调用，而且是线程安全的。
+NSRecursiveLock 递归锁有时候“加锁代码”中存在递归调用，递归开始前加锁，递归调用开始后会重复执行此方法以至于反复执行加锁代码最终造成死锁，这个时候可以使用递归锁来解决。使用递归锁可以在一个线程中反复获取锁而不造成死锁，这个过程中会记录获取锁和释放锁的次数，只有最后两者平衡锁才被最终释放。
+dispatch_semaphore GCD中信号量，也可以解决资源抢占问题,
+支持信号通知和信号等待。每当发送一个信号通知，则信号量+1；
+每当发送一个等待信号时信号量-1,；如果信号量为0则信号会处于等待状态，
+直到信号量大于0开始执行
+OSSpinLock 自旋锁(不建议使用)
+自旋锁的实现原理比较简单，就是死循环。当a线程获得锁以后，b线程想要获取
+锁就需要等待a线程释放锁。在没有获得锁的期间，b线程会一直处于忙等的状
+态。如果a线程在临界区的执行时间过长，则b线程会消耗大量的cpu时间，不太
+划算。所以，自旋锁用在临界区执行时间比较短的环境性能会很高。
 追问一：自旋和互斥对比？
 相同点：都能保证同一时间只有一个线程访问共享资源。
 都能保证线程安全。
@@ -871,28 +1343,15 @@ OSSpinLock (不建议使用)
 导致整个系统挂起。
 </code></pre><h2 id="GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><a href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）" class="headerlink" title="GCD的一些常用的函数？（group， barrier，信号量 线程同步）"></a>GCD的一些常用的函数？（group， barrier，信号量 线程同步）</h2><pre><code>延迟函数dispatch_after
 一次性 dispatch_once
-dispatch_get_global_queue
-dispatch_group_async
-dispatch_group_notify
-dispatch_set_target_queue： 主要用来给新
-建的queue设置优先级
-dispatch_group_notify dispatch group可以
-在group中的dispatch queue都执行完后，通过其回调
-dispatch_barrier_async是一个可以让代签任务
-等待其他任务完成再执行的函数
-</code></pre><h1 id="是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？"><a href="#是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？" class="headerlink" title="是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？"></a>是否使用过NSOperationQueue和GCD来管理线程？两者有什么区别？两者实现机制的根本不同之处？</h1><pre><code>GCD是纯C语言的API 。NSOperationQueue是基于GCD的OC
-的封装。
-GCD只支持FIFO队列，NSOperationQueue可以方便设置执
-行顺序，设置最大的并发数量。
-NSOperationQueue可是方便的设置operation之间的依
-赖关系，GCD则需要很多代码。
-NSOperationQueue支持KVO，可以检测operation是
-否正在执行（isExecuted）,是否结束（isFinished）,
-是否取消（isCanceled）
-GCD的执行速度比NSOperationQueue快。
-使用场合：
-任务之间不太相互依赖：GCD
-任务之间有依赖或要监听任务的执行情况：NSOperationQueue
+创建串行队列 dispatch_queue_create 
+获取并发队列 dispatch_get_global_queue
+获取主队列 dispatch_get_main_queue
+异步执行任务 dispatch_async
+同步执行任务 dispatch_sync
+提交一个调度队列 dispatch_group_async
+新建的queue设置优先级 dispatch_set_target_queue
+任务执行完成通知回调 dispatch_group_notify 
+让当前任务等待queue其他任务完成再执行 dispatch_barrier_async
 </code></pre><h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><pre><code>-(void)clickButton {
     dispatch_sync(dispath_get_main_queue(), ^(void){
         NSLog(&quot;test&quot;);
@@ -954,7 +1413,7 @@ dispatch_sync在等待主队列执行完毕。
             
               
                 
-                <a class="post-title-link" href="/2018/08/03/M_Swift94Block/" itemprop="url">
+                <a class="post-title-link" href="/2018/08/03/M_Swift99Block/" itemprop="url">
                   Block理解
                 </a>
               
@@ -1046,7 +1505,7 @@ self被释放了，此时访问self时，就会发生错误。
 使得在block期间对 对象持有，block执行结束后，解除其持有。
 注：此方法只能保证在block执行期间对象不被释放，
 如果对象在block执行执行之前已经被释放了，该方法也无效。
-</code></pre><h2 id="什么情况下不回发生循环引用"><a href="#什么情况下不回发生循环引用" class="headerlink" title="什么情况下不回发生循环引用"></a>什么情况下不回发生循环引用</h2><pre><code>通用情况 :   在block本身不被self持有,而被别的对象持有,
+</code></pre><h2 id="什么情况下不回发生循环引用"><a href="#什么情况下不回发生循环引用" class="headerlink" title="什么情况下不回发生循环引用"></a>什么情况下不回发生循环引用</h2><pre><code>通用情况:在block本身不被self持有,而被别的对象持有,
 同时不产生循环引用的时候,就不需要使用weakself了
 UIView动画block，AFN的block
 UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
@@ -1128,7 +1587,7 @@ UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
               
                 
                 <a class="post-title-link" href="/2018/08/03/M_Swift95OC发消息步骤/" itemprop="url">
-                  OC发消息步骤
+                  OC发消息
                 </a>
               
             
@@ -1171,7 +1630,7 @@ UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
       
         
           
-            <pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
+            <h2 id="发消息步骤"><a href="#发消息步骤" class="headerlink" title="发消息步骤"></a>发消息步骤</h2><pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
 有垃圾回收，就不考虑 retain，release这些函数
 2.检测这个target是不是nil对象，
 ObjC的特性允许对一个nil对象发消息而不会崩溃
@@ -1197,6 +1656,46 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
 并调用下面的方法进行消息转发
 -（void）forwardInvocation：(NSInvocation *)invocation；
 9.如果最后都没有出来的话，那么就抛出异常
+</code></pre><h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>无论何时，要调用objc_msgSend函数，必须要将函数强制转
+换成合适的函数指针类型才能调用。
+其实编译器会根据情况在objc_msgSend,
+objc_msgSend_stret, objc_msgSendSuper, 或
+objc_msgSendSuper_stret四个方法中选择一个来调用。
+</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><pre><code>将一条消息发送给一个不能处理的对象会引起崩溃，但是在崩溃
+之前，系统给响应对象一次处理异常的机会。
+当发送一条对象不能处理的消息，产生crash之前，系统会调用
+响应者的forwardIMvocation方法，并传入一个NSInvocation
+对象，NSInvocation中包含原始消息及参数，这个方法之后方法
+未实现的时候才会调用。
+你可以实现forwardInvocation方法，将消息转发给另一个
+对象，forwardInvocation方法是一个动态方法，在响应者无法
+响应方法时，会调用forwardInvocation方法，可以重写这个方
+法，实现消息转发。
+</code></pre><h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>如果self为nil，那么selector也会为空，直接返回，不会出现问题。
+（返回值时对象，是标量，结构体）
+如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0
+地址返回，所以不会出现任何错误
+如果返回值类型是对象，那么返还nil
+如果回值类型是标量，那么是0，
+如果回值类型是结构体为0，
+其他为返回值是未定义的。
+但对于[NSNull null]对象发送消息时，是会crash的，因为NSNull类只有一个null方法。
+unrecognized selector sent to instance的错误是怎么回事？
+这是因为这个对象已经被释放了（引用计数为0了），那么这个时候再去调用方
+法肯定是会Crash的，因为这个时候这个对象就是一个野指针（指向僵尸对象
+（对象的引用计数为0，指针指向的内存已经不可用）的指针）了，安全的做法
+是释放后将对象重新置为nil，使它成为一个空指针，大家可以在关闭ARC后手
+动release对象验证一下。
+这里要区别的是空指针和野指针的区别！
+    1&gt; 没有存储任何内存地址的指针就称为空指针(NULL指针)
+    2&gt; 空指针就是被赋值为0的指针，在没有被具体初始化之前，其值为0。
+    &quot;野指针&quot;不是NULL指针，是指向&quot;垃圾&quot;内存（不可用内存）的指针。
+    野指针是非常危险的。
+</code></pre><h2 id="函数调用和OC的消息传递机制区别"><a href="#函数调用和OC的消息传递机制区别" class="headerlink" title="函数调用和OC的消息传递机制区别"></a>函数调用和OC的消息传递机制区别</h2><pre><code>1对于C语言，函数的调用在编译器的时候决定调用那个函数。编译完之后直接
+顺序执行。
+2OC的函数调用成为消息发送。属于动态调用过程。在编译的时候决不能决定
+真正调用那个函数（实时证明，在编译阶段，oc可以调用任何函数，及时这个
+函数并未实现，只要申明过就不会报错，而c语言在编译阶段或报错）。
 </code></pre>
           
         
@@ -1246,7 +1745,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
             
               
                 
-                <a class="post-title-link" href="/2018/08/02/M_Swift96RunLoop/" itemprop="url">
+                <a class="post-title-link" href="/2018/08/02/M_Swift97RunLoop/" itemprop="url">
                   RunLoop
                 </a>
               
@@ -1302,8 +1801,10 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
 没有工作的时候休眠，这可以大大节省系统资源。
 </code></pre><h2 id="获取线程"><a href="#获取线程" class="headerlink" title="获取线程"></a>获取线程</h2><pre><code>NSRunLoop *runloop = [NSRunLoop currentRunLoop];
 RunLoop 一个状态循环
-</code></pre><h2 id="NSRunLoop不是线程安全的"><a href="#NSRunLoop不是线程安全的" class="headerlink" title="NSRunLoop不是线程安全的"></a>NSRunLoop不是线程安全的</h2><pre><code>我们不能再一个线程中去操作另外一个线程的run loop对象，那很可能会造成意想不到的后果
-不过幸运的是CoreFundation中的不透明类CFRunLoopRef是线程安全的，而且两种类型的run loop完全可以混合使用。
+</code></pre><h2 id="NSRunLoop不是线程安全的"><a href="#NSRunLoop不是线程安全的" class="headerlink" title="NSRunLoop不是线程安全的"></a>NSRunLoop不是线程安全的</h2><pre><code>我们不能再一个线程中去操作另外一个线程的run loop对象，
+那很可能会造成意想不到的后果
+不过幸运的是CoreFundation中的不透明类CFRunLoopRef是
+线程安全的，而且两种类型的run loop完全可以混合使用。
 </code></pre><h2 id="NSRunloop数据模型"><a href="#NSRunloop数据模型" class="headerlink" title="NSRunloop数据模型"></a>NSRunloop数据模型</h2><pre><code>NSRunloop，对CFRunLoop的封装
 1.ptherd 对应runloop的内部一个线程
 2.currendMode， 当前mode， CFRunLoopMode数据结构
@@ -1322,7 +1823,8 @@ RunLoop 一个状态循环
         AllActivites 观察所有事件
 3.Modes CFRunloopMode 的集合
 4.commonModes
-</code></pre><h2 id="autorelease-pool的创建和释放"><a href="#autorelease-pool的创建和释放" class="headerlink" title="autorelease pool的创建和释放"></a>autorelease pool的创建和释放</h2><pre><code>每当一个运行循环结束的时候，它都会释放一次autorelease pool，同时pool中的所有自动释放类型变量都会被释放掉。
+</code></pre><h2 id="autorelease-pool的创建和释放"><a href="#autorelease-pool的创建和释放" class="headerlink" title="autorelease pool的创建和释放"></a>autorelease pool的创建和释放</h2><pre><code>每当一个运行循环结束的时候，它都会释放一次autorelease pool，
+同时pool中的所有自动释放类型变量都会被释放掉。
 </code></pre><h2 id="输入事件来源"><a href="#输入事件来源" class="headerlink" title="输入事件来源"></a>输入事件来源</h2><pre><code>Run loop接收输入事件来自两种不同的来源：
 输入源（input source）和定时源（timer source）。
 两种源都使用程序的某一特定的处理例程来处理到达的事件。
@@ -1482,760 +1984,39 @@ Mode 下的 Source / Timer / Observer 互不影响。
 让其互不影响。
 Runloop 要有效，mode 里面 至少 要有一个 timer 
 (定时器事件) 或者是 source (源);
-</code></pre><h2 id="常用案例"><a href="#常用案例" class="headerlink" title="常用案例"></a>常用案例</h2><h3 id="performSelector"><a href="#performSelector" class="headerlink" title="performSelector"></a>performSelector</h3><pre><code>performSelector同样是触发Source0事件。selector也是特殊的基于自定义的源.理论上来说,允许在当前线程向任何线程上执行发送消息,和基于端口的源一样,执行selector请求会在目标线程上序列化,减缓许多在线程上允许多个方法容易引起的同步问题.不像基于端口的源,一个selector执行完后会自动从run loop里面移除.
-当调用上述API，实际上其内部会创建一个 Timer 并添加到当前线程的 RunLoop 中。所以如果当前线程没有 RunLoop，则这个方法会失效。
-当调用 performSelector:onThread: 时，实际上其会创建一个Timer加到对应的线程去，同样的，如果对应线程没有 RunLoop 该方法也会失效.
+</code></pre><h2 id="常用案例"><a href="#常用案例" class="headerlink" title="常用案例"></a>常用案例</h2><h3 id="performSelector"><a href="#performSelector" class="headerlink" title="performSelector"></a>performSelector</h3><pre><code>performSelector同样是触发Source0事件。selector也是特殊的
+基于自定义的源.理论上来说,允许在当前线程向任何线程上执行发送消息,
+和基于端口的源一样,执行selector请求会在目标线程上序列化,
+减缓许多在线程上允许多个方法容易引起的同步问题.不像基于端口的源,
+一个selector执行完后会自动从run loop里面移除.
+当调用上述API，实际上其内部会创建一个 Timer 并添加到当前线程的
+RunLoop 中。所以如果当前线程没有 RunLoop，则这个方法会失效。
+当调用 performSelector:onThread: 时，实际上其会创建一个Timer
+加到对应的线程去，同样的，如果对应线程没有 RunLoop 该方法也会失效.
 当前线程指定mode name并延时执行
 // 只在NSDefaultRunLoopMode下执行(刷新图片)
-[self.myImageView performSelector:@selector(setImage:) withObject:[UIImage imageNamed:@&quot;&quot;] afterDelay:ti inModes:@[NSDefaultRunLoopMode]];
+[self.myImageView performSelector:@selector
+(setImage:) withObject:[UIImage imageNamed:@&quot;&quot;]
+afterDelay:ti inModes:@[NSDefaultRunLoopMode]];
 </code></pre><h3 id="自定义输入源"><a href="#自定义输入源" class="headerlink" title="自定义输入源"></a>自定义输入源</h3><pre><code>使用CFRunLoopSourceRef 类型相关的函数 (线程) 来创建自定义输入源。
 </code></pre><h3 id="端口输入源"><a href="#端口输入源" class="headerlink" title="端口输入源"></a>端口输入源</h3><h3 id="设置定时源"><a href="#设置定时源" class="headerlink" title="设置定时源"></a>设置定时源</h3><pre><code>使用系统Timer
 使用自定义Timer
 </code></pre><h3 id="设置监听"><a href="#设置监听" class="headerlink" title="设置监听"></a>设置监听</h3><h2 id="other"><a href="#other" class="headerlink" title="other"></a>other</h2><pre><code>对于NSTimer，有一个特别的API，这个API会默认把Timer加到 当前线程 中去。
-[NSTimer scheduledTimerWithTimeInterval:5.1 target:self selector:@selector(printMessage:) userInfo:nil repeats:YES];
+[NSTimer scheduledTimerWithTimeInterval:5.1
+target:self selector:@selector(printMessage:)
+userInfo:nil repeats:YES];
 所以说，当且仅当加到当前线程，下面两个添加NSTimer的方案方可等效：
 - (void)defalutTimer {
-[NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(doTime) userInfo:nil repeats:YES];
+[NSTimer scheduledTimerWithTimeInterval:1.0 target:
+self selector:@selector(doTime) userInfo:nil
+repeats:YES];
 }
 - (void)commonTimer {
-NSTimer *timer =[NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(doTime) userInfo:nil repeats:YES];
-[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-}
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/01/M_Swift99Runtime理解/" itemprop="url">
-                  理解Runtime
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-08-01T09:16:13+08:00" content="2018-08-01">
-              2018-08-01
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="什么是isa指针"><a href="#什么是isa指针" class="headerlink" title="什么是isa指针"></a>什么是isa指针</h2><pre><code>每个对象都有一个标识对象类的isa实例变量。
-运行时使用此指针来确定对象需要时的实际类。
-1、 id类型是一个objc_object结构体的指针。
-2、objc_object结构体包含一个Class 类型的变量isa。
-3、 Class是objc_class结构体的指针。
-</code></pre><h3 id="为什么说类也是对象"><a href="#为什么说类也是对象" class="headerlink" title="为什么说类也是对象"></a>为什么说类也是对象</h3><pre><code>类被定义为objc_class结构体，objc_class结构体继承
-自objc_objct,对象是用 objc_object 结构体表示的，
-所以类也是对象。在应用程序中，类对象只会被创建一份。
-在objc_class结构体中定义了对象的method list，
-protocal，ivar list等，表示对象的行为。
-oc中的类和元类也是一样，都是结构体构成的，由于类的结构体
-定义继承自objc_object所以其也是一个对象，并且具有
-对象的isa特征。
-这也就解释了为什么id类型可以指向OC中任意对象类型了。
-
-永远不要用用isa来判断一个类的继承关系，
-而是应该用class方法来判断类的实例。
-struct objc_class {
-    Class isa  //所属类的指针
-    Class super_class//指向父类的指针                                        
-    const char *name    //类名                                     
-    long version            // 版本                                 
-    long info                   //供运行期使用的一些位标识。                             
-    long instance_size      //实例大小                                 
-    struct objc_ivar_list *ivars       //成员变量数组                      
-    struct objc_method_list **methodLists  //方法列表                  
-    struct objc_cache *cache//指向最近使用的方法.用于方法调用的优化                            
-    struct objc_protocol_list *protocols//协议的数组                     
-}
-</code></pre><h2 id="类也是对象，他是meteClass-元类-的实例。"><a href="#类也是对象，他是meteClass-元类-的实例。" class="headerlink" title="类也是对象，他是meteClass(元类)的实例。"></a>类也是对象，他是meteClass(元类)的实例。</h2><pre><code>实例对象在运行时被表示成objc_object类型结构体，
-结构体内部有个isa指针指向objc_class结构体。
-objc_class内部保存了类的变量和方法列表以及其他一些信息，
-并且还有一个isa指针。这个isa指针会指向meteClass(元类)，
-元类里保存了这个类的类方法列表。
-为了完整性，其实元类里也有一个isa指针，这个isa指针，
-指向的是根元类，根元类的isa指针指向自己
-实例对象--(runtime)--&gt;objc_object--(isa)
---&gt;objc_class--(isa)--&gt;元类--isa--&gt;根元类--
-isa--&gt;自己。
-当我们调用某个类的方法时，如果这个类的方法列表里没有该方法，
-则会去找这个类的父类的方法列表。这种机制就是通过
-objc_class的第二个变量super_class指针实现的。
-并且这种继承关系会扩展到元类
-isa指针指向Meta Class，因为Objc的类的本身也是一个
-Object，为了处理这个关系，runtime就创造了Meta Class，
-当给类发送[NSObject alloc]这样消息时，实际上是把这个
-消息发给了Class Object
-</code></pre><h2 id="meta-class"><a href="#meta-class" class="headerlink" title="meta class"></a>meta class</h2><pre><code>因为一个类是一个对象，它肯定也是其他类的实例，
-这个类是元类(metaclass)。元类是关于类对象的描述，
-就像类是普通实例对象的描述一样。实际上，元类的方法列表正
-是类方法：该类对象响应的选择器。
-runtime中设计了meta class， 通过meta class来创建类
-对象，所以类对象的isa指向对应的meta class。而meta class
-也是一个对象，所有元类的isa都指向其根元类，根元类的isa指针
-指向自己，通过这种设计，isa的整体结构形成了一个闭环。
-类和元类都有自己的继承体系，但它们都有共同的根父类
-NSObject，而NSObject的父类指向nil。需要注意的是上图
-Root Class（Class）是NSObject类对象，而
-Root Class（Meta）是NSObject的元类对象。
-对于像NSObject这样的类来说，它其实代表的是一个类对象，
-本质上还是一个普通的实例对象，类对象的self指针应该指
-向的是这个类对象自身。
-</code></pre><h2 id="id"><a href="#id" class="headerlink" title="id"></a>id</h2><pre><code>objc_msgSend第一个参数类型为id，大家对它都不陌生，
-它是一个指向类实例的指针：
-typedef struct objc_object *id;
-那objc_object又是啥呢：
-struct objc_object { Class isa; };
-objc_object结构体包含一个isa指针，根据isa指针就可以
-顺藤摸瓜找到对象所属的类。
-PS:isa指针不总是指向实例对象所属的类，不能依靠它来确定
-类型，而是应该用class方法来确定实例对象的类。
-因为KVO的实现机理就是将被观察对象的isa指针指向一个中间类
-而不是真实的类，这是一种叫做 isa-swizzling 的技术
-</code></pre><h2 id="ivars-methodLists"><a href="#ivars-methodLists" class="headerlink" title="ivars methodLists"></a>ivars methodLists</h2><pre><code>在objc_class结构体中：ivars是objc_ivar_list指针；
-methodLists是指向objc_method_list指针的指针。
-也就是说可以动态修改 *methodLists 的值来添加成员方法，
-这也是Category实现的原理.
-</code></pre><h2 id="IMP："><a href="#IMP：" class="headerlink" title="IMP："></a>IMP：</h2><pre><code>在runtime中IMP本质上就是一个函数指针，其定义如下，
-在IMP中有两个默认的参数id和SEL，id也就是方法的self
-这个objc_msgSend()函数传递的参数一样；。
-</code></pre><h2 id="Method："><a href="#Method：" class="headerlink" title="Method："></a>Method：</h2><pre><code>用来表示方法，其中包含SEL和IMP
-</code></pre><h2 id="Property："><a href="#Property：" class="headerlink" title="Property："></a>Property：</h2><pre><code>在runtime中定义了属性的结构体，用来表示对象中定义的属性。
-@property修饰符用来修饰属性，修饰后的属性为
-objc_property_t类型，其本质是property_t结构体
-原来UIViewController的结构体中增加了
-childViewControllers属性，这个时候和子类的内存偏移就
-发生了冲突，只不过，runtime有检测内存地址冲突的机制，
-在类生成实例变量时，会判断实例变量是否有地址冲突，
-如果发生冲突则调整对象的地址偏移。
-</code></pre><h2 id="内存布局："><a href="#内存布局：" class="headerlink" title="内存布局："></a>内存布局：</h2><pre><code>类的本质时结构体，在结构体中包含一些成员变量，
-如method list，ivar list等，这些都是结构体的一部分，
-method protocol，property的实现这些都可以放到类中，
-所有对象调用同一份即可，但对象的成员变量不可以放在一起，
-因为每个对象的成员变量值都是不同的。
-创建实例对象时，会根据其对应的Class分配内存，内存构成
-是ivar+isa_t.并且实例变量不只是包含当前class的ivars，
-也会包含其继承链的ivars，ivars的内存布局在编译时就已经
-决定，运行时需要根据ivars内存布局创建对象，所以runtime
-不能动态修改ivars，会破坏已有的内存布局。
-也不是所有对象都不能修改ivars，如果是通过runtime动态
-创建的类，时可以修改ivars的。
-</code></pre><h2 id="不能向编译后得到的类中增加实例变量"><a href="#不能向编译后得到的类中增加实例变量" class="headerlink" title="不能向编译后得到的类中增加实例变量"></a>不能向编译后得到的类中增加实例变量</h2><pre><code>因为编译后的类已经注册在runtime中，类结构体中的
-objc_ivar_list实例变量的链表和instance_size
-实例变量的内存大小已经确定，同时runtime会调用
-class_setIvarLayout或class_WeakIvarLayout
-来处理strong weak引用，所以不能向存在的类中添加实例变量
-运行时创建的类时可以添加实例变量，调用class_addIvar函数
-，但是得在调用objc_allocateClassPari之后，
-objc_registerClassPair之前，原因同上。
-</code></pre><h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>（返回值时对象，是标量，结构体）
-如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0
-地址返回，所以不会出现任何错误
-如果返还类型是对象，那么返还nil如果是标量，那么是0，
-结构体为0，其他为返回值是为定义的。
-</code></pre><h2 id="ivar读写"><a href="#ivar读写" class="headerlink" title="ivar读写"></a>ivar读写</h2><pre><code>实例变量的isa_t指针会指向其所属的类，对象中并不会包含
-method，property，protocol，ivar等信息，这些信息在编
-译时都保存在只读结构体class_ro_t中。在class_ro_t中ivar
-时const只读的，在image load时copy到class_rw_t中时，
-是不会copy ivars的，并且class_rw_t中并没有定义ivars
-的字段。
-在防伪某个成员变量时，直接通过isa_t找到对应的objc_class
-并通过其class_ro_t的ivar list做地址偏移，查找对应的对象
-内存，正是由于这种方式，所以对象的内存地址是固定不可改变的。
-</code></pre><h2 id="方法传参："><a href="#方法传参：" class="headerlink" title="方法传参："></a>方法传参：</h2><pre><code>当调用实例变量的方法时，会通过objc_msgSend（）发起调用。
-调用是会传入self和SEL，函数内部通过isa在类的内部查找方法
-列表对应的IMP，传入对应的参数并发起调用，如果调用的方法涉
-及到当前对象的成员变量的访问，这是就是通过objc_msgSend()
-内部，通过类的ivar list判断地址偏移，取出ivar并传入调
-用的IMP中的。
-</code></pre><h2 id="isa-t"><a href="#isa-t" class="headerlink" title="isa_t:"></a>isa_t:</h2><pre><code>对于对象指针也是一样，在oc1.0时，isa时一个真的指针，
-指向一堆区的地址，而在oc2.0时代，一个指针长度时八个字节
-也就是64位，在64位中直接存储着对象的信息。当查找对象所属
-的类时，直接在isa指针中进行位运算即可，而且由于在栈区进
-行操作，查找速度非常快。
-例如，isa_t本质时一个结构体，如果创建结构体再用指针指向这
-个结构体，内存占用是很大的，但是Tagged Pointer特性中，
-直接把结构体的值都存储到指针中，这样就相当节省内存了。
-苹果不允许直接访问isa指针，和Tagged Pointer也是有关
-系的，因为tagged Pointer的情况下，isa并不是一个指针指
-向另一块内存区，而是直接表示对象的值，所以通过直接访问
-isa获取到的信息是错误的。
-</code></pre><h2 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a>SEL</h2><pre><code>它是selector在Objc中的表示类型（Swift中是
-Selector类）。selector是方法选择器，
-可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
-typedef struct objc_selector *SEL;
-其实它就是个映射到方法的C字符串，你可以用 Objc 
-编译器命令@selector()或者 Runtime 系统的
-sel_registerName函数来获得一个SEL类型的方法选择器。
-常见来两个相同的类，并定规两个相同的方法，通过@selector
-获取SEL并打印，我们发现SEL都是同一个对象，地址都是相同的，
-不同类的相同SEL是同一个对象。
-在runtime中维护一个SEL列表，这个表不按照类存储，
-只要相同SEL就算作一个，并存储到表中。
-</code></pre><h2 id="Category"><a href="#Category" class="headerlink" title="Category"></a>Category</h2><pre><code>类别（category）主要有三个作用
-1.将类的实现分散到多个不同文件或多个不同框架中
-2.创建对私有方法的向前引用
-3.向对象添加非正式协议
-和Category相似的还有Extension，二者的区别是Extension
-在编译期就直接和原类编译在一起了，而Category是在
-运行时添加到原类中。
-如果一个类添加Category后，并且重写其原有方法，
-这样会导致Category的方法覆盖原有类的方法，
-但是load方法是例外，category和原有类的load方法
-都会被执行。
-在有过个Category和原类方法重名的情况下，怎么样在一个
-Category方法被调用后，调用所有Category和原类的方法？
-可以在一个Category方法被调用后，便利方法列表，
-并调用其他同名方法，但是需要注意一点是，便利过程不能
-再调用自己的方法，否则会导致递归调用，为了避免这个问题，
-可以在调用前判断被调用的方法IMP是否是当前方法的IMP
-怎么样在任何一个Category的方法被调用后，只调用元类方法呢？
-根据上面方法调用的分析，Runtime在调用方法时会有限所
-有Category调用，所以可以倒叙便利方法列表，只便利第一
-个方法即可，这个方法就是元类的方法。
-</code></pre><h2 id="如何在Category中添加变量"><a href="#如何在Category中添加变量" class="headerlink" title="如何在Category中添加变量"></a>如何在Category中添加变量</h2><pre><code>@interface TestObject (Category)
-@property (nonatomic, strong) NSObject *object; @end
-#import &lt;objc/runtime.h&gt;
-#import &lt;objc/message.h&gt;
-static void *const kAssociatedObjectKey = 
-(void *)&amp;kAssociatedObjectKey;
-@implementation TestObject (Category)
-- (NSObject *)object {
-    return objc_getAssociatedObject(
-    self, kAssociatedObjectKey);
-}
-- (void)setObject:(NSObject *)object {
-    objc_setAssociatedObject(self,
-    kAssociatedObjectKey, object,
-    OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-从原码中可以看出，所有通过associated添加的属性，
-都是被单独存放在一个哈希表AssociationsHashMap中，
-objc_setAssociatedObject和
-objc_getAssociatedObject本质上就是操作这个哈希表，
-通过对哈希表进行映射来存取对象。
-</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><pre><code>将一条消息发送给一个不能处理的对象会引起崩溃，但是在崩溃
-之前，系统给响应对象一次处理异常的机会。
-当发送一条对象不能处理的消息，产生crash之前，系统会调用
-响应者的forwardIMvocation方法，并传入一个NSInvocation
-对象，NSInvocation中包含原始消息及参数，这个方法之后方法
-未实现的时候才会调用。
-你可以实现forwardInvocation方法，将消息转发给另一个
-对象，forwardInvocation方法是一个动态方法，在响应者无法
-响应方法时，会调用forwardInvocation方法，可以重写这个方
-法，实现消息转发。
-</code></pre><h2 id="Method-Swizzling-："><a href="#Method-Swizzling-：" class="headerlink" title="Method Swizzling ："></a>Method Swizzling ：</h2><pre><code>你在swizzlingViewDidLoad方法中又调用[self
-swizzlingViewDidLoad];，这难道不会产生递归调用吗？
-其实不会，Method Swizzling ：实现原理理解为方法互换，
-假设我们将A，B两个方法进行互换，向A发消息时执行的是B的方
-法，向B发消息时执行的是A方法，所以再调用[self
-swizzlingViewDidLoad];又回到原类的方法中了。
-对于NSArray 􏴯 NSMutableArray 􏴯 NSDictionary 􏴯
-NSMutableDictionary 等类进行Method Swizzling ，实现
-方式按照上面例子来做，但是你发现Method Swizzling 根本不
-起作用
-这是因为Method Swizzling 对NSArray这些类簇是不起作
-用的，因为这些类簇，其实是一种抽象工厂的设计模式，抽象工厂内
-部有很多其他继承自身当前类的子类，抽象工厂类会根据不同情况，
-创建不同的抽象对象来进行使用。例如我们调用NSArray的
-objectAtIndex方法，这个类会在方法内部判断，内部创建不同抽
-象类进行操作。
-所以也就是我们对NSArray进行操作其实是对父类进行操作，在
-NSArray内部会创建其子类进行执行操作，真正执行操作的并不是
-NSArray自身，所以我们应该对其真身进行操作。
-如果进行Method Swizzling中的类有继承关系，并且
-swizzling了同一个方法，这样会导致父类的Swizzling失效。必
-须要证Method Swizzling方法只执行一次。
-</code></pre><h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>无论何时，要调用objc_msgSend函数，必须要将函数强制转
-换成合适的函数指针类型才能调用。
-其实编译器会根据情况在objc_msgSend,
-objc_msgSend_stret, objc_msgSendSuper, 或
-objc_msgSendSuper_stret四个方法中选择一个来调用。
-</code></pre><h2 id="KVO-KVC的实现原理"><a href="#KVO-KVC的实现原理" class="headerlink" title="KVO KVC的实现原理"></a>KVO KVC的实现原理</h2><pre><code>https://blog.csdn.net/u014247354/article/details/78403567
-apple使用isa混写（isa-swizzling）来实现KVO。
-当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying A的新类，该类继承自对象A的本类，
-且KVO为NSKVONotifying A重写观察属性的setter方法，setter方法会负责在调用原setter方法之前之后，
-通知所有观察对象属性值的更改情况。
-观察者观察的属性，只有遵循KVO变更属性值的方式才会执行KVO
-的回调方法，例如是否执行setter方法，活着是否使用KVC
-赋值。如果赋值没有通过setter方法或者KVC，而是直接修改属
-性对应的成员变量，例如：仅调用_name = @&quot;newName&quot; ,这
-时时不会触发kvo机制，更加不会调用回调方法的。所以使用
-KVO机制的前提是遵循KVO的属性设置方式来变更属性值。
-KVC实现原理
-1.检查是否存在key，如果有，就是用这些方法返回值
-2.检查是否存在名为setkey的方法，并使用它做设置值。
-对于getkey和setkey方法，经大写key
-</code></pre><h1 id="Objective-C中category的实现原理和runtime有什么关系？"><a href="#Objective-C中category的实现原理和runtime有什么关系？" class="headerlink" title="Objective-C中category的实现原理和runtime有什么关系？"></a>Objective-C中category的实现原理和runtime有什么关系？</h1><pre><code>Objective-C 中的 Category 就是对装饰模式的一种具
-体实现。它的主要作用是在不改变原有类的前提下，动态地
-给这个类添加一些方法。在 Objective-C 中的具体体现为：
-实例（类）方法、属性和协议。是的，在 Objective-C 
-中可以用 Category 来实现协议
-将 Category 和它的主类（或元类）注册到哈希表中；
-如果主类（或元类）已实现，那么重建它的方法列表。
-Category 中的实例方法和属性被整合到主类中；
-而类方法则被整合到元类中。
-另外，对协议的处理比较特殊，Category 中的协议被同
-时整合到了主类和元类中。
-我们注意到，不管是哪种情况，最终都是通过调用 
-static void remethodizeClass(Class cls) 
-函数来重新整理类的数据的。
-这个函数的主要作用是将 Category 中的方法、属性和协议
-整合到类（主类或元类）中，更新类的数据字段 data() 中
-method_lists（或 method_list）、properties 和
-protocols 的值。进一步，我们通过
-attachCategoryMethods 函数的源码可以找到真正处理
-Category 方法的 attachMethodLists 函数：
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/31/M_Swift97Runtime_isa_swizzling/" itemprop="url">
-                  iOS isa-swizzling
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-31T16:32:01+08:00" content="2018-07-31">
-              2018-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <pre><code>添加Observer
-通过runtime偷偷实现了一个子类，并且以NSKVONotifying_+类名来命名
-将之前那个对象的isa指针指向了这个子类。
-重写了观察的对象setter方法，并且在重写的中添加了willChangeValueForKey:以及didChangeValueForKey:
-移除Observer
-只是简单的将其的isa指向原来的类对象中
-然后我们在分析一下， 在真正调用的setAge:的情况下, 根据消息机制我们知道它先通过isa找到对应对象的类， 也就是现在NSKVONotifying_Person, 然后再去找setAge:，由于NSKVONotifying_Person这个对象重写了这个方法， 那么就会直接取当前的实现， 也就是带有willChangeValueForKey:以及didChangeValueForKey:， 那么自然就实现了对KVO的实现了。
-
-KVC主要通过isa-swizzling，来实现。
-
-
-
-[site setValue:@&quot;sitename&quot; forKey:@&quot;name&quot;];
-
-编译器处理成：
-SEL sel = sel_get_uid (&quot;setValue:forKey:&quot;);
-IMP method = objc_msg_lookup (site-&gt;isa,sel);
-method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
-
-我们上面提到过Method Swizzling的实现原理就是对类的Dispatch Table进行操作，每进行一次Swizzling就交换一次SEL和IMP(可以理解为函数指针)，如果Swizzling被执行了多次，就相当于SEL和IMP被交换了多次。这就会导致第一次执行成功交换了、第二次执行又换回去了、第三次执行.....这样换来换去的结果，能不能成功就看运气了😄，这也是好多人说Method Swizzling不好用的原因之一。
-为了避免这样的原因出现，我们可以通过GCD的dispatch_once函数来解决，利用dispatch_once函数内代码只会执行一次的特性。
-使用 Method Swizzling 编程就好比切菜时使用锋利的刀，一些人因为担心切到自己所以害怕锋利的刀具，可是事实上，使用钝刀往往更容易出事，而利刀更为安全。
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/31/M_Swift98Runtime常见作用/" itemprop="url">
-                  Runtime常见作用
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-31T15:14:05+08:00" content="2018-07-31">
-              2018-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="动态的添加对象的成员变量和方法"><a href="#动态的添加对象的成员变量和方法" class="headerlink" title="动态的添加对象的成员变量和方法"></a>动态的添加对象的成员变量和方法</h2><pre><code>class_addMethod([self.person class], @selector(guess), (IMP)guessAnswer, &quot;v@:&quot;);
-参数说明
-&gt;(IMP)guessAnswer 意思是guessAnswer的地址指针;
-&gt;&quot;v@:&quot; 意思是，v代表无返回值void，如果是i则代表int；@代表 id sel; : 代表 SEL _cmd;
-&gt;“v@:@@” 意思是，两个参数的没有返回值。  
-</code></pre><h2 id="动态交换两个方法的实现"><a href="#动态交换两个方法的实现" class="headerlink" title="动态交换两个方法的实现"></a>动态交换两个方法的实现</h2><pre><code>交换方法之后，以后每次调用这两个方法都会交换方法的实现
-Method m1 = class_getInstanceMethod([self.person class], @selector(sayName));
-Method m2 = class_getInstanceMethod([self.person class], @selector(saySex));
-method_exchangeImplementations(m1, m2);
-</code></pre><h2 id="拦截并替换方法"><a href="#拦截并替换方法" class="headerlink" title="拦截并替换方法"></a>拦截并替换方法</h2><pre><code>我们要改变这个方法的实现，但是又不能去动它的源代码
-(正如一些开源库出现问题的时候)，
-这个时候runtime就派上用场了
-我们先增加一个tool类，然后写一个我们自己实现的方法-change，
-通过runtime把test1替换成change。
-Class PersionClass = object_getClass([Person class]);
-Class toolClass = object_getClass([tool class]);
-////源方法的SEL和Method
-SEL oriSEL = @selector(test1);
-Method oriMethod = class_getInstanceMethod(PersionClass, oriSEL);
-////交换方法的SEL和Method
-SEL cusSEL = @selector(change);
-Method cusMethod = class_getInstanceMethod(toolClass, cusSEL);
-////先尝试給源方法添加实现，这里是为了避免源方法没有实现的情况
-BOOL addSucc = class_addMethod(PersionClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
-if (addSucc) {
-    // 添加成功：将源方法的实现替换到交换方法的实现     
-    class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
-}else {
-    //添加失败：说明源方法已经有实现，直接将两个方法的实现交换即
-    method_exchangeImplementations(oriMethod, cusMethod);  
-}
-</code></pre><h2 id="在方法上增加额外功能"><a href="#在方法上增加额外功能" class="headerlink" title="在方法上增加额外功能"></a>在方法上增加额外功能</h2><pre><code>有这样一个场景，出于某些需求，我们需要跟踪记录APP
-中按钮的点击次数和频率等数据，怎么解决？当然通过继承按钮
-类或者通过类别实现是一个办法，但是带来其他问题比如别人不
-一定会去实例化你写的子类，或者其他类别也实现了点击方法导
-致不确定会调用哪一个，runtime可以这样解决，
-实现场景二、我们app经常会遇到一些cash，我们可以通过
-runtime拦截替换这些方法，从而保证不会崩溃，例如如下列举
-    NSArray+NSRangeException
-    NSDictionary+NSRangeException
-    NSMutableAttributedString+NSRangeException
-    NSMutableString+NSRangeException
-    NSNull+Exception
-    NSObject+Swizzling
-    NSString+NSRangeException
-    UINavigationController+Consistent
-load方法会在类第一次加载的时候被调用,调用的时间比较靠前，
-适合在这个方法里做方法交换,方法交换应该被保证，
-在程序中只会执行一次。
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&amp;onceToken, ^{
-        Class selfClass = [self class];
-        SEL oriSEL = @selector(sendAction:to:forEvent:);
-        Method oriMethod = class_getInstanceMethod(selfClass, oriSEL);
-        SEL cusSEL = @selector(mySendAction:to:forEvent:);
-        Method cusMethod = class_getInstanceMethod(selfClass, cusSEL);
-        BOOL addSucc = class_addMethod(selfClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
-        if (addSucc) {
-            class_replaceMethod(selfClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
-        }else {
-            method_exchangeImplementations(oriMethod, cusMethod);
-        }
-    });
-}
-- (void)mySendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event {
-    [[Tool sharedManager] addCount];
-    [self mySendAction:action to:target forEvent:event];
-}
-</code></pre><h2 id="实现NSCoding的自动归档和解档"><a href="#实现NSCoding的自动归档和解档" class="headerlink" title="实现NSCoding的自动归档和解档"></a>实现NSCoding的自动归档和解档</h2><pre><code>- (void)encodeWithCoder:(NSCoder *)encoder
-{
-    unsigned int count = 0;
-    Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
-    for (int i = 0; i&lt;count; i++) {
-        // 取出i位置对应的成员变量
-        Ivar ivar = ivars[i];
-        // 查看成员变量
-        const char *name = ivar_getName(ivar);
-        // 归档
-        NSString *key = [NSString stringWithUTF8String:name];
-        id value = [self valueForKey:key];
-        [encoder encodeObject:value forKey:key];
-    }
-    free(ivars);
-}
-
-- (id)initWithCoder:(NSCoder *)decoder
-{
-    if (self = [super init]) {
-        unsigned int count = 0;
-        Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
-        for (int i = 0; i&lt;count; i++) {
-            // 取出i位置对应的成员变量
-            Ivar ivar = ivars[i];
-            // 查看成员变量
-            const char *name = ivar_getName(ivar);
-            // 归档
-            NSString *key = [NSString stringWithUTF8String:name];
-            id value = [decoder decodeObjectForKey:key];
-            // 设置到成员变量身上
-            [self setValue:value forKey:key];
-        }
-        free(ivars);
-    }
-    return self;
-}
-</code></pre><h2 id="实现字典转模型的自动转换"><a href="#实现字典转模型的自动转换" class="headerlink" title="实现字典转模型的自动转换"></a>实现字典转模型的自动转换</h2><pre><code>字典转模型的应用可以说是每个app必然会使用的场景,
-虽然实现的方式略有不同，但是原理都是一致的：遍历模型中所有
-属性，根据模型的属性名，去字典中查找key，取出对应的值，
-给模型的属性赋值。
-像几个出名的开源库：JSONModel,MJExtension等都是通过这
-种方式实现的。
-// 创建对应模型对象
-id objc = [[self alloc] init];
-unsigned int count = 0;
-// 1.获取成员属性数组
-Ivar *ivarList = class_copyIvarList(self, &amp;count);
-// 2.遍历所有的成员属性名,一个一个去字典中取出对应的
-value给模型属性赋值
-for (int i = 0; i &lt; count; i++) {
-    // 2.1 获取成员属性
-    Ivar ivar = ivarList[i];
-    // 2.2 获取成员属性名 C -&gt; OC 字符串
-    NSString *ivarName = [NSString stringWithUTF8String:ivar_getName(ivar)];
-    // 2.3 _成员属性名 =&gt; 字典key
-    NSString *key = [ivarName substringFromIndex:1];
-    // 2.4 去字典中取出对应value给模型属性赋值
-    id value = dict[key];
-    // 获取成员属性类型
-    NSString *ivarType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
-}
-如果模型比较简单，只有NSString，NSNumber等，
-这样就可以搞定了。但是如果模型含有NSArray，或者NSDictionary等，那么我们还需要进行第二步转换。
-if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![ivarType containsString:@&quot;NS&quot;]) { 
-    //  是字典对象,并且属性名对应类型是自定义类型
-    // 处理类型字符串 @\&quot;User\&quot; -&gt; User
-    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;@&quot; withString:@&quot;&quot;];
-    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;\&quot;&quot; withString:@&quot;&quot;];
-    // 自定义对象,并且值是字典
-    // value:user字典 -&gt; User模型
-    // 获取模型(user)类对象
-    Class modalClass = NSClassFromString(ivarType);
-    // 字典转模型
-    if (modalClass) {
-        // 字典转模型 user
-        value = [modalClass objectWithDict:value];
-    }
-}
-if ([value isKindOfClass:[NSArray class]]) {
-    // 判断对应类有没有实现字典数组转模型数组的协议
-    if ([self respondsToSelector:@selector(arrayContainModelClass)]) {
-        // 转换成id类型，就能调用任何对象的方法
-        id idSelf = self;
-        // 获取数组中字典对应的模型
-        NSString *type =  [idSelf arrayContainModelClass][key];
-        // 生成模型
-        Class classModel = NSClassFromString(type);
-        NSMutableArray *arrM = [NSMutableArray array];
-        // 遍历字典数组，生成模型数组
-        for (NSDictionary *dict in value) {
-            // 字典转模型
-            id model =  [classModel objectWithDict:dict];
-            [arrM addObject:model];
-        }
-        // 把模型数组赋值给value
-        value = arrM;
-    }
+NSTimer *timer =[NSTimer timerWithTimeInterval:
+1.0 target:self selector:@selector(doTime) 
+userInfo:nil repeats:YES];
+[[NSRunLoop currentRunLoop] addTimer:
+timer forMode:NSDefaultRunLoopMode];
 }
 </code></pre>
           
@@ -2269,7 +2050,7 @@ if ([value isKindOfClass:[NSArray class]]) {
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2310,7 +2091,7 @@ if ([value isKindOfClass:[NSArray class]]) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">170</span>
+              <span class="site-state-item-count">173</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

@@ -1,0 +1,634 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Objective-C中category的实现原理和runtime有什么关系？在runtime层，category用结构体category_t
+Objective-C 中的 Category 就是对装饰模式的一种具
+体实现。它的主要作用是在不改变原有类的前提下，动态地
+给这个类添加一些方法。在 Objective-C 中的具体体现为：
+实例（类）方法、属性和协议。是的，在 Objective-C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Category">
+<meta property="og:url" content="http://yoursite.com/2018/08/07/M_Swift104Category/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="Objective-C中category的实现原理和runtime有什么关系？在runtime层，category用结构体category_t
+Objective-C 中的 Category 就是对装饰模式的一种具
+体实现。它的主要作用是在不改变原有类的前提下，动态地
+给这个类添加一些方法。在 Objective-C 中的具体体现为：
+实例（类）方法、属性和协议。是的，在 Objective-C">
+<meta property="og:updated_time" content="2018-08-07T07:45:07.247Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Category">
+<meta name="twitter:description" content="Objective-C中category的实现原理和runtime有什么关系？在runtime层，category用结构体category_t
+Objective-C 中的 Category 就是对装饰模式的一种具
+体实现。它的主要作用是在不改变原有类的前提下，动态地
+给这个类添加一些方法。在 Objective-C 中的具体体现为：
+实例（类）方法、属性和协议。是的，在 Objective-C">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/07/M_Swift104Category/"/>
+
+  <title> Category | Men的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Men的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">欢迎光临！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            博文
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Category
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-07T15:24:48+08:00" content="2018-08-07">
+              2018-08-07
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Objective-C中category的实现原理和runtime有什么关系？"><a href="#Objective-C中category的实现原理和runtime有什么关系？" class="headerlink" title="Objective-C中category的实现原理和runtime有什么关系？"></a>Objective-C中category的实现原理和runtime有什么关系？</h1><pre><code>在runtime层，category用结构体category_t
+Objective-C 中的 Category 就是对装饰模式的一种具
+体实现。它的主要作用是在不改变原有类的前提下，动态地
+给这个类添加一些方法。在 Objective-C 中的具体体现为：
+实例（类）方法、属性和协议。是的，在 Objective-C 
+中可以用 Category 来实现协议
+将 Category 和它的主类（或元类）注册到哈希表中；
+如果主类（或元类）已实现，那么重建它的方法列表。
+Category 中的实例方法和属性被整合到主类中；
+而类方法则被整合到元类中。
+另外，对协议的处理比较特殊，Category 中的协议被同
+时整合到了主类和元类中。
+我们注意到，不管是哪种情况，最终都是通过调用 
+static void remethodizeClass(Class cls) 
+函数来重新整理类的数据的。
+这个函数的主要作用是将 Category 中的方法、属性和协议
+整合到类（主类或元类）中，更新类的数据字段 data() 中
+method_lists（或 method_list）、properties 和
+protocols 的值。进一步，我们通过
+attachCategoryMethods 函数的源码可以找到真正处理
+Category 方法的 attachMethodLists 函数：
+</code></pre><h2 id="category结构体的定义"><a href="#category结构体的定义" class="headerlink" title="category结构体的定义"></a>category结构体的定义</h2><pre><code>struct category_t {
+    const char *name;     //类的名字（name）
+    classref_t cls;       //类（cls）
+    struct method_list_t *instanceMethods; 
+    //category中所有给类添加的实例方法的列表（instanceMethods）
+    struct method_list_t *classMethods; 
+    //category中所有添加的类方法的列表（classMethods）
+    struct protocol_list_t *protocols; 
+    //category实现的所有协议的列表（protocols）
+    struct property_list_t *instanceProperties;
+    //category中添加的所有属性（instanceProperties）
+}
+</code></pre><h2 id="类别（category）主要有三个作用"><a href="#类别（category）主要有三个作用" class="headerlink" title="类别（category）主要有三个作用"></a>类别（category）主要有三个作用</h2><pre><code>1.将类的实现分散到多个不同文件或多个不同框架中
+2.创建对私有方法的向前引用
+3.向对象添加非正式协议
+</code></pre><h2 id="类别和Extension区别"><a href="#类别和Extension区别" class="headerlink" title="类别和Extension区别"></a>类别和Extension区别</h2><pre><code>和Category相似的还有Extension，二者的区别是Extension
+在编译期就直接和原类编译在一起了，而Category是在
+运行时添加到原类中。
+</code></pre><h2 id="类别为什么不能添加实例变量"><a href="#类别为什么不能添加实例变量" class="headerlink" title="类别为什么不能添加实例变量"></a>类别为什么不能添加实例变量</h2><pre><code>category是无法添加实例变量的（因为在运行期，对象的内存布局已
+经确定，如果添加实例变量就会破坏类的内部布局，这对编译型语言来
+说是灾难性的）。
+</code></pre><h2 id="类别重写类中方法"><a href="#类别重写类中方法" class="headerlink" title="类别重写类中方法"></a>类别重写类中方法</h2><pre><code>1)、category的方法没有“完全替换掉”原来类已经有的方法，也就是说如果
+category和原来类都有methodA，那么category附加完成之后，类的方法列
+表里会有两个methodA
+2)、category的方法被放到了新方法列表的前面，而原来类的方法被放到了新
+方法列表的后面，这也就是我们平常所说的category的方法会“覆盖”掉原来类
+的同名方法，这是因为运行时在查找方法的时候是顺着方法列表的顺序查找的，
+它只要一找到对应名字的方法，就会罢休^_^，殊不知后面可能还有一样名字的
+方法。
+重写其原有方法，会导致Category的方法覆盖原有类的方法，
+但是load方法是例外，category和原有类的load方法都会被执行。
+</code></pre><h2 id="如何在重写后，保证原类方法会调用"><a href="#如何在重写后，保证原类方法会调用" class="headerlink" title="如何在重写后，保证原类方法会调用"></a>如何在重写后，保证原类方法会调用</h2><pre><code>可以在一个Category方法被调用后，便利方法列表，
+并调用其他同名方法，但是需要注意一点是，便利过程不能
+再调用自己的方法，否则会导致递归调用，为了避免这个问题，
+可以在调用前判断被调用的方法IMP是否是当前方法的IMP
+</code></pre><h2 id="如何在重写后，保证只调用原类方法"><a href="#如何在重写后，保证只调用原类方法" class="headerlink" title="如何在重写后，保证只调用原类方法"></a>如何在重写后，保证只调用原类方法</h2><pre><code>根据上面方法调用的分析，Runtime在调用方法时会优先所
+有Category调用，所以可以倒叙便利方法列表，只便利第一
+个方法即可，这个方法就是元类的方法。
+</code></pre><h2 id="如何在Category中添加变量"><a href="#如何在Category中添加变量" class="headerlink" title="如何在Category中添加变量"></a>如何在Category中添加变量</h2><pre><code>关联对象来实现。我们可以看到所有的关联对象都由
+AssociationsManager管理
+AssociationsManager里面是由一个静态AssociationsHashMap来存储
+所有的关联对象的。这相当于把所有对象的关联对象都存在一个全局map里面。
+而map的的key是这个对象的指针地址（任意两个不同对象的指针地址一定是不
+同的），而这个map的value又是另外一个AssociationsHashMap，里面保
+存了关联对象的kv对。
+@interface TestObject (Category)
+@property (nonatomic, strong) NSObject *object; @end
+#import &lt;objc/runtime.h&gt;
+#import &lt;objc/message.h&gt;
+static void *const kAssociatedObjectKey = 
+(void *)&amp;kAssociatedObjectKey;
+@implementation TestObject (Category)
+- (NSObject *)object {
+return objc_getAssociatedObject(
+self, kAssociatedObjectKey);
+}
+- (void)setObject:(NSObject *)object {
+objc_setAssociatedObject(self,
+kAssociatedObjectKey, object,
+OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+从原码中可以看出，所有通过associated添加的属性，
+都是被单独存放在一个哈希表AssociationsHashMap中，
+objc_setAssociatedObject和
+objc_getAssociatedObject本质上就是操作这个哈希表，
+通过对哈希表进行映射来存取对象。
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/06/M_Swift98内存管理/" rel="next" title="内存管理">
+                <i class="fa fa-chevron-left"></i> 内存管理
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/07/M_Swift105KVO/" rel="prev" title="KVO">
+                KVO <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/12388663?v=3&u=20e1503339de9acf72fc1184728c2afca6ae9b4a&s=140"
+               alt="门乾强" />
+          <p class="site-author-name" itemprop="name">门乾强</p>
+          <p class="site-description motion-element" itemprop="description">博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">173</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Objective-C中category的实现原理和runtime有什么关系？"><span class="nav-number">1.</span> <span class="nav-text">Objective-C中category的实现原理和runtime有什么关系？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#category结构体的定义"><span class="nav-number">1.1.</span> <span class="nav-text">category结构体的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类别（category）主要有三个作用"><span class="nav-number">1.2.</span> <span class="nav-text">类别（category）主要有三个作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类别和Extension区别"><span class="nav-number">1.3.</span> <span class="nav-text">类别和Extension区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类别为什么不能添加实例变量"><span class="nav-number">1.4.</span> <span class="nav-text">类别为什么不能添加实例变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类别重写类中方法"><span class="nav-number">1.5.</span> <span class="nav-text">类别重写类中方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何在重写后，保证原类方法会调用"><span class="nav-number">1.6.</span> <span class="nav-text">如何在重写后，保证原类方法会调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何在重写后，保证只调用原类方法"><span class="nav-number">1.7.</span> <span class="nav-text">如何在重写后，保证只调用原类方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何在Category中添加变量"><span class="nav-number">1.8.</span> <span class="nav-text">如何在Category中添加变量</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

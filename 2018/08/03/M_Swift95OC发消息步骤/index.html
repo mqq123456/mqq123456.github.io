@@ -84,37 +84,37 @@
 
 
 
-<meta name="description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，
+<meta name="description" content="发消息步骤1.检查这个selector是不是要被忽略的，比如mac os开发，
 有垃圾回收，就不考虑 retain，release这些函数
 2.检测这个target是不是nil对象，
 ObjC的特性允许对一个nil对象发消息而不会崩溃
 3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
 先从缓存中找，完了跳到对应函数执行
 4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到">
+5.如果方法列表找">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OC发消息步骤">
+<meta property="og:title" content="OC发消息">
 <meta property="og:url" content="http://yoursite.com/2018/08/03/M_Swift95OC发消息步骤/index.html">
 <meta property="og:site_name" content="Men的博客">
-<meta property="og:description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，
+<meta property="og:description" content="发消息步骤1.检查这个selector是不是要被忽略的，比如mac os开发，
 有垃圾回收，就不考虑 retain，release这些函数
 2.检测这个target是不是nil对象，
 ObjC的特性允许对一个nil对象发消息而不会崩溃
 3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
 先从缓存中找，完了跳到对应函数执行
 4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到">
-<meta property="og:updated_time" content="2018-08-07T03:05:01.585Z">
+5.如果方法列表找">
+<meta property="og:updated_time" content="2018-08-07T10:42:11.254Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="OC发消息步骤">
-<meta name="twitter:description" content="1.检查这个selector是不是要被忽略的，比如mac os开发，
+<meta name="twitter:title" content="OC发消息">
+<meta name="twitter:description" content="发消息步骤1.检查这个selector是不是要被忽略的，比如mac os开发，
 有垃圾回收，就不考虑 retain，release这些函数
 2.检测这个target是不是nil对象，
 ObjC的特性允许对一个nil对象发消息而不会崩溃
 3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
 先从缓存中找，完了跳到对应函数执行
 4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到">
+5.如果方法列表找">
 
 
 
@@ -137,7 +137,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
 
   <link rel="canonical" href="http://yoursite.com/2018/08/03/M_Swift95OC发消息步骤/"/>
 
-  <title> OC发消息步骤 | Men的博客 </title>
+  <title> OC发消息 | Men的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -247,7 +247,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
             
             
               
-                OC发消息步骤
+                OC发消息
               
             
           </h1>
@@ -287,7 +287,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
       
 
       
-        <pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
+        <h2 id="发消息步骤"><a href="#发消息步骤" class="headerlink" title="发消息步骤"></a>发消息步骤</h2><pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
 有垃圾回收，就不考虑 retain，release这些函数
 2.检测这个target是不是nil对象，
 ObjC的特性允许对一个nil对象发消息而不会崩溃
@@ -313,6 +313,46 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
 并调用下面的方法进行消息转发
 -（void）forwardInvocation：(NSInvocation *)invocation；
 9.如果最后都没有出来的话，那么就抛出异常
+</code></pre><h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>无论何时，要调用objc_msgSend函数，必须要将函数强制转
+换成合适的函数指针类型才能调用。
+其实编译器会根据情况在objc_msgSend,
+objc_msgSend_stret, objc_msgSendSuper, 或
+objc_msgSendSuper_stret四个方法中选择一个来调用。
+</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><pre><code>将一条消息发送给一个不能处理的对象会引起崩溃，但是在崩溃
+之前，系统给响应对象一次处理异常的机会。
+当发送一条对象不能处理的消息，产生crash之前，系统会调用
+响应者的forwardIMvocation方法，并传入一个NSInvocation
+对象，NSInvocation中包含原始消息及参数，这个方法之后方法
+未实现的时候才会调用。
+你可以实现forwardInvocation方法，将消息转发给另一个
+对象，forwardInvocation方法是一个动态方法，在响应者无法
+响应方法时，会调用forwardInvocation方法，可以重写这个方
+法，实现消息转发。
+</code></pre><h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>如果self为nil，那么selector也会为空，直接返回，不会出现问题。
+（返回值时对象，是标量，结构体）
+如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0
+地址返回，所以不会出现任何错误
+如果返回值类型是对象，那么返还nil
+如果回值类型是标量，那么是0，
+如果回值类型是结构体为0，
+其他为返回值是未定义的。
+但对于[NSNull null]对象发送消息时，是会crash的，因为NSNull类只有一个null方法。
+unrecognized selector sent to instance的错误是怎么回事？
+这是因为这个对象已经被释放了（引用计数为0了），那么这个时候再去调用方
+法肯定是会Crash的，因为这个时候这个对象就是一个野指针（指向僵尸对象
+（对象的引用计数为0，指针指向的内存已经不可用）的指针）了，安全的做法
+是释放后将对象重新置为nil，使它成为一个空指针，大家可以在关闭ARC后手
+动release对象验证一下。
+这里要区别的是空指针和野指针的区别！
+    1&gt; 没有存储任何内存地址的指针就称为空指针(NULL指针)
+    2&gt; 空指针就是被赋值为0的指针，在没有被具体初始化之前，其值为0。
+    &quot;野指针&quot;不是NULL指针，是指向&quot;垃圾&quot;内存（不可用内存）的指针。
+    野指针是非常危险的。
+</code></pre><h2 id="函数调用和OC的消息传递机制区别"><a href="#函数调用和OC的消息传递机制区别" class="headerlink" title="函数调用和OC的消息传递机制区别"></a>函数调用和OC的消息传递机制区别</h2><pre><code>1对于C语言，函数的调用在编译器的时候决定调用那个函数。编译完之后直接
+顺序执行。
+2OC的函数调用成为消息发送。属于动态调用过程。在编译的时候决不能决定
+真正调用那个函数（实时证明，在编译阶段，oc可以调用任何函数，及时这个
+函数并未实现，只要申明过就不会报错，而c语言在编译阶段或报错）。
 </code></pre>
       
     </div>
@@ -338,7 +378,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/02/M_Swift96RunLoop/" rel="next" title="RunLoop">
+              <a href="/2018/08/02/M_Swift97RunLoop/" rel="next" title="RunLoop">
                 <i class="fa fa-chevron-left"></i> RunLoop
               </a>
             
@@ -346,7 +386,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/08/03/M_Swift94Block/" rel="prev" title="Block理解">
+              <a href="/2018/08/03/M_Swift99Block/" rel="prev" title="Block理解">
                 Block理解 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -416,7 +456,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">170</span>
+              <span class="site-state-item-count">173</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -448,7 +488,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#发消息步骤"><span class="nav-number">1.</span> <span class="nav-text">发消息步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#objc-msgSend"><span class="nav-number">2.</span> <span class="nav-text">objc_msgSend</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息转发："><span class="nav-number">3.</span> <span class="nav-text">消息转发：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Objc中向一个nill对象发消息，会发生什么？"><span class="nav-number">4.</span> <span class="nav-text">Objc中向一个nill对象发消息，会发生什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数调用和OC的消息传递机制区别"><span class="nav-number">5.</span> <span class="nav-text">函数调用和OC的消息传递机制区别</span></a></li></ol></div>
             
           </div>
         </section>

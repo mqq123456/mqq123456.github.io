@@ -93,7 +93,7 @@
 自objc_objct">
 <meta property="og:type" content="article">
 <meta property="og:title" content="理解Runtime">
-<meta property="og:url" content="http://yoursite.com/2018/08/01/M_Swift99Runtime理解/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/08/01/M_Swift94Runtime理解/index.html">
 <meta property="og:site_name" content="Men的博客">
 <meta property="og:description" content="什么是isa指针每个对象都有一个标识对象类的isa实例变量。
 运行时使用此指针来确定对象需要时的实际类。
@@ -102,7 +102,7 @@
 3、 Class是objc_class结构体的指针。
 为什么说类也是对象类被定义为objc_class结构体，objc_class结构体继承
 自objc_objct">
-<meta property="og:updated_time" content="2018-08-07T06:33:22.035Z">
+<meta property="og:updated_time" content="2018-08-07T08:08:54.024Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="理解Runtime">
 <meta name="twitter:description" content="什么是isa指针每个对象都有一个标识对象类的isa实例变量。
@@ -132,7 +132,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/08/01/M_Swift99Runtime理解/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/08/01/M_Swift94Runtime理解/"/>
 
   <title> 理解Runtime | Men的博客 </title>
 </head>
@@ -393,11 +393,6 @@ class_setIvarLayout或class_WeakIvarLayout
 运行时创建的类时可以添加实例变量，调用class_addIvar函数
 ，但是得在调用objc_allocateClassPari之后，
 objc_registerClassPair之前，原因同上。
-</code></pre><h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>（返回值时对象，是标量，结构体）
-如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0
-地址返回，所以不会出现任何错误
-如果返还类型是对象，那么返还nil如果是标量，那么是0，
-结构体为0，其他为返回值是为定义的。
 </code></pre><h2 id="ivar读写"><a href="#ivar读写" class="headerlink" title="ivar读写"></a>ivar读写</h2><pre><code>实例变量的isa_t指针会指向其所属的类，对象中并不会包含
 method，property，protocol，ivar等信息，这些信息在编
 译时都保存在只读结构体class_ro_t中。在class_ro_t中ivar
@@ -437,120 +432,6 @@ sel_registerName函数来获得一个SEL类型的方法选择器。
 不同类的相同SEL是同一个对象。
 在runtime中维护一个SEL列表，这个表不按照类存储，
 只要相同SEL就算作一个，并存储到表中。
-</code></pre><h2 id="Category"><a href="#Category" class="headerlink" title="Category"></a>Category</h2><pre><code>类别（category）主要有三个作用
-1.将类的实现分散到多个不同文件或多个不同框架中
-2.创建对私有方法的向前引用
-3.向对象添加非正式协议
-和Category相似的还有Extension，二者的区别是Extension
-在编译期就直接和原类编译在一起了，而Category是在
-运行时添加到原类中。
-如果一个类添加Category后，并且重写其原有方法，
-这样会导致Category的方法覆盖原有类的方法，
-但是load方法是例外，category和原有类的load方法
-都会被执行。
-在有过个Category和原类方法重名的情况下，怎么样在一个
-Category方法被调用后，调用所有Category和原类的方法？
-可以在一个Category方法被调用后，便利方法列表，
-并调用其他同名方法，但是需要注意一点是，便利过程不能
-再调用自己的方法，否则会导致递归调用，为了避免这个问题，
-可以在调用前判断被调用的方法IMP是否是当前方法的IMP
-怎么样在任何一个Category的方法被调用后，只调用元类方法呢？
-根据上面方法调用的分析，Runtime在调用方法时会有限所
-有Category调用，所以可以倒叙便利方法列表，只便利第一
-个方法即可，这个方法就是元类的方法。
-</code></pre><h2 id="如何在Category中添加变量"><a href="#如何在Category中添加变量" class="headerlink" title="如何在Category中添加变量"></a>如何在Category中添加变量</h2><pre><code>@interface TestObject (Category)
-@property (nonatomic, strong) NSObject *object; @end
-#import &lt;objc/runtime.h&gt;
-#import &lt;objc/message.h&gt;
-static void *const kAssociatedObjectKey = 
-(void *)&amp;kAssociatedObjectKey;
-@implementation TestObject (Category)
-- (NSObject *)object {
-    return objc_getAssociatedObject(
-    self, kAssociatedObjectKey);
-}
-- (void)setObject:(NSObject *)object {
-    objc_setAssociatedObject(self,
-    kAssociatedObjectKey, object,
-    OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-从原码中可以看出，所有通过associated添加的属性，
-都是被单独存放在一个哈希表AssociationsHashMap中，
-objc_setAssociatedObject和
-objc_getAssociatedObject本质上就是操作这个哈希表，
-通过对哈希表进行映射来存取对象。
-</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><pre><code>将一条消息发送给一个不能处理的对象会引起崩溃，但是在崩溃
-之前，系统给响应对象一次处理异常的机会。
-当发送一条对象不能处理的消息，产生crash之前，系统会调用
-响应者的forwardIMvocation方法，并传入一个NSInvocation
-对象，NSInvocation中包含原始消息及参数，这个方法之后方法
-未实现的时候才会调用。
-你可以实现forwardInvocation方法，将消息转发给另一个
-对象，forwardInvocation方法是一个动态方法，在响应者无法
-响应方法时，会调用forwardInvocation方法，可以重写这个方
-法，实现消息转发。
-</code></pre><h2 id="Method-Swizzling-："><a href="#Method-Swizzling-：" class="headerlink" title="Method Swizzling ："></a>Method Swizzling ：</h2><pre><code>你在swizzlingViewDidLoad方法中又调用[self
-swizzlingViewDidLoad];，这难道不会产生递归调用吗？
-其实不会，Method Swizzling ：实现原理理解为方法互换，
-假设我们将A，B两个方法进行互换，向A发消息时执行的是B的方
-法，向B发消息时执行的是A方法，所以再调用[self
-swizzlingViewDidLoad];又回到原类的方法中了。
-对于NSArray 􏴯 NSMutableArray 􏴯 NSDictionary 􏴯
-NSMutableDictionary 等类进行Method Swizzling ，实现
-方式按照上面例子来做，但是你发现Method Swizzling 根本不
-起作用
-这是因为Method Swizzling 对NSArray这些类簇是不起作
-用的，因为这些类簇，其实是一种抽象工厂的设计模式，抽象工厂内
-部有很多其他继承自身当前类的子类，抽象工厂类会根据不同情况，
-创建不同的抽象对象来进行使用。例如我们调用NSArray的
-objectAtIndex方法，这个类会在方法内部判断，内部创建不同抽
-象类进行操作。
-所以也就是我们对NSArray进行操作其实是对父类进行操作，在
-NSArray内部会创建其子类进行执行操作，真正执行操作的并不是
-NSArray自身，所以我们应该对其真身进行操作。
-如果进行Method Swizzling中的类有继承关系，并且
-swizzling了同一个方法，这样会导致父类的Swizzling失效。必
-须要证Method Swizzling方法只执行一次。
-</code></pre><h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>无论何时，要调用objc_msgSend函数，必须要将函数强制转
-换成合适的函数指针类型才能调用。
-其实编译器会根据情况在objc_msgSend,
-objc_msgSend_stret, objc_msgSendSuper, 或
-objc_msgSendSuper_stret四个方法中选择一个来调用。
-</code></pre><h2 id="KVO-KVC的实现原理"><a href="#KVO-KVC的实现原理" class="headerlink" title="KVO KVC的实现原理"></a>KVO KVC的实现原理</h2><pre><code>https://blog.csdn.net/u014247354/article/details/78403567
-apple使用isa混写（isa-swizzling）来实现KVO。
-当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying A的新类，该类继承自对象A的本类，
-且KVO为NSKVONotifying A重写观察属性的setter方法，setter方法会负责在调用原setter方法之前之后，
-通知所有观察对象属性值的更改情况。
-观察者观察的属性，只有遵循KVO变更属性值的方式才会执行KVO
-的回调方法，例如是否执行setter方法，活着是否使用KVC
-赋值。如果赋值没有通过setter方法或者KVC，而是直接修改属
-性对应的成员变量，例如：仅调用_name = @&quot;newName&quot; ,这
-时时不会触发kvo机制，更加不会调用回调方法的。所以使用
-KVO机制的前提是遵循KVO的属性设置方式来变更属性值。
-KVC实现原理
-1.检查是否存在key，如果有，就是用这些方法返回值
-2.检查是否存在名为setkey的方法，并使用它做设置值。
-对于getkey和setkey方法，经大写key
-</code></pre><h1 id="Objective-C中category的实现原理和runtime有什么关系？"><a href="#Objective-C中category的实现原理和runtime有什么关系？" class="headerlink" title="Objective-C中category的实现原理和runtime有什么关系？"></a>Objective-C中category的实现原理和runtime有什么关系？</h1><pre><code>Objective-C 中的 Category 就是对装饰模式的一种具
-体实现。它的主要作用是在不改变原有类的前提下，动态地
-给这个类添加一些方法。在 Objective-C 中的具体体现为：
-实例（类）方法、属性和协议。是的，在 Objective-C 
-中可以用 Category 来实现协议
-将 Category 和它的主类（或元类）注册到哈希表中；
-如果主类（或元类）已实现，那么重建它的方法列表。
-Category 中的实例方法和属性被整合到主类中；
-而类方法则被整合到元类中。
-另外，对协议的处理比较特殊，Category 中的协议被同
-时整合到了主类和元类中。
-我们注意到，不管是哪种情况，最终都是通过调用 
-static void remethodizeClass(Class cls) 
-函数来重新整理类的数据的。
-这个函数的主要作用是将 Category 中的方法、属性和协议
-整合到类（主类或元类）中，更新类的数据字段 data() 中
-method_lists（或 method_list）、properties 和
-protocols 的值。进一步，我们通过
-attachCategoryMethods 函数的源码可以找到真正处理
-Category 方法的 attachMethodLists 函数：
 </code></pre>
       
     </div>
@@ -576,15 +457,15 @@ Category 方法的 attachMethodLists 函数：
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/31/M_Swift97Runtime_isa_swizzling/" rel="next" title="iOS isa-swizzling">
-                <i class="fa fa-chevron-left"></i> iOS isa-swizzling
+              <a href="/2018/07/31/M_Swift100KVC/" rel="next" title="KVC">
+                <i class="fa fa-chevron-left"></i> KVC
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/08/02/M_Swift96RunLoop/" rel="prev" title="RunLoop">
+              <a href="/2018/08/02/M_Swift97RunLoop/" rel="prev" title="RunLoop">
                 RunLoop <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -654,7 +535,7 @@ Category 方法的 attachMethodLists 函数：
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">170</span>
+              <span class="site-state-item-count">173</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -686,7 +567,7 @@ Category 方法的 attachMethodLists 函数：
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是isa指针"><span class="nav-number">1.</span> <span class="nav-text">什么是isa指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么说类也是对象"><span class="nav-number">1.1.</span> <span class="nav-text">为什么说类也是对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类也是对象，他是meteClass-元类-的实例。"><span class="nav-number">2.</span> <span class="nav-text">类也是对象，他是meteClass(元类)的实例。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#meta-class"><span class="nav-number">3.</span> <span class="nav-text">meta class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#id"><span class="nav-number">4.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivars-methodLists"><span class="nav-number">5.</span> <span class="nav-text">ivars methodLists</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMP："><span class="nav-number">6.</span> <span class="nav-text">IMP：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method："><span class="nav-number">7.</span> <span class="nav-text">Method：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Property："><span class="nav-number">8.</span> <span class="nav-text">Property：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存布局："><span class="nav-number">9.</span> <span class="nav-text">内存布局：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不能向编译后得到的类中增加实例变量"><span class="nav-number">10.</span> <span class="nav-text">不能向编译后得到的类中增加实例变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Objc中向一个nill对象发消息，会发生什么？"><span class="nav-number">11.</span> <span class="nav-text">Objc中向一个nill对象发消息，会发生什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivar读写"><span class="nav-number">12.</span> <span class="nav-text">ivar读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法传参："><span class="nav-number">13.</span> <span class="nav-text">方法传参：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isa-t"><span class="nav-number">14.</span> <span class="nav-text">isa_t:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SEL"><span class="nav-number">15.</span> <span class="nav-text">SEL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Category"><span class="nav-number">16.</span> <span class="nav-text">Category</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何在Category中添加变量"><span class="nav-number">17.</span> <span class="nav-text">如何在Category中添加变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息转发："><span class="nav-number">18.</span> <span class="nav-text">消息转发：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method-Swizzling-："><span class="nav-number">19.</span> <span class="nav-text">Method Swizzling ：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#objc-msgSend"><span class="nav-number">20.</span> <span class="nav-text">objc_msgSend</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO-KVC的实现原理"><span class="nav-number">21.</span> <span class="nav-text">KVO KVC的实现原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Objective-C中category的实现原理和runtime有什么关系？"><span class="nav-number"></span> <span class="nav-text">Objective-C中category的实现原理和runtime有什么关系？</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是isa指针"><span class="nav-number">1.</span> <span class="nav-text">什么是isa指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么说类也是对象"><span class="nav-number">1.1.</span> <span class="nav-text">为什么说类也是对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类也是对象，他是meteClass-元类-的实例。"><span class="nav-number">2.</span> <span class="nav-text">类也是对象，他是meteClass(元类)的实例。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#meta-class"><span class="nav-number">3.</span> <span class="nav-text">meta class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#id"><span class="nav-number">4.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivars-methodLists"><span class="nav-number">5.</span> <span class="nav-text">ivars methodLists</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMP："><span class="nav-number">6.</span> <span class="nav-text">IMP：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method："><span class="nav-number">7.</span> <span class="nav-text">Method：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Property："><span class="nav-number">8.</span> <span class="nav-text">Property：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存布局："><span class="nav-number">9.</span> <span class="nav-text">内存布局：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不能向编译后得到的类中增加实例变量"><span class="nav-number">10.</span> <span class="nav-text">不能向编译后得到的类中增加实例变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivar读写"><span class="nav-number">11.</span> <span class="nav-text">ivar读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法传参："><span class="nav-number">12.</span> <span class="nav-text">方法传参：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isa-t"><span class="nav-number">13.</span> <span class="nav-text">isa_t:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SEL"><span class="nav-number">14.</span> <span class="nav-text">SEL</span></a></li></ol></div>
             
           </div>
         </section>

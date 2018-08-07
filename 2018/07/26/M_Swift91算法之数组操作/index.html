@@ -84,34 +84,31 @@
 
 
 
-<meta name="description" content="添加Observer
-通过runtime偷偷实现了一个子类，并且以NSKVONotifying_+类名来命名
-将之前那个对象的isa指针指向了这个子类。
-重写了观察的对象setter方法，并且在重写的中添加了willChangeValueForKey:以及didChangeValueForKey:
-移除Observer
-只是简单的将其的isa指向原来的类对象中
-然后我们在分析一下， 在真正调用的s">
+<meta name="description" content="数组去重// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
+function unique(arr) {
+    var res = [arr[0]];
+    for (var i = 0; i &amp;lt; arr.length; i++) {
+        var repeat = false;
+        for (var j =">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iOS isa-swizzling">
-<meta property="og:url" content="http://yoursite.com/2018/07/31/M_Swift97Runtime_isa_swizzling/index.html">
+<meta property="og:title" content="算法之数组操作">
+<meta property="og:url" content="http://yoursite.com/2018/07/26/M_Swift91算法之数组操作/index.html">
 <meta property="og:site_name" content="Men的博客">
-<meta property="og:description" content="添加Observer
-通过runtime偷偷实现了一个子类，并且以NSKVONotifying_+类名来命名
-将之前那个对象的isa指针指向了这个子类。
-重写了观察的对象setter方法，并且在重写的中添加了willChangeValueForKey:以及didChangeValueForKey:
-移除Observer
-只是简单的将其的isa指向原来的类对象中
-然后我们在分析一下， 在真正调用的s">
-<meta property="og:updated_time" content="2018-08-03T02:18:36.517Z">
+<meta property="og:description" content="数组去重// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
+function unique(arr) {
+    var res = [arr[0]];
+    for (var i = 0; i &amp;lt; arr.length; i++) {
+        var repeat = false;
+        for (var j =">
+<meta property="og:updated_time" content="2018-08-03T02:16:39.196Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iOS isa-swizzling">
-<meta name="twitter:description" content="添加Observer
-通过runtime偷偷实现了一个子类，并且以NSKVONotifying_+类名来命名
-将之前那个对象的isa指针指向了这个子类。
-重写了观察的对象setter方法，并且在重写的中添加了willChangeValueForKey:以及didChangeValueForKey:
-移除Observer
-只是简单的将其的isa指向原来的类对象中
-然后我们在分析一下， 在真正调用的s">
+<meta name="twitter:title" content="算法之数组操作">
+<meta name="twitter:description" content="数组去重// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
+function unique(arr) {
+    var res = [arr[0]];
+    for (var i = 0; i &amp;lt; arr.length; i++) {
+        var repeat = false;
+        for (var j =">
 
 
 
@@ -132,9 +129,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/31/M_Swift97Runtime_isa_swizzling/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/26/M_Swift91算法之数组操作/"/>
 
-  <title> iOS isa-swizzling | Men的博客 </title>
+  <title> 算法之数组操作 | Men的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -244,7 +241,7 @@
             
             
               
-                iOS isa-swizzling
+                算法之数组操作
               
             
           </h1>
@@ -256,8 +253,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-31T16:32:01+08:00" content="2018-07-31">
-              2018-07-31
+            <time itemprop="dateCreated" datetime="2018-07-26T09:46:15+08:00" content="2018-07-26">
+              2018-07-26
             </time>
           </span>
 
@@ -284,28 +281,88 @@
       
 
       
-        <pre><code>添加Observer
-通过runtime偷偷实现了一个子类，并且以NSKVONotifying_+类名来命名
-将之前那个对象的isa指针指向了这个子类。
-重写了观察的对象setter方法，并且在重写的中添加了willChangeValueForKey:以及didChangeValueForKey:
-移除Observer
-只是简单的将其的isa指向原来的类对象中
-然后我们在分析一下， 在真正调用的setAge:的情况下, 根据消息机制我们知道它先通过isa找到对应对象的类， 也就是现在NSKVONotifying_Person, 然后再去找setAge:，由于NSKVONotifying_Person这个对象重写了这个方法， 那么就会直接取当前的实现， 也就是带有willChangeValueForKey:以及didChangeValueForKey:， 那么自然就实现了对KVO的实现了。
+        <h2 id="数组去重"><a href="#数组去重" class="headerlink" title="数组去重"></a>数组去重</h2><pre><code>// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
+function unique(arr) {
+    var res = [arr[0]];
+    for (var i = 0; i &lt; arr.length; i++) {
+        var repeat = false;
+        for (var j = 0; j &lt; res.length; i++) {
+            if (arr[i] == res[j]) {
+                repeat = true;
+                break;
+            }
+        }
+        if (!repeat) {
+            res.push(arr[i]);
+        }
+    }
+    return res;
+}
+// 思路：每次取出原数组的元素，然后再对象中访问这个属性，如果存在就说明重复
+function unique(arr) {
+    var res = [];
+    var json = {};
+    for (var i = 0; i &lt; arr.length; i++) {
+        if (!json[arr[i]]) {
+            res.push(arr[i]);
+            json[arr[i]] = 1;
+        }
+    }
+    return res;
+}
+// 利用下标查询
+function unique(arr) {
+    var newArr = [arr[0]];
+    for (var i = 0; i &lt; arr.length; i++) {
+        if (newArr.indexOf(arr[i]) == -1) {
+            newArr.push(arr[i]);
+        }
+    }
+    return newArr;
+}
 
-KVC主要通过isa-swizzling，来实现。
+// 两个数组中相同的元素和不同的元素
+// 合并两数组，并删除重复元素(代码类似于数组去重，只不过都是比较两个数组)
+</code></pre><h2 id="对数组进行反转"><a href="#对数组进行反转" class="headerlink" title="对数组进行反转"></a>对数组进行反转</h2><pre><code>function reverae(arr) {
+    var j = arr.length - 1;
+    for (var i = 0; i &lt; arr.length; i++) {
+        var temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+        j--;
+    }
+}
+</code></pre><h2 id="获取数组中连续的元素"><a href="#获取数组中连续的元素" class="headerlink" title="获取数组中连续的元素"></a>获取数组中连续的元素</h2><pre><code>function fn(arr){
+  var result = [],
+      i = 0;
+  result[i] = [arr[0]];
+  arr.reduce(function(prev, cur){
+    cur-prev === 1 ? result[i].push(cur) : result[++i] = [cur];
+    return cur;
+  });
+  return result;
+}
+</code></pre><h2 id="数组合并-先排序，再合并"><a href="#数组合并-先排序，再合并" class="headerlink" title="数组合并(先排序，再合并)"></a>数组合并(先排序，再合并)</h2><pre><code>// 合并两个有序数组
+function mergeOrder(arr1,arr2) {
+    var result = arr1 +arr2;
+    var m = 0;
+    var n = 0;
+    for (var i = 0; i &lt; result.length; i++) {
+        if (m == arr1.length) {
+            result[i] = arr2[n++];
+        }else if (n==arr2.length) {
+            result[i] = arr1[m++];
+        }else{
+            if (arr1[m] &lt; arr2[n]) {
+                result[i] = arr1[m++];
+            }else{
+                result[i] = arr2[n++];
+            }
+        }
 
-
-
-[site setValue:@&quot;sitename&quot; forKey:@&quot;name&quot;];
-
-编译器处理成：
-SEL sel = sel_get_uid (&quot;setValue:forKey:&quot;);
-IMP method = objc_msg_lookup (site-&gt;isa,sel);
-method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
-
-我们上面提到过Method Swizzling的实现原理就是对类的Dispatch Table进行操作，每进行一次Swizzling就交换一次SEL和IMP(可以理解为函数指针)，如果Swizzling被执行了多次，就相当于SEL和IMP被交换了多次。这就会导致第一次执行成功交换了、第二次执行又换回去了、第三次执行.....这样换来换去的结果，能不能成功就看运气了😄，这也是好多人说Method Swizzling不好用的原因之一。
-为了避免这样的原因出现，我们可以通过GCD的dispatch_once函数来解决，利用dispatch_once函数内代码只会执行一次的特性。
-使用 Method Swizzling 编程就好比切菜时使用锋利的刀，一些人因为担心切到自己所以害怕锋利的刀具，可是事实上，使用钝刀往往更容易出事，而利刀更为安全。
+    }
+    return result;
+}
 </code></pre>
       
     </div>
@@ -331,16 +388,16 @@ method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/31/M_Swift98Runtime常见作用/" rel="next" title="Runtime常见作用">
-                <i class="fa fa-chevron-left"></i> Runtime常见作用
+              <a href="/2018/07/22/M_Swift101常见UI问题/" rel="next" title="常见UI问题">
+                <i class="fa fa-chevron-left"></i> 常见UI问题
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/08/01/M_Swift99Runtime理解/" rel="prev" title="理解Runtime">
-                理解Runtime <i class="fa fa-chevron-right"></i>
+              <a href="/2018/07/26/M_Swift92算法之排序/" rel="prev" title="算法之排序">
+                算法之排序 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -409,7 +466,7 @@ method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">170</span>
+              <span class="site-state-item-count">173</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -441,7 +498,7 @@ method(site, sel, @&quot;sitename&quot;, @&quot;name&quot;);
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数组去重"><span class="nav-number">1.</span> <span class="nav-text">数组去重</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对数组进行反转"><span class="nav-number">2.</span> <span class="nav-text">对数组进行反转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取数组中连续的元素"><span class="nav-number">3.</span> <span class="nav-text">获取数组中连续的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数组合并-先排序，再合并"><span class="nav-number">4.</span> <span class="nav-text">数组合并(先排序，再合并)</span></a></li></ol></div>
             
           </div>
         </section>
