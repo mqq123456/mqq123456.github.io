@@ -102,7 +102,7 @@
 3、 Class是objc_class结构体的指针。
 为什么说类也是对象类被定义为objc_class结构体，objc_class结构体继承
 自objc_objct">
-<meta property="og:updated_time" content="2018-08-07T08:08:54.024Z">
+<meta property="og:updated_time" content="2018-08-08T10:54:17.704Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="理解Runtime">
 <meta name="twitter:description" content="什么是isa指针每个对象都有一个标识对象类的isa实例变量。
@@ -432,6 +432,11 @@ sel_registerName函数来获得一个SEL类型的方法选择器。
 不同类的相同SEL是同一个对象。
 在runtime中维护一个SEL列表，这个表不按照类存储，
 只要相同SEL就算作一个，并存储到表中。
+</code></pre><h2 id="runtime如何实现weak变量的自动置nil"><a href="#runtime如何实现weak变量的自动置nil" class="headerlink" title="runtime如何实现weak变量的自动置nil"></a>runtime如何实现weak变量的自动置nil</h2><pre><code>runtime 对注册的类， 会进行布局，对于 weak 对象会放入一个 hash 表
+中。 用 weak 指向的对象内存地址作为 key，当此对象的引用计数为0的时
+候会 dealloc，假如 weak 指向的对象内存地址是a，那么就会以a为键， 
+在这个 weak 表中搜索，找到所有以a为键的 weak 对象，从而设置为 nil
+</code></pre><h2 id="load方法"><a href="#load方法" class="headerlink" title="load方法"></a>load方法</h2><pre><code>Load方法是在类加载的时候调用的，是在类加载到运行时的时候调用的，在mian函数之前，所以比较适合在load中调用钩子方法。只调用一次
 </code></pre>
       
     </div>
@@ -535,7 +540,7 @@ sel_registerName函数来获得一个SEL类型的方法选择器。
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">173</span>
+              <span class="site-state-item-count">176</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -567,7 +572,7 @@ sel_registerName函数来获得一个SEL类型的方法选择器。
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是isa指针"><span class="nav-number">1.</span> <span class="nav-text">什么是isa指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么说类也是对象"><span class="nav-number">1.1.</span> <span class="nav-text">为什么说类也是对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类也是对象，他是meteClass-元类-的实例。"><span class="nav-number">2.</span> <span class="nav-text">类也是对象，他是meteClass(元类)的实例。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#meta-class"><span class="nav-number">3.</span> <span class="nav-text">meta class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#id"><span class="nav-number">4.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivars-methodLists"><span class="nav-number">5.</span> <span class="nav-text">ivars methodLists</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMP："><span class="nav-number">6.</span> <span class="nav-text">IMP：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method："><span class="nav-number">7.</span> <span class="nav-text">Method：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Property："><span class="nav-number">8.</span> <span class="nav-text">Property：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存布局："><span class="nav-number">9.</span> <span class="nav-text">内存布局：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不能向编译后得到的类中增加实例变量"><span class="nav-number">10.</span> <span class="nav-text">不能向编译后得到的类中增加实例变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivar读写"><span class="nav-number">11.</span> <span class="nav-text">ivar读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法传参："><span class="nav-number">12.</span> <span class="nav-text">方法传参：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isa-t"><span class="nav-number">13.</span> <span class="nav-text">isa_t:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SEL"><span class="nav-number">14.</span> <span class="nav-text">SEL</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是isa指针"><span class="nav-number">1.</span> <span class="nav-text">什么是isa指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么说类也是对象"><span class="nav-number">1.1.</span> <span class="nav-text">为什么说类也是对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类也是对象，他是meteClass-元类-的实例。"><span class="nav-number">2.</span> <span class="nav-text">类也是对象，他是meteClass(元类)的实例。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#meta-class"><span class="nav-number">3.</span> <span class="nav-text">meta class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#id"><span class="nav-number">4.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivars-methodLists"><span class="nav-number">5.</span> <span class="nav-text">ivars methodLists</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMP："><span class="nav-number">6.</span> <span class="nav-text">IMP：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method："><span class="nav-number">7.</span> <span class="nav-text">Method：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Property："><span class="nav-number">8.</span> <span class="nav-text">Property：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存布局："><span class="nav-number">9.</span> <span class="nav-text">内存布局：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不能向编译后得到的类中增加实例变量"><span class="nav-number">10.</span> <span class="nav-text">不能向编译后得到的类中增加实例变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivar读写"><span class="nav-number">11.</span> <span class="nav-text">ivar读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法传参："><span class="nav-number">12.</span> <span class="nav-text">方法传参：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isa-t"><span class="nav-number">13.</span> <span class="nav-text">isa_t:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SEL"><span class="nav-number">14.</span> <span class="nav-text">SEL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#runtime如何实现weak变量的自动置nil"><span class="nav-number">15.</span> <span class="nav-text">runtime如何实现weak变量的自动置nil</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#load方法"><span class="nav-number">16.</span> <span class="nav-text">load方法</span></a></li></ol></div>
             
           </div>
         </section>

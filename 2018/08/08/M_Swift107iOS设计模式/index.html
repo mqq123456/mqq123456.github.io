@@ -1,0 +1,596 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="代理模式场景：当一个类的某些功能需要由别的类来实现，但是又不确定具体会是哪个类实现。
+优势：解耦合、多继承
+实例：tableview的 数据源delegate，通过和protocol的配合，完成委托诉求。
+观察者模式场景：当对象间存在一对多关系时，则使用观察者模式（Observer Pattern）。
+比如，当一个对象被修改时，则会自动通知它的依赖对象。观察者模式属于行为型模式。
+优势：解耦合
+实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式">
+<meta property="og:url" content="http://yoursite.com/2018/08/08/M_Swift107iOS设计模式/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="代理模式场景：当一个类的某些功能需要由别的类来实现，但是又不确定具体会是哪个类实现。
+优势：解耦合、多继承
+实例：tableview的 数据源delegate，通过和protocol的配合，完成委托诉求。
+观察者模式场景：当对象间存在一对多关系时，则使用观察者模式（Observer Pattern）。
+比如，当一个对象被修改时，则会自动通知它的依赖对象。观察者模式属于行为型模式。
+优势：解耦合
+实">
+<meta property="og:updated_time" content="2018-08-08T10:46:46.822Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式">
+<meta name="twitter:description" content="代理模式场景：当一个类的某些功能需要由别的类来实现，但是又不确定具体会是哪个类实现。
+优势：解耦合、多继承
+实例：tableview的 数据源delegate，通过和protocol的配合，完成委托诉求。
+观察者模式场景：当对象间存在一对多关系时，则使用观察者模式（Observer Pattern）。
+比如，当一个对象被修改时，则会自动通知它的依赖对象。观察者模式属于行为型模式。
+优势：解耦合
+实">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/08/M_Swift107iOS设计模式/"/>
+
+  <title> 设计模式 | Men的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Men的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">欢迎光临！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            博文
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                设计模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-08T10:21:34+08:00" content="2018-08-08">
+              2018-08-08
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><pre><code>场景：当一个类的某些功能需要由别的类来实现，但是又不确定具体会是哪个类实现。
+优势：解耦合、多继承
+实例：tableview的 数据源delegate，通过和protocol的配合，完成委托诉求。
+</code></pre><h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><pre><code>场景：当对象间存在一对多关系时，则使用观察者模式（Observer Pattern）。
+比如，当一个对象被修改时，则会自动通知它的依赖对象。观察者模式属于行为型模式。
+优势：解耦合
+实例：Notification通知中心，注册通知中心，任何位置可以发送消息，
+注册观察者的对象可以接收。
+kvo，键值对改变通知的观察者，平时基本没用过。
+</code></pre><h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><pre><code>场景：确保程序运行期某个类，只有一份实例，用于进行资源共享控制。
+注意：
+    单例类只能有一个实例。
+    单例类必须自己创建自己的唯一实例。
+    单例类必须给所有其他对象提供这一实例。
+优势：在内存里只有一个实例，减少了内存的开销，尤其是频繁的创建和销毁实
+例，避免对资源的多重占用比如写文件操作
+缺点：没有接口，不能继承，与单一职责原则冲突，一个类应该只关心内部逻
+辑，而不关心外面怎么样来实例化。
+注意事项：确保使用者只能通过 getInstance方法才能获得，单例类的唯一实例。
+实例：UIApplication, NSBundle, NSNotificationCenter, 
+NSFileManager, NSUserDefault, NSURLCache等都是单例.
+</code></pre><h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><pre><code>场景：作为一种创建类模式，在任何需要生成复杂对象的地方，都可以使用工厂方法模式
+“专门定义一个类来负责创建其他类的实例，被创建的实例通常具有共同的父类。”
+优势：
+    一个调用者想创建一个对象，只要知道其名称就可以了。
+    扩展性高，如果想增加一个产品，只要扩展一个工厂类就可以。
+    屏蔽产品的具体实现，调用者只关心产品的接口。
+缺点：
+    每次增加一个产品时，都需要增加一个具体类和对象实现工厂，使得系统
+    中类的个数成倍增加，在一定程度上增加了系统的复杂度，同时也增加了
+    系统具体类的依赖。这并不是什么好事。
+实例：以 NSArray 举例，发现 + alloc 后并非生成了我们期望的类实例，而是一个__NSPlacehodlerArray 的中间对象，后面的 - init 或 - initWithXXXXX 消息都是发送给这个中间对象，再由它做工厂，生成真的对象。生成真的对象。这里的 __NSArrayI 和 __NSArrayM
+</code></pre><h2 id="MVC"><a href="#MVC" class="headerlink" title="MVC"></a>MVC</h2><pre><code>是一中非常古老的设计模式，通过数据模型，控制器逻辑，视图展示将应用程序进行逻辑划分。
+实例：model-即数据模型，view-视图展示，controller进行UI展现和数据交互的逻辑控制。
+</code></pre><h2 id="MVVM"><a href="#MVVM" class="headerlink" title="MVVM"></a>MVVM</h2><pre><code>它其实是一个 MVC 的增强版，并将表示逻辑从 Controller 移出放到一个
+新的对象里，即 View Model
+在 iOS 上使用 MVVM 的动机,就是让它能减少 View Controller 的复杂
+性并使得表示逻辑更易于测试
+</code></pre><h2 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h2><pre><code>MVP全称Model-View-Presenter。
+Presenter：作为model和view的中间人，从model层获取数据之后传给
+view，使得View和model没有耦合。
+View：这里的View与MVC中的V又有一些小差别，这个View可以是
+viewcontroller、view等控件。Presenter通过向View传model数据进行交互。
+</code></pre>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/07/M_Swift105KVO/" rel="next" title="KVO">
+                <i class="fa fa-chevron-left"></i> KVO
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/08/M_Swift108通知原理/" rel="prev" title="通知原理">
+                通知原理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/12388663?v=3&u=20e1503339de9acf72fc1184728c2afca6ae9b4a&s=140"
+               alt="门乾强" />
+          <p class="site-author-name" itemprop="name">门乾强</p>
+          <p class="site-description motion-element" itemprop="description">博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">176</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#代理模式"><span class="nav-number">1.</span> <span class="nav-text">代理模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观察者模式"><span class="nav-number">2.</span> <span class="nav-text">观察者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例模式"><span class="nav-number">3.</span> <span class="nav-text">单例模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂模式"><span class="nav-number">4.</span> <span class="nav-text">工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVC"><span class="nav-number">5.</span> <span class="nav-text">MVC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVVM"><span class="nav-number">6.</span> <span class="nav-text">MVVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVP"><span class="nav-number">7.</span> <span class="nav-text">MVP</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

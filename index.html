@@ -228,6 +228,430 @@
             
               
                 
+                <a class="post-title-link" href="/2018/08/08/M_Swift109OC语言相关/" itemprop="url">
+                  OC语言相关
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-08T17:38:29+08:00" content="2018-08-08">
+              2018-08-08
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="OC为什么说是一门动态语言"><a href="#OC为什么说是一门动态语言" class="headerlink" title="OC为什么说是一门动态语言"></a>OC为什么说是一门动态语言</h2><pre><code>Objective-C 可以通过Runtime 这个运行时机制，在运行时动态的添加变
+量、方法、类等，所以说Objective-C 是一门动态的语言
+Objective-C的动态性，让程序在运行时判断其该有的行为，而不是像c等静
+态语言在编译构建时就确定下来。它的动态性主要体现在3个方面：
+1.动态类型：如id类型。实际上静态类型因为其固定性和可预知性而使用的特
+别广泛。静态类型是强类型，动态类型是弱类型，运行时决定接收者。
+2.动态绑定：让代码在运行时判断需要调用什么方法，而不是在编译时。与其他
+面向对象语言一样，方法调用和代码并没有在编译时连接在一起，而是在消息发
+送时才进行连接。运行时决定调用哪个方法。
+3.动态载入。让程序在运行时添加代码模块以及其他资源。用户可以根据需要执
+行一些可执行代码和资源，而不是在启动时就加载所有组件。可执行代码中可以
+含有和程序运行时整合的新类。
+</code></pre><h2 id="类方法（静态方法）和实例方法（动态方法）区别"><a href="#类方法（静态方法）和实例方法（动态方法）区别" class="headerlink" title="类方法（静态方法）和实例方法（动态方法）区别"></a>类方法（静态方法）和实例方法（动态方法）区别</h2><pre><code>类方法必须使用类调用，存储在元类结构体里面的methodLists里面
+实例方法必须使用实例对象调用，存储在类结构体里面的methodLists里面
+静态方法在程序开始时生成内存,实例方法在程序运行中生成内存，
+所以静态方法可以直接调用,实例方法要先成生实例,通过实例调用方法，静态速
+度很快，但是多了会占内存。
+静态内存是连续的,因为是在程序开始时就生成了,而实例申请的是离散的空间,
+所以当然没有静态方法快，
+</code></pre><h2 id="ios中定义属性了解"><a href="#ios中定义属性了解" class="headerlink" title="ios中定义属性了解"></a>ios中定义属性了解</h2><pre><code>@property = ivar + getter + setter
+实例变量+get方法+set方法 也就是说使用@property系统会自动生成setter和getter方法，
+nonatomic 非原子性操作，不提供线程安全，效率更高
+nonatomic 非原子性操作，不提供线程安全，效率更高
+strong 在赋值的时候调用被只想对象的retuain方法，使其引用计数加1
+weak 不增加对象的引用计数，也不持有对象，对象消失后，指针自动变为nil
+assign 不更改引用计数，修饰基础数据类型
+copy 简历一个引用计数为1的对象，常用于NSString和block
+readonly 只读属性
+readwrite默认属性 可读可写
+@synthesize：编译期间，让编译器自动生成setter方法和getter方法
+@dynamic  不自动生成，自己手动生成
+</code></pre><h2 id="NSString为什么要用copy修饰"><a href="#NSString为什么要用copy修饰" class="headerlink" title="NSString为什么要用copy修饰"></a>NSString为什么要用copy修饰</h2><pre><code>因为父类指针可以指向子类对象，使用copy的目的是为了让本对象的属性不受
+外界影响，使用copy无论给我传入的是一个可变的对象黑市不可变的对象，我
+本身持有个就是一个不可变的副本
+如果我们使用的是strong，那么这个属性就有可能指向一个可变对象，如果这
+个可变对象在外部被修改了，那么会影响该属性
+</code></pre><h2 id="如何让自己的对象具有拷贝功能"><a href="#如何让自己的对象具有拷贝功能" class="headerlink" title="如何让自己的对象具有拷贝功能"></a>如何让自己的对象具有拷贝功能</h2><pre><code>需要遵守NSCopying协议，如果自定义的对象分为可变和不可变版本，那么要
+同事细心啊NSCopying和NSMutableCopying协议
+copy和mutableCopy区别
+针对不可变对象调用copy返回该对象本身，调用mutableCopy返回一个可变对象（新的）
+针对可变对象调用copy返回一个不可变对象（新的），调用mutableCopy返回
+另外一个可变对象（新的）。
+copy:创建的是不可变副本（NSString，NSArray，NSDictionary）
+mutableCopy：创建的是可变副本（NSMutableString，
+NSMutableArray，NSMutableDictionary）
+深拷贝(mutableCopy)就是内容拷贝，即指拷贝对象的具体内容，而内存地址
+是自主分配的，拷贝结束之后，两个对象虽然存的值是相同的，但是内存地址不
+一样，两个对象也互不影响，互不干涉;浅拷贝(copy)就是指针拷贝,即对内存
+地址的复制，让目标对象指针和源对象指向同一片内存空间。
+</code></pre><h2 id="为什么IBOutlet修饰的UIView也适用weak关键字"><a href="#为什么IBOutlet修饰的UIView也适用weak关键字" class="headerlink" title="为什么IBOutlet修饰的UIView也适用weak关键字"></a>为什么IBOutlet修饰的UIView也适用weak关键字</h2><pre><code>因为既然有外链那么试图在xib中可定存在，试图已经对他有一个强引用了，使
+用storeboars创建的vc会有一个私有数组前引用所有的对象
+</code></pre><h2 id="使用descperction注意什么"><a href="#使用descperction注意什么" class="headerlink" title="使用descperction注意什么"></a>使用descperction注意什么</h2><pre><code>千万不要在description方法中同时使用%@和self,同时使用了%@和self,
+代表要调用self的description方法,因此最终会导致程序陷入死循环,循 环
+调用description方法
+当该方法使用NSLog(“%@”,self) 时候, 系统做了相关的优化，循坏调用3
+次后就会自动退出
+</code></pre><h2 id="什么时候会报unrecognized-selector错误"><a href="#什么时候会报unrecognized-selector错误" class="headerlink" title="什么时候会报unrecognized selector错误"></a>什么时候会报unrecognized selector错误</h2><pre><code>出现unrecognized selector类型的crash，一般是向对象发送了无法处理
+的消息导致的。说白一点就是这个对象没有你调的那个方法，为什么运行的时候
+才会出现，这个和OC语言动态绑定的机制有关系。
+对象未实现该方法。
+对象已经被释放。
+</code></pre><h2 id="iOS常见错误"><a href="#iOS常见错误" class="headerlink" title="iOS常见错误"></a>iOS常见错误</h2><pre><code>数组越界
+向容器存入nil
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/08/M_Swift108通知原理/" itemprop="url">
+                  通知原理
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-08T16:48:14+08:00" content="2018-08-08">
+              2018-08-08
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>定义对象间的一种一对多的依赖关系。当一个对象的状态发生改变时，所有依赖
+于它的对象都得到通知并自动更新。
+</code></pre><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><pre><code>1.向通知中心注册观察者
+    addObserver:selector:name:object:
+    （观察者接收到通知后执行任务的代码在发送通知的线程中执行）
+    addObserverForName:object:queue:usingBlock:
+    （观察者接收到通知后执行任务的代码在指定的操作队列中执行）
+2.通知中心向所有注册的观察者发送通知
+    postNotification:
+    postNotificationName:object:
+    postNotificationName:object:userInfo:
+</code></pre><h2 id="通知与线程关系"><a href="#通知与线程关系" class="headerlink" title="通知与线程关系"></a>通知与线程关系</h2><pre><code>同步和异步都是相对于发送通知所在的线程的。
+postNotification:总是会卡住当前线程，待observer执行（如不特殊处
+理selector也会在postNotification:所在线程执行）结束之后才会继续
+往下执行。所以是同步的。
+我们在底层当中的消息的触发其实是依赖与端口的，我们想要在一个线程中发消
+息，在另一个线程中进行处理的话，我们可以用端口来实现
+</code></pre><h2 id="为什么要移除通知"><a href="#为什么要移除通知" class="headerlink" title="为什么要移除通知"></a>为什么要移除通知</h2><pre><code>若在iOS8或之前版本系统中，对一个对象
+addObserver:selector:name:object:（假设name为@“111”），但是
+并没有在dealloc的之前或之中，对其进行remove操作。那么，在发送通知、
+（name为@“111”）的时候，会因为bad_access（野指针）而crash。
+若在iOS9及以后，同上操作，不会crash。
+iOS8及以前，NSNotificationCenter持有的是观察者的
+unsafe_unretained指针（可能是为了兼容老版本），这样，在观察者回收
+的时候未removeOberser，而后再进行post操作，则会向一段被回收的区域
+发送消息，所以出现野指针crash。而iOS9以后，unsafe_unretained改成
+了weak指针，即使dealloc的时候未removeOberser，再进行post操作，
+则会向nil发送消息，所以没有任何问题
+</code></pre><h2 id="Notification-Queues和异步通知"><a href="#Notification-Queues和异步通知" class="headerlink" title="Notification Queues和异步通知"></a>Notification Queues和异步通知</h2><pre><code>[[NSNotificationQueue defaultQueue] 
+enqueueNotification:notification 
+postingStyle:NSPostWhenIdle 
+coalesceMask:NSNotificationNoCoalescing 
+forModes:@[NSDefaultRunLoopMode]];
+该参数的三个可选参数：
+1，NSPostWhenIdle：runloop空闲的时候回调通知方法
+2，NSPostASAP：runloop能够调用的时候就回调通知方法
+3，NSPostNow：runloop立即回调通知方法
+根据其type，NSNotificationQueue在合适的时机将其post到
+NSNotificationCenter。这样就完成了异步的需求。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/08/M_Swift107iOS设计模式/" itemprop="url">
+                  设计模式
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-08T10:21:34+08:00" content="2018-08-08">
+              2018-08-08
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h2><pre><code>场景：当一个类的某些功能需要由别的类来实现，但是又不确定具体会是哪个类实现。
+优势：解耦合、多继承
+实例：tableview的 数据源delegate，通过和protocol的配合，完成委托诉求。
+</code></pre><h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><pre><code>场景：当对象间存在一对多关系时，则使用观察者模式（Observer Pattern）。
+比如，当一个对象被修改时，则会自动通知它的依赖对象。观察者模式属于行为型模式。
+优势：解耦合
+实例：Notification通知中心，注册通知中心，任何位置可以发送消息，
+注册观察者的对象可以接收。
+kvo，键值对改变通知的观察者，平时基本没用过。
+</code></pre><h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><pre><code>场景：确保程序运行期某个类，只有一份实例，用于进行资源共享控制。
+注意：
+    单例类只能有一个实例。
+    单例类必须自己创建自己的唯一实例。
+    单例类必须给所有其他对象提供这一实例。
+优势：在内存里只有一个实例，减少了内存的开销，尤其是频繁的创建和销毁实
+例，避免对资源的多重占用比如写文件操作
+缺点：没有接口，不能继承，与单一职责原则冲突，一个类应该只关心内部逻
+辑，而不关心外面怎么样来实例化。
+注意事项：确保使用者只能通过 getInstance方法才能获得，单例类的唯一实例。
+实例：UIApplication, NSBundle, NSNotificationCenter, 
+NSFileManager, NSUserDefault, NSURLCache等都是单例.
+</code></pre><h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><pre><code>场景：作为一种创建类模式，在任何需要生成复杂对象的地方，都可以使用工厂方法模式
+“专门定义一个类来负责创建其他类的实例，被创建的实例通常具有共同的父类。”
+优势：
+    一个调用者想创建一个对象，只要知道其名称就可以了。
+    扩展性高，如果想增加一个产品，只要扩展一个工厂类就可以。
+    屏蔽产品的具体实现，调用者只关心产品的接口。
+缺点：
+    每次增加一个产品时，都需要增加一个具体类和对象实现工厂，使得系统
+    中类的个数成倍增加，在一定程度上增加了系统的复杂度，同时也增加了
+    系统具体类的依赖。这并不是什么好事。
+实例：以 NSArray 举例，发现 + alloc 后并非生成了我们期望的类实例，而是一个__NSPlacehodlerArray 的中间对象，后面的 - init 或 - initWithXXXXX 消息都是发送给这个中间对象，再由它做工厂，生成真的对象。生成真的对象。这里的 __NSArrayI 和 __NSArrayM
+</code></pre><h2 id="MVC"><a href="#MVC" class="headerlink" title="MVC"></a>MVC</h2><pre><code>是一中非常古老的设计模式，通过数据模型，控制器逻辑，视图展示将应用程序进行逻辑划分。
+实例：model-即数据模型，view-视图展示，controller进行UI展现和数据交互的逻辑控制。
+</code></pre><h2 id="MVVM"><a href="#MVVM" class="headerlink" title="MVVM"></a>MVVM</h2><pre><code>它其实是一个 MVC 的增强版，并将表示逻辑从 Controller 移出放到一个
+新的对象里，即 View Model
+在 iOS 上使用 MVVM 的动机,就是让它能减少 View Controller 的复杂
+性并使得表示逻辑更易于测试
+</code></pre><h2 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h2><pre><code>MVP全称Model-View-Presenter。
+Presenter：作为model和view的中间人，从model层获取数据之后传给
+view，使得View和model没有耦合。
+View：这里的View与MVC中的V又有一些小差别，这个View可以是
+viewcontroller、view等控件。Presenter通过向View传model数据进行交互。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/08/07/M_Swift105KVO/" itemprop="url">
                   KVO
                 </a>
@@ -474,8 +898,10 @@ Category 方法的 attachMethodLists 函数：
     //category中添加的所有属性（instanceProperties）
 }
 </code></pre><h2 id="类别（category）主要有三个作用"><a href="#类别（category）主要有三个作用" class="headerlink" title="类别（category）主要有三个作用"></a>类别（category）主要有三个作用</h2><pre><code>1.将类的实现分散到多个不同文件或多个不同框架中
-2.创建对私有方法的向前引用
-3.向对象添加非正式协议
+2.创建对私有方法的向前引用（cocoa没有真正的私有方法）
+3.向对象添加非正式协议（创建一个NSObject的类别称为“创建一个非正式协
+议”）因为，NSObject是顶级父类，在NSObject中添加了该方法，也就是说
+通过继承关系，所有的类中都有该方法。
 </code></pre><h2 id="类别和Extension区别"><a href="#类别和Extension区别" class="headerlink" title="类别和Extension区别"></a>类别和Extension区别</h2><pre><code>和Category相似的还有Extension，二者的区别是Extension
 在编译期就直接和原类编译在一起了，而Category是在
 运行时添加到原类中。
@@ -527,6 +953,10 @@ OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 objc_setAssociatedObject和
 objc_getAssociatedObject本质上就是操作这个哈希表，
 通过对哈希表进行映射来存取对象。
+</code></pre><h2 id="在协议-和-分类-中如何使用-property"><a href="#在协议-和-分类-中如何使用-property" class="headerlink" title="在协议 和 分类 中如何使用 @property"></a>在协议 和 分类 中如何使用 @property</h2><pre><code>1、在 protocol 中使用 property 只会生成 setter 和 getter 方法
+声明,我们使用属性的目的,是希望遵守我协议的对象能实现该属性
+2、category 使用 @property 也是只会生成 setter 和 getter 方法
+的声明,真要添加属性建议使用关联对象来实现
 </code></pre>
           
         
@@ -620,7 +1050,7 @@ objc_getAssociatedObject本质上就是操作这个哈希表，
       
         
           
-            <h1 id="简述一下OC的内存管理方式"><a href="#简述一下OC的内存管理方式" class="headerlink" title="简述一下OC的内存管理方式"></a>简述一下OC的内存管理方式</h1><pre><code>包括alloc，retain，copy，release，autorelease，
+            <h2 id="简述一下OC的内存管理方式"><a href="#简述一下OC的内存管理方式" class="headerlink" title="简述一下OC的内存管理方式"></a>简述一下OC的内存管理方式</h2><pre><code>包括alloc，retain，copy，release，autorelease，
 delalloc这些方法理解
 OC中每个对象都有一个与之对应的整数，叫“引用计数器”，
 当一个对象在创建之后它的引用计数器值加1，当调用这个对象的
@@ -631,17 +1061,18 @@ alloc、retain、new、copy方法之后引用计数器值自动在原
 在alloc的时候调用了allocWithZone分配了内存
 alloc、retain、new、copy方法之后引用计数器值自
 动在原来的基础上加1
-</code></pre><h1 id="用MRC写一个setter方法"><a href="#用MRC写一个setter方法" class="headerlink" title="用MRC写一个setter方法"></a>用MRC写一个setter方法</h1><pre><code>- (void)setName:(NSString *)name {
+## 用MRC写一个setter方法
+- (void)setName:(NSString *)name {
     if(_name != name) {
         [name retain];
         [_name relrase];
         _name = name;
     }
 }
-</code></pre><h1 id="描述autorelease对象释放时机，"><a href="#描述autorelease对象释放时机，" class="headerlink" title="描述autorelease对象释放时机，"></a>描述autorelease对象释放时机，</h1><pre><code>在没有手加Autorelease Pool的情况下，Autorelease对象
+</code></pre><h2 id="描述autorelease对象释放时机，"><a href="#描述autorelease对象释放时机，" class="headerlink" title="描述autorelease对象释放时机，"></a>描述autorelease对象释放时机，</h2><pre><code>在没有手加Autorelease Pool的情况下，Autorelease对象
 是在当前的runloop迭代结束时释放的，而它能够释放的原因是
 系统在每个runloop迭代中都加入了自动释放池Push和Pop
-</code></pre><h1 id="简述autorelrasePool的工作机制"><a href="#简述autorelrasePool的工作机制" class="headerlink" title="简述autorelrasePool的工作机制"></a>简述autorelrasePool的工作机制</h1><pre><code>每一个线程创建的时候就会有一个autorelease pool的创建，
+</code></pre><h2 id="简述autorelrasePool的工作机制"><a href="#简述autorelrasePool的工作机制" class="headerlink" title="简述autorelrasePool的工作机制"></a>简述autorelrasePool的工作机制</h2><pre><code>每一个线程创建的时候就会有一个autorelease pool的创建，
 并且在线程退出的时候，清空整个autorelease pool。
 （ps:如果在子线程中设置一个循环，autorelease对象确实无
 法释放）所以子线程的autorelease对象，
@@ -693,11 +1124,17 @@ ARC编译的第三方库，或者反之）
 ，传1是调用这个函数的外层函数的返回值地址，以此类推。
 如果一个函数返回前知道调用方是ARC还是非ARC，就有机会对
 于不同情况做不同的处理
-</code></pre><h1 id="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"><a href="#在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因" class="headerlink" title="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"></a>在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因</h1><pre><code>类有一个成员变量_timer，给_timer设置的target为这个类本身。这样类保留_timer，_timer又保留了这个类，就会出现循环引用的问题，最后导致类无法正确释放。
+</code></pre><h2 id="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"><a href="#在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因" class="headerlink" title="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"></a>在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因</h2><pre><code>类有一个成员变量_timer，给_timer设置的target为这个类本身。这样类保留_timer，_timer又保留了这个类，就会出现循环引用的问题，最后导致类无法正确释放。
 
 解决这个问题的方式也很简单，当类的使用者能够确定不需要使用这个计时器时，就调用
 [_timer invalidate];
 _timer = nil;
+</code></pre><h2 id="assgin和weak区别"><a href="#assgin和weak区别" class="headerlink" title="assgin和weak区别"></a>assgin和weak区别</h2><h3 id="修饰变量类型的区别"><a href="#修饰变量类型的区别" class="headerlink" title="修饰变量类型的区别"></a>修饰变量类型的区别</h3><pre><code>weak 只可以修饰对象。如果修饰基本数据类型，编译器会报错-“Property with ‘weak’ attribute must be of object type”。
+assign 可修饰对象，和基本数据类型。当需要修饰对象类型时，MRC时代使用unsafe_unretained。当然，unsafe_unretained也可能产生野指针，所以它名字是&quot;unsafe_”。
+</code></pre><h3 id="是否产生野指针的区别"><a href="#是否产生野指针的区别" class="headerlink" title="是否产生野指针的区别"></a>是否产生野指针的区别</h3><pre><code>weak 不会产生野指针问题。因为weak修饰的对象释放后（引用计数器值为0），指针会自动被置nil，之后再向该对象发消息也不会崩溃。 weak是安全的。
+assign 如果修饰对象，会产生野指针问题；如果修饰基本数据类型则是安全的。修饰的对象释放后，指针不会自动被置空，此时向对象发消息会崩溃。
+</code></pre><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>assign 适用于基本数据类型如int,float,struct等值类型，不适用于引用类型。因为值类型会被放入栈中，遵循先进后出原则，由系统负责管理栈内存。而引用类型会被放入堆中，需要我们自己手动管理内存或通过ARC管理。
+weak 适用于delegate和block等引用类型，不会导致野指针问题，也不会循环引用，非常安全。
 </code></pre>
           
         
@@ -1110,6 +1547,17 @@ SDWebImage 对gif的处理主要是在UIImage+GIF
 由于SDWebImage通过动图数组来实现动态，
 会造成内存不能及时释放
 SDWebimage -静态图片加载会产生拉伸
+</code></pre><h2 id="SD下载完图片为什么要解码"><a href="#SD下载完图片为什么要解码" class="headerlink" title="SD下载完图片为什么要解码"></a>SD下载完图片为什么要解码</h2><pre><code>在我们使用 UIImage 的时候，创建的图片通常不会直接加载到内存，而是在
+渲染的时候再进行解压并加载到内存。这就会导致 UIImage 在渲染的时候效
+率上不是那么高效。为了提高效率通过 decodedImageWithImage方法把图
+片提前解压加载到内存，这样这张新图片就不再需要重复解压了，提高了渲染效
+率。这是一种空间换时间的做法。
+</code></pre><h2 id="旧版本AFN为什么加Runloop"><a href="#旧版本AFN为什么加Runloop" class="headerlink" title="旧版本AFN为什么加Runloop"></a>旧版本AFN为什么加Runloop</h2><pre><code>首先我们知道在旧版本的AFN中使用了 NSURLConnection 来发起并处理网
+络连接。AFN 的做法是把网络请求的发起和解析都放在同一个子线程中进行，
+但由于子线程默认不开启 runloop，它会向一个 C语言程序那样在运行完所有
+代码后退出线程。而网络请求是异步的，这会导致获取到请求数据时，线程已经
+退出，代理方法没有机会执行。因此，AFN 的做法是使用一个 runloop 来保
+证线程不死，也就是下面这段被讲烂了的代码:
 </code></pre>
           
         
@@ -1392,660 +1840,6 @@ dispatch_sync在等待主队列执行完毕。
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/03/M_Swift99Block/" itemprop="url">
-                  Block理解
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-08-03T10:03:14+08:00" content="2018-08-03">
-              2018-08-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <pre><code>本质：带有自动变量值的匿名函数
-block的实质是一个oc对象，它有自己的isa指针、invoke变量 ，
-是NSObject的子类，可以接收消息
-栈block：
-    _NSConcretStackBlock十分危险。
-堆block：
-    _NSConcretMallocBlock一般我们用block，
-    都用copy来修饰它
-全局block：
-    _NSConcretGlobalBlock
-    这种block不会捕捉任何的外部变量
-    运行时也无需有状态来参与。
-</code></pre><h2 id="写法："><a href="#写法：" class="headerlink" title="写法："></a>写法：</h2><pre><code>void (^block)(void) = ^{
-    NSLog(@&quot;无参无返回值&quot;);
-};
-void (^xiaoming1aa)() = ^(NSString *c){
-    NSLog(@&quot;带参数&quot;);
-};
-NSString *(^xiaming2)() = ^NSString *(NSString *dd) {
-    return @&quot;带参数与返回&quot;;
-};
-@property (nonatomic, copy)
-void(^myBlock)();//无参无返回值
-@property (nonatomic, copy)
-void(^myBlock1)(NSString *);//带参数
-@property (nonatomic, copy)
-NSString *(^myBlock2)(NSString *);//带参数与返回
-</code></pre><h2 id="block为什么不能修改外部变量"><a href="#block为什么不能修改外部变量" class="headerlink" title="block为什么不能修改外部变量"></a>block为什么不能修改外部变量</h2><pre><code>默认情况下，在block中访问的外部变量是复制过去的，
-复制过去的是值，即：写操作不对原变量生效。
-</code></pre><h2 id="block都做了什么？"><a href="#block都做了什么？" class="headerlink" title="__block都做了什么？"></a>__block都做了什么？</h2><pre><code>Block不允许修改外部变量的值，这里所说的外部变量的值，
-指的是栈中指针的内存地址。__block 所起到的作用就是
-只要观察到该变量被 block 所持有，就将“外部变量”
-在栈中的内存地址放到了堆中。
-进而在block内部也可以修改外部变量的值
-这也保证了原对象不被销毁，但与此同时，也会导致循环引用问题
-</code></pre><h2 id="block为什么为引起循环引用"><a href="#block为什么为引起循环引用" class="headerlink" title="block为什么为引起循环引用"></a>block为什么为引起循环引用</h2><pre><code>因为block在拷贝到堆上的时候，会retain其引用的外部变量，
-那么如果block中如果引用了他的宿主对象，
-那很有可能引起循环引用
-循环引用发生的条件就是持有这个block的对象，
-被block里边加入的对象持有
-</code></pre><h2 id="如何解决循环引用"><a href="#如何解决循环引用" class="headerlink" title="如何解决循环引用"></a>如何解决循环引用</h2><pre><code>使用__weak修饰self，使其在block中不被持有，打破循环引用。
-__weak typeof(self) weakSelf = self;
-</code></pre><h2 id="block执行过程中对象被释放"><a href="#block执行过程中对象被释放" class="headerlink" title="block执行过程中对象被释放"></a>block执行过程中对象被释放</h2><pre><code>在block执行开始时self对象还未被释放，而执行过程中，
-self被释放了，此时访问self时，就会发生错误。
-对于这种场景，应该在block中对 对象使用__strong修饰，
-使得在block期间对 对象持有，block执行结束后，解除其持有。
-注：此方法只能保证在block执行期间对象不被释放，
-如果对象在block执行执行之前已经被释放了，该方法也无效。
-</code></pre><h2 id="什么情况下不回发生循环引用"><a href="#什么情况下不回发生循环引用" class="headerlink" title="什么情况下不回发生循环引用"></a>什么情况下不回发生循环引用</h2><pre><code>通用情况:在block本身不被self持有,而被别的对象持有,
-同时不产生循环引用的时候,就不需要使用weakself了
-UIView动画block，AFN的block
-UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
-所以循环无法形成 --&gt; 动画block不会造成循环引用的原因。
-</code></pre><h2 id="函数和block区别"><a href="#函数和block区别" class="headerlink" title="函数和block区别"></a>函数和block区别</h2><pre><code>函数里面只能访问全局变量，而Block代码块不光能访问全局变量，
-还拥有当前栈内存和堆内存变量的可读性
-（当然通过__block访问指示符修饰的局部变量还可以在block代码块里面进行修改）。
-从内存的角度看，函数指针只不过是指向代码区的一段可执行代码，
-而block实际上是程序运行过程中在栈内存动态创建的对象，
-可以向其发送copy消息将block对象拷贝到堆内存，
-以延长其生命周期。
-</code></pre><h2 id="如何区分block位置"><a href="#如何区分block位置" class="headerlink" title="如何区分block位置"></a>如何区分block位置</h2><pre><code>要点一:
-    当block在函数内部，
-    且定义的时候就使用了函数内部的变量，
-    那么这个block是存储在栈上的。 
-要点二:
-    当block定义在函数体外面，
-    或者定义在函数体内部且当时函数执行的时候，
-    block体中并没有需要使用函数内部的局部变量时，
-    也就是block在函数执行的时候只是静静地待在一边定义了一下
-    而不使用函数体的内容，
-    那么block将会被编译器存储为全局block。 
-要点三:
-    全局block存储在堆中，
-    对全局block使用copy操作会返回原函数指针；
-    而对栈中的block使用copy操作，
-    会产生两个不同的block地址，
-    也就是两个匿名函数的入口地址。 
-要点四:
-    ARC机制优化会将stack的block,
-    转为heap的block进行调用。
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/03/M_Swift95OC发消息步骤/" itemprop="url">
-                  OC发消息
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-08-03T09:59:36+08:00" content="2018-08-03">
-              2018-08-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="发消息步骤"><a href="#发消息步骤" class="headerlink" title="发消息步骤"></a>发消息步骤</h2><pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
-有垃圾回收，就不考虑 retain，release这些函数
-2.检测这个target是不是nil对象，
-ObjC的特性允许对一个nil对象发消息而不会崩溃
-3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
-先从缓存中找，完了跳到对应函数执行
-4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到超类的方法分发列表找，
-一直找到NSObject
-6.如果还找不到，就开始进行动态方法解析，调用
-+(Bool)resolveInstanceMethod(SEL)selector；（实例方法）
-+(Bool)resolveClassMethod(SEL)selector；（类方法）
-该方法的参数就是那个位置的选择子（方法），其返回值为bool，
-表示这个类能否新增一个实例方法用于处理该未知的方法
-一般用这个方法可以动态的添加方法
-7.如果还是找不到，那么运行系统就会问，
-能不能把这条消息转发给其他的接受者处理。调用
-+(id)forwardingTargetForSelector(SEL)selector；
-当前接收者如果能找到备选对象，那么将其返回，
-如果找不到，返回nil
-8.如果还是找不到，那么会创建一个NSInvocation对象，
-把这个尚未处理的那条消息有关的全部细节都封装其中，
-此对象包含选择子，目标对象及参数，
-并调用下面的方法进行消息转发
--（void）forwardInvocation：(NSInvocation *)invocation；
-9.如果最后都没有出来的话，那么就抛出异常
-</code></pre><h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>无论何时，要调用objc_msgSend函数，必须要将函数强制转
-换成合适的函数指针类型才能调用。
-其实编译器会根据情况在objc_msgSend,
-objc_msgSend_stret, objc_msgSendSuper, 或
-objc_msgSendSuper_stret四个方法中选择一个来调用。
-</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><pre><code>将一条消息发送给一个不能处理的对象会引起崩溃，但是在崩溃
-之前，系统给响应对象一次处理异常的机会。
-当发送一条对象不能处理的消息，产生crash之前，系统会调用
-响应者的forwardIMvocation方法，并传入一个NSInvocation
-对象，NSInvocation中包含原始消息及参数，这个方法之后方法
-未实现的时候才会调用。
-你可以实现forwardInvocation方法，将消息转发给另一个
-对象，forwardInvocation方法是一个动态方法，在响应者无法
-响应方法时，会调用forwardInvocation方法，可以重写这个方
-法，实现消息转发。
-</code></pre><h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>如果self为nil，那么selector也会为空，直接返回，不会出现问题。
-（返回值时对象，是标量，结构体）
-如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0
-地址返回，所以不会出现任何错误
-如果返回值类型是对象，那么返还nil
-如果回值类型是标量，那么是0，
-如果回值类型是结构体为0，
-其他为返回值是未定义的。
-但对于[NSNull null]对象发送消息时，是会crash的，因为NSNull类只有一个null方法。
-unrecognized selector sent to instance的错误是怎么回事？
-这是因为这个对象已经被释放了（引用计数为0了），那么这个时候再去调用方
-法肯定是会Crash的，因为这个时候这个对象就是一个野指针（指向僵尸对象
-（对象的引用计数为0，指针指向的内存已经不可用）的指针）了，安全的做法
-是释放后将对象重新置为nil，使它成为一个空指针，大家可以在关闭ARC后手
-动release对象验证一下。
-这里要区别的是空指针和野指针的区别！
-    1&gt; 没有存储任何内存地址的指针就称为空指针(NULL指针)
-    2&gt; 空指针就是被赋值为0的指针，在没有被具体初始化之前，其值为0。
-    &quot;野指针&quot;不是NULL指针，是指向&quot;垃圾&quot;内存（不可用内存）的指针。
-    野指针是非常危险的。
-</code></pre><h2 id="函数调用和OC的消息传递机制区别"><a href="#函数调用和OC的消息传递机制区别" class="headerlink" title="函数调用和OC的消息传递机制区别"></a>函数调用和OC的消息传递机制区别</h2><pre><code>1对于C语言，函数的调用在编译器的时候决定调用那个函数。编译完之后直接
-顺序执行。
-2OC的函数调用成为消息发送。属于动态调用过程。在编译的时候决不能决定
-真正调用那个函数（实时证明，在编译阶段，oc可以调用任何函数，及时这个
-函数并未实现，只要申明过就不会报错，而c语言在编译阶段或报错）。
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/02/M_Swift97RunLoop/" itemprop="url">
-                  RunLoop
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-08-02T16:50:35+08:00" content="2018-08-02">
-              2018-08-02
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <pre><code>Run loops是线程的基础架构部分，每个线程，
-包括程序的主线程main thread都有与之相应的run loop对象。
-程序启动的时候会调用UIApplicationMain()函数，
-重点是UIApplicationMain()函数，
-这个方法会为main thread设置一个NSRunLoop对象
-对其它线程来说，run loop默认是没有启动的，
-如果你需要更多的线程交互则可以手动配置和启动，
-如果线程只是去执行一个长时间的已确定的任务则不需要。
-使用run loop可以使你的线程在有工作的时候工作，
-没有工作的时候休眠，这可以大大节省系统资源。
-</code></pre><h2 id="获取线程"><a href="#获取线程" class="headerlink" title="获取线程"></a>获取线程</h2><pre><code>NSRunLoop *runloop = [NSRunLoop currentRunLoop];
-RunLoop 一个状态循环
-</code></pre><h2 id="NSRunLoop不是线程安全的"><a href="#NSRunLoop不是线程安全的" class="headerlink" title="NSRunLoop不是线程安全的"></a>NSRunLoop不是线程安全的</h2><pre><code>我们不能再一个线程中去操作另外一个线程的run loop对象，
-那很可能会造成意想不到的后果
-不过幸运的是CoreFundation中的不透明类CFRunLoopRef是
-线程安全的，而且两种类型的run loop完全可以混合使用。
-</code></pre><h2 id="NSRunloop数据模型"><a href="#NSRunloop数据模型" class="headerlink" title="NSRunloop数据模型"></a>NSRunloop数据模型</h2><pre><code>NSRunloop，对CFRunLoop的封装
-1.ptherd 对应runloop的内部一个线程
-2.currendMode， 当前mode， CFRunLoopMode数据结构
-    2.1 name 定义别名，比如NSDefaultRunloopMode
-    2.2 source0，soures1，都是无序集合
-    2.2.1 sourece0 需要用户手动唤醒线程，非基于port的。用户主动触发的事件
-    2.2.2 sources1 具备唤醒线程能力 通过内核和其他线程互相发送消息
-    2.3timers 数组
-    2.4Observers 观测事件点
-        KCFRunLoopEntry 准备启动
-        BeforeTimers 通知观察者将要处理timer了
-        BeforeSources 通知观察者将要处理Soures了
-        BeforeWaiting 将要休眠了
-        AfterWiaiting 用户态切换到内核不久
-        Exit runloop 退出
-        AllActivites 观察所有事件
-3.Modes CFRunloopMode 的集合
-4.commonModes
-</code></pre><h2 id="autorelease-pool的创建和释放"><a href="#autorelease-pool的创建和释放" class="headerlink" title="autorelease pool的创建和释放"></a>autorelease pool的创建和释放</h2><pre><code>每当一个运行循环结束的时候，它都会释放一次autorelease pool，
-同时pool中的所有自动释放类型变量都会被释放掉。
-</code></pre><h2 id="输入事件来源"><a href="#输入事件来源" class="headerlink" title="输入事件来源"></a>输入事件来源</h2><pre><code>Run loop接收输入事件来自两种不同的来源：
-输入源（input source）和定时源（timer source）。
-两种源都使用程序的某一特定的处理例程来处理到达的事件。
-在NSRunLoop中每一个消息就被打包在
-input source或者是timer source
-</code></pre><h3 id="输入源（input-source）"><a href="#输入源（input-source）" class="headerlink" title="输入源（input source）"></a>输入源（input source）</h3><pre><code>传递异步事件，通常消息来自于其他线程或程序。
-输入源传递异步消息给相应的处理例程，
-并调用runUntilDate:方法来退出
-(在线程里面相关的NSRunLoop对象调用)。
-基于端口的输入源：
-    基于端口的输入源由内核自动发送。
-    你必须人工创建端口和它的run loop源。
-    我们可以使用端口相关的函数（CFMachPortRef，
-    CFMessagePortRef，CFSocketRef）来创建合适的对象
-自定义输入源
-    自定义的输入源需要人工从其他线程发送
-    必须使用Core Foundation里面的
-    CFRunLoopSourceRef类型相关的函数来创建。
-Cocoa上的Selector源
-    Cocoa定义了自定义输入源，允许你在任何线程执行
-    selector方法。和基于端口的源一样，执行selector
-    请求会在目标线程上序列化，减缓许多在线程上允许多个方
-    法容易引起的同步问题。不像基于端口的源，一个selector
-    执行完后会自动从run loop里面移除。
-    NSObject类提供了类似如下的selector方法：
-    - (void)performSelectorOnMainThread:
-    (SEL)aSelector withObject:
-    (id)argwaitUntilDone:(BOOL)wait
-    modes:(NSArray *)array;
-</code></pre><h3 id="定时源（timer-source）"><a href="#定时源（timer-source）" class="headerlink" title="定时源（timer source）"></a>定时源（timer source）</h3><pre><code>定时源在预设的时间点同步方式传递消息，
-这些消息都会发生在特定时间或者重复的时间间隔。
-定时源则直接传递消息给处理例程，不会立即退出run loop。
-尽管定时器可以产生基于时间的通知，但它并不是实时机制。
-和输入源一样，定时器也和你的run loop的特定模式相关。
-如果定时器所在的模式当前未被run loop监视，
-那么定时器将不会开始直到run loop运行在相应的模式下。
-典型的ScrollView滑动导致定时器不准问题
-NSTimer *timer = [NSTimer 
-scheduledTimerWithTimeInterval:4.0
-target:self
-selector:@selector(backgroundThreadFire:) userInfo:nil
-repeats:YES];
-[[NSRunLoop currentRunLoop]
-addTimer:timerforMode:NSDefaultRunLoopMode];
-</code></pre><h2 id="RunLoop观察者"><a href="#RunLoop观察者" class="headerlink" title="RunLoop观察者"></a>RunLoop观察者</h2><pre><code>源是在合适的同步或异步事件发生时触发，
-而run loop观察者则是在run loop本身运行的特定时候触发。
-你可以使用run loop观察者来为处理某一特定事件
-或是进入休眠的线程做准备。
-1.  Runloop入口
-2.  Runloop何时处理一个定时器
-3.  Runloop何时处理一个输入源
-4.  Runloop何时进入睡眠状态
-5.  Runloop何时被唤醒，但在唤醒之前要处理的事件
-6.  Runloop终止
-- (void)addObserverToCurrentRunloop
-{
-NSRunLoop*mRunLoop = [NSRunLoop currentRunLoop];
-CFRunLoopObserverContext context =
-{0,self, NULL,NULL, NULL};
-CFRunLoopObserverRefobserver 、
-=CFRunLoopObserverCreate(kCFAllocatorDefault,
-kCFRunLoopBeforeTimers,YES, 0,
-&amp;myRunLoopObserver, &amp;context);
-if (observer)
-{
-    CFRunLoopRef cfLoop = [myRunLoop 
-    getCFRunLoop];
-    CFRunLoopAddObserver(cfLoop,
-    observer, kCFRunLoopDefaultMode);
-}
-}
-</code></pre><h2 id="RunLoop的事件队列"><a href="#RunLoop的事件队列" class="headerlink" title="RunLoop的事件队列"></a>RunLoop的事件队列</h2><pre><code>1.通知观察者run loop已经启动
-2.通知观察者任何即将要开始的定时器
-3.通知观察者任何即将启动的非基于端口的源
-4.启动任何准备好的非基于端口的源
-5.如果基于端口的源准备好并处于等待状态，立即启动；并进入步骤9。
-6.通知观察者线程进入休眠
-7.将线程置于休眠直到任一下面的事件发生：
-    某一事件到达基于端口的源
-    定时器启动
-    Run loop设置的时间已经超时
-    run loop被显式唤醒
-8.通知观察者线程将被唤醒。
-9.处理未处理的事件
-    如果用户定义的定时器启动，处理定时器事件并重启
-    run loop。进入步骤2
-    如果输入源启动，传递相应的消息
-    如果run loop被显式唤醒而且时间还没超时，
-    重启run loop。进入步骤2
-10.通知观察者run loop结束。
-从这个事件队列中可以看出：
-①如果是事件到达，消息会被传递给相应的处理程序来处理，
-runloop处理完当次事件后，run loop会退出，
-而不管之前预定的时间到了没有。你可以重新启动
-run loop来等待下一事件。
-②如果线程中有需要处理的源，但是响应的事件没有到来的时候，
-线程就会休眠等待相应事件的发生。这就是为什么run loop
-可以做到让线程有工作的时候忙于工作，
-而没工作的时候处于休眠状态。
-</code></pre><h2 id="RunLoop使用时机"><a href="#RunLoop使用时机" class="headerlink" title="RunLoop使用时机"></a>RunLoop使用时机</h2><pre><code>Run loop在你要和线程有更多的交互时才需要，比如以下情况：
-使用端口或自定义输入源来和其他线程通信
-使用线程的定时器
-Cocoa中使用任何performSelector…的方法
-使线程周期性工作
-</code></pre><h2 id="RunLoop的五个类"><a href="#RunLoop的五个类" class="headerlink" title="RunLoop的五个类"></a>RunLoop的五个类</h2><pre><code>1    CFRunloopRef    【RunLoop本身】
-2    CFRunloopModeRef    【Runloop的运行模式】
-3    CFRunloopSourceRef    【Runloop要处理的事件源】
-4    CFRunloopTimerRef    【Timer事件】
-5    CFRunloopObserverRef    【Runloop的观察者（监听者）】
-</code></pre><h3 id="CFRunLoop-的结构大致如下："><a href="#CFRunLoop-的结构大致如下：" class="headerlink" title="CFRunLoop 的结构大致如下："></a>CFRunLoop 的结构大致如下：</h3><pre><code>struct __CFRunLoop {
-    CFMutableSetRef _commonModes;     // Set
-    CFMutableSetRef _commonModeItems; // Set
-    CFRunLoopModeRef _currentMode;    // Current Runloop Mode
-    CFMutableSetRef _modes;           // Set
-    ...
-};
- 如上，有个概念叫 CommonModes：
- 一个 Mode 可以将自己标记为&quot;Common&quot;属性：
- 通过将其 ModeName 添加到 RunLoop 的 commonModes 中。例如：
- 如上所示，添加 source 的时候，如果 modeName 传入
- kCFRunLoopCommonModes 或者 NSRunLoopCommonModes，
- 则该 source 会被保存到 RunLoop 的
- _commonModeItems 中，而且，会被添加到 
- commonModes 中的所有mode中去。
- 其实，每当 RunLoop 的内容发生变化时，
- RunLoop 都会自动将 _commonModeItems 
- 里的 Source/Observer/Timer 同步到具有 
- Common 标记的所有Mode里。
-主线程的 RunLoop 里有两个预置的 Mode
-：kCFRunLoopDefaultMode 和 UITrackingRunLoopMode。
-这两个 Mode 都已经被标记为 Common 属性。
-DefaultMode 是 App 平时所处的状态，
-TrackingRunLoopMode 是追踪 ScrollView 滑动时的状态。
-当你创建一个 Timer 并加到 DefaultMode 时，
-Timer 会得到重复回调，但此时滑动一个TableView时，
-RunLoop 会将 mode 切换为 TrackingRunLoopMode，
-这时 Timer 就不会被回调，并且也不会影响到滑动操作。
-有时你需要一个 Timer，在两个 Mode 中都能得到回调，
-一种办法就是将这个 Timer 分别加入这两个 Mode。
-还有一种方式，就是将 Timer 加入到顶层的 RunLoop 
-的 commonModeItems 中。commonModeItems 被
-RunLoop 自动更新到所有具有 Common 属性的 Mode 里去。
-一个 RunLoop 包含若干个 Mode，每个 Mode 
-又包含若干个Source/Timer/Observer。
-但是，运行的时候，一条线程对应一个 Runloop，
-Runloop 总是运行在某种特定的CFRunLoopModeRef
-（运行模式）下。
-这是因为，在 Runloop 中有多个运行模式，每次调用 
-RunLoop 的主函数__CFRunloopRun() 时，只能指定其中一个
-Mode（称 CurrentMode）运行， 如果需要切换 Mode，只能是
-退出 CurrentMode 切换到指定的 Mode 进入，目的以保证不同
-Mode 下的 Source / Timer / Observer 互不影响。
-每次调用 RunLoop 的主函数时，只能指定其中一个 Mode，
-这个Mode被称作 CurrentMode。如果需要切换 Mode，
-只能退出 Loop，再重新指定一个 Mode 进入。
-这样做主要是为了分隔开不同组的 Source/Timer/Observer
-让其互不影响。
-Runloop 要有效，mode 里面 至少 要有一个 timer 
-(定时器事件) 或者是 source (源);
-</code></pre><h2 id="常用案例"><a href="#常用案例" class="headerlink" title="常用案例"></a>常用案例</h2><h3 id="performSelector"><a href="#performSelector" class="headerlink" title="performSelector"></a>performSelector</h3><pre><code>performSelector同样是触发Source0事件。selector也是特殊的
-基于自定义的源.理论上来说,允许在当前线程向任何线程上执行发送消息,
-和基于端口的源一样,执行selector请求会在目标线程上序列化,
-减缓许多在线程上允许多个方法容易引起的同步问题.不像基于端口的源,
-一个selector执行完后会自动从run loop里面移除.
-当调用上述API，实际上其内部会创建一个 Timer 并添加到当前线程的
-RunLoop 中。所以如果当前线程没有 RunLoop，则这个方法会失效。
-当调用 performSelector:onThread: 时，实际上其会创建一个Timer
-加到对应的线程去，同样的，如果对应线程没有 RunLoop 该方法也会失效.
-当前线程指定mode name并延时执行
-// 只在NSDefaultRunLoopMode下执行(刷新图片)
-[self.myImageView performSelector:@selector
-(setImage:) withObject:[UIImage imageNamed:@&quot;&quot;]
-afterDelay:ti inModes:@[NSDefaultRunLoopMode]];
-</code></pre><h3 id="自定义输入源"><a href="#自定义输入源" class="headerlink" title="自定义输入源"></a>自定义输入源</h3><pre><code>使用CFRunLoopSourceRef 类型相关的函数 (线程) 来创建自定义输入源。
-</code></pre><h3 id="端口输入源"><a href="#端口输入源" class="headerlink" title="端口输入源"></a>端口输入源</h3><h3 id="设置定时源"><a href="#设置定时源" class="headerlink" title="设置定时源"></a>设置定时源</h3><pre><code>使用系统Timer
-使用自定义Timer
-</code></pre><h3 id="设置监听"><a href="#设置监听" class="headerlink" title="设置监听"></a>设置监听</h3><h2 id="other"><a href="#other" class="headerlink" title="other"></a>other</h2><pre><code>对于NSTimer，有一个特别的API，这个API会默认把Timer加到 当前线程 中去。
-[NSTimer scheduledTimerWithTimeInterval:5.1
-target:self selector:@selector(printMessage:)
-userInfo:nil repeats:YES];
-所以说，当且仅当加到当前线程，下面两个添加NSTimer的方案方可等效：
-- (void)defalutTimer {
-[NSTimer scheduledTimerWithTimeInterval:1.0 target:
-self selector:@selector(doTime) userInfo:nil
-repeats:YES];
-}
-- (void)commonTimer {
-NSTimer *timer =[NSTimer timerWithTimeInterval:
-1.0 target:self selector:@selector(doTime) 
-userInfo:nil repeats:YES];
-[[NSRunLoop currentRunLoop] addTimer:
-timer forMode:NSDefaultRunLoopMode];
-}
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2091,7 +1885,7 @@ timer forMode:NSDefaultRunLoopMode];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">173</span>
+              <span class="site-state-item-count">176</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

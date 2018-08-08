@@ -100,7 +100,7 @@ AFN优点AFNetworking内置支持JSON,plist文件和XML文件的解析,使">
 网络通信信息序列化/反序列化模块(Serialization)
 对于iOS UIKit库的扩展(UIKit)
 AFN优点AFNetworking内置支持JSON,plist文件和XML文件的解析,使">
-<meta property="og:updated_time" content="2018-08-07T10:03:39.423Z">
+<meta property="og:updated_time" content="2018-08-08T10:22:20.693Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AFN SD做了哪些优化">
 <meta name="twitter:description" content="AFN包括如下模块网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
@@ -314,6 +314,17 @@ SDWebImage 对gif的处理主要是在UIImage+GIF
 由于SDWebImage通过动图数组来实现动态，
 会造成内存不能及时释放
 SDWebimage -静态图片加载会产生拉伸
+</code></pre><h2 id="SD下载完图片为什么要解码"><a href="#SD下载完图片为什么要解码" class="headerlink" title="SD下载完图片为什么要解码"></a>SD下载完图片为什么要解码</h2><pre><code>在我们使用 UIImage 的时候，创建的图片通常不会直接加载到内存，而是在
+渲染的时候再进行解压并加载到内存。这就会导致 UIImage 在渲染的时候效
+率上不是那么高效。为了提高效率通过 decodedImageWithImage方法把图
+片提前解压加载到内存，这样这张新图片就不再需要重复解压了，提高了渲染效
+率。这是一种空间换时间的做法。
+</code></pre><h2 id="旧版本AFN为什么加Runloop"><a href="#旧版本AFN为什么加Runloop" class="headerlink" title="旧版本AFN为什么加Runloop"></a>旧版本AFN为什么加Runloop</h2><pre><code>首先我们知道在旧版本的AFN中使用了 NSURLConnection 来发起并处理网
+络连接。AFN 的做法是把网络请求的发起和解析都放在同一个子线程中进行，
+但由于子线程默认不开启 runloop，它会向一个 C语言程序那样在运行完所有
+代码后退出线程。而网络请求是异步的，这会导致获取到请求数据时，线程已经
+退出，代理方法没有机会执行。因此，AFN 的做法是使用一个 runloop 来保
+证线程不死，也就是下面这段被讲烂了的代码:
 </code></pre>
       
     </div>
@@ -417,7 +428,7 @@ SDWebimage -静态图片加载会产生拉伸
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">173</span>
+              <span class="site-state-item-count">176</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -449,7 +460,7 @@ SDWebimage -静态图片加载会产生拉伸
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AFN包括如下模块"><span class="nav-number">1.</span> <span class="nav-text">AFN包括如下模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AFN优点"><span class="nav-number">2.</span> <span class="nav-text">AFN优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDWebImage-概论"><span class="nav-number">3.</span> <span class="nav-text">SDWebImage 概论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AFN、SD缺点"><span class="nav-number"></span> <span class="nav-text">AFN、SD缺点</span></a></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AFN包括如下模块"><span class="nav-number">1.</span> <span class="nav-text">AFN包括如下模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AFN优点"><span class="nav-number">2.</span> <span class="nav-text">AFN优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDWebImage-概论"><span class="nav-number">3.</span> <span class="nav-text">SDWebImage 概论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AFN、SD缺点"><span class="nav-number"></span> <span class="nav-text">AFN、SD缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SD下载完图片为什么要解码"><span class="nav-number">1.</span> <span class="nav-text">SD下载完图片为什么要解码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#旧版本AFN为什么加Runloop"><span class="nav-number">2.</span> <span class="nav-text">旧版本AFN为什么加Runloop</span></a></li></ol></div>
             
           </div>
         </section>
