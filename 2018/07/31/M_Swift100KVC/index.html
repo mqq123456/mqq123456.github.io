@@ -1,0 +1,592 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+相关方法-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setVa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KVC">
+<meta property="og:url" content="http://yoursite.com/2018/07/31/M_Swift100KVC/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+相关方法-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setVa">
+<meta property="og:updated_time" content="2018-08-07T08:38:24.439Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KVC">
+<meta name="twitter:description" content="它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+相关方法-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setVa">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/31/M_Swift100KVC/"/>
+
+  <title> KVC | Men的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Men的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">欢迎光临！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            博文
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                KVC
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-31T16:32:01+08:00" content="2018-07-31">
+              2018-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <pre><code>它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+</code></pre><h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><pre><code>-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setValue: (id) value  forKey: (NSString*) key
+</code></pre><h2 id="访问过程"><a href="#访问过程" class="headerlink" title="访问过程"></a>访问过程</h2><pre><code>1.接收器中如果有key访问器
+（或getKey、isKey、_key、_getKey、setKey）则使用它。
+2.没有访问器时，使用接收器的类方法
+accessInstanceVariablesDirectly来查询。返回YES时，如果存在实例
+变量key（或_key、isKey、_isKey等）则返回或设置其值。使用引用计数管
+理方式时，实例变量如果为对象，则旧值会被自动释放，新值被保存并代入。
++(BOOL)accessInstanceVariablesDirectly
+通常定义为返回YES，可以在子类中改变。该类方法返回YES时，使用键值编码
+可以访问该类的实例变量。返回NO时不可以访问。只要该方法返回YES，实例变
+量的可视属性即使有@private修饰，也可以访问。
+3.既没有访问器也没有实例变量时，将引起接收器调用方法
+valueForUndefinedKey:或setValue:forUndefinedKey:。
+-(id) valueForUndefinedKey: (NSStirng *) key
+不能取得键字符串对应的值时，从方法valueForKey：中调用该方法。默认情
+况下，该方法的执行会触发NSUndefinedKeyException。不过，通过在子类
+中修改定义，就可以返回其他对象。
+- (void) setValue:(id)value forUndefinedKey:(NSString *) key
+不能设置键字符串key对应的属性值时，从方法setValue:forKey中调用该方
+法。默认情况下，该方法的执行会触发异常NSUndefinedKeyException。不
+过，通过在子类中修改定义，可以返回其他对象。
+4.   如果该返回值不是对象，则返回被适当的对象包装的值；设置值时也应先
+包装成相应的对象。
+属性为对象时，该对象还可能持有属性。这时候可以用“.”连接表示键的字符
+串，这种表示方式称为键路径。只要能找到对象，点和键多长都没有关系。
+- (id)valueForKeyPath:(NSString *) keyPath
+以点切分键路径，并使用第一个键向接收器发送valueForKey：方法。然后，
+再使用键路径的下一个键，向得到的对象发送valueForKey：方法，如此反复
+操作，返回最后获得的对象。
+- (void)setValue:(id) value forKeyPath:(NSString *) keyPath
+与valueForKeyPath：方法一样取出对象，这里只对路径中的最后一个键调用
+setValue：forKey：方法，并设定属性值为value。
+</code></pre><h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="KVC提供了验证Key对应的Value是否可用的方法："><a href="#KVC提供了验证Key对应的Value是否可用的方法：" class="headerlink" title="KVC提供了验证Key对应的Value是否可用的方法："></a>KVC提供了验证Key对应的Value是否可用的方法：</h3><pre><code>(BOOL)validateValue:(inout id *)ioValue forKey:(NSString *)inKey error:(out NSError **)outError;  
+</code></pre><h3 id="KVC对数值和结构体型属性的支持"><a href="#KVC对数值和结构体型属性的支持" class="headerlink" title="KVC对数值和结构体型属性的支持"></a>KVC对数值和结构体型属性的支持</h3>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/29/M_Swift89Runtime相关方法/" rel="next" title="Runtime">
+                <i class="fa fa-chevron-left"></i> Runtime
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/03/M_Swift99Block/" rel="prev" title="Block理解">
+                Block理解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/12388663?v=3&u=20e1503339de9acf72fc1184728c2afca6ae9b4a&s=140"
+               alt="门乾强" />
+          <p class="site-author-name" itemprop="name">门乾强</p>
+          <p class="site-description motion-element" itemprop="description">博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">169</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#相关方法"><span class="nav-number">1.</span> <span class="nav-text">相关方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问过程"><span class="nav-number">2.</span> <span class="nav-text">访问过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Other"><span class="nav-number">3.</span> <span class="nav-text">Other</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#KVC提供了验证Key对应的Value是否可用的方法："><span class="nav-number">3.1.</span> <span class="nav-text">KVC提供了验证Key对应的Value是否可用的方法：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KVC对数值和结构体型属性的支持"><span class="nav-number">3.2.</span> <span class="nav-text">KVC对数值和结构体型属性的支持</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

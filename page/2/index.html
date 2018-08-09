@@ -228,6 +228,560 @@
             
               
                 
+                <a class="post-title-link" href="/2018/07/29/M_Swift89Runtime相关方法/" itemprop="url">
+                  Runtime
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-29T11:48:50+08:00" content="2018-07-29">
+              2018-07-29
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="1-基本使用"><a href="#1-基本使用" class="headerlink" title="1.基本使用"></a>1.基本使用</h2><pre><code>Objective-C 从三种不同的层级上与 Runtime 系统进行交互，
+分别是通过 Objective-C 源代码，
+通过 Foundation 框架的NSObject类定义的方法，
+通过对 runtime 函数的直接调用。
+RunTime简称运行时,就是系统在运行的时候的一些机制，
+其中最主要的是消息机制。
+每一个oc的方法，底层必然有一个与之对应的runtime方法。
+</code></pre><h2 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h2><h3 id="获取属性列表"><a href="#获取属性列表" class="headerlink" title="获取属性列表"></a>获取属性列表</h3><pre><code>objc_property_t *propertyList = class_copyPropertyList([self class], &amp;count);
+for (unsigned int i=0; i&lt;count; i++) {
+const char *propertyName = property_getName(propertyList[i]);
+NSLog(@&quot;property----&gt;%@&quot;, [NSString stringWithUTF8String:propertyName]);
+}
+</code></pre><h3 id="获取方法列表"><a href="#获取方法列表" class="headerlink" title="获取方法列表"></a>获取方法列表</h3><pre><code>Method *methodList = class_copyMethodList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Method method = methodList[i];
+NSLog(@&quot;method----&gt;%@&quot;, NSStringFromSelector(method_getName(method)));
+}
+</code></pre><h3 id="获取成员变量列表"><a href="#获取成员变量列表" class="headerlink" title="获取成员变量列表"></a>获取成员变量列表</h3><pre><code>Ivar *ivarList = class_copyIvarList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Ivar myIvar = ivarList[i];
+const char *ivarName = ivar_getName(myIvar);
+NSLog(@&quot;Ivar----&gt;%@&quot;, [NSString stringWithUTF8String:ivarName]);
+}
+</code></pre><h3 id="获取协议列表"><a href="#获取协议列表" class="headerlink" title="获取协议列表"></a>获取协议列表</h3><pre><code>__unsafe_unretained Protocol **protocolList = class_copyProtocolList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Protocol *myProtocal = protocolList[i];
+const char *protocolName = protocol_getName(myProtocal);
+NSLog(@&quot;protocol----&gt;%@&quot;, [NSString stringWithUTF8String:protocolName]);
+}
+</code></pre><h3 id="获得类方法"><a href="#获得类方法" class="headerlink" title="获得类方法"></a>获得类方法</h3><pre><code>Class PersonClass = object_getClass([Person class]);
+SEL oriSEL = @selector(test1);
+Method oriMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
+</code></pre><h3 id="获取实例方法"><a href="#获取实例方法" class="headerlink" title="获取实例方法"></a>获取实例方法</h3><pre><code>Class PersonClass = object_getClass([xiaoming class]);
+SEL oriSEL = @selector(test2);
+Method cusMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
+</code></pre><h3 id="添加一个实例变量"><a href="#添加一个实例变量" class="headerlink" title="添加一个实例变量"></a>添加一个实例变量</h3><pre><code>/*
+参数一、类名
+参数二、属性名称
+参数三、开辟字节长度
+参数四、对其方式
+参数五、参数类型 “@” 官方解释 An object (whether statically typed or typed id) （对象 静态类型或者id类型） 具体类型可参照官方文档
+return: BOOL 是否添加成功
+*/
+BOOL isSuccess = class_addIvar(MyClass, &quot;addIvar&quot;, sizeof(NSString *), 0, &quot;@&quot;);
+</code></pre><h3 id="添加方法"><a href="#添加方法" class="headerlink" title="添加方法"></a>添加方法</h3><pre><code>/*
+参数一、类名
+参数二、SEL 添加的方法名字
+参数三、IMP指针 (IMP就是Implementation的缩写，它是指向一个方法实现的指针，每一个方法都有一个对应的IMP)
+参数四、其中types参数为&quot;i@:@“，按顺序分别表示：具体类型可参照官方文档
+i 返回值类型int，若是v则表示void
+@ 参数id(self)
+: SEL(_cmd)
+@ id(str)
+V@:表示返回值是void 带有SEL参数 （An object (whether statically typed or typed id)）
+*/
+BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+</code></pre><h3 id="替换方法"><a href="#替换方法" class="headerlink" title="替换方法"></a>替换方法</h3><pre><code>class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+</code></pre><h3 id="交换方法"><a href="#交换方法" class="headerlink" title="交换方法"></a>交换方法</h3><pre><code>method_exchangeImplementations(oriMethod, cusMethod);
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/26/M_Swift90算法之数学计算/" itemprop="url">
+                  算法之数学计算
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-26T11:30:02+08:00" content="2018-07-26">
+              2018-07-26
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="二分法查找"><a href="#二分法查找" class="headerlink" title="二分法查找"></a>二分法查找</h2><pre><code>function binarySeach( arr,val,leftIndex,rightIndex ){
+    //找到中间的值
+    var midIndex = Math.floor((leftIndex+rightIndex)/2);
+    var midval=arr[midIndex];
+    //console.log(midval );
+    if( leftIndex &gt; rightIndex ){
+        console.log(&quot;前一位是&quot;,midval );
+        console.log(&quot;下标：&quot;,midIndex);
+        return ;
+    }
+    if( midval &gt; val ){
+        binarySeach(arr,val,leftIndex,midIndex-1);
+    }else if(midval &lt; val){
+        binarySeach(arr,val,midIndex+1,rightIndex);
+    }else{
+        console.log(&quot;找到了,下标为:&quot;+midIndex);
+        return;
+    }
+}
+var arr=[1,3,12,21,24,44,54,67];
+binarySeach(arr,25,0,arr.length-1);
+</code></pre><h2 id="求两个数的最大公约数，递归"><a href="#求两个数的最大公约数，递归" class="headerlink" title="求两个数的最大公约数，递归"></a>求两个数的最大公约数，递归</h2><pre><code>function Gcd(var a, var b)
+ {
+      if(a&lt;=0||b&lt;=0)
+          return -1;
+     else if(a&gt;b)
+         return Gcd(a-b, b);
+     else if(a&lt;b)
+         return Gcd(a, b-a);
+     else
+         return a;
+ }
+// 最小公倍数 两个整数的乘积 / 最大公约数
+// a* b/gcd(a,b)
+</code></pre><h2 id="斐波那契数列"><a href="#斐波那契数列" class="headerlink" title="斐波那契数列"></a>斐波那契数列</h2><pre><code>function Fibonacci(int n) {
+    if(n &lt; 0){
+        return 0;
+    }
+    if(n == 0){
+        return 0;
+    }else if(n == 1){
+        return 1;
+    }else return Fibonacci(n-1)+ Fibonacci(n-2);
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/26/M_Swift92算法之排序/" itemprop="url">
+                  算法之排序
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-26T11:06:22+08:00" content="2018-07-26">
+              2018-07-26
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h2><pre><code>思想：相邻连个之间，较小的放前面
+function maopao(arr) {
+    for (var i = 0; i &lt; arr.length; i++) {
+        for (var j = 0; j &lt; arr.length; j++) {
+            if (arr[i] &gt; arr[j]) {
+                var temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+</code></pre><h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h2><pre><code>每便利一次，选择一个最小的放最前面
+function xuanze(arr) {
+    for (var i = 0; i &lt; arr.length; i++) {
+        var min = i;
+        for (var j = 0; j &lt; arr.length; j++) {
+            if (arr[j] &lt;arr[i]) {
+                min = j;
+            }
+        }
+        if (min != i) {
+            var temp = arr[i];
+            arr[i] = arr[min];
+            arr[min] = arr[i];
+        }
+    }
+}
+</code></pre><h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><pre><code>function insertSort(arr) {
+    var len = arr.length;
+    var preIndex,current;
+    for (var i = 1; i &lt; len; i++) {
+        preIndex = i -1;
+        current = arr[i];
+        while(preIndex &gt;=0 &amp;&amp; arr[preIndex] &gt; current) {
+            arr[preIndex +1] = arr[preIndex];
+            preIndex --;
+        }
+        arr[preIndex +1] = current;
+    }
+}
+</code></pre><h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h2><pre><code>希尔排序也是一种插入排序
+不同之处在于，它会优先比较距离较远的元素。希尔排序的核心在于间隔序列的设定。
+function shellSort(arr) {
+    var len = arr.length;
+    var temp,gap =1;
+    while(gap &lt; len/3){
+        gap = gap *3 +1;
+    }
+    for (gap; gap&gt; 0; gap = Math.floor(gap/3)) {
+        for (var i = gap; i &lt; len; i++) {
+            temp = arr[i];
+            for (var j = i - gap; j &gt;0 &amp;&amp; arr[j] &gt; temp; j -= gap) {
+                arr[j+gap] = arr[j];
+            }
+            arr[j+gap] = temp;
+        }
+    }
+    return arr;
+}
+</code></pre><h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><pre><code>作为一种典型的分而治之思想的算法应用
+function mergeSort(arr) {  //采用自上而下的递归方法
+    var len = arr.length;
+    if(len &lt; 2) {
+        return arr;
+    }
+    var middle = Math.floor(len / 2),
+        left = arr.slice(0, middle),
+        right = arr.slice(middle);
+    return merge(mergeSort(left), mergeSort(right));
+}
+
+function merge(left, right)
+{
+    var result = [];
+
+    while (left.length&gt;0 &amp;&amp; right.length&gt;0) {
+        if (left[0] &lt;= right[0]) {
+            result.push(left.shift());
+        } else {
+            result.push(right.shift());
+        }
+    }
+
+    while (left.length)
+        result.push(left.shift());
+
+    while (right.length)
+        result.push(right.shift());
+
+    return result;
+}
+</code></pre><h2 id="快速排序（Quick-Sort）"><a href="#快速排序（Quick-Sort）" class="headerlink" title="快速排序（Quick Sort）"></a>快速排序（Quick Sort）</h2><pre><code>分而治之思想在排序算法。本质上来看，快速排序应该算是在冒泡排序基础上的递归分治法。
+先是把第一个挖出来，作为基值；然后先是从右向左，对比基值，如果如果小，那么放到坑里；然后在从左往右对比基值，如果大，那么放到坑里；当换完一轮了后，把基值放到坑里；然后在根据基值，分左右两组，递归排序；
+function quickSort(arr, left, right) {
+    var len = arr.length,
+        partitionIndex,
+        left = typeof left != &apos;number&apos; ? 0 : left,
+        right = typeof right != &apos;number&apos; ? len - 1 : right;
+
+    if (left &lt; right) {
+        partitionIndex = partition(arr, left, right);
+        quickSort(arr, left, partitionIndex-1);
+        quickSort(arr, partitionIndex+1, right);
+    }
+    return arr;
+}
+
+function partition(arr, left ,right) {     //分区操作
+    var pivot = left,                      //设定基准值（pivot）
+        index = pivot + 1;
+    for (var i = index; i &lt;= right; i++) {
+        if (arr[i] &lt; arr[pivot]) {
+            swap(arr, i, index);
+            index++;
+        }        
+    }
+    swap(arr, pivot, index - 1);
+    return index-1;
+}
+
+function swap(arr, i, j) {
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+</code></pre><h2 id="堆排序（Heap-Sort）"><a href="#堆排序（Heap-Sort）" class="headerlink" title="堆排序（Heap Sort）"></a>堆排序（Heap Sort）</h2><pre><code>堆排序可以说是一种利用堆的概念来排序的选择排序。分为两种方法：
+大顶堆：每个节点的值都大于或等于其子节点的值，在堆排序算法中用于升序排列
+小顶堆：每个节点的值都小于或等于其子节点的值，在堆排序算法中用于降序排列
+var len;    //因为声明的多个函数都需要数据长度，所以把len设置成为全局变量
+
+function buildMaxHeap(arr) {   //建立大顶堆
+    len = arr.length;
+    for (var i = Math.floor(len/2); i &amp;gt;= 0; i--) {
+        heapify(arr, i);
+    }
+}
+
+function heapify(arr, i) {     //堆调整
+    var left = 2 * i + 1,
+        right = 2 * i + 2,
+        largest = i;
+
+    if (left &lt; len &amp;&amp; arr[left] &gt; arr[largest]) {
+        largest = left;
+    }
+
+    if (right &lt; len &amp;&amp; arr[right] &gt; arr[largest]) {
+        largest = right;
+    }
+
+    if (largest != i) {
+        swap(arr, i, largest);
+        heapify(arr, largest);
+    }
+}
+
+function swap(arr, i, j) {
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+function heapSort(arr) {
+    buildMaxHeap(arr);
+
+    for (var i = arr.length-1; i &gt; 0; i--) {
+        swap(arr, 0, i);
+        len--;
+        heapify(arr, 0);
+    }
+    return arr;
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/26/M_Swift91算法之数组操作/" itemprop="url">
                   算法之数组操作
                 </a>
@@ -1083,288 +1637,6 @@ function mergeOrder(arr1,arr2) {
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/06/M_Swift86傲慢与偏见读后感/" itemprop="url">
-                  傲慢与偏见读后感
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-06T15:18:22+08:00" content="2018-06-06">
-              2018-06-06
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>今天好好读了一下这本书，傲慢与偏见。我很少读国外文学，今天算是真正的读了一下国外的文学,昨天又搁浅了，没有读完，很遗憾，只知道玩游戏了，这个游戏是真的很坑，你怎么打都不赢的时候，你真的是没有办法，现在最好的办法就是练习，如果就这样气馁了，真的是不是太好，所以我打算好好游戏，好好学习，这也是为自己做准备吧，打算趁着现在没有事情，好好练习一下这个英雄，能够让自己不致于太尴尬，所以，我想我时候做一点让自己都不遗憾的事情了，这真的很重要。<br>哈哈，说了半天，其实我是要写这本书的，感觉没有写，很无奈啊，这样吧，我再写写，争取能写好。<br>哈哈，我感觉我这个人怎么越来越没有恒心，越来越没有毅力了，真的是这样，这样让我很失望，我想我不能摆脱的话就不要去摆脱，没有必要，只要自己足够努力，我想一定会成功，不要着急，耐心点，再好好的耐心的等一等，相信自己，一定会有一个好的收获，就像去年学车一样，从一开始就保持一个耐心的姿态，不也很快就拿到驾照了嘛，所以，还是要好好的努力为主。<br>不要相信那些没有用的，只有自己是对的。<br>说了半天没有用的，我现在想好好说说这个外国文学了，外国的东西还是让我感觉有点不一样的，我们很多时候写文章都会要描述一下环境，用一些词藻，但是这个外国文学不是这样，他很不耐烦的讲述事情，讲的很细，每个人说的每句话好像都说了，就像是你在看一部电影一样，一句一句话的跟你说，我感觉这更像是一个编剧写出来的东西，真的是的。<br>还有就是在人物性格方面，我感觉这个傲慢和偏见很直接，就是单纯的从一个人的说话和弹出中去描述，不添加任何修饰，感觉很直接，让我们一下子就能感觉到人物性格。<br>今天早上玩个游戏气死我了，我很努力的在玩，但是连个人头和助攻都混不到，然后我想再玩一把把，把刚才的失败赎回来，没想到，这次越玩越差，尼玛，跟人家吵架的心都有了。真的是很生气，不知道为什么，很郁闷，这真的很难。怎么这么乱。<br>我</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/06/M_Swift88小小的一天/" itemprop="url">
-                  小小一天
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-06T09:35:26+08:00" content="2018-06-06">
-              2018-06-06
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>从昨天的思考，到今天，我想是时候说一下无聊的东西了，这样一天天的，是的，没事做的心情，继续写一点东西吧，谈谈人生，谈谈理想，说一些胡话，就算是聊以慰藉吧。<br>日子一天一天，很快，不知道这样是好是坏，我们总是打算着很多事情，但是有的时候到头来却是一场空，我不知道这样的日子还能多久，我也不想，但是我想，我需要写点东西，我需要让人生充实，我想有的人可以用很多东西来写东西，有的人就是这样。<br>哈哈，感觉头绪有点乱，真的不知道写什么好。天气热的要死，一出门，就是热浪腾腾。今天倒是还好，有点阴天，雾茫茫的，总算是没有大太阳了。<br>好像在说一堆没用的事情，但是人生就是这样，你不知道你会在哪里遇见什么人，你也不知道下一个路口在什么地方，总之，你就这样走着，这样活着，我们说是行尸走肉，其实我们每个人何尝又不是，每个人在社会上其实都是活着，别说你意义很大，其实你处的位置决定了你的作为，所以，不必惊讶，也不必低沉，其实我们都一样。<br>有钱人过的生活我们是享受不了，但是有钱人也有我们不曾有过的焦虑，其实都一样，他们说他们很忙，也好吧，其实说是有意义，当我们真正到老了，真的不知道是不是还是乐观的说有什么意思。<br>真的我们也许在有的时候会很天真，有的时候又很无聊，生活就是这样。<br>好了，不知道又胡扯了什么，今天看了一个新闻，说有声阅读将成为下一个风口，我想确实有一定的作用，但是我们不可否认，当我们没有事情可以做的时候，新闻称为了我们最大的慰藉，这有着一股神奇的力量，我想这有点可怕，我想现在的新闻变了，变成我们不认识的样子，真的是的，我现在发现，我打字真的是又点查，工作这么多年了，竟然打字一直都这样差，真的是有点说不过去，不过也就这样吧，平时写代码，真的不是太纠结打字速度的，但是当你写文字的时候，对于打字这个问题，还是比较注重的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/05/M_Swift87小思考/" itemprop="url">
-                  小思考
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-05T10:30:15+08:00" content="2018-06-05">
-              2018-06-05
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>今天也是没有什么重要的事情，昨天晚上的苹果开发者大会，发布了很多操作系统的优化，没有一件硬件产品，所以，我想，这个世界可能真的就是在变慢，这样感觉也挺好，起码，我们一时半会还没有被淘汰，但是，当我们没有事情的时候，我们应该干点什么呢，我想，是不是应该写一个app去实现一些东西，这个真的是一个我一直以来都想要去尝试的东西，因为搞这个开发。真的是你闲下来的时候就会手痒痒，这真的是一个让人头疼的问题，但是，其实创新是一件最让人头疼的问题，这就是一个麻烦了，我想我是否能够做一个东西，能够清楚的了解很多东西，就像是一些游戏，我能清楚的知道这个东西应该是什么，应该怎么做，应该怎么样去做，我想做一个工具类的东西，比如说现在高考就要结束了，那么大学是哪个好，专业选哪个好，真的是一个让人头疼的问题，那么我们能不能用一个攻略的东西，让这个事情变的好一点，我想是不是应该有个东西叫做百事通，这个真的是一个让人头疼的问题。<br>我突然想到一个很有意思的问题，既然现在游戏这么火爆，微信又凭借一个朋友圈火爆四射，那么我们能不能就是来模仿一个微信和王者荣耀，就模仿一把腾讯如何。<br>现在简单的想法是这样的，我们做一个类似微信发现页面的功能，内容是王者荣耀，这样就能够很好的通用性，然后再加上很多直播等内容的丰富，能不能做到比王者荣耀助手好很多的功能，我现在看王者荣耀助手，感觉很无聊，感觉一点都没有用，还有就是你的很多功能不能得到很好的发展。<br>现在我定义一下，这么一个app，他首先的定位是工具类。然后能够直播，然后能够慢动作分析。<br>我想现在像nba一样，一场比赛都会有很多慢动作分析，那么我们能不能分析局势啊，我们能不能把王者荣耀做在沙盘上进行演示？？<br>还有一个最重要的问题就是，腾讯肯定不会为我们提供这么多的权限，我们也不可能得到王者荣耀用户数据，比如账号名称，等等<br>但是，我们有英雄，就像我们是一个NBA球迷一样，你肯定有支持的球队，或者你肯定有喜欢的球员，那么这就是一个入手点。<br>我们是一个荣耀爱好者，那么你肯定就会有你喜欢玩的位置，喜欢玩的英雄。那么这就是入手点。<br>好了，应用有了，那么你能为英雄做什么呢？这就是我们的功能，说白了，每个爱好者都是想玩好游戏，但是全部的游戏攻略都普遍存在一个问题，就是对游戏认知太浅，感觉就不是一个会玩的玩家写出来的东西，这真的是一个让人头疼的问题。我也不是一个会玩的玩家，我怎么写这些东西呢？？<br>还有就是我们怎么样才能写好一本书，我曾经多次强调过，一个好的app就应该是一本书，一本很有诱惑的书，你打开之后就爱不释手的感觉，这真的很重要。但是我这个认知比较浅的人，真的能做到吗？<br>好了，也许大千网友能做到，就好了，认知很重要。我可以向所有人发起这个认知活动，应该是有好心人能够给到一个最好的答案。应该有钱就有人出来贡献吧。<br>好了，人物已经出来了，但是，就像书一样，我看完了，那么我下次再看的时候又能给我带来什么呢？更可怕的是，有的时候有些人根本不喜欢看第二遍。<br>这是一个问题，我想我们可以通过很多友好的东西来去做这些东西，我们可以添加一些东西，比如说书签，可以让用户自己编写一些东西，让用户能够更清楚的认识到自己的不足。<br>就像打篮球一样，我们每次都想找几个人打，每次打完，都没有发现自己有什么进步，这真的让人头疼。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1410,7 +1682,7 @@ function mergeOrder(arr1,arr2) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">166</span>
+              <span class="site-state-item-count">169</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
