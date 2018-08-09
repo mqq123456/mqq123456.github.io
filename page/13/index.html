@@ -228,6 +228,273 @@
             
               
                 
+                <a class="post-title-link" href="/2016/08/03/M_5Swift_initializer/" itemprop="url">
+                  initializer
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-03T15:03:04+08:00" content="2016-08-03">
+              2016-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>designated initializer<br>convenience initializer<br>required 关键字<br>protocol中的initializer<br>Designated Initializer</p>
+<blockquote>
+<p>当我们创建一个class的时候，如果这个class拥有未初始化的非Optional属性，则必须提供一个构造器(称为designated initializer)。这句话有两个重点：<br>1.未初始化；2.非Optional属性。<br>比较一下下面几种写法：</p>
+</blockquote>
+<p>//A<br>class Person {<br>let name : String = “”<br>}<br>//B<br>class Person {<br>let name : String<br>}<br>//C<br>class Person {<br>var name : String?<br>}<br>//D<br>class Person {<br>let name : String?<br>}<br>A,C都可以正常编译，B,D会报错(error: class ‘Person’ has no initializers)。因为Swift不允许非Optional变量在没有初始化的情况下使用或者访问，这样会造成潜在的风险，于是Swift编译器对构造器做了严格的限制:类必须提供一个designated initializer，并且初始化所有未初始化的非Optional属性</p>
+<p>A,B两种写法中，let换成var结果是一样的。但是D比较特殊，在Swift中，常量在访问和使用之前必须初始化(哪怕是Optional)</p>
+<p>var p : String?<br>print(p)<br>//正常编译<br>let p : String?<br>print(p)<br>//报错：error: constant ‘p’ used before being initialized<br>由此可见我们上面的描述并不准确，应当是未初始化的非Optional属性或Optinal常量。不过一般我们不会声明一个Optional常量，另外这么说也是在太过拗口，所以就简单称之为未初始化的非Optional属性吧(下文也会这样表述)。</p>
+<p>同样，在子类初始化过程中，Swift也做了严格的限制</p>
+<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}<br>首先，Engineer必须调用super.init，如果你这样写：</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>self.name = name<br>}<br>不好意思，self.name是常量，不可修改。即便我们将let name : String改为var name : String，仍会报错，而且是两个：</p>
+<p>error: super.init isn’t called on all paths before returning from initializer<br>error: use of ‘self’ in property access ‘name’ before super.init initializes self<br>从这两个错误信息可以看出，在子类的构造器中，父类的成员变量必须通过父类的designated initializer进行初始化。也就是说，我们必须调用super.init（第一个error），而且在调用super.init之前不能使用和访问任何父类的成员变量（第二个error）。</p>
+<p>其次,super.init必须在子类所有未初始化的非Optional属性初始化之后调用。</p>
+<p>这跟我们以前所了解的不同，例如在JAVA的构造器中我们会先调用super.init。Swift之所以这样做，同样是为了安全性。<br>假设我们要求在初始化一个Person之后，立刻输出一些信息用来debug：</p>
+<p>class Person {<br>var name : String<br>init(name : String){<br>self.name = name<br>printDescription()<br>}</p>
+<p>func printDescription() -&gt; () {<br>print(“name=(name)”)<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
+<p>override func printDescription() -&gt; () {<br>print(“name=(name), title=(title)”)<br>}<br>}<br>如果在Engineer的init中，我们首先调用super.init，那么我们就会在初始化title之前执行子类的printDescription方法，这是Swift所不允许的。</p>
+<p>Convenience Initializer<br>一个类可以提供多个designated initializer，但是designated initializer不可以调用designated initializer。<br>如果需要提供一个依赖designated initializer的构造器，需要添加关键字convenience，称为convenience initializer。<br>在上面的例子中，假设我们从文件中读取人的信息，读取到的是“名字;职位;联系方式”格式的字符串。我们需要写一个构造器方法从这串文字中解析出相应的信息。</p>
+<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}</p>
+<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}<br>因为新的构造器调用了self.init，因此需要添加关键字convenience，否则会报错：error: designated initializer for ‘Person’ cannot delegate (with ‘self.init’); did you mean this to be a convenience initializer?</p>
+<p>一个类可以拥有多个convenience initializer，而且convenience initializer可以调用其他convenience initializer。<br>convenience initializer有以下约束：</p>
+<p>必须调用当前类的designated initializer，调用父类的designated initializer是不行的。<br>只有当前类可以使用（子类也可以使用，不过需要特殊处理。见下文）。<br>Required 关键字<br>如果父类中的构造器需要在子类中重写，可以使用required关键字。子类必须重写父类中标记为required的构造器方法(不管是designated initializer还是convenience initializer)。<br>上面的例子中，init(convertFromLiteral value : String)并不适合子类，所以我们加上required关键字，编译器会提示我们Engineer没有实现required initializer。</p>
+<p>class Engineer: Person {<br>var title : String</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
+<p>required convenience init(convertFromLiteral value : String){<br>var name = “”<br>var title = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>}else if(title.characters.count == 0){<br>title = component<br>break<br>}<br>}<br>self.init(name: name, title: title)<br>}<br>}<br>上文提到了convenience initializer只有当前类才能使用，Swift不允许子类通过父类构造器进行初始化是显而易见的。convenience initializer实际上更像一个方法，如果我们将某个convenience initializer所依赖的designated initializer标记为required，就相当于告诉了编译器我们的子类一定重写了这个designated initializer。也就是说，如果我们的子类通过这个convenience initializer进行初始化，最终会执行子类中重写的designated initializer。</p>
+<p>说这么一大堆，用代码看的更清楚：</p>
+<p>class Person {<br>let name : String<br>required init(name : String){<br>self.name = name<br>}</p>
+<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}</p>
+<p>class Engineer: Person {<br>var title : String</p>
+<p>required init(name: String) {<br>self.title = “unknow”<br>super.init(name: name)<br>}</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}</p>
+<p>let peter = Person.init(convertFromLiteral: “peter;”)<br>print(peter.name)<br>let tom = Engineer.init(convertFromLiteral: “tom;”)<br>print(tom.name + “, “ + tom.title)<br>将父类中convenience initializer所依赖的designated initializer标记为required，我们就可以通过该convenience initializer初始化子类了。</p>
+<p>Protocol中的Initializer<br>Swift提供了很多包涵构造器的protocol，如StringLiteralConvertible，DictionaryLiteralConvertible，ArrayLiteralConvertible等。</p>
+<p>如果我们想通过如下方式初始化，我们就需要用到StringLiteralConvertible</p>
+<p>let peter : Person = “Peter”<br>代码如下：</p>
+<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
+<p>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
+<p>let peter : Person = “Peter”<br>是不是很cool？</p>
+<p>需要注意的是，Swfit很好的控制了构造器的作用域（默认情况下，convenience initializer是子类不可见的），但是protocol中的方法是子类可见的。所以protocol中的构造器方法都必须声明为required。<br>如果实现protocol的是一个final类，那么则没必要再是required，因为它不会有子类。<br>等一下，如果Person是第三方库中的类呢？<br>你可能会说没问题啊，我们可以通过extension实现StringLiteralConvertible</p>
+<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
+<p>}</p>
+<p>extension Person: StringLiteralConvertible{<br>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
+<p>let peter : Person = “Peter”<br>真是这样吗？Sorry!!!</p>
+<p>首先，required initializer必须在类中声明。所以上面的required关键字要不得<br>其次，protocol中的构造器方法必须声明为required，除非Person是final的。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/08/03/M_5Swift编程思想的转换/" itemprop="url">
+                  Swfit编程思想的转换
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-03T15:03:04+08:00" content="2016-08-03">
+              2016-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>原来的代码+原来的思想+Swift. 哪里出错了呢?<br>最理想的情况当然就是从一个100%的Swift项目开始.如果你能做到,很好.但是多数情况下,我们有着已存在的代码,却很想开始使用Swift语言,那我们应该从哪里开始呢?</p>
+<p>为什么?<br>回过来说一下:你为什么想用Swift写程序呢?原因有很多:Swift语言是编程语言的新星;有着更棒的语法;Swift是苹果向我们推荐的iOS开发语言.<br>在将来,Swift的关注度会继续增加,并且Swift将成为开发OSX和iOS程序最适合,最受支持,最简便的编程语言.</p>
+<p>SwiftAwesomeness</p>
+<p>正如上图,这就是未来Swfit的趋势,那你又能做什么来从Swift方式开始呢?</p>
+<p>Swift方式<br>有许多方面需要考虑,但我们先讨论下两大内容: 安全性和值语义.</p>
+<p>安全性<br>Nil是Objective-C中很棒的存在:你可以发消息给nil,系统运行时会不会Crash,继续保持响应.</p>
+<p>然而Swift中的nil是很不一样的,通常其类型机制会阻止你试图使用nil调用方法或者访问一个内容为nil的属性.虽然你可以避开这个类型机制,但这样做就如同在C语言中使用指向null的指针一样糟糕:你将容易在运行时掉入陷阱,使你的应用Crash.</p>
+<p>在Swift中,所有都是类型安全的.一个String类型的字符串就是字符串,且不会为nil.理解上类似于C++的引用而不是C中的指针,因为它们永远不会为nil.</p>
+<p>可选变量<br>在可选变量中,nil是可以使用的.一个可选类型的字符串变量可以是一个字符串,也可以为nil.你每次都要检查是什么.不然你可以强制解包这个可选变量,或者改变它成一个隐式解包的可选变量,这意味着成为一个可选类型但表现跟一个真正的值一样,一旦它是nil,这个app就会Crash</p>
+<p>unwarp<br>Cocoa里充满了可选类型的变量,这代表着每次你所持有的数据,都不得不检查内部真正的内容</p>
+<p>这在想法上是一个巨大的提升,你要明白不应该有机会向nil发送消息.在一个强类型语言机制里,要么它是nil,要么就是某个值.如果它在程序运行时未知的,就需要检查,不要试着强制解包它</p>
+<p>将可选变量想做一个箱子:箱子里可以什么都没有(为nill),也可以有个值.但你在解包或者拆箱这个可选变量之前总是需要检查它,就像你会问在这个可选变量内部到底是什么?</p>
+<p>box<br>在Swift已经有大量的其他例子显示了Swift语言的安全性:初始化方法,更少未定义的行为,内存安全.Nil安全是Swift语言面世以来相当常见的对语言安全性的体现.</p>
+<p>值类型<br>值类型在Swift随处可见.显而易见,Obejctvie-C有着像NSInteger的基本数据类型,和像CGRect结构体.但是许多像NSString,NSArray等等都是类,为引用类型.</p>
+<p>在Swfit中,一个完全不同的地方就在于它的标准库都有超过80个结构体,只有4个类,可以通过浏览头文件看到.</p>
+<p>字符串,数字,集合这些类型在Swift都是值类型.这就意味着如果你有一个可变的Swfit字符串,把它传入一个函数,你将得到的是字符串的拷贝.再次说明下,这可不是一件糟糕的事:我们在一直使用Objective-C中,有copy和mutableCopy.这对于多数普遍类型的新默认行为是一个巨大的提升.</p>
+<p>桥接<br>Swift被设计出来当然要能与Objective-C很好协同工作,由于Cocoa是为Objective-C建立的,所以这是很有必要的.所有这些Cocoa APIs 几乎都能被Swfit调用,这意味着你自定义的Objective-C类也能很好桥接到Swift类</p>
+<p>这里就有问题出现了:以Swift开始,添加Objective-C,如何正像期望一样调用从Objective-C桥接到Swfit方法</p>
+<p>Swift 到 Objective-C<br>Swiftz中有许多特性比如原生的结构体,加强的枚举等等,不能完全地桥接到Objective-C,这就意味着你使用Swift最新特性来写最新和最好的Swift框架,许多框架你就不能在Objective-C上使用.</p>
+<p>即使你限制自己只用Swift一些能兼容的特性写程序,你也不能让Swift的类继承自Objective-C的类.你可以借鉴table views或collection views的模式,使用代理和布局对象来解决这个问题,但你要始终记得如果你Swfit的API需要继承,默认在Objective-C不可见的.</p>
+<p>如果你用@objc<br>标记了你的类和协议,那么他们在Obejctive-C在就是可用的.dynamic<br>修饰符也显示使用了@objc<br>使得在Objective-C语言上可用,但它也使得你所限定的属性或者方法使用了Objective-C动态分发.</p>
+<p>Swift 到 Objective-C</p>
+<p>如果你想要使用swizzle或者其他动态特性,你将需要使用dynamic<br>标识符,仅仅@objc<br>不能保证它是使用objc_msgSend()<br>方法使得可能方法仍是编译过的或者内联的.<br>再一次强调:只有具有兼容性的特性才能工作.如果你在Swfit枚举对象中实现一个方法,它不会桥接过去,如果你的枚举存储不是int而是其他类型,它也不会桥接过去.</p>
+<p>Objective-C 到 Swift: Nullability<br>Objective-C转向Swift有许多好的方面来优化.你给在Objective-C中属性,参数,和返回值的类型添加标注.<br>_Null_unspecified(default)</p>
+<p>桥接为一个在Swift显示解包的可选值<br>_Nonnull</p>
+<p>变量值不会为nil;桥接为一个常规的引用<br>_Nullable</p>
+<p>变量值可以为nil;桥接为一个可选变量<br>如果你标注了你Obejctive-C代码, 在Swift中将会有很好的类型转变.即使你没有接触过Swfit,当你写Objective-C时这些标注会在你代码完成后出现.并且如果你声明一个方法参数为_Nonnull<br>而你传入了nil,你就会得到一个编译警告.<br>这是很好的练习来开始添加这些标注.在你使用已存在的API时会有所有帮助,让你更容易地开始使用Swfit.</p>
+<p>Objective-C 到 Swift: Lightweight Generics<br>轻量泛型是Swfit2新出来的特性.那些NSArray,NSDictionary,NSSet能存储任何原来的NSObject对象的集合类型需要大量的转换.在Objective-C中不会出现这样的问题,但记得在Swfit的所有都安全相关,正确的转换需要大量的类型检查.你应该先检测类型,而不是强制转换.<br>现在有了泛型,这意味着你写的Objective-C代码会是这样的:<br>NSArray<nsstring *=""> * _Nonnull<br>这是一个将存储NSString对象的NSArray.有着Nullability标注,你会明白这数组本身不能为nil;你将总能得到一个数组.如果你之前写过Java或C++你应该会熟悉这样的泛型写法.</nsstring></p>
+<p>而这个桥接到Swfit后会是这个样子的:[String]<br>一个简洁的Swfit的存储String的数组.</p>
+<p>小小的提醒: 轻量泛型只对基础集合的array, dictionary, sets 起作用</p>
+<p>需要跨的坑<br>我简易完全用Swfit开始新项目,如果你需要第三方库,这不会影响你用Swfit还是Obejctive-C,你都能调用.如果你已经有了存在的项目代码,想开始引入Swfit代码,尝试Obejctive-C向Swfit方法的保证桥接.例如已经实例化的视图控制器,视图在Swfit工作正常;它们都起源于NSObject,所以需要的话你能访问它们通过Objective-C.</p>
+<p>Bridge</p>
+<p>还有其他方面:Swfit泛型,枚举的存储不仅仅是整型,内嵌类型,结构体等等,这些需要等到你完全入门100%Swift,不要灰心,那天会比你所想的提前到来.</p>
+<p>在那之前,继续友好地使用Obejctive-C,做好使用Swfit的准备.下面资源可以帮助你完成这一转变.</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/08/01/H_1Htmlhtml、css、js文件加载顺序及执行情况/" itemprop="url">
                   html、css、js文件加载顺序及执行情况
                 </a>
@@ -1274,214 +1541,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net16蓝牙/" itemprop="url">
-                  蓝牙
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>● iOS中提供了4个框架用于实现蓝牙连接<br>● GameKit.framework(用法简单)<br>• 只能用于iOS设备之间的连接,多用于游戏(比如五子棋对战),从iOS7开始过期<br>● MultipeerConnectivity.framework<br>• 只能用于iOS设备之间的连接,从iOS7开始引入,主要用于文件共享(仅限于沙盒的文<br>件)<br>● ExternalAccessory.framework<br>• 可用于第三方蓝牙设备交互,但是蓝牙设备必须经过苹果MFi认证(国内较少)<br>● CoreBluetooth.framework(时下热门)<br>• 可用于第三方蓝牙设备交互,必须要支持蓝牙4.0<br>● 硬件至少是4s,系统至少是iOS6<br>● 蓝牙4.0以低功耗著称,一般也叫BLE(Bluetooth Low Energy) • 目前应用比较多的案例:运动手坏、嵌入式设备、智能家居<br> GameKit的蓝牙开发步骤<br>● 显示可以连接的蓝牙设备列表<br>GKPeerPickerController *ppc = [[GKPeerPickerController alloc] init]; ppc.delegate = self;<br>[ppc show];<br>● 在代理方法中监控蓝牙的连接</p>
-<ul>
-<li>(void)peerPickerController:(GKPeerPickerController <em>)picker<br>didConnectPeer:(NSString </em>)peerID toSession:(GKSession *)session { NSLog(@”连接到设备:%@”, peerID);<br>// 关闭蓝牙设备显示界面<br>[picker dismiss];<br>// 设置接收到蓝牙数据后的监听器<br>[session setDataReceiveHandler:self withContext:nil]; // 保存session<br>self.session = session;<br>}<br>GameKit的蓝牙开发步骤<br>● 处理接收到的蓝牙数据</li>
-<li>(void) receiveData:(NSData <em>)data fromPeer:(NSString </em>)peer<br>inSession: (GKSession <em>)session context:(void </em>)context {<br>}<br>● 利用GKSession给其他设备发送数据 ● 给指定的连接设备发送数据</li>
-<li>(BOOL)sendData:(NSData <em>) data toPeers:(NSArray </em>)peers<br>withDataMode:(GKSendDataMode)mode error:(NSError **)error;<br>● 给所有连接的设备发送数据</li>
-<li>(BOOL)sendDataToAllPeers:(NSData <em>) data withDataMode:<br>(GKSendDataMode)mode error:(NSError *</em>)error;<br>GameKit的蓝牙开发注意<br>● 只能用于iOS设备之间的连接<br>● 只能用于同一个应用程序之间的连接 ● 最好别利用蓝牙发送比较大的数据<br>Core Bluetooth<br>● Core Bluetooth测试比较麻烦,正常情况下,得至少有2台真实的蓝牙4.0设备<br>● 如何让iOS模拟器也能测试蓝牙4.0程序?<br>● 买一个CSR蓝牙4.0 USB适配器,插在Mac上<br>● 在终端输入sudo nvram bluetoothHostControllerSwitchBehavior=”never”<br>● 重启Mac<br>● 用Xcode 4.6调试代码,将程序跑在iOS 6.1的模拟器上 (苹果把iOS 7.0模拟器对BLE的支持移除掉了)<br>● Core Bluetooth的使用场景<br>● 运动手环、智能家居、嵌入式设备等等(金融刷卡器、心电测量器)<br>Core Bluetooth的核心结构图<br>Core Bluetooth的基本常识<br>● 每个蓝牙4.0设备都是通过服务(Service)和特征(Characteristic)来展示自 己的<br>● 一个设备必然包含一个或多个服务,每个服务下面又包含若干个特征 ● 特征是与外界交互的最小单位<br>• 比如说,一台蓝牙4.0设备,用特征A来描述自己的出厂信息,用特征B来收发 数据<br>● 服务和特征都是用UUID来唯一标识的,通过UUID就能区别不同的服务和特征 ● 设备里面各个服务(service)和特征(characteristic)的功能,均由蓝牙设备硬件厂<br>商提供,比如哪些是用来交互(读写),哪些可获取模块信息(只读)等<br>Core Bluetooth的开发步骤<br>● 建立中心设备<br>● 扫描外设(Discover Peripheral)<br>● 连接外设(Connect Peripheral)<br>● 扫描外设中的服务和特征(Discover Services And Characteristics)<br>● 利用特征与外设做数据交互(Explore And Interact)<br>● 断开连接(Disconnect)<br>蓝牙的现状<br>● 绝大多数智能手机支持蓝牙 4.0(BLE)<br>● 蓝牙芯片发展迅速,在性能和效率方面都有很大提高,且不断变得更小更便宜<br>● iBeacon + 蓝牙,前景一片光明<br>● 应用之一:室内导航<br>● Estimote公司为iBeacon提供基站<br>● 3个iBeacon基站的预购价格为99美元(约合人民币610元)<br>● Estimote公司推出的iBeacon基站的最远传输距离为50m,但是他们推荐在10m 范围内的使用效果最好<br>● 一块纽扣电池就能为一个iBeacon基站提供长达 2 年的使用寿命,而且是在设 备不断对外发射信号的情况下</li>
-</ul>
-<p>GameKit框架简介<br>● 使用GameKit框架,可以在游戏中增加对等连接,又称对端连接或点 对点连接,Peer To Peer。<br>● 使用GameKit框架中的对等网络连接API,可以在游戏玩家之间建立一 个对等网络,并在游戏/应用实例之间交换数据。<br>● GameKit框架可以使用蓝牙在玩家之间创建网络,玩家甚至不需要连 接到互联网,就可以彼此对战。<br>通过蓝牙实现对等网络连接<br>为玩家双方呈现一个GKPeerPickerController,提供了一个标准的 用户界面连接两台设备<br>ViewControoler遵循GKPeerPickerControllerDelegate协议,处理来 自GKPeerPickerController(对端选择器)的信息<br>建立连接后,使用GKSession类可以向对端设备发送数据<br>在receiveData:fromPeer:inSession:context代理方法中编写代码来处 理接收到的数据<br>蓝牙对等网络演练——发送照片(1)<br>● 演练目标:通过蓝牙彼此发送照片 ● 演练步骤:<br>● 1. 基于照片选择项目进行扩展,仅从照片库选择照片<br>● ●</p>
-<ol>
-<li>添加GameKit框架 3. 创建对等连接<br>● 3.1 实例化对端选择器<br>● 3.2 设置代理,并遵循协议<br>● 3.3 显示对端选择器</li>
-<li>连接建立代理方法 peerPickerController:didConnectPeer:toSession:<br>4.1记录对端连接会话 4.2 设置数据接收处理 4.3 关闭对端选择器<br>●<br>● ● ●<br>蓝牙对等网络演练——发送照片(2)<br>● 发送数据方法<br>[_peerSession sendDataToAllPeers:data<br>withDataMode:GKSendDataReliable error:&amp;error]; ● 接收数据方法</li>
-</ol>
-<ul>
-<li>(void)receiveData:(NSData <em>)data fromPeer:<br>(NSString </em>)peer inSession: (GKSession <em>)session<br>context:(void </em>)context;<br>蓝牙对等网络——发送自定义对象<br>● 如果要通过网络发送自定义对象,需要使用NSKeyedArchiver方法归档 自定义对象,然后再发送归档后的NSData<br>● 自定义对象需要遵从NSCoding协议,并实现相应的归档和恢复方法 ● 接收端接收到数据之后,使用NSKeyedUnarchiver方法恢复数据</li>
-</ul>
-<p>人生就像卫生纸,没事的时候,尽量少扯; 时间就像卫生纸,看着挺多,用着用着就 没了…</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net15加速计/" itemprop="url">
-                  加速计
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>● 加速计的作用<br>● 用于检测设备的运动(比如摇晃)<br>● 加速计的经典应用场景 ● 摇一摇<br>● 计步器<br>加速计的原理<br>● 检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用,哪个方向运动了) ● 根据加速度数值,就可以判断出在各个方向上的作用力度<br>加速计程序的开发<br>● 加速计程序的开发<br>● 在iOS4以前:使用UIAccelerometer,用法非常简单(到了iOS5就已经过<br>期)<br>● 从iOS4开始:CoreMotion.framework<br>● 虽然UIAccelerometer已经过期,但由于其用法极其简单,很多程序里面都 还有残留<br>UIAccelerometer的使用步骤<br>● 获得单例对象<br>UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];<br>● 设置代理 accelerometer.delegate = self;<br>● 设置采样间隔<br>accelerometer.updateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 实现代理方法</p>
-<ul>
-<li>(void)accelerometer:(UIAccelerometer <em>)accelerometer didAccelerate:<br>(UIAcceleration </em>)acceleration<br>// acceleration中的x、y、z三个属性分别代表每个轴上的加速度<br>Core Motion<br>● 在iOS4之前,加速度计由UIAccelerometer类来负责采集数据<br>● 随着iPhone4的推出<br>● 加速度计全面升级,并引入了陀螺仪<br>● 与Motion(运动)相关的编程成为重头戏<br>● 苹果特地在iOS4中增加了专门处理Motion的框架-CoreMotion.framework<br>● Core Motion不仅能够提供实时的加速度值和旋转速度值,更重要的是,苹果 在其中集成了很多牛逼的算法<br>Core Motion获取数据的两种方式<br>● push<br>● 实时采集所有数据(采集频率高)<br>● pull<br>● 在有需要的时候,再主动去采集数据<br>Core Motion的使用步骤(push)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) {<br>// 加速计可用 }<br>● 设置采样间隔<br>mgr.accelerometerUpdateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 开始采样(采样到数据就会调用handler,handler会在queue中执行)</li>
-<li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue <em>)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager </em>mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
-<li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 检测到摇动 </em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /** 摇动取消(被中断) </em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 摇动结束 </em>/<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a href="https://github.com/Shmoopi/iOS-System-Services" target="_blank" rel="external">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a href="https://github.com/erica/uidevice-extension" target="_blank" rel="external">https://github.com/erica/uidevice-extension</a></li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1527,7 +1586,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">172</span>
+              <span class="site-state-item-count">174</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

@@ -228,6 +228,214 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/31/D_Net16蓝牙/" itemprop="url">
+                  蓝牙
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>● iOS中提供了4个框架用于实现蓝牙连接<br>● GameKit.framework(用法简单)<br>• 只能用于iOS设备之间的连接,多用于游戏(比如五子棋对战),从iOS7开始过期<br>● MultipeerConnectivity.framework<br>• 只能用于iOS设备之间的连接,从iOS7开始引入,主要用于文件共享(仅限于沙盒的文<br>件)<br>● ExternalAccessory.framework<br>• 可用于第三方蓝牙设备交互,但是蓝牙设备必须经过苹果MFi认证(国内较少)<br>● CoreBluetooth.framework(时下热门)<br>• 可用于第三方蓝牙设备交互,必须要支持蓝牙4.0<br>● 硬件至少是4s,系统至少是iOS6<br>● 蓝牙4.0以低功耗著称,一般也叫BLE(Bluetooth Low Energy) • 目前应用比较多的案例:运动手坏、嵌入式设备、智能家居<br> GameKit的蓝牙开发步骤<br>● 显示可以连接的蓝牙设备列表<br>GKPeerPickerController *ppc = [[GKPeerPickerController alloc] init]; ppc.delegate = self;<br>[ppc show];<br>● 在代理方法中监控蓝牙的连接</p>
+<ul>
+<li>(void)peerPickerController:(GKPeerPickerController <em>)picker<br>didConnectPeer:(NSString </em>)peerID toSession:(GKSession *)session { NSLog(@”连接到设备:%@”, peerID);<br>// 关闭蓝牙设备显示界面<br>[picker dismiss];<br>// 设置接收到蓝牙数据后的监听器<br>[session setDataReceiveHandler:self withContext:nil]; // 保存session<br>self.session = session;<br>}<br>GameKit的蓝牙开发步骤<br>● 处理接收到的蓝牙数据</li>
+<li>(void) receiveData:(NSData <em>)data fromPeer:(NSString </em>)peer<br>inSession: (GKSession <em>)session context:(void </em>)context {<br>}<br>● 利用GKSession给其他设备发送数据 ● 给指定的连接设备发送数据</li>
+<li>(BOOL)sendData:(NSData <em>) data toPeers:(NSArray </em>)peers<br>withDataMode:(GKSendDataMode)mode error:(NSError **)error;<br>● 给所有连接的设备发送数据</li>
+<li>(BOOL)sendDataToAllPeers:(NSData <em>) data withDataMode:<br>(GKSendDataMode)mode error:(NSError *</em>)error;<br>GameKit的蓝牙开发注意<br>● 只能用于iOS设备之间的连接<br>● 只能用于同一个应用程序之间的连接 ● 最好别利用蓝牙发送比较大的数据<br>Core Bluetooth<br>● Core Bluetooth测试比较麻烦,正常情况下,得至少有2台真实的蓝牙4.0设备<br>● 如何让iOS模拟器也能测试蓝牙4.0程序?<br>● 买一个CSR蓝牙4.0 USB适配器,插在Mac上<br>● 在终端输入sudo nvram bluetoothHostControllerSwitchBehavior=”never”<br>● 重启Mac<br>● 用Xcode 4.6调试代码,将程序跑在iOS 6.1的模拟器上 (苹果把iOS 7.0模拟器对BLE的支持移除掉了)<br>● Core Bluetooth的使用场景<br>● 运动手环、智能家居、嵌入式设备等等(金融刷卡器、心电测量器)<br>Core Bluetooth的核心结构图<br>Core Bluetooth的基本常识<br>● 每个蓝牙4.0设备都是通过服务(Service)和特征(Characteristic)来展示自 己的<br>● 一个设备必然包含一个或多个服务,每个服务下面又包含若干个特征 ● 特征是与外界交互的最小单位<br>• 比如说,一台蓝牙4.0设备,用特征A来描述自己的出厂信息,用特征B来收发 数据<br>● 服务和特征都是用UUID来唯一标识的,通过UUID就能区别不同的服务和特征 ● 设备里面各个服务(service)和特征(characteristic)的功能,均由蓝牙设备硬件厂<br>商提供,比如哪些是用来交互(读写),哪些可获取模块信息(只读)等<br>Core Bluetooth的开发步骤<br>● 建立中心设备<br>● 扫描外设(Discover Peripheral)<br>● 连接外设(Connect Peripheral)<br>● 扫描外设中的服务和特征(Discover Services And Characteristics)<br>● 利用特征与外设做数据交互(Explore And Interact)<br>● 断开连接(Disconnect)<br>蓝牙的现状<br>● 绝大多数智能手机支持蓝牙 4.0(BLE)<br>● 蓝牙芯片发展迅速,在性能和效率方面都有很大提高,且不断变得更小更便宜<br>● iBeacon + 蓝牙,前景一片光明<br>● 应用之一:室内导航<br>● Estimote公司为iBeacon提供基站<br>● 3个iBeacon基站的预购价格为99美元(约合人民币610元)<br>● Estimote公司推出的iBeacon基站的最远传输距离为50m,但是他们推荐在10m 范围内的使用效果最好<br>● 一块纽扣电池就能为一个iBeacon基站提供长达 2 年的使用寿命,而且是在设 备不断对外发射信号的情况下</li>
+</ul>
+<p>GameKit框架简介<br>● 使用GameKit框架,可以在游戏中增加对等连接,又称对端连接或点 对点连接,Peer To Peer。<br>● 使用GameKit框架中的对等网络连接API,可以在游戏玩家之间建立一 个对等网络,并在游戏/应用实例之间交换数据。<br>● GameKit框架可以使用蓝牙在玩家之间创建网络,玩家甚至不需要连 接到互联网,就可以彼此对战。<br>通过蓝牙实现对等网络连接<br>为玩家双方呈现一个GKPeerPickerController,提供了一个标准的 用户界面连接两台设备<br>ViewControoler遵循GKPeerPickerControllerDelegate协议,处理来 自GKPeerPickerController(对端选择器)的信息<br>建立连接后,使用GKSession类可以向对端设备发送数据<br>在receiveData:fromPeer:inSession:context代理方法中编写代码来处 理接收到的数据<br>蓝牙对等网络演练——发送照片(1)<br>● 演练目标:通过蓝牙彼此发送照片 ● 演练步骤:<br>● 1. 基于照片选择项目进行扩展,仅从照片库选择照片<br>● ●</p>
+<ol>
+<li>添加GameKit框架 3. 创建对等连接<br>● 3.1 实例化对端选择器<br>● 3.2 设置代理,并遵循协议<br>● 3.3 显示对端选择器</li>
+<li>连接建立代理方法 peerPickerController:didConnectPeer:toSession:<br>4.1记录对端连接会话 4.2 设置数据接收处理 4.3 关闭对端选择器<br>●<br>● ● ●<br>蓝牙对等网络演练——发送照片(2)<br>● 发送数据方法<br>[_peerSession sendDataToAllPeers:data<br>withDataMode:GKSendDataReliable error:&amp;error]; ● 接收数据方法</li>
+</ol>
+<ul>
+<li>(void)receiveData:(NSData <em>)data fromPeer:<br>(NSString </em>)peer inSession: (GKSession <em>)session<br>context:(void </em>)context;<br>蓝牙对等网络——发送自定义对象<br>● 如果要通过网络发送自定义对象,需要使用NSKeyedArchiver方法归档 自定义对象,然后再发送归档后的NSData<br>● 自定义对象需要遵从NSCoding协议,并实现相应的归档和恢复方法 ● 接收端接收到数据之后,使用NSKeyedUnarchiver方法恢复数据</li>
+</ul>
+<p>人生就像卫生纸,没事的时候,尽量少扯; 时间就像卫生纸,看着挺多,用着用着就 没了…</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net15加速计/" itemprop="url">
+                  加速计
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>● 加速计的作用<br>● 用于检测设备的运动(比如摇晃)<br>● 加速计的经典应用场景 ● 摇一摇<br>● 计步器<br>加速计的原理<br>● 检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用,哪个方向运动了) ● 根据加速度数值,就可以判断出在各个方向上的作用力度<br>加速计程序的开发<br>● 加速计程序的开发<br>● 在iOS4以前:使用UIAccelerometer,用法非常简单(到了iOS5就已经过<br>期)<br>● 从iOS4开始:CoreMotion.framework<br>● 虽然UIAccelerometer已经过期,但由于其用法极其简单,很多程序里面都 还有残留<br>UIAccelerometer的使用步骤<br>● 获得单例对象<br>UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];<br>● 设置代理 accelerometer.delegate = self;<br>● 设置采样间隔<br>accelerometer.updateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 实现代理方法</p>
+<ul>
+<li>(void)accelerometer:(UIAccelerometer <em>)accelerometer didAccelerate:<br>(UIAcceleration </em>)acceleration<br>// acceleration中的x、y、z三个属性分别代表每个轴上的加速度<br>Core Motion<br>● 在iOS4之前,加速度计由UIAccelerometer类来负责采集数据<br>● 随着iPhone4的推出<br>● 加速度计全面升级,并引入了陀螺仪<br>● 与Motion(运动)相关的编程成为重头戏<br>● 苹果特地在iOS4中增加了专门处理Motion的框架-CoreMotion.framework<br>● Core Motion不仅能够提供实时的加速度值和旋转速度值,更重要的是,苹果 在其中集成了很多牛逼的算法<br>Core Motion获取数据的两种方式<br>● push<br>● 实时采集所有数据(采集频率高)<br>● pull<br>● 在有需要的时候,再主动去采集数据<br>Core Motion的使用步骤(push)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) {<br>// 加速计可用 }<br>● 设置采样间隔<br>mgr.accelerometerUpdateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 开始采样(采样到数据就会调用handler,handler会在queue中执行)</li>
+<li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue <em>)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager </em>mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
+<li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 检测到摇动 </em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /** 摇动取消(被中断) </em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /** 摇动结束 </em>/<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a href="https://github.com/Shmoopi/iOS-System-Services" target="_blank" rel="external">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a href="https://github.com/erica/uidevice-extension" target="_blank" rel="external">https://github.com/erica/uidevice-extension</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/31/D_Net14传感器/" itemprop="url">
                   传感器
                 </a>
@@ -1171,242 +1379,6 @@ NSLog(@&quot;sub num=%d&quot;,_num);
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net6CoreLocation/" itemprop="url">
-                  CoreLocation
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<p>CLLocationManager 定位管理者<br>CLLocation 代表位置(经度/纬度/高度/速度/路线等)<br>CLHeading  代表移动方向<br>CLRegion   代表一个区域</p>
-<blockquote>
-<p>CLCircularRegion  圆形区域<br>CLBeaconRegion 蓝牙信号区域</p>
-</blockquote>
-<p>返回定位服务是否可用<br>[CLLocationManager locationServicesEnabled];<br>返回延迟定位更新是否可用<br>[CLLocationManager deferredLocationUpdatesAvailable];<br>返回重大位置改变监听是否可用<br>[CLLocationManager significantLocationChangeMonitoringAvailable];<br>返回是否支持磁力计算方向<br>[CLLocationManager headingAvailable];<br>返回蓝牙信号范围服务是否可用<br>[CLLocationManager isRangingAvailable];</p>
-<hr>
-<p>设置是否可以暂停定位来节省电池电量, YES不需要定位数据时自动暂停定位<br>// mgr.pausesLocationUpdatesAutomatically</p>
-<hr>
-<p>每隔多少米定位一次, 只有水平方向超过该值时才会重新定位<br>// mgr.distanceFilter = 100;</p>
-<hr>
-<p>定位精确度<br>// mgr.desiredAccuracy;<br>kCLDistanceFilterNone;<br>kCLLocationAccuracyBestForNavigation 导航级最佳精准<br>kCLLocationAccuracyBest; 最佳精准<br>kCLLocationAccuracyNearestTenMeters; 10米误差<br>kCLLocationAccuracyHundredMeters; 百米胡茬<br>kCLLocationAccuracyKilometer;  千米误差<br>kCLLocationAccuracyThreeKilometers; 3千米误差</p>
-<hr>
-<p>定位数据的用途<br>// mgr.activityType;<br>CLActivityTypeOther 作为普通用途<br>CLActivityTypeAutomotiveNavigation  作为车辆导航<br>CLActivityTypeFitness  作为不行<br>CLActivityTypeOtherNavigation 作为其它导航</p>
-<hr>
-<p>// CLLocation<br>location.coordinate; 坐标, 包含经纬度<br>location.altitude; 设备海拔高度 单位是米<br>location.course; 设置前进方向 0表示北 90东 180南 270西<br>location.horizontalAccuracy; 水平精准度<br>location.verticalAccuracy; 垂直精准度<br>location.timestamp; 定位信息返回的时间<br>location.speed; 设备移动速度 单位是米/秒, 适用于行车速度而不太适用于不行<br>/<em><br>可以设置模拟器模拟速度<br>bicycle ride 骑车移动<br>run 跑动<br>freeway drive 高速公路驾车
-</em>/</p>
-<hr>
-<p>// CLAuthorizationStatus<br>用户从未选择过权限<br>kCLAuthorizationStatusNotDetermined<br>无法使用定位服务，该状态用户无法改变<br>kCLAuthorizationStatusRestricted<br>用户拒绝该应用使用定位服务，或是定位服务总开关处于关闭状态<br>kCLAuthorizationStatusDenied<br>已经授权（废弃）<br>kCLAuthorizationStatusAuthorized<br>用户允许该程序无论何时都可以使用地理信息<br>kCLAuthorizationStatusAuthorizedAlways<br>用户同意程序在可见时使用地理位置<br>kCLAuthorizationStatusAuthorizedWhenInUse</p>
-<hr>
-<p>// 计算两个位置之间的距离, 单位是米<br>[newLocation distanceFromLocation:self.prevLocation];</p>
-<hr>
-<p>获取方向信息不会提示用户(不需要授权), 因为不会泄露隐私<br>// [self.mgr startUpdatingHeading];</p>
-<p>magneticHeading 设备与磁北的相对角度<br>trueHeading 设置与真北的相对角度, 必须和定位一起使用, iOS需要设置的位置来计算真北<br>真北始终指向地理北极点<br>磁北对应随着时间变化的地球磁场北极<br>@interface ViewController ()<cllocationmanagerdelegate><br>{<br>//创建对象<br>CLLocationManager *_manager;<br>}</cllocationmanagerdelegate></p>
-<p>//获取当前经度<br>_manager =[[CLLocationManager alloc]init];<br>//设置代理<br>_manager.delegate=self;</p>
-<p>开始定位<br>[self startLocation];</p>
-<p>#pragma mark - 开始定位<br>-(void)startLocation<br>{<br>//判断定位服务是否可用<br>if (![CLLocationManager locationServicesEnabled]) {<br>NSLog(@”定位服务不可用”);</p>
-<p>}</p>
-<p>//设置精确度<br>_manager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;<br>//距离变化敏感程度<br>_manager.distanceFilter=1000;<br>//开始定位<br>[_manager startUpdatingLocation];<br>}</p>
-<p>#pragma mark - 协议提供的代理方法，当位置更新的时候执行<br>-(void)locationManager:(CLLocationManager <em>)manager didUpdateLocations:(NSArray </em>)locations<br>{<br>//地址：经纬度</p>
-<p>//获取地址对象(包含经纬度)<br>CLLocation *location=manager.location;<br>//获取当前经纬度<br>CLLocationCoordinate2D coordinate=location.coordinate;<br>//输出经纬度<br>NSLog(@”long=%f lan=%f”,coordinate.longitude,coordinate.latitude);</p>
-<p>}  </p>
-<p>方向服务<br>//    [self testHeading];</p>
-<p>#pragma mark - 方向服务<br>-(void)testHeading<br>{<br>if (![CLLocationManager headingAvailable]) {<br>NSLog(@”方向服务不可用”);<br>return;<br>}<br>[_manager startUpdatingHeading];<br>}</p>
-<p>#pragma mark - 代理方法，当方向更新的时候开始执行<br>-(void)locationManager:(CLLocationManager <em>)manager didUpdateHeading:(CLHeading </em>)newHeading<br>{</p>
-<p>NSLog(@”磁极方向= %f”,newHeading.magneticHeading);<br>NSLog(@”地理方向 = %f”,newHeading.trueHeading);<br>}</p>
-<p>地址编码和地址反编码<br>[self testGeoCoder];</p>
-<p>#pragma mark - 地址编码和地址反编码<br>-(void)testGeoCoder<br>{<br>//知道地址，获取经纬度===地址编码<br>CLGeocoder <em>geocoCoder=[[CLGeocoder alloc]init];<br>[geocoCoder geocodeAddressString:@”兴美生活广场” completionHandler:^(NSArray </em>placemarks, NSError <em>error) {<br>//返回placemarks<br>for (CLPlacemark </em>mark in placemarks)<br>{<br>NSLog(@”mark=%@”,mark );<br>}<br>}];<br>//地址反编码，知道经纬度，获取地址，<br>CLLocation *location=[[CLLocation alloc]initWithLatitude:40.03708400 longitude:116.37059500];</p>
-<p>CLGeocoder <em>reverseGeocoCoder=[[CLGeocoder alloc]init];<br>[reverseGeocoCoder reverseGeocodeLocation:location completionHandler:^(NSArray </em>placemarks, NSError <em>error) {<br>for (CLPlacemark </em>mark in placemarks)<br>{<br>NSLog(@”地址反编码=%@”,mark );</p>
-<p>}<br>}];</p>
-<p>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net2NSOperation/" itemprop="url">
-                  NSOperation
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>NSOperation、NSOperationQueue</p>
-</blockquote>
-<p>//对于NSThread的封装，提供了更为方便的使用接口<br>//支持block</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation <em>operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation </em>bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation <em>bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue </em>queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
-<p>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1452,7 +1424,7 @@ NSLog(@&quot;sub num=%d&quot;,_num);
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">172</span>
+              <span class="site-state-item-count">174</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

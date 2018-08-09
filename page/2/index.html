@@ -412,6 +412,469 @@ block需要将使用的数据从栈内存拷贝到堆内存中，对象的话就
             
               
                 
+                <a class="post-title-link" href="/2018/08/03/M_Swift95OC发消息步骤/" itemprop="url">
+                  OC发消息
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-03T09:59:36+08:00" content="2018-08-03">
+              2018-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="发消息步骤"><a href="#发消息步骤" class="headerlink" title="发消息步骤"></a>发消息步骤</h2><pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
+有垃圾回收，就不考虑 retain，release这些函数
+2.检测这个target是不是nil对象，
+ObjC的特性允许对一个nil对象发消息而不会崩溃
+3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
+先从缓存中找，完了跳到对应函数执行
+4.如果缓存列表找不到，就找一下方法分发表
+5.如果方法列表找不到，就到超类的方法分发列表找，
+一直找到NSObject
+6.如果还找不到，就开始进行动态方法解析，调用
++(Bool)resolveInstanceMethod(SEL)selector；（实例方法）
++(Bool)resolveClassMethod(SEL)selector；（类方法）
+该方法的参数就是那个位置的选择子（方法），其返回值为bool，
+表示这个类能否新增一个实例方法用于处理该未知的方法
+一般用这个方法可以动态的添加方法
+7.如果还是找不到，那么运行系统就会问，
+能不能把这条消息转发给其他的接受者处理。调用
++(id)forwardingTargetForSelector(SEL)selector；
+当前接收者如果能找到备选对象，那么将其返回，
+如果找不到，返回nil
+8.如果还是找不到，那么会创建一个NSInvocation对象，
+把这个尚未处理的那条消息有关的全部细节都封装其中，
+此对象包含选择子，目标对象及参数，
+并调用下面的方法进行消息转发
+-（void）forwardInvocation：(NSInvocation *)invocation；
+9.如果最后都没有出来的话，那么就抛出异常
+</code></pre><h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>当前对象无论调用任何方法返回的都是当前对象
+无论何时，要调用objc_msgSend函数，必须要将函数强制转
+换成合适的函数指针类型才能调用。
+其实编译器会根据情况在objc_msgSend,
+objc_msgSend_stret, objc_msgSendSuper, 或
+objc_msgSendSuper_stret四个方法中选择一个来调用。
+</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><pre><code>将一条消息发送给一个不能处理的对象会引起崩溃，但是在崩溃
+之前，系统给响应对象一次处理异常的机会。
+当发送一条对象不能处理的消息，产生crash之前，系统会调用
+响应者的forwardIMvocation方法，并传入一个NSInvocation
+对象，NSInvocation中包含原始消息及参数，这个方法之后方法
+未实现的时候才会调用。
+你可以实现forwardInvocation方法，将消息转发给另一个
+对象，forwardInvocation方法是一个动态方法，在响应者无法
+响应方法时，会调用forwardInvocation方法，可以重写这个方
+法，实现消息转发。
+</code></pre><h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>如果self为nil，那么selector也会为空，直接返回，不会出现问题。
+（返回值时对象，是标量，结构体）
+如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0
+地址返回，所以不会出现任何错误
+如果返回值类型是对象，那么返还nil
+如果回值类型是标量，那么是0，
+如果回值类型是结构体为0，
+其他为返回值是未定义的。
+但对于[NSNull null]对象发送消息时，是会crash的，因为
+NSNull类只有一个null方法。
+</code></pre><h3 id="unrecognized-selector-sent-to-instance的错误是怎么回事？"><a href="#unrecognized-selector-sent-to-instance的错误是怎么回事？" class="headerlink" title="unrecognized selector sent to instance的错误是怎么回事？"></a>unrecognized selector sent to instance的错误是怎么回事？</h3><pre><code>这是因为这个对象已经被释放了（引用计数为0了），那么这个时候再去调用方
+法肯定是会Crash的，因为这个时候这个对象就是一个野指针（指向僵尸对象
+（对象的引用计数为0，指针指向的内存已经不可用）的指针）了，安全的做法
+是释放后将对象重新置为nil，使它成为一个空指针，大家可以在关闭ARC后手
+动release对象验证一下。
+</code></pre><h3 id="空指针和野指针的区别"><a href="#空指针和野指针的区别" class="headerlink" title="空指针和野指针的区别"></a>空指针和野指针的区别</h3><pre><code>没有存储任何内存地址的指针就称为空指针(NULL指针)
+空指针就是被赋值为0的指针，在没有被具体初始化之前，其值为0。
+&quot;野指针&quot;不是NULL指针，是指向&quot;垃圾&quot;内存（不可用内存）的指针。
+野指针是非常危险的。
+</code></pre><h2 id="函数调用和OC的消息传递机制区别"><a href="#函数调用和OC的消息传递机制区别" class="headerlink" title="函数调用和OC的消息传递机制区别"></a>函数调用和OC的消息传递机制区别</h2><pre><code>对于C语言，函数的调用在编译器的时候决定调用那个函数。编译完之后直接
+顺序执行。
+OC的函数调用成为消息发送。属于动态调用过程。在编译的时候决不能决定
+真正调用那个函数（实时证明，在编译阶段，oc可以调用任何函数，及时这个
+函数并未实现，只要申明过就不会报错，而c语言在编译阶段或报错）。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/01/M_Swift94Runtime理解/" itemprop="url">
+                  理解Runtime
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-01T09:16:13+08:00" content="2018-08-01">
+              2018-08-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="类结构体模型"><a href="#类结构体模型" class="headerlink" title="类结构体模型"></a>类结构体模型</h2><pre><code>// objc_object对象模型
+struct objc_object {
+    private:
+    isa_t isa;
+    public:
+    Class ISA();
+    Class getIsa();
+    // 省略其余方法
+    ...
+}
+// objc_class类模型
+struct objc_class : objc_object {
+    Class isa  //所属类的指针
+    Class super_class//指向父类的指针                                        
+    const char *name //类名                                     
+    long version // 版本                                 
+    long info //供运行期使用的一些位标识。                             
+    long instance_size //实例大小                                 
+    struct objc_ivar_list *ivars//成员变量数组                      
+    struct objc_method_list **methodLists//方法列表                  
+    struct objc_cache *cache//指向最近使用的方法.用于方法调用的优化                            
+    struct objc_protocol_list *protocols//协议的数组                     
+}
+在objc_class结构体中定义了对象的method list，
+protocal，ivar list等，表示对象的行为。
+</code></pre><h3 id="为什么说类也是对象"><a href="#为什么说类也是对象" class="headerlink" title="为什么说类也是对象"></a>为什么说类也是对象</h3><pre><code>类被定义为objc_class结构体，objc_class结构体继承自
+objc_objct,对象是用 objc_object 结构体表示的，所以类也
+是对象。
+oc中的类和元类也是一样，都是结构体构成的，由于类的结构体定义
+继承自objc_object所以其也是一个对象，并且具有对象的isa特
+征。
+在应用程序中，类对象只会被创建一份。
+</code></pre><h3 id="Meta-Class元类"><a href="#Meta-Class元类" class="headerlink" title="Meta Class元类"></a>Meta Class元类</h3><pre><code>isa指针指向Meta Class，因为Objc的类的本身也是一个
+Object，为了处理这个关系，runtime就创造了Meta Class，
+当给类发送[NSObject alloc]这样消息时，实际上是把这个
+消息发给了Class Object
+因为一个类是一个对象，它是元类(metaclass)的对象。
+元类是关于类对象的描述，
+就像类是普通实例对象的描述一样。实际上，元类的方法列表正
+是#类方法#：该类对象响应的选择器。
+</code></pre><h3 id="什么是isa指针"><a href="#什么是isa指针" class="headerlink" title="什么是isa指针"></a>什么是isa指针</h3><pre><code>每个对象都有一个标识对象类的isa实例变量。
+运行时使用此指针来确定对象需要时的实际类。
+1、 id类型是一个objc_object结构体的指针。
+2、objc_object结构体包含一个Class 类型的变量isa。
+3、 Class是objc_class结构体的指针。
+</code></pre><h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><pre><code>objc_msgSend第一个参数类型为id，大家对它都不陌生，
+它是一个指向类实例的指针：
+typedef struct objc_object *id;
+那objc_object又是啥呢：
+struct objc_object { Class isa; };
+objc_object结构体包含一个isa指针，根据isa指针就可以
+顺藤摸瓜找到对象所属的类。
+</code></pre><h3 id="为什么id类型可以指向OC中任意对象"><a href="#为什么id类型可以指向OC中任意对象" class="headerlink" title="为什么id类型可以指向OC中任意对象"></a>为什么id类型可以指向OC中任意对象</h3><pre><code>isa指针不总是指向实例对象所属的类，不能依靠它来确定
+类型，而是应该用class方法来确定实例对象的类。
+因为KVO的实现机理就是将被观察对象的isa指针指向一个中间类
+</code></pre><h3 id="为什么不能用isa判断一个类的继承关系"><a href="#为什么不能用isa判断一个类的继承关系" class="headerlink" title="为什么不能用isa判断一个类的继承关系"></a>为什么不能用isa判断一个类的继承关系</h3><pre><code>永远不要用用isa来判断一个类的继承关系，
+而是应该用class方法来判断类的实例。
+可以从isa-swizzling进行分析，也是不合理的
+</code></pre><h2 id="类结构关系"><a href="#类结构关系" class="headerlink" title="类结构关系"></a>类结构关系</h2><pre><code>实例对象在运行时被表示成objc_object类型结构体，结构体内部
+有个isa指针指向objc_class结构体。objc_class内部保存了类
+的变量和方法列表以及其他一些信息，并且还有一个isa指针。这个
+isa指针会指向meteClass(元类)，元类里保存了这个类的类方法
+列表。
+runtime中设计了meta class， 通过meta class来创建类对
+象，所以类对象的isa指向对应的meta class。而meta class也
+是一个对象，所有元类的isa都指向其根元类，根元类的isa指针指
+向自己，通过这种设计，isa的整体结构形成了一个闭环。为了完整
+性，其实元类里也有一个isa指针，这个isa指针，指向的是根元
+类，根元类的isa指针指向自己
+实例对象--(runtime)--&gt;objc_object--(isa)--
+&gt;objc_class--(isa)--&gt;元类--isa--&gt;根元类--isa--&gt;自
+己。
+类和元类都有自己的继承体系，但它们都有共同的根父类
+NSObject，而NSObject的父类指向nil。Root 
+Class（Class）是NSObject类对象，而Root Class（Meta）
+是NSObject的元类对象。对于像NSObject这样的类来说，它其实
+代表的是一个类对象，本质上还是一个普通的实例对象，类对象的、
+self指针应该指向的是这个类对象自身。
+</code></pre><h3 id="继承实现"><a href="#继承实现" class="headerlink" title="继承实现"></a>继承实现</h3><pre><code>当我们调用某个类的方法时，如果这个类的方法列表里没有该方法，
+则会去找这个类的父类的方法列表。这种机制就是通过
+objc_class的第二个变量super_class指针实现的。
+并且这种继承关系会扩展到元类。
+</code></pre><h2 id="内存布局："><a href="#内存布局：" class="headerlink" title="内存布局："></a>内存布局：</h2><pre><code>类的本质时结构体，在结构体中包含一些成员变量，
+如method list，ivar list等，这些都是结构体的一部分，
+method protocol，property的实现这些都可以放到类中，
+所有对象调用同一份即可，但对象的成员变量不可以放在一起，
+因为每个对象的成员变量值都是不同的。
+</code></pre><h3 id="为什么不能添加变量"><a href="#为什么不能添加变量" class="headerlink" title="为什么不能添加变量"></a>为什么不能添加变量</h3><pre><code>创建实例对象时，会根据其对应的Class分配内存，内存构成
+是ivar+isa_t.并且实例变量不只是包含当前class的ivars，
+也会包含其继承链的ivars，ivars的内存布局在编译时就已经
+决定，运行时需要根据ivars内存布局创建对象，所以runtime
+不能动态修改ivars，会破坏已有的内存布局。
+</code></pre><h3 id="不能向编译后得到的类中增加实例变量"><a href="#不能向编译后得到的类中增加实例变量" class="headerlink" title="不能向编译后得到的类中增加实例变量"></a>不能向编译后得到的类中增加实例变量</h3><pre><code>因为编译后的类已经注册在runtime中，类结构体中的
+objc_ivar_list实例变量的链表和instance_size
+实例变量的内存大小已经确定，同时runtime会调用
+class_setIvarLayout或class_WeakIvarLayout
+来处理strong weak引用，所以不能向存在的类中添加实例变量
+运行时创建的类时可以添加实例变量，调用class_addIvar函数
+，但是得在调用objc_allocateClassPari之后，
+objc_registerClassPair之前，原因同上。
+</code></pre><h3 id="系统如何解决新增实例冲突"><a href="#系统如何解决新增实例冲突" class="headerlink" title="系统如何解决新增实例冲突"></a>系统如何解决新增实例冲突</h3><pre><code>类的结构体在编译时都是固定的，如果想修改类的结构需要重新编译
+原来UIViewController的结构体中增加了
+childViewControllers属性，这个时候和子类的内存偏移就
+发生了冲突，只不过，runtime有检测内存地址冲突的机制，
+在类生成实例变量时，会判断实例变量是否有地址冲突，
+如果发生冲突则调整对象的地址偏移。
+</code></pre><h2 id="ivars-methodLists"><a href="#ivars-methodLists" class="headerlink" title="ivars methodLists"></a>ivars methodLists</h2><pre><code>在objc_class结构体中：ivars是objc_ivar_list指针；
+methodLists是指向objc_method_list指针的指针。
+也就是说可以动态修改 *methodLists 的值来添加成员方法，
+这也是Category实现的原理.
+</code></pre><h2 id="IMP："><a href="#IMP：" class="headerlink" title="IMP："></a>IMP：</h2><pre><code>//结构
+typedef void (*IMP)(void /* id, SEL, ... */ );
+在runtime中IMP本质上就是一个函数指针
+在IMP中有两个默认的参数id和SEL，id也就是方法的self
+这和objc_msgSend()函数传递的参数一样；
+Runtime提供很多对于IMP的操作API，我们很多Runtime函数都
+是IMP操作
+</code></pre><h2 id="Method："><a href="#Method：" class="headerlink" title="Method："></a>Method：</h2><pre><code>//结构
+typedef struct method_t *Method;
+struct method_t { 
+    SEL name;
+    const char *types;
+    IMP imp; 
+};
+用来表示方法，其中包含SEL和IMP
+</code></pre><h2 id="Property："><a href="#Property：" class="headerlink" title="Property："></a>Property：</h2><pre><code>在runtime中定义了属性的结构体，用来表示对象中定义的属性。
+@property修饰符用来修饰属性，修饰后的属性为
+objc_property_t类型，其本质是property_t结构体
+    struct property_t {
+    const char *name; 
+    const char *attributes;
+};
+</code></pre><h2 id="ivar读写"><a href="#ivar读写" class="headerlink" title="ivar读写"></a>ivar读写</h2><pre><code>实例变量的isa_t指针会指向其所属的类，对象中并不会包含
+method，property，protocol，ivar等信息，这些信息在编
+译时都保存在只读结构体class_ro_t中。在class_ro_t中ivar
+时const只读的，在image load时copy到class_rw_t中时，
+是不会copy ivars的，并且class_rw_t中并没有定义ivars
+的字段。
+在防伪某个成员变量时，直接通过isa_t找到对应的objc_class
+并通过其class_ro_t的ivar list做地址偏移，查找对应的对象
+内存，正是由于这种方式，所以对象的内存地址是固定不可改变的。
+</code></pre><h2 id="方法传参："><a href="#方法传参：" class="headerlink" title="方法传参："></a>方法传参：</h2><pre><code>当调用实例变量的方法时，会通过objc_msgSend（）发起调用。
+调用是会传入self和SEL，函数内部通过isa在类的内部查找方法
+列表对应的IMP，传入对应的参数并发起调用，如果调用的方法涉
+及到当前对象的成员变量的访问，这是就是通过objc_msgSend()
+内部，通过类的ivar list判断地址偏移，取出ivar并传入调
+用的IMP中的。
+调用super的方式时则调用objc_msgSendSuper()函数实现
+</code></pre><h2 id="isa-t"><a href="#isa-t" class="headerlink" title="isa_t:"></a>isa_t:</h2><pre><code>对于对象指针也是一样，在oc1.0时，isa时一个真的指针，
+指向一堆区的地址，而在oc2.0时代，一个指针长度时八个字节
+也就是64位，在64位中直接存储着对象的信息。当查找对象所属
+的类时，直接在isa指针中进行位运算即可，而且由于在栈区进
+行操作，查找速度非常快。
+例如，isa_t本质时一个结构体，如果创建结构体再用指针指向这
+个结构体，内存占用是很大的，但是Tagged Pointer特性中，
+直接把结构体的值都存储到指针中，这样就相当节省内存了。
+苹果不允许直接访问isa指针，和Tagged Pointer也是有关
+系的，因为tagged Pointer的情况下，isa并不是一个指针指
+向另一块内存区，而是直接表示对象的值，所以通过直接访问
+isa获取到的信息是错误的。
+</code></pre><h2 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a>SEL</h2><pre><code>它是selector在Objc中的表示类型（Swift中是
+Selector类）。selector是方法选择器，
+可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
+typedef struct objc_selector *SEL;
+从源码中看其实是一个const *的常量字符串，只代表名字而已
+其实它就是个映射到方法的C字符串，你可以用 Objc 
+编译器命令@selector()或者 Runtime 系统的
+sel_registerName函数来获得一个SEL类型的方法选择器。
+常见来两个相同的类，并定规两个相同的方法，通过@selector
+获取SEL并打印，我们发现SEL都是同一个对象，地址都是相同的，
+不同类的相同SEL是同一个对象。
+在runtime中维护一个SEL列表，这个表不按照类存储，
+只要相同SEL就算作一个，并存储到表中。
+</code></pre><h2 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h2><pre><code>协议存储在protocol_t结构体中，而protocol_t继承objc_object，所以也就具备对象特征
+struct protocol_t : objc_object {
+    const char *mangledName;
+    struct protocol_list_t *protocols; 
+    method_list_t *instanceMethods; 
+    method_list_t *classMethods;
+    method_list_t *optionalInstanceMethods;
+    method_list_t *optionalClassMethods;
+    property_list_t *instanceProperties;
+    uint32_t size; // sizeof(protocol_t) 
+    uint32_t flags;
+    const char **_extendedMethodTypes; 
+    const char *_demangledName; 
+    property_list_t *_classProperties;
+};
+既然具备了对象的特征，那么也有isa指针，在Protocol中所有的isa都指向同一个类Protocol。Protocol类并没有元类
+</code></pre><h2 id="runtime如何实现weak变量的自动置nil"><a href="#runtime如何实现weak变量的自动置nil" class="headerlink" title="runtime如何实现weak变量的自动置nil"></a>runtime如何实现weak变量的自动置nil</h2><pre><code>runtime 对注册的类， 会进行布局，对于 weak 对象会放入一个 hash 表
+中。 用 weak 指向的对象内存地址作为 key，当此对象的引用计数为0的时
+候会 dealloc，假如 weak 指向的对象内存地址是a，那么就会以a为键， 
+在这个 weak 表中搜索，找到所有以a为键的 weak 对象，从而设置为 nil
+</code></pre><h2 id="map-images-函数Runtime-初始化操作"><a href="#map-images-函数Runtime-初始化操作" class="headerlink" title="map_images 函数Runtime 初始化操作"></a>map_images 函数Runtime 初始化操作</h2><pre><code>在runtime中所有类都存在一个哈希表中，在table的buckets中存储
+1. 加载所有类到类的gdb_objc_realized_classes表中
+2. 对所有类做重映射
+3. 将所有SEL都注册到namedSelectors表中
+4. 修复函数指针遗留
+5. 将所有Protocol添加到protocol_map表中
+6. 将所有Protocol重映射
+7. 初始化所有非懒加载的类，进行rw，ro操作 
+8. 便利所有懒加载类，执行初始化
+9. 处理所有Category包括Class和MetaClass
+10. 初始化所有未初始化类
+</code></pre><h2 id="load方法"><a href="#load方法" class="headerlink" title="load方法"></a>load方法</h2><pre><code>Load方法是在类加载的时候调用的，是在类加载到运行时的时候调用的，
+在mian函数之前，由系统调用，所以比较适合在load中调用钩子方法。只调用
+一次，注意load方法是直接调用的，并没有走运行时的objc_msgSend函数
+load方法顺序应该是，父类-&gt;子类-&gt;分类
+</code></pre><h2 id="initialize"><a href="#initialize" class="headerlink" title="initialize"></a>initialize</h2><pre><code>initialize是由Runtime调用的，与load不同的是，initialize方法是第
+一次调用类所属方法时才会调用，如果当前类方法永远不被调用的话
+initialize有可能永远不会执行。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/31/M_Swift100KVC/" itemprop="url">
                   KVC
                 </a>
@@ -1607,228 +2070,6 @@ function mergeOrder(arr1,arr2) {
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/03/N_Android16进阶/" itemprop="url">
-                  Android进阶
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T15:52:53+08:00" content="2018-07-03">
-              2018-07-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>接口interface</p>
-<p>interface是一些功能的集合，但它只定义了对象必须实现的成员，而不包含成员的实现代码，成员的具体代码由实现接口的类提供。Android对接口的使用场景主要有三类：事件监听器接口、对象序列化结构、线程类相关接口。<br>事件监听器接口</p>
-<p>这类接口名称一般以Listener或者CallBack结尾，监听器定义了事件触发时应该进行的操作方法，具体操作步骤需要自定义实现。常见的监听器接口有：<br>对象序列化接口<br>线程类相关接口<br>抽象类abtract class<br>部分基础控件<br>适配器<br>适配器在实际使用时都要派生重写，所以sdk里的适配器类都是抽象类或接口，包括：<br>1、列表适配器，如ListAdapter、SpinnerAdapter、BaseAdapter等等；<br>2、页面适配器，如PagerAdapter、FragmentPagerAdapter、FragmentStatePagerAdapter等等</p>
-<p>静态static<br>静态方法<br>1、静态方法中只能调用静态方法，不能调用非静态方法；<br>静态变量在运行时一般无需修改，如果在运行时修改了变量值，可能会得到非预期的结果。<br>2、静态方法中只能使用静态的类变量，不能使用非静态的类变量；<br>3、静态方法中不能使用this和super，即使this后面跟的是静态类变量也不行；<br>静态类<br>静态类指的是名称前加了static修饰符的类，一般用于开放给外部使用的类中内部类，这样就可以通过“上级类的类名.内部类的类名”来访问。比如说AlertDialog类的内部类Builder，可通过AlertDialog.Builder来调用；再比如Build类的内部类VERSION，可通过Build.VERSION来调用。<br>终态final</p>
-<p>单例模式有三个特点；<br>1、某个类只能有一个实例；<br>2、它要自行创建这个实例；<br>3、它只有唯一途径向整个系统提供这个实例。<br>public class SingletonInner {</p>
-<p>private static class SingletonHolder {<br>private static SingletonInner instance = new SingletonInner();<br>}</p>
-<p>private SingletonInner() {<br>}</p>
-<p>public static SingletonInner getInstance() {<br>return SingletonHolder.instance;<br>}</p>
-<p>}<br>类工厂</p>
-<p>类工厂的输入参数为类名，这得用模板来表示了。类工厂用的就比较多，比如java的容器类ArrayList、HashMap等等都用到了类工厂</p>
-<p>策略模式<br>装饰模式</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/03/N_Android14通信/" itemprop="url">
-                  Android通信相关
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T14:55:14+08:00" content="2018-07-03">
-              2018-07-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。</p>
-<p>下面是Activity类与生命周期有关的方法：<br>onCreate : 创建页面<br>onStart : 开始页面<br>onStop : 停止页面<br>onResume : 恢复页面<br>onPause : 暂停页面<br>onDestroy : 销毁页面<br>onRestart : 重启页面<br>onNewIntent : 重用栈中已存在的实例<br>onSaveInstanceState : 保存实例状态。使用场景：1、从A视图跳转到B视图，需要保存A视图的状态（不考虑特殊情况）；2、屏幕从竖屏变为横屏，需要保存竖屏时的视图状态，从横屏变为竖屏亦然；3、当前Activity处于后台，系统因资源紧张将其杀死。<br>onRestoreInstanceState : 恢复实例状态。使用场景：1、屏幕从竖屏变为横屏，横屏显示时需要恢复之前保存的竖屏状态；2、activity后台运行被系统杀死。此处注意，从B视图返回A视图时并不调用该方法。</p>
-<p>Intent用于处理Android各组件之间的通讯。Intent完成的工作主要有三部分：<br>1、Intent需标明本次通讯请求是从哪里来，到哪里去，要怎么走；<br>2、发起方携带上本次通讯需要的数据内容，接收方则对收到的Intent数据进行解包；<br>3、如发起方要求判断接收方的处理结果，Intent还需负责传回应答的数据内容；<br>Intent由以下部分组成：<br>Component : 组件，用于指定Intent的来源与目的<br>Action : 用于指定Intent的动作<br>Data(即Uri) :  用于指定动作要操纵的数据路径<br>Category : 用于指定动作的类别<br>Type : 数据类型，用于指定Data类型的定义<br>Extras : 扩展信息，用于指定装载的参数信息<br>Flags : 标志位，用于指定Intent的运行模式（也叫启动标志）。详细说明见上一节的《Android开发笔记（三十九）Activity的生命周期》。</p>
-<p>广播的调用方法</p>
-<p>sendBroadcast : 发送广播<br>registerReceiver : 注册接收器，一般在onStart或者onResume方法中注册<br>unregisterReceiver : 注销接收器，一般在onStop或者onPause方法中注销</p>
-<p>基本的手势事件主要有如下三个方法：<br>dispatchTouchEvent : 判断该事件是否需要下发。返回true表示需要下发给下级视图，返回false表示不需要下发（交给自身的onTouchEvent处理）。但是否最终下发，还需根据onInterceptTouchEvent的拦截结果。<br>onInterceptTouchEvent : 判断当前容器是否需要拦截该事件。返回true表示予以拦截（交给自身的onTouchEvent处理）、不放给下级视图，返回false表示不拦截该事件。<br>onTouchEvent : 判断该事件是否处理完毕。返回true表示处理完毕，则无需处理上级视图的onTouchEvent，一路返回结束流程。返回false表示该事件未完成，则返回继续处理上级视图的onTouchEvent，然后再根据上级onTouchEvent的返回值判断是直接结束还是由再上级处理。<br>手势事件的生命周期</p>
-<p>控件响应<br>Activity.dispatchTouchEvent(返回true)-&gt;ViewGroup.dispatchTouchEvent(返回true)-&gt;ViewGroup.onInterceptTouchEvent(返回false)-&gt;View.dispatchTouchEvent(返回true)-&gt;View.onTouchEvent(返回true)-&gt;结束<br>TouchEvent</p>
-<p>下面是触摸事件的常用方法：<br>getAction : 获取当前的动作<br>getX : 获取当前在控件内部的相对坐标X<br>getY : 获取当前在控件内部的相对坐标Y<br>getRawX : 获取当前在屏幕上的相对坐标X<br>getRawY : 获取当前在屏幕上的相对坐标Y<br>getEventTime : 获取当前的事件时间</p>
-<p>弹性滑动</p>
-<p>滑动计算器Scroller</p>
-<p>Scroller是Android用于计算滑动参数的辅助类，常用方法如下：<br>startScroll : 设置开始滑动的参数，包括起始的xy坐标、xy偏移量，另一个重载的方法还可以设置滑动的持续时间。<br>computeScrollOffset : 计算滑动偏移量。返回值可判断滑动是否结束，返回fasle表示滑动结束，返回true表示还在滑动当中。<br>getCurrX : 获得当前的X坐标<br>getCurrY : 获得当前的Y坐标<br>getDuration : 获得滑动的持续时间<br>forceFinished : 强行停止滑动<br>isFinished : 判断滑动是否结束。返回fasle表示还未结束，返回true表示滑动结束。该方法与computeScrollOffset的区别在于：1、computeScrollOffset内部还有计算偏移量，而isFinished只返回标志不做其他处理；2、computeScrollOffset返回fasle表示滑动结束，而isFinished返回true表示滑动结束。<br>scrollTo : 将控件滑动到指定坐标位置</p>
-<p>View的滑动方法</p>
-<p>虽然Scroller提供了滑动的相关计算函数，但是Scroller本身并不能直接滑动控件。因为Scroller只是个运算模拟器，根据时间的流逝计算xy坐标，所以我们必须调用控件自身的滑动方法，才能真正让控件动起来。View类中操纵滑动的方法有两个：<br>scrollTo : 将控件滑动到指定坐标位置<br>scrollBy : 将控件滑动指定偏移量。查看源码会发现scrollBy内部就是调用scrollTo，当然得先把当前坐标加上偏移量，从而得到滑动后的绝对坐标。</p>
-<p>一、采用Handler类的post方法<br>Handler常用的post方法有下面几种：<br>post : 立即启动Runnable<br>postDelayed : 延迟指定时间间隔后启动Runnable<br>postAtTime : 在指定时间启动Runnable<br>removeCallbacks : 回收/移除指定的Runnable</p>
-<p>AsyncTask是个模板类（AsyncTask<params, progress,="" result="">），继承它的新类需要指定模板的参数类型，模板参数说明如下：<br>Params : 任务启动时的输入参数，比如http访问的url、请求参数等等。可设置为String类型或者自定义的数据结构<br>Progress : 任务执行的进度。可设置为Integer类型<br>Result : 任务执行完的结果。可设置为String类型或者自定义的数据结构<br>doInBackground : 异步处理操作都放在该方法中，params参数对应execute方法的输入参数。该方法运行于分线程，所以不能操作UI，其他方法都能操作UI<br>onPreExecute : 在doInBackground执行之前调用<br>onProgressUpdate : doInBackground方法中调用publishProgress时会触发该方法，通常用于处理过程中刷新进度条<br>onPostExecute : 在doInBackground执行完毕时调用，通常用于处理完毕后刷新展示页面<br>onCancelled : doInBackground方法中调用cancel时会触发该方法<br>定时器：Timer和TimerTask，CountDownTimer，AlarmManager<br>权限申请</params,></p>
-<p>通过前面对设备的基本操作介绍，可看到Android四大组件各显神通，各组件协同配合完成了许多功能。具体的组件使用分类如下：</p>
-<p>1、Activity：包括拨号（Intent.ACTION_CALL）、手工发短信（Intent.ACTION_SENDTO）、发邮件（Intent.ACTION_SEND）、系统设置页面（Settings.ACTION_SETTINGS）以及其他分项设置页面。<br>2、Service：包括获取子系统服务的管理器，如电话管理器TelephonyManager（Context.TELEPHONY_SERVICE）、定位管理器LocationManager（Context.LOCATION_SERVICE）、蓝牙管理器BluetoothAdapter（BLUETOOTH_MANAGER_SERVICE）、WLAN管理器WifiManager（Context.WIFI_SERVICE）、数据连接管理器ConnectivityManager（Context.CONNECTIVITY_SERVICE）。<br>3、Broadcast：包括开关飞行模式、开关GPS、自动发送短信的发送成功通知与接收成功通知。<br>4、ContentProvider：包括通过ContentResolver获取与开关的功能，如屏幕自动旋转、亮度自动调节、飞行模式等等。<br>json</p>
-<p>json的常用方法有：<br>JSONObject构造函数 : 从指定字符串构造出一个JSONObject对象<br>JSONObject.getJSONObject : 获取指定名称的JSONObject对象<br>JSONObject.getString : 获取指定名称的字符串值<br>JSONObject.put : 添加一个json元素<br>JSONObject.toString : 把当前JSONObject输出为一个json字符串<br>JSONObject.getJSONArray : 获取指定名称的json对象数组<br>JSONArray.length : 获取json对象数组的大小<br>JSONArray.getJSONObject : 获取json对象数组在指定位置处的JSONObject对象<br>JSONArray.put : 往json对象数组中添加一个JSONObject对象</p>
-<p>URL编码，BASE64编码。MD5加密，RSA加密，3DES加密</p>
-<p>内存泄漏的场景</p>
-<p>在Android开发中，内存泄漏可能发生在如下几个场景：<br>1、查询操作后，没有关闭游标Cursor；<br>2、刷新适配器Adapter时，没有重用convertView对象；<br>3、Bitmap对象使用完毕，没有调用recycle方法回收内存；<br>4、给系统服务注册了监听器，却没有及时注销；<br>5、Activity引用了耗时对象，造成页面关闭时无法释放被引用的对象；</p>
-<p>picasso</p>
-<p>picasso是Square公司开源的一个Android图片缓存库<br>Universal-Image-Loader</p>
-<p>Universal-Image-Loader是个广泛应用的图片加载框架，它的功能比Picasso更丰富，当然用起来也会复杂一些。</p>
-<p>Java的异常分两类，运行时异常RuntimeException和非运行时异常。<br>运行时异常包括空指针异常NullPointerException、数组越界异常IndexOutOfBoundsException、类型转换异常ClassCastException、数据库异常SQLException等等，（网上很多文章把SQLException归为非运行时异常，但查看源码SQLException继承自RuntimeException，所以它应是运行时异常）。非运行时异常包括输入输出异常IOException、无此加密算法异常NoSuchAlgorithmException等等。<br>非运行时异常在编码的时候就要进行处理，不然编译都通不过。运行时异常有的在程序运行时才会发现，但也有的在编码时就得处理，比如说非法参数异常IllegalArgumentException、非法状态异常IllegalStateException等等。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1874,7 +2115,7 @@ function mergeOrder(arr1,arr2) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">172</span>
+              <span class="site-state-item-count">174</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

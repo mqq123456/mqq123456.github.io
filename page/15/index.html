@@ -228,6 +228,140 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/31/D_Net6CoreLocation/" itemprop="url">
+                  CoreLocation
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p>CLLocationManager 定位管理者<br>CLLocation 代表位置(经度/纬度/高度/速度/路线等)<br>CLHeading  代表移动方向<br>CLRegion   代表一个区域</p>
+<blockquote>
+<p>CLCircularRegion  圆形区域<br>CLBeaconRegion 蓝牙信号区域</p>
+</blockquote>
+<p>返回定位服务是否可用<br>[CLLocationManager locationServicesEnabled];<br>返回延迟定位更新是否可用<br>[CLLocationManager deferredLocationUpdatesAvailable];<br>返回重大位置改变监听是否可用<br>[CLLocationManager significantLocationChangeMonitoringAvailable];<br>返回是否支持磁力计算方向<br>[CLLocationManager headingAvailable];<br>返回蓝牙信号范围服务是否可用<br>[CLLocationManager isRangingAvailable];</p>
+<hr>
+<p>设置是否可以暂停定位来节省电池电量, YES不需要定位数据时自动暂停定位<br>// mgr.pausesLocationUpdatesAutomatically</p>
+<hr>
+<p>每隔多少米定位一次, 只有水平方向超过该值时才会重新定位<br>// mgr.distanceFilter = 100;</p>
+<hr>
+<p>定位精确度<br>// mgr.desiredAccuracy;<br>kCLDistanceFilterNone;<br>kCLLocationAccuracyBestForNavigation 导航级最佳精准<br>kCLLocationAccuracyBest; 最佳精准<br>kCLLocationAccuracyNearestTenMeters; 10米误差<br>kCLLocationAccuracyHundredMeters; 百米胡茬<br>kCLLocationAccuracyKilometer;  千米误差<br>kCLLocationAccuracyThreeKilometers; 3千米误差</p>
+<hr>
+<p>定位数据的用途<br>// mgr.activityType;<br>CLActivityTypeOther 作为普通用途<br>CLActivityTypeAutomotiveNavigation  作为车辆导航<br>CLActivityTypeFitness  作为不行<br>CLActivityTypeOtherNavigation 作为其它导航</p>
+<hr>
+<p>// CLLocation<br>location.coordinate; 坐标, 包含经纬度<br>location.altitude; 设备海拔高度 单位是米<br>location.course; 设置前进方向 0表示北 90东 180南 270西<br>location.horizontalAccuracy; 水平精准度<br>location.verticalAccuracy; 垂直精准度<br>location.timestamp; 定位信息返回的时间<br>location.speed; 设备移动速度 单位是米/秒, 适用于行车速度而不太适用于不行<br>/<em><br>可以设置模拟器模拟速度<br>bicycle ride 骑车移动<br>run 跑动<br>freeway drive 高速公路驾车
+</em>/</p>
+<hr>
+<p>// CLAuthorizationStatus<br>用户从未选择过权限<br>kCLAuthorizationStatusNotDetermined<br>无法使用定位服务，该状态用户无法改变<br>kCLAuthorizationStatusRestricted<br>用户拒绝该应用使用定位服务，或是定位服务总开关处于关闭状态<br>kCLAuthorizationStatusDenied<br>已经授权（废弃）<br>kCLAuthorizationStatusAuthorized<br>用户允许该程序无论何时都可以使用地理信息<br>kCLAuthorizationStatusAuthorizedAlways<br>用户同意程序在可见时使用地理位置<br>kCLAuthorizationStatusAuthorizedWhenInUse</p>
+<hr>
+<p>// 计算两个位置之间的距离, 单位是米<br>[newLocation distanceFromLocation:self.prevLocation];</p>
+<hr>
+<p>获取方向信息不会提示用户(不需要授权), 因为不会泄露隐私<br>// [self.mgr startUpdatingHeading];</p>
+<p>magneticHeading 设备与磁北的相对角度<br>trueHeading 设置与真北的相对角度, 必须和定位一起使用, iOS需要设置的位置来计算真北<br>真北始终指向地理北极点<br>磁北对应随着时间变化的地球磁场北极<br>@interface ViewController ()<cllocationmanagerdelegate><br>{<br>//创建对象<br>CLLocationManager *_manager;<br>}</cllocationmanagerdelegate></p>
+<p>//获取当前经度<br>_manager =[[CLLocationManager alloc]init];<br>//设置代理<br>_manager.delegate=self;</p>
+<p>开始定位<br>[self startLocation];</p>
+<p>#pragma mark - 开始定位<br>-(void)startLocation<br>{<br>//判断定位服务是否可用<br>if (![CLLocationManager locationServicesEnabled]) {<br>NSLog(@”定位服务不可用”);</p>
+<p>}</p>
+<p>//设置精确度<br>_manager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;<br>//距离变化敏感程度<br>_manager.distanceFilter=1000;<br>//开始定位<br>[_manager startUpdatingLocation];<br>}</p>
+<p>#pragma mark - 协议提供的代理方法，当位置更新的时候执行<br>-(void)locationManager:(CLLocationManager <em>)manager didUpdateLocations:(NSArray </em>)locations<br>{<br>//地址：经纬度</p>
+<p>//获取地址对象(包含经纬度)<br>CLLocation *location=manager.location;<br>//获取当前经纬度<br>CLLocationCoordinate2D coordinate=location.coordinate;<br>//输出经纬度<br>NSLog(@”long=%f lan=%f”,coordinate.longitude,coordinate.latitude);</p>
+<p>}  </p>
+<p>方向服务<br>//    [self testHeading];</p>
+<p>#pragma mark - 方向服务<br>-(void)testHeading<br>{<br>if (![CLLocationManager headingAvailable]) {<br>NSLog(@”方向服务不可用”);<br>return;<br>}<br>[_manager startUpdatingHeading];<br>}</p>
+<p>#pragma mark - 代理方法，当方向更新的时候开始执行<br>-(void)locationManager:(CLLocationManager <em>)manager didUpdateHeading:(CLHeading </em>)newHeading<br>{</p>
+<p>NSLog(@”磁极方向= %f”,newHeading.magneticHeading);<br>NSLog(@”地理方向 = %f”,newHeading.trueHeading);<br>}</p>
+<p>地址编码和地址反编码<br>[self testGeoCoder];</p>
+<p>#pragma mark - 地址编码和地址反编码<br>-(void)testGeoCoder<br>{<br>//知道地址，获取经纬度===地址编码<br>CLGeocoder <em>geocoCoder=[[CLGeocoder alloc]init];<br>[geocoCoder geocodeAddressString:@”兴美生活广场” completionHandler:^(NSArray </em>placemarks, NSError <em>error) {<br>//返回placemarks<br>for (CLPlacemark </em>mark in placemarks)<br>{<br>NSLog(@”mark=%@”,mark );<br>}<br>}];<br>//地址反编码，知道经纬度，获取地址，<br>CLLocation *location=[[CLLocation alloc]initWithLatitude:40.03708400 longitude:116.37059500];</p>
+<p>CLGeocoder <em>reverseGeocoCoder=[[CLGeocoder alloc]init];<br>[reverseGeocoCoder reverseGeocodeLocation:location completionHandler:^(NSArray </em>placemarks, NSError <em>error) {<br>for (CLPlacemark </em>mark in placemarks)<br>{<br>NSLog(@”地址反编码=%@”,mark );</p>
+<p>}<br>}];</p>
+<p>}</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/31/D_Net5KVC和KVO/" itemprop="url">
                   KVC和KVO
                 </a>
@@ -544,6 +678,108 @@
 <p>//任务添加<br>dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;30; i++)<br>{<br>NSLog(@” B=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>});<br>//先是所有任务执行完成<br>dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>NSLog(@”所有的任务执行完成”);<br>});<br>}<br>-(void)runOneCode<br>{<br>static dispatch_once_t onceToken;<br>dispatch_once(&amp;onceToken, ^{<br>NSLog(@”这句话我只说一次”);<br>});<br>}<br>-(void)delayRunCode<br>{<br>dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br>NSLog(@”我是一只小小小小鸟,永远永远也飞不高”);<br>});</p>
 <p>}<br>-(void)simulaterNetworkDataDownload<br>{<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];<br>[self.view addSubview:_progressView];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>注意：不要再主线程里更新UI<br>//            _progressView.progress+=0.01;</p>
 <p>dispatch_async(dispatch_get_main_queue(), ^{<br>_progressView.progress+=0.01;<br>});<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>NSLog(@”下载完成”);<br>});</p>
+<p>}</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net2NSOperation/" itemprop="url">
+                  NSOperation
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>NSOperation、NSOperationQueue</p>
+</blockquote>
+<p>//对于NSThread的封装，提供了更为方便的使用接口<br>//支持block</p>
+<blockquote>
+<p>创建和使用</p>
+</blockquote>
+<p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation <em>operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation </em>bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation <em>bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue </em>queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
 <p>}</p>
 
           
@@ -1197,250 +1433,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/30/B_OC9内存管理/" itemprop="url">
-                  内存管理
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
-              2016-07-30
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>OC中的内存管理</p>
-</blockquote>
-<p>alloc+init 方式创建对象, 一般情况下在堆上上,使用完一定要释放<br>手动内存管理<br>自动内存管理(自动引用计数-ARC)<br>如何内存管理方式切换到手动内存管理?<br>工程配置–&gt;TARGETS-&gt;Build Setting-&gt; 搜索 counting,  设置为NO</p>
-<blockquote>
-<p>内存管理中常用的方法</p>
-</blockquote>
-<p>alloc+init<br>//1.alloc+init<br>//alloc: 为对象申请空间,把这块空间全部初始化为0<br>//alloc申请的对象一般情况下都在堆空间,必须考虑释放的问题<br>//init 初始化这个对象<br>Dog *princess = [[Dog alloc] init];<br>dealloc+release<br>retain+retainCount</p>
-<blockquote>
-<p>引用计数这种内存管理方式</p>
-</blockquote>
-<p>//获取对象被使用的次数<br>NSLog(@”count=%lu”,princess.retainCount);<br>//以后内存管理中有问题的<br>//retain: 让对象引用次数+1<br>//retain的对象也要release<br>[p release];<br>NSLog(@”count=%lu”,princess.retainCount);<br>//释放放在最后<br>//release作用:<br>//  如果retainCount&gt;1 说明有多个人在使用这个对象,不会释放,对象引用次数-1<br>//  如果retianCount==1<br>//  最后使用的”人”释放这个对象<br>//      调用dealloc真正释放对象<br>[princess release];<br>NSMutableString <em>str = [[NSMutableString alloc] initWithString:@”的麻烦了看什么地方了开始免费立刻马上离开父母萨洛克没放到里面是打发来看马萨拉蒂方面撒地方可拉伸的佛罗伦萨地方了”];<br>//特别值得注意的问题<br>//  最好千万不要在对象release之后使用对象<br>//什么是释放:<br>//  释放是失去了这块内存的使用权(内存还在)<br>//      一旦释放, 别人有可能使用这块内存<br>//      咱们在使用的就会出现问题<br>//[princess show];<br>copy+mutableCopy<br>//问题:<br>//  retain两个指针, 只有一个对象<br>//  copy复制这个对象<br>//  效果:  两个指针指向不同的对象<br>//  copy 返回不可变对象<br>//  mutableCopy返回可变对象<br>NSMutableString </em>pname = [name mutableCopy];</p>
-<blockquote>
-<p>内存管理原则:黄金法则<br>如果你对一个对象使用了 alloc,retain,copy/mutableCopy, 使用完这个对象之后需要调用对应的realese或autorelease<br>代码中alloc和release成对出现的retain和release也是成对出现的</p>
-<blockquote>
-<p>代码中出现的各种内存管理情况</p>
-</blockquote>
-</blockquote>
-<p>(0)如果在方法内部定义了一个对象指针,指向了alloc申请的对象<br>需要在方法结束前释放这个对象</p>
-<blockquote>
-<p>init中为对象指针(类的实例变量)的申请对象</p>
-</blockquote>
-<p>需要在dealloc方法中释放 (重点)<br>//需求: 创建车的同时添加引擎<br>-(id)init<br>{<br>if(self = [super init])<br>{<br>//考虑到释放问题<br>//类中对象指针一般在init中申请对象<br>//  在dealloc中释放对象<br>_engine = [[Engine alloc] init];<br>//NSString *str = [[NSString alloc] init];<br>//[str release];<br>}<br>return self;<br>}<br>-(void)dealloc<br>{<br>NSLog(@”Car dealloc”);<br>[_engine release];<br>//这句放在最后<br>[super dealloc];<br>}</p>
-<blockquote>
-<p>对象指针的setter方法</p>
-</blockquote>
-<p>//_engine实现设置方法<br>-(void)setEngine:(Engine *)engine<br>{<br>//以前的写法<br>//_engine = engine;<br>//传入的指针和保存指针相同,返回即可<br>if(_engine == engine)<br>{<br>return;<br>}<br>//旧的对象不用了, 立即释放<br>[_engine release];<br>//多一个指针指向engine对象<br>//引用次数+1,调用retian方法<br>_engine = [engine retain];<br>}</p>
-<blockquote>
-<p>对象指针的getter方法</p>
-</blockquote>
-<p>//_engine实现获取方法<br>-(Engine *)engine<br>{<br>//以前的实现<br>//return _engine;<br>//retain: 返回的对象类外的指针指向, 多了一个使用, 引用+1<br>//  autorelease谁使用,谁释放<br>//      不能用release, 立即使用<br>return [[_engine retain] autorelease];<br>}</p>
-<blockquote>
-<p>各种实例变量的property (重点)</p>
-</blockquote>
-<p>//使用property实例变量添加getter和setter<br>// 一般情况, NSString 使用copy作为属性修饰符<br>//copy, 把传入的字符串拷贝一个份新的<br>//字符串,字典,数组用copy最好<br>@property (copy) NSString <em>type;<br>//assign表示直接赋值, 不retain也不copy<br>//  默认是assign, assgin可以不写<br>//@property (assign) float price;<br>@property float price;<br>//retain表示实现的setter中添加retain,getter也会添加retain<br>@property (retain) Engine </em>engine;</p>
-<p>//代理设计模式中<br>//  代理的属性修饰符必须是assgin,不能是retain,否则会引起无法释放的问题<br>@property (assign) id delegate;</p>
-<blockquote>
-<p>取消线程保护 nonautomic</p>
-</blockquote>
-<p>//nonatomic取消多线程保护<br>//1.什么是多线程(多任务)<br>// 迅雷下载(界面响应用户点击,下载数据)<br>//2.为啥要加这一句啊<br>//  多线程保护比较耗时, 取消提供代码速度<br>@property (nonatomic) float speed;</p>
-<blockquote>
-<p>类方法创建对象如何写?</p>
-</blockquote>
-<p>//类方法创建的对象无需释放, 也不能释放<br>创建对象的方法,类方法<br>+(id)car<br>{<br>//干两件事情<br>Car *car = [[Car alloc] init];<br>//if(car)<br>//{<br>//设置car的属性<br>//}<br>//alloc和autorelease对应起来<br>return [car autorelease];<br>}</p>
-<blockquote>
-<p>数组中的添加对象内存管理  NSArray</p>
-</blockquote>
-<p>//数组被释放的时候会给数组中每个对象发送release<br>[array release];</p>
-<blockquote>
-<p>字符串的内存管理</p>
-</blockquote>
-<p>//  特点: 特立独行,有性格<br>//字符串常量的引用数是极大值,不需要释放<br>//总结:<br>以alloc创建的字符串最后使用release释放<br>字符串常量和以类方法创建的字符串不需要释放</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/30/C_UI5UIViewController/" itemprop="url">
-                  UIViewController
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
-              2016-07-30
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>简单的理解一个界面就是一个UIViewContorller</p>
-<p>如何使用UIViewContorller实现多界面的切换</p>
-</blockquote>
-<p>1.登陆界面：<br>先创建LoginViewController对象<br>将对象设置为window的rootViewController视图控制器 (主视图控制器)<br>2.跳转到下一个界面（设置按钮触发点击事件）<br>先创建下一个界面 MainViewController.的对象———mvc<br>使用presentViewController切换到下一个界面<br>参数1:跳转到界面mcv<br>参数2:是否实现动画效果。<br>参数3:block<br>[self presentViewController:mvc animated:YES completion:nil];<br>3.返回上一个界面<br>同样是设置按钮，点击按钮触发事件。<br>释放掉原来的界面，显示出上一个界面。dismissViewControllerAnimated</p>
-<h1 id="self-dismissViewControllerAnimated-YES-completion-nil"><a href="#self-dismissViewControllerAnimated-YES-completion-nil" class="headerlink" title="[self dismissViewControllerAnimated:YES completion:nil];"></a>[self dismissViewControllerAnimated:YES completion:nil];</h1><p>4.设置打开动画<br>mvc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;<br>翻转  UIModalTransitionStyleFlipHorizontal<br>交错  UIModalTransitionStyleCrossDissolve<br>翻页  UIModalTransitionStylePartialCurl</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1486,7 +1478,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">172</span>
+              <span class="site-state-item-count">174</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
