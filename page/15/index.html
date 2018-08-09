@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net1NSThread/" itemprop="url">
-                  NSThread
+                <a class="post-title-link" href="/2016/07/31/D_Net17音频/" itemprop="url">
+                  音频
                 </a>
               
             
@@ -242,7 +242,7 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
+            <time itemprop="dateCreated" datetime="2016-07-31T17:50:51+08:00" content="2016-07-31">
               2016-07-31
             </time>
           </span>
@@ -272,35 +272,11 @@
       
         
           
-            <blockquote>
-<p>什么是NSThread？</p>
-</blockquote>
-<p>NSThread 是ios提供的操作和使用线程的一个类<br>线程：<br>进程：理解，活着的程序，是程序执行的一个操作系统实体</p>
-<blockquote>
-<p>NSThread的创建线程</p>
-</blockquote>
-<p>//每个线程执行对应一个方法<br>NSThread *thread1=[[NSThread alloc]initWithTarget:self selector:@selector(thread1:) object:nil];<br>//启动线程<br>[thread1 start];</p>
-<p>//以类方法创建线程<br>//    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];<br>//可以实现同时执行的效果，以前都是先执行A后执行B，现在有了多线程，可以实现同时执行</p>
-<blockquote>
-<p>为什么要实行线程</p>
-</blockquote>
-<p>//UI界面中如果直接执行耗时任务的，界面会卡死，为了能让界面执行耗时任务的时候继续反应，使用新的线程去执行耗时任务<br>//应用场合：下载网络文件，同时执行多个任务，加载大文件，加载大数据<br>//3.为什么要实行线程<br>UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(100, 100, 100, 30);<br>[button setTitle:@”耗时任务” forState:UIControlStateNormal];<br>[self.view addSubview:button];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>-(void)btnClick:(UIButton </em>)button<br>{<br>    //暂停5秒<br>    //    [NSThread sleepForTimeInterval:5];<br>    //    [self dealThread2:nil];<br>    //    如果直接执行的话UI界面会卡死，没有反应<br>    //开启一个新的线程执行<br>    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];</p>
-<p>}</p>
-<p>//4.监控线程的执行完成<br>//如何知道那个线程执行接收，使用block–以后要学<br>//4.监控线程的执行完成<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealThreadExit:) name:NSThreadWillExitNotification object:nil];<br>-(void)dealThreadExit:(NSNotification *)no<br>{<br>    NSLog(@”线程执行完成”);<br>    NSLog(@”ui=%@”,no.userInfo);<br>}<br>//5.线程的控制，线程同步<br>//遇到情况：多个线程访问同一块数据<br>//如何解决：<br>//a+10   1.先从内存拿出，修改，再放回去<br>//访问数据的时候加锁<br>//5.线程的控制，线程同步<br>_lock=[[NSLock alloc]init];</p>
-<p>[NSThread detachNewThreadSelector:@selector(addFunc:) toTarget:self withObject:nil];<br>[NSThread detachNewThreadSelector:@selector(subFunc) toTarget:self withObject:nil];</p>
-<p>[self setAddBlock:^(NSString *mmm){<br>    NSLog(@”hbbbgeregour====%@”,mmm);<br>}];</p>
-<p>#pragma mark - 线程同步<br>-(void)addFunc:(NSThread *)th<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        [_lock lock];<br>        _num++;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        [_lock unlock];</p>
-<pre><code>}
-NSLog(@&quot;add num=%d&quot;,_num);
-if (self.addBlock)
-{
-    self.addBlock(@&quot;add&quot;);
-}
-</code></pre><p>}<br>-(void)subFunc<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        //        [_lock lock];<br>        _num–;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        //        [_lock unlock];</p>
-<pre><code>}
-NSLog(@&quot;sub num=%d&quot;,_num);
-</code></pre><p>}</p>
-<p>//6.UI主线程如何操作UI？<br>//ui主线程，<br>//    工作子线程<br>//    注意：不要在子线程中直接操作UI，交给主线程UI；<br>[self howToUpDateUIInSubThread];<br>-(void)howToUpDateUIInSubThread<br>{<br>    _progress =[[UIProgressView alloc]initWithFrame:CGRectMake(10, 200, 300, 20)];<br>    [self.view addSubview:_progress];<br>    //添加一个按钮<br>    UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>    button.frame=CGRectMake(100, 300, 100, 30);<br>    [button setTitle:@”下载文件” forState:UIControlStateNormal];<br>    [self.view addSubview:button];<br>    [button addTarget:self action:@selector(startDownloadClick:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)startDownloadClick:(UIButton </em>)button<br>{<br>    [NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:nil];<br>}<br>-(void)download:(NSThread <em>)thread<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //更新UI<br>        //        _progress.progress+=0.01;<br>        //在主线程中执行一个方法<br>        [self performSelectorOnMainThread:@selector(upDateUI) withObject:nil waitUntilDone:NO];<br>        [NSThread sleepForTimeInterval:0.001];<br>        NSLog(@”进度为%f%%”,_progress.progress</em>100);<br>    }<br>}<br>-(void)upDateUI<br>{<br>    _progress.progress+=0.001;<br>}</p>
+            <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL <em>url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID </em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘<em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} \;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL </em>)url error:(NSError <strong>)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError </strong>)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
+<ul>
+<li>(void)pause; 停止</li>
+<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
+</ul>
 
           
         
@@ -598,132 +574,6 @@ NSLog(@&quot;sub num=%d&quot;,_num);
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net3GCD/" itemprop="url">
-                  GCD
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>什么是GCD</p>
-</blockquote>
-<p>Grand Central Dispach–<br>好用：1.简单<br>基于block c函数接口<br>功能强大：支持多核心编程<br>支持高级编程功能</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>//开启一个新的线程<br>//queue<br>//三种：main——queue主线程队列<br>//globle——queue全局队列。异步任务加载这里<br>//自定义的<br>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>}<br>});<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”B=%d”,i);<br>}<br>});</p>
-<blockquote>
-<p>模拟网络数据下载</p>
-</blockquote>
-<p>[self simulaterNetworkDataDownload];</p>
-<blockquote>
-<p>延迟执行，延时5s执行</p>
-</blockquote>
-<p>[self delayRunCode];</p>
-<blockquote>
-<p>有的代码指向执行一次</p>
-</blockquote>
-<p>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];</p>
-<blockquote>
-<p>多个任务同时执行，等待所有任务结束</p>
-</blockquote>
-<p>//    模拟迅雷多路下载后关机<br>[self simulaterThreadDownload];</p>
-<p>}<br>-(void)simulaterThreadDownload<br>{<br>dispatch_group_t group=dispatch_group_create();</p>
-<p>//任务添加<br>dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;30; i++)<br>{<br>NSLog(@” B=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>});<br>//先是所有任务执行完成<br>dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>NSLog(@”所有的任务执行完成”);<br>});<br>}<br>-(void)runOneCode<br>{<br>static dispatch_once_t onceToken;<br>dispatch_once(&amp;onceToken, ^{<br>NSLog(@”这句话我只说一次”);<br>});<br>}<br>-(void)delayRunCode<br>{<br>dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br>NSLog(@”我是一只小小小小鸟,永远永远也飞不高”);<br>});</p>
-<p>}<br>-(void)simulaterNetworkDataDownload<br>{<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];<br>[self.view addSubview:_progressView];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>注意：不要再主线程里更新UI<br>//            _progressView.progress+=0.01;</p>
-<p>dispatch_async(dispatch_get_main_queue(), ^{<br>_progressView.progress+=0.01;<br>});<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>NSLog(@”下载完成”);<br>});</p>
-<p>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/31/D_Net4AVAudioPlayer/" itemprop="url">
                   AVAudioPlayer
                 </a>
@@ -850,6 +700,132 @@ NSLog(@&quot;sub num=%d&quot;,_num);
             
               
                 
+                <a class="post-title-link" href="/2016/07/31/D_Net3GCD/" itemprop="url">
+                  GCD
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>什么是GCD</p>
+</blockquote>
+<p>Grand Central Dispach–<br>好用：1.简单<br>基于block c函数接口<br>功能强大：支持多核心编程<br>支持高级编程功能</p>
+<blockquote>
+<p>创建和使用</p>
+</blockquote>
+<p>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</p>
+<blockquote>
+<p>创建和使用</p>
+</blockquote>
+<p>//开启一个新的线程<br>//queue<br>//三种：main——queue主线程队列<br>//globle——queue全局队列。异步任务加载这里<br>//自定义的<br>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>}<br>});<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”B=%d”,i);<br>}<br>});</p>
+<blockquote>
+<p>模拟网络数据下载</p>
+</blockquote>
+<p>[self simulaterNetworkDataDownload];</p>
+<blockquote>
+<p>延迟执行，延时5s执行</p>
+</blockquote>
+<p>[self delayRunCode];</p>
+<blockquote>
+<p>有的代码指向执行一次</p>
+</blockquote>
+<p>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];</p>
+<blockquote>
+<p>多个任务同时执行，等待所有任务结束</p>
+</blockquote>
+<p>//    模拟迅雷多路下载后关机<br>[self simulaterThreadDownload];</p>
+<p>}<br>-(void)simulaterThreadDownload<br>{<br>dispatch_group_t group=dispatch_group_create();</p>
+<p>//任务添加<br>dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;30; i++)<br>{<br>NSLog(@” B=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>});<br>//先是所有任务执行完成<br>dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>NSLog(@”所有的任务执行完成”);<br>});<br>}<br>-(void)runOneCode<br>{<br>static dispatch_once_t onceToken;<br>dispatch_once(&amp;onceToken, ^{<br>NSLog(@”这句话我只说一次”);<br>});<br>}<br>-(void)delayRunCode<br>{<br>dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br>NSLog(@”我是一只小小小小鸟,永远永远也飞不高”);<br>});</p>
+<p>}<br>-(void)simulaterNetworkDataDownload<br>{<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];<br>[self.view addSubview:_progressView];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>注意：不要再主线程里更新UI<br>//            _progressView.progress+=0.01;</p>
+<p>dispatch_async(dispatch_get_main_queue(), ^{<br>_progressView.progress+=0.01;<br>});<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>NSLog(@”下载完成”);<br>});</p>
+<p>}</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/31/D_Net2NSOperation/" itemprop="url">
                   NSOperation
                 </a>
@@ -903,6 +879,128 @@ NSLog(@&quot;sub num=%d&quot;,_num);
 </blockquote>
 <p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation <em>operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation </em>bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation <em>bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue </em>queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
 <p>}</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net1NSThread/" itemprop="url">
+                  NSThread
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>什么是NSThread？</p>
+</blockquote>
+<p>NSThread 是ios提供的操作和使用线程的一个类<br>线程：<br>进程：理解，活着的程序，是程序执行的一个操作系统实体</p>
+<blockquote>
+<p>NSThread的创建线程</p>
+</blockquote>
+<p>//每个线程执行对应一个方法<br>NSThread *thread1=[[NSThread alloc]initWithTarget:self selector:@selector(thread1:) object:nil];<br>//启动线程<br>[thread1 start];</p>
+<p>//以类方法创建线程<br>//    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];<br>//可以实现同时执行的效果，以前都是先执行A后执行B，现在有了多线程，可以实现同时执行</p>
+<blockquote>
+<p>为什么要实行线程</p>
+</blockquote>
+<p>//UI界面中如果直接执行耗时任务的，界面会卡死，为了能让界面执行耗时任务的时候继续反应，使用新的线程去执行耗时任务<br>//应用场合：下载网络文件，同时执行多个任务，加载大文件，加载大数据<br>//3.为什么要实行线程<br>UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(100, 100, 100, 30);<br>[button setTitle:@”耗时任务” forState:UIControlStateNormal];<br>[self.view addSubview:button];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>-(void)btnClick:(UIButton </em>)button<br>{<br>    //暂停5秒<br>    //    [NSThread sleepForTimeInterval:5];<br>    //    [self dealThread2:nil];<br>    //    如果直接执行的话UI界面会卡死，没有反应<br>    //开启一个新的线程执行<br>    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];</p>
+<p>}</p>
+<p>//4.监控线程的执行完成<br>//如何知道那个线程执行接收，使用block–以后要学<br>//4.监控线程的执行完成<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealThreadExit:) name:NSThreadWillExitNotification object:nil];<br>-(void)dealThreadExit:(NSNotification *)no<br>{<br>    NSLog(@”线程执行完成”);<br>    NSLog(@”ui=%@”,no.userInfo);<br>}<br>//5.线程的控制，线程同步<br>//遇到情况：多个线程访问同一块数据<br>//如何解决：<br>//a+10   1.先从内存拿出，修改，再放回去<br>//访问数据的时候加锁<br>//5.线程的控制，线程同步<br>_lock=[[NSLock alloc]init];</p>
+<p>[NSThread detachNewThreadSelector:@selector(addFunc:) toTarget:self withObject:nil];<br>[NSThread detachNewThreadSelector:@selector(subFunc) toTarget:self withObject:nil];</p>
+<p>[self setAddBlock:^(NSString *mmm){<br>    NSLog(@”hbbbgeregour====%@”,mmm);<br>}];</p>
+<p>#pragma mark - 线程同步<br>-(void)addFunc:(NSThread *)th<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        [_lock lock];<br>        _num++;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        [_lock unlock];</p>
+<pre><code>}
+NSLog(@&quot;add num=%d&quot;,_num);
+if (self.addBlock)
+{
+    self.addBlock(@&quot;add&quot;);
+}
+</code></pre><p>}<br>-(void)subFunc<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        //        [_lock lock];<br>        _num–;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        //        [_lock unlock];</p>
+<pre><code>}
+NSLog(@&quot;sub num=%d&quot;,_num);
+</code></pre><p>}</p>
+<p>//6.UI主线程如何操作UI？<br>//ui主线程，<br>//    工作子线程<br>//    注意：不要在子线程中直接操作UI，交给主线程UI；<br>[self howToUpDateUIInSubThread];<br>-(void)howToUpDateUIInSubThread<br>{<br>    _progress =[[UIProgressView alloc]initWithFrame:CGRectMake(10, 200, 300, 20)];<br>    [self.view addSubview:_progress];<br>    //添加一个按钮<br>    UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>    button.frame=CGRectMake(100, 300, 100, 30);<br>    [button setTitle:@”下载文件” forState:UIControlStateNormal];<br>    [self.view addSubview:button];<br>    [button addTarget:self action:@selector(startDownloadClick:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)startDownloadClick:(UIButton </em>)button<br>{<br>    [NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:nil];<br>}<br>-(void)download:(NSThread <em>)thread<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //更新UI<br>        //        _progress.progress+=0.01;<br>        //在主线程中执行一个方法<br>        [self performSelectorOnMainThread:@selector(upDateUI) withObject:nil waitUntilDone:NO];<br>        [NSThread sleepForTimeInterval:0.001];<br>        NSLog(@”进度为%f%%”,_progress.progress</em>100);<br>    }<br>}<br>-(void)upDateUI<br>{<br>    _progress.progress+=0.001;<br>}</p>
 
           
         
@@ -1305,131 +1403,6 @@ NSLog(@&quot;sub num=%d&quot;,_num);
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/30/C_UI11UIScrollView/" itemprop="url">
-                  UIScrollView
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
-              2016-07-30
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>属性</p>
-</blockquote>
-<p>内容区域contentSize<br>@property(nonatomic) CGSize contentSize;<br>偏移量contentOffset<br>@property(nonatomic) CGPoint contentOffset;<br>弹簧效果bounces<br>@property(nonatomic) BOOL bounces;<br>分页效果pagingEnabled<br>@property(nonatomic,getter=isPagingEnabled) BOOL pagingEnabled;<br>允许滑动视图本身，如果设为no只能通过方法滑动，不能直接用手滑动<br>@property(nonatomic,getter=isScrollEnabled) BOOL scrollEnabled;<br>显示水平进度条showsHorizontalScrollIndicator<br>@property(nonatomic) BOOL showsHorizontalScrollIndicator;<br>显示垂直进度条showsVerticalScrollIndicator<br>@property(nonatomic) BOOL showsVerticalScrollIndicator;<br>放大和缩小的倍数<br>@property(nonatomic) CGFloat minimumZoomScale;<br>@property(nonatomic) CGFloat maximumZoomScale;</p>
-<p>1缩放到某个区域，（具体出现的区域受缩放倍数的影响）</p>
-<ul>
-<li>(void)zoomToRect:(CGRect)rect animated:(BOOL)animated;</li>
-</ul>
-<p>2种通过代码滑动视图的方法，一个是设置偏移量，一个是滑动到某个区域（常用第一个）</p>
-<ul>
-<li>(void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;</li>
-<li>(void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated;</li>
-</ul>
-<blockquote>
-<p>滚动视图的基本使用</p>
-</blockquote>
-<p>演示UIScrollView滚动试图基本使用<br>UIImageView <em>imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 11000, 5600)];<br>imageView.image=[UIImage imageNamed:@”1001.jpg”];<br>[self.view addSubview:imageView];<br>使用滚动试图<br>声明一个滚动试图<br>UIScrollView </em>scrollView=[[UIScrollView alloc]initWithFrame:self.view.bounds];<br>[self.view addSubview:scrollView];<br>imageView放到了滚动试图中<br>[scrollView addSubview:imageView];<br>滚动试图比较特殊，有两个大小。本身大小，其中内容大小<br>scrollView.contentSize=CGSizeMake(11000, 5600);<br>滚动试图常用属性<br>是否显示水平或竖直滚动条。<br>水平，横向<br>scrollView.showsHorizontalScrollIndicator=NO;<br>竖直，纵向<br>scrollView.showsVerticalScrollIndicator=NO;<br>设置分页滚动<br>scrollView.pagingEnabled=YES;<br>设置是否可以拉出空白区域，bounces蹦跳  scrollView.bounces=YES;</p>
-<blockquote>
-<p>滚动视图的基本原理 + 滚动视图的事件处理</p>
-</blockquote>
-<p>滚动试图缩放和基本原理UIScrollViewDelegate<br>scrollView.delegate=self;<br>开始拖拽<br>滚动。。。。。<br>结束拖拽<br>开始减速<br>滚动。。。。。<br>减速结束（滚动停止）；<br>【UIScrollViewDelegate】<br>代理方法<br>滑动过程中</p>
-<ul>
-<li>(void)scrollViewDidScroll:(UIScrollView *)scrollView;<br>开始拖动</li>
-<li>(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;<br>停止拖动</li>
-<li>(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;<br>开始滑动</li>
-<li>(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;<br>停止滑动</li>
-<li>(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView; </li>
-</ul>
-<blockquote>
-<p>滚动视图的缩放</p>
-</blockquote>
-<p>设置最大最小缩放比例<br>通过代理方法，告诉滚动试图，哪个试图应该缩放<br>scrollView.maximumZoomScale=10;<br>scrollView.minimumZoomScale=0.1;<br>代理方法，告诉scrollView哪个试图应该缩放<br>当试图滚动的时候执行<br>试图缩放。<br>允许缩放的视图(一个scrollview中只能有一个可以缩放且必须设置可以缩放的范围)<br>-(UIView <em>)viewForZoomingInScrollView:(UIScrollView </em>)scrollView<br>{<br>返回被缩放的试图<br>return imageView;<br>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1475,7 +1448,7 @@ NSLog(@&quot;sub num=%d&quot;,_num);
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">175</span>
+              <span class="site-state-item-count">176</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

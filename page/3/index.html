@@ -228,6 +228,302 @@
             
               
                 
+                <a class="post-title-link" href="/2018/07/22/M_Swift101常见UI问题/" itemprop="url">
+                  常见UI问题
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-22T18:47:40+08:00" content="2018-07-22">
+              2018-07-22
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="tableView卡顿"><a href="#tableView卡顿" class="headerlink" title="tableView卡顿"></a>tableView卡顿</h2><pre><code>1.最常⽤用的就是cell的重⽤用  
+2.避免cell的重新布局 
+3.提前计算并缓存cell的属性及内容 
+4.减少cell中控件的数量量
+5.不要使⽤用ClearColor，⽆无背景⾊色，透明度也不不要设置为0 
+6.使⽤局部更新
+7.加载⽹络数据，下载图⽚，使用异步加载，并缓存 
+8.少使⽤用addView 给cell动态添加view 
+9.按需加载cell，cell滚动很快时，只加载范围内的cell 
+10.不要实现无用的代理理⽅方法，tableView只遵守两个协议 
+11.缓存⾏⾼
+12.不要做多余的绘制工作。
+13.预渲染图像。
+14.使⽤用正确的数据结构来存储数据。
+</code></pre><h2 id="应用优化"><a href="#应用优化" class="headerlink" title="应用优化"></a>应用优化</h2><pre><code>一、首页启动速度   
+    启动过程中做的事情越少越好、不在UI线程上作耗时的
+    操作、在合适的时机开始后台任务、尽量减小包的大小
+二、页面浏览速度
+    json的处理、数据压缩、内容缓存、算法的优化
+三、操作流畅度优化：
+    见tableVIew的优化
+四、数据库的优化：
+    数据库设计上面的重构、查询语句的优化、分库分表
+五、服务器端和客户端的交互优化：
+    客户端尽量减少请求、服务端尽量做多的逻辑
+    处理、通信协议的优化
+六、非技术性能优化
+    产品逻辑性、代码规范、界面交互规范等
+</code></pre><h2 id="卡顿检测"><a href="#卡顿检测" class="headerlink" title="卡顿检测"></a>卡顿检测</h2><pre><code>1.使用instrument
+2.在程序运行期间能及时获取卡顿信息
+监控卡顿,最直接就是找到主线程都在干些啥玩意儿.我们知道一个线程的消息事
+件处理都是依赖于NSRunLoop来驱动,所以要知道线程正在调用什么方法,
+就需要从NSRunLoop来入手.其中核心方法CFRunLoopRun简化后的主要逻辑
+大概是这样的:
+int32_t __CFRunLoopRun()
+{
+    //通知即将进入runloop
+    __CFRunLoopDoObservers(KCFRunLoopEntry);
+    do
+    {
+    // 通知将要处理timer和source
+    __CFRunLoopDoObservers(kCFRunLoopBeforeTimers);
+    __CFRunLoopDoObservers(kCFRunLoopBeforeSources);
+
+    __CFRunLoopDoBlocks();  //处理非延迟的主线程调用
+    __CFRunLoopDoSource0(); //处理UIEvent事件        
+    //GCD dispatch main queue
+    CheckIfExistMessagesInMainDispatchQueue();
+    // 即将进入休眠
+    __CFRunLoopDoObservers(kCFRunLoopBeforeWaiting);
+    // 等待内核mach_msg事件
+    mach_port_t wakeUpPort = SleepAndWaitForWakingUpPorts();
+    // Zzz...
+    // 从等待中醒来
+    __CFRunLoopDoObservers(kCFRunLoopAfterWaiting);
+    // 处理因timer的唤醒
+    if (wakeUpPort == timerPort)
+    __CFRunLoopDoTimers();
+    // 处理异步方法唤醒,如dispatch_async
+    else if (wakeUpPort == mainDispatchQueuePort)
+    __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__()
+    // UI刷新,动画显示
+    else
+    __CFRunLoopDoSource1();
+    // 再次确保是否有同步的方法需要调用
+    __CFRunLoopDoBlocks();
+    } while (!stop &amp;&amp; !timeout);
+    //通知即将退出runloop
+    __CFRunLoopDoObservers(CFRunLoopExit);
+}
+不难发现NSRunLoop调用方法主要就是在kCFRunLoopBeforeSources和
+kCFRunLoopBeforeWaiting之间,还有kCFRunLoopAfterWaiting之后,
+也就是如果我们发现这两个时间内耗时太长,那么就可以判定出此时主线程卡顿.
+</code></pre><h3 id="量化卡顿的程度"><a href="#量化卡顿的程度" class="headerlink" title="量化卡顿的程度"></a>量化卡顿的程度</h3><pre><code>要监控NSRunLoop的状态,我们需要使用到CFRunLoopObserverRef,通过它
+可以实时获得这些状态值的变化,具体的使用如下:
+static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
+{
+MyClass *object = (__bridge MyClass*)info;
+object-&gt;activity = activity;
+}
+
+- (void)registerObserver
+{
+CFRunLoopObserverContext context = {0,(__bridge void*)self,NULL,NULL};
+    CFRunLoopObserverRef observer = 
+    CFRunLoopObserverCreate(kCFAllocatorDefault,
+    kCFRunLoopAllActivities,
+    YES,
+    0,
+    &amp;runLoopObserverCallBack,
+    &amp;context);
+    CFRunLoopAddObserver(CFRunLoopGetMain(), 
+    observer, kCFRunLoopCommonModes);
+}
+只需要另外再开启一个线程,实时计算这两个状态区域之间的耗时是否到达某
+个阀值,便能揪出这些性能杀手.
+
+为了让计算更精确,需要让子线程更及时的获知主线程NSRunLoop状态变化,
+所以dispatch_semaphore_t是个不错的选择,另外卡顿需要覆盖到多次连
+续小卡顿和单次长时间卡顿两种情景,所以判定条件也需要做适当优化.将上
+面两个方法添加计算的逻辑如下:
+static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
+{
+MyClass *object = (__bridge MyClass*)info;
+
+// 记录状态值
+object-&gt;activity = activity;
+
+// 发送信号
+dispatch_semaphore_t semaphore = moniotr-&gt;semaphore;
+dispatch_semaphore_signal(semaphore);
+}
+
+- (void)registerObserver
+{
+CFRunLoopObserverContext context = {0,(__bridge void*)self,NULL,NULL};
+CFRunLoopObserverRef observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
+kCFRunLoopAllActivities,
+YES,
+0,
+&amp;runLoopObserverCallBack,
+&amp;context);
+CFRunLoopAddObserver(CFRunLoopGetMain(), observer, kCFRunLoopCommonModes);
+
+// 创建信号
+semaphore = dispatch_semaphore_create(0);
+
+// 在子线程监控时长
+dispatch_async(dispatch_get_global_queue(0, 0), ^{
+while (YES)
+{
+// 假定连续5次超时50ms认为卡顿(当然也包含了单次超时250ms)
+long st = dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, 50*NSEC_PER_MSEC));
+if (st != 0)
+{
+if (activity==kCFRunLoopBeforeSources || activity==kCFRunLoopAfterWaiting)
+{
+if (++timeoutCount &lt; 5)
+continue;
+
+NSLog(@&quot;好像有点儿卡哦&quot;);
+}
+}
+timeoutCount = 0;
+}
+});
+}
+</code></pre><h3 id="记录卡顿的函数调用"><a href="#记录卡顿的函数调用" class="headerlink" title="记录卡顿的函数调用"></a>记录卡顿的函数调用</h3><pre><code>监控到了卡顿现场,当然下一步便是记录此时的函数调用信息,此处可以使用一个
+第三方Crash收集组件PLCrashReporter,它不仅可以收集Crash信息也可用
+于实时获取各线程的调用堆栈,使用示例如下:
+PLCrashReporterConfig *config = [[PLCrashReporterConfig
+alloc]initWithSignalHandlerType:
+PLCrashReporterSignalHandlerTypeBSD
+symbolicationStrategy:
+PLCrashReporterSymbolicationStrategyAll];
+PLCrashReporter *crashReporter = 
+[[PLCrashReporter alloc] initWithConfiguration:config];
+
+NSData *data = [crashReporter generateLiveReport];
+PLCrashReport *reporter = [[PLCrashReport alloc]
+initWithData:data error:NULL];
+NSString *report = [PLCrashReportTextFormatter
+stringValueForCrashReport:reporter
+withTextFormat:PLCrashReportTextFormatiOS];
+
+NSLog(@&quot;------------\n%@\n------------&quot;, report);
+当检测到卡顿时,抓取堆栈信息,然后在客户端做一些过滤处理,便可以上报到
+服务器,通过收集一定量的卡顿数据后经过分析便能准确定位需要优化的逻辑,至
+此这个实时卡顿监控就大功告成了!
+</code></pre><h2 id="什么是掉帧"><a href="#什么是掉帧" class="headerlink" title="什么是掉帧"></a>什么是掉帧</h2><pre><code>掉帧一般指由于硬件不足以负荷显示器画面动态显示刷新的频率，从而帧率过低
+所造成的画面出现停滞（或短时间或长时间）现象。掉帧在游戏中就是玩游戏过
+程中，出现卡这种情况，图像未及时刷新造成，画面粘滞。
+帧数就是在1秒钟时间里传输的图片的量，也可以理解为图形处理器每秒钟能够
+刷新几次，通常用fps（Frames Per Second）表示。每一帧都是静止的图
+象，快速连续地显示帧便形成了运动的假象。高的帧率可以得到更流畅、更逼真
+的动画。每秒钟帧数 (fps) 愈多，所显示的动作就会愈流畅。
+</code></pre><h2 id="APP启动流出"><a href="#APP启动流出" class="headerlink" title="APP启动流出"></a>APP启动流出</h2><pre><code>1.打开程序
+2.执行main函数
+3.执行UIApplicationMain函数
+4.初始化UIApplication（创建和设置代理，开启RunLoop事件循环）
+5.监听事件，执行AppDelegate对应函数
+    程序加载完成
+    程序获取焦点
+    程序进入后台
+    程序失去焦点
+    程序从后台进入前台
+    内存警告，可能要终止程序
+    程序即将结束
+6.结束程序
+</code></pre><h2 id="封装SDK需要注意哪些"><a href="#封装SDK需要注意哪些" class="headerlink" title="封装SDK需要注意哪些"></a>封装SDK需要注意哪些</h2><pre><code>1.类名、宏定义、枚举、通知、类别等命名时加静态库统一特殊前缀，以避免命名冲突。
+2.类别中方法名也需要加特殊前缀，以避免方法覆盖导致不必要麻烦。
+3.对于项目中的c、c++中的方法，需要加前缀
+4.对于开发静态库时引入的开源库，若体量过大，可外部引用，提供给接入方时
+加以说明，体量小的可以对类名及类中所用枚举、通知等加前缀使用。
+5.特别需要注意的是在同一个类中多个interface的情况，加前缀时一定要检
+查所有的interface，避免遗漏
+6.由于一些接入方引入静态库时，对app的体积有严格的控制，所以在开发静态
+库时，要尽量精简代码，引入开源库时，可剔除一些不必要的部分，如能用系统
+提供的方法实现的功能，尽量不去引入大型第三方库，不然打包出来的.a库可能体积增加很多。
+</code></pre><h2 id="使用drawRect有什么影响"><a href="#使用drawRect有什么影响" class="headerlink" title="使用drawRect有什么影响"></a>使用drawRect有什么影响</h2><pre><code>drawRect方法依赖Core Graphics框架来进行自定义的绘制，但这种方法主
+要的缺点就是它处理touch事件的方式：每次按钮被点击后，都会用
+setNeddsDisplay进行强制重绘；而且不止一次，每次单点事件触发两次执
+行。这样的话从性能的角度来说，对CPU和内存来说都是欠佳的。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/03/N_Android15与时俱进/" itemprop="url">
                   Android与时俱进
                 </a>
@@ -1190,100 +1486,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/10/Q_3孩子一岁/" itemprop="url">
-                  孩子一岁生日
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-05-10T10:10:45+08:00" content="2018-05-10">
-              2018-05-10
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>一转眼，孩子已经一岁了，感觉时间很快，说实话我真的没有怎么陪伴孩子，五一的时候我请了三天假，跟着五一一起，相当于在家呆了一个星期，差不多跟过年也差不多了，在家呆了那么久，孩子始终都没有学会叫爸爸，这确实很难，也说明了我陪伴孩子的真的是少。<br>以前我想着孩子大一点，我带着孩子来北京，我们一家人能在一起，从我上次在家里呆了一个星期之后，我这种想法彻底破灭了，孩子正在成长的时候，孩子喜欢玩了，这个时候每天都希望出去转转，真的是不能在家里窝着的，但是如果在北京的话，真的是只能在家里窝着，因为我要去上班，这真的是一个头疼的问题，一方面想要陪伴，一方面想让孩子自由。<br>好了，不说那么头疼的问题了，现在孩子真的是越来越淘气了，有时候感觉这孩子特别的娇气，动不动的就会哭，这真的让我很失望，我不希望小小年纪就有多坚强，但是也不能动不动就哭，这真的是太娇气了，更可气的是不吃饭，真的是，我看那么多孩子，都胖嘟嘟的，这孩子真的是一点都不胖，虽说不是多瘦吧，肉也挺结实的，但是，我真的是觉得应该要好好吃饭的，对于饮食上的问题，我觉得真的是要好好的注意，不能小小年纪就惯成不好的饮食习惯，这真的不应该是一个农村孩子应该有的体制。淘气其实我觉得还是可以理解的，毕竟是孩子嘛，但是真的不希望坏的习惯早早的出现在孩子身上，我不能在家里陪伴孩子，说实话，孩子的成长，我至今都没有做任何工作，但是我真的希望孩子能养成好的习惯，这对将来真的很重要，我真的不知道该怎么做了，如果让孩子来北京的话，确实是太痛苦了，但是在家里的话，我真的是没有时间去教育孩子的，这是一个很大的问题。<br>我结下来讲的问题是独立的问题，我想孩子你已经一岁了，至少也需要慢慢的减少母亲的陪伴了，有的时候要学会自己玩乐，学会跟孩子玩乐了，也要学会母亲不在的时候，不要哭哭啼啼了。我其实很像给孩子买个婴儿床，这个问题我觉得很重要，孩子慢慢的长大了，要学会独立了，不致于早早的独立生活，但至少要有一些独立生活的行为，自己睡觉我觉得应该是一个常识，我问题我同事，他家的孩子很早的时候就自己睡，我觉得这样很好。<br>说到睡觉，这孩子真的是不省心，睡觉的姿势真的是千奇百怪，我真的很无语，睡着的时候需要翻来覆去的半天，最后轰然趴倒在被窝里，就这样跟趴着睡着了，我们再把她弄到被窝里，但是不一会她就会把被子蹬到一边去，然后睡着睡着，竟然会横过来，头一个劲的往上顶，顶到枕头里，顶到整个头都仰着，歪着，那姿势，我觉得需要一定的柔韧，反正我是做不到。<br>家里床是很大，让孩子自己睡一个床，有时候觉得确实有点占地方，这真的是一个头疼的问题。我想这个床真的是应该买的。<br>我没有照顾孩子，但是从目前来看，孩子的身上确实有一些小的毛病，我知道媳妇一直很疼爱孩子，其实照顾孩子真的不容易，在这里说一句，孩子她妈妈辛苦了。<br>话说回来，有些问题，我们看到了，但是我们不知道怎么解决。也许只有孩子的妈妈能解决吧，我只能是一个旁观者，有的时候话多了，反而是显得的不干活，还净是一些事。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1329,7 +1531,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">175</span>
+              <span class="site-state-item-count">176</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
