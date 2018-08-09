@@ -104,7 +104,7 @@
 2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，
 当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，
 两个线">
-<meta property="og:updated_time" content="2018-08-07T10:02:36.355Z">
+<meta property="og:updated_time" content="2018-08-09T07:43:21.558Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多线程">
 <meta name="twitter:description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU，
@@ -398,7 +398,11 @@ NSCondition可以给每个线程分别加锁，加锁后不影响其他线程进
 这是非常强大。
 NSConditionLock （借助 NSCondition 来实现，本质是生产者-消费者模型）
 也可以像NSCondition一样做多线程之间的任务等待调用，而且是线程安全的。
-NSRecursiveLock 递归锁有时候“加锁代码”中存在递归调用，递归开始前加锁，递归调用开始后会重复执行此方法以至于反复执行加锁代码最终造成死锁，这个时候可以使用递归锁来解决。使用递归锁可以在一个线程中反复获取锁而不造成死锁，这个过程中会记录获取锁和释放锁的次数，只有最后两者平衡锁才被最终释放。
+NSRecursiveLock 递归锁有时候“加锁代码”中存在递归调用，递归开始前加
+锁，递归调用开始后会重复执行此方法以至于反复执行加锁代码最终造成死锁，
+这个时候可以使用递归锁来解决。使用递归锁可以在一个线程中反复获取锁而不
+造成死锁，这个过程中会记录获取锁和释放锁的次数，只有最后两者平衡锁才被
+最终释放。
 dispatch_semaphore GCD中信号量，也可以解决资源抢占问题,
 支持信号通知和信号等待。每当发送一个信号通知，则信号量+1；
 每当发送一个等待信号时信号量-1,；如果信号量为0则信号会处于等待状态，
@@ -408,8 +412,7 @@ OSSpinLock 自旋锁(不建议使用)
 锁就需要等待a线程释放锁。在没有获得锁的期间，b线程会一直处于忙等的状
 态。如果a线程在临界区的执行时间过长，则b线程会消耗大量的cpu时间，不太
 划算。所以，自旋锁用在临界区执行时间比较短的环境性能会很高。
-追问一：自旋和互斥对比？
-相同点：都能保证同一时间只有一个线程访问共享资源。
+</code></pre><h2 id="自旋和互斥对比"><a href="#自旋和互斥对比" class="headerlink" title="自旋和互斥对比"></a>自旋和互斥对比</h2><pre><code>相同点：都能保证同一时间只有一个线程访问共享资源。
 都能保证线程安全。
 不同点：
 互斥锁：如果共享数据已经有其他线程加锁了，线程会进入
@@ -473,16 +476,16 @@ dispatch_sync在等待主队列执行完毕。
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/08/03/M_Swift99Block/" rel="next" title="Block理解">
-                <i class="fa fa-chevron-left"></i> Block理解
+              <a href="/2018/07/29/M_Swift89Runtime相关方法/" rel="next" title="Runtime">
+                <i class="fa fa-chevron-left"></i> Runtime
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/08/03/M_Swift102AFN_SDWebImage/" rel="prev" title="AFN SD做了哪些优化">
-                AFN SD做了哪些优化 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/08/03/M_Swift103事件响应顺序/" rel="prev" title="iOS事件响应顺序">
+                iOS事件响应顺序 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -551,7 +554,7 @@ dispatch_sync在等待主队列执行完毕。
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">176</span>
+              <span class="site-state-item-count">166</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -583,7 +586,7 @@ dispatch_sync在等待主队列执行完毕。
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发和并行的区别"><span class="nav-number">1.</span> <span class="nav-text">并发和并行的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你理解的多线程"><span class="nav-number">2.</span> <span class="nav-text">你理解的多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一种：pthread"><span class="nav-number">2.1.</span> <span class="nav-text">第一种：pthread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二种：NSThread"><span class="nav-number">2.2.</span> <span class="nav-text">第二种：NSThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三种：GCD"><span class="nav-number">2.3.</span> <span class="nav-text">第三种：GCD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四种：NSOperation"><span class="nav-number">2.4.</span> <span class="nav-text">第四种：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的原理"><span class="nav-number">3.</span> <span class="nav-text">多线程的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的优点"><span class="nav-number">4.</span> <span class="nav-text">多线程的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的缺点"><span class="nav-number">5.</span> <span class="nav-text">多线程的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD和NSOperation区别，你更倾向于哪一种？"><span class="nav-number">6.</span> <span class="nav-text">GCD和NSOperation区别，你更倾向于哪一种？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#区别"><span class="nav-number">6.1.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于GCD："><span class="nav-number">6.2.</span> <span class="nav-text">倾向于GCD：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于：NSOperation"><span class="nav-number">6.3.</span> <span class="nav-text">倾向于：NSOperation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场合："><span class="nav-number">6.4.</span> <span class="nav-text">使用场合：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios-几种线程锁"><span class="nav-number">7.</span> <span class="nav-text">ios 几种线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><span class="nav-number">8.</span> <span class="nav-text">GCD的一些常用的函数？（group， barrier，信号量 线程同步）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题分析"><span class="nav-number">9.</span> <span class="nav-text">问题分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发和并行的区别"><span class="nav-number">1.</span> <span class="nav-text">并发和并行的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你理解的多线程"><span class="nav-number">2.</span> <span class="nav-text">你理解的多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一种：pthread"><span class="nav-number">2.1.</span> <span class="nav-text">第一种：pthread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二种：NSThread"><span class="nav-number">2.2.</span> <span class="nav-text">第二种：NSThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三种：GCD"><span class="nav-number">2.3.</span> <span class="nav-text">第三种：GCD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四种：NSOperation"><span class="nav-number">2.4.</span> <span class="nav-text">第四种：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的原理"><span class="nav-number">3.</span> <span class="nav-text">多线程的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的优点"><span class="nav-number">4.</span> <span class="nav-text">多线程的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的缺点"><span class="nav-number">5.</span> <span class="nav-text">多线程的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD和NSOperation区别，你更倾向于哪一种？"><span class="nav-number">6.</span> <span class="nav-text">GCD和NSOperation区别，你更倾向于哪一种？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#区别"><span class="nav-number">6.1.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于GCD："><span class="nav-number">6.2.</span> <span class="nav-text">倾向于GCD：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于：NSOperation"><span class="nav-number">6.3.</span> <span class="nav-text">倾向于：NSOperation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场合："><span class="nav-number">6.4.</span> <span class="nav-text">使用场合：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios-几种线程锁"><span class="nav-number">7.</span> <span class="nav-text">ios 几种线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自旋和互斥对比"><span class="nav-number">8.</span> <span class="nav-text">自旋和互斥对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><span class="nav-number">9.</span> <span class="nav-text">GCD的一些常用的函数？（group， barrier，信号量 线程同步）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题分析"><span class="nav-number">10.</span> <span class="nav-text">问题分析</span></a></li></ol></div>
             
           </div>
         </section>
