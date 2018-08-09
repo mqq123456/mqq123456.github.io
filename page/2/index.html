@@ -228,6 +228,583 @@
             
               
                 
+                <a class="post-title-link" href="/2018/08/03/M_Swift99Block/" itemprop="url">
+                  Block理解
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-03T10:03:14+08:00" content="2018-08-03">
+              2018-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>本质：带有自动变量值的匿名函数
+block的实质是一个oc对象，它有自己的isa指针、invoke变
+量 ，是NSObject的子类，可以接收消息
+1._NSConcreteGlobalBlock,全局的静态block，不会访问外部的变量。
+就是说如果你的block没有调用其他 的外部变量，那你的block类型就是这
+种。例如：你仅仅在你的block里面写一个NSLog(&quot;hello world&quot;);
+2._NSConcreteStackBlock 保存在栈中的 block，当函数返回时会被销
+毁。这个block就是你声明的时候不用copy修饰，并且你的block访问了外部
+变量。
+3._NSConcreteMallocBlock 保存在堆中的 block，当引用计数为 0 时
+会被销毁。
+</code></pre><h2 id="写法："><a href="#写法：" class="headerlink" title="写法："></a>写法：</h2><pre><code>void (^block)(void) = ^{
+    NSLog(@&quot;无参无返回值&quot;);
+};
+void (^xiaoming1aa)() = ^(NSString *c){
+    NSLog(@&quot;带参数&quot;);
+};
+NSString *(^xiaming2)() = ^NSString *(NSString *dd) {
+    return @&quot;带参数与返回&quot;;
+};
+@property (nonatomic, copy)
+void(^myBlock)();//无参无返回值
+@property (nonatomic, copy)
+void(^myBlock1)(NSString *);//带参数
+@property (nonatomic, copy)
+NSString *(^myBlock2)(NSString *);//带参数与返回
+</code></pre><h2 id="block为什么不能修改外部变量"><a href="#block为什么不能修改外部变量" class="headerlink" title="block为什么不能修改外部变量"></a>block为什么不能修改外部变量</h2><pre><code>默认情况下，在block中访问的外部变量是复制过去的，
+复制过去的是值，即：写操作不对原变量生效。
+</code></pre><h2 id="block都做了什么？"><a href="#block都做了什么？" class="headerlink" title="__block都做了什么？"></a>__block都做了什么？</h2><pre><code>Block不允许修改外部变量的值，这里所说的外部变量的值，
+指的是栈中指针的内存地址。__block 所起到的作用就是
+只要观察到该变量被 block 所持有，就将“外部变量”
+在栈中的内存地址放到了堆中。
+进而在block内部也可以修改外部变量的值
+这也保证了原对象不被销毁，但与此同时，也会导致循环引用问题
+</code></pre><h2 id="block为什么为引起循环引用"><a href="#block为什么为引起循环引用" class="headerlink" title="block为什么为引起循环引用"></a>block为什么为引起循环引用</h2><pre><code>因为block在拷贝到堆上的时候，会retain其引用的外部变量，
+那么如果block中如果引用了他的宿主对象，
+那很有可能引起循环引用
+循环引用发生的条件就是持有这个block的对象，
+被block里边加入的对象持有
+</code></pre><h2 id="如何解决循环引用"><a href="#如何解决循环引用" class="headerlink" title="如何解决循环引用"></a>如何解决循环引用</h2><pre><code>使用__weak修饰self，使其在block中不被持有，打破循环引用。
+__weak typeof(self) weakSelf = self;
+</code></pre><h2 id="Block为什么要用copy修饰"><a href="#Block为什么要用copy修饰" class="headerlink" title="Block为什么要用copy修饰"></a>Block为什么要用copy修饰</h2><pre><code>针对block的三种类型，
+也就是copy修饰的block。他的生命 周期就是随着对象的销毁而结束的。只要
+对象不销毁，我们就可以调用的到在堆中的block。这就是为什么我们要用
+copy来修饰block。因为不用copy修饰的访问外部变量的block，只在他所在
+的函数被调用的那一瞬间可以使用。之后就消失了。
+</code></pre><h2 id="block执行过程中对象被释放"><a href="#block执行过程中对象被释放" class="headerlink" title="block执行过程中对象被释放"></a>block执行过程中对象被释放</h2><pre><code>在block执行开始时self对象还未被释放，而执行过程中，
+self被释放了，此时访问self时，就会发生错误。
+对于这种场景，应该在block中对 对象使用__strong修饰，
+使得在block期间对 对象持有，block执行结束后，解除其持有。
+注：此方法只能保证在block执行期间对象不被释放，
+如果对象在block执行执行之前已经被释放了，该方法也无效。
+</code></pre><h2 id="什么情况下不回发生循环引用"><a href="#什么情况下不回发生循环引用" class="headerlink" title="什么情况下不回发生循环引用"></a>什么情况下不回发生循环引用</h2><pre><code>通用情况:在block本身不被self持有,而被别的对象持有,
+同时不产生循环引用的时候,就不需要使用weakself了
+UIView动画block，AFN的block
+UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
+所以循环无法形成 --&gt; 动画block不会造成循环引用的原因。
+</code></pre><h2 id="函数和block区别"><a href="#函数和block区别" class="headerlink" title="函数和block区别"></a>函数和block区别</h2><pre><code>函数里面只能访问全局变量，而Block代码块不光能访问全局变量，
+还拥有当前栈内存和堆内存变量的可读性
+（当然通过__block访问指示符修饰的局部变量还可以在block代码块里面进行修改）。
+从内存的角度看，函数指针只不过是指向代码区的一段可执行代码，
+而block实际上是程序运行过程中在栈内存动态创建的对象，
+可以向其发送copy消息将block对象拷贝到堆内存，
+以延长其生命周期。
+</code></pre><h2 id="如何区分block位置"><a href="#如何区分block位置" class="headerlink" title="如何区分block位置"></a>如何区分block位置</h2><pre><code>要点一:
+    当block在函数内部，
+    且定义的时候就使用了函数内部的变量，
+    那么这个block是存储在栈上的。 
+要点二:
+    当block定义在函数体外面，
+    或者定义在函数体内部且当时函数执行的时候，
+    block体中并没有需要使用函数内部的局部变量时，
+    也就是block在函数执行的时候只是静静地待在一边定义了一下
+    而不使用函数体的内容，
+    那么block将会被编译器存储为全局block。 
+要点三:
+    全局block存储在堆中，
+    对全局block使用copy操作会返回原函数指针；
+    而对栈中的block使用copy操作，
+    会产生两个不同的block地址，
+    也就是两个匿名函数的入口地址。 
+要点四:
+    ARC机制优化会将stack的block,
+    转为heap的block进行调用。
+</code></pre><h2 id="delegate为什么用weak-它和block区别"><a href="#delegate为什么用weak-它和block区别" class="headerlink" title="delegate为什么用weak 它和block区别"></a>delegate为什么用weak 它和block区别</h2><pre><code>weak是为了解决循环引用的问题
+代理和block的共同特性是回调机制，不同的是，代理的方法比较多，比较分
+散，使用block的代码比较集中统一；代理运行成本比较低，一对一的关系，
+block需要将使用的数据从栈内存拷贝到堆内存中，对象的话就是加计数，代理
+制是保存一个对象指针，直接回调；block写法简单，注重传输，但是需要注意
+循环引用
+总结：公共接口，方法比较多的时候用delegate进行解耦，异步和简单的回调用block
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/31/M_Swift100KVC/" itemprop="url">
+                  KVC
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-31T16:32:01+08:00" content="2018-07-31">
+              2018-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+</code></pre><h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><pre><code>-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setValue: (id) value  forKey: (NSString*) key
+</code></pre><h2 id="访问过程"><a href="#访问过程" class="headerlink" title="访问过程"></a>访问过程</h2><pre><code>1.接收器中如果有key访问器
+（或getKey、isKey、_key、_getKey、setKey）则使用它。
+2.没有访问器时，使用接收器的类方法
+accessInstanceVariablesDirectly来查询。返回YES时，如果存在实例
+变量key（或_key、isKey、_isKey等）则返回或设置其值。使用引用计数管
+理方式时，实例变量如果为对象，则旧值会被自动释放，新值被保存并代入。
++(BOOL)accessInstanceVariablesDirectly
+通常定义为返回YES，可以在子类中改变。该类方法返回YES时，使用键值编码
+可以访问该类的实例变量。返回NO时不可以访问。只要该方法返回YES，实例变
+量的可视属性即使有@private修饰，也可以访问。
+3.既没有访问器也没有实例变量时，将引起接收器调用方法
+valueForUndefinedKey:或setValue:forUndefinedKey:。
+-(id) valueForUndefinedKey: (NSStirng *) key
+不能取得键字符串对应的值时，从方法valueForKey：中调用该方法。默认情
+况下，该方法的执行会触发NSUndefinedKeyException。不过，通过在子类
+中修改定义，就可以返回其他对象。
+- (void) setValue:(id)value forUndefinedKey:(NSString *) key
+不能设置键字符串key对应的属性值时，从方法setValue:forKey中调用该方
+法。默认情况下，该方法的执行会触发异常NSUndefinedKeyException。不
+过，通过在子类中修改定义，可以返回其他对象。
+4.   如果该返回值不是对象，则返回被适当的对象包装的值；设置值时也应先
+包装成相应的对象。
+属性为对象时，该对象还可能持有属性。这时候可以用“.”连接表示键的字符
+串，这种表示方式称为键路径。只要能找到对象，点和键多长都没有关系。
+- (id)valueForKeyPath:(NSString *) keyPath
+以点切分键路径，并使用第一个键向接收器发送valueForKey：方法。然后，
+再使用键路径的下一个键，向得到的对象发送valueForKey：方法，如此反复
+操作，返回最后获得的对象。
+- (void)setValue:(id) value forKeyPath:(NSString *) keyPath
+与valueForKeyPath：方法一样取出对象，这里只对路径中的最后一个键调用
+setValue：forKey：方法，并设定属性值为value。
+</code></pre><h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="KVC提供了验证Key对应的Value是否可用的方法："><a href="#KVC提供了验证Key对应的Value是否可用的方法：" class="headerlink" title="KVC提供了验证Key对应的Value是否可用的方法："></a>KVC提供了验证Key对应的Value是否可用的方法：</h3><pre><code>(BOOL)validateValue:(inout id *)ioValue forKey:(NSString *)inKey error:(out NSError **)outError;  
+</code></pre><h3 id="KVC对数值和结构体型属性的支持"><a href="#KVC对数值和结构体型属性的支持" class="headerlink" title="KVC对数值和结构体型属性的支持"></a>KVC对数值和结构体型属性的支持</h3>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/31/M_Swift96Runtime常见作用/" itemprop="url">
+                  Runtime常见作用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-31T15:14:05+08:00" content="2018-07-31">
+              2018-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="动态的添加对象的成员变量和方法"><a href="#动态的添加对象的成员变量和方法" class="headerlink" title="动态的添加对象的成员变量和方法"></a>动态的添加对象的成员变量和方法</h2><pre><code>class_addMethod([self.person class], @selector(guess), (IMP)guessAnswer, &quot;v@:&quot;);
+参数说明
+&gt;(IMP)guessAnswer 意思是guessAnswer的地址指针;
+&gt;&quot;v@:&quot; 意思是，v代表无返回值void，如果是i则代表int；@代表 id sel; : 代表 SEL _cmd;
+&gt;“v@:@@” 意思是，两个参数的没有返回值。  
+</code></pre><h2 id="动态交换两个方法的实现"><a href="#动态交换两个方法的实现" class="headerlink" title="动态交换两个方法的实现"></a>动态交换两个方法的实现</h2><pre><code>交换方法之后，以后每次调用这两个方法都会交换方法的实现
+Method m1 = class_getInstanceMethod([self.person class], @selector(sayName));
+Method m2 = class_getInstanceMethod([self.person class], @selector(saySex));
+method_exchangeImplementations(m1, m2);
+</code></pre><h2 id="拦截并替换方法"><a href="#拦截并替换方法" class="headerlink" title="拦截并替换方法"></a>拦截并替换方法</h2><pre><code>我们要改变这个方法的实现，但是又不能去动它的源代码
+(正如一些开源库出现问题的时候)，
+这个时候runtime就派上用场了
+我们先增加一个tool类，然后写一个我们自己实现的方法-change，
+通过runtime把test1替换成change。
+Class PersionClass = object_getClass([Person class]);
+Class toolClass = object_getClass([tool class]);
+////源方法的SEL和Method
+SEL oriSEL = @selector(test1);
+Method oriMethod = class_getInstanceMethod(PersionClass, oriSEL);
+////交换方法的SEL和Method
+SEL cusSEL = @selector(change);
+Method cusMethod = class_getInstanceMethod(toolClass, cusSEL);
+////先尝试給源方法添加实现，这里是为了避免源方法没有实现的情况
+BOOL addSucc = class_addMethod(PersionClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+if (addSucc) {
+    // 添加成功：将源方法的实现替换到交换方法的实现     
+    class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+}else {
+    //添加失败：说明源方法已经有实现，直接将两个方法的实现交换即
+    method_exchangeImplementations(oriMethod, cusMethod);  
+}
+</code></pre><h2 id="在方法上增加额外功能"><a href="#在方法上增加额外功能" class="headerlink" title="在方法上增加额外功能"></a>在方法上增加额外功能</h2><pre><code>有这样一个场景，出于某些需求，我们需要跟踪记录APP
+中按钮的点击次数和频率等数据，怎么解决？当然通过继承按钮
+类或者通过类别实现是一个办法，但是带来其他问题比如别人不
+一定会去实例化你写的子类，或者其他类别也实现了点击方法导
+致不确定会调用哪一个，runtime可以这样解决，
+实现场景二、我们app经常会遇到一些cash，我们可以通过
+runtime拦截替换这些方法，从而保证不会崩溃，例如如下列举
+    NSArray+NSRangeException
+    NSDictionary+NSRangeException
+    NSMutableAttributedString+NSRangeException
+    NSMutableString+NSRangeException
+    NSNull+Exception
+    NSObject+Swizzling
+    NSString+NSRangeException
+    UINavigationController+Consistent
+load方法会在类第一次加载的时候被调用,调用的时间比较靠前，
+适合在这个方法里做方法交换,方法交换应该被保证，
+在程序中只会执行一次。
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        Class selfClass = [self class];
+        SEL oriSEL = @selector(sendAction:to:forEvent:);
+        Method oriMethod = class_getInstanceMethod(selfClass, oriSEL);
+        SEL cusSEL = @selector(mySendAction:to:forEvent:);
+        Method cusMethod = class_getInstanceMethod(selfClass, cusSEL);
+        BOOL addSucc = class_addMethod(selfClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+        if (addSucc) {
+            class_replaceMethod(selfClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+        }else {
+            method_exchangeImplementations(oriMethod, cusMethod);
+        }
+    });
+}
+- (void)mySendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event {
+    [[Tool sharedManager] addCount];
+    [self mySendAction:action to:target forEvent:event];
+}
+</code></pre><h2 id="实现NSCoding的自动归档和解档"><a href="#实现NSCoding的自动归档和解档" class="headerlink" title="实现NSCoding的自动归档和解档"></a>实现NSCoding的自动归档和解档</h2><pre><code>- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    unsigned int count = 0;
+    Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
+    for (int i = 0; i&lt;count; i++) {
+        // 取出i位置对应的成员变量
+        Ivar ivar = ivars[i];
+        // 查看成员变量
+        const char *name = ivar_getName(ivar);
+        // 归档
+        NSString *key = [NSString stringWithUTF8String:name];
+        id value = [self valueForKey:key];
+        [encoder encodeObject:value forKey:key];
+    }
+    free(ivars);
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (self = [super init]) {
+        unsigned int count = 0;
+        Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
+        for (int i = 0; i&lt;count; i++) {
+            // 取出i位置对应的成员变量
+            Ivar ivar = ivars[i];
+            // 查看成员变量
+            const char *name = ivar_getName(ivar);
+            // 归档
+            NSString *key = [NSString stringWithUTF8String:name];
+            id value = [decoder decodeObjectForKey:key];
+            // 设置到成员变量身上
+            [self setValue:value forKey:key];
+        }
+        free(ivars);
+    }
+    return self;
+}
+</code></pre><h2 id="实现字典转模型的自动转换"><a href="#实现字典转模型的自动转换" class="headerlink" title="实现字典转模型的自动转换"></a>实现字典转模型的自动转换</h2><pre><code>字典转模型的应用可以说是每个app必然会使用的场景,
+虽然实现的方式略有不同，但是原理都是一致的：遍历模型中所有
+属性，根据模型的属性名，去字典中查找key，取出对应的值，
+给模型的属性赋值。
+像几个出名的开源库：JSONModel,MJExtension等都是通过这
+种方式实现的。
+// 创建对应模型对象
+id objc = [[self alloc] init];
+unsigned int count = 0;
+// 1.获取成员属性数组
+Ivar *ivarList = class_copyIvarList(self, &amp;count);
+// 2.遍历所有的成员属性名,一个一个去字典中取出对应的
+value给模型属性赋值
+for (int i = 0; i &lt; count; i++) {
+    // 2.1 获取成员属性
+    Ivar ivar = ivarList[i];
+    // 2.2 获取成员属性名 C -&gt; OC 字符串
+    NSString *ivarName = [NSString stringWithUTF8String:ivar_getName(ivar)];
+    // 2.3 _成员属性名 =&gt; 字典key
+    NSString *key = [ivarName substringFromIndex:1];
+    // 2.4 去字典中取出对应value给模型属性赋值
+    id value = dict[key];
+    // 获取成员属性类型
+    NSString *ivarType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
+}
+如果模型比较简单，只有NSString，NSNumber等，
+这样就可以搞定了。但是如果模型含有NSArray，或者NSDictionary等，那么我们还需要进行第二步转换。
+if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![ivarType containsString:@&quot;NS&quot;]) { 
+    //  是字典对象,并且属性名对应类型是自定义类型
+    // 处理类型字符串 @\&quot;User\&quot; -&gt; User
+    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;@&quot; withString:@&quot;&quot;];
+    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;\&quot;&quot; withString:@&quot;&quot;];
+    // 自定义对象,并且值是字典
+    // value:user字典 -&gt; User模型
+    // 获取模型(user)类对象
+    Class modalClass = NSClassFromString(ivarType);
+    // 字典转模型
+    if (modalClass) {
+        // 字典转模型 user
+        value = [modalClass objectWithDict:value];
+    }
+}
+if ([value isKindOfClass:[NSArray class]]) {
+    // 判断对应类有没有实现字典数组转模型数组的协议
+    if ([self respondsToSelector:@selector(arrayContainModelClass)]) {
+        // 转换成id类型，就能调用任何对象的方法
+        id idSelf = self;
+        // 获取数组中字典对应的模型
+        NSString *type =  [idSelf arrayContainModelClass][key];
+        // 生成模型
+        Class classModel = NSClassFromString(type);
+        NSMutableArray *arrM = [NSMutableArray array];
+        // 遍历字典数组，生成模型数组
+        for (NSDictionary *dict in value) {
+            // 字典转模型
+            id model =  [classModel objectWithDict:dict];
+            [arrM addObject:model];
+        }
+        // 把模型数组赋值给value
+        value = arrM;
+    }
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/07/29/M_Swift89Runtime相关方法/" itemprop="url">
                   Runtime
                 </a>
@@ -1252,396 +1829,11 @@ function mergeOrder(arr1,arr2) {
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/03/N_Android13内存/" itemprop="url">
-                  Android开发总结内存
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T14:23:23+08:00" content="2018-07-03">
-              2018-07-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。</p>
-<p>res是Android项目工程中存放各类的目录，主要包括布局、图形与配置等等。res的子目录主要有：</p>
-<p>anim : 存放动画的描述文件<br>drawable : 存放各类图形的描述文件，包括drawable的描述文件，以及三种图片格式：png（推荐）、jpg（支持）、gif（不推荐，因为ImageView只显示gif的第一帧）。以drawable打头的有好几个目录，分别存放不同分辨率的图片，这些目录的区别详见<br>layout : 存放页面的布局文件，主要在Acitivity、Fragment以及部分自定义控件中使用<br>menu : 存放菜单的布局文件<br>raw : 存放原始格式的文件，一般是二进制的流文件，比如音频文件、视频文件等等<br>values : 存放各类参数的配置文件，具体的配置文件说明如下<br>——arrays.xml : 存放各类数组的定义文件，字符串数组的根节点为string-array，整型数组的根节点为integer-array<br>——booleans.xml : 存放布尔类型的定义文件，根节点为resources，元素节点为bool<br>——attrs.xml : 存放自定义控件的属性信息，根节点为resources，元素节点为declare-styleable——attr<br>——colors.xml : 存放颜色的定义文件，根节点为resources，元素节点为color<br>——dimens.xml : 存放像素的定义文件，根节点为resources，元素节点为dimen<br>——ids.xml : 存放控件id的定义文件，根节点为resources，元素节点为item，type为id<br>——integers.xml : 存放整数类型的定义文件，根节点为resources，元素节点为integer<br>——strings.xml : 存放字符串类型的定义文件，根节点为resources，元素节点为string<br>——styles.xml : 存放控件风格的定义文件，根节点为resources，元素节点为style——item<br>xml : 存放其他的xml文件，比如说存放SearchView的searchable.xml属性定义文件</p>
-<p>其余目录下面的配置文件，一般需要在代码中解析数据结构，比如说图像、字符串、整型数、二进制流等等。具体的代码调用方式如下：</p>
-<p>drawable : 一般使用getResources().getDrawable(R.drawable.example);，gif文件使用getResources().getMovie(R.drawable.example);<br>raw : getResources().openRawResource(R.raw.example);<br>values :<br>——arrays.xml : 解析字符串数组使用getResources().getStringArray(R.array.city);，解析整型数组使用getResources().getIntArray(R.array.code);<br>——attrs.xml : 代码中不解析该文件的数据结构，在自定义控件的构造函数中通过如下方式使用：TypedArray attrArray=getContext().obtainStyledAttributes( attrs, R.styleable.example);<br>——booleans.xml : getResources().getBoolean(R.bool.example);<br>——colors.xml : getResources().getColor(R.color.example);<br>——dimens.xml : getResources().getDimension(R.dimen.example);<br>——ids.xml : 代码中不使用该文件配置，在布局文件中使用为：android:id=”@id/…”（注意与一般情况相比去掉了加号）<br>——integers.xml : getResources().getInteger(R.integer.example);<br>——strings.xml : getResources().getString(R.string.example);<br>——styles.xml : 代码中不解析该文件的数据结构，布局文件的使用在控件内部加上style属性：style=”@style/example”<br>xml : getResources().getXml(R.xml.example);</p>
-<p>assets目录用于存放应用程序的资产文件，该目录下的文件不会被系统编译，所以无法通过R.<em>.</em>这种方式来访问。Android专门为assets目录提供了一个工具类AssetManager，通过该工具，我们能够以字节流方式打开assets下的文件，并将字节流转换为文本或者图像。<br>ssetManager提供了如下方法用于处理assets：<br>1、 String[] list(String path);<br>列出该目录下的下级文件和文件夹名称<br>2、 InputStream open(String fileName);<br>以顺序读取模式打开文件，默认模式为ACCESS_STREAMING<br>3、 InputStream open(String fileName, int accessMode);<br>以指定模式打开文件。读取模式有以下几种：<br>ACCESS_UNKNOWN : 未指定具体的读取模式<br>ACCESS_RANDOM : 随机读取<br>ACCESS_STREAMING : 顺序读取<br>ACCESS_BUFFER : 缓存读取<br>4、 void close()<br>关闭AssetManager实例</p>
-<p>集合(Set/HashSet)</p>
-<p>集合中的元素是没有顺序的，而且不可以重复。这意味着，集合只能遍历而无法通过索引访问指定元素，并且如果重复添加相同值将不会增大集合。因为Set只是接口，所以实际用的是它的一个派生类HashSet。<br>集合的常用方法如下：<br>add : 添加元素<br>clear : 清空容器<br>contains : 判断容器中是否存在该元素<br>iterator : 获取第一个元素的指针<br>isEmpty : 判断容器是否为空<br>remove : 删除元素<br>size : 获取容器大小</p>
-<p>队列(ArrayList)</p>
-<p>队列与集合恰恰相反，队列中的元素是有顺序的，而且允许重复，所以队列可以使用索引来访问指定元素（类似数组的下标）。<br>队列的常用方法包括上面集合列出的几个，下面列出有变更或者添加的方法：<br>add : 提供了两个方法。默认在队列末尾添加元素；如果指定了索引位置，则在指定位置末尾添加元素<br>get : 获取指定位置的元素<br>indexOf : 获取指定元素的第一个索引位置<br>lastIndexOf : 获取指定元素的最后一个索引位置<br>remove : 提供了两个方法。除了删除元素之外，还可以删除指定位置的元素<br>set : 替换指定位置的元素<br>subList : 截取从开始位置到结束位置之间的子队列</p>
-<p>映射(Map/HashMap)</p>
-<p>映射保存的是键值对（即key—value）的映射关系，一个映射中不能包含相同的key，每个key只能映射一个value。但Map只是接口，实际中常用的是它的一个派生类HashMap。类似的，队列、链表、向量都是派生自List接口。<br>映射的常用方法如下：<br>clear : 清空容器<br>containsKey : 判断容器中是否存在该键（key）的元素<br>containsValue : 判断容器中是否存在该值（value）的元素<br>get : 根据指定键获得元素的值<br>isEmpty : 判断容器是否为空<br>keySet : 获取容器中键的集合<br>put : 设置键值对的映射关系。如原来没有该键，则添加元素；如果原来存在该键，则替换元素<br>remove : 删除指定键对应的元素<br>size : 获取容器的大小<br>values : 获取容器中值的集合</p>
-<p>Application组件</p>
-<p>Application是比Activity高级的组件，它的生命周期覆盖了APP运行的全过程；而Activity页面的生命周期很短暂，只要进入别的页面，原页面就被停止或者销毁；因此我们可以在Application中保存全局变量。在打开App时，系统会先初始化Application，然后才进入到开始的Activity页面。通常我们不需要指定一个Application，这时系统会自动帮我们创建，如果需要创建自己的Application，创建一个派生自Application的类，并在manifest的application标签中注册就好了。</p>
-<p>SharedPreferences存储数据</p>
-<p>下面是Properties的常用方法：<br>load : 从属性文件中加载属性对象<br>store : 把属性对象保存到属性文件<br>getProperty : 获取属性值<br>setProperty : 设置属性值<br>loadFromXML : 从XML格式的属性文件中加载属性对象<br>storeToXML : 把属性对象保存到XML格式的属性文件</p>
-<p>SQLite</p>
-<p>Realm应用背景</p>
-<p>File类</p>
-<p>File类是java中的文件操作工具类，它的常用方法如下：<br>File构造函数 : 根据文件路径构造File对象<br>delete : 删除文件<br>exists : 判断文件是否存在<br>getName : 获取文件的文件名<br>getPath : 获取文件的目录路径<br>getParent : 获取上级目录路径<br>isDirectory : 判断是否为目录/文件夹<br>isFile : 判断是否为文件<br>length : 获取该文件的大小<br>list : 列出该目录下的所有文件（夹），返回String数组<br>listFiles : 列出该目录下的所有文件（夹），返回File数组<br>mkdirs : 创建目录/文件夹<br>renameTo : 重命名文件，其实就是移动文件到指定目录</p>
-<p>Environment类</p>
-<p>Environment类是Android中获取各种目录信息的工具，主要方法如下：<br>getDataDirectory : 获得系统data目录的路径<br>getDownloadCacheDirectory : 获得下载缓存目录的路径<br>getExternalStorageState : 获得外部存储的状态<br>SD卡操作</p>
-<p>下载请求</p>
-<p>要想使用下载功能，首先得构建一个下载请求，说明从哪里下载、下载参数为何、下载的文件保存到哪里等等。这个下载请求便是DownloadManager的子类Request，下面是该类的常用方法<br>Request构造函数 : 指定从哪个网络地址下载文件。<br>Request.setAllowedNetworkTypes : 指定允许进行下载的网络类型。Request.NETWORK_WIFI表示wifi环境（推荐），Request.NETWORK_MOBILE表示数据连接环境（不推荐），Request.NETWORK_BLUETOOTH表示蓝牙环境。<br>Request.setDestinationInExternalFilesDir : 设置下载文件在本地的保存路径。<br>Request.addRequestHeader : 给HTTP请求添加头部参数。<br>Request.setMimeType : 设置下载文件的媒体类型。<br>Request.setVisibleInDownloadsUi : 设置下载页面是否可见。<br>下载操作</p>
-<p>构建下载请求完毕，然后才能进行下载的相关操作。下面是DownloadManager常用的下载方法：<br>enqueue : 将下载请求加入到任务队列中，即开始下载任务。该方法返回本次下载任务的编号。<br>remove : 取消指定编号的下载任务。<br>restartDownload : 重新下载指定编号的任务。<br>openDownloadedFile : 打开下载完成的文件。<br>getMimeTypeForDownloadedFile : 获取下载完成的文件的媒体类型。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/03/N_Android12开发总结/" itemprop="url">
-                  Android开发总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T11:20:03+08:00" content="2018-07-03">
-              2018-07-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Android项目开发建议：</p>
-<p>1、全部Activity可继承自BaseActivity，便于统一风格与处理公共事件，构建对话框，统一构造器的建立，万一需要整体变动，一处改动个处处有效。</p>
-<p>2、数据库表字段常量和SQL逻辑分离，更清晰，建议使用Lite系列狂降LiteOrm库，超级清晰且重心可以放在业务上不用关心数据库细节</p>
-<p>3、全局变量放全局类中，模块私有放自己的管理类中，让常量清晰且集中</p>
-<p>4、不要相信庞大的管理类的东西会带来什么好处，可能是一场灾难，而要时刻注意单一原则，一个类专心做好一件事</p>
-<p>Android两种方式事件处理</p>
-<p>1、基于回调的事件处理</p>
-<p>2、基于监听器的事件处理</p>
-<p>Android的事件处理机制是一种委派式（Delegation）事件处理方式<br>普通组件（事件源）将整个事件处理委托给特定的对象（事件监听器），当该事件源发生制定的事件时，就通知所委托的事件监听器，由监听器处理这个事件。<br>Android默认约定当UI线程阻塞超过20秒，会引发ANR(Application Not Responding)异常</p>
-<p>为了找起来方便，暂且分为七大类：显示、存储、通信、发布与调优、进阶用法、与时俱进、继续精进。</p>
-<p>显示又分为八块：屏幕、文本、图形、简单控件、自定义视图、动画、窗口、复杂控件；</p>
-<p>存储分为六块：资源、内存、键值对、数据库、文件、网络存储；</p>
-<p>通信分作六块：组件通信、事件通信、多线程通信、跨进程通信、设备通信、网络通信；</p>
-<p>发布与调优分为五块：打包、安全、性能、健壮、兼容；</p>
-<p>进阶用法分为六块：java细节、设计模式、图像处理、高级控件、第三方sdk、开发者工具；</p>
-<p>与时俱进分为六块：新版控件、多媒体开发、高级动画、行为协调、页面切换、花样输入；</p>
-<p>继续精进分为六块：人工智能、混合开发、三维动画、物联网、屏幕特效、视频加工；</p>
-<p>dp和px的转换<br>屏幕分辨率getWindowManager<br>Drawable资源目录</p>
-<p>drawable文件放在res目录的各个drawable目录下，\res\drawable一般放的是描述性的xml文件，图片文件一般放在具体分辨率的drawable目录下。例如<br>drawable-ldpi里面主要放低分辨率的图片，如QVGA（240×320）<br>drawable-mdpi里面主要放中等分辨率的图片，如HVGA（320×480）<br>drawable-hdpi里面主要放高分辨率的图片，如WVGA（480×800），FWVGA（480×854）<br>drawable-xhdpi里面主要放加高分辨率的图片，如Nexus（720×1280）以上分辨率<br>drawable-xxhdpi里面主要放超高分辨率的图片，如Nexus（1080×1920）以上分辨率<br>StateListDrawable是在一个xml文件中定义不同状态下呈现的图像。下面是一个例子btn_visit_selector.xml<br>state_pressed：为true时表示按下，一般用于按钮Button，图形设置于android:background<br>state_checked：为true时表示勾选，一般用于单选框RadioButton、复选框CheckBox，图形设置于android:drawableLeft<br>state_selected：为true时表示选中，一般用于单选框RadioButton、复选框CheckBox，图形设置于android:background<br>state_focused：为true时表示获取焦点，一般用于文本框EditText，图形设置于android:background</p>
-<p>shape的定义文件是xml，以shape元素为根节点。根节点下定义了六个节点：corners（圆角）、gradien（渐变）、padding（间隔）、size（尺寸）、solid（填充）、stroke（描边），各节点的属性值主要是各种长宽、半径、角度，以及颜色。<br>visibility各取值的区别 : 该属性有三个取值，分别是：visible表示可见，invisible表示不可见，gone表示消失</p>
-<p>View是单个视图，所有的控件类都是从它派生出来；而ViewGroup是个视图组织，所有的布局视图类都是从它派生出来。由于View和ViewGroup是基类，因此很少会直接使用，偶尔用到的场景，主要有如下几个：<br>1、页面上需要单独显示一条横线或者竖线。如果填充图片显然不够经济，最简单的做法，就是在xml布局中增加一个View控件，高度或宽度设置为1dp，背景颜色设置为线条颜色，这样便实现了单独显示线条的需求。<br>2、点击事件的处理函数onClick(View v)，这里面我们要调用View的getId方法获取发生点击事件的控件id，从而进行该控件对应的点击处理。<br>3、在代码中设置某控件为可见或不可见或消失，此时需要使用View类的三个变量，分别是View.VISIBLE、View.INVISIBLE和View.GONE。</p>
-<p>Button是文本按钮（继承自TextView），而ImageButton是图像按钮（继承自ImageView）。两者之间的区别在于：<br>1、Button即可显示文本也可显示图形（通过设置背景图），而ImageButton只能显示图形不能显示文本；<br>2、Button可在文本周围区域显示小图，而ImageButton无法在某个区域显示小图；<br>3、ImageButton上的图像可按比例进行拉伸，而Button上的大图会拉伸变形（因为背景图无法按比例拉伸）；<br>从上面可以看出，Button的适应面更广，所以实际开发中基本使用Button。</p>
-<p>CheckBox</p>
-<p>CheckBox是复选框，点击勾选，再点击则取消勾选。CheckBox是CompoundButton的一个子类，所以继承了CompoundButton的所有属性和方法。</p>
-<p>RadioGroup和RadioButton</p>
-<p>RadioButton是单选框，点击选中，但是再点击不会取消选中。只有点击同组的其他RadioButton，原来勾选的RadioButton才会取消选中。RadioButton也是CompoundButton的一个子类，所以继承了CompoundButton的所有属性和方法。<br>RadioGroup是容纳多个RadioButton的组布局，同组中只能有一个RadioButton被选中。下面是RadioGroup常用的几个方法：<br>setCheckedId : 选中指定ID的RadioButton。<br>getCheckedRadioButtonId : 获取选中状态RadioButton的ID。<br>setOnCheckedChangeListener : 设置勾选变化的监听器。<br>自定义视图存在三个构造函数，分别是<br>//只有一个参数，用于在代码中构造对象<br>public SignatureView(Context context) {<br>super(context);<br>}</p>
-<p>//有两个参数，用于在XML布局中构造对象<br>public SignatureView(Context context, AttributeSet attrs) {<br>super(context, attrs);<br>if (attrs != null) {<br>TypedArray attrArray=getContext().obtainStyledAttributes( attrs, R.styleable.SignatureView);<br>mPaintColor = attrArray.getColor(R.styleable.SignatureView_paint_color, 0);<br>attrArray.recycle();<br>}<br>}</p>
-<p>//有三个参数，用于在XML布局中构造对象<br>public SignatureView(Context context, AttributeSet attrs, int defStyleAttr) {<br>super(context, attrs, defStyleAttr);<br>}<br>三个可进行绘制的方法</p>
-<p>在自定义视图中，有三个函数可以重写用于界面绘制，在视图创建过程中，三个函数的执行顺序依次是：onLayout、onDraw、dispatchDraw。<br>1、onLayout(boolean changed, int left, int top, int right, int bottom) :<br>onLayout用于定位该视图在上级视图中的位置，从其参数中就可以看出来。由于该函数没有画布，因此只适合绘制现成的视图控件。<br>2、onDraw(Canvas canvas) :<br>自定义控件一般是重写onDraw方法，在画布中绘制各种图形。<br>3、dispatchDraw(Canvas canvas) :<br>dispatchDraw与onDraw的区别在于：onDraw在绘制下级视图之前，而dispatchDraw在绘制下级视图之后，所以如果不想自己的绘图被下级视图覆盖的话，就要在dispatchDraw中进行绘制操作。为方便记忆，只要是从ViewGroup衍生出的视图，都用dispatchDraw，其他小控件都用onDraw。</p>
-<p>菜单Menu</p>
-<p>Android的菜单分为两类：选项菜单和上下文菜单，默认使用选项菜单。菜单的布局文件存放在res/menu目录下，使用ADT新建一个Android工程，首页代码MainActivity中会自动生成onMenuOpened和onMenuItemSelected函数代码。<br>下面是选项菜单需要重写的方法：<br>onMenuOpened : 在菜单弹出时调用，一般无需重写<br>onMenuItemSelected : 在菜单项选择时调用，查看该方法的源码，会发现该方法内部做分支处理，判断如果是选项菜单则调用onOptionsItemSelected，如果是上下文菜单则调用onContextItemSelected。一般无需重写<br>onCreateOptionsMenu : 在页面打开时调用，需要重写指定菜单项目<br>onOptionsItemSelected : 在选项菜单的菜单项选中时调用，需要重写对不同菜单项做分支处理<br>onPrepareOptionsMenu : 在准备打开选项菜单时调用，一般无需重写<br>onOptionsMenuClosed : 在选项菜单关闭时调用，一般无需重写<br>AlertDialog</p>
-<p>Android中最常用的对话框是AlertDialog，它可以完成常见的交互操作，如提示、确认、选择等等，然后就是进度对话框ProgressDialog<br>AlertDialog没有公开的构造函数，必须借助于AlertDialog.Builder才能完成参数设置。Builder的常用方法如下：<br>setIcon : 设置标题的图标。<br>setTitle : 设置标题的文本。<br>setCustomTitle : 设置自定义的标题视图。<br>–以上方法用于设置标题部分。注意setTitle和setCustomTitle只能设置其一，不能重复设置。<br>setMessage : 设置内容的文本。<br>setView : 设置自定义的内容视图。<br>setAdapter : 设置List方式的内容视图。使用较麻烦，一般不用。<br>setItems : 设置Spinner方式的内容视图。窗口显示与对话框模式的Spinner极为相似，没有底部的按钮，一旦选中某项就立即关闭对话框。<br>setSingleChoiceItems : 设置单选列表的内容视图。与setItems的区别在于有显示底部的交互按钮，并且每项右边有单选按钮。<br>setMultiChoiceItems : 设置多选列表的内容视图。底部有交互按钮，并且每项右边有复选按钮。<br>–以上方法用于设置内容部分。注意这些方法互相冲突，同时只能设置其一。<br>setPositiveButton : 设置肯定按钮的信息，如文本、点击监听器。<br>setNegativeButton : 设置否定按钮的信息，如文本、点击监听器。<br>setNeutralButton : 设置中性按钮的信息，如文本、点击监听器。<br>–以上方法用于设置交互按钮。</p>
-<p>WindowManager<br>getDefaultDisplay : 获取默认的显示屏信息。通常用该方法获取屏幕分辨率<br>addView : 往窗口添加视图。第二个参数为WindowManager.LayoutParams对象。<br>updateViewLayout : 更新指定视图的布局参数。第二个参数为WindowManager.LayoutParams对象。<br>removeView : 往窗口移除指定视图。</p>
-<p>TabBar<br>1、使用TabActivity。其中在布局文件中设置TabHost、TabWidget和RadioButton，在代码文件中应用TabActivity、TabSpec和CompoundButton。<br>2、使用ActivityGroup。将几个栏目的首页Activity都放入ActivityGroup，然后根据点击事件选择切换到哪个Activity。<br>3、使用FragmentActivity和Fragment。将几个栏目的首页Fragment都放入FragmentActivity，可自动响应点击事件。<br>其中TabActivity继承自ActivityGroup，目前Android声称TabActivity与ActivityGroup都已废弃，建议采用Fragment和FragmentManager来代替。从实现代码来看，TabActivity和ActivityGroup两种方式的代码量都较多，而FragmentActivity方式的代码就显得很简洁，所以博主也推荐第三种方式。</p>
-<p>标题栏ActionBar<br>1、在AndroidManifest.xml中给activity设置无标题栏的主题，就关闭ActionBar。否则就显示</p>
-<p><activity android:theme="@android:style/Theme.Holo.NoActionBar"><br>2、在styles.xml的当前主题中加入一个项android:windowNoTitle，为true时表示关闭ActionBar；为false表示显示</activity></p>
-<p><item name="android:windowNoTitle">true</item><br>3、在Activity代码的setContentView之前加入下面代码，就关闭ActionBar。否则就显示<br>requestWindowFeature(Window.FEATURE_NO_TITLE);<br>4、在Activity代码中获得ActionBar实例，调用该实例的hide方法表示关闭ActionBar；调用show方法表示显示<br>ActionBar actionBar = getActionBar();<br>if (actionBar != null) {<br>actionBar.hide();  //隐藏ActionBar<br>actionBar.show();  //显示ActionBar<br>}</p>
-<p>ViewPager<br>下面是ViewPager的常用方法：<br>setAdapter : 设置ViewPager的适配器<br>setCurrentItem : 设置当前的页码，即默认打开ViewPager时显示哪一页的内容。<br>setOnPageChangeListener : 设置ViewPager的页面变化监听器。<br>ViewPager的适配器<br>ViewPager的监听器</p>
-<p>ViewPager一般不监听每个页面项的点击事件，而是监听页面滑动的监听事件，对应的监听器类是OnPageChangeListener。该类的三个方法介绍如下：<br>onPageScrollStateChanged : 翻页状态改变时调用，状态参数取值说明为：0表示静止，1表示正在滑动，2表示滑动完毕。在翻页过程中，状态值变化依次为：正在滑动-&gt;滑动完毕-&gt;静止。<br>onPageScrolled : 在翻页过程中调用。该方法的三个参数取值说明为：第一个参数表示当前页面的序号；第二个参数表示当前页面偏移的百分比，最小值为0，最大值为1；第三个参数表示当前页面的偏移距离，单位px。<br>onPageSelected : 在页面选择时调用，该方法用得较多。位置参数表示当前页面的序号。</p>
-<p>WaterfallGridView,StaggeredGridView,PinterestLikeAdapterView</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/03/N_Android11开发整理/" itemprop="url">
-                  Android开发整理
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T10:09:31+08:00" content="2018-07-03">
-              2018-07-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>做安卓开发也算是有一些时间了，一直都没有想过要整理一些东西，最近不是太忙，想着能整理一些，对自己也是一个提升吧。<br>我没有什么整理的头绪，也没有什么脉络，其实网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Android项目目录结构<br>Activity：应用被打开时显示的界面<br>src：项目代码<br>R.java：项目所有的资源文件<br>Android.jar：Android的jar包，倒入此包方可使用Android的api<br>libs：导入第三方jar包<br>assets：存放资源文件，比如mp3，视频文件<br>bin：存放编译打包的文件<br>res：存放资源文件<br>drawable：存放图片文件<br>layout：存放布局文件<br>menu：定义菜单的样式<br>String.xml:存放字符串资源</p>
-<p>Android的配置文件<br>指定应用的包名<br>package= “com.item.helloworld”<br>data/data/com.item.helloworld<br>应用生成的文件都在此路径<br>Android的四大组件使用前全部都需要在此清单文件中配置</p>
-<p>常用的adb指令<br>adb start-server ：启动adb进程<br>adb kill-server: 杀死进程<br>adb divices :查看当前开发环境链接的设备<br>adb install xxx.apk 往模拟器安装apk<br>adb uninstall 包名： 删除模拟器中应用<br>adb shell ： 进入linux命令</p>
-<p>常用布局：线性布局<br>LinerLayout<br>指定各个节点排列方向<br>android：orientation = “horizontal”<br>设置右对齐<br>android：layout_gravity=”right”<br>当竖直布局时，只能左右对齐和水平居中，顶部底部对齐竖直剧中无效<br>当水平对齐时，只能顶部底部对齐，和竖直居中<br>线性布局非常重要的一个属性：权重<br>android：layout_weight=’1’<br>权重：按照比例分配屏幕的剩余宽度或者高度</p>
-<p>常见布局：相对布局<br>RelativeLayout<br>组件默认左对齐，顶部对齐<br>设置组件制定组件的右边<br>android:layout_toRightOf=”id/tv1”<br>设置右对齐父控件<br>android：layout_alignParentRight=”true”</p>
-<p>帧布局：FrameLayout<br>默认组件都是左对齐和顶部对齐，每个组件相当于一个div</p>
-<p>文件读写操作<br>Ram内存：运行内存，相当于电脑内存<br>Rom内存：内部存储空间，相当于电脑硬盘<br>sd卡：外部存储空间，相当于电脑移动硬盘<br>//持久化保存数据<br>File file = new File(“data/data/com.itheima.rwinrom/info.txt”);<br>FileOutputStream fos = new FileOutputStream(file);<br>fos.write((name + “##” + pass).getBytes());<br>fos.close();<br>读取数据前先检测文件是否存在<br>if(file.exists())<br>读取保存的数据，也是直接开文件输入流读取<br>File file = new File(“data/data/com.itheima.rwinrom/info.txt”);<br>FileInputStream fis = new FileInputStream(file);<br>//把字节流转换成字符流<br>BufferedReader br = new BufferedReader(new InputStreamReader(fis));<br>String text = br.readLine();<br>String[] s = text.split(“##”);</p>
-<p>SharePreference<br>用于存储账号密码<br>往SharePrefreence写数据<br>拿到一个SharePreference对象<br>SharePrefrence sp = getSharePrefenrences(“config”,MODE_PRIVATE);<br>拿到编辑器<br>Editor ed = sp.edit();<br>写数据<br>ed.putBoolen(“name”,name)<br>ed.commit();<br>从SharedPreference里取数据<br>SharedPreferences sp = getSharedPreferences(“config”, MODE_PRIVATE);<br>//从SharedPreference里取数据<br>String name = sp.getBoolean(“name”, “”);</p>
-<p>ListView<br>MVC结构<br>M：model模型层，要显示的数据集合<br>V：view试图层，用户看到的界面–ListView<br>C：controller控制层，操作数据如何显示—adapter对象</p>
-<p>BaseAdapter</p>
-<p>必须实现的两个方法</p>
-<p>第一个</p>
-<p>//系统调用此方法，用来获知模型层有多少条数据<br>@Override<br>public int getCount() {<br>return people.size();<br>}</p>
-<p>第二个</p>
-<p>//系统调用此方法，获取要显示至ListView的View对象<br>//position:是return的View对象所对应的数据在集合中的位置<br>@Override<br>public View getView(int position, View convertView, ViewGroup parent) {<br>System.out.println(“getView方法调用” + position);<br>TextView tv = new TextView(MainActivity.this);<br>//拿到集合中的元素<br>Person p = people.get(position);<br>tv.setText(p.toString());</p>
-<p>//把TextView的对象返回出去，它会变成ListView的条目<br>return tv;<br>}</p>
-<p>消息队列<br>主线程创建时，系统会同事创建消息队列对象（MessageQueue）和消息轮询器对象（Looper）<br>轮询器的作用，就是不停的检测消息队列中是否有消息（Message）<br>Looper一旦发现Message Queue中有消息，就会把消息取出来，然后把消息扔给Handler对象，Handler会调用自己HandleMessage方法处理这条消息<br>Handler handler = new Handler() {<br>主线程有一个消息轮询器looper，不断检测消息队列是否有新消息，如果发现有新消息，自动调用此方法，注意：此方法是主线程运行的<br>public void handleMessage(android.os.Message msg) {</p>
-<p>}<br>}<br>在子线程中使用Handler对象往消息队列里发消息<br>创建消息对象<br>Message msg = new Message（）；<br>//消息的obj属性可以付给任意对象，通过这个属性可以携带数据<br>msg.obj = bm;<br>//what属性相当于一个标签，用于区分不同的消息，从而运行不同的代码<br>msg.what = 1<br>handler.sendMessage(msg);</p>
-<p>Activity生命周期（掌握）</p>
-<p>void onCreate()</p>
-<p>Activity已经被创建完毕<br>void onStart()</p>
-<p>Activity已经显示在屏幕，但没有得到焦点<br>void onResume()</p>
-<p>Activity得到焦点，可以与用户交互<br>void onPause()</p>
-<p>Activity失去焦点，无法再与用户交互，但依然可见<br>void onStop()</p>
-<p>Activity不可见，进入后台<br>void onDestroy()</p>
-<p>Activity被销毁<br>void onRestart()</p>
-<p>Activity从不可见变成可见时会执行此方法</p>
-<p>横竖屏写死<br>android:screenOrientation=”landscape”<br>android:screenOrientation=”portrait”<br>让系统的环境 不再去敏感横竖屏的切换。</p>
-<p>android:configChanges=”orientation|screenSize|keyboardHidden”</p>
-<p>进程优先级（掌握）</p>
-<p>前台进程：拥有一个正在与用户交互的activity（onResume方法被调用）的进程<br>可见进程：拥有一个非前台，但是对用户可见的activity（onPause方法被调用）的进程<br>服务进程：拥有一个通过startService方法启动的服务的进程<br>后台进程：拥有一个后台activity（onStop方法被调用）的进程<br>空进程：没有拥有任何活动的应用组件的进程，也就是没有任何服务和activity在运行</p>
-<p>样式与主题（熟悉）</p>
-<p>样式与主题定义方式一样<br>样式用于布局文件中的组件<br>主题用于Activity</p>
-<p>Fragment（重要）</p>
-<p>用途：在一个Activity里切换界面，切换界面时只切换Fragment里面的内容<br>生命周期方法跟Activity一致，可以理解把其为就是一个Activity<br>fragment切换时会销毁旧的，再创建新的<br>定义布局文件作为Fragment的显示内容<br>//此方法返回的View就会被显示在Fragment上<br>@Override<br>public View onCreateView(LayoutInflater inflater, ViewGroup container,<br>Bundle savedInstanceState) {<br>// TODO Auto-generated method stub<br>//用布局文件填充成一个View对象，返回出去，那么就显示在Fragment上了<br>View v = inflater.inflate(R.layout.fragment01, null);<br>return v;<br>}<br>把Fragment显示至指定ViewGroup中</p>
-<p>//把fragment显示至界面<br>//new出fragment对象<br>Fragment01 fg = new Fragment01();<br>FragmentManager fm = getFragmentManager();<br>//开启事务<br>FragmentTransaction ft = fm.beginTransaction();<br>//把fragment对象显示到指定资源id的组件里面<br>ft.replace(R.id.fl, fg);<br>ft.commit();<br>生命周期（重要）</p>
-<p>fragment切换时旧fragment对象会销毁，新的fragment对象会被创建<br>在drawable目录下定义xml文件，子节点为animation-list，在这里定义要显示的图片和每张图片的显示时长</p>
-<p><animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false"></animation-list></p>
-<p><item android:drawable="@drawable/g1" android:duration="200"></item></p>
-<p><item android:drawable="@drawable/g2" android:duration="200"></item></p>
-<p><item android:drawable="@drawable/g3" android:duration="200"><br><br>ImageView iv = (ImageView) findViewById(R.id.iv);<br>//把动画文件设置为imageView的背景<br>iv.setBackgroundResource(R.drawable.animations);<br>AnimationDrawable ad = (AnimationDrawable) iv.getBackground();<br>//播放动画<br>ad.start();</item></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1682,7 +1874,7 @@ function mergeOrder(arr1,arr2) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">169</span>
+              <span class="site-state-item-count">172</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

@@ -1008,6 +1008,199 @@ objc_getAssociatedObject本质上就是操作这个哈希表，
             
               
                 
+                <a class="post-title-link" href="/2018/08/06/M_Swift98内存管理/" itemprop="url">
+                  内存管理
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-06T18:53:33+08:00" content="2018-08-06">
+              2018-08-06
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="简述一下OC的内存管理方式"><a href="#简述一下OC的内存管理方式" class="headerlink" title="简述一下OC的内存管理方式"></a>简述一下OC的内存管理方式</h2><pre><code>包括alloc，retain，copy，release，autorelease，
+delalloc这些方法理解
+OC中每个对象都有一个与之对应的整数，叫“引用计数器”，
+当一个对象在创建之后它的引用计数器值加1，当调用这个对象的
+alloc、retain、new、copy方法之后引用计数器值自动在原
+来的基础上加1，当调用这个对象的release方法之后它的引用计
+数器值减1，如果一个对象的引用计数器值为0，则系统会自动
+调用这个对象的dealloc方法来销毁这个对象。
+在alloc的时候调用了allocWithZone分配了内存
+alloc、retain、new、copy方法之后引用计数器值自
+动在原来的基础上加1
+</code></pre><h2 id="用MRC写一个setter方法"><a href="#用MRC写一个setter方法" class="headerlink" title="用MRC写一个setter方法"></a>用MRC写一个setter方法</h2><pre><code>- (void)setName:(NSString *)name {
+    if(_name != name) {
+        [name retain];
+        [_name relrase];
+        _name = name;
+    }
+}
+</code></pre><h2 id="描述autorelease对象释放时机，"><a href="#描述autorelease对象释放时机，" class="headerlink" title="描述autorelease对象释放时机，"></a>描述autorelease对象释放时机，</h2><pre><code>在没有手加Autorelease Pool的情况下，Autorelease对象
+是在当前的runloop迭代结束时释放的，而它能够释放的原因是
+系统在每个runloop迭代中都加入了自动释放池Push和Pop
+</code></pre><h2 id="简述autorelrasePool的工作机制"><a href="#简述autorelrasePool的工作机制" class="headerlink" title="简述autorelrasePool的工作机制"></a>简述autorelrasePool的工作机制</h2><pre><code>每一个线程创建的时候就会有一个autorelease pool的创建，
+并且在线程退出的时候，清空整个autorelease pool。
+（ps:如果在子线程中设置一个循环，autorelease对象确实无
+法释放）所以子线程的autorelease对象，
+要么在子线程中设置runloop清楚
+RutoreleasePoolPage
+{
+    magic_t const magic;
+    id *next;
+    pthread_t const thread;
+    AutoreleasePoolPage *const parent;
+    AutoreleasePoolPage *child;
+    uint32_t const depth;
+    uint32_t hiwat;
+}
+AutoreleasePool并没有单独的结构，而是由若干个
+AutoreleasePoolPage以双向链表的形式组合而成（
+分别对应结构中的parent指针和child指针）
+AutoreleasePool是按线程一一对应的
+（结构中的thread指针指向当前线程）
+AutoreleasePoolPage每个对象会开辟4096字节内存
+（也就是虚拟内存一页的大小），除了上面的实例变量所占空间，
+剩下的空间全部用来储存autorelease对象的地址
+上面的id *next指针作为游标指向栈顶最新add进来
+的autorelease对象的下一个位置
+一个AutoreleasePoolPage的空间被占满时，
+会新建一个AutoreleasePoolPage对象，连接链表，
+后来的autorelease对象在新的page加入
+runtime 黑魔法之Thread Local Storage
+Thread Local Storage（TLS）线程局部存储，
+目的很简单，将一块内存作为某个线程专有的存储，
+以key-value的形式进行读写，比如在非arm架构下，
+使用pthread提供的方法实现：
+在返回值身上调用objc_autoreleaseReturnValue方法时，
+runtime将这个返回值object储存在TLS中，然后直接返回这
+个object（不调用autorelease）；同时，在外部接收这个返
+回值的objc_retainAutoreleasedReturnValue里，发
+现TLS中正好存了这个对象，那么直接返回这个object
+（不调用retain）。
+于是乎，调用方和被调方利用TLS做中转，
+很有默契的免去了对返回值的内存管理。
+于是问题又来了，假如被调方和主调方只有一边是ARC
+环境编译的该咋办？（比如我们在ARC环境下用了非
+ARC编译的第三方库，或者反之）
+只能动用更高级的黑魔法。
+黑魔法之__builtin_return_address
+这个内建函数原型是char *__builtin_return_address
+(int level)，作用是得到函数的返回地址，参数表示层数，
+如__builtin_return_address(0)表示当前函数体返回地址
+，传1是调用这个函数的外层函数的返回值地址，以此类推。
+如果一个函数返回前知道调用方是ARC还是非ARC，就有机会对
+于不同情况做不同的处理
+</code></pre><h2 id="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"><a href="#在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因" class="headerlink" title="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"></a>在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因</h2><pre><code>类有一个成员变量_timer，给_timer设置的target为这个类本、
+身。这样类保留_timer，_timer又保留了这个类，就会出现循环
+引用的问题，最后导致类无法正确释放。
+
+解决这个问题的方式也很简单，当类的使用者能够确定不需要使用这
+个计时器时，就调用
+[_timer invalidate];
+_timer = nil;
+</code></pre><h2 id="assgin和weak区别"><a href="#assgin和weak区别" class="headerlink" title="assgin和weak区别"></a>assgin和weak区别</h2><h3 id="修饰变量类型的区别"><a href="#修饰变量类型的区别" class="headerlink" title="修饰变量类型的区别"></a>修饰变量类型的区别</h3><pre><code>weak 只可以修饰对象。如果修饰基本数据类型，编译器会报
+错-“Property with ‘weak’ attribute must be of 
+object type”。
+assign 可修饰对象，和基本数据类型。当需要修饰对象类型时，
+MRC时代使用unsafe_unretained。当然，
+unsafe_unretained也可能产生野指针，所以它名字
+是&quot;unsafe_”。
+</code></pre><h3 id="是否产生野指针的区别"><a href="#是否产生野指针的区别" class="headerlink" title="是否产生野指针的区别"></a>是否产生野指针的区别</h3><pre><code>weak 不会产生野指针问题。因为weak修饰的对象释放后（引用计
+数器值为0），指针会自动被置nil，之后再向该对象发消息也不会
+崩溃。 weak是安全的。
+assign 如果修饰对象，会产生野指针问题；如果修饰基本数据类
+型则是安全的。修饰的对象释放后，指针不会自动被置空，此时向对
+象发消息会崩溃。
+</code></pre><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>assign 适用于基本数据类型如int,float,struct等值类型，不
+适用于引用类型。因为值类型会被放入栈中，遵循先进后出原则，由
+系统负责管理栈内存。而引用类型会被放入堆中，需要我们自己手动
+管理内存或通过ARC管理。
+weak 适用于delegate和block等引用类型，不会导致野指针问
+题，也不会循环引用，非常安全。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/08/06/M_Swift89判断类相同/" itemprop="url">
                   判断类相同
                 </a>
@@ -1294,6 +1487,143 @@ withEvent:(UIEvent *)event后，其实我们的点击后调
             
               
                 
+                <a class="post-title-link" href="/2018/08/03/M_Swift102AFN_SDWebImage/" itemprop="url">
+                  AFN SD做了哪些优化
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-03T10:09:03+08:00" content="2018-08-03">
+              2018-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="AFN包括如下模块"><a href="#AFN包括如下模块" class="headerlink" title="AFN包括如下模块"></a>AFN包括如下模块</h2><pre><code>网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
+网络状态监听模块(Reachability)
+网络通信安全策略模块(Security)
+网络通信信息序列化/反序列化模块(Serialization)
+对于iOS UIKit库的扩展(UIKit)
+</code></pre><h2 id="AFN优点"><a href="#AFN优点" class="headerlink" title="AFN优点"></a>AFN优点</h2><pre><code>AFNetworking内置支持JSON,plist文件和XML文件的解析,使用比
+较方便我们能够有效的控制并观察一个网络请求的创建、进行、取消、
+完成、暂停恢复、异常等问题及状态
+可以帮助我们轻松友好的完成请求的创建、响应的系列化,网络状态的监控以
+及安全策略以及每一个请求operation的管理(operation的相互依赖或
+状态改变)。 
+</code></pre><h2 id="SDWebImage-概论"><a href="#SDWebImage-概论" class="headerlink" title="SDWebImage 概论"></a>SDWebImage 概论</h2><pre><code>1.提供了一个UIImageView的category用来加载网
+络图片并且对网络图片的缓存进行管理
+2.采用异步方式来下载网络图片
+3.采用异步方式，使用memory＋disk来缓存网
+络图片，自动管理缓存。
+4.支持GIF动画
+5.支持WebP格式
+6.同一个URL的网络图片不会被重复下载
+7.失效的URL不会被无限重试
+8.耗时操作都在子线程，确保不会阻塞主线程
+9.使用GCD和ARC
+10.支持Arm64
+13.图片解码处理在一个 NSOperationQueue 完成，
+不会拖慢主线程 UI。如果有需要对下载的图片进行二次处理，
+最好也在这里完成，效率会好很多。
+</code></pre><h1 id="AFN、SD缺点"><a href="#AFN、SD缺点" class="headerlink" title="AFN、SD缺点"></a>AFN、SD缺点</h1><pre><code>最近版早早已经支持NSURLSession了，但是不支持iOS7以下系统。
+且AFNetworking必须使用ARC
+SDWebImage 对gif的处理主要是在UIImage+GIF
+这个文件里面，利用ImageIO函数创建二进制数据，如下：
+由于SDWebImage通过动图数组来实现动态，
+会造成内存不能及时释放
+SDWebimage -静态图片加载会产生拉伸
+</code></pre><h2 id="SD下载完图片为什么要解码"><a href="#SD下载完图片为什么要解码" class="headerlink" title="SD下载完图片为什么要解码"></a>SD下载完图片为什么要解码</h2><pre><code>在我们使用 UIImage 的时候，创建的图片通常不会直接加载到内存，而是在
+渲染的时候再进行解压并加载到内存。这就会导致 UIImage 在渲染的时候效
+率上不是那么高效。为了提高效率通过 decodedImageWithImage方法把图
+片提前解压加载到内存，这样这张新图片就不再需要重复解压了，提高了渲染效
+率。这是一种空间换时间的做法。
+</code></pre><h2 id="旧版本AFN为什么加Runloop"><a href="#旧版本AFN为什么加Runloop" class="headerlink" title="旧版本AFN为什么加Runloop"></a>旧版本AFN为什么加Runloop</h2><pre><code>首先我们知道在旧版本的AFN中使用了 NSURLConnection 来发起并处理网
+络连接。AFN 的做法是把网络请求的发起和解析都放在同一个子线程中进行，
+但由于子线程默认不开启 runloop，它会向一个 C语言程序那样在运行完所有
+代码后退出线程。而网络请求是异步的，这会导致获取到请求数据时，线程已经
+退出，代理方法没有机会执行。因此，AFN 的做法是使用一个 runloop 来保
+证线程不死，也就是下面这段被讲烂了的代码:
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/08/03/M_Swift93多线程/" itemprop="url">
                   多线程
                 </a>
@@ -1530,327 +1860,11 @@ dispatch_sync在等待主队列执行完毕。
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/03/M_Swift99Block/" itemprop="url">
-                  Block理解
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-08-03T10:03:14+08:00" content="2018-08-03">
-              2018-08-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <pre><code>本质：带有自动变量值的匿名函数
-block的实质是一个oc对象，它有自己的isa指针、invoke变
-量 ，是NSObject的子类，可以接收消息
-1._NSConcreteGlobalBlock,全局的静态block，不会访问外部的变量。
-就是说如果你的block没有调用其他 的外部变量，那你的block类型就是这
-种。例如：你仅仅在你的block里面写一个NSLog(&quot;hello world&quot;);
-2._NSConcreteStackBlock 保存在栈中的 block，当函数返回时会被销
-毁。这个block就是你声明的时候不用copy修饰，并且你的block访问了外部
-变量。
-3._NSConcreteMallocBlock 保存在堆中的 block，当引用计数为 0 时
-会被销毁。
-</code></pre><h2 id="写法："><a href="#写法：" class="headerlink" title="写法："></a>写法：</h2><pre><code>void (^block)(void) = ^{
-    NSLog(@&quot;无参无返回值&quot;);
-};
-void (^xiaoming1aa)() = ^(NSString *c){
-    NSLog(@&quot;带参数&quot;);
-};
-NSString *(^xiaming2)() = ^NSString *(NSString *dd) {
-    return @&quot;带参数与返回&quot;;
-};
-@property (nonatomic, copy)
-void(^myBlock)();//无参无返回值
-@property (nonatomic, copy)
-void(^myBlock1)(NSString *);//带参数
-@property (nonatomic, copy)
-NSString *(^myBlock2)(NSString *);//带参数与返回
-</code></pre><h2 id="block为什么不能修改外部变量"><a href="#block为什么不能修改外部变量" class="headerlink" title="block为什么不能修改外部变量"></a>block为什么不能修改外部变量</h2><pre><code>默认情况下，在block中访问的外部变量是复制过去的，
-复制过去的是值，即：写操作不对原变量生效。
-</code></pre><h2 id="block都做了什么？"><a href="#block都做了什么？" class="headerlink" title="__block都做了什么？"></a>__block都做了什么？</h2><pre><code>Block不允许修改外部变量的值，这里所说的外部变量的值，
-指的是栈中指针的内存地址。__block 所起到的作用就是
-只要观察到该变量被 block 所持有，就将“外部变量”
-在栈中的内存地址放到了堆中。
-进而在block内部也可以修改外部变量的值
-这也保证了原对象不被销毁，但与此同时，也会导致循环引用问题
-</code></pre><h2 id="block为什么为引起循环引用"><a href="#block为什么为引起循环引用" class="headerlink" title="block为什么为引起循环引用"></a>block为什么为引起循环引用</h2><pre><code>因为block在拷贝到堆上的时候，会retain其引用的外部变量，
-那么如果block中如果引用了他的宿主对象，
-那很有可能引起循环引用
-循环引用发生的条件就是持有这个block的对象，
-被block里边加入的对象持有
-</code></pre><h2 id="如何解决循环引用"><a href="#如何解决循环引用" class="headerlink" title="如何解决循环引用"></a>如何解决循环引用</h2><pre><code>使用__weak修饰self，使其在block中不被持有，打破循环引用。
-__weak typeof(self) weakSelf = self;
-</code></pre><h2 id="Block为什么要用copy修饰"><a href="#Block为什么要用copy修饰" class="headerlink" title="Block为什么要用copy修饰"></a>Block为什么要用copy修饰</h2><pre><code>针对block的三种类型，
-也就是copy修饰的block。他的生命 周期就是随着对象的销毁而结束的。只要
-对象不销毁，我们就可以调用的到在堆中的block。这就是为什么我们要用
-copy来修饰block。因为不用copy修饰的访问外部变量的block，只在他所在
-的函数被调用的那一瞬间可以使用。之后就消失了。
-</code></pre><h2 id="block执行过程中对象被释放"><a href="#block执行过程中对象被释放" class="headerlink" title="block执行过程中对象被释放"></a>block执行过程中对象被释放</h2><pre><code>在block执行开始时self对象还未被释放，而执行过程中，
-self被释放了，此时访问self时，就会发生错误。
-对于这种场景，应该在block中对 对象使用__strong修饰，
-使得在block期间对 对象持有，block执行结束后，解除其持有。
-注：此方法只能保证在block执行期间对象不被释放，
-如果对象在block执行执行之前已经被释放了，该方法也无效。
-</code></pre><h2 id="什么情况下不回发生循环引用"><a href="#什么情况下不回发生循环引用" class="headerlink" title="什么情况下不回发生循环引用"></a>什么情况下不回发生循环引用</h2><pre><code>通用情况:在block本身不被self持有,而被别的对象持有,
-同时不产生循环引用的时候,就不需要使用weakself了
-UIView动画block，AFN的block
-UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
-所以循环无法形成 --&gt; 动画block不会造成循环引用的原因。
-</code></pre><h2 id="函数和block区别"><a href="#函数和block区别" class="headerlink" title="函数和block区别"></a>函数和block区别</h2><pre><code>函数里面只能访问全局变量，而Block代码块不光能访问全局变量，
-还拥有当前栈内存和堆内存变量的可读性
-（当然通过__block访问指示符修饰的局部变量还可以在block代码块里面进行修改）。
-从内存的角度看，函数指针只不过是指向代码区的一段可执行代码，
-而block实际上是程序运行过程中在栈内存动态创建的对象，
-可以向其发送copy消息将block对象拷贝到堆内存，
-以延长其生命周期。
-</code></pre><h2 id="如何区分block位置"><a href="#如何区分block位置" class="headerlink" title="如何区分block位置"></a>如何区分block位置</h2><pre><code>要点一:
-    当block在函数内部，
-    且定义的时候就使用了函数内部的变量，
-    那么这个block是存储在栈上的。 
-要点二:
-    当block定义在函数体外面，
-    或者定义在函数体内部且当时函数执行的时候，
-    block体中并没有需要使用函数内部的局部变量时，
-    也就是block在函数执行的时候只是静静地待在一边定义了一下
-    而不使用函数体的内容，
-    那么block将会被编译器存储为全局block。 
-要点三:
-    全局block存储在堆中，
-    对全局block使用copy操作会返回原函数指针；
-    而对栈中的block使用copy操作，
-    会产生两个不同的block地址，
-    也就是两个匿名函数的入口地址。 
-要点四:
-    ARC机制优化会将stack的block,
-    转为heap的block进行调用。
-</code></pre><h2 id="delegate为什么用weak-它和block区别"><a href="#delegate为什么用weak-它和block区别" class="headerlink" title="delegate为什么用weak 它和block区别"></a>delegate为什么用weak 它和block区别</h2><pre><code>weak是为了解决循环引用的问题
-代理和block的共同特性是回调机制，不同的是，代理的方法比较多，比较分
-散，使用block的代码比较集中统一；代理运行成本比较低，一对一的关系，
-block需要将使用的数据从栈内存拷贝到堆内存中，对象的话就是加计数，代理
-制是保存一个对象指针，直接回调；block写法简单，注重传输，但是需要注意
-循环引用
-总结：公共接口，方法比较多的时候用delegate进行解耦，异步和简单的回调用block
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/31/M_Swift100KVC/" itemprop="url">
-                  KVC
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-31T16:32:01+08:00" content="2018-07-31">
-              2018-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <pre><code>它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
-键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
-默认在NSObject中实现。
-</code></pre><h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><pre><code>-(id)  valueForKey: (NSString *) key
-返回表示属性的键字符串所对应的值。如果不能取得值
-，则将引起接收器调用方法valueForUndefinedKey:。
--(void)setValue: (id) value  forKey: (NSString*) key
-</code></pre><h2 id="访问过程"><a href="#访问过程" class="headerlink" title="访问过程"></a>访问过程</h2><pre><code>1.接收器中如果有key访问器
-（或getKey、isKey、_key、_getKey、setKey）则使用它。
-2.没有访问器时，使用接收器的类方法
-accessInstanceVariablesDirectly来查询。返回YES时，如果存在实例
-变量key（或_key、isKey、_isKey等）则返回或设置其值。使用引用计数管
-理方式时，实例变量如果为对象，则旧值会被自动释放，新值被保存并代入。
-+(BOOL)accessInstanceVariablesDirectly
-通常定义为返回YES，可以在子类中改变。该类方法返回YES时，使用键值编码
-可以访问该类的实例变量。返回NO时不可以访问。只要该方法返回YES，实例变
-量的可视属性即使有@private修饰，也可以访问。
-3.既没有访问器也没有实例变量时，将引起接收器调用方法
-valueForUndefinedKey:或setValue:forUndefinedKey:。
--(id) valueForUndefinedKey: (NSStirng *) key
-不能取得键字符串对应的值时，从方法valueForKey：中调用该方法。默认情
-况下，该方法的执行会触发NSUndefinedKeyException。不过，通过在子类
-中修改定义，就可以返回其他对象。
-- (void) setValue:(id)value forUndefinedKey:(NSString *) key
-不能设置键字符串key对应的属性值时，从方法setValue:forKey中调用该方
-法。默认情况下，该方法的执行会触发异常NSUndefinedKeyException。不
-过，通过在子类中修改定义，可以返回其他对象。
-4.   如果该返回值不是对象，则返回被适当的对象包装的值；设置值时也应先
-包装成相应的对象。
-属性为对象时，该对象还可能持有属性。这时候可以用“.”连接表示键的字符
-串，这种表示方式称为键路径。只要能找到对象，点和键多长都没有关系。
-- (id)valueForKeyPath:(NSString *) keyPath
-以点切分键路径，并使用第一个键向接收器发送valueForKey：方法。然后，
-再使用键路径的下一个键，向得到的对象发送valueForKey：方法，如此反复
-操作，返回最后获得的对象。
-- (void)setValue:(id) value forKeyPath:(NSString *) keyPath
-与valueForKeyPath：方法一样取出对象，这里只对路径中的最后一个键调用
-setValue：forKey：方法，并设定属性值为value。
-</code></pre><h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="KVC提供了验证Key对应的Value是否可用的方法："><a href="#KVC提供了验证Key对应的Value是否可用的方法：" class="headerlink" title="KVC提供了验证Key对应的Value是否可用的方法："></a>KVC提供了验证Key对应的Value是否可用的方法：</h3><pre><code>(BOOL)validateValue:(inout id *)ioValue forKey:(NSString *)inKey error:(out NSError **)outError;  
-</code></pre><h3 id="KVC对数值和结构体型属性的支持"><a href="#KVC对数值和结构体型属性的支持" class="headerlink" title="KVC对数值和结构体型属性的支持"></a>KVC对数值和结构体型属性的支持</h3>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1891,7 +1905,7 @@ setValue：forKey：方法，并设定属性值为value。
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">169</span>
+              <span class="site-state-item-count">172</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
