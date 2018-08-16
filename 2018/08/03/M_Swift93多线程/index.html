@@ -104,7 +104,7 @@
 2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，
 当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，
 两个线">
-<meta property="og:updated_time" content="2018-08-09T07:43:21.558Z">
+<meta property="og:updated_time" content="2018-08-14T11:55:26.962Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多线程">
 <meta name="twitter:description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU，
@@ -451,6 +451,210 @@ dispath向主队列加一个同步的block；
 此时主队列在等待    dispatch_sync(dispatch_get_main_queue()，^(){block体})；执行
 dispatch_sync在等待主队列执行完毕。
 造成死锁。
+</code></pre><h2 id="同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"><a href="#同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件" class="headerlink" title="同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"></a>同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件</h2><pre><code>首先创建并行队列，创建队列组，将队列和需要处理的网络请求分别
+添加到组中，当组中所有队列处理完事件后调用
+dispatch_group_notify，我们需要在里边处理事件。由于队列
+在处理网络请求时将”发送完一个请求”作为事件完成的标记（此时还
+未获得网络请求返回数据），所以在这里需要用信号量进行控制，在
+执行dispatch_group_notify前发起信号等待（三次信号等待，
+分别对应每个队列的信号通知），在每个队列获取到网络请求返回数
+据时发出信号通知。这样就能完成需求中的要求。
+如果需求中改为：同时存在A,B,C三个任务，要求ABC依次进行处
+理，当上一个完成时再进行下一个任务，当三个任务都完成时再处理
+事件。这时只需要将队列改为串行队列即可（不在需要信号量控
+制）。
+</code></pre><h2 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h2><pre><code>信号量是一个计数器，常用于处理进程或线程的同步问题，特别是对临界资源的同步访问。
+临界资源可以简单的理解为在某一时刻只能由一个进程或线程进行操作的资源，这里的资源
+可以是一段代码、一个变量或某种硬件资源。信号量的值大于或等于0时表示可供并发进程使用的
+资源实体数；小于0时代表正在等待使用临界资源的进程数。
+注意：这里的信号量跟信号是没有关系的。
+3、信号量的操作
+信号量的值与相应资源的使用情况有关，当它的值大于0时，表示当前可用资源的数量，当他的值小于0时，其绝对值表示等待
+使用这个资源的进程个数。信号量的值仅能由PV操作来改变。
+</code></pre><h2 id="某些线程执行完之后去执行其他线程"><a href="#某些线程执行完之后去执行其他线程" class="headerlink" title="某些线程执行完之后去执行其他线程"></a>某些线程执行完之后去执行其他线程</h2><pre><code>1.利用GCD中的barrier
+dispatch_async — A
+dispatch_async — B
+dispatch_barrier_async — middle
+dispatch_async — C
+2.利用GCD中的group
+创建一个dispatch_group_t
+dispatch_group_async — 依次添加并发操作
+dispatch_group_notify
+</code></pre><h2 id="两个线程的notification怎么实现，除GCD"><a href="#两个线程的notification怎么实现，除GCD" class="headerlink" title="两个线程的notification怎么实现，除GCD"></a>两个线程的notification怎么实现，除GCD</h2><pre><code>这里讲到了“重定向”，就是我们在Notification所在的默认线程
+中捕获这些分发的通知，然后将其重定向到指定的线程中。
+一种重定向的实现思路是自定义一个通知队列(注意，不是
+NSNotificationQueue对象，而是一个数组)，让这个队列去维
+护那些我们需要重定向的Notification。我们仍然是像平常一样
+去注册一个通知的观察者，当Notification来了时，先看看post
+这个Notification的线程是不是我们所期望的线程，如果不是，
+则将这个Notification存储到我们的队列中，并发送一个信号
+(signal)到期望的线程中，来告诉这个线程需要处理一个
+Notification。指定的线程在收到信号后，将Notification从
+队列中移除，并进行处理。
+</code></pre><h2 id="如何保证NSNotificationCenter线程安全"><a href="#如何保证NSNotificationCenter线程安全" class="headerlink" title="如何保证NSNotificationCenter线程安全"></a>如何保证NSNotificationCenter线程安全</h2><pre><code>当我们注册一个观察者是，通知中心会持有观察者的一个弱引用，来
+确保观察者是可用的。
+主线程调用dealloc操作会让Observer对象的引用计数减为0，这
+时对象会被释放掉。
+后台线程发送一个通知，如果此时Observer还未被释放，则会用其
+转出消息，并执行回调方法。而如果在回调执行的过程中对象被释放
+了，就会出现上面的问题。
+那我们该怎么做呢？这里有一些好的建议：
+尽量在一个线程中处理通知相关的操作，大部分情况下，这样做都能
+确保通知的正常工作。不过，我们无法确定到底会在哪个线程中调用
+dealloc方法，所以这一点还是比较困难。
+注册监听都时，使用基于block的API。这样我们在block还要继续
+调用self的属性或方法，就可以通过weak-strong的方式来处理。
+具体大家可以改造下上面的代码试试是什么效果。
+使用带有安全生命周期的对象，这一点对象单例对象来说再合适不过
+了，在应用的整个生命周期都不会被释放。
+使用代理。
+</code></pre><h2 id="GCD-信号量控制并发"><a href="#GCD-信号量控制并发" class="headerlink" title="GCD 信号量控制并发"></a>GCD 信号量控制并发</h2><pre><code>信号量是一个整形值并且具有一个初始计数值，并且支持两个操作：
+信号通知和等待。当一个信号量被信号通知，其计数会被增加。当一
+个线程在一个信号量上等待时，线程会被阻塞（如果有必要的话），
+直至计数器大于零，然后线程会减少这个计数。
+dispatch_semaphore_signal是发送一个信号，自然会让信号
+总量加1，dispatch_semaphore_wait等待信号，当信号总量少
+于0的时候就会一直等待，否则就可以正常的执行，并让信号总、
+量-1，根据这样的原理，我们便可以快速的创建一个并发控制来同步
+任务和有限资源访问控制。
+</code></pre><h2 id="iOS线程间的通信"><a href="#iOS线程间的通信" class="headerlink" title="iOS线程间的通信"></a>iOS线程间的通信</h2><pre><code>iOS中，两个线程之间要想互相通信，可以使用：NSMachPort 
+首先NSMarchPort是一个task内线程之间异步通信用的 
+你需要在你的两个object内重写handlePortMessage:方法来截
+取接收到的消息，使用NSPortMessage来发送消息 
+消息一般都是有唯一id和数据组成的 
+数据需要经过序列化通过NSPortMessage的components来传递 
+接收到数据之后需要进行反序列化 
+</code></pre><h2 id="get和set的属性如何保证线程的安全"><a href="#get和set的属性如何保证线程的安全" class="headerlink" title="get和set的属性如何保证线程的安全"></a>get和set的属性如何保证线程的安全</h2><pre><code>property 的 atomic 是采用 spinlock_t 也就是俗称的自旋
+锁实现的。
+atomic通过这种方法，在运行时保证 set,get方法的原子性。 
+仅仅是保证了set,get方法的原子性。 
+这种线程是不安全的。
+self.intA 是原子操作，但是self.intA = self.intA + 1
+这个表达式并不是原子操作。 
+所以线程是不安全的。 
+threadA 在执行表达式 self.intA之后 self.intA = 
+self.intA + 1;并没有执行完毕 
+此时threadB 执行self.intA = self.intA + 1; 
+再回到threadA时，self.intA的数值就被更新了
+所以仅仅使用atomic并不能保证线程安全。
+</code></pre><h2 id="GCD-的珊栏方法"><a href="#GCD-的珊栏方法" class="headerlink" title="GCD 的珊栏方法"></a>GCD 的珊栏方法</h2><pre><code>我们有时需要异步执行两组操作，而且第一组操作执行完之后，才能
+开始执行第二组操作。这样我们就需要一个相当于栅栏一样的一个方
+法将两组异步执行的操作组给分割起来，当然这里的操作组里可以包
+含一个或多个任务。这就需要用到dispatch_barrier_async方
+法在两个操作组间形成栅栏
+</code></pre><h2 id="延时操作主要有4种方式"><a href="#延时操作主要有4种方式" class="headerlink" title="延时操作主要有4种方式"></a>延时操作主要有4种方式</h2><pre><code>1.sleep方式
+[NSThread sleepForTimeInterval:1.0f];
+[self delayMethod];
+使用sleep方式在主线程和子线程中均可执行,但是这是中阻塞线程
+的方式,所以建议放到子线程中使用,以免卡住主线程使界面卡住.
+没有发现取消执行的方法.
+2.NSTimer定时器方式
+[NSTimer scheduledTimerWithTimeInterval:1.0f 
+target:self selector:@selector(delayMethod) 
+userInfo:nil repeats:NO];
+使用定时器方式必须放到主线程中使用,否则无效. 是一种非阻塞的
+方式.
+可以通过- (void)invalidate;方法取消执行。
+3.GCD方式
+dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//write code here
+});
+该方式可选择线程去执行,是一种非阻塞的方式.
+没有发现取消执行的方法.
+4.performSelector方式
+[self performSelector:@selector(delayMethod) 
+withObject:nil afterDelay:1.0f];
+使用该方式必须放到主线程中使用,否则无效. 是一种非阻塞的方式.
+取消执行方法如下:
+[[self class] 
+cancelPreviousPerformRequestsWithTarget:self 
+selector:@selector(delayMethod) object:nil];
+</code></pre><h2 id="NSLock死锁"><a href="#NSLock死锁" class="headerlink" title="NSLock死锁"></a>NSLock死锁</h2><pre><code>使用锁最容易犯的一个错误就是在递归或循环中造成死锁
+如下代码中，因为在线程1中的递归block中，锁会被多次的lock，
+所以自己也被阻塞了。
+此处将NSLock换成NSRecursiveLock，便可解决问题。
+NSRecursiveLock类定义的锁可以在同一线程多次lock，而不会
+造成死锁。
+递归锁会跟踪它被多少次lock。每次成功的lock都必须平衡调用
+unlock操作。
+只有所有的锁住和解锁操作都平衡的时候，锁才真正被释放给其他线
+程获得。
+</code></pre><h2 id="NSNotificationCenter的同步和异步"><a href="#NSNotificationCenter的同步和异步" class="headerlink" title="NSNotificationCenter的同步和异步"></a>NSNotificationCenter的同步和异步</h2><pre><code>默认的NSNotificationCenter是同步的
+您可以通过NSNotificationQueue的
+enqueueNotification:postingStyle:和enqueueNotification:postingStyle:coalesceMask:f
+orModes:方法将通告放入队列，实现异步发送，在把通告放入队列
+之后，这些方法会立即将控制权返回给调用对象。
+通过这里的时间间隔可以看出， 通过通知队列来管理通知，不会再
+造成阻塞。
+</code></pre><h2 id="NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"><a href="#NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作" class="headerlink" title="NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"></a>NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作</h2><pre><code>开辟子线程：（使用子线程的runloop）
+NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(newThread) object:nil];
+[thread start];
+- (void)newThread
+{     @autoreleasepool
+        {
+            [NSTimer scheduledTimerWithTimeInterval:2.0 
+            target:self selector:@selector(addTime) 
+            userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] run];
+        }
+}
+</code></pre><h2 id="原子属性"><a href="#原子属性" class="headerlink" title="原子属性"></a>原子属性</h2><pre><code>原子属性（线程安全），是针对多线程设计的，是默认属性
+多个线程在写入原子属性时（调用 setter 方法），能够保证同一
+时间只有一个线程执行写入操作
+原子属性是一种单(线程)写多(线程)读的多线程技术
+原子属性的效率比互斥锁高，不过可能会出现脏数据
+在定义属性时，必须显示地指定 nonatomic，否则默认为atomic
+多线程——atomic nonatomic的区别
+原子性atomic ,默认属性，编译器会在property上自动添加原子锁
+非原子性nonatomic，不考虑多线程情况时使用，提高效率
+原子属性内部的锁是自旋锁，自旋锁的执行效率比互斥锁高
+atomic本质上就是给get/set方法加锁，即原子锁，以避免线程A
+还没执行完setter，线程B又开始执行的，导致读取数据错误的问
+题。
+</code></pre><h3 id="atomic一定是线程安全的么？"><a href="#atomic一定是线程安全的么？" class="headerlink" title="atomic一定是线程安全的么？"></a>atomic一定是线程安全的么？</h3><pre><code>不一定，首先atomic的释义是原子性，并不是线程安全。原子性这
+个概念表示一个操作序列就像一个操作一样不被打断，而不像一个操
+作序列一样中间容许被打断。所以nonatomic一定是线程不安全
+的，但是atomic却不一定是线程安全的。
+假设线程A执行在对某属性get之前线程B release了该属性，会导
+致程序崩溃。
+原子属性内部的锁是自旋锁，自旋锁的执行效率比互斥锁高
+</code></pre><h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2><pre><code>一般说来，确保线程安全的方法有这几个：竞争与原子操作、同步与
+锁、可重入、过度优化。
+竞争与原子操作 
+多个线程同时访问和修改一个数据，可能造成很严重的后果。出现严
+重后果的原因是很多操作被操作系统编译为汇编代码之后不止一条指
+令，因此在执行的时候可能执行了一半就被调度系统打断了而去执行
+别的代码了。一般将单指令的操作称为原子的(Atomic)，因为不管
+怎样，单条指令的执行是不会被打断的。
+因此，为了避免出现多线程操作数据的出现异常，Linux系统提供了
+一些常用操作的原子指令，确保了线程的安全。但是，它们只适用于
+比较简单的场合，在复杂的情况下就要选用其他的方法了。
+同步与锁 
+为了避免多个线程同时读写一个数据而产生不可预料的后果，开发人
+员要将各个线程对同一个数据的访问同步，也就是说，在一个线程访
+问数据未结束的时候，其他线程不得对同一个数据进行访问。
+同步的最常用的方法是使用锁(Lock)，它是一种非强制机制，每个
+线程在访问数据或资源之前首先试图获取锁，并在访问结束之后释放
+锁；在锁已经被占用的时候试图获取锁时，线程会等待，直到锁重新
+可用。
+二元信号量是最简单的一种锁，它只有两种状态：占用与非占用，它
+适合只能被唯一一个线程独占访问的资源。对于允许多个线程并发访
+问的资源，要使用多元信号量(简称信号量)。
+可重入 
+一个函数被重入，表示这个函数没有执行完成，但由于外部因素或内
+部因素，又一次进入该函数执行。一个函数称为可重入的，表明该函
+数被重入之后不会产生任何不良后果。可重入是并发安全的强力保
+障，一个可重入的函数可以在多线程环境下放心使用。
+过度优化 
+在很多情况下，即使我们合理地使用了锁，也不一定能够保证线程安
+全，因此，我们可能对代码进行过度的优化以确保线程安全。
+我们可以使用volatile关键字试图阻止过度优化，它可以做两件
+事：第一，阻止编译器为了提高速度将一个变量缓存到寄存器而不写
+回；第二，阻止编译器调整操作volatile变量的指令顺序。
+在另一种情况下，CPU的乱序执行让多线程安全保障的努力变得很困
+难，通常的解决办法是调用CPU提供的一条常被称作barrier的指
+令，它会阻止CPU将该指令之前的指令交换到barrier之后，反之亦
+然。
 </code></pre>
       
     </div>
@@ -554,7 +758,7 @@ dispatch_sync在等待主队列执行完毕。
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">176</span>
+              <span class="site-state-item-count">181</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -586,7 +790,7 @@ dispatch_sync在等待主队列执行完毕。
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发和并行的区别"><span class="nav-number">1.</span> <span class="nav-text">并发和并行的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你理解的多线程"><span class="nav-number">2.</span> <span class="nav-text">你理解的多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一种：pthread"><span class="nav-number">2.1.</span> <span class="nav-text">第一种：pthread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二种：NSThread"><span class="nav-number">2.2.</span> <span class="nav-text">第二种：NSThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三种：GCD"><span class="nav-number">2.3.</span> <span class="nav-text">第三种：GCD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四种：NSOperation"><span class="nav-number">2.4.</span> <span class="nav-text">第四种：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的原理"><span class="nav-number">3.</span> <span class="nav-text">多线程的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的优点"><span class="nav-number">4.</span> <span class="nav-text">多线程的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的缺点"><span class="nav-number">5.</span> <span class="nav-text">多线程的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD和NSOperation区别，你更倾向于哪一种？"><span class="nav-number">6.</span> <span class="nav-text">GCD和NSOperation区别，你更倾向于哪一种？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#区别"><span class="nav-number">6.1.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于GCD："><span class="nav-number">6.2.</span> <span class="nav-text">倾向于GCD：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于：NSOperation"><span class="nav-number">6.3.</span> <span class="nav-text">倾向于：NSOperation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场合："><span class="nav-number">6.4.</span> <span class="nav-text">使用场合：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios-几种线程锁"><span class="nav-number">7.</span> <span class="nav-text">ios 几种线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自旋和互斥对比"><span class="nav-number">8.</span> <span class="nav-text">自旋和互斥对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><span class="nav-number">9.</span> <span class="nav-text">GCD的一些常用的函数？（group， barrier，信号量 线程同步）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题分析"><span class="nav-number">10.</span> <span class="nav-text">问题分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#并发和并行的区别"><span class="nav-number">1.</span> <span class="nav-text">并发和并行的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你理解的多线程"><span class="nav-number">2.</span> <span class="nav-text">你理解的多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一种：pthread"><span class="nav-number">2.1.</span> <span class="nav-text">第一种：pthread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二种：NSThread"><span class="nav-number">2.2.</span> <span class="nav-text">第二种：NSThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三种：GCD"><span class="nav-number">2.3.</span> <span class="nav-text">第三种：GCD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四种：NSOperation"><span class="nav-number">2.4.</span> <span class="nav-text">第四种：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的原理"><span class="nav-number">3.</span> <span class="nav-text">多线程的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的优点"><span class="nav-number">4.</span> <span class="nav-text">多线程的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程的缺点"><span class="nav-number">5.</span> <span class="nav-text">多线程的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD和NSOperation区别，你更倾向于哪一种？"><span class="nav-number">6.</span> <span class="nav-text">GCD和NSOperation区别，你更倾向于哪一种？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#区别"><span class="nav-number">6.1.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于GCD："><span class="nav-number">6.2.</span> <span class="nav-text">倾向于GCD：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#倾向于：NSOperation"><span class="nav-number">6.3.</span> <span class="nav-text">倾向于：NSOperation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场合："><span class="nav-number">6.4.</span> <span class="nav-text">使用场合：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios-几种线程锁"><span class="nav-number">7.</span> <span class="nav-text">ios 几种线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自旋和互斥对比"><span class="nav-number">8.</span> <span class="nav-text">自旋和互斥对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><span class="nav-number">9.</span> <span class="nav-text">GCD的一些常用的函数？（group， barrier，信号量 线程同步）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题分析"><span class="nav-number">10.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"><span class="nav-number">11.</span> <span class="nav-text">同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信号量"><span class="nav-number">12.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#某些线程执行完之后去执行其他线程"><span class="nav-number">13.</span> <span class="nav-text">某些线程执行完之后去执行其他线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两个线程的notification怎么实现，除GCD"><span class="nav-number">14.</span> <span class="nav-text">两个线程的notification怎么实现，除GCD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何保证NSNotificationCenter线程安全"><span class="nav-number">15.</span> <span class="nav-text">如何保证NSNotificationCenter线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD-信号量控制并发"><span class="nav-number">16.</span> <span class="nav-text">GCD 信号量控制并发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS线程间的通信"><span class="nav-number">17.</span> <span class="nav-text">iOS线程间的通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get和set的属性如何保证线程的安全"><span class="nav-number">18.</span> <span class="nav-text">get和set的属性如何保证线程的安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD-的珊栏方法"><span class="nav-number">19.</span> <span class="nav-text">GCD 的珊栏方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#延时操作主要有4种方式"><span class="nav-number">20.</span> <span class="nav-text">延时操作主要有4种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSLock死锁"><span class="nav-number">21.</span> <span class="nav-text">NSLock死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSNotificationCenter的同步和异步"><span class="nav-number">22.</span> <span class="nav-text">NSNotificationCenter的同步和异步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"><span class="nav-number">23.</span> <span class="nav-text">NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原子属性"><span class="nav-number">24.</span> <span class="nav-text">原子属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#atomic一定是线程安全的么？"><span class="nav-number">24.1.</span> <span class="nav-text">atomic一定是线程安全的么？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程安全"><span class="nav-number">25.</span> <span class="nav-text">线程安全</span></a></li></ol></div>
             
           </div>
         </section>

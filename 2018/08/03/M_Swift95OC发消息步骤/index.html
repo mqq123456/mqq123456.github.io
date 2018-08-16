@@ -104,7 +104,7 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
 先从缓存中找，完了跳到对应函数执行
 4.如果缓存列表找不到，就找一下方法分发表
 5.如果方法列表找">
-<meta property="og:updated_time" content="2018-08-09T07:45:14.237Z">
+<meta property="og:updated_time" content="2018-08-14T11:55:18.869Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OC发消息">
 <meta name="twitter:description" content="发消息步骤1.检查这个selector是不是要被忽略的，比如mac os开发，
@@ -319,12 +319,9 @@ ObjC的特性允许对一个nil对象发消息而不会崩溃
 其实编译器会根据情况在objc_msgSend,
 objc_msgSend_stret, objc_msgSendSuper, 或
 objc_msgSendSuper_stret四个方法中选择一个来调用。
-</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><pre><code>将一条消息发送给一个不能处理的对象会引起崩溃，但是在崩溃
-之前，系统给响应对象一次处理异常的机会。
-当发送一条对象不能处理的消息，产生crash之前，系统会调用
-响应者的forwardIMvocation方法，并传入一个NSInvocation
-对象，NSInvocation中包含原始消息及参数，这个方法之后方法
-未实现的时候才会调用。
+</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><h3 id="消息转发机流程"><a href="#消息转发机流程" class="headerlink" title="消息转发机流程"></a>消息转发机流程</h3><pre><code>1、动态方法解析resolveInstanceMethod
+2、备用接受者forwardingTargetForSelector
+3、完整转发forwardInvocation
 你可以实现forwardInvocation方法，将消息转发给另一个
 对象，forwardInvocation方法是一个动态方法，在响应者无法
 响应方法时，会调用forwardInvocation方法，可以重写这个方
@@ -353,6 +350,37 @@ NSNull类只有一个null方法。
 OC的函数调用成为消息发送。属于动态调用过程。在编译的时候决不能决定
 真正调用那个函数（实时证明，在编译阶段，oc可以调用任何函数，及时这个
 函数并未实现，只要申明过就不会报错，而c语言在编译阶段或报错）。
+</code></pre><h2 id="消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？"><a href="#消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？" class="headerlink" title="消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？"></a>消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？</h2><pre><code>返回值文档中说是表示动态决议成功与否。但在上面的例子中（不涉
+及消息转发的情况下），如果在该函数内为指定的 selector 提供
+实现，无论返回 YES 还是 NO，编译运行都是正确的；但如果在该
+函数内并不真正为 selector 提供实现，无论返回 YES 还是 
+NO，运行都会 crash，道理很简单，selector 并没有对应的实
+现，而又没有实现消息转发。
+resolveInstanceMethod 是为对象方法进行决议，
+而 resolveClassMethod 是为类方法进行决议。
+</code></pre><h2 id="NSInvocation"><a href="#NSInvocation" class="headerlink" title="NSInvocation"></a>NSInvocation</h2><pre><code>NSInvocation是一个消息调用类，它包含了所有OC消息的成分：
+target、selector、参数以及返回值。NSInvocation可以将消
+息转换成一个对象，消息的每一个参数能够直接设定，而且当一个
+NSInvocation对象调度时返回值是可以自己设定的。一个
+NSInvocation对象能够重复的调度不同的目标(target)，而且
+它的selector也能够设置为另外一个方法签名。NSInvocation
+遵守NSCoding协议，但是仅支持NSPortCoder编码，不支持归档
+型操作。
+// 通过NSMethodSignature对象创建NSInvocation对象，NSMethodSignature为方法签名类
++ (NSInvocation *)invocationWithMethodSignature:(NSMethodSignature *)sig;
+// 获取NSMethodSignature对象
+@property (readonly, retain) NSMethodSignature *methodSignature;
+// 保留参数，它会将传入的所有参数以及target都retain一遍
+- (void)retainArguments;
+// 判断参数是否还存在
+// 调用retainArguments之前，值为NO，调用之后值为YES
+@property (readonly) BOOL argumentsRetained;
+// 设置消息调用者，注意：target最好不要是局部变量
+@property (nullable, assign) id target;
+// 设置要调用的消息
+@property SEL selector;
+// 获取消息返回值
+- (void)getReturnValue:(void *)retLoc;
 </code></pre>
       
     </div>
@@ -456,7 +484,7 @@ OC的函数调用成为消息发送。属于动态调用过程。在编译的时
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">176</span>
+              <span class="site-state-item-count">181</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -488,7 +516,7 @@ OC的函数调用成为消息发送。属于动态调用过程。在编译的时
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#发消息步骤"><span class="nav-number">1.</span> <span class="nav-text">发消息步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#objc-msgSend"><span class="nav-number">2.</span> <span class="nav-text">objc_msgSend</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息转发："><span class="nav-number">3.</span> <span class="nav-text">消息转发：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Objc中向一个nill对象发消息，会发生什么？"><span class="nav-number">4.</span> <span class="nav-text">Objc中向一个nill对象发消息，会发生什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#unrecognized-selector-sent-to-instance的错误是怎么回事？"><span class="nav-number">4.1.</span> <span class="nav-text">unrecognized selector sent to instance的错误是怎么回事？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#空指针和野指针的区别"><span class="nav-number">4.2.</span> <span class="nav-text">空指针和野指针的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数调用和OC的消息传递机制区别"><span class="nav-number">5.</span> <span class="nav-text">函数调用和OC的消息传递机制区别</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#发消息步骤"><span class="nav-number">1.</span> <span class="nav-text">发消息步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#objc-msgSend"><span class="nav-number">2.</span> <span class="nav-text">objc_msgSend</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息转发："><span class="nav-number">3.</span> <span class="nav-text">消息转发：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#消息转发机流程"><span class="nav-number">3.1.</span> <span class="nav-text">消息转发机流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Objc中向一个nill对象发消息，会发生什么？"><span class="nav-number">4.</span> <span class="nav-text">Objc中向一个nill对象发消息，会发生什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#unrecognized-selector-sent-to-instance的错误是怎么回事？"><span class="nav-number">4.1.</span> <span class="nav-text">unrecognized selector sent to instance的错误是怎么回事？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#空指针和野指针的区别"><span class="nav-number">4.2.</span> <span class="nav-text">空指针和野指针的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数调用和OC的消息传递机制区别"><span class="nav-number">5.</span> <span class="nav-text">函数调用和OC的消息传递机制区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？"><span class="nav-number">6.</span> <span class="nav-text">消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSInvocation"><span class="nav-number">7.</span> <span class="nav-text">NSInvocation</span></a></li></ol></div>
             
           </div>
         </section>

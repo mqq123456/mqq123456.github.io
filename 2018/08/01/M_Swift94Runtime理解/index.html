@@ -112,7 +112,7 @@ struct objc_object {
 }
 // objc_class类模型
 struct objc_class : objc_object {">
-<meta property="og:updated_time" content="2018-08-09T07:18:22.115Z">
+<meta property="og:updated_time" content="2018-08-09T09:45:14.298Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="理解Runtime">
 <meta name="twitter:description" content="类结构体模型// objc_object对象模型
@@ -351,12 +351,13 @@ typedef struct objc_object *id;
 struct objc_object { Class isa; };
 objc_object结构体包含一个isa指针，根据isa指针就可以
 顺藤摸瓜找到对象所属的类。
-</code></pre><h3 id="为什么id类型可以指向OC中任意对象"><a href="#为什么id类型可以指向OC中任意对象" class="headerlink" title="为什么id类型可以指向OC中任意对象"></a>为什么id类型可以指向OC中任意对象</h3><pre><code>isa指针不总是指向实例对象所属的类，不能依靠它来确定
+</code></pre><h3 id="为什么id类型可以指向OC中任意对象"><a href="#为什么id类型可以指向OC中任意对象" class="headerlink" title="为什么id类型可以指向OC中任意对象"></a>为什么id类型可以指向OC中任意对象</h3><pre><code>id类型被定义为指向对象的指针
+NSObject只有一个Class对象isa，而objc_object也是只有一个Class对
+象isa,也就是说id等价于NSObject*。所以id是一个一个比较灵活的对象指
+针，并且是一个指向任何一个继承了Object（或者NSObject）类的对象
+</code></pre><h3 id="为什么不能用isa判断一个类的继承关系"><a href="#为什么不能用isa判断一个类的继承关系" class="headerlink" title="为什么不能用isa判断一个类的继承关系"></a>为什么不能用isa判断一个类的继承关系</h3><pre><code>isa指针不总是指向实例对象所属的类，不能依靠它来确定
 类型，而是应该用class方法来确定实例对象的类。
 因为KVO的实现机理就是将被观察对象的isa指针指向一个中间类
-</code></pre><h3 id="为什么不能用isa判断一个类的继承关系"><a href="#为什么不能用isa判断一个类的继承关系" class="headerlink" title="为什么不能用isa判断一个类的继承关系"></a>为什么不能用isa判断一个类的继承关系</h3><pre><code>永远不要用用isa来判断一个类的继承关系，
-而是应该用class方法来判断类的实例。
-可以从isa-swizzling进行分析，也是不合理的
 </code></pre><h2 id="类结构关系"><a href="#类结构关系" class="headerlink" title="类结构关系"></a>类结构关系</h2><pre><code>实例对象在运行时被表示成objc_object类型结构体，结构体内部
 有个isa指针指向objc_class结构体。objc_class内部保存了类
 的变量和方法列表以及其他一些信息，并且还有一个isa指针。这个
@@ -613,7 +614,7 @@ initialize有可能永远不会执行。
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">176</span>
+              <span class="site-state-item-count">181</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

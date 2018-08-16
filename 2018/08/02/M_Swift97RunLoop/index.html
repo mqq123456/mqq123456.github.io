@@ -102,7 +102,7 @@
 这个方法会为main thread设置一个NSRunLoop对象
 对其它线程来说，run loop默认是没有启动的，
 如果你需要更多的线程交互则可以手动配">
-<meta property="og:updated_time" content="2018-08-07T07:22:41.159Z">
+<meta property="og:updated_time" content="2018-08-14T11:51:42.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RunLoop">
 <meta name="twitter:description" content="Run loops是线程的基础架构部分，每个线程，
@@ -513,6 +513,47 @@ userInfo:nil repeats:YES];
 [[NSRunLoop currentRunLoop] addTimer:
 timer forMode:NSDefaultRunLoopMode];
 }
+</code></pre><h2 id="NSTimer和RunLoop"><a href="#NSTimer和RunLoop" class="headerlink" title="NSTimer和RunLoop"></a>NSTimer和RunLoop</h2><pre><code>timer不是一种实时的机制，会存在延迟，而且延迟的程度跟当前线
+程的执行情况有关。
+NSTimer其实也是一种资源，如果看过多线程变成指引文档的话，
+我们会发现所有的source如果要起作用，就得加到runloop中去。
+同理timer这种资源要想起作用，那肯定也需要加到runloop中才
+会又效喽。如果一个runloop里面不包含任何资源的话，运行该
+runloop时会立马退出。你可能会说那我们APP的主线程的
+runloop我们没有往其中添加任何资源，为什么它还好好的运行。
+RunLoop 是用GCD的 dispatch_source_t 实现的 Timer。 
+当调用 NSObject 的 performSelecter:afterDelay: 后，
+实际上其内部会创建一个 Timer 并添加到当前线程的 RunLoop 
+中。所以如果当前线程没有 RunLoop，则这个方法会失效。当调用 
+performSelector:onThread: 时，实际上其会创建一个 
+Timer 加到对应的线程去，同样的，如果对应线程没有 RunLoop 
+该方法也会失效。
+CADisplayLink 是一个和屏幕刷新率（每秒刷新60次）一致的定
+时器（但实际实现原理更复杂，和 NSTimer 并不一样，其内部实
+际是操作了一个 Source）。如果在两次屏幕刷新之间执行了一个
+长任务，那其中就会有一帧被跳过去，造成界面卡顿的感觉。
+</code></pre><h2 id="动画和RunLoop"><a href="#动画和RunLoop" class="headerlink" title="动画和RunLoop"></a>动画和RunLoop</h2><pre><code>CAAnimation是由RunloopObserver触发回调来重绘
+实际上这些背后关联的Layer图层才是真正用来在屏幕上显示和做动
+画，UIView仅仅是对它的一个封装，提供了一些iOS类似于处理触
+摸的具体功能，以及Core Animation底层方法的高级接口。
+UIView 的 Layer 在系统内部，被维护着三份同样的树形数据结
+构，分别是：
+1.图层树（这里是代码可以操纵的，设置属性的最终值会立刻在这里更新）； 
+2.呈现树（是一个中间层，系统就在这一层上更改属性，进行各种渲
+染操作。比如一个动画是更改alpha值从0到1，那么在逻辑树上此
+属性会被立刻更新为最终属性1，而在动画树上会根据设置的动画时
+间从0逐步变化到1）；
+3.渲染树（其属性值就是当前正被显示在屏幕上的属性值）；
+隐式动画是系统框架自动完成的。Core Animation在每个
+runloop周期中自动开始一次新的事务，即使你不显式的用
+[CATransaction begin]开始一次事务，任何在一次runloop
+循环中属性的改变都会被集中起来，然后做一次0.25秒的动画。
+Core Animation提供的显式动画类型，既可以直接对退曾属性做
+动画，也可以覆盖默认的图层行为。
+我们经常使用的CABasicAnimation，
+CAKeyframeAnimation，CATransitionAnimation，
+CAAnimationGroup等都是显式动画类型，这些CAAnimation类
+型可以直接提交到CALayer上。
 </code></pre>
       
     </div>
@@ -616,7 +657,7 @@ timer forMode:NSDefaultRunLoopMode];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">176</span>
+              <span class="site-state-item-count">181</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -648,7 +689,7 @@ timer forMode:NSDefaultRunLoopMode];
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取线程"><span class="nav-number">1.</span> <span class="nav-text">获取线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSRunLoop不是线程安全的"><span class="nav-number">2.</span> <span class="nav-text">NSRunLoop不是线程安全的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSRunloop数据模型"><span class="nav-number">3.</span> <span class="nav-text">NSRunloop数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#autorelease-pool的创建和释放"><span class="nav-number">4.</span> <span class="nav-text">autorelease pool的创建和释放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输入事件来源"><span class="nav-number">5.</span> <span class="nav-text">输入事件来源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#输入源（input-source）"><span class="nav-number">5.1.</span> <span class="nav-text">输入源（input source）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定时源（timer-source）"><span class="nav-number">5.2.</span> <span class="nav-text">定时源（timer source）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop观察者"><span class="nav-number">6.</span> <span class="nav-text">RunLoop观察者</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop的事件队列"><span class="nav-number">7.</span> <span class="nav-text">RunLoop的事件队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop使用时机"><span class="nav-number">8.</span> <span class="nav-text">RunLoop使用时机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop的五个类"><span class="nav-number">9.</span> <span class="nav-text">RunLoop的五个类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CFRunLoop-的结构大致如下："><span class="nav-number">9.1.</span> <span class="nav-text">CFRunLoop 的结构大致如下：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用案例"><span class="nav-number">10.</span> <span class="nav-text">常用案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#performSelector"><span class="nav-number">10.1.</span> <span class="nav-text">performSelector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义输入源"><span class="nav-number">10.2.</span> <span class="nav-text">自定义输入源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口输入源"><span class="nav-number">10.3.</span> <span class="nav-text">端口输入源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置定时源"><span class="nav-number">10.4.</span> <span class="nav-text">设置定时源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置监听"><span class="nav-number">10.5.</span> <span class="nav-text">设置监听</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#other"><span class="nav-number">11.</span> <span class="nav-text">other</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取线程"><span class="nav-number">1.</span> <span class="nav-text">获取线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSRunLoop不是线程安全的"><span class="nav-number">2.</span> <span class="nav-text">NSRunLoop不是线程安全的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSRunloop数据模型"><span class="nav-number">3.</span> <span class="nav-text">NSRunloop数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#autorelease-pool的创建和释放"><span class="nav-number">4.</span> <span class="nav-text">autorelease pool的创建和释放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输入事件来源"><span class="nav-number">5.</span> <span class="nav-text">输入事件来源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#输入源（input-source）"><span class="nav-number">5.1.</span> <span class="nav-text">输入源（input source）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定时源（timer-source）"><span class="nav-number">5.2.</span> <span class="nav-text">定时源（timer source）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop观察者"><span class="nav-number">6.</span> <span class="nav-text">RunLoop观察者</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop的事件队列"><span class="nav-number">7.</span> <span class="nav-text">RunLoop的事件队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop使用时机"><span class="nav-number">8.</span> <span class="nav-text">RunLoop使用时机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RunLoop的五个类"><span class="nav-number">9.</span> <span class="nav-text">RunLoop的五个类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CFRunLoop-的结构大致如下："><span class="nav-number">9.1.</span> <span class="nav-text">CFRunLoop 的结构大致如下：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用案例"><span class="nav-number">10.</span> <span class="nav-text">常用案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#performSelector"><span class="nav-number">10.1.</span> <span class="nav-text">performSelector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义输入源"><span class="nav-number">10.2.</span> <span class="nav-text">自定义输入源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#端口输入源"><span class="nav-number">10.3.</span> <span class="nav-text">端口输入源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置定时源"><span class="nav-number">10.4.</span> <span class="nav-text">设置定时源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置监听"><span class="nav-number">10.5.</span> <span class="nav-text">设置监听</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#other"><span class="nav-number">11.</span> <span class="nav-text">other</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSTimer和RunLoop"><span class="nav-number">12.</span> <span class="nav-text">NSTimer和RunLoop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动画和RunLoop"><span class="nav-number">13.</span> <span class="nav-text">动画和RunLoop</span></a></li></ol></div>
             
           </div>
         </section>

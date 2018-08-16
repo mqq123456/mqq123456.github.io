@@ -102,7 +102,7 @@ view的父视图，这样至上而下传递事件。直到单例UIWindow
 对象，最后是单例UIApplication对象以终止，UIApplication
 的下一个响应者是nil，已结束整个响应循环。
 事件在传递过程中视图可以决定是否需要对该">
-<meta property="og:updated_time" content="2018-08-09T07:28:08.180Z">
+<meta property="og:updated_time" content="2018-08-14T11:44:31.532Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS事件响应顺序">
 <meta name="twitter:description" content="只有继承了UIResponder的类才能响应touch事件，
@@ -357,6 +357,30 @@ pointInside:withEvent:来确定该触摸点是否在该View内。
 所以当我们重写pointInside:(CGPoint)point 
 withEvent:(UIEvent *)event后，其实我们的点击后调
 用hitTest来递归的找hit-TestView的区域从这样：
+</code></pre><h2 id="去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）"><a href="#去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）" class="headerlink" title="去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）"></a>去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）</h2><pre><code>Core Foundation和Foundation为Mach端口提供了高级API。
+在内核基础上封装的CFMachPort / NSMachPort可以用做
+runloop源
+而这个源，正是我们经常在调用栈里看到的source0与source1
+苹果注册了一个 Source1 (基于 mach port 的) 用来接收系统
+事件，其回调函数为 
+__IOHIDEventSystemClientQueueCallback()
+当我们触发了事件（触摸/锁屏/摇晃等）后
+由IOKit.framework生成一个 IOHIDEvent事件
+而IOKit是苹果的硬件驱动框架
+由它进行底层接口的抽象封装与系统进行交互传递硬件感应的事件
+它专门处理用户交互设备，由IOHIDServices和IOHIDDisplays
+两部分组成
+其中IOHIDServices是专门处理用户交互的，它会将事件封装成
+IOHIDEvents对象，详细请看这里
+然后这些事件又由SpringBoard接收，它只接收收按键(锁屏/静音
+等)，触摸，加速，接近传感器等几种 Event
+接着用mach port转发给需要的App进程
+随后苹果注册的那个 Source1 就会触发回调，并调用 
+_UIApplicationHandleEventQueue()进行应用内部的分发
+_UIApplicationHandleEventQueue()把IOHIDEvent处理包
+装成UIEvent进行处理分发，我们平时的UIGesture/处理屏幕旋
+转/发送给 UIWindow/UIButton 点击、touchesBegin/
+Move/End/Cancel这些事件，都是在这个回调中完成
 </code></pre>
       
     </div>
@@ -460,7 +484,7 @@ withEvent:(UIEvent *)event后，其实我们的点击后调
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">176</span>
+              <span class="site-state-item-count">181</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -492,7 +516,7 @@ withEvent:(UIEvent *)event后，其实我们的点击后调
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-事件的产生"><span class="nav-number">1.</span> <span class="nav-text">1. 事件的产生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事件分发（Event-Delivery）"><span class="nav-number">2.</span> <span class="nav-text">事件分发（Event Delivery）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何找到最合适的view来处理事件"><span class="nav-number">2.1.</span> <span class="nav-text">如何找到最合适的view来处理事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hitTest-withEvent-方法的处理流程如下"><span class="nav-number">2.2.</span> <span class="nav-text">hitTest:withEvent:方法的处理流程如下:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事件的响应"><span class="nav-number">3.</span> <span class="nav-text">事件的响应</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如果一个button有一部分超出父控件的范围了，这部分无法响应点击"><span class="nav-number">4.</span> <span class="nav-text">如果一个button有一部分超出父控件的范围了，这部分无法响应点击</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-事件的产生"><span class="nav-number">1.</span> <span class="nav-text">1. 事件的产生</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事件分发（Event-Delivery）"><span class="nav-number">2.</span> <span class="nav-text">事件分发（Event Delivery）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何找到最合适的view来处理事件"><span class="nav-number">2.1.</span> <span class="nav-text">如何找到最合适的view来处理事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hitTest-withEvent-方法的处理流程如下"><span class="nav-number">2.2.</span> <span class="nav-text">hitTest:withEvent:方法的处理流程如下:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事件的响应"><span class="nav-number">3.</span> <span class="nav-text">事件的响应</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如果一个button有一部分超出父控件的范围了，这部分无法响应点击"><span class="nav-number">4.</span> <span class="nav-text">如果一个button有一部分超出父控件的范围了，这部分无法响应点击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）"><span class="nav-number">5.</span> <span class="nav-text">去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）</span></a></li></ol></div>
             
           </div>
         </section>

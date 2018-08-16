@@ -228,6 +228,610 @@
             
               
                 
+                <a class="post-title-link" href="/2016/07/30/B_OC5setter和getter方法/" itemprop="url">
+                  OC @property
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:32:03+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>OC是一门面向对象的语言<br>面向对象: 封装, 继承,    多态</p>
+<p>能不能让编译器自动生成getter和setter方法的原型?</p>
+</blockquote>
+<p>使用 @property帮我们生成getter和setter方法的声明<br>(1)形式1<br>//以名字name为例<br>-(void)setName:(NSString <em>)n;<br>-(NSString </em>)name;<br>(2)形式2<br>@property NSString * name;</p>
+<blockquote>
+<p>能不能让编译器自动生成getter和setter方法的实现(早期版本)</p>
+</blockquote>
+<p>使用 @synthesize 帮我们生成getter和setter方法的实现<br>(1)形式1<br>//以名字name为例<br>//name的设置方法<br>-(void)setName:(NSString <em>)n<br>{<br>    NSLog(@”setName”);<br>    name = n;<br>}<br>//name的获取方法<br>-(NSString </em>)name<br>{<br>    //返回name是实例变量name<br>    return name;<br>}<br>(2)形式2<br>@synthesize name;</p>
+<blockquote>
+<p>实例变量设置为只读的</p>
+</blockquote>
+<p>@property (readonly) NSString *sex;</p>
+<blockquote>
+<p>指定getter方法和setter方法的方法名?</p>
+</blockquote>
+<p>@property (getter = isShow,<br>           setter = changeShow:) BOOL show;</p>
+<blockquote>
+<p>不同类型的实例变量的property如何写</p>
+</blockquote>
+<p>对于字符串和对象有特殊的处理<br>添加property<br>nonatomic 作用取消线程保护,提高代码执行速度<br>@property (nonatomic) int age;<br>copy 表示拷贝对象<br>@property (nonatomic,copy) NSString <em>name;<br>retin 表示持有对象<br>@property (nonatomic,retain) Eye </em>eye;</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC4字典/" itemprop="url">
+                  OC字典
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:26:06+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p> 创建初始化</p>
+</blockquote>
+<p>//参数格式: value1,key1,  value2,key2, …..<br>NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:<br>@”zhangsan,B,13611112222”, @”zhangsan”,<br>@”lisi,G,1101101101110”, @”lisi”,<br>nil];</p>
+<blockquote>
+<p>使用其中对象</p>
+</blockquote>
+<p>NSString *str = [dict objectForKey:@”lisi”];</p>
+<blockquote>
+<p>快速遍历</p>
+</blockquote>
+<p>//细节1: 使用forin获取到的都是key,不是值<br>//细节2: 使用字典, 存进去是某个顺序, 取出来不一定是这个顺序<br>for (NSString <em>key in dict) {<br>NSString </em>value = [dict objectForKey:key];<br>NSLog(@”key = %@, value = %@”,key,value);<br>}</p>
+<blockquote>
+<p>==NSMutableDictionary==</p>
+</blockquote>
+<p>NSMutableDictionary类继承与NSDictionary</p>
+<blockquote>
+<p>创建对象</p>
+</blockquote>
+<p>NSMutableDictionary *mdict = [[NSMutableDictionary alloc] init];</p>
+<blockquote>
+<p>添加或替换</p>
+</blockquote>
+<p>//细节: 如果这个key不存在, 相当于字典中添加一个对象<br>//如果key存在, 则会覆盖这个key对应的值<br>[mdict setValue:@”zhangsan,27” forKey:@”zs”];<br>[mdict setValue:@”lisi,30” forKey:@”ls”];</p>
+<blockquote>
+<p>移除对象</p>
+</blockquote>
+<p>[mdict removeObjectForKey:@”ww”];<br>[mdict removeAllObjects];</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC3数组/" itemprop="url">
+                  OC数组
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:20:54+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p> 创建初始化</p>
+</blockquote>
+<p>NSArray <em>array = [[NSArray alloc] initWithObjects:@”z”,@”l”,@”w”,nil];<br>NSArray </em>array2 = [[NSArray alloc] initWithArray:array];<br>NSString *str1 = [array objectAtIndex:1];    //不要越界,会崩溃</p>
+<blockquote>
+<p>快速遍历</p>
+</blockquote>
+<p>long count = array.count;<br>for(long i=0; i&lt;count; i++)<br>for(NSString *s  in  array)</p>
+<blockquote>
+<p>查找指定对象</p>
+</blockquote>
+<p>long loc = [array indexOfObject:@”lishi”];</p>
+<blockquote>
+<p>==NSMutableArray==</p>
+</blockquote>
+<p>NSMutableArray继承自NSArray, 使用NSArray的所有方法</p>
+<blockquote>
+<p>创建对象</p>
+</blockquote>
+<p>NSMutableArray <em>marr = [[NSMutableArray alloc] init];<br>NSMutableArray </em>marr = [NSMutableArray array];</p>
+<blockquote>
+<p>添加对象</p>
+</blockquote>
+<p>[marr addObject:str1];</p>
+<blockquote>
+<p>插入对象</p>
+</blockquote>
+<p>[marr insertObject:@”zhuge” atIndex:0];</p>
+<blockquote>
+<p>移除对象</p>
+</blockquote>
+<p>[marr removeObject:@”zhuge”];<br>[marr removeObjectAtIndex:0];</p>
+<blockquote>
+<p>替换对象</p>
+</blockquote>
+<p>[marr replaceObjectAtIndex:0 withObject:@”ouyang”];</p>
+<blockquote>
+<p>排序</p>
+</blockquote>
+<p>[marr sortUsingSelector:@selector(mycompare:)];</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC2字符串/" itemprop="url">
+                  OC字符串
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:16:02+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>创建字符串对象</p>
+</blockquote>
+<p>NSString <em>str = @”hello world”;<br>//从C的字符串创建一个字符串对象<br>NSString </em>str2 = [[NSString alloc] initWithUTF8String:”tian qi bu cuo o”];<br>NSString <em>str2 = [NSString<br>                  stringWithUTF8String:”tian qi bu cuo o”];<br>//从其他数据生成字符串对象<br>NSString </em>str3 = [[NSString alloc] initWithFormat:@”zhangsan %d %c”,age,sex];<br>//从另外一个字符串对象,创建字符串对象<br>NSString *str4 = [[NSString alloc] initWithString:str3];</p>
+<blockquote>
+<p>计算长度</p>
+</blockquote>
+<p>long length=[str length]</p>
+<blockquote>
+<p>比较字符串</p>
+</blockquote>
+<p>BOOL a=[str1 isEqualToString str2];<br>int r=[str1 compare str2];</p>
+<blockquote>
+<p>查找子串</p>
+</blockquote>
+<p>NSRstring range=[str rangeOfString substr];</p>
+<blockquote>
+<p>提取字符和字符串</p>
+</blockquote>
+<p>unichar c=[str characterAtInder :4]<br>NSString *subetring=[str substringWithRange:range];</p>
+<blockquote>
+<p>转换</p>
+</blockquote>
+<p>int num=[str intValue]</p>
+<blockquote>
+<p>从文件生成字符串</p>
+</blockquote>
+<p>NSString <em>str10=@”/Users/student/Desktopdict.txt”;<br>NSString </em>f=[[NSString alloc]initWithContentsOfFile:str10 encoding:NSUTF8StringEncoding error:<br>             nil];</p>
+<blockquote>
+<p>==NSMutableString==</p>
+</blockquote>
+<p><1> 创建对象</1></p>
+<p><2> 复制(设置字符串)</2></p>
+<p><3> 连接(附加)</3></p>
+<p><4> 插入</4></p>
+<p><5> 删除</5></p>
+<p><6> 替换</6></p>
+<blockquote>
+<p>== 字符串处理相关</p>
+</blockquote>
+<p><1> 字符串分割    , 使用NSString的componentsSeparatedByString<br>NSArray *arr = [str componentsSeparatedByString:@” “];</1></p>
+<p><2> 数组合并为字符串 ,使用NSArray的componentsJoinedByString<br>NSString *comStr = [arr componentsJoinedByString:@”—“];</2></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC1类和对象/" itemprop="url">
+                  OC 类和对象
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T21:51:55+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Objective-c是c语言的母集合，它的原意就是在原始的c语言的主体上加入面向对象的特性。<br>1、面向对象和面向过程<br>面向对象和面向过程是编程的两种思考方式。面向对象，简称OOP，它是以事物为中心，参与事件的事物是核心，完成事件只是事物的一个小任务。面向过程，简称OPP，它是以事件为中心，事件是核心，列出了完成事件的每一个步骤，一步一步完成。也就是面向对象侧重于从问题在寻找客体、客体的作用。客体间的关系即“谁”、“做什么”、“怎么做”，面向过程侧重于问题的分解即“事件怎么做”。<br>2、类和对象<br>（1）类是一组具有相同（特征）属性和行为（功能）的事物的集合（抽象）。对象就是类的具体实现。世间万物皆对象。类其实就是一种数据类型，它的变量就是对象。<br>（2）类的定义<br>在OC中，类的定义分两部分：接口部分和实现部分；<br>接口部分（interface）：声明了类与父类的名字、方法是实例变量。接口文件以.h为后缀。<br>例如 Student.h        接口文件<br>@interface Student : NSObject      //NSObject是继承的父类<br>{<br>@public  //访问修饰符<br>    //以下是实例变量的声明<br>    NSString <em> name;   //姓名<br>    int age;                   //年龄<br>    NSString </em> address;//地址<br>    NSString * hobby; //爱好<br>}<br>//是方法的声明<br>-(void) sayHi;   //打招呼的方法<br>-(void) eat;       //吃饭的方法<br>-(void) walk;    //走的的方法<br>实现部分（implementation）：包含了方法的实现，真正意义上定义了类的行为。实现文件以.m为后缀。<br>注意：<br>编译器不要求将接口文件和实现文件的代码放在不同的文件中。每一个类用一对接口/实现源文件是一个良好的习惯。一个文件中可以声明和定义多个类。<br>如果类之间没有什么关系，最好不要把不同的类放在同一个文件书写。<br>例如 //Student.m   实现文件</p>
+<p>#import<br>@implementation Student<br>//以下是方法的实现<br>-(void) sayHi   //打招呼的方法<br>{<br>    NSLog(@”我是来自%@的%@，今年%d岁，喜欢%@”,address,age,name,hobby);<br>}<br>-(void) eat       //吃饭的方法<br>{<br>    NSLog(@“%@也得吃饭。”,name);<br>}<br>（3）对象的创建和使用<br>1&gt;对象的创建<br>内存分配：为对象动态的分配内存地址。<br>初始化：在内存中填上的初始值。<br>例如：Student * stu =[[Student alloc] init];<br>说明：向类发送alloc消息，就是为该类分配一块足够大内存，用于存放实例变量，同时初始化内存，填上的初始值。<br>2&gt;对象的赋值使用<br>例如：//main函数</p>
+<p>#import “Student.h”<br>int main (int argc, const char <em> argv[])<br>{<br>    @autoreleasepool {<br>        //创建一个学生对象<br>        Student </em> student = [[Student alloc] init];<br>        student-&gt;name = @”孙悟空”;//为姓名赋值<br>        student-&gt;age = 500;      //为年龄赋值<br>        student-&gt;address = @”傲来国花果山”;//为地址赋值<br>        student-&gt;hobby =@”游山玩水”;//为爱好赋值<br>        //调用打招呼的方法<br>        [student sayHi];<br>    }<br>    -&gt;赋值必须实例变量的修饰符是@public。实例变量的修饰符还有@protected和@private，系统默认实例变量的类型是@protected，对于这两种类型的实例变量，我们需要调用方法为其赋值或者取值。<br>    广义上讲为实例变量赋值的方法成为设置器，取出实例变量的方法成为访问器。<br>    设置器、访问器说明：</p>
+<pre><code>1. 设置器命名: set+首字母大写的实例变量名  如：-(void)setAge:(int)newAge
+2. 设置器参数不要与实例变量重名。
+3. 读取器:与实例变量名同名，并且返回类型与实例类型一致。
+缺点：
+实例变量越多，编写就越麻烦。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/07/30/A_C5常用关键字/" itemprop="url">
                   C语言中的关键字
                 </a>
@@ -771,161 +1375,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/28/A_C1终端的一些常用命令/" itemprop="url">
-                  终端的一些常用命令
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-28T11:02:25+08:00" content="2016-07-28">
-              2016-07-28
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>文件系统 : </p>
-</blockquote>
-<p>在类unix中，一切皆文件，无论是文档，u盘，摄像机，音响等<br>设备，只要连接到类unix系统，在系统本身看来都可以通过操作<br>文件的方式来操作该设备。而所做的这些操作自然是在终端中了<br>文件系统是模仿树的结构设计的。<br>自然界的树只有一个根，树根连带主干是一部分，主干上面还有<br>可多的分支，分支上又有小分支和树叶。<br>类unix上的文件系统也是如此，也有一个根目录（目录即文件夹）<br>根目录下有一些分支目录，分支目录里还有一些小的分支目录，<br>小的分支目录里面还可能有一些更小的分支目录和文件，所有的<br>分支目录都可以看成树枝，所有的文件都可以看成是树叶。</p>
-<blockquote>
-<p>pwd 显示当前目录的绝对路径</p>
-</blockquote>
-<p>所谓绝对路径就是从根目录（／）开始的这个路径<br>相对路径就是相对与当前的这个路径而言</p>
-<blockquote>
-<p>ls  显示当前目录（文件夹）里的一些文件或目录的名字</p>
-</blockquote>
-<p>这些文件或者目录都是可见的。一般目录里还会有隐藏文件或隐藏目录，这些文件和目<br>录是以.为开头的。若是想要显示所有文件和目录（包括隐藏的文件和隐            藏的目录）。那么要用到   ls   -a  还有一个常用的命令是 ls  -l  和 ls -al</p>
-<blockquote>
-<p>cd  切换一个目录 </p>
-</blockquote>
-<p>cd命令后可加一个相对路径也可以加一个绝对路径。<br>咱们每创建一个新目录，那么这个目录里面是会默认生成两个新目录，名字分别是.和 ..。<br>的意义是当前文件，而..是当前目录的上一级目录（或者管它叫当前目录的父目录）</p>
-<blockquote>
-<p>cp  拷贝一个文件或者目录</p>
-</blockquote>
-<p>touch  新创建一个空文件<br>$ touch   已存在文件的目录<br>相当于把该文件时间戳更新，文件内容并未改变<br>$ touch  newfile<br>newfile就是那个新创建的空文件的名字</p>
-<blockquote>
-<p>rm   删除一个文件，或者删除一个目录</p>
-</blockquote>
-<p>删除一个文件就是<br>$ rm   filename<br>删除一个目录<br>$ rm －r dirname</p>
-<blockquote>
-<p>tab键   补全功能:</p>
-</blockquote>
-<p>补全文件或文件夹的名字，也可以补全目录下的相关文件</p>
-<blockquote>
-<p>open  在终端以文件夹窗口的形式来打开某个目录或文件，也可以打开应用程序</p>
-</blockquote>
-<p>小技巧：当以文件夹窗口的形式找到文件或者目录后，想要在终端中打开，很方便的<br>一个操作就是把该文件或者目录拖拽到终端窗口即可获得其绝对路径</p>
-<blockquote>
-<p>vim 编辑器</p>
-</blockquote>
-<p>1）vim 可以打开一个已经存在的文件，这种情况下它是<br>vim  文件名<br>如果vim后面跟的名字的文件并不存在，那么vim进文件之后保存<br>退出就相当于创建了一个新文件。</p>
-<blockquote>
-<p>vim 有3中模式：命令模式 ， 插入模式（编辑模式），可视模式</p>
-</blockquote>
-<p>（1）命令模式，就是我可以键入各种命令（前提是这些命令都是被支持的）<br>一般输入命令要用 “：命令名字”<br>：w         表示保存该文件<br>：q          表示退出该文件<br>：q！      表示强制退出并且不保存该文件<br>：wq       表示保存并且退出该文件<br>：wq！   表示保存修改并且强制退出该文件</p>
-<p>（2）编辑模式<br>当处于编辑模式的时候我们可以任意更改该文件内容<br>（3）可视模式<br>一般用于修改代码格式要用到，例如代码风格对齐要用到，用法为：<br>（4）当用vim打开一个文件的时候它会默认进入到命令模式，如果我要修改该文件那么就需要键入“i”键，切换到编辑模式。那么从编辑模式切换到命令模式我们是用ESC键。如果想要通过命令模式切换到可视模式，需要在命令模式下键入 “v”键。想要从可视模式切回命令模式依然是用ESC键。</p>
-<blockquote>
-<p>命令模式下我们经常会用到一些命令</p>
-</blockquote>
-<p>“a”在当前光标位置后插入文本（内容），并且会自动切入到编辑模式<br>“o”在当前光标所在行的下一行另起一行，并且切入到编辑模式<br>“O”在当前光标所在行的上一行另起一行,并且切入到了编辑模式<br>“x”要删除一个字符那么把光标移动到该字符，然后点下‘x’<br>“dd”其实是连续按两次‘d’键，作用是删除光标所在行整行内容<br>“4dd”相当于删除从光标所在行往下数4行内容<br>“yy”是复制光标所在行一整行内容<br>“4yy” 相当于复制从光标所在行往下数4行内容<br>“p”如果误删除了某几行那么我们可以用‘p’键把删除的内容再粘回来<br>具体做就是在光标的下一行位置插入几行的内容<br>“u”撤消之前的一步操作,若是想撤消之前多步操作就是多点几回‘u’</p>
-<blockquote>
-<p>光标移动</p>
-</blockquote>
-<p>“$”将光标移动到当前行的行尾<br>“^”将光标移动到当前行的第一个非空白字符位置<br>“G”将光标定位到最后一行上<br>“gg”将光标移动到第一行<br>“:set number”显示行号<br>“:set nonumber”把已经显示出的行号去掉</p>
-<blockquote>
-<p>简单搜索</p>
-</blockquote>
-<p>“/string”用于搜索一个字串string。<br>要查找上次查找的字符串的下一个位置使用“n”命令。<br>vim编辑器的配置文件，该配置文件的名字是唯一的“.vimrc”。<br>$ vim  .vimrc<br>syntax on<br>set number<br>set showmatch<br>set tabstop=4<br>set shiftwidth=4<br>set softtabstop=4<br>set smartindent<br>注意：.vimrc这个文件必须是存放在家目录（不一定是/home那个目录，一般新打开一个终端，命令行会默认在某一个目录下，该目录就是家目录）</p>
-<blockquote>
-<p>格言：</p>
-</blockquote>
-<p>在这个世界上，唯一不变的规律是这个世界一直在变。一定要不断提高<br>自己以适应这个变化的世界。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/17/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span>
+    <a class="extend prev" rel="prev" href="/page/17/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/19/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -966,7 +1420,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">176</span>
+              <span class="site-state-item-count">181</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
