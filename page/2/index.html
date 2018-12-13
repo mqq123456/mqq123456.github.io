@@ -228,6 +228,299 @@
             
               
                 
+                <a class="post-title-link" href="/2018/08/08/M_Swift109OC语言相关/" itemprop="url">
+                  OC语言相关
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-08T17:38:29+08:00" content="2018-08-08">
+              2018-08-08
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="OC为什么说是一门动态语言"><a href="#OC为什么说是一门动态语言" class="headerlink" title="OC为什么说是一门动态语言"></a>OC为什么说是一门动态语言</h2><pre><code>Objective-C 可以通过Runtime 这个运行时机制，在运行时动态的添加变
+量、方法、类等，所以说Objective-C 是一门动态的语言
+Objective-C的动态性，让程序在运行时判断其该有的行为，而不是像c等静
+态语言在编译构建时就确定下来。它的动态性主要体现在3个方面：
+1.动态类型：如id类型。实际上静态类型因为其固定性和可预知性而使用的特
+别广泛。静态类型是强类型，动态类型是弱类型，运行时决定接收者。
+2.动态绑定：让代码在运行时判断需要调用什么方法，而不是在编译时。与其他
+面向对象语言一样，方法调用和代码并没有在编译时连接在一起，而是在消息发
+送时才进行连接。运行时决定调用哪个方法。
+3.动态载入。让程序在运行时添加代码模块以及其他资源。用户可以根据需要执
+行一些可执行代码和资源，而不是在启动时就加载所有组件。可执行代码中可以
+含有和程序运行时整合的新类。
+</code></pre><h2 id="类方法（静态方法）和实例方法（动态方法）区别"><a href="#类方法（静态方法）和实例方法（动态方法）区别" class="headerlink" title="类方法（静态方法）和实例方法（动态方法）区别"></a>类方法（静态方法）和实例方法（动态方法）区别</h2><pre><code>类方法必须使用类调用，存储在元类结构体里面的methodLists里面
+实例方法必须使用实例对象调用，存储在类结构体里面的methodLists里面
+静态方法在程序开始时生成内存,实例方法在程序运行中生成内存，
+所以静态方法可以直接调用,实例方法要先成生实例,通过实例调用方法，静态速
+度很快，但是多了会占内存。
+静态内存是连续的,因为是在程序开始时就生成了,而实例申请的是离散的空间,
+所以当然没有静态方法快，
+</code></pre><h2 id="ios中定义属性了解"><a href="#ios中定义属性了解" class="headerlink" title="ios中定义属性了解"></a>ios中定义属性了解</h2><pre><code>@property = ivar + getter + setter
+实例变量+get方法+set方法 也就是说使用@property系统会自动生成setter和getter方法，
+nonatomic 非原子性操作，不提供线程安全，效率更高
+nonatomic 非原子性操作，不提供线程安全，效率更高
+strong 在赋值的时候调用被只想对象的retuain方法，使其引用计数加1
+weak 不增加对象的引用计数，也不持有对象，对象消失后，指针自动变为nil
+assign 不更改引用计数，修饰基础数据类型
+copy 简历一个引用计数为1的对象，常用于NSString和block
+readonly 只读属性
+readwrite默认属性 可读可写
+@synthesize：编译期间，让编译器自动生成setter方法和getter方法
+@dynamic  不自动生成，自己手动生成
+</code></pre><h2 id="NSString为什么要用copy修饰"><a href="#NSString为什么要用copy修饰" class="headerlink" title="NSString为什么要用copy修饰"></a>NSString为什么要用copy修饰</h2><pre><code>因为父类指针可以指向子类对象，使用copy的目的是为了让本对象的属性不受
+外界影响，使用copy无论给我传入的是一个可变的对象黑市不可变的对象，我
+本身持有个就是一个不可变的副本
+如果我们使用的是strong，那么这个属性就有可能指向一个可变对象，如果这
+个可变对象在外部被修改了，那么会影响该属性
+</code></pre><h2 id="如何让自己的对象具有拷贝功能"><a href="#如何让自己的对象具有拷贝功能" class="headerlink" title="如何让自己的对象具有拷贝功能"></a>如何让自己的对象具有拷贝功能</h2><pre><code>需要遵守NSCopying协议，如果自定义的对象分为可变和不可变版本，那么要
+同事细心啊NSCopying和NSMutableCopying协议
+copy和mutableCopy区别
+针对不可变对象调用copy返回该对象本身，调用mutableCopy返回一个可变对象（新的）
+针对可变对象调用copy返回一个不可变对象（新的），调用mutableCopy返回
+另外一个可变对象（新的）。
+copy:创建的是不可变副本（NSString，NSArray，NSDictionary）
+mutableCopy：创建的是可变副本（NSMutableString，
+NSMutableArray，NSMutableDictionary）
+深拷贝(mutableCopy)就是内容拷贝，即指拷贝对象的具体内容，而内存地址
+是自主分配的，拷贝结束之后，两个对象虽然存的值是相同的，但是内存地址不
+一样，两个对象也互不影响，互不干涉;浅拷贝(copy)就是指针拷贝,即对内存
+地址的复制，让目标对象指针和源对象指向同一片内存空间。
+</code></pre><h2 id="为什么IBOutlet修饰的UIView也适用weak关键字"><a href="#为什么IBOutlet修饰的UIView也适用weak关键字" class="headerlink" title="为什么IBOutlet修饰的UIView也适用weak关键字"></a>为什么IBOutlet修饰的UIView也适用weak关键字</h2><pre><code>因为既然有外链那么试图在xib中可定存在，试图已经对他有一个强引用了，使
+用storeboars创建的vc会有一个私有数组前引用所有的对象
+</code></pre><h2 id="使用descperction注意什么"><a href="#使用descperction注意什么" class="headerlink" title="使用descperction注意什么"></a>使用descperction注意什么</h2><pre><code>千万不要在description方法中同时使用%@和self,同时使用了%@和self,
+代表要调用self的description方法,因此最终会导致程序陷入死循环,循 环
+调用description方法
+当该方法使用NSLog(“%@”,self) 时候, 系统做了相关的优化，循坏调用3
+次后就会自动退出
+</code></pre><h2 id="什么时候会报unrecognized-selector错误"><a href="#什么时候会报unrecognized-selector错误" class="headerlink" title="什么时候会报unrecognized selector错误"></a>什么时候会报unrecognized selector错误</h2><pre><code>出现unrecognized selector类型的crash，一般是向对象发送了无法处理
+的消息导致的。说白一点就是这个对象没有你调的那个方法，为什么运行的时候
+才会出现，这个和OC语言动态绑定的机制有关系。
+对象未实现该方法。
+对象已经被释放。
+</code></pre><h2 id="iOS常见错误"><a href="#iOS常见错误" class="headerlink" title="iOS常见错误"></a>iOS常见错误</h2><pre><code>数组越界
+向容器存入nil
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/08/M_Swift108通知原理/" itemprop="url">
+                  通知原理
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-08T16:48:14+08:00" content="2018-08-08">
+              2018-08-08
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>定义对象间的一种一对多的依赖关系。当一个对象的状态发生改变时，所有依赖
+于它的对象都得到通知并自动更新。
+</code></pre><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><pre><code>1.向通知中心注册观察者
+    addObserver:selector:name:object:
+    （观察者接收到通知后执行任务的代码在发送通知的线程中执行）
+    addObserverForName:object:queue:usingBlock:
+    （观察者接收到通知后执行任务的代码在指定的操作队列中执行）
+2.通知中心向所有注册的观察者发送通知
+    postNotification:
+    postNotificationName:object:
+    postNotificationName:object:userInfo:
+</code></pre><h2 id="通知与线程关系"><a href="#通知与线程关系" class="headerlink" title="通知与线程关系"></a>通知与线程关系</h2><pre><code>同步和异步都是相对于发送通知所在的线程的。
+postNotification:总是会卡住当前线程，待observer执行（如不特殊处
+理selector也会在postNotification:所在线程执行）结束之后才会继续
+往下执行。所以是同步的。
+我们在底层当中的消息的触发其实是依赖与端口的，我们想要在一个线程中发消
+息，在另一个线程中进行处理的话，我们可以用端口来实现
+</code></pre><h2 id="为什么要移除通知"><a href="#为什么要移除通知" class="headerlink" title="为什么要移除通知"></a>为什么要移除通知</h2><pre><code>若在iOS8或之前版本系统中，对一个对象
+addObserver:selector:name:object:（假设name为@“111”），但是
+并没有在dealloc的之前或之中，对其进行remove操作。那么，在发送通知、
+（name为@“111”）的时候，会因为bad_access（野指针）而crash。
+若在iOS9及以后，同上操作，不会crash。
+iOS8及以前，NSNotificationCenter持有的是观察者的
+unsafe_unretained指针（可能是为了兼容老版本），这样，在观察者回收
+的时候未removeOberser，而后再进行post操作，则会向一段被回收的区域
+发送消息，所以出现野指针crash。而iOS9以后，unsafe_unretained改成
+了weak指针，即使dealloc的时候未removeOberser，再进行post操作，
+则会向nil发送消息，所以没有任何问题
+</code></pre><h2 id="Notification-Queues和异步通知"><a href="#Notification-Queues和异步通知" class="headerlink" title="Notification Queues和异步通知"></a>Notification Queues和异步通知</h2><pre><code>[[NSNotificationQueue defaultQueue] 
+enqueueNotification:notification 
+postingStyle:NSPostWhenIdle 
+coalesceMask:NSNotificationNoCoalescing 
+forModes:@[NSDefaultRunLoopMode]];
+该参数的三个可选参数：
+1，NSPostWhenIdle：runloop空闲的时候回调通知方法
+2，NSPostASAP：runloop能够调用的时候就回调通知方法
+3，NSPostNow：runloop立即回调通知方法
+根据其type，NSNotificationQueue在合适的时机将其post到
+NSNotificationCenter。这样就完成了异步的需求。
+</code></pre><h2 id="NSNotification与KVO异同点"><a href="#NSNotification与KVO异同点" class="headerlink" title="NSNotification与KVO异同点"></a>NSNotification与KVO异同点</h2><pre><code>kvo： 这些代码都只需在观察者里边进行实现，被观察者不用添加任何代码，所以谁要监听谁注册，然后对响应进行处理即可，使得观察者与被观察者完全解耦，运用很灵活，很简单.
+缺点:
+KVO只能检测类中的属性，并且属性名都是通过NSString来查找，编译器不会帮你去检测与补全，纯手敲可能比较容易出错.
+NSNotification：一对多”，在APP中，很多控制器都需要知道一个事件，应该用通知；
+要被观察者先主动发出通知，然后观察者注册监听后再来进行响应，比KVO 多了发送通知的一步，但是其优点是监听不局限于属性的变化，还可以对多种多样的装填变化进行监听，监听范围广，使用也更灵活
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/08/08/M_Swift107iOS设计模式/" itemprop="url">
                   设计模式
                 </a>
@@ -1923,402 +2216,6 @@ atomic本质上就是给get/set方法加锁，即原子锁，以避免线程A
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/03/M_Swift99Block/" itemprop="url">
-                  Block理解
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-08-03T10:03:14+08:00" content="2018-08-03">
-              2018-08-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <pre><code>本质：带有自动变量值的匿名函数
-block的实质是一个oc对象，它有自己的isa指针、invoke变
-量 ，是NSObject的子类，可以接收消息
-1._NSConcreteGlobalBlock,全局的静态block，不会访问外部的变量。
-就是说如果你的block没有调用其他 的外部变量，那你的block类型就是这
-种。例如：你仅仅在你的block里面写一个NSLog(&quot;hello world&quot;);
-2._NSConcreteStackBlock 保存在栈中的 block，当函数返回时会被销
-毁。这个block就是你声明的时候不用copy修饰，并且你的block访问了外部
-变量。
-3._NSConcreteMallocBlock 保存在堆中的 block，当引用计数为 0 时
-会被销毁。
-</code></pre><h2 id="写法："><a href="#写法：" class="headerlink" title="写法："></a>写法：</h2><pre><code>void (^block)(void) = ^{
-    NSLog(@&quot;无参无返回值&quot;);
-};
-void (^xiaoming1aa)() = ^(NSString *c){
-    NSLog(@&quot;带参数&quot;);
-};
-NSString *(^xiaming2)() = ^NSString *(NSString *dd) {
-    return @&quot;带参数与返回&quot;;
-};
-@property (nonatomic, copy)
-void(^myBlock)();//无参无返回值
-@property (nonatomic, copy)
-void(^myBlock1)(NSString *);//带参数
-@property (nonatomic, copy)
-NSString *(^myBlock2)(NSString *);//带参数与返回
-</code></pre><h2 id="block为什么不能修改外部变量"><a href="#block为什么不能修改外部变量" class="headerlink" title="block为什么不能修改外部变量"></a>block为什么不能修改外部变量</h2><pre><code>默认情况下，在block中访问的外部变量是复制过去的，
-复制过去的是值，即：写操作不对原变量生效。
-</code></pre><h2 id="block都做了什么？"><a href="#block都做了什么？" class="headerlink" title="__block都做了什么？"></a>__block都做了什么？</h2><pre><code>Block不允许修改外部变量的值，这里所说的外部变量的值，
-指的是栈中指针的内存地址。__block 所起到的作用就是
-只要观察到该变量被 block 所持有，就将“外部变量”
-在栈中的内存地址放到了堆中。
-进而在block内部也可以修改外部变量的值
-这也保证了原对象不被销毁，但与此同时，也会导致循环引用问题
-</code></pre><h2 id="block为什么为引起循环引用"><a href="#block为什么为引起循环引用" class="headerlink" title="block为什么为引起循环引用"></a>block为什么为引起循环引用</h2><pre><code>因为block在拷贝到堆上的时候，会retain其引用的外部变量，
-那么如果block中如果引用了他的宿主对象，
-那很有可能引起循环引用
-循环引用发生的条件就是持有这个block的对象，
-被block里边加入的对象持有
-</code></pre><h2 id="如何解决循环引用"><a href="#如何解决循环引用" class="headerlink" title="如何解决循环引用"></a>如何解决循环引用</h2><pre><code>使用__weak修饰self，使其在block中不被持有，打破循环引用。
-__weak typeof(self) weakSelf = self;
-</code></pre><h2 id="Block为什么要用copy修饰"><a href="#Block为什么要用copy修饰" class="headerlink" title="Block为什么要用copy修饰"></a>Block为什么要用copy修饰</h2><pre><code>针对block的三种类型，
-也就是copy修饰的block。他的生命 周期就是随着对象的销毁而结束的。只要
-对象不销毁，我们就可以调用的到在堆中的block。这就是为什么我们要用
-copy来修饰block。因为不用copy修饰的访问外部变量的block，只在他所在
-的函数被调用的那一瞬间可以使用。之后就消失了。
-</code></pre><h2 id="block执行过程中对象被释放"><a href="#block执行过程中对象被释放" class="headerlink" title="block执行过程中对象被释放"></a>block执行过程中对象被释放</h2><pre><code>在block执行开始时self对象还未被释放，而执行过程中，
-self被释放了，此时访问self时，就会发生错误。
-对于这种场景，应该在block中对 对象使用__strong修饰，
-使得在block期间对 对象持有，block执行结束后，解除其持有。
-注：此方法只能保证在block执行期间对象不被释放，
-如果对象在block执行执行之前已经被释放了，该方法也无效。
-</code></pre><h2 id="什么情况下不回发生循环引用"><a href="#什么情况下不回发生循环引用" class="headerlink" title="什么情况下不回发生循环引用"></a>什么情况下不回发生循环引用</h2><pre><code>通用情况:在block本身不被self持有,而被别的对象持有,
-同时不产生循环引用的时候,就不需要使用weakself了
-UIView动画block，AFN的block
-UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
-所以循环无法形成 --&gt; 动画block不会造成循环引用的原因。
-</code></pre><h2 id="函数和block区别"><a href="#函数和block区别" class="headerlink" title="函数和block区别"></a>函数和block区别</h2><pre><code>函数里面只能访问全局变量，而Block代码块不光能访问全局变量，
-还拥有当前栈内存和堆内存变量的可读性
-（当然通过__block访问指示符修饰的局部变量还可以在block代码块里面进行修改）。
-从内存的角度看，函数指针只不过是指向代码区的一段可执行代码，
-而block实际上是程序运行过程中在栈内存动态创建的对象，
-可以向其发送copy消息将block对象拷贝到堆内存，
-以延长其生命周期。
-</code></pre><h2 id="如何区分block位置"><a href="#如何区分block位置" class="headerlink" title="如何区分block位置"></a>如何区分block位置</h2><pre><code>要点一:
-    当block在函数内部，
-    且定义的时候就使用了函数内部的变量，
-    那么这个block是存储在栈上的。 
-要点二:
-    当block定义在函数体外面，
-    或者定义在函数体内部且当时函数执行的时候，
-    block体中并没有需要使用函数内部的局部变量时，
-    也就是block在函数执行的时候只是静静地待在一边定义了一下
-    而不使用函数体的内容，
-    那么block将会被编译器存储为全局block。 
-要点三:
-    全局block存储在堆中，
-    对全局block使用copy操作会返回原函数指针；
-    而对栈中的block使用copy操作，
-    会产生两个不同的block地址，
-    也就是两个匿名函数的入口地址。 
-要点四:
-    ARC机制优化会将stack的block,
-    转为heap的block进行调用。
-</code></pre><h2 id="delegate为什么用weak-它和block区别"><a href="#delegate为什么用weak-它和block区别" class="headerlink" title="delegate为什么用weak 它和block区别"></a>delegate为什么用weak 它和block区别</h2><pre><code>weak是为了解决循环引用的问题
-代理和block的共同特性是回调机制，不同的是，代理的方法比较多，比较分
-散，使用block的代码比较集中统一；代理运行成本比较低，一对一的关系，
-block需要将使用的数据从栈内存拷贝到堆内存中，对象的话就是加计数，代理
-制是保存一个对象指针，直接回调；block写法简单，注重传输，但是需要注意
-循环引用
-总结：公共接口，方法比较多的时候用delegate进行解耦，异步和简单的回调用block
-</code></pre><h2 id="在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别"><a href="#在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别" class="headerlink" title="在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别"></a>在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别</h2><pre><code>在block中调用self会引起循环引用，但是在block中需要对
-weakSelf进行strong,保证代码在执行到block中，self不会被
-释放，当block执行完后，会自动释放该strongSelf
-进行大量调用会引起内存问题
-</code></pre><h2 id="block嵌套block还用——strong两遍吗"><a href="#block嵌套block还用——strong两遍吗" class="headerlink" title="block嵌套block还用——strong两遍吗"></a>block嵌套block还用——strong两遍吗</h2><pre><code>只要在最后把外层的block执行一次, 内层的block才会真正地被
-加载进内存, 循环引用问题再次出现. 出现循环引用的原因其实也
-不难理解, 因为strongPerson说白了也是一个强引用, 它与一般
-强引用的区别在于, 它只会在被定义的block中对对象进行强引用, 
-在block过后就会把对象释放掉, 所以在第2层block中继续用
-strongPerson出现循环引用跟一般造成循环引用的原因其实是一
-样的, 解决方法也是如出一辙, 而且可以继续嵌套下去, 此处的警
-告同样是结果没被使用:
-加上修饰符strong时，当别处把变量释放掉，但调用该变量的
-block如果仍然没有执行结束，那么系统就会等待block执行完成后
-再释放，对该变量在block中的使用起到了保护作用。当block执行
-结束后会自动释放掉。
-</code></pre><h2 id="block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在"><a href="#block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在" class="headerlink" title="block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在"></a>block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在</h2><pre><code>在执行Block语法的时候，Block语法表达式所使用的自动变量的值
-是被保存进了Block的结构体实例中，也就是Block自身中
-Block仅仅捕获了val的值，并没有捕获val的内存地址。
-</code></pre><h2 id="block-和-delegate使用优先级"><a href="#block-和-delegate使用优先级" class="headerlink" title="block 和 delegate使用优先级"></a>block 和 delegate使用优先级</h2><pre><code>block 和 delegate 都可以通知外面。block 更轻型，使用更
-简单，能够直接访问上下文，这样类中不需要存储临时数据，使用 
-block 的代码通常会在同一个地方，这样读代码也连贯。
-delegate 更重一些，需要实现接口，它的方法分离开来，很多时
-候需要存储一些临时数据，另外相关的代码会被分离到各处，没有 
-block 好读。
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/08/03/M_Swift95OC发消息步骤/" itemprop="url">
-                  OC发消息
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-08-03T09:59:36+08:00" content="2018-08-03">
-              2018-08-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="发消息步骤"><a href="#发消息步骤" class="headerlink" title="发消息步骤"></a>发消息步骤</h2><pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
-有垃圾回收，就不考虑 retain，release这些函数
-2.检测这个target是不是nil对象，
-ObjC的特性允许对一个nil对象发消息而不会崩溃
-3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
-先从缓存中找，完了跳到对应函数执行
-4.如果缓存列表找不到，就找一下方法分发表
-5.如果方法列表找不到，就到超类的方法分发列表找，
-一直找到NSObject
-6.如果还找不到，就开始进行动态方法解析，调用
-+(Bool)resolveInstanceMethod(SEL)selector；（实例方法）
-+(Bool)resolveClassMethod(SEL)selector；（类方法）
-该方法的参数就是那个位置的选择子（方法），其返回值为bool，
-表示这个类能否新增一个实例方法用于处理该未知的方法
-一般用这个方法可以动态的添加方法
-7.如果还是找不到，那么运行系统就会问，
-能不能把这条消息转发给其他的接受者处理。调用
-+(id)forwardingTargetForSelector(SEL)selector；
-当前接收者如果能找到备选对象，那么将其返回，
-如果找不到，返回nil
-8.如果还是找不到，那么会创建一个NSInvocation对象，
-把这个尚未处理的那条消息有关的全部细节都封装其中，
-此对象包含选择子，目标对象及参数，
-并调用下面的方法进行消息转发
--（void）forwardInvocation：(NSInvocation *)invocation；
-9.如果最后都没有出来的话，那么就抛出异常
-</code></pre><h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>当前对象无论调用任何方法返回的都是当前对象
-无论何时，要调用objc_msgSend函数，必须要将函数强制转
-换成合适的函数指针类型才能调用。
-其实编译器会根据情况在objc_msgSend,
-objc_msgSend_stret, objc_msgSendSuper, 或
-objc_msgSendSuper_stret四个方法中选择一个来调用。
-</code></pre><h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><h3 id="消息转发机流程"><a href="#消息转发机流程" class="headerlink" title="消息转发机流程"></a>消息转发机流程</h3><pre><code>1、动态方法解析resolveInstanceMethod
-2、备用接受者forwardingTargetForSelector
-3、完整转发forwardInvocation
-你可以实现forwardInvocation方法，将消息转发给另一个
-对象，forwardInvocation方法是一个动态方法，在响应者无法
-响应方法时，会调用forwardInvocation方法，可以重写这个方
-法，实现消息转发。
-</code></pre><h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>如果self为nil，那么selector也会为空，直接返回，不会出现问题。
-（返回值时对象，是标量，结构体）
-如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0
-地址返回，所以不会出现任何错误
-如果返回值类型是对象，那么返还nil
-如果回值类型是标量，那么是0，
-如果回值类型是结构体为0，
-其他为返回值是未定义的。
-但对于[NSNull null]对象发送消息时，是会crash的，因为
-NSNull类只有一个null方法。
-</code></pre><h3 id="unrecognized-selector-sent-to-instance的错误是怎么回事？"><a href="#unrecognized-selector-sent-to-instance的错误是怎么回事？" class="headerlink" title="unrecognized selector sent to instance的错误是怎么回事？"></a>unrecognized selector sent to instance的错误是怎么回事？</h3><pre><code>这是因为这个对象已经被释放了（引用计数为0了），那么这个时候再去调用方
-法肯定是会Crash的，因为这个时候这个对象就是一个野指针（指向僵尸对象
-（对象的引用计数为0，指针指向的内存已经不可用）的指针）了，安全的做法
-是释放后将对象重新置为nil，使它成为一个空指针，大家可以在关闭ARC后手
-动release对象验证一下。
-</code></pre><h3 id="空指针和野指针的区别"><a href="#空指针和野指针的区别" class="headerlink" title="空指针和野指针的区别"></a>空指针和野指针的区别</h3><pre><code>没有存储任何内存地址的指针就称为空指针(NULL指针)
-空指针就是被赋值为0的指针，在没有被具体初始化之前，其值为0。
-&quot;野指针&quot;不是NULL指针，是指向&quot;垃圾&quot;内存（不可用内存）的指针。
-野指针是非常危险的。
-</code></pre><h2 id="函数调用和OC的消息传递机制区别"><a href="#函数调用和OC的消息传递机制区别" class="headerlink" title="函数调用和OC的消息传递机制区别"></a>函数调用和OC的消息传递机制区别</h2><pre><code>对于C语言，函数的调用在编译器的时候决定调用那个函数。编译完之后直接
-顺序执行。
-OC的函数调用成为消息发送。属于动态调用过程。在编译的时候决不能决定
-真正调用那个函数（实时证明，在编译阶段，oc可以调用任何函数，及时这个
-函数并未实现，只要申明过就不会报错，而c语言在编译阶段或报错）。
-</code></pre><h2 id="消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？"><a href="#消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？" class="headerlink" title="消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？"></a>消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？</h2><pre><code>返回值文档中说是表示动态决议成功与否。但在上面的例子中（不涉
-及消息转发的情况下），如果在该函数内为指定的 selector 提供
-实现，无论返回 YES 还是 NO，编译运行都是正确的；但如果在该
-函数内并不真正为 selector 提供实现，无论返回 YES 还是 
-NO，运行都会 crash，道理很简单，selector 并没有对应的实
-现，而又没有实现消息转发。
-resolveInstanceMethod 是为对象方法进行决议，
-而 resolveClassMethod 是为类方法进行决议。
-</code></pre><h2 id="NSInvocation"><a href="#NSInvocation" class="headerlink" title="NSInvocation"></a>NSInvocation</h2><pre><code>NSInvocation是一个消息调用类，它包含了所有OC消息的成分：
-target、selector、参数以及返回值。NSInvocation可以将消
-息转换成一个对象，消息的每一个参数能够直接设定，而且当一个
-NSInvocation对象调度时返回值是可以自己设定的。一个
-NSInvocation对象能够重复的调度不同的目标(target)，而且
-它的selector也能够设置为另外一个方法签名。NSInvocation
-遵守NSCoding协议，但是仅支持NSPortCoder编码，不支持归档
-型操作。
-// 通过NSMethodSignature对象创建NSInvocation对象，NSMethodSignature为方法签名类
-+ (NSInvocation *)invocationWithMethodSignature:(NSMethodSignature *)sig;
-// 获取NSMethodSignature对象
-@property (readonly, retain) NSMethodSignature *methodSignature;
-// 保留参数，它会将传入的所有参数以及target都retain一遍
-- (void)retainArguments;
-// 判断参数是否还存在
-// 调用retainArguments之前，值为NO，调用之后值为YES
-@property (readonly) BOOL argumentsRetained;
-// 设置消息调用者，注意：target最好不要是局部变量
-@property (nullable, assign) id target;
-// 设置要调用的消息
-@property SEL selector;
-// 获取消息返回值
-- (void)getReturnValue:(void *)retLoc;
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2364,7 +2261,7 @@ NSInvocation对象能够重复的调度不同的目标(target)，而且
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">184</span>
+              <span class="site-state-item-count">186</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
