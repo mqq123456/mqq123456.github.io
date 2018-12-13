@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net17音频/" itemprop="url">
-                  音频
+                <a class="post-title-link" href="/2016/07/31/D_Net7SVN/" itemprop="url">
+                  svn
                 </a>
               
             
@@ -272,235 +272,31 @@
       
         
           
-            <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL <em>url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID </em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘<em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} \;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL </em>)url error:(NSError <strong>)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError </strong>)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
-<ul>
-<li>(void)pause; 停止</li>
-<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net2NSOperation/" itemprop="url">
-                  NSOperation
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
             <blockquote>
-<p>NSOperation、NSOperationQueue</p>
+<p>介绍</p>
 </blockquote>
-<p>//对于NSThread的封装，提供了更为方便的使用接口<br>//支持block</p>
+<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
 <blockquote>
-<p>创建和使用</p>
+<p>svn 服务端和客户端模型</p>
 </blockquote>
-<p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation <em>operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation </em>bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation <em>bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue </em>queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
-<p>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/31/D_Net1NSThread/" itemprop="url">
-                  NSThread
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>什么是NSThread？</p>
-</blockquote>
-<p>NSThread 是ios提供的操作和使用线程的一个类<br>线程：<br>进程：理解，活着的程序，是程序执行的一个操作系统实体</p>
-<blockquote>
-<p>NSThread的创建线程</p>
-</blockquote>
-<p>//每个线程执行对应一个方法<br>NSThread *thread1=[[NSThread alloc]initWithTarget:self selector:@selector(thread1:) object:nil];<br>//启动线程<br>[thread1 start];</p>
-<p>//以类方法创建线程<br>//    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];<br>//可以实现同时执行的效果，以前都是先执行A后执行B，现在有了多线程，可以实现同时执行</p>
-<blockquote>
-<p>为什么要实行线程</p>
-</blockquote>
-<p>//UI界面中如果直接执行耗时任务的，界面会卡死，为了能让界面执行耗时任务的时候继续反应，使用新的线程去执行耗时任务<br>//应用场合：下载网络文件，同时执行多个任务，加载大文件，加载大数据<br>//3.为什么要实行线程<br>UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(100, 100, 100, 30);<br>[button setTitle:@”耗时任务” forState:UIControlStateNormal];<br>[self.view addSubview:button];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>-(void)btnClick:(UIButton </em>)button<br>{<br>    //暂停5秒<br>    //    [NSThread sleepForTimeInterval:5];<br>    //    [self dealThread2:nil];<br>    //    如果直接执行的话UI界面会卡死，没有反应<br>    //开启一个新的线程执行<br>    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];</p>
-<p>}</p>
-<p>//4.监控线程的执行完成<br>//如何知道那个线程执行接收，使用block–以后要学<br>//4.监控线程的执行完成<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealThreadExit:) name:NSThreadWillExitNotification object:nil];<br>-(void)dealThreadExit:(NSNotification *)no<br>{<br>    NSLog(@”线程执行完成”);<br>    NSLog(@”ui=%@”,no.userInfo);<br>}<br>//5.线程的控制，线程同步<br>//遇到情况：多个线程访问同一块数据<br>//如何解决：<br>//a+10   1.先从内存拿出，修改，再放回去<br>//访问数据的时候加锁<br>//5.线程的控制，线程同步<br>_lock=[[NSLock alloc]init];</p>
-<p>[NSThread detachNewThreadSelector:@selector(addFunc:) toTarget:self withObject:nil];<br>[NSThread detachNewThreadSelector:@selector(subFunc) toTarget:self withObject:nil];</p>
-<p>[self setAddBlock:^(NSString *mmm){<br>    NSLog(@”hbbbgeregour====%@”,mmm);<br>}];</p>
-<p>#pragma mark - 线程同步<br>-(void)addFunc:(NSThread *)th<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        [_lock lock];<br>        _num++;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        [_lock unlock];</p>
-<pre><code>}
-NSLog(@&quot;add num=%d&quot;,_num);
-if (self.addBlock)
-{
-    self.addBlock(@&quot;add&quot;);
-}
-</code></pre><p>}<br>-(void)subFunc<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        //        [_lock lock];<br>        _num–;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        //        [_lock unlock];</p>
-<pre><code>}
-NSLog(@&quot;sub num=%d&quot;,_num);
-</code></pre><p>}</p>
-<p>//6.UI主线程如何操作UI？<br>//ui主线程，<br>//    工作子线程<br>//    注意：不要在子线程中直接操作UI，交给主线程UI；<br>[self howToUpDateUIInSubThread];<br>-(void)howToUpDateUIInSubThread<br>{<br>    _progress =[[UIProgressView alloc]initWithFrame:CGRectMake(10, 200, 300, 20)];<br>    [self.view addSubview:_progress];<br>    //添加一个按钮<br>    UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>    button.frame=CGRectMake(100, 300, 100, 30);<br>    [button setTitle:@”下载文件” forState:UIControlStateNormal];<br>    [self.view addSubview:button];<br>    [button addTarget:self action:@selector(startDownloadClick:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)startDownloadClick:(UIButton </em>)button<br>{<br>    [NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:nil];<br>}<br>-(void)download:(NSThread <em>)thread<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //更新UI<br>        //        _progress.progress+=0.01;<br>        //在主线程中执行一个方法<br>        [self performSelectorOnMainThread:@selector(upDateUI) withObject:nil waitUntilDone:NO];<br>        [NSThread sleepForTimeInterval:0.001];<br>        NSLog(@”进度为%f%%”,_progress.progress</em>100);<br>    }<br>}<br>-(void)upDateUI<br>{<br>    _progress.progress+=0.001;<br>}</p>
+<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a href="http://192.168.88.8/download/softwares/svn" target="_blank" rel="external">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a href="http://192.168.88.10/svn" target="_blank" rel="external">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi ~/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 <em>.a 即可<br>global-ignores = </em>.o <em>.lo </em>.la <em>.al .libs </em>.so <em>.so.[0-9]</em> <em>.pyc </em>.pyo <em>~.nib </em>.so <em>.pbxuser </em>.mode<em> </em>.perspective* .DS_Store xcuserdata project.xcworkspace</p>
+<ol>
+<li>svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数</li>
+<li>svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co</li>
+<li>svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a href="http://1000phone.cn/stuproj/ios1212" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a href="http://1000phone.cn/stuproj" target="_blank" rel="external">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)</li>
+<li>svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</li>
+</ol>
+<hr>
+<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser</p>
+<h2 id="M-common-db-php"><a href="#M-common-db-php" class="headerlink" title="M common_db.php"></a>M common_db.php</h2><p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题</p>
+<h2 id="M-showcompileinfo-php"><a href="#M-showcompileinfo-php" class="headerlink" title="M showcompileinfo.php"></a>M showcompileinfo.php</h2><p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php</p>
+<ol>
+<li>svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中</li>
+<li>svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件</li>
+<li>svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改</li>
+<li>svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit</li>
+<li>svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a href="http://1000phone.cn/stuproj/ios1212/test1234" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a href="http://1000phone.cn/stuproj/ios1212/myproject2" target="_blank" rel="external">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</li>
+</ol>
 
           
         
@@ -798,132 +594,6 @@ NSLog(@&quot;sub num=%d&quot;,_num);
             
               
                 
-                <a class="post-title-link" href="/2016/07/31/D_Net4AVAudioPlayer/" itemprop="url">
-                  AVAudioPlayer
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
-              2016-07-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>创建播放器对象</p>
-</blockquote>
-<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”lalala.mp3” ofType:nil];<br>_player =[[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:path] error:nil];<br>//预加准备<br>[_player prepareToPlay];</p>
-<p>//添加一个按钮：开始播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>[_player play];<br>}];</p>
-<p>//添加一个按钮：停止播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 150, 100, 30) title:@”暂停” action:^(UIButton *button) {<br>[_player pause];<br>}];<br>//滑块控件<br>_slider=[[UISlider alloc]initWithFrame:CGRectMake(100, 200, 100, 30)];<br>[self.view addSubview:_slider];<br>[_slider addTarget:self action:@selector(dealSlider:) forControlEvents:UIControlEventValueChanged];<br>_slider.value=1;<br>进度条<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(50, 50, 200, 20)];<br>[self.view addSubview:_progressView];<br>[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dealTimer:) userInfo:nil repeats:YES];</p>
-<p>}</p>
-<p>-(void)dealTimer:(NSTimer <em>)t<br>{<br>_progressView.progress=_player.currentTime / _player.duration;<br>}<br>-(void)dealSlider:(UISlider </em>)s<br>{<br>_player.volume=s.value;<br>}</p>
-<blockquote>
-<p>网络音乐的播放</p>
-</blockquote>
-<p>1.使用AudioStreamer.h开源库<br>配置开源库<br>创建对象<br>{<br>AudioStreamer *_streamer;<br>}</p>
-<p>NSString <em>urlString=@”<a href="http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061" target="_blank" rel="external">http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061</a>“;<br>//    如果是self调用时的警告可以<br>//    __weak UIViewController </em>vc=self;</p>
-<p>__block typeof (_streamer) t=_streamer;</p>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>t =[[AudioStreamer alloc]initWithURL:[NSURL URLWithString:urlString]];<br>[t start];<br>}];</p>
-<blockquote>
-<p>播放本地视频文件</p>
-</blockquote>
-<p>//1、配置<br>//添加mediaPlayer<br>//如何播放在线视频文件</p>
-<p>#import “ViewController.h”</p>
-<p>#import <mediaplayer mediaplayer.h=""></mediaplayer></p>
-<p>#import “UIView+ZJQuickControl.h”</p>
-<ul>
-<li>(void)viewDidLoad<br>{<br>[super viewDidLoad];</li>
-</ul>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {</p>
-<p>NSString <em>path=[[NSBundle mainBundle]pathForResource:@”dzs.mp4” ofType:nil];<br>MPMoviePlayerViewController </em>mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL fileURLWithPath:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
-<blockquote>
-<p>播放在线视频</p>
-</blockquote>
-<p>//<a href="http://quiet.local/baoman.mp4" target="_blank" rel="external">http://quiet.local/baoman.mp4</a></p>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放网络mp4” action:^(UIButton *button) {</p>
-<p>NSString <em>path=@”<a href="http://quiet.local/baoman.mp4" target="_blank" rel="external">http://quiet.local/baoman.mp4</a>“;<br>MPMoviePlayerViewController </em>mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL URLWithString:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2016/07/31/D_Net3GCD/" itemprop="url">
                   GCD
                 </a>
@@ -1050,8 +720,8 @@ NSLog(@&quot;sub num=%d&quot;,_num);
             
               
                 
-                <a class="post-title-link" href="/2016/07/30/C_UI1Label/" itemprop="url">
-                  UILabel
+                <a class="post-title-link" href="/2016/07/31/D_Net4AVAudioPlayer/" itemprop="url">
+                  AVAudioPlayer
                 </a>
               
             
@@ -1064,8 +734,8 @@ NSLog(@&quot;sub num=%d&quot;,_num);
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
-              2016-07-30
+            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
+              2016-07-31
             </time>
           </span>
 
@@ -1095,37 +765,38 @@ NSLog(@&quot;sub num=%d&quot;,_num);
         
           
             <blockquote>
-<p>创建UIlabel</p>
+<p>创建播放器对象</p>
 </blockquote>
-<p>UILabel *label=[[UILabel alloc]init];</p>
+<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”lalala.mp3” ofType:nil];<br>_player =[[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:path] error:nil];<br>//预加准备<br>[_player prepareToPlay];</p>
+<p>//添加一个按钮：开始播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>[_player play];<br>}];</p>
+<p>//添加一个按钮：停止播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 150, 100, 30) title:@”暂停” action:^(UIButton *button) {<br>[_player pause];<br>}];<br>//滑块控件<br>_slider=[[UISlider alloc]initWithFrame:CGRectMake(100, 200, 100, 30)];<br>[self.view addSubview:_slider];<br>[_slider addTarget:self action:@selector(dealSlider:) forControlEvents:UIControlEventValueChanged];<br>_slider.value=1;<br>进度条<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(50, 50, 200, 20)];<br>[self.view addSubview:_progressView];<br>[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dealTimer:) userInfo:nil repeats:YES];</p>
+<p>}</p>
+<p>-(void)dealTimer:(NSTimer <em>)t<br>{<br>_progressView.progress=_player.currentTime / _player.duration;<br>}<br>-(void)dealSlider:(UISlider </em>)s<br>{<br>_player.volume=s.value;<br>}</p>
 <blockquote>
-<p>坐标</p>
+<p>网络音乐的播放</p>
 </blockquote>
-<p>label.frame=CGRectMake(100, 100, 200, 30);</p>
+<p>1.使用AudioStreamer.h开源库<br>配置开源库<br>创建对象<br>{<br>AudioStreamer *_streamer;<br>}</p>
+<p>NSString <em>urlString=@”<a href="http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061" target="_blank" rel="external">http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061</a>“;<br>//    如果是self调用时的警告可以<br>//    __weak UIViewController </em>vc=self;</p>
+<p>__block typeof (_streamer) t=_streamer;</p>
+<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>t =[[AudioStreamer alloc]initWithURL:[NSURL URLWithString:urlString]];<br>[t start];<br>}];</p>
 <blockquote>
-<p>文本</p>
+<p>播放本地视频文件</p>
 </blockquote>
-<p>label.text=@”我是标签～”;</p>
+<p>//1、配置<br>//添加mediaPlayer<br>//如何播放在线视频文件</p>
+<p>#import “ViewController.h”</p>
+<p>#import <mediaplayer mediaplayer.h=""></mediaplayer></p>
+<p>#import “UIView+ZJQuickControl.h”</p>
+<ul>
+<li>(void)viewDidLoad<br>{<br>[super viewDidLoad];</li>
+</ul>
+<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {</p>
+<p>NSString <em>path=[[NSBundle mainBundle]pathForResource:@”dzs.mp4” ofType:nil];<br>MPMoviePlayerViewController </em>mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL fileURLWithPath:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
 <blockquote>
-<p>颜色</p>
+<p>播放在线视频</p>
 </blockquote>
-<p>1.文字颜色<br>label.textColor=[UIColor orangeColor];<br>2.三原色设置颜色。<br>label.textColor = [UIColor colorWithRed:0.6 green:0.3 blue:0.5 alpha:1];<br>3.设置高亮文字颜色<br>highlightedTextColor<br>4.标签背景颜色<br>label.backgroundColor=[UIColor orangeColor];</p>
-<blockquote>
-<p>字体lable.font</p>
-</blockquote>
-<p>label.font = [UIFont systemFontOfSize:17];<br>粗体加设置大小。<br>label.font = [UIFont boldSystemFontOfSize:20];<br>自定义字体<br>label.font = [UIFont fontWithName:@”Arial” size:17];<br>根据label宽度设置字体大小<br>adjustFontSizeToFitWidth<br>显示所有字体<br>NSLog(@”所有字体%@”,[UIFont familyNames]);</p>
-<blockquote>
-<p>对其方式</p>
-</blockquote>
-<p>设置标签的背景颜色backgroundColor<br>label.backgroundColor=[UIColor grayColor];<br>靠右对其，默认靠左对其textAlignment<br>label.textAlignment = NSTextAlignmentRight;<br>如何显示多行文本<br>0表示任意多行。labe.numberOfLines<br>label.numberOfLines = 0;</p>
-<blockquote>
-<p>设置阴影</p>
-</blockquote>
-<p>设置阴影颜色shadowColor<br>label.shadowColor = [UIColor redColor];<br>设置阴影偏移shadowOffset<br>label.shadowOffset = CGSizeMake(3, 3);</p>
-<blockquote>
-<p>设置窗口显示的文本sizeToFit</p>
-</blockquote>
-<p>自动适应文本作用：文本有多大，标签就有多大<br>[label sizeToFit];<br>最大显示行数<br>numberOflines<br>当内容超出宽度模式<br>lineBreakMode</p>
+<p>//<a href="http://quiet.local/baoman.mp4" target="_blank" rel="external">http://quiet.local/baoman.mp4</a></p>
+<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放网络mp4” action:^(UIButton *button) {</p>
+<p>NSString <em>path=@”<a href="http://quiet.local/baoman.mp4" target="_blank" rel="external">http://quiet.local/baoman.mp4</a>“;<br>MPMoviePlayerViewController </em>mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL URLWithString:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
 
           
         
@@ -1175,8 +846,232 @@ NSLog(@&quot;sub num=%d&quot;,_num);
             
               
                 
-                <a class="post-title-link" href="/2016/07/30/C_UI13UITableView/" itemprop="url">
-                  UITableView
+                <a class="post-title-link" href="/2016/07/31/D_Net2NSOperation/" itemprop="url">
+                  NSOperation
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>NSOperation、NSOperationQueue</p>
+</blockquote>
+<p>//对于NSThread的封装，提供了更为方便的使用接口<br>//支持block</p>
+<blockquote>
+<p>创建和使用</p>
+</blockquote>
+<p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation <em>operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation </em>bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation <em>bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue </em>queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
+<p>}</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/31/D_Net1NSThread/" itemprop="url">
+                  NSThread
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-31T00:07:14+08:00" content="2016-07-31">
+              2016-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>什么是NSThread？</p>
+</blockquote>
+<p>NSThread 是ios提供的操作和使用线程的一个类<br>线程：<br>进程：理解，活着的程序，是程序执行的一个操作系统实体</p>
+<blockquote>
+<p>NSThread的创建线程</p>
+</blockquote>
+<p>//每个线程执行对应一个方法<br>NSThread *thread1=[[NSThread alloc]initWithTarget:self selector:@selector(thread1:) object:nil];<br>//启动线程<br>[thread1 start];</p>
+<p>//以类方法创建线程<br>//    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];<br>//可以实现同时执行的效果，以前都是先执行A后执行B，现在有了多线程，可以实现同时执行</p>
+<blockquote>
+<p>为什么要实行线程</p>
+</blockquote>
+<p>//UI界面中如果直接执行耗时任务的，界面会卡死，为了能让界面执行耗时任务的时候继续反应，使用新的线程去执行耗时任务<br>//应用场合：下载网络文件，同时执行多个任务，加载大文件，加载大数据<br>//3.为什么要实行线程<br>UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(100, 100, 100, 30);<br>[button setTitle:@”耗时任务” forState:UIControlStateNormal];<br>[self.view addSubview:button];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>-(void)btnClick:(UIButton </em>)button<br>{<br>    //暂停5秒<br>    //    [NSThread sleepForTimeInterval:5];<br>    //    [self dealThread2:nil];<br>    //    如果直接执行的话UI界面会卡死，没有反应<br>    //开启一个新的线程执行<br>    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];</p>
+<p>}</p>
+<p>//4.监控线程的执行完成<br>//如何知道那个线程执行接收，使用block–以后要学<br>//4.监控线程的执行完成<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealThreadExit:) name:NSThreadWillExitNotification object:nil];<br>-(void)dealThreadExit:(NSNotification *)no<br>{<br>    NSLog(@”线程执行完成”);<br>    NSLog(@”ui=%@”,no.userInfo);<br>}<br>//5.线程的控制，线程同步<br>//遇到情况：多个线程访问同一块数据<br>//如何解决：<br>//a+10   1.先从内存拿出，修改，再放回去<br>//访问数据的时候加锁<br>//5.线程的控制，线程同步<br>_lock=[[NSLock alloc]init];</p>
+<p>[NSThread detachNewThreadSelector:@selector(addFunc:) toTarget:self withObject:nil];<br>[NSThread detachNewThreadSelector:@selector(subFunc) toTarget:self withObject:nil];</p>
+<p>[self setAddBlock:^(NSString *mmm){<br>    NSLog(@”hbbbgeregour====%@”,mmm);<br>}];</p>
+<p>#pragma mark - 线程同步<br>-(void)addFunc:(NSThread *)th<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        [_lock lock];<br>        _num++;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        [_lock unlock];</p>
+<pre><code>}
+NSLog(@&quot;add num=%d&quot;,_num);
+if (self.addBlock)
+{
+    self.addBlock(@&quot;add&quot;);
+}
+</code></pre><p>}<br>-(void)subFunc<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        //        [_lock lock];<br>        _num–;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        //        [_lock unlock];</p>
+<pre><code>}
+NSLog(@&quot;sub num=%d&quot;,_num);
+</code></pre><p>}</p>
+<p>//6.UI主线程如何操作UI？<br>//ui主线程，<br>//    工作子线程<br>//    注意：不要在子线程中直接操作UI，交给主线程UI；<br>[self howToUpDateUIInSubThread];<br>-(void)howToUpDateUIInSubThread<br>{<br>    _progress =[[UIProgressView alloc]initWithFrame:CGRectMake(10, 200, 300, 20)];<br>    [self.view addSubview:_progress];<br>    //添加一个按钮<br>    UIButton <em>button=[UIButton buttonWithType:UIButtonTypeSystem];<br>    button.frame=CGRectMake(100, 300, 100, 30);<br>    [button setTitle:@”下载文件” forState:UIControlStateNormal];<br>    [self.view addSubview:button];<br>    [button addTarget:self action:@selector(startDownloadClick:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)startDownloadClick:(UIButton </em>)button<br>{<br>    [NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:nil];<br>}<br>-(void)download:(NSThread <em>)thread<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //更新UI<br>        //        _progress.progress+=0.01;<br>        //在主线程中执行一个方法<br>        [self performSelectorOnMainThread:@selector(upDateUI) withObject:nil waitUntilDone:NO];<br>        [NSThread sleepForTimeInterval:0.001];<br>        NSLog(@”进度为%f%%”,_progress.progress</em>100);<br>    }<br>}<br>-(void)upDateUI<br>{<br>    _progress.progress+=0.001;<br>}</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/B_OC7plist,归档和Json/" itemprop="url">
+                  plist,归档和Json
                 </a>
               
             
@@ -1220,44 +1115,44 @@ NSLog(@&quot;sub num=%d&quot;,_num);
         
           
             <blockquote>
-<p>我们为什么要实现单元格的复用机制</p>
+<p>数据持久化简介</p>
 </blockquote>
-<p>单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存<br>单元格的复用机制原理<br>一开始的时候我们创建了桌面最多能显示的单元格数，cell<br>当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格<br>因此我们就做到了只生成了屏幕范围可显示的单元格个数，就实现滑动表格试图时，以后不会再init alloc单元格cell了，从而实现了节省内存的原理<br>单元格的复用机制<br>-(UITableViewCell <em>)tableView:(UITableView </em>)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath<br>{</p>
-<p>定义一个cell标示符，用以区分不同的cell<br>以后有不同风格的cell就可以使用了<br>static NSString <em>cellID=@”cell”;<br>从cell复用池中拿到可用的cell<br>UITableViewCell </em>cell=[tableView dequeueReusableCellWithIdentifier:cellID];<br>检测，拿到一个可用的cell<br>if(cell ==nil)<br>{<br>创建新的cell<br>cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];<br>}</p>
-<p><3>显示分组数据<br>显示每段       多少section数据<br>-(NSInteger)numberOfSectionsInTableView:(UITableView <em>)tableView<br>{<br>return _dataArray.count;<br>}<br>告诉表格每段要显示多少行<br>重要参数：section每次传入制定序号<br>-(NSInteger)tableView:(UITableView </em>)tableView numberOfRowsInSection:(NSInteger)section<br>{<br>NSArray *array=_dataArray[section];<br>return array.count;<br>}</3></p>
+<p>文件:    最常用的最基础的存储数据的方式<br>plist,xml,json    表示数据的某种格式<br>数据库:        海量的数据(省上所有人的电话信息)存储到数据库中<br>SQL Server 2000, mysql, Oracle<br>云端存储:        数据都存储的网络上, 安全性好, 跨设备,跨平台</p>
 <blockquote>
-<p>单元格行的高度</p>
+<p>plist文件</p>
 </blockquote>
-<p>//通过这个方法可以指定任意行的高度。<br>-(CGFloat)tableView:(UITableView <em>)tableView heightForRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{<br>    return 44.0f;<br>}</p>
-<p>单元格的背景<br>单元格的内容视图contentView</p>
+<p>用途比较多<br>本质上来说是 Property List file, 属性列表文件<br>存储格式:  数据都是由字典,数组,字符串构成的<br>2.2 如何创建plist文件<br>File-&gt;OS X-Resource–&gt; Proerty List<br>2.3 plist文件的读取和写入<br>//如何读取这个plist文件???<br>NSString <em>path = @”/Users/mac/Desktop/oc7-持久化存储/PlistUseDemo/PlistUseDemo/student.plist”;<br>//plist根结点只有两种类型, 数组和字典<br>//  分别使用NSArray和NSDictionary读取plist<br>NSDictionary </em>dict = [[NSDictionary alloc] initWithContentsOfFile:path];<br>//输出所有的班级的信息<br>//NSArray <em>classList = [dict valueForKey:@”classes”];<br>NSArray </em>classList = dict[@”classes”];<br>for (NSDictionary *classDict in classList) {<br>}<br>//  可以把一个数组或者字典写入到plist中<br>//参数1: 传入一个路径<br>//参数2: 表示是否安全的写入<br>[classList writeToFile:@”/Users/mac/Desktop/classList.plist” atomically:YES];</p>
 <blockquote>
-<p>某行选中的事件处理</p>
+<p>归档</p>
 </blockquote>
-<p>-(void)tableView:(UITableView <em>)tableView didSelectRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{}<br>//某行被取消选中了<br>-(void)tableView:(UITableView <em>)tableView didDeselectRowAtIndexPath:(NSIndexPath </em>)indexPath<br>{<br>NSLog(@”被取消选中了”);<br>}</p>
+<p>使用归档, 可以直接把一个对象保存到文件中</p>
+<p>//归档的使用<br>//作用: 对象保存到文件中<br>//相比plist: plist使用简单, 不能存储自定义对象<br>//  归档可以存储任意类型对象<br>NSArray <em>array = [[NSArray alloc] initWithObjects:@”小二”,@”三少”,@”四娘”,@”跳舞大神”, nil];<br>//通过归档的形式存储到文件中<br>//设置文件名<br>NSString </em>path = @”/Users/mac/Desktop/people.data”;<br>//NSKeyedArchiver专门用于归档的类<br>//参数1: 传入需要保存的对象<br>//参数2: 传入文件路径<br>BOOL b = [NSKeyedArchiver archiveRootObject:array toFile:path];<br>//把对象从文件中恢复出来===解档<br>//参数1: 传入保存了对象文件<br>//返回值: 返回保存的对象<br>//  类型原来存储的是什么类型, 用什么类型接收<br>NSArray <em>readArray = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>for(NSString </em>str in readArray)<br>{<br>}</p>
 <blockquote>
-<p>添加头部视图和尾部视图</p>
+<p>自定义对象的归档和解档</p>
 </blockquote>
-<p>//    添加头部试图<br>UIImageView <em>imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];<br>imageView.image=[UIImage imageNamed:@”fenjing.jpg”];<br>_tableView.tableHeaderView=imageView;<br>//    添加尾部试图<br>UIImageView </em>footImage=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 150)];<br>footImage.image=[UIImage imageNamed:@”head2.jpg”];<br>_tableView.tableFooterView=footImage;</p>
+<p>//归档<br>NSString <em>path = @”/Users/mac/Desktop/dog.data”;<br>//<em>**</em></em>  自定义的对象不能直接归档, 会出现崩溃<br>//<strong>*</strong>  需要告诉系统我们对象应该如何归档<br>//          自己类中添加一些指定的方法</p>
+<p>[NSKeyedArchiver archiveRootObject:huaer toFile:path];</p>
+<p>//解档刚才存入的对象<br>Dog *newDog = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>NSLog(@”–&gt; %@ %@ %f %@”,<br>      newDog.nickname,<br>      newDog.gender,<br>      newDog.weight,<br>      newDog.type);</p>
+<p>//告诉系统, 这个对象应该如何编码<br>//  如果没有加这个方法,自定义对象归档的时候会奔溃</p>
+<ul>
+<li>(void)encodeWithCoder:(NSCoder *)aCoder<br>{<br>  //把类中的对象指定一个key, 编码到文件中<br>  [aCoder encodeObject:self.nickname forKey:@”nickname”];<br>  [aCoder encodeObject:self.gender forKey:@”gender”];<br>  [aCoder encodeObject:[NSNumber numberWithFloat:self.weight] forKey:@”weight”];<br>  [aCoder encodeObject:self.type forKey:@”type”];</li>
+</ul>
+<p>}</p>
+<p>//告诉系统, 这个对象应该如何解码<br>//  如果没有加这个方法,自定义对象解档的时候会奔溃</p>
+<ul>
+<li><p>(id)initWithCoder:(NSCoder *)aDecoder<br>{<br>  if (self = [super init]) {</p>
+<pre><code>//对数据进行解码操作
+self.nickname = [aDecoder decodeObjectForKey:@&quot;nickname&quot;];
+self.gender = [aDecoder decodeObjectForKey:@&quot;gender&quot;];
+self.weight = [[aDecoder decodeObjectForKey:@&quot;weight&quot;] floatValue];
+self.type = [aDecoder decodeObjectForKey:@&quot;type&quot;];
+</code></pre><p>  }<br>  return self;<br>}</p>
+</li>
+</ul>
 <blockquote>
-<p>表格视图的编辑(难点)</p>
+<p>Json解析</p>
 </blockquote>
-<p><1>单元格的删除操作[重点, 必须掌握]</1></p>
-<p><2>单元格的增加操作</2></p>
-<p><3>单元格的移动操作</3></p>
-<p><4>多行选中和多行删除操作</4></p>
-<p>2.表格视图的设置</p>
-<p><1>设置表格的索引</1></p>
-<p><2>设置段头和段尾</2></p>
-<p><3>表格的分割线</3></p>
-<p>3.表格视图的搜索</p>
-<p><1>添加搜索条 UISearchBar–&gt;tableHeaderView</1></p>
-<p>4.表格视图控制器</p>
-<blockquote>
-<p>cell的定制</p>
-</blockquote>
-<p>1.我们使用MVC模式实现cell的定制。<br>什么是MVC模式<br>V是：VIew视图     作用：展示数据，接收用户交互<br>C是：Controller控制器<br>作用：负责把数据从Model中拿出来放到View上。<br>根据View的操作区修改数据。<br>M是：Model模型    作用：存储和表示数据</p>
-<p>理解：简单理解为每个界面分为三层——Model，VIew，Controller<br>效果：让开发变得更简单，可维护性更强，可扩展性更强，可阅读性更强<br>下面我们就具体看一下MVC模式应该怎么设计，在MVC模式下如何定制cell<br>1.Model的设计<br>这里：你要建立数据模型，存储数据（数据模型：就是oc中的类）<br>现在获取的数据本质上是原始数据，<br>以后原始数据有很多中  plist  JSON  数据库  文本文件<br>注意：不要直接使用原始数据<br>把所有的原始数据存储到数据模型Model<br>将解析数据存储到Model中<br>建立数组接收每个Model对象。</p>
-<p>2.cell的定制<br>就是将cell上所有的空间全部封装成一个类。<br>在这个类里，我们创建这些控件，设置相应的坐标<br>将这些类添加到self.contentView</p>
+<p>Javascript Object Notation 简写<br>网络常用一种表示数据或交换数据的格式<br>4.2 Json数据格式<br>[]表示一个数组, 对应NSArray<br>{}表示一个字典, 对应NSDictionary<br>key:value  表示一个键值对<br>“str”    表示一个字符串   NSString<br>90        表示一个数字       NSNumber<br>,  表示并列的数据<br>4.3 Json格式的读取和使用<br>//如何解析JSON, 解析后如何获取其中数据<br>NSString <em>path = @”/Users/mac/Desktop/1422带课/oc7-持久化存储/topic.txt”;<br>//JSON先读取到程序中(NSString,NSData)<br>NSData </em>data = [[NSData alloc] initWithContentsOfFile:path];<br>//OC提供专门用于JSON解析的类<br>//NSJSONSerialization<br>//功能: 把NSData类型JSON数据转化为字典或者数组<br>//参数1: 需要解析的JSON数据<br>//参数2: 传入一个选项<br>//参数3: 错误<br>//返回值: 如果JSON顶层结点是[],用NSArray接收<br>//       如果顶层结点是{}, 用NSDictionary接收<br>NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];</p>
 
           
         
@@ -1375,6 +1270,131 @@ NSLog(@&quot;sub num=%d&quot;,_num);
 <p>UIPanGestureRecognizer <em>pan=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(dealPan:)];<br>[_imageView addGestureRecognizer:pan];<br>}<br>-(void)dealPan:(UIPanGestureRecognizer </em>)pan<br>{<br>重要的属性locationInView<br>CGPoint point=[pan locationInView:self.view];<br>_imageView.center=point;<br>}<br>长按手势LongPress<br>UILongPressGestureRecognizer *longPress=[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(dealLongPress:)];<br>[_imageView addGestureRecognizer:longPress];</p>
 <p>}<br>-(void)dealLongPress:(UILongPressGestureRecognizer <em>)longPress<br>{<br>NSLog(@”长按”);<br>重要的属性 longPress.state<br>if(longPress.state==UIGestureRecognizerStateBegan)<br>{<br>UIAlertView </em>al=[[UIAlertView alloc]init];<br>al.message=@”是否保存图片”;<br>[al addButtonWithTitle:@”取消”];<br>[al show];<br>}</p>
 <p>}</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/07/30/C_UI11UIScrollView/" itemprop="url">
+                  UIScrollView
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T22:45:09+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>属性</p>
+</blockquote>
+<p>内容区域contentSize<br>@property(nonatomic) CGSize contentSize;<br>偏移量contentOffset<br>@property(nonatomic) CGPoint contentOffset;<br>弹簧效果bounces<br>@property(nonatomic) BOOL bounces;<br>分页效果pagingEnabled<br>@property(nonatomic,getter=isPagingEnabled) BOOL pagingEnabled;<br>允许滑动视图本身，如果设为no只能通过方法滑动，不能直接用手滑动<br>@property(nonatomic,getter=isScrollEnabled) BOOL scrollEnabled;<br>显示水平进度条showsHorizontalScrollIndicator<br>@property(nonatomic) BOOL showsHorizontalScrollIndicator;<br>显示垂直进度条showsVerticalScrollIndicator<br>@property(nonatomic) BOOL showsVerticalScrollIndicator;<br>放大和缩小的倍数<br>@property(nonatomic) CGFloat minimumZoomScale;<br>@property(nonatomic) CGFloat maximumZoomScale;</p>
+<p>1缩放到某个区域，（具体出现的区域受缩放倍数的影响）</p>
+<ul>
+<li>(void)zoomToRect:(CGRect)rect animated:(BOOL)animated;</li>
+</ul>
+<p>2种通过代码滑动视图的方法，一个是设置偏移量，一个是滑动到某个区域（常用第一个）</p>
+<ul>
+<li>(void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;</li>
+<li>(void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated;</li>
+</ul>
+<blockquote>
+<p>滚动视图的基本使用</p>
+</blockquote>
+<p>演示UIScrollView滚动试图基本使用<br>UIImageView <em>imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 11000, 5600)];<br>imageView.image=[UIImage imageNamed:@”1001.jpg”];<br>[self.view addSubview:imageView];<br>使用滚动试图<br>声明一个滚动试图<br>UIScrollView </em>scrollView=[[UIScrollView alloc]initWithFrame:self.view.bounds];<br>[self.view addSubview:scrollView];<br>imageView放到了滚动试图中<br>[scrollView addSubview:imageView];<br>滚动试图比较特殊，有两个大小。本身大小，其中内容大小<br>scrollView.contentSize=CGSizeMake(11000, 5600);<br>滚动试图常用属性<br>是否显示水平或竖直滚动条。<br>水平，横向<br>scrollView.showsHorizontalScrollIndicator=NO;<br>竖直，纵向<br>scrollView.showsVerticalScrollIndicator=NO;<br>设置分页滚动<br>scrollView.pagingEnabled=YES;<br>设置是否可以拉出空白区域，bounces蹦跳  scrollView.bounces=YES;</p>
+<blockquote>
+<p>滚动视图的基本原理 + 滚动视图的事件处理</p>
+</blockquote>
+<p>滚动试图缩放和基本原理UIScrollViewDelegate<br>scrollView.delegate=self;<br>开始拖拽<br>滚动。。。。。<br>结束拖拽<br>开始减速<br>滚动。。。。。<br>减速结束（滚动停止）；<br>【UIScrollViewDelegate】<br>代理方法<br>滑动过程中</p>
+<ul>
+<li>(void)scrollViewDidScroll:(UIScrollView *)scrollView;<br>开始拖动</li>
+<li>(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;<br>停止拖动</li>
+<li>(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;<br>开始滑动</li>
+<li>(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;<br>停止滑动</li>
+<li>(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView; </li>
+</ul>
+<blockquote>
+<p>滚动视图的缩放</p>
+</blockquote>
+<p>设置最大最小缩放比例<br>通过代理方法，告诉滚动试图，哪个试图应该缩放<br>scrollView.maximumZoomScale=10;<br>scrollView.minimumZoomScale=0.1;<br>代理方法，告诉scrollView哪个试图应该缩放<br>当试图滚动的时候执行<br>试图缩放。<br>允许缩放的视图(一个scrollview中只能有一个可以缩放且必须设置可以缩放的范围)<br>-(UIView <em>)viewForZoomingInScrollView:(UIScrollView </em>)scrollView<br>{<br>返回被缩放的试图<br>return imageView;<br>}</p>
 
           
         
