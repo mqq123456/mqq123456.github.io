@@ -228,6 +228,864 @@
             
               
                 
+                <a class="post-title-link" href="/2018/08/03/M_Swift103事件响应顺序/" itemprop="url">
+                  iOS事件响应顺序
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-03T10:29:19+08:00" content="2018-08-03">
+              2018-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>只有继承了UIResponder的类才能响应touch事件，
+响应顺序，优先是最上层的view响应事件，
+如果该view有视图控制器的话会是下一个响应者，否者就是该
+view的父视图，这样至上而下传递事件。直到单例UIWindow
+对象，最后是单例UIApplication对象以终止，UIApplication
+的下一个响应者是nil，已结束整个响应循环。
+事件在传递过程中视图可以决定是否需要对该事件进行响应。
+</code></pre><h2 id="1-事件的产生"><a href="#1-事件的产生" class="headerlink" title="1. 事件的产生"></a>1. 事件的产生</h2><pre><code>发生事件后，系统会将该事件加入到一个由UIApplication
+管理的事件队列中。
+UIApplication会从事件队列中取出最前面的事件，
+并将该事件分发下去处理。通常，先发送事件给应用程序
+的主窗口（keywindow）。
+keywindow会在视图层次结构中找到一个最合适的视图来处理事件。
+</code></pre><h2 id="事件分发（Event-Delivery）"><a href="#事件分发（Event-Delivery）" class="headerlink" title="事件分发（Event Delivery）"></a>事件分发（Event Delivery）</h2><pre><code>第一响应者（First responder）指的是当前接受触摸的响应者
+对象（通常是一个UIView对象），即表示当前该对象正在与用户
+交互，它是响应者链的开端。整个响应者链和事件分发的使命都是
+找出第一响应者。
+
+UIWindow对象以消息的形式将事件发送给第一响应者，
+使其有机会首先处理事件。如果第一响应者没有进行处理，
+系统就将事件（通过消息）传递给响应者链中的下一个响应者
+，看看它是否可以进行处理。
+事件的传递先从父控件传递到子控件（UIApplication
+-&gt;window-&gt;寻找处理事件最合适的view）。
+如果父view不能接受触摸事件，那么子view也不能接收到
+触摸事件。
+</code></pre><h3 id="如何找到最合适的view来处理事件"><a href="#如何找到最合适的view来处理事件" class="headerlink" title="如何找到最合适的view来处理事件"></a>如何找到最合适的view来处理事件</h3><pre><code>iOS系统检测到手指触摸(Touch)操作时会将其打包成一
+个UIEvent对象，并放入当前活动Application的事件队列，
+单例的UIApplication会从事件队列中取出触摸事件并传递给单
+例的UIWindow来处理，UIWindow对象首先会使用
+hitTest:withEvent:方法寻找此次Touch操作初始点所在的视图
+(View)，即需要将触摸事件传递给其处理的视图，这个过程称之为
+hit-test view。
+UIWindow实例对象会首先在它的内容视图上调用
+hitTest:withEvent:，此方法会在其视图层级结构中的每个视图
+上调用pointInside:withEvent:（该方法用来判断点击事件发
+生的位置是否处于当前视图范围内，以确定用户是不是点击了当前视
+图），如果pointInside:withEvent:返回YES，则继续逐级调
+用，直到找到touch操作发生的位置，这个视图也就是要找的hit-
+test view。
+</code></pre><h3 id="hitTest-withEvent-方法的处理流程如下"><a href="#hitTest-withEvent-方法的处理流程如下" class="headerlink" title="hitTest:withEvent:方法的处理流程如下:"></a>hitTest:withEvent:方法的处理流程如下:</h3><pre><code>view会调用hitTest:withEvent:方法，
+hitTest:withEvent:方法底层会调用
+pointInside:withEvent:方法判断触摸点是不是在这个view的
+坐标系上。如果在坐标系上，会分发事件给这个view的子view。然
+后每个字view重复以上步骤，直至最底层的一个合适的view。
+如所有子视图都返回非，则hitTest:withEvent:方法返回自身(self)。
+</code></pre><h2 id="事件的响应"><a href="#事件的响应" class="headerlink" title="事件的响应"></a>事件的响应</h2><pre><code>事件响应会先从底层最合适的view开始，然后随着上一步找到的链
+一层一层响应touch事件。默认touch事件会传递给上一层。如果到
+了viewcontroller的view，就会传递给viewcontroller。如
+果viewcontroller不能处理，就会传递给UIWindow。如果
+UIWindow无法处理，就会传递给UIApplication。如果
+UIApplication无法处理，就会传递给
+UIApplicationDelegate。如果UIApplicationDelegate不
+能处理，则会丢弃该事件。
+</code></pre><h2 id="如果一个button有一部分超出父控件的范围了，这部分无法响应点击"><a href="#如果一个button有一部分超出父控件的范围了，这部分无法响应点击" class="headerlink" title="如果一个button有一部分超出父控件的范围了，这部分无法响应点击"></a>如果一个button有一部分超出父控件的范围了，这部分无法响应点击</h2><pre><code>当我去点击View-C的时候，hit-Testing实际上是这样检测的
+1.首先，视图会先从View-A开始检查，发现触摸点在View-A，
+所以检查View-A的子视图View-B。
+2.发现触摸点在View-B内，好棒！看看View-B内的子
+视图View-C。
+3.发现触摸点在View-C内，但View-C没有子视图了，
+所以View-C是此次触摸事件的hit-TestView了。
+那么UIView中其实提供了两个方法来确定hit-TestView
+1.- (UIView *)hitTest:(CGPoint)point 
+withEvent:(UIEvent *)event;
+2.- (BOOL)pointInside:(CGPoint)point 
+withEvent:(UIEvent *)event;
+//这个就是我们上面重写的方法
+注意其实在每次递归去调用hitTest:(CGPoint)point
+withEvent:(UIEvent *)event之前，都会调用
+pointInside:withEvent:来确定该触摸点是否在该View内。
+所以当我们重写pointInside:(CGPoint)point 
+withEvent:(UIEvent *)event后，其实我们的点击后调
+用hitTest来递归的找hit-TestView的区域从这样：
+</code></pre><h2 id="去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）"><a href="#去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）" class="headerlink" title="去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）"></a>去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）</h2><pre><code>Core Foundation和Foundation为Mach端口提供了高级API。
+在内核基础上封装的CFMachPort / NSMachPort可以用做
+runloop源
+而这个源，正是我们经常在调用栈里看到的source0与source1
+苹果注册了一个 Source1 (基于 mach port 的) 用来接收系统
+事件，其回调函数为 
+__IOHIDEventSystemClientQueueCallback()
+当我们触发了事件（触摸/锁屏/摇晃等）后
+由IOKit.framework生成一个 IOHIDEvent事件
+而IOKit是苹果的硬件驱动框架
+由它进行底层接口的抽象封装与系统进行交互传递硬件感应的事件
+它专门处理用户交互设备，由IOHIDServices和IOHIDDisplays
+两部分组成
+其中IOHIDServices是专门处理用户交互的，它会将事件封装成
+IOHIDEvents对象，详细请看这里
+然后这些事件又由SpringBoard接收，它只接收收按键(锁屏/静音
+等)，触摸，加速，接近传感器等几种 Event
+接着用mach port转发给需要的App进程
+随后苹果注册的那个 Source1 就会触发回调，并调用 
+_UIApplicationHandleEventQueue()进行应用内部的分发
+_UIApplicationHandleEventQueue()把IOHIDEvent处理包
+装成UIEvent进行处理分发，我们平时的UIGesture/处理屏幕旋
+转/发送给 UIWindow/UIButton 点击、touchesBegin/
+Move/End/Cancel这些事件，都是在这个回调中完成
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/03/M_Swift102AFN_SDWebImage/" itemprop="url">
+                  AFN SD做了哪些优化
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-03T10:09:03+08:00" content="2018-08-03">
+              2018-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="AFN包括如下模块"><a href="#AFN包括如下模块" class="headerlink" title="AFN包括如下模块"></a>AFN包括如下模块</h2><pre><code>网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
+网络状态监听模块(Reachability)
+网络通信安全策略模块(Security)
+网络通信信息序列化/反序列化模块(Serialization)
+对于iOS UIKit库的扩展(UIKit)
+</code></pre><h2 id="AFN优点"><a href="#AFN优点" class="headerlink" title="AFN优点"></a>AFN优点</h2><pre><code>AFNetworking内置支持JSON,plist文件和XML文件的解析,使用比
+较方便我们能够有效的控制并观察一个网络请求的创建、进行、取消、
+完成、暂停恢复、异常等问题及状态
+可以帮助我们轻松友好的完成请求的创建、响应的系列化,网络状态的监控以
+及安全策略以及每一个请求operation的管理(operation的相互依赖或
+状态改变)。 
+</code></pre><h2 id="SDWebImage-概论"><a href="#SDWebImage-概论" class="headerlink" title="SDWebImage 概论"></a>SDWebImage 概论</h2><pre><code>1.提供了一个UIImageView的category用来加载网
+络图片并且对网络图片的缓存进行管理
+2.采用异步方式来下载网络图片
+3.采用异步方式，使用memory＋disk来缓存网
+络图片，自动管理缓存。
+4.支持GIF动画
+5.支持WebP格式
+6.同一个URL的网络图片不会被重复下载
+7.失效的URL不会被无限重试
+8.耗时操作都在子线程，确保不会阻塞主线程
+9.使用GCD和ARC
+10.支持Arm64
+13.图片解码处理在一个 NSOperationQueue 完成，
+不会拖慢主线程 UI。如果有需要对下载的图片进行二次处理，
+最好也在这里完成，效率会好很多。
+</code></pre><h1 id="AFN、SD缺点"><a href="#AFN、SD缺点" class="headerlink" title="AFN、SD缺点"></a>AFN、SD缺点</h1><pre><code>最近版早早已经支持NSURLSession了，但是不支持iOS7以下系统。
+且AFNetworking必须使用ARC
+SDWebImage 对gif的处理主要是在UIImage+GIF
+这个文件里面，利用ImageIO函数创建二进制数据，如下：
+由于SDWebImage通过动图数组来实现动态，
+会造成内存不能及时释放
+SDWebimage -静态图片加载会产生拉伸
+</code></pre><h2 id="SD下载完图片为什么要解码"><a href="#SD下载完图片为什么要解码" class="headerlink" title="SD下载完图片为什么要解码"></a>SD下载完图片为什么要解码</h2><pre><code>在我们使用 UIImage 的时候，创建的图片通常不会直接加载到内存，而是在
+渲染的时候再进行解压并加载到内存。这就会导致 UIImage 在渲染的时候效
+率上不是那么高效。为了提高效率通过 decodedImageWithImage方法把图
+片提前解压加载到内存，这样这张新图片就不再需要重复解压了，提高了渲染效
+率。这是一种空间换时间的做法。
+</code></pre><h2 id="旧版本AFN为什么加Runloop"><a href="#旧版本AFN为什么加Runloop" class="headerlink" title="旧版本AFN为什么加Runloop"></a>旧版本AFN为什么加Runloop</h2><pre><code>首先我们知道在旧版本的AFN中使用了 NSURLConnection 来发起并处理网
+络连接。AFN 的做法是把网络请求的发起和解析都放在同一个子线程中进行，
+但由于子线程默认不开启 runloop，它会向一个 C语言程序那样在运行完所有
+代码后退出线程。而网络请求是异步的，这会导致获取到请求数据时，线程已经
+退出，代理方法没有机会执行。因此，AFN 的做法是使用一个 runloop 来保
+证线程不死，也就是下面这段被讲烂了的代码:
+</code></pre><h2 id="AFN多重代理如何实现"><a href="#AFN多重代理如何实现" class="headerlink" title="AFN多重代理如何实现"></a>AFN多重代理如何实现</h2><pre><code>https://www.jianshu.com/p/961cfc9a446b
+又有小伙伴问了，我们设置的这个代理不是NSURLSessionDelegate吗？怎
+么能响应NSUrlSession这么多代理呢？我们点到类的声明文件中去看看：
+我们可以看到这些代理都是继承关系，而在NSURLSession实现中，只要设置
+了这个代理，它会去判断这些所有的代理，是否respondsToSelector这些代
+理中的方法，如果响应了就会去调用。
+</code></pre><h2 id="SDWebImage的缓存策略"><a href="#SDWebImage的缓存策略" class="headerlink" title="SDWebImage的缓存策略"></a>SDWebImage的缓存策略</h2><pre><code>Memory 和 Disk 双缓存    
+</code></pre><h2 id="SDWebImage加载图片的流程"><a href="#SDWebImage加载图片的流程" class="headerlink" title="SDWebImage加载图片的流程"></a>SDWebImage加载图片的流程</h2><pre><code>1.入口 setImageWithURL:placeholderImage:options:会
+先把 placeholderImage显示，然后 SDWebImageManager根
+据 URL 开始处理图片。
+2.进入SDWebImageManager 类中
+downloadWithURL:delegate:options:userInfo:，交给
+SDImageCache从缓存查找图片是否已经下载
+queryDiskCacheForKey:delegate:userInfo:.
+3.先从内存图片缓存查找是否有图片，如果内存中已经有图片缓存，
+SDImageCacheDelegate回调 
+imageCache:didFindImage:forKey:userInfo:到
+SDWebImageManager。
+4.SDWebImageManagerDelegate 回调
+webImageManager:didFinishWithImage: 到 
+UIImageView+WebCache,等前端展示图片。
+5.如果内存缓存中没有，生成 ｀NSOperation ｀
+添加到队列，开始从硬盘查找图片是否已经缓存。
+6.根据 URL的MD5值Key在硬盘缓存目录下尝试读取图片文件。这
+一步是在 NSOperation 进行的操作，所以回主线程进行结果回
+调 notifyDelegate:。
+7.如果上一操作从硬盘读取到了图片，将图片添加到内存缓存中（如
+果空闲内存过小， 会先清空内存缓存）。
+SDImageCacheDelegate&apos;回调 
+imageCache:didFindImage:forKey:userInfo:`。进而
+回调展示图片。
+8.如果从硬盘缓存目录读取不到图片，说明所有缓存都不存在该图
+片，需要下载图片， 回调 
+imageCache:didNotFindImageForKey:userInfo:。
+9.共享或重新生成一个下载器 SDWebImageDownloader开始下载图片。
+10.图片下载由 NSURLConnection来做，实现相关 delegate
+来判断图片下载中、下载完成和下载失败。
+11.connection:didReceiveData: 中利用 ImageIO做了按
+图片下载进度加载效果。
+12.connectionDidFinishLoading: 数据下载完成后交给 
+SDWebImageDecoder做图片解码处理。
+13.图片解码处理在一个 NSOperationQueue完成，不会拖慢主
+线程 UI.如果有需要 对下载的图片进行二次处理，最好也在这里
+完成，效率会好很多。
+14.在主线程 notifyDelegateOnMainThreadWithInfo:
+宣告解码完成 
+imageDecoder:didFinishDecodingImage:userInfo: 
+回调给 SDWebImageDownloader`。
+15.imageDownloader:didFinishWithImage:回调给
+SDWebImageManager告知图片 下载完成。
+16. 通知所有的 downloadDelegates下载完成，回调给需要的
+地方展示图片。
+17.将图片保存到 SDImageCache中，内存缓存和硬盘缓存同时保
+存。写文件到硬盘 也在以单独 NSOperation 完成，避免拖慢主
+线程。
+18.SDImageCache 在初始化的时候会注册一些消息通知，
+在内存警告或退到后台的时 候清理内存图片缓存，应用结束的时候
+清理过期图片。
+</code></pre><h2 id="SDWebimage对相同url图片问题"><a href="#SDWebimage对相同url图片问题" class="headerlink" title="SDWebimage对相同url图片问题"></a>SDWebimage对相同url图片问题</h2><pre><code>找出问题所在了，因为修改头像后，图片的url是不变的，而默认情
+况下，SDWebimage对相同url是优先使用缓存的，因此得加
+options属性
+[self.HeaderImage sd_setImageWithURL:[NSURL URLWithString:yhPic] placeholderImage:[UIImage imageNamed:@&quot;ameng_dh&quot;] options:SDWebImageRefreshCached];
+SDWebImageRefreshCached是专门用来处理相同url，图片不同
+的情况的。
+重点是在SDWebImageManager.m文件中，大概176行左右
+在(利用SDWebImageRefreshCached)的基础上，修改SD库
+添加这一段代码// remove 
+SDWebImageDownloaderUseNSURLCache flag 
+downloaderOptions &amp;= 
+~SDWebImageDownloaderUseNSURLCache;
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/08/03/M_Swift93多线程/" itemprop="url">
+                  多线程
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-08-03T10:06:32+08:00" content="2018-08-03">
+              2018-08-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="并发和并行的区别"><a href="#并发和并行的区别" class="headerlink" title="并发和并行的区别"></a>并发和并行的区别</h2><pre><code>1.并发，当有多个线程在操作时，如果系统只有一个CPU，
+则它根本不可能真正同时进行一个以上的线程，它只能把CPU运
+行时间划分为若干了时间段，再将时间段分配给各个线程执行，
+在一个时间段的线程代码运行时，其他线程处于挂起状。这
+种方式我们称之为并发。
+2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，
+当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，
+两个线程互相不抢占cpu资源，可以同时进行，这种方式称为并行。
+区别：并发和并行是既相似又有区别的两个概念，并行是指两个活
+着多个时间在同一时刻发生；而并发是指两个或多个事件同一
+时间间隔内发生。
+</code></pre><h2 id="你理解的多线程"><a href="#你理解的多线程" class="headerlink" title="你理解的多线程"></a>你理解的多线程</h2><h3 id="第一种：pthread"><a href="#第一种：pthread" class="headerlink" title="第一种：pthread"></a>第一种：pthread</h3><pre><code>a.特点：
+    1）一套通用的多线程API
+    2）适用于Unix\Linux\Windows等系统
+    3）跨平台\可移植
+    4）使用难度大
+b.使用语言：c语言
+c.使用频率：几乎不用
+d.线程生命周期：由程序员进行管理
+</code></pre><h3 id="第二种：NSThread"><a href="#第二种：NSThread" class="headerlink" title="第二种：NSThread"></a>第二种：NSThread</h3><pre><code>a.特点：
+    1）使用更加面向对象
+    2）简单易用，可直接操作线程对象
+    b.使用语言：OC语言
+    c.使用频率：偶尔使用
+    d.线程生命周期：由程序员进行管理
+</code></pre><h3 id="第三种：GCD"><a href="#第三种：GCD" class="headerlink" title="第三种：GCD"></a>第三种：GCD</h3><pre><code>a.特点：
+    1）旨在替代NSThread等线程技术
+    2）充分利用设备的多核（自动）
+b.使用语言：C语言
+c.使用频率：经常使用
+d.线程生命周期：自动管理
+</code></pre><h3 id="第四种：NSOperation"><a href="#第四种：NSOperation" class="headerlink" title="第四种：NSOperation"></a>第四种：NSOperation</h3><pre><code>a.特点：
+    1）基于GCD（底层是GCD）
+    2）比GCD多了一些更简单实用的功能
+    3）使用更加面向对象
+b.使用语言：OC语言
+c.使用频率：经常使用
+d.线程生命周期：自动管理
+</code></pre><h2 id="多线程的原理"><a href="#多线程的原理" class="headerlink" title="多线程的原理"></a>多线程的原理</h2><pre><code>同一时间，CPU只能处理1条线程，只有1条线程在工作（执行）
+多线程并发（同时）执行，其实是CPU快速地在多条线程之间
+调度（切换）
+如果CPU调度线程的时间足够快，就造成了多线程并发执行的假象
+思考：如果线程非常非常多，会发生什么情况？
+CPU会在N多线程之间调度，CPU会累死，消耗大量的CPU资源
+每条线程被调度执行的频次会降低（线程的执行效率降低）
+</code></pre><h2 id="多线程的优点"><a href="#多线程的优点" class="headerlink" title="多线程的优点"></a>多线程的优点</h2><pre><code>能适当提高程序的执行效率    
+能适当提高资源利用率（CPU、内存利用率）
+</code></pre><h2 id="多线程的缺点"><a href="#多线程的缺点" class="headerlink" title="多线程的缺点"></a>多线程的缺点</h2><pre><code>开启线程需要占用一定的内存空间（默认情况下，主线程占用1M，
+子线程占用512KB），如果开启大量的线程，会占用大量的内存
+空间，降低程序的性能
+线程越多，CPU在调度线程上的开销就越大
+程序设计更加复杂：比如线程之间的通信、多线程的数据共享
+</code></pre><h2 id="GCD和NSOperation区别，你更倾向于哪一种？"><a href="#GCD和NSOperation区别，你更倾向于哪一种？" class="headerlink" title="GCD和NSOperation区别，你更倾向于哪一种？"></a>GCD和NSOperation区别，你更倾向于哪一种？</h2><h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><pre><code>1.GCD是底层的C语言构成的API，而NSOperationQueue及
+相关对象是Objc的对象。在GCD中，在队列中执行的是由block
+构成的任务，这是一个轻量级的数据结构；而Operation作为一
+个对象，为我们提供了更多的选择；
+2.在NSOperationQueue中，我们可以随时取消已经设定要准备
+执行的任务(当然，已经开始的任务就无法阻止了)，而GCD没法停
+止已经加入queue的block(其实是有的，但需要许多复杂的代码)；
+3.NSOperation能够方便地设置依赖关系，我们可以让一个
+Operation依赖于另一个Operation，这样的话尽管两个
+Operation处于同一个并行队列中，但前者会直到后者执行完毕后
+再执行；
+4.我们能将KVO应用在NSOperation中，可以监听一
+个Operation是否完成或取消，这样子能比GCD更加有效地掌控
+我们执行的后台任务；
+5.在NSOperation中，我们能够设置NSOperation的
+priority优先级，能够使同一个并行队列中的任务区分先后地执
+行，而在GCD中，我们只能区分不同任务队列的优先级，如果要区分
+block任务的优先级，也需要大量的复杂代码；
+6.我们能够对NSOperation进行继承，在这之上添加成员变量与成
+员方法，提高整个代码的复用度，这比简单地将block任务排入执行
+队列更有自由度，能够在其之上添加更多自定制的功能。
+总的来说，Operationqueue提供了更多你在编写多线程程序时需
+要的功能，并隐藏了许多线程调度，线程取消与线程优先级的复杂代
+码，为我们提供简单的API入口。从编程原则来说，一般我们需要尽
+可能的使用高等级、封装完美的API，在必须时才使用底层API。但
+是我认为当我们的需求能够以更简单的底层代码完成的时候，简洁的
+GCD或许是个更好的选择，而Operationqueue 为我们提供能更多
+的选择。
+</code></pre><h3 id="倾向于GCD："><a href="#倾向于GCD：" class="headerlink" title="倾向于GCD："></a>倾向于GCD：</h3><pre><code>1.GCD是纯C语言的API，轻量级 。
+2.GCD的执行速度比NSOperationQueue快。
+3.代码更底层简洁
+</code></pre><h3 id="倾向于：NSOperation"><a href="#倾向于：NSOperation" class="headerlink" title="倾向于：NSOperation"></a>倾向于：NSOperation</h3><pre><code>NSOperation拥有更多的函数可用
+NSOperationQueue可以方便的设置operation之间的依
+赖关系，GCD则需要很多代码。
+NSOperationQueue支持KVO，可以检测operation是
+否正在执行（isExecuted）,是否结束（isFinished）,
+是否取消（isCanceled）
+GCD 只支持FIFO 的队列，NSOperationQueue可以调
+整队列的执行顺序（通过调整权重）。NSOperationQueue可
+以方便的管理并发、NSOperation之间的优先级。
+</code></pre><h3 id="使用场合："><a href="#使用场合：" class="headerlink" title="使用场合："></a>使用场合：</h3><pre><code>任务之间不太相互依赖，一般的需求很简单的多线程操作，
+用GCD都可以了，简单高效。
+任务之间有依赖或要监听任务的执行情况用 NSOperationQueue
+</code></pre><h2 id="ios-几种线程锁"><a href="#ios-几种线程锁" class="headerlink" title="ios 几种线程锁"></a>ios 几种线程锁</h2><pre><code>锁是最常用的同步工具。一段代码段在同一个时间只能允许被一个线程访问
+，比如一个线程A进入加锁代码之后由于已经加锁，另一个线程B就无法访问，
+只有等待前一个线程A执行完加锁代码后解锁，B线程才能访问加锁代码。
+@synchronized 一个对象层面的锁，锁住了整个对象，底层使用了互斥递归锁来实现
+pathread_mutex 互斥锁（c语言）和信号量的实现原理类似，也是阻塞线程并进入睡眠，需要进行上下文切换。
+NSLock 对象锁-简单的互斥锁（内部封装了一个 pthread_mutex）
+NSCondition （封装了一个互斥锁和条件变量。互斥锁保证线程安全，条件
+变量保证执行顺序）同样实现了NSLocking协议，
+所以它和NSLock一样，也有NSLocking协议的lock和unlock方法，
+可以当做NSLock来使用解决线程同步问题，用法完全一样。NSCondition
+提供更高级的用法。wait和signal
+NSCondition和NSLock、@synchronized等是不同的是，
+NSCondition可以给每个线程分别加锁，加锁后不影响其他线程进入临界区。
+这是非常强大。
+NSConditionLock （借助 NSCondition 来实现，本质是生产者-消费者模型）
+也可以像NSCondition一样做多线程之间的任务等待调用，而且是线程安全的。
+NSRecursiveLock 递归锁有时候“加锁代码”中存在递归调用，递归开始前加
+锁，递归调用开始后会重复执行此方法以至于反复执行加锁代码最终造成死锁，
+这个时候可以使用递归锁来解决。使用递归锁可以在一个线程中反复获取锁而不
+造成死锁，这个过程中会记录获取锁和释放锁的次数，只有最后两者平衡锁才被
+最终释放。
+dispatch_semaphore GCD中信号量，也可以解决资源抢占问题,
+支持信号通知和信号等待。每当发送一个信号通知，则信号量+1；
+每当发送一个等待信号时信号量-1,；如果信号量为0则信号会处于等待状态，
+直到信号量大于0开始执行
+OSSpinLock 自旋锁(不建议使用)
+自旋锁的实现原理比较简单，就是死循环。当a线程获得锁以后，b线程想要获取
+锁就需要等待a线程释放锁。在没有获得锁的期间，b线程会一直处于忙等的状
+态。如果a线程在临界区的执行时间过长，则b线程会消耗大量的cpu时间，不太
+划算。所以，自旋锁用在临界区执行时间比较短的环境性能会很高。
+</code></pre><h2 id="自旋和互斥对比"><a href="#自旋和互斥对比" class="headerlink" title="自旋和互斥对比"></a>自旋和互斥对比</h2><pre><code>相同点：都能保证同一时间只有一个线程访问共享资源。
+都能保证线程安全。
+不同点：
+互斥锁：如果共享数据已经有其他线程加锁了，线程会进入
+休眠状态等待锁。一旦被访问的资源被解锁，则等待资源的
+线程会被唤醒。
+自旋锁：如果共享数据已经有其他线程加锁了，线程会以死循环
+的方式等待锁，一旦被访问的资源被解锁，则等待资源的线程会
+立即执行。
+自旋锁的效率高于互斥锁。
+由于自旋时不释放CPU，因而持有自旋锁的线程应该尽快释放
+自旋锁，否则等待该自旋锁的线程会一直在哪里自旋，这就会浪
+费CPU时间。
+持有自旋锁的线程在sleep之前应该释放自旋锁以便其他可以获得
+该自旋锁。内核编程中，如果持有自旋锁的代码sleep了就可能
+导致整个系统挂起。
+</code></pre><h2 id="GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><a href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）" class="headerlink" title="GCD的一些常用的函数？（group， barrier，信号量 线程同步）"></a>GCD的一些常用的函数？（group， barrier，信号量 线程同步）</h2><pre><code>延迟函数dispatch_after
+一次性 dispatch_once
+创建串行队列 dispatch_queue_create 
+获取并发队列 dispatch_get_global_queue
+获取主队列 dispatch_get_main_queue
+异步执行任务 dispatch_async
+同步执行任务 dispatch_sync
+提交一个调度队列 dispatch_group_async
+新建的queue设置优先级 dispatch_set_target_queue
+任务执行完成通知回调 dispatch_group_notify 
+让当前任务等待queue其他任务完成再执行 dispatch_barrier_async
+</code></pre><h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><pre><code>-(void)clickButton {
+    dispatch_sync(dispath_get_main_queue(), ^(void){
+        NSLog(&quot;test&quot;);
+    });
+}
+以上代码座位一个UIButton的响应方法有什么问题，能看到log吗？
+原因如下：
+在ios使用 dispatch_sync(dispatch_get_main_queue()^(){block体})；
+dispath向主队列加一个同步的block；
+此时主队列在等待    dispatch_sync(dispatch_get_main_queue()，^(){block体})；执行
+dispatch_sync在等待主队列执行完毕。
+造成死锁。
+</code></pre><h2 id="同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"><a href="#同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件" class="headerlink" title="同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"></a>同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件</h2><pre><code>首先创建并行队列，创建队列组，将队列和需要处理的网络请求分别
+添加到组中，当组中所有队列处理完事件后调用
+dispatch_group_notify，我们需要在里边处理事件。由于队列
+在处理网络请求时将”发送完一个请求”作为事件完成的标记（此时还
+未获得网络请求返回数据），所以在这里需要用信号量进行控制，在
+执行dispatch_group_notify前发起信号等待（三次信号等待，
+分别对应每个队列的信号通知），在每个队列获取到网络请求返回数
+据时发出信号通知。这样就能完成需求中的要求。
+如果需求中改为：同时存在A,B,C三个任务，要求ABC依次进行处
+理，当上一个完成时再进行下一个任务，当三个任务都完成时再处理
+事件。这时只需要将队列改为串行队列即可（不在需要信号量控
+制）。
+</code></pre><h2 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h2><pre><code>信号量是一个计数器，常用于处理进程或线程的同步问题，特别是对临界资源的同步访问。
+临界资源可以简单的理解为在某一时刻只能由一个进程或线程进行操作的资源，这里的资源
+可以是一段代码、一个变量或某种硬件资源。信号量的值大于或等于0时表示可供并发进程使用的
+资源实体数；小于0时代表正在等待使用临界资源的进程数。
+注意：这里的信号量跟信号是没有关系的。
+3、信号量的操作
+信号量的值与相应资源的使用情况有关，当它的值大于0时，表示当前可用资源的数量，当他的值小于0时，其绝对值表示等待
+使用这个资源的进程个数。信号量的值仅能由PV操作来改变。
+</code></pre><h2 id="某些线程执行完之后去执行其他线程"><a href="#某些线程执行完之后去执行其他线程" class="headerlink" title="某些线程执行完之后去执行其他线程"></a>某些线程执行完之后去执行其他线程</h2><pre><code>1.利用GCD中的barrier
+dispatch_async — A
+dispatch_async — B
+dispatch_barrier_async — middle
+dispatch_async — C
+2.利用GCD中的group
+创建一个dispatch_group_t
+dispatch_group_async — 依次添加并发操作
+dispatch_group_notify
+</code></pre><h2 id="两个线程的notification怎么实现，除GCD"><a href="#两个线程的notification怎么实现，除GCD" class="headerlink" title="两个线程的notification怎么实现，除GCD"></a>两个线程的notification怎么实现，除GCD</h2><pre><code>这里讲到了“重定向”，就是我们在Notification所在的默认线程
+中捕获这些分发的通知，然后将其重定向到指定的线程中。
+一种重定向的实现思路是自定义一个通知队列(注意，不是
+NSNotificationQueue对象，而是一个数组)，让这个队列去维
+护那些我们需要重定向的Notification。我们仍然是像平常一样
+去注册一个通知的观察者，当Notification来了时，先看看post
+这个Notification的线程是不是我们所期望的线程，如果不是，
+则将这个Notification存储到我们的队列中，并发送一个信号
+(signal)到期望的线程中，来告诉这个线程需要处理一个
+Notification。指定的线程在收到信号后，将Notification从
+队列中移除，并进行处理。
+</code></pre><h2 id="如何保证NSNotificationCenter线程安全"><a href="#如何保证NSNotificationCenter线程安全" class="headerlink" title="如何保证NSNotificationCenter线程安全"></a>如何保证NSNotificationCenter线程安全</h2><pre><code>当我们注册一个观察者是，通知中心会持有观察者的一个弱引用，来
+确保观察者是可用的。
+主线程调用dealloc操作会让Observer对象的引用计数减为0，这
+时对象会被释放掉。
+后台线程发送一个通知，如果此时Observer还未被释放，则会用其
+转出消息，并执行回调方法。而如果在回调执行的过程中对象被释放
+了，就会出现上面的问题。
+那我们该怎么做呢？这里有一些好的建议：
+尽量在一个线程中处理通知相关的操作，大部分情况下，这样做都能
+确保通知的正常工作。不过，我们无法确定到底会在哪个线程中调用
+dealloc方法，所以这一点还是比较困难。
+注册监听都时，使用基于block的API。这样我们在block还要继续
+调用self的属性或方法，就可以通过weak-strong的方式来处理。
+具体大家可以改造下上面的代码试试是什么效果。
+使用带有安全生命周期的对象，这一点对象单例对象来说再合适不过
+了，在应用的整个生命周期都不会被释放。
+使用代理。
+</code></pre><h2 id="GCD-信号量控制并发"><a href="#GCD-信号量控制并发" class="headerlink" title="GCD 信号量控制并发"></a>GCD 信号量控制并发</h2><pre><code>信号量是一个整形值并且具有一个初始计数值，并且支持两个操作：
+信号通知和等待。当一个信号量被信号通知，其计数会被增加。当一
+个线程在一个信号量上等待时，线程会被阻塞（如果有必要的话），
+直至计数器大于零，然后线程会减少这个计数。
+dispatch_semaphore_signal是发送一个信号，自然会让信号
+总量加1，dispatch_semaphore_wait等待信号，当信号总量少
+于0的时候就会一直等待，否则就可以正常的执行，并让信号总、
+量-1，根据这样的原理，我们便可以快速的创建一个并发控制来同步
+任务和有限资源访问控制。
+</code></pre><h2 id="iOS线程间的通信"><a href="#iOS线程间的通信" class="headerlink" title="iOS线程间的通信"></a>iOS线程间的通信</h2><pre><code>iOS中，两个线程之间要想互相通信，可以使用：NSMachPort 
+首先NSMarchPort是一个task内线程之间异步通信用的 
+你需要在你的两个object内重写handlePortMessage:方法来截
+取接收到的消息，使用NSPortMessage来发送消息 
+消息一般都是有唯一id和数据组成的 
+数据需要经过序列化通过NSPortMessage的components来传递 
+接收到数据之后需要进行反序列化 
+</code></pre><h2 id="get和set的属性如何保证线程的安全"><a href="#get和set的属性如何保证线程的安全" class="headerlink" title="get和set的属性如何保证线程的安全"></a>get和set的属性如何保证线程的安全</h2><pre><code>property 的 atomic 是采用 spinlock_t 也就是俗称的自旋
+锁实现的。
+atomic通过这种方法，在运行时保证 set,get方法的原子性。 
+仅仅是保证了set,get方法的原子性。 
+这种线程是不安全的。
+self.intA 是原子操作，但是self.intA = self.intA + 1
+这个表达式并不是原子操作。 
+所以线程是不安全的。 
+threadA 在执行表达式 self.intA之后 self.intA = 
+self.intA + 1;并没有执行完毕 
+此时threadB 执行self.intA = self.intA + 1; 
+再回到threadA时，self.intA的数值就被更新了
+所以仅仅使用atomic并不能保证线程安全。
+</code></pre><h2 id="GCD-的珊栏方法"><a href="#GCD-的珊栏方法" class="headerlink" title="GCD 的珊栏方法"></a>GCD 的珊栏方法</h2><pre><code>我们有时需要异步执行两组操作，而且第一组操作执行完之后，才能
+开始执行第二组操作。这样我们就需要一个相当于栅栏一样的一个方
+法将两组异步执行的操作组给分割起来，当然这里的操作组里可以包
+含一个或多个任务。这就需要用到dispatch_barrier_async方
+法在两个操作组间形成栅栏
+</code></pre><h2 id="延时操作主要有4种方式"><a href="#延时操作主要有4种方式" class="headerlink" title="延时操作主要有4种方式"></a>延时操作主要有4种方式</h2><pre><code>1.sleep方式
+[NSThread sleepForTimeInterval:1.0f];
+[self delayMethod];
+使用sleep方式在主线程和子线程中均可执行,但是这是中阻塞线程
+的方式,所以建议放到子线程中使用,以免卡住主线程使界面卡住.
+没有发现取消执行的方法.
+2.NSTimer定时器方式
+[NSTimer scheduledTimerWithTimeInterval:1.0f 
+target:self selector:@selector(delayMethod) 
+userInfo:nil repeats:NO];
+使用定时器方式必须放到主线程中使用,否则无效. 是一种非阻塞的
+方式.
+可以通过- (void)invalidate;方法取消执行。
+3.GCD方式
+dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//write code here
+});
+该方式可选择线程去执行,是一种非阻塞的方式.
+没有发现取消执行的方法.
+4.performSelector方式
+[self performSelector:@selector(delayMethod) 
+withObject:nil afterDelay:1.0f];
+使用该方式必须放到主线程中使用,否则无效. 是一种非阻塞的方式.
+取消执行方法如下:
+[[self class] 
+cancelPreviousPerformRequestsWithTarget:self 
+selector:@selector(delayMethod) object:nil];
+</code></pre><h2 id="NSLock死锁"><a href="#NSLock死锁" class="headerlink" title="NSLock死锁"></a>NSLock死锁</h2><pre><code>使用锁最容易犯的一个错误就是在递归或循环中造成死锁
+如下代码中，因为在线程1中的递归block中，锁会被多次的lock，
+所以自己也被阻塞了。
+此处将NSLock换成NSRecursiveLock，便可解决问题。
+NSRecursiveLock类定义的锁可以在同一线程多次lock，而不会
+造成死锁。
+递归锁会跟踪它被多少次lock。每次成功的lock都必须平衡调用
+unlock操作。
+只有所有的锁住和解锁操作都平衡的时候，锁才真正被释放给其他线
+程获得。
+</code></pre><h2 id="NSNotificationCenter的同步和异步"><a href="#NSNotificationCenter的同步和异步" class="headerlink" title="NSNotificationCenter的同步和异步"></a>NSNotificationCenter的同步和异步</h2><pre><code>默认的NSNotificationCenter是同步的
+您可以通过NSNotificationQueue的
+enqueueNotification:postingStyle:和enqueueNotification:postingStyle:coalesceMask:f
+orModes:方法将通告放入队列，实现异步发送，在把通告放入队列
+之后，这些方法会立即将控制权返回给调用对象。
+通过这里的时间间隔可以看出， 通过通知队列来管理通知，不会再
+造成阻塞。
+</code></pre><h2 id="NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"><a href="#NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作" class="headerlink" title="NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"></a>NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作</h2><pre><code>开辟子线程：（使用子线程的runloop）
+NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(newThread) object:nil];
+[thread start];
+- (void)newThread
+{     @autoreleasepool
+        {
+            [NSTimer scheduledTimerWithTimeInterval:2.0 
+            target:self selector:@selector(addTime) 
+            userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] run];
+        }
+}
+</code></pre><h2 id="原子属性"><a href="#原子属性" class="headerlink" title="原子属性"></a>原子属性</h2><pre><code>原子属性（线程安全），是针对多线程设计的，是默认属性
+多个线程在写入原子属性时（调用 setter 方法），能够保证同一
+时间只有一个线程执行写入操作
+原子属性是一种单(线程)写多(线程)读的多线程技术
+原子属性的效率比互斥锁高，不过可能会出现脏数据
+在定义属性时，必须显示地指定 nonatomic，否则默认为atomic
+多线程——atomic nonatomic的区别
+原子性atomic ,默认属性，编译器会在property上自动添加原子锁
+非原子性nonatomic，不考虑多线程情况时使用，提高效率
+原子属性内部的锁是自旋锁，自旋锁的执行效率比互斥锁高
+atomic本质上就是给get/set方法加锁，即原子锁，以避免线程A
+还没执行完setter，线程B又开始执行的，导致读取数据错误的问
+题。
+</code></pre><h3 id="atomic一定是线程安全的么？"><a href="#atomic一定是线程安全的么？" class="headerlink" title="atomic一定是线程安全的么？"></a>atomic一定是线程安全的么？</h3><pre><code>不一定，首先atomic的释义是原子性，并不是线程安全。原子性这
+个概念表示一个操作序列就像一个操作一样不被打断，而不像一个操
+作序列一样中间容许被打断。所以nonatomic一定是线程不安全
+的，但是atomic却不一定是线程安全的。
+假设线程A执行在对某属性get之前线程B release了该属性，会导
+致程序崩溃。
+原子属性内部的锁是自旋锁，自旋锁的执行效率比互斥锁高
+</code></pre><h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2><pre><code>一般说来，确保线程安全的方法有这几个：竞争与原子操作、同步与
+锁、可重入、过度优化。
+竞争与原子操作 
+多个线程同时访问和修改一个数据，可能造成很严重的后果。出现严
+重后果的原因是很多操作被操作系统编译为汇编代码之后不止一条指
+令，因此在执行的时候可能执行了一半就被调度系统打断了而去执行
+别的代码了。一般将单指令的操作称为原子的(Atomic)，因为不管
+怎样，单条指令的执行是不会被打断的。
+因此，为了避免出现多线程操作数据的出现异常，Linux系统提供了
+一些常用操作的原子指令，确保了线程的安全。但是，它们只适用于
+比较简单的场合，在复杂的情况下就要选用其他的方法了。
+同步与锁 
+为了避免多个线程同时读写一个数据而产生不可预料的后果，开发人
+员要将各个线程对同一个数据的访问同步，也就是说，在一个线程访
+问数据未结束的时候，其他线程不得对同一个数据进行访问。
+同步的最常用的方法是使用锁(Lock)，它是一种非强制机制，每个
+线程在访问数据或资源之前首先试图获取锁，并在访问结束之后释放
+锁；在锁已经被占用的时候试图获取锁时，线程会等待，直到锁重新
+可用。
+二元信号量是最简单的一种锁，它只有两种状态：占用与非占用，它
+适合只能被唯一一个线程独占访问的资源。对于允许多个线程并发访
+问的资源，要使用多元信号量(简称信号量)。
+可重入 
+一个函数被重入，表示这个函数没有执行完成，但由于外部因素或内
+部因素，又一次进入该函数执行。一个函数称为可重入的，表明该函
+数被重入之后不会产生任何不良后果。可重入是并发安全的强力保
+障，一个可重入的函数可以在多线程环境下放心使用。
+过度优化 
+在很多情况下，即使我们合理地使用了锁，也不一定能够保证线程安
+全，因此，我们可能对代码进行过度的优化以确保线程安全。
+我们可以使用volatile关键字试图阻止过度优化，它可以做两件
+事：第一，阻止编译器为了提高速度将一个变量缓存到寄存器而不写
+回；第二，阻止编译器调整操作volatile变量的指令顺序。
+在另一种情况下，CPU的乱序执行让多线程安全保障的努力变得很困
+难，通常的解决办法是调用CPU提供的一条常被称作barrier的指
+令，它会阻止CPU将该指令之前的指令交换到barrier之后，反之亦
+然。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/08/03/M_Swift99Block/" itemprop="url">
                   Block理解
                 </a>
@@ -1818,616 +2676,6 @@ BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(c
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/26/M_Swift90算法之数学计算/" itemprop="url">
-                  算法之数学计算
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-26T11:30:02+08:00" content="2018-07-26">
-              2018-07-26
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="二分法查找"><a href="#二分法查找" class="headerlink" title="二分法查找"></a>二分法查找</h2><pre><code>function binarySeach( arr,val,leftIndex,rightIndex ){
-    //找到中间的值
-    var midIndex = Math.floor((leftIndex+rightIndex)/2);
-    var midval=arr[midIndex];
-    //console.log(midval );
-    if( leftIndex &gt; rightIndex ){
-        console.log(&quot;前一位是&quot;,midval );
-        console.log(&quot;下标：&quot;,midIndex);
-        return ;
-    }
-    if( midval &gt; val ){
-        binarySeach(arr,val,leftIndex,midIndex-1);
-    }else if(midval &lt; val){
-        binarySeach(arr,val,midIndex+1,rightIndex);
-    }else{
-        console.log(&quot;找到了,下标为:&quot;+midIndex);
-        return;
-    }
-}
-var arr=[1,3,12,21,24,44,54,67];
-binarySeach(arr,25,0,arr.length-1);
-</code></pre><h2 id="求两个数的最大公约数，递归"><a href="#求两个数的最大公约数，递归" class="headerlink" title="求两个数的最大公约数，递归"></a>求两个数的最大公约数，递归</h2><pre><code>function Gcd(var a, var b)
- {
-      if(a&lt;=0||b&lt;=0)
-          return -1;
-     else if(a&gt;b)
-         return Gcd(a-b, b);
-     else if(a&lt;b)
-         return Gcd(a, b-a);
-     else
-         return a;
- }
-// 最小公倍数 两个整数的乘积 / 最大公约数
-// a* b/gcd(a,b)
-</code></pre><h2 id="斐波那契数列"><a href="#斐波那契数列" class="headerlink" title="斐波那契数列"></a>斐波那契数列</h2><pre><code>function Fibonacci(int n) {
-    if(n &lt; 0){
-        return 0;
-    }
-    if(n == 0){
-        return 0;
-    }else if(n == 1){
-        return 1;
-    }else return Fibonacci(n-1)+ Fibonacci(n-2);
-}
-</code></pre><h2 id="累加求和"><a href="#累加求和" class="headerlink" title="累加求和"></a>累加求和</h2><pre><code>int sum = 0;//定义初始化总和
-for(int i=1;i&lt;=100;i++){//从1开始循环到100
-sum=sum+i;//加上当前序号
-}
-System.out.println(sum);//在控制台中打印出来
-}
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/26/M_Swift92算法之排序/" itemprop="url">
-                  算法之排序
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-26T11:06:22+08:00" content="2018-07-26">
-              2018-07-26
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h2><pre><code>思想：每次遍历，相邻两个比较大小，修改位置
-复杂度：n平方
-function maopao(arr) {
-    for (var i = 0; i &lt; arr.length; i++) {
-        for (var j = 0; j &lt; arr.length; j++) {
-            if (arr[i] &gt; arr[j]) {
-                var temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
-            }
-        }
-    }
-}
-</code></pre><h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h2><pre><code>思想：一次便利结束后，找到最小的，放到最前面，交换次数较冒泡排序少
-排序复杂度：n平方
-function xuanze(arr) {
-    for (var i = 0; i &lt; arr.length; i++) {
-        var min = i;
-        for (var j = 0; j &lt; arr.length; j++) {
-            if (arr[j] &lt;arr[i]) {
-                min = j;
-            }
-        }
-        if (min != i) {
-            var temp = arr[i];
-            arr[i] = arr[min];
-            arr[min] = arr[i];
-        }
-    }
-}
-</code></pre><h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><pre><code>思想：每次往最小数组里插入一个数据，并保证数组是排序的
-(1) 将这个序列的第一个元素R0视为一个有序序列； 
-(2) 依次把 , , … ,  插入到这个有序序列中； 
-(3) 将插入到有序序列中时，前 i-1 个数是有序的，将和 ~ 从后往前进行比较，确定要插入的位置。
-function insertSort(arr) {
-    var len = arr.length;
-    var preIndex,current;
-    for (var i = 1; i &lt; len; i++) {
-        preIndex = i -1;
-        current = arr[i];
-        while(preIndex &gt;=0 &amp;&amp; arr[preIndex] &gt; current) {
-            arr[preIndex +1] = arr[preIndex];
-            preIndex --;
-        }
-        arr[preIndex +1] = current;
-    }
-}
-</code></pre><h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h2><pre><code>4.希尔排序，希尔排序也是一种插入排序
-不同：希尔排序优先比较较远的元素，希尔排序的核心在于间隔序列的设定
-对于n个待排序的数列，取一个小于n的整数gap(gap被称为步长)将待排序元素
-分成若干个组子序列，所有距离为gap的倍数的记录放在同一个组中；然后，对
-各组内的元素进行直接插入排序。 这一趟排序完成之后，每一个组的元素都是
-有序的。然后减小gap的值，并重复执行上述的分组和排序。重复这样的操作，
-当gap=1时，整个数列就是有序的。
-function shellSort(arr) {
-    var len = arr.length;
-    var temp,gap =1;
-    while(gap &lt; len/3){
-        gap = gap *3 +1;
-    }
-    for (gap; gap&gt; 0; gap = Math.floor(gap/3)) {
-        for (var i = gap; i &lt; len; i++) {
-            temp = arr[i];
-            for (var j = i - gap; j &gt;0 &amp;&amp; arr[j] &gt; temp; j -= gap) {
-                arr[j+gap] = arr[j];
-            }
-            arr[j+gap] = temp;
-        }
-    }
-    return arr;
-}
-</code></pre><h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><pre><code>作为一种典型的分而治之思想的算法应用
-将一个数组排序，可以先递归的将它分成两半分别排序，然后再将结果归并起来。
-缺点：需要额外的空间
-从下往上的归并排序：将待排序的数列分成若干个长度为1的子数列，然后将这
-些数列两两合并；得到若干个长度为2的有序数列，再将这些数列两两合并；得
-到若干个长度为4的有序数列，再将它们两两合并；直接合并成一个数列为止。
-这样就得到了我们想要的排序结果
-function mergeSort(arr) {  //采用自上而下的递归方法
-    var len = arr.length;
-    if(len &lt; 2) {
-        return arr;
-    }
-    var middle = Math.floor(len / 2),
-        left = arr.slice(0, middle),
-        right = arr.slice(middle);
-    return merge(mergeSort(left), mergeSort(right));
-}
-
-function merge(left, right)
-{
-    var result = [];
-
-    while (left.length&gt;0 &amp;&amp; right.length&gt;0) {
-        if (left[0] &lt;= right[0]) {
-            result.push(left.shift());
-        } else {
-            result.push(right.shift());
-        }
-    }
-
-    while (left.length)
-        result.push(left.shift());
-
-    while (right.length)
-        result.push(right.shift());
-
-    return result;
-}
-</code></pre><h2 id="快速排序（Quick-Sort）"><a href="#快速排序（Quick-Sort）" class="headerlink" title="快速排序（Quick Sort）"></a>快速排序（Quick Sort）</h2><pre><code>分而治之思想在排序算法。本质上来看，快速排序应该算是在冒泡排序基础上的递归分治法。
-先是把第一个挖出来，作为基值；然后先是从右向左，对比基值，如果如果小，那么放到坑里；然后在从左往右对比基值，如果大，那么放到坑里；当换完一轮了后，把基值放到坑里；然后在根据基值，分左右两组，递归排序；
-通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比
-另外一部分的所有数据都要小，继续对长度较短的序列进行同样的分割，最后到
-达整体有序。在排序过程中，由于已经分开的两部分的元素不需要进行比较，故
-减少了比较次数，降低了排序时间。
-function quickSort(arr, left, right) {
-    var len = arr.length,
-        partitionIndex,
-        left = typeof left != &apos;number&apos; ? 0 : left,
-        right = typeof right != &apos;number&apos; ? len - 1 : right;
-
-    if (left &lt; right) {
-        partitionIndex = partition(arr, left, right);
-        quickSort(arr, left, partitionIndex-1);
-        quickSort(arr, partitionIndex+1, right);
-    }
-    return arr;
-}
-
-function partition(arr, left ,right) {     //分区操作
-    var pivot = left,                      //设定基准值（pivot）
-        index = pivot + 1;
-    for (var i = index; i &lt;= right; i++) {
-        if (arr[i] &lt; arr[pivot]) {
-            swap(arr, i, index);
-            index++;
-        }        
-    }
-    swap(arr, pivot, index - 1);
-    return index-1;
-}
-
-function swap(arr, i, j) {
-    var temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-}
-</code></pre><h2 id="堆排序（Heap-Sort）"><a href="#堆排序（Heap-Sort）" class="headerlink" title="堆排序（Heap Sort）"></a>堆排序（Heap Sort）</h2><pre><code>堆排序可以说是一种利用堆的概念来排序的选择排序。分为两种方法：
-大顶堆：每个节点的值都大于或等于其子节点的值，在堆排序算法中用于升序排列
-小顶堆：每个节点的值都小于或等于其子节点的值，在堆排序算法中用于降序排列
-堆排序的基本思想是：将待排序序列构造成一个大顶堆，此时，整个序列的最大
-值就是堆顶的根节点。将其与末尾元素进行交换，此时末尾就为最大值。然后将
-剩余n-1个元素重新构造成一个堆，这样会得到n个元素的次小值。如此反复执
-行，便能得到一个有序序列了
-
-var len;    //因为声明的多个函数都需要数据长度，所以把len设置成为全局变量
-
-function buildMaxHeap(arr) {   //建立大顶堆
-    len = arr.length;
-    for (var i = Math.floor(len/2); i &amp;gt;= 0; i--) {
-        heapify(arr, i);
-    }
-}
-
-function heapify(arr, i) {     //堆调整
-    var left = 2 * i + 1,
-        right = 2 * i + 2,
-        largest = i;
-
-    if (left &lt; len &amp;&amp; arr[left] &gt; arr[largest]) {
-        largest = left;
-    }
-
-    if (right &lt; len &amp;&amp; arr[right] &gt; arr[largest]) {
-        largest = right;
-    }
-
-    if (largest != i) {
-        swap(arr, i, largest);
-        heapify(arr, largest);
-    }
-}
-
-function swap(arr, i, j) {
-    var temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-}
-
-function heapSort(arr) {
-    buildMaxHeap(arr);
-
-    for (var i = arr.length-1; i &gt; 0; i--) {
-        swap(arr, 0, i);
-        len--;
-        heapify(arr, 0);
-    }
-    return arr;
-}
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/26/M_Swift91算法之数组操作/" itemprop="url">
-                  算法之数组操作
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-26T09:46:15+08:00" content="2018-07-26">
-              2018-07-26
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="数组去重"><a href="#数组去重" class="headerlink" title="数组去重"></a>数组去重</h2><pre><code>// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
-function unique(arr) {
-    var res = [arr[0]];
-    for (var i = 0; i &lt; arr.length; i++) {
-        var repeat = false;
-        for (var j = 0; j &lt; res.length; i++) {
-            if (arr[i] == res[j]) {
-                repeat = true;
-                break;
-            }
-        }
-        if (!repeat) {
-            res.push(arr[i]);
-        }
-    }
-    return res;
-}
-// 思路：每次取出原数组的元素，然后再对象中访问这个属性，如果存在就说明重复
-function unique(arr) {
-    var res = [];
-    var json = {};
-    for (var i = 0; i &lt; arr.length; i++) {
-        if (!json[arr[i]]) {
-            res.push(arr[i]);
-            json[arr[i]] = 1;
-        }
-    }
-    return res;
-}
-// 利用下标查询
-function unique(arr) {
-    var newArr = [arr[0]];
-    for (var i = 0; i &lt; arr.length; i++) {
-        if (newArr.indexOf(arr[i]) == -1) {
-            newArr.push(arr[i]);
-        }
-    }
-    return newArr;
-}
-
-// 两个数组中相同的元素和不同的元素
-// 合并两数组，并删除重复元素(代码类似于数组去重，只不过都是比较两个数组)
-</code></pre><h2 id="对数组进行反转"><a href="#对数组进行反转" class="headerlink" title="对数组进行反转"></a>对数组进行反转</h2><pre><code>function reverae(arr) {
-    var j = arr.length - 1;
-    for (var i = 0; i &lt; arr.length; i++) {
-        var temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-        j--;
-    }
-}
-</code></pre><h2 id="获取数组中连续的元素"><a href="#获取数组中连续的元素" class="headerlink" title="获取数组中连续的元素"></a>获取数组中连续的元素</h2><pre><code>function fn(arr){
-  var result = [],
-      i = 0;
-  result[i] = [arr[0]];
-  arr.reduce(function(prev, cur){
-    cur-prev === 1 ? result[i].push(cur) : result[++i] = [cur];
-    return cur;
-  });
-  return result;
-}
-</code></pre><h2 id="数组合并-先排序，再合并"><a href="#数组合并-先排序，再合并" class="headerlink" title="数组合并(先排序，再合并)"></a>数组合并(先排序，再合并)</h2><pre><code>// 合并两个有序数组
-function mergeOrder(arr1,arr2) {
-    var result = arr1 +arr2;
-    var m = 0;
-    var n = 0;
-    for (var i = 0; i &lt; result.length; i++) {
-        if (m == arr1.length) {
-            result[i] = arr2[n++];
-        }else if (n==arr2.length) {
-            result[i] = arr1[m++];
-        }else{
-            if (arr1[m] &lt; arr2[n]) {
-                result[i] = arr1[m++];
-            }else{
-                result[i] = arr2[n++];
-            }
-        }
-
-    }
-    return result;
-}
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2473,7 +2721,7 @@ function mergeOrder(arr1,arr2) {
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">186</span>
+              <span class="site-state-item-count">189</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -2513,7 +2761,7 @@ function mergeOrder(arr1,arr2) {
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
