@@ -102,7 +102,7 @@ A的新类，该类继承自对象A的本类，
 setter方法会负责在调用原setter方法之前之后，
 通知所有观察对象属性值的更改情况。
 对象注册为观察者时，isa指针">
-<meta property="og:updated_time" content="2018-08-14T11:42:48.060Z">
+<meta property="og:updated_time" content="2020-06-24T05:42:02.028Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="KVO">
 <meta name="twitter:description" content="KVO实现原理apple使用isa混写（isa-swizzling）来实现KVO。
@@ -308,6 +308,16 @@ keyPath 的属性值已经变更；之
 性对应的成员变量，例如：仅调用_name = @&quot;newName&quot; ,这
 时时不会触发kvo机制，更加不会调用回调方法的。所以使用
 KVO机制的前提是遵循KVO的属性设置方式来变更属性值。
+</code></pre><h2 id="KVO流程"><a href="#KVO流程" class="headerlink" title="KVO流程"></a>KVO流程</h2><pre><code>1.注册A类的name属性变化监听
+    [a addObserver:self forKeyPath:@&quot;name&quot; options:NSKeyValueObservingOptionNew context:nil];
+2.创建A的子类NSKVONotifyingA
+    Class noA = objc_allocateClassPair([A class], &quot;NSKVONotifyingA&quot;, observer);
+3.isa指针混合
+    将A类的指针指向NSKVONotifyingA，从而到达调用NSKVONotifyingA类的方法的目的
+4.当调用a的setName方法时进入到NSKVONotifyingA类的setName方法
+5.调用willChangeValueForKey回调属性将要变化
+6.调用NSKVONotifyingA类的【self setName】赋值，实际上执行的是A类的setName，达到赋值目的
+7.调用didChangeValueForKey回调属性变化了
 </code></pre><h2 id="为什么要用子类监听setter方法，而不用分类呢？"><a href="#为什么要用子类监听setter方法，而不用分类呢？" class="headerlink" title="为什么要用子类监听setter方法，而不用分类呢？"></a>为什么要用子类监听setter方法，而不用分类呢？</h2><pre><code>原因是当你用分类监听setter方法的时候，原类中setter方法就不会走了，这样不好，所以苹果使用了子类监听setter方法。
 </code></pre><h2 id="isa-swizzling为什么不会出现递归"><a href="#isa-swizzling为什么不会出现递归" class="headerlink" title="isa-swizzling为什么不会出现递归"></a>isa-swizzling为什么不会出现递归</h2><pre><code>你在swizzlingViewDidLoad方法中又调用[self
 swizzlingViewDidLoad];，这难道不会产生递归调用吗？
@@ -468,7 +478,7 @@ KVO未能分配类两名NSKVONotifying_myKVO,自动键-值观察不
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">191</span>
+              <span class="site-state-item-count">212</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -500,7 +510,7 @@ KVO未能分配类两名NSKVONotifying_myKVO,自动键-值观察不
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO实现原理"><span class="nav-number">1.</span> <span class="nav-text">KVO实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要用子类监听setter方法，而不用分类呢？"><span class="nav-number">2.</span> <span class="nav-text">为什么要用子类监听setter方法，而不用分类呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isa-swizzling为什么不会出现递归"><span class="nav-number">3.</span> <span class="nav-text">isa-swizzling为什么不会出现递归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要保证只执行一次Method-Swizzling"><span class="nav-number">4.</span> <span class="nav-text">为什么要保证只执行一次Method Swizzling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method-Swizzling为什么对类簇不起作用"><span class="nav-number">5.</span> <span class="nav-text">Method Swizzling为什么对类簇不起作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVC与KVO的不同"><span class="nav-number">6.</span> <span class="nav-text">KVC与KVO的不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和notification-通知-的区别"><span class="nav-number">7.</span> <span class="nav-text">KVO和notification(通知)的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和delegate-通知-的区别"><span class="nav-number">8.</span> <span class="nav-text">KVO和delegate(通知)的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和线程关系"><span class="nav-number">9.</span> <span class="nav-text">KVO和线程关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#当你创建的一个类的名字和kvo动态生成的子类的名字冲突了-会发生什么"><span class="nav-number">10.</span> <span class="nav-text">当你创建的一个类的名字和kvo动态生成的子类的名字冲突了 会发生什么</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO实现原理"><span class="nav-number">1.</span> <span class="nav-text">KVO实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO流程"><span class="nav-number">2.</span> <span class="nav-text">KVO流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要用子类监听setter方法，而不用分类呢？"><span class="nav-number">3.</span> <span class="nav-text">为什么要用子类监听setter方法，而不用分类呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isa-swizzling为什么不会出现递归"><span class="nav-number">4.</span> <span class="nav-text">isa-swizzling为什么不会出现递归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要保证只执行一次Method-Swizzling"><span class="nav-number">5.</span> <span class="nav-text">为什么要保证只执行一次Method Swizzling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method-Swizzling为什么对类簇不起作用"><span class="nav-number">6.</span> <span class="nav-text">Method Swizzling为什么对类簇不起作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVC与KVO的不同"><span class="nav-number">7.</span> <span class="nav-text">KVC与KVO的不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和notification-通知-的区别"><span class="nav-number">8.</span> <span class="nav-text">KVO和notification(通知)的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和delegate-通知-的区别"><span class="nav-number">9.</span> <span class="nav-text">KVO和delegate(通知)的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KVO和线程关系"><span class="nav-number">10.</span> <span class="nav-text">KVO和线程关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#当你创建的一个类的名字和kvo动态生成的子类的名字冲突了-会发生什么"><span class="nav-number">11.</span> <span class="nav-text">当你创建的一个类的名字和kvo动态生成的子类的名字冲突了 会发生什么</span></a></li></ol></div>
             
           </div>
         </section>
@@ -519,7 +529,7 @@ KVO未能分配类两名NSKVONotifying_myKVO,自动键-值观察不
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
