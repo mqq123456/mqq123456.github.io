@@ -350,6 +350,187 @@
             
               
                 
+                <a class="post-title-link" href="/2019/06/25/M_Swift124字符串操作/" itemprop="url">
+                  未命名
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h2 id="title-字符串操作"><a href="#title-字符串操作" class="headerlink" title="title :字符串操作"></a>title :字符串操作</h2><p>// 字符反转的方法<br>   private void swap(char[] c, int front, int end) {</p>
+<pre><code>if (front &gt; end || end &gt;= c.length) {
+    return;
+}
+
+while (front &lt; end) {
+
+    char tmp = c[front];
+    c[front] = c[end];
+    c[end] = tmp;
+
+    front++;
+    end--;
+}
+</code></pre><p>}<br>   // 判断字符串是否由相同的字符组成<br>      public boolean compareStr(String str1, String str2) {</p>
+<pre><code>byte[] bs1 = str1.getBytes();
+byte[] bs2 = str2.getBytes();
+
+Arrays.sort(bs1);
+Arrays.sort(bs2);
+
+str1 = new String(bs1);
+str2 = new String(bs2);
+
+if (str1.equals(str2)) {
+    return true;
+} else {
+    return false;
+}
+</code></pre><p>}<br>删除重复字符</p>
+<pre><code>public String removeDuplicate2(String str) {
+
+    char[] cs = str.toCharArray();
+    int n = cs.length;
+
+    int count[] = new int[256];
+    for (int i = 0; i &lt; cs.length; i++) {
+        if (count[cs[i]] != 0)
+            cs[i] = &apos;\0&apos;;
+        count[cs[i]]++;
+    }
+
+    int be = 0;
+    for (int i = 0; i &lt; n; i++) {
+        if (cs[i] != &apos;\0&apos;)
+            cs[be++] = cs[i];
+    }
+
+    return new String(cs, 0, be);
+}
+public static void printStr(String test,Integer ptr)
+   {
+       if(ptr&lt;=test.length())
+       {
+           char[] chars = test.toCharArray();
+           for(int i=ptr;i&lt;chars.length;i++)
+           {
+
+               char temp = chars[i];
+               chars[i]=chars[ptr];
+               chars[ptr]=temp;
+               resultSet.add(new String(chars));
+               printStr(new String(chars),ptr+1);
+           }
+       }
+  }
+</code></pre><p>最长不含重复字符的子字符串<br>请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。假设字符串中只还有’a’~’z’的字符<br>提到回文串，自然要利用回文串的特点，想到将源字符串逆转后，“回文串”（不一定连续）相当于顺序没变<br>求原字符串和其反串的最大公共子序列（不是子串，因为可以不连续）的长度（使用动态规划很容易求得），然后用原字符串的长度减去这个最大公共子串的长度就得到了最小编辑长度。</p>
+<p>int maxLen(string s1, string s2){<br>    int length1 = s1.size();<br>    int length2 = s2.size();<br>    for (int i = 0; i &lt; length1; ++i)<br>        MaxLen[i][0] = 0;<br>    for (int i = 0; i &lt; length2; ++i)<br>        MaxLen[0][i] = 0;</p>
+<pre><code>for (int i = 1; i &lt;= length1; ++i)
+{
+    for (int j = 1; j &lt;= length2; ++j)
+    {
+        if (s1[i-1] == s2[j-1]){
+            MaxLen[i][j] = MaxLen[i-1][j - 1] + 1;
+        }
+        else
+        {
+            MaxLen[i][j] = max(MaxLen[i - 1][j], MaxLen[i][j - 1]);
+        }
+    }
+}
+
+return MaxLen[length1][length2];
+</code></pre><p>}<br>int main(){<br>string s;<br>while (cin &gt;&gt; s){<br>    int length = s.size();<br>    if (length == 1){<br>        cout &lt;&lt; 1 &lt;&lt; endl;<br>        continue;<br>    }<br>    //利用回文串的特点<br>    string s2 = s;<br>    reverse(s2.begin(),s2.end());<br>    int max_length = maxLen(s, s2);<br>    cout &lt;&lt; length - max_length &lt;&lt; endl;<br>}<br>return 0;<br>}</p>
+<p>实现一个算法，确定一个字符串 s 的所有字符是否全都不同。</p>
+<p>我的解题思路：<br>先将字符串转化成字符数组；<br>对其进行排序，再通过for循环进行判断，排序后的字符数组如果前一位与后一位相同，则输出“false”，否则输出“true”。</p>
+<p>由于题目没有明确说明，根据示例我判断字符串中出现的字符应该在[‘a’,’z’]之间，实践证明确实如此。基于这个前提，使用bool数组的做法是定义一个长度为26的初始值全为0 bool数组，逐个字符遍历astr，如果bool数组中对应的下标（’a’-&gt;0, …, ‘z’-&gt;25）的值为1则重复出现，返回false，否则设置对应下标值为1。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2019/06/25/M_Swift123开根号/" itemprop="url">
                   开根号
                 </a>
@@ -411,6 +592,207 @@ while (low &lt;= high) {
 }
 return -1.000;
 </code></pre><p>}</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/06/25/M_Swift122总结/" itemprop="url">
+                  总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>很久没有写博客了，有一年多的时间了吧，这中间风风雨雨，我想是不是忘记了自己的初衷了，今天好像一天都没有工作，我想写点东西吧，纪念一下自己的30岁，不知道30岁以后的人生是什么样，我想是时候y需要规划一下了。<br>总之很多问题，我好像随波逐流的在这一年里干了很多事情，也好像什么也没干<br>孩子出生了，我也没回家看过几次。。。<br>房子买了，真的是满纸荒唐言，一把心酸泪，很扯，但愿以后的结果让我们很满意吧。<br>这段时间我觉得最大的成功就是写了公交规划这个项目吧，我觉得对我来说确实挺爽的，这个项目我觉得还是挺有收获的，因为是我一个人独立完成的，而且是用java，总之，还是挺有意义的。效率不能算是非常的好，但是我觉得代码很简洁，还是有一点能力的，自夸一下吧。算是对自己信心上的一个提高<br>现在在说地图数据编译，其实代码都是已经写好的，我只不过是用这编译罢了，没有多少技术含量，但是每次编译的时候都需要熬夜似的编译，让我确实很疲惫，不知道以后会不会好点。<br>总之对地图数据这方面我也算是有了一点点的收获，还是挺高兴的。<br>下面的事情我想我也不知道怎么办了，卖完房子，现金方面就不是太充足了，还借了一些钱，希望也是尽快能还上<br>明天也不知道是什么情况，公司搬到海淀这个地方对我h来说还是挺难受的，我每天早上要6点40左右就要醒来，然后赶将近两个小时的时间的公交和地铁去上班，下班也是，这样一天天的让我身心很疲惫，每到周末想好好的放松一下的时候，我又上了打游戏的瘾，天天打游戏到深夜，也还是疲惫。总之这种状态不是很好<br>这个疫情让我在家里呆了很长很长一段时间，导致我都有点胖了，真的不是个好现象。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/06/25/M_Swift121iOS不常用方法/" itemprop="url">
+                  iOS不常用方法
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="UITableView收起键盘"><a href="#UITableView收起键盘" class="headerlink" title="UITableView收起键盘"></a>UITableView收起键盘</h2><p>何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDismissModeInteractive，表示在键盘内部滑动，键盘逐渐下去。</p>
+<h2 id="禁止手机睡眠"><a href="#禁止手机睡眠" class="headerlink" title="禁止手机睡眠"></a>禁止手机睡眠</h2><p>[UIApplication sharedApplication].idleTimerDisabled = YES;</p>
+<h2 id="tableView-beginUpdates-和-endUpdates"><a href="#tableView-beginUpdates-和-endUpdates" class="headerlink" title="tableView  beginUpdates 和 endUpdates"></a>tableView  beginUpdates 和 endUpdates</h2><p>1.beginUpdates 和 endUpdates必须成对使用<br>2、使用beginUpdates和endUpdates可以在改变一些行（row）的高度时自带动画，并且不需要Reload row（不用调用cellForRow，仅仅需要调用heightForRow，这样效率最高）。<br>3、在beginUpdates和endUpdates中执行insert,delete,select,reload row时，动画效果更加同步和顺滑，否则动画卡顿且table的属性（如row count）可能会失效。<br>4、在beginUpdates 和 endUpdates中执行 reloadData 方法和直接reloadData一样，没有相应的中间动画。</p>
+<h2 id="统一收起键盘"><a href="#统一收起键盘" class="headerlink" title="统一收起键盘"></a>统一收起键盘</h2><p>[[[UIApplication sharedApplication] keyWindow] endEditing:YES];</p>
+<h2 id="wkwebview报错"><a href="#wkwebview报错" class="headerlink" title="wkwebview报错"></a>wkwebview报错</h2><p>使用wkwebview时，push后，再pop返回，报错了：<br>Cannot form weak reference to instance (xxxx) of class xxxx. It is possible that this object was over-released, or is in the process of deallocation.<br>原因是给webView.scrollView设置了代理：webView.scrollView.delegate = self ；<br>解决办法：<br>-(void)dealloc<br>{<br>webView.scrollView.delegate = nil;<br>}</p>
+<h2 id="linker-command-failed-with-exit-code-1"><a href="#linker-command-failed-with-exit-code-1" class="headerlink" title="linker command failed with exit code 1"></a>linker command failed with exit code 1</h2><p>原因和解决办法：<br>1、看看是不是有新添加的文件跟之前文件同名<br>2、错误信息中出现了某个类的名字，去原文件中看看#import了哪些第三方库，把这些库挨个注释排除，找到出错的那个库，然后按照官方提供的步骤重新添加一遍。<br>3、SVN或git忽略了某些文件，如.o 等文件没能update下来，查看.o文件可能是红色的，可以重新添加或者修改SVN(git)的忽略设置<br>4、把.a文件删除再重新拖到项目中解决问题<br>5、可能重复添加了文件（也可能没勾选 Copy items if neded 这个选项），建议删除后重新添加<br>6、工程中文件名重复了 也会出现同样的错误<br>7、Build Settings”-&gt;”Enable Bitcode”设置为NO ，因为有些SDK不支持Bitcode<br>8、可能在引用的时候 可能写的是#import “XXXXX.m” ，如果是改为#import “XXXXX.h”<br>9、可能你导入的SDK只能在真机下才能运行，模拟器会报错！<br>10、找到 Build settings-&gt;Linking-&gt;Other Linker Flags将此属性修改成-all_load 或者 -ObjC<br>11、Build settings-&gt;Search Path-&gt;Library Search Paths 添加静态库的相应路径</p>
+<h2 id="CABasicAnimation-按home键后台之后，再切回来动画就停止"><a href="#CABasicAnimation-按home键后台之后，再切回来动画就停止" class="headerlink" title="CABasicAnimation 按home键后台之后，再切回来动画就停止"></a>CABasicAnimation 按home键后台之后，再切回来动画就停止</h2><p>CABasicAnimation有个属性removedOnCompletion，默认值为YES,意思是动画在指定时间段内完成后，就会从层上自动移除。<br>如果CABasicAnimation 按home键后台之后，再切回来动画就停止，只要将removedOnCompletion属性设为no动画就不会停止，直到你移除该动画</p>
+<h2 id="播放一张张连续的图片"><a href="#播放一张张连续的图片" class="headerlink" title="播放一张张连续的图片"></a>播放一张张连续的图片</h2><p>// 方法一<br>imageView.animationImages = @[[UIImage imageNamed:@”animate_1”], [UIImage imageNamed:@”animate_2”], [UIImage imageNamed:@”animate<em>3”]];<br>imageView.animationDuration = 1.0;<br>// 方法二<br>imageView.image = [UIImage animatedImageNamed:@”animate</em>“ duration:1.0];<br>// 方法二解释下，这个方法会加载animate_为前缀的，后边0-1024，也就是animate_0、animate_1一直到animate_1024</p>
+<h2 id="判断两个rect是否有交叉"><a href="#判断两个rect是否有交叉" class="headerlink" title="判断两个rect是否有交叉"></a>判断两个rect是否有交叉</h2><p>if (CGRectIntersectsRect(rect1, rect2)) {<br>}</p>
+<h2 id="键盘上方增加工具栏"><a href="#键盘上方增加工具栏" class="headerlink" title="键盘上方增加工具栏"></a>键盘上方增加工具栏</h2><p>UIToolbar <em>keyboardDoneButtonView = [[UIToolbar alloc] init];<br>[keyboardDoneButtonView sizeToFit];<br>UIBarButtonItem </em>doneButton = [[UIBarButtonItem alloc] initWithTitle:@”Done”<br>style:UIBarButtonItemStyleBordered target:self<br>action:@selector(doneClicked:)];<br>[keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];<br>txtField.inputAccessoryView = keyboardDoneButtonView;</p>
+<h2 id="判断一个view是否为另一个view的子视图"><a href="#判断一个view是否为另一个view的子视图" class="headerlink" title="判断一个view是否为另一个view的子视图"></a>判断一个view是否为另一个view的子视图</h2><p>// 如果myView是self.view本身，也会返回yes<br>BOOL isSubView = [myView isDescendantOfView:self.view];</p>
+<h2 id="判断某一行的cell是否已经显示"><a href="#判断某一行的cell是否已经显示" class="headerlink" title="判断某一行的cell是否已经显示"></a>判断某一行的cell是否已经显示</h2><p>CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];<br>BOOL completelyVisible = CGRectContainsRect(tableView.bounds, cellRect);</p>
+<h2 id="隐藏UITextView-UITextField光标"><a href="#隐藏UITextView-UITextField光标" class="headerlink" title="隐藏UITextView/UITextField光标"></a>隐藏UITextView/UITextField光标</h2><p>textField.tintColor = [UIColor clearColor];</p>
+<h2 id="当UITextView-UITextField中没有文字时，禁用回车键"><a href="#当UITextView-UITextField中没有文字时，禁用回车键" class="headerlink" title="当UITextView/UITextField中没有文字时，禁用回车键"></a>当UITextView/UITextField中没有文字时，禁用回车键</h2><p>textField.enablesReturnKeyAutomatically = YES;</p>
 
           
         
@@ -647,114 +1029,7 @@ OpenGL画笔    GL10
             
               
                 
-                <a class="post-title-link" href="/2019/06/25/M_Swift121iOS不常用方法/" itemprop="url">
-                  iOS不常用方法
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="UITableView收起键盘"><a href="#UITableView收起键盘" class="headerlink" title="UITableView收起键盘"></a>UITableView收起键盘</h2><p>何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDismissModeInteractive，表示在键盘内部滑动，键盘逐渐下去。</p>
-<h2 id="禁止手机睡眠"><a href="#禁止手机睡眠" class="headerlink" title="禁止手机睡眠"></a>禁止手机睡眠</h2><p>[UIApplication sharedApplication].idleTimerDisabled = YES;</p>
-<h2 id="tableView-beginUpdates-和-endUpdates"><a href="#tableView-beginUpdates-和-endUpdates" class="headerlink" title="tableView  beginUpdates 和 endUpdates"></a>tableView  beginUpdates 和 endUpdates</h2><p>1.beginUpdates 和 endUpdates必须成对使用<br>2、使用beginUpdates和endUpdates可以在改变一些行（row）的高度时自带动画，并且不需要Reload row（不用调用cellForRow，仅仅需要调用heightForRow，这样效率最高）。<br>3、在beginUpdates和endUpdates中执行insert,delete,select,reload row时，动画效果更加同步和顺滑，否则动画卡顿且table的属性（如row count）可能会失效。<br>4、在beginUpdates 和 endUpdates中执行 reloadData 方法和直接reloadData一样，没有相应的中间动画。</p>
-<h2 id="统一收起键盘"><a href="#统一收起键盘" class="headerlink" title="统一收起键盘"></a>统一收起键盘</h2><p>[[[UIApplication sharedApplication] keyWindow] endEditing:YES];</p>
-<h2 id="wkwebview报错"><a href="#wkwebview报错" class="headerlink" title="wkwebview报错"></a>wkwebview报错</h2><p>使用wkwebview时，push后，再pop返回，报错了：<br>Cannot form weak reference to instance (xxxx) of class xxxx. It is possible that this object was over-released, or is in the process of deallocation.<br>原因是给webView.scrollView设置了代理：webView.scrollView.delegate = self ；<br>解决办法：<br>-(void)dealloc<br>{<br>webView.scrollView.delegate = nil;<br>}</p>
-<h2 id="linker-command-failed-with-exit-code-1"><a href="#linker-command-failed-with-exit-code-1" class="headerlink" title="linker command failed with exit code 1"></a>linker command failed with exit code 1</h2><p>原因和解决办法：<br>1、看看是不是有新添加的文件跟之前文件同名<br>2、错误信息中出现了某个类的名字，去原文件中看看#import了哪些第三方库，把这些库挨个注释排除，找到出错的那个库，然后按照官方提供的步骤重新添加一遍。<br>3、SVN或git忽略了某些文件，如.o 等文件没能update下来，查看.o文件可能是红色的，可以重新添加或者修改SVN(git)的忽略设置<br>4、把.a文件删除再重新拖到项目中解决问题<br>5、可能重复添加了文件（也可能没勾选 Copy items if neded 这个选项），建议删除后重新添加<br>6、工程中文件名重复了 也会出现同样的错误<br>7、Build Settings”-&gt;”Enable Bitcode”设置为NO ，因为有些SDK不支持Bitcode<br>8、可能在引用的时候 可能写的是#import “XXXXX.m” ，如果是改为#import “XXXXX.h”<br>9、可能你导入的SDK只能在真机下才能运行，模拟器会报错！<br>10、找到 Build settings-&gt;Linking-&gt;Other Linker Flags将此属性修改成-all_load 或者 -ObjC<br>11、Build settings-&gt;Search Path-&gt;Library Search Paths 添加静态库的相应路径</p>
-<h2 id="CABasicAnimation-按home键后台之后，再切回来动画就停止"><a href="#CABasicAnimation-按home键后台之后，再切回来动画就停止" class="headerlink" title="CABasicAnimation 按home键后台之后，再切回来动画就停止"></a>CABasicAnimation 按home键后台之后，再切回来动画就停止</h2><p>CABasicAnimation有个属性removedOnCompletion，默认值为YES,意思是动画在指定时间段内完成后，就会从层上自动移除。<br>如果CABasicAnimation 按home键后台之后，再切回来动画就停止，只要将removedOnCompletion属性设为no动画就不会停止，直到你移除该动画</p>
-<h2 id="播放一张张连续的图片"><a href="#播放一张张连续的图片" class="headerlink" title="播放一张张连续的图片"></a>播放一张张连续的图片</h2><p>// 方法一<br>imageView.animationImages = @[[UIImage imageNamed:@”animate_1”], [UIImage imageNamed:@”animate_2”], [UIImage imageNamed:@”animate<em>3”]];<br>imageView.animationDuration = 1.0;<br>// 方法二<br>imageView.image = [UIImage animatedImageNamed:@”animate</em>“ duration:1.0];<br>// 方法二解释下，这个方法会加载animate_为前缀的，后边0-1024，也就是animate_0、animate_1一直到animate_1024</p>
-<h2 id="判断两个rect是否有交叉"><a href="#判断两个rect是否有交叉" class="headerlink" title="判断两个rect是否有交叉"></a>判断两个rect是否有交叉</h2><p>if (CGRectIntersectsRect(rect1, rect2)) {<br>}</p>
-<h2 id="键盘上方增加工具栏"><a href="#键盘上方增加工具栏" class="headerlink" title="键盘上方增加工具栏"></a>键盘上方增加工具栏</h2><p>UIToolbar <em>keyboardDoneButtonView = [[UIToolbar alloc] init];<br>[keyboardDoneButtonView sizeToFit];<br>UIBarButtonItem </em>doneButton = [[UIBarButtonItem alloc] initWithTitle:@”Done”<br>style:UIBarButtonItemStyleBordered target:self<br>action:@selector(doneClicked:)];<br>[keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];<br>txtField.inputAccessoryView = keyboardDoneButtonView;</p>
-<h2 id="判断一个view是否为另一个view的子视图"><a href="#判断一个view是否为另一个view的子视图" class="headerlink" title="判断一个view是否为另一个view的子视图"></a>判断一个view是否为另一个view的子视图</h2><p>// 如果myView是self.view本身，也会返回yes<br>BOOL isSubView = [myView isDescendantOfView:self.view];</p>
-<h2 id="判断某一行的cell是否已经显示"><a href="#判断某一行的cell是否已经显示" class="headerlink" title="判断某一行的cell是否已经显示"></a>判断某一行的cell是否已经显示</h2><p>CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];<br>BOOL completelyVisible = CGRectContainsRect(tableView.bounds, cellRect);</p>
-<h2 id="隐藏UITextView-UITextField光标"><a href="#隐藏UITextView-UITextField光标" class="headerlink" title="隐藏UITextView/UITextField光标"></a>隐藏UITextView/UITextField光标</h2><p>textField.tintColor = [UIColor clearColor];</p>
-<h2 id="当UITextView-UITextField中没有文字时，禁用回车键"><a href="#当UITextView-UITextField中没有文字时，禁用回车键" class="headerlink" title="当UITextView/UITextField中没有文字时，禁用回车键"></a>当UITextView/UITextField中没有文字时，禁用回车键</h2><p>textField.enablesReturnKeyAutomatically = YES;</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/06/25/N_Android19管理类/" itemprop="url">
+                <a class="post-title-link" href="/2019/06/25/N_Android17常用类/" itemprop="url">
                   未命名
                 </a>
               
@@ -798,358 +1073,39 @@ OpenGL画笔    GL10
       
         
           
-            <h1 id="Android控件类"><a href="#Android控件类" class="headerlink" title="Android控件类"></a>Android控件类</h1><pre><code>窗口管理    WindowManager   
-显示信息    Display、DisplayMetrics 
-标签页面    TabActivity    
-页面组    ActivityGroup   
-碎片页面    FragmentActivity 
-资源管理    Resources    
-资产管理    AssetManager
-打包结构    Parcelable    
-应用    Application    
-共享参数    SharedPreferences  
-SQLite数据库    SQLiteDatabase、SQLiteOpenHelper  
-游标    ContentValues、Cursor    
-环境管理    Environment    
-输入法管理    InputMethodManager   
-列表页面    ListActivity    
-页面    Activity    
-意图、意图过滤器    Intent、IntentFilter 
-包裹    Bundle    
-服务、异步服务    Service、IntentService 
-广播、广播接收器    Broadcast、BroadcastReceiver
-手势事件    MotionEvent    
-手势检测器    GestureDetector 
-滚动器    Scroller   
-定位管理    LocationManager、Criteria
-通话管理    TelephonyManager   
-基站信息    CellLocation、CellInfo 
-处理器    Handler、Looper、Message 
-异步任务    AsyncTask    
-倒计时器    CountDownTimer  
-定时器管理    AlarmManager   
-延迟的意图    PendingIntent    
-信使    Messenger、IBinder    
-通知管理    Notification、NotificationManager  
-远程接口    AIDL    
-内容提供者    ContentProvider   
-内容解决者    ContentResolver  
-内容观察者    ContentObserver 
-版本信息    Build    
-短信管理    SmsManager   
-摄像头    Camera   
-音频管理    AudioManager  
-震动器    Vibrator    
-传感器    Sensor、SensorManager   
-连接管理    ConnectivityManager    
-热点管理    WifiManager    
-下载管理    DownloadManager   
-json数据    JSONObject、JSONArray 
-窗口    Window    
-java原生接口    JNI  
-日志    Log   
-提示    Toast  
-代码混淆    Proguard  
-存储管理    StorageManager   
-流量统计    TrafficStats    
-打包管理    PackageManager、PackageInfo   
-活动管理    ActivityManager    
-屏幕配置    Configuration    
-剪贴板管理    ClipboardManager 
-参数设置页面    PreferenceActivity 
-仪器测试用例    InstrumentationTestCase  
-页面测试用例    ActivityTestCase   
-电源管理    PowerManager    
-电池管理    BatteryManager   
-窗口管理    WindowManager  
-电话管理    TelephonyManager
-媒体投影管理    MediaProjectionManager 
-图像读取    ImageReader    
-媒体编码与转换    MediaCodec、MediaMuxer 
-可缩放矢量图形    SVG    
-PDF文件渲染    PdfRenderer 
-任务调度    JobInfo、JobScheduler、JobService 
-NFC适配器    NfcAdapter    
-NFC传统类型    MifareClassic
-蓝牙适配器    BluetoothAdapter
-蓝牙设备    BluetoothDevice    
-红外遥控管理器    ConsumerIrManager 
+            <h1 id="Android常用类"><a href="#Android常用类" class="headerlink" title="Android常用类"></a>Android常用类</h1><pre><code>名称    类名    
+基本数据类型    String、Integer、Double、BigDecimal    
+格式化工具    Formatter、DecimalFormat、NumberFormat    
+样式、匹配器    Pattern、Matcher    
+日期、日历    Date、SimpleDateFormat、Calendar    
+向量、队列、链表    Set/HashSet、ArrayList、LinkedList    
+矢量、栈    Vector、Stack    
+映射、哈希表    Map/HashMap、Hashtable    
+迭代器    Iterator  
+序列化结构    Serializable   
+文件    File    
+文件流    FileOutputStream、FileInputStream    
+缓存流    BufferedOutputStream、BufferedInputStream    
+任务    Runnable    
+线程    Thread    
+定时器    Timer、TimerTask   
+反射    reflect    
+xml解析    XmlPullParser、dom、sax、SAXParser    
+输入输出流    InputStream、OutputStream    
+http连接    HttpURLConnection、HttpClient    
+URL编码和解码    URLEncoder、URLDecoder    
+BASE64编码和解码    BASE64Encoder、BASE64Decoder    
+加密算法    Cipher、KeyGenerator、SecretKey、MessageDigest    
+线程池    Executors、ThreadPoolExecutor    
+定时器线程池    ScheduledExecutorService    
+异常    Exception  
+键值对属性    Properties    
+加锁    ReentrantLock、ReentrantReadWriteLock    
+字符串建造者    StringBuilder    
+数组、容器组    Arrays、Collections    
+数学函数    Math    
+套接字、网络地址    Socket、SocketServer、InetAddress
 </code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/06/25/M_Swift124字符串操作/" itemprop="url">
-                  未命名
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h2 id="title-字符串操作"><a href="#title-字符串操作" class="headerlink" title="title :字符串操作"></a>title :字符串操作</h2><p>// 字符反转的方法<br>   private void swap(char[] c, int front, int end) {</p>
-<pre><code>if (front &gt; end || end &gt;= c.length) {
-    return;
-}
-
-while (front &lt; end) {
-
-    char tmp = c[front];
-    c[front] = c[end];
-    c[end] = tmp;
-
-    front++;
-    end--;
-}
-</code></pre><p>}<br>   // 判断字符串是否由相同的字符组成<br>      public boolean compareStr(String str1, String str2) {</p>
-<pre><code>byte[] bs1 = str1.getBytes();
-byte[] bs2 = str2.getBytes();
-
-Arrays.sort(bs1);
-Arrays.sort(bs2);
-
-str1 = new String(bs1);
-str2 = new String(bs2);
-
-if (str1.equals(str2)) {
-    return true;
-} else {
-    return false;
-}
-</code></pre><p>}<br>删除重复字符</p>
-<pre><code>public String removeDuplicate2(String str) {
-
-    char[] cs = str.toCharArray();
-    int n = cs.length;
-
-    int count[] = new int[256];
-    for (int i = 0; i &lt; cs.length; i++) {
-        if (count[cs[i]] != 0)
-            cs[i] = &apos;\0&apos;;
-        count[cs[i]]++;
-    }
-
-    int be = 0;
-    for (int i = 0; i &lt; n; i++) {
-        if (cs[i] != &apos;\0&apos;)
-            cs[be++] = cs[i];
-    }
-
-    return new String(cs, 0, be);
-}
-public static void printStr(String test,Integer ptr)
-   {
-       if(ptr&lt;=test.length())
-       {
-           char[] chars = test.toCharArray();
-           for(int i=ptr;i&lt;chars.length;i++)
-           {
-
-               char temp = chars[i];
-               chars[i]=chars[ptr];
-               chars[ptr]=temp;
-               resultSet.add(new String(chars));
-               printStr(new String(chars),ptr+1);
-           }
-       }
-  }
-</code></pre><p>最长不含重复字符的子字符串<br>请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。假设字符串中只还有’a’~’z’的字符<br>提到回文串，自然要利用回文串的特点，想到将源字符串逆转后，“回文串”（不一定连续）相当于顺序没变<br>求原字符串和其反串的最大公共子序列（不是子串，因为可以不连续）的长度（使用动态规划很容易求得），然后用原字符串的长度减去这个最大公共子串的长度就得到了最小编辑长度。</p>
-<p>int maxLen(string s1, string s2){<br>    int length1 = s1.size();<br>    int length2 = s2.size();<br>    for (int i = 0; i &lt; length1; ++i)<br>        MaxLen[i][0] = 0;<br>    for (int i = 0; i &lt; length2; ++i)<br>        MaxLen[0][i] = 0;</p>
-<pre><code>for (int i = 1; i &lt;= length1; ++i)
-{
-    for (int j = 1; j &lt;= length2; ++j)
-    {
-        if (s1[i-1] == s2[j-1]){
-            MaxLen[i][j] = MaxLen[i-1][j - 1] + 1;
-        }
-        else
-        {
-            MaxLen[i][j] = max(MaxLen[i - 1][j], MaxLen[i][j - 1]);
-        }
-    }
-}
-
-return MaxLen[length1][length2];
-</code></pre><p>}<br>int main(){<br>string s;<br>while (cin &gt;&gt; s){<br>    int length = s.size();<br>    if (length == 1){<br>        cout &lt;&lt; 1 &lt;&lt; endl;<br>        continue;<br>    }<br>    //利用回文串的特点<br>    string s2 = s;<br>    reverse(s2.begin(),s2.end());<br>    int max_length = maxLen(s, s2);<br>    cout &lt;&lt; length - max_length &lt;&lt; endl;<br>}<br>return 0;<br>}</p>
-<p>实现一个算法，确定一个字符串 s 的所有字符是否全都不同。</p>
-<p>我的解题思路：<br>先将字符串转化成字符数组；<br>对其进行排序，再通过for循环进行判断，排序后的字符数组如果前一位与后一位相同，则输出“false”，否则输出“true”。</p>
-<p>由于题目没有明确说明，根据示例我判断字符串中出现的字符应该在[‘a’,’z’]之间，实践证明确实如此。基于这个前提，使用bool数组的做法是定义一个长度为26的初始值全为0 bool数组，逐个字符遍历astr，如果bool数组中对应的下标（’a’-&gt;0, …, ‘z’-&gt;25）的值为1则重复出现，返回false，否则设置对应下标值为1。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/06/25/M_Swift120总结/" itemprop="url">
-                  总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>很久没有写总结的东西了，最近也总是很浮躁，不知道怎么写，以前静下心来的时候，总是会写一点博客，不管是好东西还是坏的东西，总之是写了不少，现在不知道为什么，这种写的欲望都没有了，好像感觉没啥可写的了。<br>这确实让我很头疼，没事总不知道要干点什么，以前总是积极的想弄点这弄点那，现在连这点积极的态度都没有了，不禁想问自己，我到底怎么了，我应该干点什么，我想是时候反思一下自己了。<br>这个公交的项目，到现在一直淅淅沥沥的进行着，看似不紧张，实际上我觉得应该非常的紧张，但是我一个人的能力有限，我也没有办法去主导，所以就这样等着吧。<br>我想我是时候要学习一点新的东西了，这将是我下一步突破的重点。我想过很多，我觉得服务端开发是很重要的，我觉得前段开发，我也需要做很深的了解，如果这次的公交项目能够很好的参与的话，我想对我来说也是一个很大的收获。<br>下一步怎么走，我一直在等，我还在玩游戏，有时候感觉真的，这个游戏让人很头疼，玩了很多的肉类英雄，感觉那种无奈，是你无法做到的，我想我是时候突破一下，用一些比较有挑战点的英雄了。<br>不说这个了，感觉越来越难受，写点有用的吧，最近需要学习点知识了，感觉很多知识自己只是了解，没法记住，很多东西需要去背了。<br>不说了，去背点知识了。</p>
-
           
         
       

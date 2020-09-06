@@ -84,16 +84,16 @@
 
 
 
-<meta name="description" content="UI程序绘制流程[UIView setNeedsDisplay];[view.layer setNeedsDisplay];[CALayer display];[layer.delegate respondsTo:@selector(displayLayer:)];yes-&amp;gt; 异步绘制入口no-&amp;gt; 系统绘制流程绘制是CPU和GPU共同协作的通过CoreGraphics、CoreImag">
+<meta name="description" content="程序绘制流程[UIView setNeedsDisplay];[view.layer setNeedsDisplay];[CALayer display];[layer.delegate respondsTo:@selector(displayLayer:)];yes-&amp;gt; 异步绘制入口no-&amp;gt; 系统绘制流程绘制是CPU和GPU共同协作的通过CoreGraphics、CoreImage由">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Men的博客">
+<meta property="og:title" content="UI">
 <meta property="og:url" content="http://yoursite.com/2019/09/29/M_Swift126UI/index.html">
 <meta property="og:site_name" content="Men的博客">
-<meta property="og:description" content="UI程序绘制流程[UIView setNeedsDisplay];[view.layer setNeedsDisplay];[CALayer display];[layer.delegate respondsTo:@selector(displayLayer:)];yes-&amp;gt; 异步绘制入口no-&amp;gt; 系统绘制流程绘制是CPU和GPU共同协作的通过CoreGraphics、CoreImag">
-<meta property="og:updated_time" content="2020-07-08T07:44:47.544Z">
+<meta property="og:description" content="程序绘制流程[UIView setNeedsDisplay];[view.layer setNeedsDisplay];[CALayer display];[layer.delegate respondsTo:@selector(displayLayer:)];yes-&amp;gt; 异步绘制入口no-&amp;gt; 系统绘制流程绘制是CPU和GPU共同协作的通过CoreGraphics、CoreImage由">
+<meta property="og:updated_time" content="2020-09-06T09:15:15.146Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Men的博客">
-<meta name="twitter:description" content="UI程序绘制流程[UIView setNeedsDisplay];[view.layer setNeedsDisplay];[CALayer display];[layer.delegate respondsTo:@selector(displayLayer:)];yes-&amp;gt; 异步绘制入口no-&amp;gt; 系统绘制流程绘制是CPU和GPU共同协作的通过CoreGraphics、CoreImag">
+<meta name="twitter:title" content="UI">
+<meta name="twitter:description" content="程序绘制流程[UIView setNeedsDisplay];[view.layer setNeedsDisplay];[CALayer display];[layer.delegate respondsTo:@selector(displayLayer:)];yes-&amp;gt; 异步绘制入口no-&amp;gt; 系统绘制流程绘制是CPU和GPU共同协作的通过CoreGraphics、CoreImage由">
 
 
 
@@ -116,7 +116,7 @@
 
   <link rel="canonical" href="http://yoursite.com/2019/09/29/M_Swift126UI/"/>
 
-  <title>  | Men的博客 </title>
+  <title> UI | Men的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -226,7 +226,7 @@
             
             
               
-                
+                UI
               
             
           </h1>
@@ -266,7 +266,7 @@
       
 
       
-        <h1 id="UI"><a href="#UI" class="headerlink" title="UI"></a>UI</h1><p>程序绘制流程<br>[UIView setNeedsDisplay];<br>[view.layer setNeedsDisplay];<br>[CALayer display];<br>[layer.delegate respondsTo:@selector(displayLayer:)];<br>yes-&gt; 异步绘制入口<br>no-&gt; 系统绘制流程<br>绘制是CPU和GPU共同协作的<br>通过CoreGraphics、CoreImage由CPU预处理，最终通过OpenGL ES将数据传送到屏幕<br>1、CoreAnimation提交会话，包括自己和子树（view hierarchy）的layout状态等；<br>2、RenderServer解析提交的子树状态，生成绘制指令；<br>3、GPU执行绘制指令；<br>4、显示渲染后的数据；<br>调用-setNeedsDisplay的时候，仅会设置图层为dirty。当渲染系统准备就绪，调用视图的-display方法，同时装配像素存储空间，建立一个CoreGraphics上下文（CGContextRef），将上下文push进上下文堆栈，绘图程序进入对应的内存存储空间。<br>渲染时机</p>
+        <p>程序绘制流程<br>[UIView setNeedsDisplay];<br>[view.layer setNeedsDisplay];<br>[CALayer display];<br>[layer.delegate respondsTo:@selector(displayLayer:)];<br>yes-&gt; 异步绘制入口<br>no-&gt; 系统绘制流程<br>绘制是CPU和GPU共同协作的<br>通过CoreGraphics、CoreImage由CPU预处理，最终通过OpenGL ES将数据传送到屏幕<br>1、CoreAnimation提交会话，包括自己和子树（view hierarchy）的layout状态等；<br>2、RenderServer解析提交的子树状态，生成绘制指令；<br>3、GPU执行绘制指令；<br>4、显示渲染后的数据；<br>调用-setNeedsDisplay的时候，仅会设置图层为dirty。当渲染系统准备就绪，调用视图的-display方法，同时装配像素存储空间，建立一个CoreGraphics上下文（CGContextRef），将上下文push进上下文堆栈，绘图程序进入对应的内存存储空间。<br>渲染时机</p>
 <p>上面已经提到过：Core Animation 在 RunLoop 中注册了一个 Observer 监听 BeforeWaiting(即将进入休眠) 和 Exit (即将退出Loop) 事件 。当在操作 UI 时，比如改变了 Frame、更新了 UIView/CALayer 的层次时，或者手动调用了 UIView/CALayer 的 setNeedsLayout/setNeedsDisplay方法后，这个 UIView/CALayer 就被标记为待处理，并被提交到一个全局的容器去。当Oberver监听的事件到来时，回调执行函数中会遍历所有待处理的UIView/CAlayer 以执行实际的绘制和调整，并更新 UI 界面。<br>打包layers并发送到渲染server；递归提交子树的layers；<br>如果子树太复杂，会消耗很大，对性能造成影响；</p>
 <p>事件响应流程<br>点击屏幕-》UIApplication-〉UIWindow-》hitTest：withEvent：-〉pointInside：withEvent：<br>-》subviews-〉UIView-》倒序遍历-〉hitTest：withEvent：<br>hitTest：withEvent内部实现</p>
 <p>GPU<br>顶点着色<br>图元装配<br>光栅化<br>片着色<br>片段处理</p>
@@ -330,7 +330,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/09/29/M_Swift128OC属性/" rel="next" title="">
+              <a href="/2019/09/29/M_Swift129RunTime/" rel="next" title="">
                 <i class="fa fa-chevron-left"></i> 
               </a>
             
@@ -338,8 +338,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/09/29/M_Swift129RunTime/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/09/29/M_Swift130Block/" rel="prev" title="Block">
+                Block <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -440,7 +440,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#UI"><span class="nav-number">1.</span> <span class="nav-text">UI</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CALayer"><span class="nav-number">1.1.</span> <span class="nav-text">CALayer</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CALayer"><span class="nav-number">1.</span> <span class="nav-text">CALayer</span></a></li></ol></div>
             
           </div>
         </section>
