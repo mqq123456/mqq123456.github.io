@@ -1,0 +1,968 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="动态规划一般是求值问题，核心是穷举找状态转移方程
+剪绳子最大乘积、大数求余
+推论一： 将绳子 以相等的长度等分为多段 ，得到的乘积最大。
+推论二： 尽可能将绳子以长度 3 等分为多段时，乘积最大。
+最优3等分，次优，剩下个2。最差，剩下个1，将最后一个3，分成2 + 2
+快速幂解析
+当我们计算出来 x^2 之后就可以只进行三次乘法就可以了，相对于之前的 7 次乘法，时间大大减少了。
+正则表达式匹配">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Men的博客">
+<meta property="og:url" content="http://yoursite.com/2019/09/29/M_Swift148动态规划/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="动态规划一般是求值问题，核心是穷举找状态转移方程
+剪绳子最大乘积、大数求余
+推论一： 将绳子 以相等的长度等分为多段 ，得到的乘积最大。
+推论二： 尽可能将绳子以长度 3 等分为多段时，乘积最大。
+最优3等分，次优，剩下个2。最差，剩下个1，将最后一个3，分成2 + 2
+快速幂解析
+当我们计算出来 x^2 之后就可以只进行三次乘法就可以了，相对于之前的 7 次乘法，时间大大减少了。
+正则表达式匹配">
+<meta property="og:updated_time" content="2020-07-27T03:12:00.054Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Men的博客">
+<meta name="twitter:description" content="动态规划一般是求值问题，核心是穷举找状态转移方程
+剪绳子最大乘积、大数求余
+推论一： 将绳子 以相等的长度等分为多段 ，得到的乘积最大。
+推论二： 尽可能将绳子以长度 3 等分为多段时，乘积最大。
+最优3等分，次优，剩下个2。最差，剩下个1，将最后一个3，分成2 + 2
+快速幂解析
+当我们计算出来 x^2 之后就可以只进行三次乘法就可以了，相对于之前的 7 次乘法，时间大大减少了。
+正则表达式匹配">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/29/M_Swift148动态规划/"/>
+
+  <title>  | Men的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Men的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">欢迎光临！</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            博文
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-09-29T09:56:33+08:00" content="2019-09-29">
+              2019-09-29
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><pre><code>一般是求值问题，核心是穷举找状态转移方程
+剪绳子最大乘积、大数求余
+推论一： 将绳子 以相等的长度等分为多段 ，得到的乘积最大。
+推论二： 尽可能将绳子以长度 3 等分为多段时，乘积最大。
+最优3等分，次优，剩下个2。最差，剩下个1，将最后一个3，分成2 + 2
+快速幂解析
+当我们计算出来 x^2 之后就可以只进行三次乘法就可以了，相对于之前的 7 次乘法，时间大大减少了。
+正则表达式匹配  
+表示数值的字符串  
+把数字翻译成字符串 
+最长不含重复字符的子字符串  
+n个骰子的点数  
+股票买卖问题
+打家劫舍问题
+nSum问题
+高楼扔鸡蛋问题
+子集背包问题
+完全背包问题
+汉洛塔
+三个人分别点了三家外卖，又一个外卖小哥配送，他有多少种配送方式
+写个算法，输出2~100的素数
+赛马题，网上能搜到
+问一个有关花开通知蜜蜂，花关通知蜜蜂的问题；
+要求想一个时间复杂度为O1的解法，来解决一个2的平方的算法题（答 无限空间换时间的策略）如何计算x^n
+ACID银行家算法
+一个不多于5位数的整数，反序处理problem；
+一个多边形分割方法
+从篮子里如何取苹果的一个算法;
+火星文字
+基本计算器
+分治
+</code></pre><h2 id="礼物的最大价值"><a href="#礼物的最大价值" class="headerlink" title="礼物的最大价值"></a>礼物的最大价值</h2><pre><code>在一个 m*n 的棋盘的每一格都放有一个礼物，每个礼物都有一定的价值（价值大于 0）。你可以从棋盘的左上角开始拿格子里的礼物，并每次向右或者向下移动一格、直到到达棋盘的右下角。给定一个棋盘及其上面的礼物的价值，请计算你最多能拿到多少价值的礼物？
+</code></pre><p>输入:<br>[<br>  [1,3,1],<br>  [1,5,1],<br>  [4,2,1]<br>]<br>输出: 12<br>解释: 路径 1→3→5→2→1 可以拿到最多价值的礼物<br>并每次 向右 或者 向下 移动一格<br>class Solution {<br>    public int maxValue(int[][] grid) {<br>        int m = grid.length, n = grid[0].length;<br>        for(int i = 0; i &lt; m; i++) {<br>            for(int j = 0; j &lt; n; j++) {<br>                if(i == 0 &amp;&amp; j == 0) continue;<br>                if(i == 0) grid[i][j] += grid[i][j - 1] ;<br>                else if(j == 0) grid[i][j] += grid[i - 1][j];<br>                else grid[i][j] += Math.max(grid[i][j - 1], grid[i - 1][j]);<br>            }<br>        }<br>        return grid[m - 1][n - 1];<br>    }<br>}<br>递归<br>    斐波那契数列<br>斐波那契数列<br>递归法：<br>    function Fibonacci(int n) {<br>        if(n &lt; 0){<br>            return 0;<br>        }<br>        if(n == 0){<br>            return 0;<br>        }else if(n == 1){<br>            return 1;<br>        }else return Fibonacci(n-1)+ Fibonacci(n-2);<br>    }<br>动态规划：<br>class Solution {<br>    public int fib(int n) {<br>        int a = 0, b = 1, sum;<br>        for(int i = 0; i &lt; n; i++){<br>            sum = (a + b) % 1000000007;<br>            a = b;<br>            b = sum;<br>        }<br>        return a;<br>    }<br>}<br>    青蛙跳台阶问题（本质是求斐波那契数列）<br>问用递归写一个阶乘算法</p>
+<p>n个骰子的点数<br>把n个骰子扔在地上，所有骰子朝上一面的点数之和为s。输入n，打印出s的所有可能的值出现的概率。<br>使用动态规划解决问题一般分为三步：<br>表示状态<br>找出状态转移方程<br>边界处理</p>
+<h2 id="掷骰子"><a href="#掷骰子" class="headerlink" title="掷骰子"></a>掷骰子</h2><p>首先用数组的第一维来表示阶段，也就是投掷完了几枚骰子。<br>然后用第二维来表示投掷完这些骰子后，可能出现的点数。<br>数组的值就表示，该阶段各个点数出现的次数。<br>class Solution {<br>public:<br>    vector<double> twoSum(int n) {<br>        int dp[15][70];<br>        memset(dp, 0, sizeof(dp));<br>        for (int i = 1; i &lt;= 6; i ++) {<br>            dp[1][i] = 1;<br>        }<br>        for (int i = 2; i &lt;= n; i ++) {<br>            for (int j = i; j &lt;= 6<em>i; j ++) {<br>                for (int cur = 1; cur &lt;= 6; cur ++) {<br>                    if (j - cur &lt;= 0) {<br>                        break;<br>                    }<br>                    dp[i][j] += dp[i-1][j-cur];<br>                }<br>            }<br>        }<br>        int all = pow(6, n);<br>        vector<double> ret;<br>        for (int i = n; i &lt;= 6 </double></em> n; i ++) {<br>            ret.push_back(dp[n][i] <em> 1.0 / all);<br>        }<br>        return ret;<br>    }<br>};<br>使用随机数<br>使得n-1点数概率数组和1点数概率数组元素两两相乘，并将乘积结果加到n点数概率数组上。<br>基本思路如上，然后我们可以根据动态规划的套路：<br>1.构造dp数组：tmp[]为n个骰子的点数概率数组，pre[]为n-1个骰子的点数概率数组，一个骰子的点数概率数组显然是6个六分之一,不需要另设数组。<br>2.初始化dp数组：pre[]={1/6d,1/6d,1/6d,1/6d,1/6d,1/6d}<br>3.构造状态转移方程:tmp[x+y]+=pre[x]</em>num[y];<br>    public double[] twoSum(int n) {<br>        double pre[]={1/6d,1/6d,1/6d,1/6d,1/6d,1/6d};<br>        for(int i=2;i&lt;=n;i++){<br>            double tmp[]=new double[5*i+1];<br>            for(int j=0;j&lt;pre.length;j++)<br>                for(int x=0;x&lt;6;x++)<br>                    tmp[j+x]+=pre[j]/6;<br>            pre=tmp;<br>        }<br>        return pre;<br>    }</double></p>
+<h2 id="扑克牌中的顺子"><a href="#扑克牌中的顺子" class="headerlink" title="扑克牌中的顺子"></a>扑克牌中的顺子</h2><p>从扑克牌中随机抽5张牌，判断是不是一个顺子，即这5张牌是不是连续的。2～10为数字本身，A为1，J为11，Q为12，K为13，而大、小王为 0 ，可以看成任意数字。A 不能视为 14。<br>方法一： 集合 Set + 遍历</p>
+<p>遍历五张牌，遇到大小王（即 0直接跳过。<br>判别重复： 利用 Set 实现遍历判重， Set<br>获取最大 / 最小的牌： 借助辅助变量 ma 和 mi ，遍历统计即可。<br>class Solution {<br>    public boolean isStraight(int[] nums) {<br>        Set<integer> repeat = new HashSet&lt;&gt;();<br>        int max = 0, min = 14;<br>        for(int num : nums) {<br>            if(num == 0) continue; // 跳过大小王<br>            max = Math.max(max, num); // 最大牌<br>            min = Math.min(min, num); // 最小牌<br>            if(repeat.contains(num)) return false; // 若有重复，提前返回 false<br>            repeat.add(num); // 添加此牌至 Set<br>        }<br>        return max - min &lt; 5; // 最大牌 - 最小牌 &lt; 5 则可构成顺子<br>    }<br>}<br>方法二：排序 + 遍历<br>class Solution {<br>    public boolean isStraight(int[] nums) {<br>        int joker = 0;<br>        Arrays.sort(nums); // 数组排序<br>        for(int i = 0; i &lt; 4; i++) {<br>            if(nums[i] == 0) joker++; // 统计大小王数量<br>            else if(nums[i] == nums[i + 1]) return false; // 若有重复，提前返回 false<br>        }<br>        return nums[4] - nums[joker] &lt; 5; // 最大牌 - 最小牌 &lt; 5 则可构成顺子<br>    }<br>}</integer></p>
+<h2 id="股票的最大利润"><a href="#股票的最大利润" class="headerlink" title="股票的最大利润"></a>股票的最大利润</h2><p>假设把某股票的价格按照时间先后顺序存储在数组中，请问买卖该股票一次可能获得的最大利润是多少？</p>
+<p>class Solution {<br>    public int maxProfit(int[] prices) {<br>        int cost = Integer.MAX_VALUE, profit = 0;<br>        for(int price : prices) {<br>            cost = Math.min(cost, price);<br>            profit = Math.max(profit, price - cost);<br>        }<br>        return profit;<br>    }<br>}</p>
+<h2 id="丑数"><a href="#丑数" class="headerlink" title="丑数"></a>丑数</h2><p>我们把只包含质因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数。</p>
+<p>输入: n = 10<br>输出: 12<br>解释: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 是前 10 个丑数。<br>class Solution {<br>    public int nthUglyNumber(int n) {<br>        int a = 0, b = 0, c = 0;<br>        int[] dp = new int[n];<br>        dp[0] = 1;<br>        for(int i = 1; i &lt; n; i++) {<br>            int n2 = dp[a] <em> 2, n3 = dp[b] </em> 3, n5 = dp[c] * 5;<br>            dp[i] = Math.min(Math.min(n2, n3), n5);<br>            if(dp[i] == n2) a++;<br>            if(dp[i] == n3) b++;<br>            if(dp[i] == n5) c++;<br>        }<br>        return dp[n - 1];<br>    }<br>}</p>
+<h2 id="乘积最大子数组"><a href="#乘积最大子数组" class="headerlink" title="乘积最大子数组"></a>乘积最大子数组</h2><p>动态规划<br>遍历数组时计算当前最大值，不断更新<br>class Solution {<br>    public int maxProduct(int[] nums) {<br>        int max = Integer.MIN_VALUE, imax = 1, imin = 1;<br>        for(int i=0; i&lt;nums.length; i++){<br>            if(nums[i] &lt; 0){<br>              int tmp = imax;<br>              imax = imin;<br>              imin = tmp;<br>            }<br>            imax = Math.max(imax<em>nums[i], nums[i]);<br>            imin = Math.min(imin</em>nums[i], nums[i]);</p>
+<pre><code>        max = Math.max(max, imax);
+    }
+    return max;
+}
+</code></pre><p>}</p>
+<h2 id="实现一个基本的计算器来计算一个简单的字符串表达式的值。"><a href="#实现一个基本的计算器来计算一个简单的字符串表达式的值。" class="headerlink" title="实现一个基本的计算器来计算一个简单的字符串表达式的值。"></a>实现一个基本的计算器来计算一个简单的字符串表达式的值。</h2><p>先把乘除法的值计算出来，最终将所有的运算简化成只有加法。<br>将表达式（中缀）转化为后缀<br>将后缀计算出结果<br>class Solution {<br>    public int calculate(String s) {<br>        Stack<integer> numStack = new Stack&lt;&gt;();</integer></p>
+<pre><code>    char lastOp = &apos;+&apos;;
+    char[] arr = s.toCharArray();
+    for(int i = 0; i &lt; arr.length; i ++){
+        if(arr[i] == &apos; &apos;) continue;
+
+        if(Character.isDigit(arr[i])){
+            int tempNum = arr[i] - &apos;0&apos;;
+            while(++i &lt; arr.length &amp;&amp; Character.isDigit(arr[i])){
+                tempNum = tempNum * 10 + (arr[i] - &apos;0&apos;);
+            } i--;
+
+            if(lastOp == &apos;+&apos;) numStack.push(tempNum);
+            else if(lastOp == &apos;-&apos;) numStack.push(-tempNum);
+            else numStack.push(res(lastOp, numStack.pop(), tempNum));
+        } else lastOp = arr[i];
+    }
+
+    int ans = 0;
+    for(int num : numStack) ans += num;
+    return ans;
+}
+
+private int res(char op, int a, int b){
+    if(op == &apos;*&apos;) return a * b;
+    else if(op == &apos;/&apos;) return a / b;
+    else if(op == &apos;+&apos;) return a + b; //其实加减运算可以忽略
+    else return a - b;
+}
+</code></pre><p>}</p>
+<h2 id="LRU算法"><a href="#LRU算法" class="headerlink" title="LRU算法"></a>LRU算法</h2><p>class LRUCache {<br>    // key -&gt; Node(key, val)<br>    private HashMap<integer, node=""> map;<br>    // Node(k1, v1) &lt;-&gt; Node(k2, v2)…<br>    private DoubleList cache;<br>    // 最大容量<br>    private int cap;</integer,></p>
+<pre><code>public LRUCache(int capacity) {
+    this.cap = capacity;
+    map = new HashMap&lt;&gt;();
+    cache = new DoubleList();
+}
+
+public int get(int key) {
+    if (!map.containsKey(key))
+        return -1;
+    int val = map.get(key).val;
+    // 利用 put 方法把该数据提前
+    put(key, val);
+    return val;
+}
+
+public void put(int key, int val) {
+    // 先把新节点 x 做出来
+    Node x = new Node(key, val);
+
+    if (map.containsKey(key)) {
+        // 删除旧的节点，新的插到头部
+        cache.remove(map.get(key));
+        cache.addFirst(x);
+        // 更新 map 中对应的数据
+        map.put(key, x);
+    } else {
+        if (cap == cache.size()) {
+            // 删除链表最后一个数据
+            Node last = cache.removeLast();
+            map.remove(last.key);
+        }
+        // 直接添加到头部
+        cache.addFirst(x);
+        map.put(key, x);
+    }
+}
+</code></pre><p>}</p>
+<h2 id="字符串的排列"><a href="#字符串的排列" class="headerlink" title="字符串的排列"></a>字符串的排列</h2><pre><code>输入一个字符串，打印出该字符串中字符的所有排列。
+输入：s = &quot;abc&quot;
+输出：[&quot;abc&quot;,&quot;acb&quot;,&quot;bac&quot;,&quot;bca&quot;,&quot;cab&quot;,&quot;cba&quot;]
+    回溯法
+     对于一个长度为 n 的字符串（假设字符互不重复）n×(n−1)×(n−2)…×2×1 种方案
+ 根据字符串排列的特点，考虑深度优先搜索所有排列方案。
+重复方案与剪枝： 当字符串存在重复字符时，排列方案中也存在重复方案。为排除重复方案，需在固定某位字符时，保证 “每种字符只在此位固定一次” ，即遇到重复字符时不交换，直接跳过。从 DFS 角度看，此操作称为 “剪枝” 。
+     * 回溯算法框架：解决一个问题，实际上就是一个决策树的遍历过程：
+ * 1. 路径：做出的选择
+ * 2. 选择列表：当前可以做的选择
+ * 3. 结束条件：到达决策树底层，无法再做选择的条件
+字符串的排列可以抽象为一棵决策树：
+    List&lt;String&gt; res = new LinkedList&lt;&gt;();
+    char[] c;
+    public String[] permutation(String s) {
+        c = s.toCharArray();
+        dfs(0);
+        return res.toArray(new String[res.size()]);
+    }
+    void dfs(int x) {
+        if(x == c.length - 1) {
+            res.add(String.valueOf(c)); // 添加排列方案
+            return;
+        }
+        HashSet&lt;Character&gt; set = new HashSet&lt;&gt;();
+        for(int i = x; i &lt; c.length; i++) {
+            if(set.contains(c[i])) continue; // 重复，因此剪枝
+            set.add(c[i]);
+            swap(i, x); // 交换，将 c[i] 固定在第 x 位 
+            dfs(x + 1); // 开启固定第 x + 1 位字符
+            swap(i, x); // 恢复交换
+        }
+    }
+    void swap(int a, int b) {
+        char tmp = c[a];
+        c[a] = c[b];
+        c[b] = tmp;
+    }
+</code></pre><h2 id="全排列问题"><a href="#全排列问题" class="headerlink" title="全排列问题"></a>全排列问题</h2><p>List<list<integer>&gt; res = new LinkedList&lt;&gt;();</list<integer></p>
+<p>/<em> 主函数，输入一组不重复的数字，返回它们的全排列 </em>/<br>List<list<integer>&gt; permute(int[] nums) {<br>    // 记录「路径」<br>    LinkedList<integer> track = new LinkedList&lt;&gt;();<br>    backtrack(nums, track);<br>    return res;<br>}</integer></list<integer></p>
+<p>// 路径：记录在 track 中<br>// 选择列表：nums 中不存在于 track 的那些元素<br>// 结束条件：nums 中的元素全都在 track 中出现<br>void backtrack(int[] nums, LinkedList<integer> track) {<br>    // 触发结束条件<br>    if (track.size() == nums.length) {<br>        res.add(new LinkedList(track));<br>        return;<br>    }</integer></p>
+<pre><code>for (int i = 0; i &lt; nums.length; i++) {
+    // 排除不合法的选择
+    if (track.contains(nums[i]))
+        continue;
+    // 做选择
+    track.add(nums[i]);
+    // 进入下一层决策树
+    backtrack(nums, track);
+    // 取消选择
+    track.removeLast();
+}
+</code></pre><p>}</p>
+<h2 id="n皇后问题"><a href="#n皇后问题" class="headerlink" title="n皇后问题"></a>n皇后问题</h2><p>给你一个 N×N 的棋盘，让你放置 N 个皇后，使得它们不能互相攻击。<br>PS：皇后可以攻击同一行、同一列、左上左下右上右下四个方向的任意单位。<br>vector<vector<string>&gt; res;</vector<string></p>
+<p>/<em> 输入棋盘边长 n，返回所有合法的放置 </em>/<br>vector<vector<string>&gt; solveNQueens(int n) {<br>    // ‘.’ 表示空，’Q’ 表示皇后，初始化空棋盘。<br>    vector<string> board(n, string(n, ‘.’));<br>    backtrack(board, 0);<br>    return res;<br>}</string></vector<string></p>
+<p>// 路径：board 中小于 row 的那些行都已经成功放置了皇后<br>// 选择列表：第 row 行的所有列都是放置皇后的选择<br>// 结束条件：row 超过 board 的最后一行<br>void backtrack(vector<string>&amp; board, int row) {<br>    // 触发结束条件<br>    if (row == board.size()) {<br>        res.push_back(board);<br>        return;<br>    }</string></p>
+<pre><code>int n = board[row].size();
+for (int col = 0; col &lt; n; col++) {
+    // 排除不合法选择
+    if (!isValid(board, row, col)) 
+        continue;
+    // 做选择
+    board[row][col] = &apos;Q&apos;;
+    // 进入下一行决策
+    backtrack(board, row + 1);
+    // 撤销选择
+    board[row][col] = &apos;.&apos;;
+}
+</code></pre><p>}<br>/<em> 是否可以在 board[row][col] 放置皇后？ </em>/<br>bool isValid(vector<string>&amp; board, int row, int col) {<br>    int n = board.size();<br>    // 检查列是否有皇后互相冲突<br>    for (int i = 0; i &lt; n; i++) {<br>        if (board[i][col] == ‘Q’)<br>            return false;<br>    }<br>    // 检查右上方是否有皇后互相冲突<br>    for (int i = row - 1, j = col + 1;<br>            i &gt;= 0 &amp;&amp; j &lt; n; i–, j++) {<br>        if (board[i][j] == ‘Q’)<br>            return false;<br>    }<br>    // 检查左上方是否有皇后互相冲突<br>    for (int i = row - 1, j = col - 1;<br>            i &gt;= 0 &amp;&amp; j &gt;= 0; i–, j–) {<br>        if (board[i][j] == ‘Q’)<br>            return false;<br>    }<br>    return true;<br>}</string></p>
+<p>int openLock(String[] deadends, String target) {<br>    // 记录需要跳过的死亡密码<br>    Set<string> deads = new HashSet&lt;&gt;();<br>    for (String s : deadends) deads.add(s);<br>    // 记录已经穷举过的密码，防止走回头路<br>    Set<string> visited = new HashSet&lt;&gt;();<br>    Queue<string> q = new LinkedList&lt;&gt;();<br>    // 从起点开始启动广度优先搜索<br>    int step = 0;<br>    q.offer(“0000”);<br>    visited.add(“0000”);</string></string></string></p>
+<pre><code>while (!q.isEmpty()) {
+    int sz = q.size();
+    /* 将当前队列中的所有节点向周围扩散 */
+    for (int i = 0; i &lt; sz; i++) {
+        String cur = q.poll();
+
+        /* 判断是否到达终点 */
+        if (deads.contains(cur))
+            continue;
+        if (cur.equals(target))
+            return step;
+
+        /* 将一个节点的未遍历相邻节点加入队列 */
+        for (int j = 0; j &lt; 4; j++) {
+            String up = plusOne(cur, j);
+            if (!visited.contains(up)) {
+                q.offer(up);
+                visited.add(up);
+            }
+            String down = minusOne(cur, j);
+            if (!visited.contains(down)) {
+                q.offer(down);
+                visited.add(down);
+            }
+        }
+    }
+    /* 在这里增加步数 */
+    step++;
+}
+// 如果穷举完都没找到目标密码，那就是找不到了
+return -1;
+</code></pre><p>}</p>
+<h2 id="给定一组非负整数，重新排列它们的顺序使之组成一个最大的整数。"><a href="#给定一组非负整数，重新排列它们的顺序使之组成一个最大的整数。" class="headerlink" title="给定一组非负整数，重新排列它们的顺序使之组成一个最大的整数。"></a>给定一组非负整数，重新排列它们的顺序使之组成一个最大的整数。</h2><p>输入: [10,2]<br>输出: 210<br>想法<br>为了构建最大数字，我们希望越高位的数字越大越好。<br>当数字是多位时，我们构建s1，s2，将s1+s2 和s2 + s1 进行比较，哪个大哪个放前面<br>class Solution {<br>    private class LargerNumberComparator implements Comparator<string> {<br>        @Override<br>        public int compare(String a, String b) {<br>            String order1 = a + b;<br>            String order2 = b + a;<br>           return order2.compareTo(order1);<br>        }<br>    }</string></p>
+<pre><code>public String largestNumber(int[] nums) {
+    // Get input integers as strings.
+    String[] asStrs = new String[nums.length];
+    for (int i = 0; i &lt; nums.length; i++) {
+        asStrs[i] = String.valueOf(nums[i]);
+    }
+
+    // Sort strings according to custom comparator.
+    Arrays.sort(asStrs, new LargerNumberComparator());
+
+    // If, after being sorted, the largest number is `0`, the entire number
+    // is zero.
+    if (asStrs[0].equals(&quot;0&quot;)) {
+        return &quot;0&quot;;
+    }
+
+    // Build largest number from sorted array.
+    String largestNumberStr = new String();
+    for (String numAsStr : asStrs) {
+        largestNumberStr += numAsStr;
+    }
+
+    return largestNumberStr;
+}
+</code></pre><p>}</p>
+<h2 id="摆动排序"><a href="#摆动排序" class="headerlink" title="摆动排序"></a>摆动排序</h2><p>输入: nums = [1, 5, 1, 1, 6, 4]<br>输出: 一个可能的答案是 [1, 4, 1, 5, 1, 6]</p>
+<ol>
+<li><p>解法1：排序<br>首先，我们可以很容易想到一种简单的解法：将数组进行排序，然后从中间位置进行等分（如果数组长度为奇数，则将中间的元素分到前面），然后将两个数组进行穿插。<br>但是这一解法有一个问题，例如，对于数组[1, 2, 2, 3]，按照这种做法求得的结果仍为[1, 2, 2, 3]<br>为了方便阅读，我们在下文中定义较小的子数组为数组A，较大的子数组为数组B。显然，出现上述现象是因为nums中存在重复元素。实际上，由于穿插之后，相邻元素必来自不同子数组，所以A或B内部出现重复元素是不会出现上述现象的。所以，出现上述情况其实是因为数组A和数组B出现了相同元素，我们用r来表示这一元素。而且我们可以很容易发现，如果A和B都存在r，那么r一定是A的最大值，B的最小值，这意味着r一定出现在A的尾部，B的头部。其实，如果这一数字的个数较少，不会出现这一现象，只有当这一数字个数达到原数组元素总数的一半，才会在穿插后的出现在相邻位置。<br>class Solution {</p>
+<p> /**</p>
+<ul>
+<li>先排序再穿插</li>
+<li>O(nlogn)+O(n)=O(nlogn)</li>
+<li><p>@param nums<br>*/<br>public void wiggleSort(int[] nums) {<br> //排序<br> Arrays.sort(nums);<br> int len=nums.length,i = 0;<br> int[] smaller=new int[len%2==0?len/2:(len/2+1)],bigger=new int[len/2];<br> //复制<br> System.arraycopy(nums,0,smaller,0,smaller.length);<br> System.arraycopy(nums,smaller.length,bigger,0,len/2);<br> //穿插<br> for (; i &lt; len / 2; i++) {</p>
+<pre><code>nums[2*i]=smaller[smaller.length-1-i];
+nums[2*i+1]=bigger[len/2-1-i];
+</code></pre><p> }<br> if (len%2!=0) nums[2*i]=smaller[smaller.length-1-i];<br>}<br>}</p>
+<h2 id="计算右侧小于当前元素的个数"><a href="#计算右侧小于当前元素的个数" class="headerlink" title="计算右侧小于当前元素的个数"></a>计算右侧小于当前元素的个数</h2><p>给定一个整数数组 nums，按要求返回一个新数组 counts。数组 counts 有该性质： counts[i] 的值是  nums[i] 右侧小于 nums[i] 的元素的数量。<br>输入：[5,2,6,1]<br>输出：[2,1,1,0]<br>解释：<br>5 的右侧有 2 个更小的元素 (2 和 1)<br>2 的右侧仅有 1 个更小的元素 (1)<br>6 的右侧有 1 个更小的元素 (1)<br>1 的右侧有 0 个更小的元素<br>方法一：离散化树状数组<br>class Solution {<br>private int[] c;<br>private int[] a;</p>
+<p>public List<integer> countSmaller(int[] nums) {<br> List<integer> resultList = new ArrayList<integer>();<br> discretization(nums);<br> init(nums.length + 5);<br> for (int i = nums.length - 1; i &gt;= 0; –i) {</integer></integer></integer></p>
+<pre><code>int id = getId(nums[i]);
+resultList.add(query(id - 1));
+update(id);
+</code></pre><p> }<br> Collections.reverse(resultList);<br> return resultList;<br>}</p>
+<p>private void init(int length) {<br> c = new int[length];<br> Arrays.fill(c, 0);<br>}</p>
+<p>private int lowBit(int x) {<br> return x &amp; (-x);<br>}</p>
+<p>private void update(int pos) {<br> while (pos &lt; c.length) {</p>
+<pre><code>c[pos] += 1;
+pos += lowBit(pos);
+</code></pre><p> }<br>}</p>
+<p>private int query(int pos) {<br> int ret = 0;<br> while (pos &gt; 0) {</p>
+<pre><code>ret += c[pos];
+pos -= lowBit(pos);
+</code></pre><p> }</p>
+<p> return ret;<br>}</p>
+<p>private void discretization(int[] nums) {<br> Set<integer> set = new HashSet<integer>();<br> for (int num : nums) {</integer></integer></p>
+<pre><code>set.add(num);
+</code></pre><p> }<br> int size = set.size();<br> a = new int[size];<br> int index = 0;<br> for (int num : set) {</p>
+<pre><code>a[index++] = num;
+</code></pre><p> }<br> Arrays.sort(a);<br>}</p>
+<p>private int getId(int x) {<br> return Arrays.binarySearch(a, x) + 1;<br>}<br>}</p>
+<h2 id="小偷问题"><a href="#小偷问题" class="headerlink" title="小偷问题"></a>小偷问题</h2><p>你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。<br>给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。<br>方法一：动态规划 + 滚动数组<br>class Solution {<br>public int rob(int[] nums) {<br> if (nums == null || nums.length == 0) {</p>
+<pre><code>return 0;
+</code></pre><p> }<br> int length = nums.length;<br> if (length == 1) {</p>
+<pre><code>return nums[0];
+</code></pre><p> }<br> int[] dp = new int[length];<br> dp[0] = nums[0];<br> dp[1] = Math.max(nums[0], nums[1]);<br> for (int i = 2; i &lt; length; i++) {</p>
+<pre><code>dp[i] = Math.max(dp[i - 2] + nums[i], dp[i - 1]);
+</code></pre><p> }<br> return dp[length - 1];<br>}<br>}</p>
+<h2 id="最长上升子序列"><a href="#最长上升子序列" class="headerlink" title="最长上升子序列"></a>最长上升子序列</h2><p>动态规划<br>public class Solution {<br>public int lengthOfLIS(int[] nums) {<br> if (nums.length == 0) {</p>
+<pre><code>return 0;
+</code></pre><p> }<br> int[] dp = new int[nums.length];<br> dp[0] = 1;<br> int maxans = 1;<br> for (int i = 1; i &lt; dp.length; i++) {</p>
+<pre><code>int maxval = 0;
+for (int j = 0; j &lt; i; j++) {
+    if (nums[i] &gt; nums[j]) {
+        maxval = Math.max(maxval, dp[j]);
+    }
+}
+dp[i] = maxval + 1;
+maxans = Math.max(maxans, dp[i]);
+</code></pre><p> }<br> return maxans;<br>}<br>}<br>贪心 + 二分查找<br>class Solution {<br>public:<br>int lengthOfLIS(vector<int>&amp; nums) {<br> int len = 1, n = (int)nums.size();<br> if (n == 0) return 0;<br> vector<int> d(n + 1, 0);<br> d[len] = nums[0];<br> for (int i = 1; i &lt; n; ++i) {</int></int></p>
+<pre><code>if (nums[i] &gt; d[len]) d[++len] = nums[i];
+else{
+    int l = 1, r = len, pos = 0; // 如果找不到说明所有的数都比 nums[i] 大，此时要更新 d[1]，所以这里将 pos 设为 0
+    while (l &lt;= r) {
+        int mid = (l + r) &gt;&gt; 1;
+        if (d[mid] &lt; nums[i]) {
+            pos = mid;
+            l = mid + 1;
+        }
+        else r = mid - 1;
+    }
+    d[pos + 1] = nums[i];
+}
+</code></pre><p> }<br> return len;<br>}<br>};</p>
+<h2 id="零钱兑换"><a href="#零钱兑换" class="headerlink" title="零钱兑换"></a>零钱兑换</h2><p>给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。<br>方法一、搜索回溯 [超出时间限制]<br>public class Solution {</p>
+</li>
+</ul>
+<p>public int coinChange(int[] coins, int amount) {<br> return coinChange(0, coins, amount);<br>}</p>
+<p>private int coinChange(int idxCoin, int[] coins, int amount) {<br> if (amount == 0)<br>   return 0;<br> if (idxCoin &lt; coins.length &amp;&amp; amount &gt; 0) {<br>   int maxVal = amount / coins[idxCoin];<br>   int minCost = Integer.MAX_VALUE;<br>   for (int x = 0; x &lt;= maxVal; x++) {</p>
+<pre><code>if (amount &gt;= x * coins[idxCoin]) {
+  int res = coinChange(idxCoin + 1, coins, amount - x * coins[idxCoin]);
+  if (res != -1)
+    minCost = Math.min(minCost, res + x);
+}
+</code></pre><p>   }<br>   return (minCost == Integer.MAX_VALUE)? -1: minCost;<br> }<br> return -1;<br>}<br>}<br>方法二、动态规划-自上而下 [通过]<br>public class Solution {</p>
+<p>public int coinChange(int[] coins, int amount) {<br> if (amount &lt; 1) return 0;<br> return coinChange(coins, amount, new int[amount]);<br>}</p>
+<p>private int coinChange(int[] coins, int rem, int[] count) {<br> if (rem &lt; 0) return -1;<br> if (rem == 0) return 0;<br> if (count[rem - 1] != 0) return count[rem - 1];<br> int min = Integer.MAX_VALUE;<br> for (int coin : coins) {<br>   int res = coinChange(coins, rem - coin, count);<br>   if (res &gt;= 0 &amp;&amp; res &lt; min)</p>
+<pre><code>min = 1 + res;
+</code></pre><p> }<br> count[rem - 1] = (min == Integer.MAX_VALUE) ? -1 : min;<br> return count[rem - 1];<br>}<br>}<br>方法三、动态规划：自下而上 [通过]<br>public class Solution {<br>public int coinChange(int[] coins, int amount) {<br> int max = amount + 1;<br> int[] dp = new int[amount + 1];<br> Arrays.fill(dp, max);<br> dp[0] = 0;<br> for (int i = 1; i &lt;= amount; i++) {<br>   for (int j = 0; j &lt; coins.length; j++) {</p>
+<pre><code>if (coins[j] &lt;= i) {
+  dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
+}
+</code></pre><p>   }<br> }<br> return dp[amount] &gt; amount ? -1 : dp[amount];<br>}<br>}</p>
+<h2 id="矩阵中的最长递增路径"><a href="#矩阵中的最长递增路径" class="headerlink" title="矩阵中的最长递增路径"></a>矩阵中的最长递增路径</h2><p>本文面向高阶读者者。它引入了以下概念：深度优先搜索，记忆化，动态规划和拓扑排序。本文解释了动态规划和拓扑排序的关系。</p>
+</li>
+</ol>
+<p>给定两个单词（beginWord 和 endWord）和一个字典，找到从 beginWord 到 endWord 的最短转换序列的长度。转换需遵循如下规则：<br>每次转换只能改变一个字母。<br>转换过程中的中间单词必须是字典中的单词。<br>输入:<br>beginWord = “hit”,<br>endWord = “cog”,<br>wordList = [“hot”,”dot”,”dog”,”lot”,”log”,”cog”]</p>
+<p>输出: 5</p>
+<p>解释: 一个最短转换序列是 “hit” -&gt; “hot” -&gt; “dot” -&gt; “dog” -&gt; “cog”,<br>     返回它的长度 5。<br>我们将问题抽象在一个无向无权图中，每个单词作为节点，差距只有一个字母的两个单词之间连一条边。问题变成找到从起点到终点的最短路径，如果存在的话。因此可以使用广度优先搜索方法。<br>方法 1：广度优先搜索<br>class Solution {<br>  public int ladderLength(String beginWord, String endWord, List<string> wordList) {</string></p>
+<pre><code>// Since all words are of same length.
+int L = beginWord.length();
+
+// Dictionary to hold combination of words that can be formed,
+// from any given word. By changing one letter at a time.
+Map&lt;String, List&lt;String&gt;&gt; allComboDict = new HashMap&lt;&gt;();
+
+wordList.forEach(
+    word -&gt; {
+      for (int i = 0; i &lt; L; i++) {
+        // Key is the generic word
+        // Value is a list of words which have the same intermediate generic word.
+        String newWord = word.substring(0, i) + &apos;*&apos; + word.substring(i + 1, L);
+        List&lt;String&gt; transformations = allComboDict.getOrDefault(newWord, new ArrayList&lt;&gt;());
+        transformations.add(word);
+        allComboDict.put(newWord, transformations);
+      }
+    });
+
+// Queue for BFS
+Queue&lt;Pair&lt;String, Integer&gt;&gt; Q = new LinkedList&lt;&gt;();
+Q.add(new Pair(beginWord, 1));
+
+// Visited to make sure we don&apos;t repeat processing same word.
+Map&lt;String, Boolean&gt; visited = new HashMap&lt;&gt;();
+visited.put(beginWord, true);
+
+while (!Q.isEmpty()) {
+  Pair&lt;String, Integer&gt; node = Q.remove();
+  String word = node.getKey();
+  int level = node.getValue();
+  for (int i = 0; i &lt; L; i++) {
+
+    // Intermediate words for current word
+    String newWord = word.substring(0, i) + &apos;*&apos; + word.substring(i + 1, L);
+
+    // Next states are all the words which share the same intermediate state.
+    for (String adjacentWord : allComboDict.getOrDefault(newWord, new ArrayList&lt;&gt;())) {
+      // If at any point if we find what we are looking for
+      // i.e. the end word - we can return with the answer.
+      if (adjacentWord.equals(endWord)) {
+        return level + 1;
+      }
+      // Otherwise, add it to the BFS Queue. Also mark it visited
+      if (!visited.containsKey(adjacentWord)) {
+        visited.put(adjacentWord, true);
+        Q.add(new Pair(adjacentWord, level + 1));
+      }
+    }
+  }
+}
+
+return 0;
+</code></pre><p>  }<br>}</p>
+<h2 id="计算网格中岛屿的数量"><a href="#计算网格中岛屿的数量" class="headerlink" title="计算网格中岛屿的数量"></a>计算网格中岛屿的数量</h2><p>给你一个由 ‘1’（陆地）和 ‘0’（水）组成的的二维网格，请你计算网格中岛屿的数量。</p>
+<p>岛屿总是被水包围，并且每座岛屿只能由水平方向或竖直方向上相邻的陆地连接形成。</p>
+<p>此外，你可以假设该网格的四条边均被水包围。<br>输入:<br>[<br>[‘1’,’1’,’1’,’1’,’0’],<br>[‘1’,’1’,’0’,’1’,’0’],<br>[‘1’,’1’,’0’,’0’,’0’],<br>[‘0’,’0’,’0’,’0’,’0’]<br>]<br>输出: 1<br>方法一：深度优先搜索<br>我们可以将二维网格看成一个无向图，竖直或水平相邻的 1 之间有边相连。</p>
+<h2 id="找出那个只出现了一次的元素"><a href="#找出那个只出现了一次的元素" class="headerlink" title="找出那个只出现了一次的元素"></a>找出那个只出现了一次的元素</h2><p>给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。<br>方法一：位运算<br>class Solution {<br>    public int singleNumber(int[] nums) {<br>        int single = 0;<br>        for (int num : nums) {<br>            single ^= num;<br>        }<br>        return single;<br>    }<br>}</p>
+<p>给定两个整数，分别表示分数的分子 numerator 和分母 denominator，以字符串形式返回小数。<br>如果小数部分为循环小数，则将循环的部分括在括号内。<br>不需要复杂的数学知识，只需要数学的基本知识。了解长除法的运算规则。<br>注意边界情况！列出所有你可以想到的测试数据并验证你的代码。<br>长除法：核心思想是当余数出现循环的时候，对应的商也会循环。<br>需要用一个哈希表记录余数出现在小数部分的位置，当你发现已经出现的余数，就可以将重复出现的小数部分用括号括起来。</p>
+<h2 id="找到若干个完全平方数"><a href="#找到若干个完全平方数" class="headerlink" title="找到若干个完全平方数"></a>找到若干个完全平方数</h2><p>给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, …）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少。<br>输入: n = 12<br>输出: 3<br>解释: 12 = 4 + 4 + 4.<br>class Solution {</p>
+<p>  public int numSquares(int n) {<br>    int dp[] = new int[n + 1];<br>    Arrays.fill(dp, Integer.MAX_VALUE);<br>    // bottom case<br>    dp[0] = 0;</p>
+<pre><code>// pre-calculate the square numbers.
+int max_square_index = (int) Math.sqrt(n) + 1;
+int square_nums[] = new int[max_square_index];
+for (int i = 1; i &lt; max_square_index; ++i) {
+  square_nums[i] = i * i;
+}
+
+for (int i = 1; i &lt;= n; ++i) {
+  for (int s = 1; s &lt; max_square_index; ++s) {
+    if (i &lt; square_nums[s])
+      break;
+    dp[i] = Math.min(dp[i], dp[i - square_nums[s]] + 1);
+  }
+}
+return dp[n];
+</code></pre><p>  }<br>}</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/29/M_Swift149位运算/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/29/M_Swift150算法整理/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars2.githubusercontent.com/u/12388663?v=3&u=20e1503339de9acf72fc1184728c2afca6ae9b4a&s=140"
+               alt="门乾强" />
+          <p class="site-author-name" itemprop="name">门乾强</p>
+          <p class="site-description motion-element" itemprop="description">博客</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">223</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#动态规划"><span class="nav-number">1.</span> <span class="nav-text">动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#礼物的最大价值"><span class="nav-number">1.1.</span> <span class="nav-text">礼物的最大价值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#掷骰子"><span class="nav-number">1.2.</span> <span class="nav-text">掷骰子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扑克牌中的顺子"><span class="nav-number">1.3.</span> <span class="nav-text">扑克牌中的顺子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#股票的最大利润"><span class="nav-number">1.4.</span> <span class="nav-text">股票的最大利润</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#丑数"><span class="nav-number">1.5.</span> <span class="nav-text">丑数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#乘积最大子数组"><span class="nav-number">1.6.</span> <span class="nav-text">乘积最大子数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现一个基本的计算器来计算一个简单的字符串表达式的值。"><span class="nav-number">1.7.</span> <span class="nav-text">实现一个基本的计算器来计算一个简单的字符串表达式的值。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LRU算法"><span class="nav-number">1.8.</span> <span class="nav-text">LRU算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串的排列"><span class="nav-number">1.9.</span> <span class="nav-text">字符串的排列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全排列问题"><span class="nav-number">1.10.</span> <span class="nav-text">全排列问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n皇后问题"><span class="nav-number">1.11.</span> <span class="nav-text">n皇后问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#给定一组非负整数，重新排列它们的顺序使之组成一个最大的整数。"><span class="nav-number">1.12.</span> <span class="nav-text">给定一组非负整数，重新排列它们的顺序使之组成一个最大的整数。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#摆动排序"><span class="nav-number">1.13.</span> <span class="nav-text">摆动排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算右侧小于当前元素的个数"><span class="nav-number">1.14.</span> <span class="nav-text">计算右侧小于当前元素的个数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小偷问题"><span class="nav-number">1.15.</span> <span class="nav-text">小偷问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最长上升子序列"><span class="nav-number">1.16.</span> <span class="nav-text">最长上升子序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#零钱兑换"><span class="nav-number">1.17.</span> <span class="nav-text">零钱兑换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵中的最长递增路径"><span class="nav-number">1.18.</span> <span class="nav-text">矩阵中的最长递增路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算网格中岛屿的数量"><span class="nav-number">1.19.</span> <span class="nav-text">计算网格中岛屿的数量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#找出那个只出现了一次的元素"><span class="nav-number">1.20.</span> <span class="nav-text">找出那个只出现了一次的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#找到若干个完全平方数"><span class="nav-number">1.21.</span> <span class="nav-text">找到若干个完全平方数</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

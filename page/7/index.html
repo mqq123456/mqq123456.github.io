@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2018/07/03/N_Android13内存/" itemprop="url">
-                  Android开发总结内存
+                <a class="post-title-link" href="/2018/08/01/M_Swift94Runtime理解/" itemprop="url">
+                  理解Runtime
                 </a>
               
             
@@ -242,7 +242,1765 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T14:23:23+08:00" content="2018-07-03">
+            <time itemprop="dateCreated" datetime="2018-08-01T09:16:13+08:00" content="2018-08-01">
+              2018-08-01
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="类结构体模型"><a href="#类结构体模型" class="headerlink" title="类结构体模型"></a>类结构体模型</h2><pre><code>// objc_object对象模型
+struct objc_object {
+    private:
+    isa_t isa;
+    public:
+    Class ISA();
+    Class getIsa();
+    // 省略其余方法
+    ...
+}
+// objc_class类模型
+struct objc_class : objc_object {
+    Class isa  //所属类的指针
+    Class super_class//指向父类的指针                                        
+    const char *name //类名                                     
+    long version // 版本                                 
+    long info //供运行期使用的一些位标识。                             
+    long instance_size //实例大小                                 
+    struct objc_ivar_list *ivars//成员变量数组                      
+    struct objc_method_list **methodLists//方法列表                  
+    struct objc_cache *cache//指向最近使用的方法.用于方法调用的优化                            
+    struct objc_protocol_list *protocols//协议的数组                     
+}
+在objc_class结构体中定义了对象的method list，
+protocal，ivar list等，表示对象的行为。
+</code></pre><h3 id="为什么说类也是对象"><a href="#为什么说类也是对象" class="headerlink" title="为什么说类也是对象"></a>为什么说类也是对象</h3><pre><code>类被定义为objc_class结构体，objc_class结构体继承自
+objc_objct,对象是用 objc_object 结构体表示的，所以类也
+是对象。
+oc中的类和元类也是一样，都是结构体构成的，由于类的结构体定义
+继承自objc_object所以其也是一个对象，并且具有对象的isa特
+征。
+在应用程序中，类对象只会被创建一份。
+</code></pre><h3 id="Meta-Class元类"><a href="#Meta-Class元类" class="headerlink" title="Meta Class元类"></a>Meta Class元类</h3><pre><code>isa指针指向Meta Class，因为Objc的类的本身也是一个
+Object，为了处理这个关系，runtime就创造了Meta Class，
+当给类发送[NSObject alloc]这样消息时，实际上是把这个
+消息发给了Class Object
+因为一个类是一个对象，它是元类(metaclass)的对象。
+元类是关于类对象的描述，
+就像类是普通实例对象的描述一样。实际上，元类的方法列表正
+是#类方法#：该类对象响应的选择器。
+</code></pre><h3 id="什么是isa指针"><a href="#什么是isa指针" class="headerlink" title="什么是isa指针"></a>什么是isa指针</h3><pre><code>每个对象都有一个标识对象类的isa实例变量。
+运行时使用此指针来确定对象需要时的实际类。
+1、 id类型是一个objc_object结构体的指针。
+2、objc_object结构体包含一个Class 类型的变量isa。
+3、 Class是objc_class结构体的指针。
+</code></pre><h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><pre><code>objc_msgSend第一个参数类型为id，大家对它都不陌生，
+它是一个指向类实例的指针：
+typedef struct objc_object *id;
+那objc_object又是啥呢：
+struct objc_object { Class isa; };
+objc_object结构体包含一个isa指针，根据isa指针就可以
+顺藤摸瓜找到对象所属的类。
+</code></pre><h3 id="为什么id类型可以指向OC中任意对象"><a href="#为什么id类型可以指向OC中任意对象" class="headerlink" title="为什么id类型可以指向OC中任意对象"></a>为什么id类型可以指向OC中任意对象</h3><pre><code>id类型被定义为指向对象的指针
+NSObject只有一个Class对象isa，而objc_object也是只有一个Class对
+象isa,也就是说id等价于NSObject*。所以id是一个一个比较灵活的对象指
+针，并且是一个指向任何一个继承了Object（或者NSObject）类的对象
+</code></pre><h3 id="为什么不能用isa判断一个类的继承关系"><a href="#为什么不能用isa判断一个类的继承关系" class="headerlink" title="为什么不能用isa判断一个类的继承关系"></a>为什么不能用isa判断一个类的继承关系</h3><pre><code>isa指针不总是指向实例对象所属的类，不能依靠它来确定
+类型，而是应该用class方法来确定实例对象的类。
+因为KVO的实现机理就是将被观察对象的isa指针指向一个中间类
+</code></pre><h2 id="类结构关系"><a href="#类结构关系" class="headerlink" title="类结构关系"></a>类结构关系</h2><pre><code>实例对象在运行时被表示成objc_object类型结构体，结构体内部
+有个isa指针指向objc_class结构体。objc_class内部保存了类
+的变量和方法列表以及其他一些信息，并且还有一个isa指针。这个
+isa指针会指向meteClass(元类)，元类里保存了这个类的类方法
+列表。
+runtime中设计了meta class， 通过meta class来创建类对
+象，所以类对象的isa指向对应的meta class。而meta class也
+是一个对象，所有元类的isa都指向其根元类，根元类的isa指针指
+向自己，通过这种设计，isa的整体结构形成了一个闭环。为了完整
+性，其实元类里也有一个isa指针，这个isa指针，指向的是根元
+类，根元类的isa指针指向自己
+实例对象--(runtime)--&gt;objc_object--(isa)--
+&gt;objc_class--(isa)--&gt;元类--isa--&gt;根元类--isa--&gt;自
+己。
+类和元类都有自己的继承体系，但它们都有共同的根父类
+NSObject，而NSObject的父类指向nil。Root 
+Class（Class）是NSObject类对象，而Root Class（Meta）
+是NSObject的元类对象。对于像NSObject这样的类来说，它其实
+代表的是一个类对象，本质上还是一个普通的实例对象，类对象的、
+self指针应该指向的是这个类对象自身。
+</code></pre><h3 id="继承实现"><a href="#继承实现" class="headerlink" title="继承实现"></a>继承实现</h3><pre><code>当我们调用某个类的方法时，如果这个类的方法列表里没有该方法，
+则会去找这个类的父类的方法列表。这种机制就是通过
+objc_class的第二个变量super_class指针实现的。
+并且这种继承关系会扩展到元类。
+</code></pre><h2 id="内存布局："><a href="#内存布局：" class="headerlink" title="内存布局："></a>内存布局：</h2><pre><code>类的本质时结构体，在结构体中包含一些成员变量，
+如method list，ivar list等，这些都是结构体的一部分，
+method protocol，property的实现这些都可以放到类中，
+所有对象调用同一份即可，但对象的成员变量不可以放在一起，
+因为每个对象的成员变量值都是不同的。
+</code></pre><h3 id="为什么不能添加变量"><a href="#为什么不能添加变量" class="headerlink" title="为什么不能添加变量"></a>为什么不能添加变量</h3><pre><code>创建实例对象时，会根据其对应的Class分配内存，内存构成
+是ivar+isa_t.并且实例变量不只是包含当前class的ivars，
+也会包含其继承链的ivars，ivars的内存布局在编译时就已经
+决定，运行时需要根据ivars内存布局创建对象，所以runtime
+不能动态修改ivars，会破坏已有的内存布局。
+</code></pre><h3 id="不能向编译后得到的类中增加实例变量"><a href="#不能向编译后得到的类中增加实例变量" class="headerlink" title="不能向编译后得到的类中增加实例变量"></a>不能向编译后得到的类中增加实例变量</h3><pre><code>因为编译后的类已经注册在runtime中，类结构体中的
+objc_ivar_list实例变量的链表和instance_size
+实例变量的内存大小已经确定，同时runtime会调用
+class_setIvarLayout或class_WeakIvarLayout
+来处理strong weak引用，所以不能向存在的类中添加实例变量
+运行时创建的类时可以添加实例变量，调用class_addIvar函数
+，但是得在调用objc_allocateClassPari之后，
+objc_registerClassPair之前，原因同上。
+</code></pre><h3 id="系统如何解决新增实例冲突"><a href="#系统如何解决新增实例冲突" class="headerlink" title="系统如何解决新增实例冲突"></a>系统如何解决新增实例冲突</h3><pre><code>类的结构体在编译时都是固定的，如果想修改类的结构需要重新编译
+原来UIViewController的结构体中增加了
+childViewControllers属性，这个时候和子类的内存偏移就
+发生了冲突，只不过，runtime有检测内存地址冲突的机制，
+在类生成实例变量时，会判断实例变量是否有地址冲突，
+如果发生冲突则调整对象的地址偏移。
+</code></pre><h2 id="ivars-methodLists"><a href="#ivars-methodLists" class="headerlink" title="ivars methodLists"></a>ivars methodLists</h2><pre><code>在objc_class结构体中：ivars是objc_ivar_list指针；
+methodLists是指向objc_method_list指针的指针。
+也就是说可以动态修改 *methodLists 的值来添加成员方法，
+这也是Category实现的原理.
+</code></pre><h2 id="IMP："><a href="#IMP：" class="headerlink" title="IMP："></a>IMP：</h2><pre><code>//结构
+typedef void (*IMP)(void /* id, SEL, ... */ );
+在runtime中IMP本质上就是一个函数指针
+在IMP中有两个默认的参数id和SEL，id也就是方法的self
+这和objc_msgSend()函数传递的参数一样；
+Runtime提供很多对于IMP的操作API，我们很多Runtime函数都
+是IMP操作
+</code></pre><h2 id="Method："><a href="#Method：" class="headerlink" title="Method："></a>Method：</h2><pre><code>//结构
+typedef struct method_t *Method;
+struct method_t { 
+    SEL name;
+    const char *types;
+    IMP imp; 
+};
+用来表示方法，其中包含SEL和IMP
+</code></pre><h2 id="Property："><a href="#Property：" class="headerlink" title="Property："></a>Property：</h2><pre><code>在runtime中定义了属性的结构体，用来表示对象中定义的属性。
+@property修饰符用来修饰属性，修饰后的属性为
+objc_property_t类型，其本质是property_t结构体
+    struct property_t {
+    const char *name; 
+    const char *attributes;
+};
+</code></pre><h2 id="ivar读写"><a href="#ivar读写" class="headerlink" title="ivar读写"></a>ivar读写</h2><pre><code>实例变量的isa_t指针会指向其所属的类，对象中并不会包含
+method，property，protocol，ivar等信息，这些信息在编
+译时都保存在只读结构体class_ro_t中。在class_ro_t中ivar
+时const只读的，在image load时copy到class_rw_t中时，
+是不会copy ivars的，并且class_rw_t中并没有定义ivars
+的字段。
+在防伪某个成员变量时，直接通过isa_t找到对应的objc_class
+并通过其class_ro_t的ivar list做地址偏移，查找对应的对象
+内存，正是由于这种方式，所以对象的内存地址是固定不可改变的。
+</code></pre><h2 id="方法传参："><a href="#方法传参：" class="headerlink" title="方法传参："></a>方法传参：</h2><pre><code>当调用实例变量的方法时，会通过objc_msgSend（）发起调用。
+调用是会传入self和SEL，函数内部通过isa在类的内部查找方法
+列表对应的IMP，传入对应的参数并发起调用，如果调用的方法涉
+及到当前对象的成员变量的访问，这是就是通过objc_msgSend()
+内部，通过类的ivar list判断地址偏移，取出ivar并传入调
+用的IMP中的。
+调用super的方式时则调用objc_msgSendSuper()函数实现
+</code></pre><h2 id="isa-t"><a href="#isa-t" class="headerlink" title="isa_t:"></a>isa_t:</h2><pre><code>对于对象指针也是一样，在oc1.0时，isa时一个真的指针，
+指向一堆区的地址，而在oc2.0时代，一个指针长度时八个字节
+也就是64位，在64位中直接存储着对象的信息。当查找对象所属
+的类时，直接在isa指针中进行位运算即可，而且由于在栈区进
+行操作，查找速度非常快。
+例如，isa_t本质时一个结构体，如果创建结构体再用指针指向这
+个结构体，内存占用是很大的，但是Tagged Pointer特性中，
+直接把结构体的值都存储到指针中，这样就相当节省内存了。
+苹果不允许直接访问isa指针，和Tagged Pointer也是有关
+系的，因为tagged Pointer的情况下，isa并不是一个指针指
+向另一块内存区，而是直接表示对象的值，所以通过直接访问
+isa获取到的信息是错误的。
+</code></pre><h2 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a>SEL</h2><pre><code>它是selector在Objc中的表示类型（Swift中是
+Selector类）。selector是方法选择器，
+可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
+typedef struct objc_selector *SEL;
+从源码中看其实是一个const *的常量字符串，只代表名字而已
+其实它就是个映射到方法的C字符串，你可以用 Objc 
+编译器命令@selector()或者 Runtime 系统的
+sel_registerName函数来获得一个SEL类型的方法选择器。
+常见来两个相同的类，并定规两个相同的方法，通过@selector
+获取SEL并打印，我们发现SEL都是同一个对象，地址都是相同的，
+不同类的相同SEL是同一个对象。
+在runtime中维护一个SEL列表，这个表不按照类存储，
+只要相同SEL就算作一个，并存储到表中。
+</code></pre><h2 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h2><pre><code>协议存储在protocol_t结构体中，而protocol_t继承objc_object，所以也就具备对象特征
+struct protocol_t : objc_object {
+    const char *mangledName;
+    struct protocol_list_t *protocols; 
+    method_list_t *instanceMethods; 
+    method_list_t *classMethods;
+    method_list_t *optionalInstanceMethods;
+    method_list_t *optionalClassMethods;
+    property_list_t *instanceProperties;
+    uint32_t size; // sizeof(protocol_t) 
+    uint32_t flags;
+    const char **_extendedMethodTypes; 
+    const char *_demangledName; 
+    property_list_t *_classProperties;
+};
+既然具备了对象的特征，那么也有isa指针，在Protocol中所有的isa都指向同一个类Protocol。Protocol类并没有元类
+</code></pre><h2 id="runtime如何实现weak变量的自动置nil"><a href="#runtime如何实现weak变量的自动置nil" class="headerlink" title="runtime如何实现weak变量的自动置nil"></a>runtime如何实现weak变量的自动置nil</h2><pre><code>runtime 对注册的类， 会进行布局，对于 weak 对象会放入一个 hash 表
+中。 用 weak 指向的对象内存地址作为 key，当此对象的引用计数为0的时
+候会 dealloc，假如 weak 指向的对象内存地址是a，那么就会以a为键， 
+在这个 weak 表中搜索，找到所有以a为键的 weak 对象，从而设置为 nil
+</code></pre><h2 id="map-images-函数Runtime-初始化操作"><a href="#map-images-函数Runtime-初始化操作" class="headerlink" title="map_images 函数Runtime 初始化操作"></a>map_images 函数Runtime 初始化操作</h2><pre><code>在runtime中所有类都存在一个哈希表中，在table的buckets中存储
+1. 加载所有类到类的gdb_objc_realized_classes表中
+2. 对所有类做重映射
+3. 将所有SEL都注册到namedSelectors表中
+4. 修复函数指针遗留
+5. 将所有Protocol添加到protocol_map表中
+6. 将所有Protocol重映射
+7. 初始化所有非懒加载的类，进行rw，ro操作 
+8. 便利所有懒加载类，执行初始化
+9. 处理所有Category包括Class和MetaClass
+10. 初始化所有未初始化类
+</code></pre><h2 id="load方法"><a href="#load方法" class="headerlink" title="load方法"></a>load方法</h2><pre><code>Load方法是在类加载的时候调用的，是在类加载到运行时的时候调用的，
+在mian函数之前，由系统调用，所以比较适合在load中调用钩子方法。只调用
+一次，注意load方法是直接调用的，并没有走运行时的objc_msgSend函数
+load方法顺序应该是，父类-&gt;子类-&gt;分类
+</code></pre><h2 id="initialize"><a href="#initialize" class="headerlink" title="initialize"></a>initialize</h2><pre><code>initialize是由Runtime调用的，与load不同的是，initialize方法是第
+一次调用类所属方法时才会调用，如果当前类方法永远不被调用的话
+initialize有可能永远不会执行。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/31/M_Swift100KVC/" itemprop="url">
+                  KVC
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-31T16:32:01+08:00" content="2018-07-31">
+              2018-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
+键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
+默认在NSObject中实现。
+</code></pre><h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><pre><code>-(id)  valueForKey: (NSString *) key
+返回表示属性的键字符串所对应的值。如果不能取得值
+，则将引起接收器调用方法valueForUndefinedKey:。
+-(void)setValue: (id) value  forKey: (NSString*) key
+</code></pre><h2 id="访问过程"><a href="#访问过程" class="headerlink" title="访问过程"></a>访问过程</h2><pre><code>1.接收器中如果有key访问器
+（或getKey、isKey、_key、_getKey、setKey）则使用它。
+2.没有访问器时，使用接收器的类方法
+accessInstanceVariablesDirectly来查询。返回YES时，如果存在实例
+变量key（或_key、isKey、_isKey等）则返回或设置其值。使用引用计数管
+理方式时，实例变量如果为对象，则旧值会被自动释放，新值被保存并代入。
++(BOOL)accessInstanceVariablesDirectly
+通常定义为返回YES，可以在子类中改变。该类方法返回YES时，使用键值编码
+可以访问该类的实例变量。返回NO时不可以访问。只要该方法返回YES，实例变
+量的可视属性即使有@private修饰，也可以访问。
+3.既没有访问器也没有实例变量时，将引起接收器调用方法
+valueForUndefinedKey:或setValue:forUndefinedKey:。
+-(id) valueForUndefinedKey: (NSStirng *) key
+不能取得键字符串对应的值时，从方法valueForKey：中调用该方法。默认情
+况下，该方法的执行会触发NSUndefinedKeyException。不过，通过在子类
+中修改定义，就可以返回其他对象。
+- (void) setValue:(id)value forUndefinedKey:(NSString *) key
+不能设置键字符串key对应的属性值时，从方法setValue:forKey中调用该方
+法。默认情况下，该方法的执行会触发异常NSUndefinedKeyException。不
+过，通过在子类中修改定义，可以返回其他对象。
+4.   如果该返回值不是对象，则返回被适当的对象包装的值；设置值时也应先
+包装成相应的对象。
+属性为对象时，该对象还可能持有属性。这时候可以用“.”连接表示键的字符
+串，这种表示方式称为键路径。只要能找到对象，点和键多长都没有关系。
+- (id)valueForKeyPath:(NSString *) keyPath
+以点切分键路径，并使用第一个键向接收器发送valueForKey：方法。然后，
+再使用键路径的下一个键，向得到的对象发送valueForKey：方法，如此反复
+操作，返回最后获得的对象。
+- (void)setValue:(id) value forKeyPath:(NSString *) keyPath
+与valueForKeyPath：方法一样取出对象，这里只对路径中的最后一个键调用
+setValue：forKey：方法，并设定属性值为value。
+</code></pre><h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="KVC提供了验证Key对应的Value是否可用的方法："><a href="#KVC提供了验证Key对应的Value是否可用的方法：" class="headerlink" title="KVC提供了验证Key对应的Value是否可用的方法："></a>KVC提供了验证Key对应的Value是否可用的方法：</h3><pre><code>(BOOL)validateValue:(inout id *)ioValue forKey:(NSString *)inKey error:(out NSError **)outError;  
+</code></pre><h3 id="KVC对数值和结构体型属性的支持"><a href="#KVC对数值和结构体型属性的支持" class="headerlink" title="KVC对数值和结构体型属性的支持"></a>KVC对数值和结构体型属性的支持</h3><h2 id="NSMutableDictionary的setObject和setValue的区别，哪一个add-nil对象会crash"><a href="#NSMutableDictionary的setObject和setValue的区别，哪一个add-nil对象会crash" class="headerlink" title="NSMutableDictionary的setObject和setValue的区别，哪一个add nil对象会crash"></a>NSMutableDictionary的setObject和setValue的区别，哪一个add nil对象会crash</h2><pre><code>1, setObject：forkey：中value是不能够为nil的，不然会报错。
+setValue：forKey：中value能够为nil，但是当value为nil的时候，会自动调用removeObject：forKey方法
+2, setValue：forKey：中key的参数只能够是NSString类型，而setObject：forKey：的可以是任何类型
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/31/M_Swift96Runtime常见作用/" itemprop="url">
+                  Runtime常见作用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-31T15:14:05+08:00" content="2018-07-31">
+              2018-07-31
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="动态的添加对象的成员变量和方法"><a href="#动态的添加对象的成员变量和方法" class="headerlink" title="动态的添加对象的成员变量和方法"></a>动态的添加对象的成员变量和方法</h2><pre><code>class_addMethod([self.person class], @selector(guess), (IMP)guessAnswer, &quot;v@:&quot;);
+参数说明
+&gt;(IMP)guessAnswer 意思是guessAnswer的地址指针;
+&gt;&quot;v@:&quot; 意思是，v代表无返回值void，如果是i则代表int；@代表 id sel; : 代表 SEL _cmd;
+&gt;“v@:@@” 意思是，两个参数的没有返回值。  
+</code></pre><h2 id="动态交换两个方法的实现"><a href="#动态交换两个方法的实现" class="headerlink" title="动态交换两个方法的实现"></a>动态交换两个方法的实现</h2><pre><code>交换方法之后，以后每次调用这两个方法都会交换方法的实现
+Method m1 = class_getInstanceMethod([self.person class], @selector(sayName));
+Method m2 = class_getInstanceMethod([self.person class], @selector(saySex));
+method_exchangeImplementations(m1, m2);
+</code></pre><h2 id="拦截并替换方法"><a href="#拦截并替换方法" class="headerlink" title="拦截并替换方法"></a>拦截并替换方法</h2><pre><code>我们要改变这个方法的实现，但是又不能去动它的源代码
+(正如一些开源库出现问题的时候)，
+这个时候runtime就派上用场了
+我们先增加一个tool类，然后写一个我们自己实现的方法-change，
+通过runtime把test1替换成change。
+Class PersionClass = object_getClass([Person class]);
+Class toolClass = object_getClass([tool class]);
+////源方法的SEL和Method
+SEL oriSEL = @selector(test1);
+Method oriMethod = class_getInstanceMethod(PersionClass, oriSEL);
+////交换方法的SEL和Method
+SEL cusSEL = @selector(change);
+Method cusMethod = class_getInstanceMethod(toolClass, cusSEL);
+////先尝试給源方法添加实现，这里是为了避免源方法没有实现的情况
+BOOL addSucc = class_addMethod(PersionClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+if (addSucc) {
+    // 添加成功：将源方法的实现替换到交换方法的实现     
+    class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+}else {
+    //添加失败：说明源方法已经有实现，直接将两个方法的实现交换即
+    method_exchangeImplementations(oriMethod, cusMethod);  
+}
+</code></pre><h2 id="在方法上增加额外功能"><a href="#在方法上增加额外功能" class="headerlink" title="在方法上增加额外功能"></a>在方法上增加额外功能</h2><pre><code>有这样一个场景，出于某些需求，我们需要跟踪记录APP
+中按钮的点击次数和频率等数据，怎么解决？当然通过继承按钮
+类或者通过类别实现是一个办法，但是带来其他问题比如别人不
+一定会去实例化你写的子类，或者其他类别也实现了点击方法导
+致不确定会调用哪一个，runtime可以这样解决，
+实现场景二、我们app经常会遇到一些cash，我们可以通过
+runtime拦截替换这些方法，从而保证不会崩溃，例如如下列举
+    NSArray+NSRangeException
+    NSDictionary+NSRangeException
+    NSMutableAttributedString+NSRangeException
+    NSMutableString+NSRangeException
+    NSNull+Exception
+    NSObject+Swizzling
+    NSString+NSRangeException
+    UINavigationController+Consistent
+load方法会在类第一次加载的时候被调用,调用的时间比较靠前，
+适合在这个方法里做方法交换,方法交换应该被保证，
+在程序中只会执行一次。
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        Class selfClass = [self class];
+        SEL oriSEL = @selector(sendAction:to:forEvent:);
+        Method oriMethod = class_getInstanceMethod(selfClass, oriSEL);
+        SEL cusSEL = @selector(mySendAction:to:forEvent:);
+        Method cusMethod = class_getInstanceMethod(selfClass, cusSEL);
+        BOOL addSucc = class_addMethod(selfClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+        if (addSucc) {
+            class_replaceMethod(selfClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+        }else {
+            method_exchangeImplementations(oriMethod, cusMethod);
+        }
+    });
+}
+- (void)mySendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event {
+    [[Tool sharedManager] addCount];
+    [self mySendAction:action to:target forEvent:event];
+}
+</code></pre><h2 id="实现NSCoding的自动归档和解档"><a href="#实现NSCoding的自动归档和解档" class="headerlink" title="实现NSCoding的自动归档和解档"></a>实现NSCoding的自动归档和解档</h2><pre><code>- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    unsigned int count = 0;
+    Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
+    for (int i = 0; i&lt;count; i++) {
+        // 取出i位置对应的成员变量
+        Ivar ivar = ivars[i];
+        // 查看成员变量
+        const char *name = ivar_getName(ivar);
+        // 归档
+        NSString *key = [NSString stringWithUTF8String:name];
+        id value = [self valueForKey:key];
+        [encoder encodeObject:value forKey:key];
+    }
+    free(ivars);
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (self = [super init]) {
+        unsigned int count = 0;
+        Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
+        for (int i = 0; i&lt;count; i++) {
+            // 取出i位置对应的成员变量
+            Ivar ivar = ivars[i];
+            // 查看成员变量
+            const char *name = ivar_getName(ivar);
+            // 归档
+            NSString *key = [NSString stringWithUTF8String:name];
+            id value = [decoder decodeObjectForKey:key];
+            // 设置到成员变量身上
+            [self setValue:value forKey:key];
+        }
+        free(ivars);
+    }
+    return self;
+}
+</code></pre><h2 id="实现字典转模型的自动转换"><a href="#实现字典转模型的自动转换" class="headerlink" title="实现字典转模型的自动转换"></a>实现字典转模型的自动转换</h2><pre><code>字典转模型的应用可以说是每个app必然会使用的场景,
+虽然实现的方式略有不同，但是原理都是一致的：遍历模型中所有
+属性，根据模型的属性名，去字典中查找key，取出对应的值，
+给模型的属性赋值。
+像几个出名的开源库：JSONModel,MJExtension等都是通过这
+种方式实现的。
+// 创建对应模型对象
+id objc = [[self alloc] init];
+unsigned int count = 0;
+// 1.获取成员属性数组
+Ivar *ivarList = class_copyIvarList(self, &amp;count);
+// 2.遍历所有的成员属性名,一个一个去字典中取出对应的
+value给模型属性赋值
+for (int i = 0; i &lt; count; i++) {
+    // 2.1 获取成员属性
+    Ivar ivar = ivarList[i];
+    // 2.2 获取成员属性名 C -&gt; OC 字符串
+    NSString *ivarName = [NSString stringWithUTF8String:ivar_getName(ivar)];
+    // 2.3 _成员属性名 =&gt; 字典key
+    NSString *key = [ivarName substringFromIndex:1];
+    // 2.4 去字典中取出对应value给模型属性赋值
+    id value = dict[key];
+    // 获取成员属性类型
+    NSString *ivarType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
+}
+如果模型比较简单，只有NSString，NSNumber等，
+这样就可以搞定了。但是如果模型含有NSArray，或者NSDictionary等，那么我们还需要进行第二步转换。
+if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![ivarType containsString:@&quot;NS&quot;]) { 
+    //  是字典对象,并且属性名对应类型是自定义类型
+    // 处理类型字符串 @\&quot;User\&quot; -&gt; User
+    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;@&quot; withString:@&quot;&quot;];
+    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;\&quot;&quot; withString:@&quot;&quot;];
+    // 自定义对象,并且值是字典
+    // value:user字典 -&gt; User模型
+    // 获取模型(user)类对象
+    Class modalClass = NSClassFromString(ivarType);
+    // 字典转模型
+    if (modalClass) {
+        // 字典转模型 user
+        value = [modalClass objectWithDict:value];
+    }
+}
+if ([value isKindOfClass:[NSArray class]]) {
+    // 判断对应类有没有实现字典数组转模型数组的协议
+    if ([self respondsToSelector:@selector(arrayContainModelClass)]) {
+        // 转换成id类型，就能调用任何对象的方法
+        id idSelf = self;
+        // 获取数组中字典对应的模型
+        NSString *type =  [idSelf arrayContainModelClass][key];
+        // 生成模型
+        Class classModel = NSClassFromString(type);
+        NSMutableArray *arrM = [NSMutableArray array];
+        // 遍历字典数组，生成模型数组
+        for (NSDictionary *dict in value) {
+            // 字典转模型
+            id model =  [classModel objectWithDict:dict];
+            [arrM addObject:model];
+        }
+        // 把模型数组赋值给value
+        value = arrM;
+    }
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/29/M_Swift89Runtime相关方法/" itemprop="url">
+                  Runtime
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-29T11:48:50+08:00" content="2018-07-29">
+              2018-07-29
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="1-基本使用"><a href="#1-基本使用" class="headerlink" title="1.基本使用"></a>1.基本使用</h2><pre><code>Objective-C 从三种不同的层级上与 Runtime 系统进行交互，
+分别是通过 Objective-C 源代码，
+通过 Foundation 框架的NSObject类定义的方法，
+通过对 runtime 函数的直接调用。
+RunTime简称运行时,就是系统在运行的时候的一些机制，
+其中最主要的是消息机制。
+每一个oc的方法，底层必然有一个与之对应的runtime方法。
+</code></pre><h2 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h2><h3 id="获取属性列表"><a href="#获取属性列表" class="headerlink" title="获取属性列表"></a>获取属性列表</h3><pre><code>objc_property_t *propertyList = class_copyPropertyList([self class], &amp;count);
+for (unsigned int i=0; i&lt;count; i++) {
+const char *propertyName = property_getName(propertyList[i]);
+NSLog(@&quot;property----&gt;%@&quot;, [NSString stringWithUTF8String:propertyName]);
+}
+</code></pre><h3 id="获取方法列表"><a href="#获取方法列表" class="headerlink" title="获取方法列表"></a>获取方法列表</h3><pre><code>Method *methodList = class_copyMethodList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Method method = methodList[i];
+NSLog(@&quot;method----&gt;%@&quot;, NSStringFromSelector(method_getName(method)));
+}
+</code></pre><h3 id="获取成员变量列表"><a href="#获取成员变量列表" class="headerlink" title="获取成员变量列表"></a>获取成员变量列表</h3><pre><code>Ivar *ivarList = class_copyIvarList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Ivar myIvar = ivarList[i];
+const char *ivarName = ivar_getName(myIvar);
+NSLog(@&quot;Ivar----&gt;%@&quot;, [NSString stringWithUTF8String:ivarName]);
+}
+</code></pre><h3 id="获取协议列表"><a href="#获取协议列表" class="headerlink" title="获取协议列表"></a>获取协议列表</h3><pre><code>__unsafe_unretained Protocol **protocolList = class_copyProtocolList([self class], &amp;count);
+for (unsigned int i; i&lt;count; i++) {
+Protocol *myProtocal = protocolList[i];
+const char *protocolName = protocol_getName(myProtocal);
+NSLog(@&quot;protocol----&gt;%@&quot;, [NSString stringWithUTF8String:protocolName]);
+}
+</code></pre><h3 id="获得类方法"><a href="#获得类方法" class="headerlink" title="获得类方法"></a>获得类方法</h3><pre><code>Class PersonClass = object_getClass([Person class]);
+SEL oriSEL = @selector(test1);
+Method oriMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
+</code></pre><h3 id="获取实例方法"><a href="#获取实例方法" class="headerlink" title="获取实例方法"></a>获取实例方法</h3><pre><code>Class PersonClass = object_getClass([xiaoming class]);
+SEL oriSEL = @selector(test2);
+Method cusMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
+</code></pre><h3 id="添加一个实例变量"><a href="#添加一个实例变量" class="headerlink" title="添加一个实例变量"></a>添加一个实例变量</h3><pre><code>/*
+参数一、类名
+参数二、属性名称
+参数三、开辟字节长度
+参数四、对其方式
+参数五、参数类型 “@” 官方解释 An object (whether statically typed or typed id) （对象 静态类型或者id类型） 具体类型可参照官方文档
+return: BOOL 是否添加成功
+*/
+BOOL isSuccess = class_addIvar(MyClass, &quot;addIvar&quot;, sizeof(NSString *), 0, &quot;@&quot;);
+</code></pre><h3 id="添加方法"><a href="#添加方法" class="headerlink" title="添加方法"></a>添加方法</h3><pre><code>/*
+参数一、类名
+参数二、SEL 添加的方法名字
+参数三、IMP指针 (IMP就是Implementation的缩写，它是指向一个方法实现的指针，每一个方法都有一个对应的IMP)
+参数四、其中types参数为&quot;i@:@“，按顺序分别表示：具体类型可参照官方文档
+i 返回值类型int，若是v则表示void
+@ 参数id(self)
+: SEL(_cmd)
+@ id(str)
+V@:表示返回值是void 带有SEL参数 （An object (whether statically typed or typed id)）
+*/
+BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+</code></pre><h3 id="替换方法"><a href="#替换方法" class="headerlink" title="替换方法"></a>替换方法</h3><pre><code>class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+</code></pre><h3 id="交换方法"><a href="#交换方法" class="headerlink" title="交换方法"></a>交换方法</h3><pre><code>method_exchangeImplementations(oriMethod, cusMethod);
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/26/M_Swift90算法之数学计算/" itemprop="url">
+                  算法之数学计算
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-26T11:30:02+08:00" content="2018-07-26">
+              2018-07-26
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="二分法查找"><a href="#二分法查找" class="headerlink" title="二分法查找"></a>二分法查找</h2><pre><code>function binarySeach( arr,val,leftIndex,rightIndex ){
+    //找到中间的值
+    var midIndex = Math.floor((leftIndex+rightIndex)/2);
+    var midval=arr[midIndex];
+    //console.log(midval );
+    if( leftIndex &gt; rightIndex ){
+        console.log(&quot;前一位是&quot;,midval );
+        console.log(&quot;下标：&quot;,midIndex);
+        return ;
+    }
+    if( midval &gt; val ){
+        binarySeach(arr,val,leftIndex,midIndex-1);
+    }else if(midval &lt; val){
+        binarySeach(arr,val,midIndex+1,rightIndex);
+    }else{
+        console.log(&quot;找到了,下标为:&quot;+midIndex);
+        return;
+    }
+}
+var arr=[1,3,12,21,24,44,54,67];
+binarySeach(arr,25,0,arr.length-1);
+</code></pre><h2 id="求两个数的最大公约数，递归"><a href="#求两个数的最大公约数，递归" class="headerlink" title="求两个数的最大公约数，递归"></a>求两个数的最大公约数，递归</h2><pre><code>function Gcd(var a, var b)
+ {
+      if(a&lt;=0||b&lt;=0)
+          return -1;
+     else if(a&gt;b)
+         return Gcd(a-b, b);
+     else if(a&lt;b)
+         return Gcd(a, b-a);
+     else
+         return a;
+ }
+// 最小公倍数 两个整数的乘积 / 最大公约数
+// a* b/gcd(a,b)
+</code></pre><h2 id="斐波那契数列"><a href="#斐波那契数列" class="headerlink" title="斐波那契数列"></a>斐波那契数列</h2><pre><code>function Fibonacci(int n) {
+    if(n &lt; 0){
+        return 0;
+    }
+    if(n == 0){
+        return 0;
+    }else if(n == 1){
+        return 1;
+    }else return Fibonacci(n-1)+ Fibonacci(n-2);
+}
+</code></pre><h2 id="累加求和"><a href="#累加求和" class="headerlink" title="累加求和"></a>累加求和</h2><pre><code>int sum = 0;//定义初始化总和
+for(int i=1;i&lt;=100;i++){//从1开始循环到100
+sum=sum+i;//加上当前序号
+}
+System.out.println(sum);//在控制台中打印出来
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/26/M_Swift92算法之排序/" itemprop="url">
+                  算法之排序
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-26T11:06:22+08:00" content="2018-07-26">
+              2018-07-26
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h2><pre><code>思想：每次遍历，相邻两个比较大小，修改位置
+复杂度：n平方
+function maopao(arr) {
+    for (var i = 0; i &lt; arr.length; i++) {
+        for (var j = 0; j &lt; arr.length; j++) {
+            if (arr[i] &gt; arr[j]) {
+                var temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+</code></pre><h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h2><pre><code>思想：一次便利结束后，找到最小的，放到最前面，交换次数较冒泡排序少
+排序复杂度：n平方
+function xuanze(arr) {
+    for (var i = 0; i &lt; arr.length; i++) {
+        var min = i;
+        for (var j = 0; j &lt; arr.length; j++) {
+            if (arr[j] &lt;arr[i]) {
+                min = j;
+            }
+        }
+        if (min != i) {
+            var temp = arr[i];
+            arr[i] = arr[min];
+            arr[min] = arr[i];
+        }
+    }
+}
+</code></pre><h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><pre><code>思想：每次往最小数组里插入一个数据，并保证数组是排序的
+(1) 将这个序列的第一个元素R0视为一个有序序列； 
+(2) 依次把 , , … ,  插入到这个有序序列中； 
+(3) 将插入到有序序列中时，前 i-1 个数是有序的，将和 ~ 从后往前进行比较，确定要插入的位置。
+function insertSort(arr) {
+    var len = arr.length;
+    var preIndex,current;
+    for (var i = 1; i &lt; len; i++) {
+        preIndex = i -1;
+        current = arr[i];
+        while(preIndex &gt;=0 &amp;&amp; arr[preIndex] &gt; current) {
+            arr[preIndex +1] = arr[preIndex];
+            preIndex --;
+        }
+        arr[preIndex +1] = current;
+    }
+}
+</code></pre><h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h2><pre><code>4.希尔排序，希尔排序也是一种插入排序
+不同：希尔排序优先比较较远的元素，希尔排序的核心在于间隔序列的设定
+对于n个待排序的数列，取一个小于n的整数gap(gap被称为步长)将待排序元素
+分成若干个组子序列，所有距离为gap的倍数的记录放在同一个组中；然后，对
+各组内的元素进行直接插入排序。 这一趟排序完成之后，每一个组的元素都是
+有序的。然后减小gap的值，并重复执行上述的分组和排序。重复这样的操作，
+当gap=1时，整个数列就是有序的。
+function shellSort(arr) {
+    var len = arr.length;
+    var temp,gap =1;
+    while(gap &lt; len/3){
+        gap = gap *3 +1;
+    }
+    for (gap; gap&gt; 0; gap = Math.floor(gap/3)) {
+        for (var i = gap; i &lt; len; i++) {
+            temp = arr[i];
+            for (var j = i - gap; j &gt;0 &amp;&amp; arr[j] &gt; temp; j -= gap) {
+                arr[j+gap] = arr[j];
+            }
+            arr[j+gap] = temp;
+        }
+    }
+    return arr;
+}
+</code></pre><h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><pre><code>作为一种典型的分而治之思想的算法应用
+将一个数组排序，可以先递归的将它分成两半分别排序，然后再将结果归并起来。
+缺点：需要额外的空间
+从下往上的归并排序：将待排序的数列分成若干个长度为1的子数列，然后将这
+些数列两两合并；得到若干个长度为2的有序数列，再将这些数列两两合并；得
+到若干个长度为4的有序数列，再将它们两两合并；直接合并成一个数列为止。
+这样就得到了我们想要的排序结果
+function mergeSort(arr) {  //采用自上而下的递归方法
+    var len = arr.length;
+    if(len &lt; 2) {
+        return arr;
+    }
+    var middle = Math.floor(len / 2),
+        left = arr.slice(0, middle),
+        right = arr.slice(middle);
+    return merge(mergeSort(left), mergeSort(right));
+}
+
+function merge(left, right)
+{
+    var result = [];
+
+    while (left.length&gt;0 &amp;&amp; right.length&gt;0) {
+        if (left[0] &lt;= right[0]) {
+            result.push(left.shift());
+        } else {
+            result.push(right.shift());
+        }
+    }
+
+    while (left.length)
+        result.push(left.shift());
+
+    while (right.length)
+        result.push(right.shift());
+
+    return result;
+}
+</code></pre><h2 id="快速排序（Quick-Sort）"><a href="#快速排序（Quick-Sort）" class="headerlink" title="快速排序（Quick Sort）"></a>快速排序（Quick Sort）</h2><pre><code>分而治之思想在排序算法。本质上来看，快速排序应该算是在冒泡排序基础上的递归分治法。
+先是把第一个挖出来，作为基值；然后先是从右向左，对比基值，如果如果小，那么放到坑里；然后在从左往右对比基值，如果大，那么放到坑里；当换完一轮了后，把基值放到坑里；然后在根据基值，分左右两组，递归排序；
+通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比
+另外一部分的所有数据都要小，继续对长度较短的序列进行同样的分割，最后到
+达整体有序。在排序过程中，由于已经分开的两部分的元素不需要进行比较，故
+减少了比较次数，降低了排序时间。
+function quickSort(arr, left, right) {
+    var len = arr.length,
+        partitionIndex,
+        left = typeof left != &apos;number&apos; ? 0 : left,
+        right = typeof right != &apos;number&apos; ? len - 1 : right;
+
+    if (left &lt; right) {
+        partitionIndex = partition(arr, left, right);
+        quickSort(arr, left, partitionIndex-1);
+        quickSort(arr, partitionIndex+1, right);
+    }
+    return arr;
+}
+
+function partition(arr, left ,right) {     //分区操作
+    var pivot = left,                      //设定基准值（pivot）
+        index = pivot + 1;
+    for (var i = index; i &lt;= right; i++) {
+        if (arr[i] &lt; arr[pivot]) {
+            swap(arr, i, index);
+            index++;
+        }        
+    }
+    swap(arr, pivot, index - 1);
+    return index-1;
+}
+
+function swap(arr, i, j) {
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+</code></pre><h2 id="堆排序（Heap-Sort）"><a href="#堆排序（Heap-Sort）" class="headerlink" title="堆排序（Heap Sort）"></a>堆排序（Heap Sort）</h2><pre><code>堆排序可以说是一种利用堆的概念来排序的选择排序。分为两种方法：
+大顶堆：每个节点的值都大于或等于其子节点的值，在堆排序算法中用于升序排列
+小顶堆：每个节点的值都小于或等于其子节点的值，在堆排序算法中用于降序排列
+堆排序的基本思想是：将待排序序列构造成一个大顶堆，此时，整个序列的最大
+值就是堆顶的根节点。将其与末尾元素进行交换，此时末尾就为最大值。然后将
+剩余n-1个元素重新构造成一个堆，这样会得到n个元素的次小值。如此反复执
+行，便能得到一个有序序列了
+
+var len;    //因为声明的多个函数都需要数据长度，所以把len设置成为全局变量
+
+function buildMaxHeap(arr) {   //建立大顶堆
+    len = arr.length;
+    for (var i = Math.floor(len/2); i &amp;gt;= 0; i--) {
+        heapify(arr, i);
+    }
+}
+
+function heapify(arr, i) {     //堆调整
+    var left = 2 * i + 1,
+        right = 2 * i + 2,
+        largest = i;
+
+    if (left &lt; len &amp;&amp; arr[left] &gt; arr[largest]) {
+        largest = left;
+    }
+
+    if (right &lt; len &amp;&amp; arr[right] &gt; arr[largest]) {
+        largest = right;
+    }
+
+    if (largest != i) {
+        swap(arr, i, largest);
+        heapify(arr, largest);
+    }
+}
+
+function swap(arr, i, j) {
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+function heapSort(arr) {
+    buildMaxHeap(arr);
+
+    for (var i = arr.length-1; i &gt; 0; i--) {
+        swap(arr, 0, i);
+        len--;
+        heapify(arr, 0);
+    }
+    return arr;
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/26/M_Swift91算法之数组操作/" itemprop="url">
+                  算法之数组操作
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-26T09:46:15+08:00" content="2018-07-26">
+              2018-07-26
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="数组去重"><a href="#数组去重" class="headerlink" title="数组去重"></a>数组去重</h2><pre><code>// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
+function unique(arr) {
+    var res = [arr[0]];
+    for (var i = 0; i &lt; arr.length; i++) {
+        var repeat = false;
+        for (var j = 0; j &lt; res.length; i++) {
+            if (arr[i] == res[j]) {
+                repeat = true;
+                break;
+            }
+        }
+        if (!repeat) {
+            res.push(arr[i]);
+        }
+    }
+    return res;
+}
+// 思路：每次取出原数组的元素，然后再对象中访问这个属性，如果存在就说明重复
+function unique(arr) {
+    var res = [];
+    var json = {};
+    for (var i = 0; i &lt; arr.length; i++) {
+        if (!json[arr[i]]) {
+            res.push(arr[i]);
+            json[arr[i]] = 1;
+        }
+    }
+    return res;
+}
+// 利用下标查询
+function unique(arr) {
+    var newArr = [arr[0]];
+    for (var i = 0; i &lt; arr.length; i++) {
+        if (newArr.indexOf(arr[i]) == -1) {
+            newArr.push(arr[i]);
+        }
+    }
+    return newArr;
+}
+
+// 两个数组中相同的元素和不同的元素
+// 合并两数组，并删除重复元素(代码类似于数组去重，只不过都是比较两个数组)
+</code></pre><h2 id="对数组进行反转"><a href="#对数组进行反转" class="headerlink" title="对数组进行反转"></a>对数组进行反转</h2><pre><code>function reverae(arr) {
+    var j = arr.length - 1;
+    for (var i = 0; i &lt; arr.length; i++) {
+        var temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+        j--;
+    }
+}
+</code></pre><h2 id="获取数组中连续的元素"><a href="#获取数组中连续的元素" class="headerlink" title="获取数组中连续的元素"></a>获取数组中连续的元素</h2><pre><code>function fn(arr){
+  var result = [],
+      i = 0;
+  result[i] = [arr[0]];
+  arr.reduce(function(prev, cur){
+    cur-prev === 1 ? result[i].push(cur) : result[++i] = [cur];
+    return cur;
+  });
+  return result;
+}
+</code></pre><h2 id="数组合并-先排序，再合并"><a href="#数组合并-先排序，再合并" class="headerlink" title="数组合并(先排序，再合并)"></a>数组合并(先排序，再合并)</h2><pre><code>// 合并两个有序数组
+function mergeOrder(arr1,arr2) {
+    var result = arr1 +arr2;
+    var m = 0;
+    var n = 0;
+    for (var i = 0; i &lt; result.length; i++) {
+        if (m == arr1.length) {
+            result[i] = arr2[n++];
+        }else if (n==arr2.length) {
+            result[i] = arr1[m++];
+        }else{
+            if (arr1[m] &lt; arr2[n]) {
+                result[i] = arr1[m++];
+            }else{
+                result[i] = arr2[n++];
+            }
+        }
+
+    }
+    return result;
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/22/M_Swift101常见UI问题/" itemprop="url">
+                  常见UI问题
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-22T18:47:40+08:00" content="2018-07-22">
+              2018-07-22
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="tableView卡顿"><a href="#tableView卡顿" class="headerlink" title="tableView卡顿"></a>tableView卡顿</h2><pre><code>1.最常⽤用的就是cell的重⽤用  
+2.避免cell的重新布局 
+3.提前计算并缓存cell的属性及内容 
+4.减少cell中控件的数量量
+5.不要使⽤用ClearColor，⽆无背景⾊色，透明度也不不要设置为0 
+6.使⽤局部更新
+7.加载⽹络数据，下载图⽚，使用异步加载，并缓存 
+8.少使⽤用addView 给cell动态添加view 
+9.按需加载cell，cell滚动很快时，只加载范围内的cell 
+10.不要实现无用的代理理⽅方法，tableView只遵守两个协议 
+11.缓存⾏⾼
+12.不要做多余的绘制工作。
+13.预渲染图像。
+14.使⽤用正确的数据结构来存储数据。
+</code></pre><h2 id="应用优化"><a href="#应用优化" class="headerlink" title="应用优化"></a>应用优化</h2><pre><code>一、首页启动速度   
+    启动过程中做的事情越少越好、不在UI线程上作耗时的
+    操作、在合适的时机开始后台任务、尽量减小包的大小
+二、页面浏览速度
+    json的处理、数据压缩、内容缓存、算法的优化
+三、操作流畅度优化：
+    见tableVIew的优化
+四、数据库的优化：
+    数据库设计上面的重构、查询语句的优化、分库分表
+五、服务器端和客户端的交互优化：
+    客户端尽量减少请求、服务端尽量做多的逻辑
+    处理、通信协议的优化
+六、非技术性能优化
+    产品逻辑性、代码规范、界面交互规范等
+</code></pre><h2 id="卡顿检测"><a href="#卡顿检测" class="headerlink" title="卡顿检测"></a>卡顿检测</h2><pre><code>1.使用instrument
+2.在程序运行期间能及时获取卡顿信息
+监控卡顿,最直接就是找到主线程都在干些啥玩意儿.我们知道一个线程的消息事
+件处理都是依赖于NSRunLoop来驱动,所以要知道线程正在调用什么方法,
+就需要从NSRunLoop来入手.其中核心方法CFRunLoopRun简化后的主要逻辑
+大概是这样的:
+int32_t __CFRunLoopRun()
+{
+    //通知即将进入runloop
+    __CFRunLoopDoObservers(KCFRunLoopEntry);
+    do
+    {
+    // 通知将要处理timer和source
+    __CFRunLoopDoObservers(kCFRunLoopBeforeTimers);
+    __CFRunLoopDoObservers(kCFRunLoopBeforeSources);
+
+    __CFRunLoopDoBlocks();  //处理非延迟的主线程调用
+    __CFRunLoopDoSource0(); //处理UIEvent事件        
+    //GCD dispatch main queue
+    CheckIfExistMessagesInMainDispatchQueue();
+    // 即将进入休眠
+    __CFRunLoopDoObservers(kCFRunLoopBeforeWaiting);
+    // 等待内核mach_msg事件
+    mach_port_t wakeUpPort = SleepAndWaitForWakingUpPorts();
+    // Zzz...
+    // 从等待中醒来
+    __CFRunLoopDoObservers(kCFRunLoopAfterWaiting);
+    // 处理因timer的唤醒
+    if (wakeUpPort == timerPort)
+    __CFRunLoopDoTimers();
+    // 处理异步方法唤醒,如dispatch_async
+    else if (wakeUpPort == mainDispatchQueuePort)
+    __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__()
+    // UI刷新,动画显示
+    else
+    __CFRunLoopDoSource1();
+    // 再次确保是否有同步的方法需要调用
+    __CFRunLoopDoBlocks();
+    } while (!stop &amp;&amp; !timeout);
+    //通知即将退出runloop
+    __CFRunLoopDoObservers(CFRunLoopExit);
+}
+不难发现NSRunLoop调用方法主要就是在kCFRunLoopBeforeSources和
+kCFRunLoopBeforeWaiting之间,还有kCFRunLoopAfterWaiting之后,
+也就是如果我们发现这两个时间内耗时太长,那么就可以判定出此时主线程卡顿.
+</code></pre><h3 id="量化卡顿的程度"><a href="#量化卡顿的程度" class="headerlink" title="量化卡顿的程度"></a>量化卡顿的程度</h3><pre><code>要监控NSRunLoop的状态,我们需要使用到CFRunLoopObserverRef,通过它
+可以实时获得这些状态值的变化,具体的使用如下:
+static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
+{
+MyClass *object = (__bridge MyClass*)info;
+object-&gt;activity = activity;
+}
+
+- (void)registerObserver
+{
+CFRunLoopObserverContext context = {0,(__bridge void*)self,NULL,NULL};
+    CFRunLoopObserverRef observer = 
+    CFRunLoopObserverCreate(kCFAllocatorDefault,
+    kCFRunLoopAllActivities,
+    YES,
+    0,
+    &amp;runLoopObserverCallBack,
+    &amp;context);
+    CFRunLoopAddObserver(CFRunLoopGetMain(), 
+    observer, kCFRunLoopCommonModes);
+}
+只需要另外再开启一个线程,实时计算这两个状态区域之间的耗时是否到达某
+个阀值,便能揪出这些性能杀手.
+
+为了让计算更精确,需要让子线程更及时的获知主线程NSRunLoop状态变化,
+所以dispatch_semaphore_t是个不错的选择,另外卡顿需要覆盖到多次连
+续小卡顿和单次长时间卡顿两种情景,所以判定条件也需要做适当优化.将上
+面两个方法添加计算的逻辑如下:
+static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
+{
+MyClass *object = (__bridge MyClass*)info;
+
+// 记录状态值
+object-&gt;activity = activity;
+
+// 发送信号
+dispatch_semaphore_t semaphore = moniotr-&gt;semaphore;
+dispatch_semaphore_signal(semaphore);
+}
+
+- (void)registerObserver
+{
+CFRunLoopObserverContext context = {0,(__bridge void*)self,NULL,NULL};
+CFRunLoopObserverRef observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
+kCFRunLoopAllActivities,
+YES,
+0,
+&amp;runLoopObserverCallBack,
+&amp;context);
+CFRunLoopAddObserver(CFRunLoopGetMain(), observer, kCFRunLoopCommonModes);
+
+// 创建信号
+semaphore = dispatch_semaphore_create(0);
+
+// 在子线程监控时长
+dispatch_async(dispatch_get_global_queue(0, 0), ^{
+while (YES)
+{
+// 假定连续5次超时50ms认为卡顿(当然也包含了单次超时250ms)
+long st = dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, 50*NSEC_PER_MSEC));
+if (st != 0)
+{
+if (activity==kCFRunLoopBeforeSources || activity==kCFRunLoopAfterWaiting)
+{
+if (++timeoutCount &lt; 5)
+continue;
+
+NSLog(@&quot;好像有点儿卡哦&quot;);
+}
+}
+timeoutCount = 0;
+}
+});
+}
+</code></pre><h3 id="记录卡顿的函数调用"><a href="#记录卡顿的函数调用" class="headerlink" title="记录卡顿的函数调用"></a>记录卡顿的函数调用</h3><pre><code>监控到了卡顿现场,当然下一步便是记录此时的函数调用信息,此处可以使用一个
+第三方Crash收集组件PLCrashReporter,它不仅可以收集Crash信息也可用
+于实时获取各线程的调用堆栈,使用示例如下:
+PLCrashReporterConfig *config = [[PLCrashReporterConfig
+alloc]initWithSignalHandlerType:
+PLCrashReporterSignalHandlerTypeBSD
+symbolicationStrategy:
+PLCrashReporterSymbolicationStrategyAll];
+PLCrashReporter *crashReporter = 
+[[PLCrashReporter alloc] initWithConfiguration:config];
+
+NSData *data = [crashReporter generateLiveReport];
+PLCrashReport *reporter = [[PLCrashReport alloc]
+initWithData:data error:NULL];
+NSString *report = [PLCrashReportTextFormatter
+stringValueForCrashReport:reporter
+withTextFormat:PLCrashReportTextFormatiOS];
+
+NSLog(@&quot;------------\n%@\n------------&quot;, report);
+当检测到卡顿时,抓取堆栈信息,然后在客户端做一些过滤处理,便可以上报到
+服务器,通过收集一定量的卡顿数据后经过分析便能准确定位需要优化的逻辑,至
+此这个实时卡顿监控就大功告成了!
+</code></pre><h2 id="什么是掉帧"><a href="#什么是掉帧" class="headerlink" title="什么是掉帧"></a>什么是掉帧</h2><pre><code>掉帧一般指由于硬件不足以负荷显示器画面动态显示刷新的频率，从而帧率过低
+所造成的画面出现停滞（或短时间或长时间）现象。掉帧在游戏中就是玩游戏过
+程中，出现卡这种情况，图像未及时刷新造成，画面粘滞。
+帧数就是在1秒钟时间里传输的图片的量，也可以理解为图形处理器每秒钟能够
+刷新几次，通常用fps（Frames Per Second）表示。每一帧都是静止的图
+象，快速连续地显示帧便形成了运动的假象。高的帧率可以得到更流畅、更逼真
+的动画。每秒钟帧数 (fps) 愈多，所显示的动作就会愈流畅。
+</code></pre><h2 id="APP启动流出"><a href="#APP启动流出" class="headerlink" title="APP启动流出"></a>APP启动流出</h2><pre><code>1.打开程序
+2.执行main函数
+3.执行UIApplicationMain函数
+4.初始化UIApplication（创建和设置代理，开启RunLoop事件循环）
+5.监听事件，执行AppDelegate对应函数
+    程序加载完成
+    程序获取焦点
+    程序进入后台
+    程序失去焦点
+    程序从后台进入前台
+    内存警告，可能要终止程序
+    程序即将结束
+6.结束程序
+</code></pre><h2 id="封装SDK需要注意哪些"><a href="#封装SDK需要注意哪些" class="headerlink" title="封装SDK需要注意哪些"></a>封装SDK需要注意哪些</h2><pre><code>1.类名、宏定义、枚举、通知、类别等命名时加静态库统一特殊前缀，以避免命名冲突。
+2.类别中方法名也需要加特殊前缀，以避免方法覆盖导致不必要麻烦。
+3.对于项目中的c、c++中的方法，需要加前缀
+4.对于开发静态库时引入的开源库，若体量过大，可外部引用，提供给接入方时
+加以说明，体量小的可以对类名及类中所用枚举、通知等加前缀使用。
+5.特别需要注意的是在同一个类中多个interface的情况，加前缀时一定要检
+查所有的interface，避免遗漏
+6.由于一些接入方引入静态库时，对app的体积有严格的控制，所以在开发静态
+库时，要尽量精简代码，引入开源库时，可剔除一些不必要的部分，如能用系统
+提供的方法实现的功能，尽量不去引入大型第三方库，不然打包出来的.a库可能体积增加很多。
+</code></pre><h2 id="使用drawRect有什么影响"><a href="#使用drawRect有什么影响" class="headerlink" title="使用drawRect有什么影响"></a>使用drawRect有什么影响</h2><pre><code>drawRect方法依赖Core Graphics框架来进行自定义的绘制，但这种方法主
+要的缺点就是它处理touch事件的方式：每次按钮被点击后，都会用
+setNeddsDisplay进行强制重绘；而且不止一次，每次单点事件触发两次执
+行。这样的话从性能的角度来说，对CPU和内存来说都是欠佳的。
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/03/N_Android15与时俱进/" itemprop="url">
+                  Android与时俱进
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-07-03T16:44:08+08:00" content="2018-07-03">
               2018-07-03
             </time>
           </span>
@@ -272,31 +2030,7 @@
       
         
           
-            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。</p>
-<p>res是Android项目工程中存放各类的目录，主要包括布局、图形与配置等等。res的子目录主要有：</p>
-<p>anim : 存放动画的描述文件<br>drawable : 存放各类图形的描述文件，包括drawable的描述文件，以及三种图片格式：png（推荐）、jpg（支持）、gif（不推荐，因为ImageView只显示gif的第一帧）。以drawable打头的有好几个目录，分别存放不同分辨率的图片，这些目录的区别详见<br>layout : 存放页面的布局文件，主要在Acitivity、Fragment以及部分自定义控件中使用<br>menu : 存放菜单的布局文件<br>raw : 存放原始格式的文件，一般是二进制的流文件，比如音频文件、视频文件等等<br>values : 存放各类参数的配置文件，具体的配置文件说明如下<br>——arrays.xml : 存放各类数组的定义文件，字符串数组的根节点为string-array，整型数组的根节点为integer-array<br>——booleans.xml : 存放布尔类型的定义文件，根节点为resources，元素节点为bool<br>——attrs.xml : 存放自定义控件的属性信息，根节点为resources，元素节点为declare-styleable——attr<br>——colors.xml : 存放颜色的定义文件，根节点为resources，元素节点为color<br>——dimens.xml : 存放像素的定义文件，根节点为resources，元素节点为dimen<br>——ids.xml : 存放控件id的定义文件，根节点为resources，元素节点为item，type为id<br>——integers.xml : 存放整数类型的定义文件，根节点为resources，元素节点为integer<br>——strings.xml : 存放字符串类型的定义文件，根节点为resources，元素节点为string<br>——styles.xml : 存放控件风格的定义文件，根节点为resources，元素节点为style——item<br>xml : 存放其他的xml文件，比如说存放SearchView的searchable.xml属性定义文件</p>
-<p>其余目录下面的配置文件，一般需要在代码中解析数据结构，比如说图像、字符串、整型数、二进制流等等。具体的代码调用方式如下：</p>
-<p>drawable : 一般使用getResources().getDrawable(R.drawable.example);，gif文件使用getResources().getMovie(R.drawable.example);<br>raw : getResources().openRawResource(R.raw.example);<br>values :<br>——arrays.xml : 解析字符串数组使用getResources().getStringArray(R.array.city);，解析整型数组使用getResources().getIntArray(R.array.code);<br>——attrs.xml : 代码中不解析该文件的数据结构，在自定义控件的构造函数中通过如下方式使用：TypedArray attrArray=getContext().obtainStyledAttributes( attrs, R.styleable.example);<br>——booleans.xml : getResources().getBoolean(R.bool.example);<br>——colors.xml : getResources().getColor(R.color.example);<br>——dimens.xml : getResources().getDimension(R.dimen.example);<br>——ids.xml : 代码中不使用该文件配置，在布局文件中使用为：android:id=”@id/…”（注意与一般情况相比去掉了加号）<br>——integers.xml : getResources().getInteger(R.integer.example);<br>——strings.xml : getResources().getString(R.string.example);<br>——styles.xml : 代码中不解析该文件的数据结构，布局文件的使用在控件内部加上style属性：style=”@style/example”<br>xml : getResources().getXml(R.xml.example);</p>
-<p>assets目录用于存放应用程序的资产文件，该目录下的文件不会被系统编译，所以无法通过R.<em>.</em>这种方式来访问。Android专门为assets目录提供了一个工具类AssetManager，通过该工具，我们能够以字节流方式打开assets下的文件，并将字节流转换为文本或者图像。<br>ssetManager提供了如下方法用于处理assets：<br>1、 String[] list(String path);<br>列出该目录下的下级文件和文件夹名称<br>2、 InputStream open(String fileName);<br>以顺序读取模式打开文件，默认模式为ACCESS_STREAMING<br>3、 InputStream open(String fileName, int accessMode);<br>以指定模式打开文件。读取模式有以下几种：<br>ACCESS_UNKNOWN : 未指定具体的读取模式<br>ACCESS_RANDOM : 随机读取<br>ACCESS_STREAMING : 顺序读取<br>ACCESS_BUFFER : 缓存读取<br>4、 void close()<br>关闭AssetManager实例</p>
-<p>集合(Set/HashSet)</p>
-<p>集合中的元素是没有顺序的，而且不可以重复。这意味着，集合只能遍历而无法通过索引访问指定元素，并且如果重复添加相同值将不会增大集合。因为Set只是接口，所以实际用的是它的一个派生类HashSet。<br>集合的常用方法如下：<br>add : 添加元素<br>clear : 清空容器<br>contains : 判断容器中是否存在该元素<br>iterator : 获取第一个元素的指针<br>isEmpty : 判断容器是否为空<br>remove : 删除元素<br>size : 获取容器大小</p>
-<p>队列(ArrayList)</p>
-<p>队列与集合恰恰相反，队列中的元素是有顺序的，而且允许重复，所以队列可以使用索引来访问指定元素（类似数组的下标）。<br>队列的常用方法包括上面集合列出的几个，下面列出有变更或者添加的方法：<br>add : 提供了两个方法。默认在队列末尾添加元素；如果指定了索引位置，则在指定位置末尾添加元素<br>get : 获取指定位置的元素<br>indexOf : 获取指定元素的第一个索引位置<br>lastIndexOf : 获取指定元素的最后一个索引位置<br>remove : 提供了两个方法。除了删除元素之外，还可以删除指定位置的元素<br>set : 替换指定位置的元素<br>subList : 截取从开始位置到结束位置之间的子队列</p>
-<p>映射(Map/HashMap)</p>
-<p>映射保存的是键值对（即key—value）的映射关系，一个映射中不能包含相同的key，每个key只能映射一个value。但Map只是接口，实际中常用的是它的一个派生类HashMap。类似的，队列、链表、向量都是派生自List接口。<br>映射的常用方法如下：<br>clear : 清空容器<br>containsKey : 判断容器中是否存在该键（key）的元素<br>containsValue : 判断容器中是否存在该值（value）的元素<br>get : 根据指定键获得元素的值<br>isEmpty : 判断容器是否为空<br>keySet : 获取容器中键的集合<br>put : 设置键值对的映射关系。如原来没有该键，则添加元素；如果原来存在该键，则替换元素<br>remove : 删除指定键对应的元素<br>size : 获取容器的大小<br>values : 获取容器中值的集合</p>
-<p>Application组件</p>
-<p>Application是比Activity高级的组件，它的生命周期覆盖了APP运行的全过程；而Activity页面的生命周期很短暂，只要进入别的页面，原页面就被停止或者销毁；因此我们可以在Application中保存全局变量。在打开App时，系统会先初始化Application，然后才进入到开始的Activity页面。通常我们不需要指定一个Application，这时系统会自动帮我们创建，如果需要创建自己的Application，创建一个派生自Application的类，并在manifest的application标签中注册就好了。</p>
-<p>SharedPreferences存储数据</p>
-<p>下面是Properties的常用方法：<br>load : 从属性文件中加载属性对象<br>store : 把属性对象保存到属性文件<br>getProperty : 获取属性值<br>setProperty : 设置属性值<br>loadFromXML : 从XML格式的属性文件中加载属性对象<br>storeToXML : 把属性对象保存到XML格式的属性文件</p>
-<p>SQLite</p>
-<p>Realm应用背景</p>
-<p>File类</p>
-<p>File类是java中的文件操作工具类，它的常用方法如下：<br>File构造函数 : 根据文件路径构造File对象<br>delete : 删除文件<br>exists : 判断文件是否存在<br>getName : 获取文件的文件名<br>getPath : 获取文件的目录路径<br>getParent : 获取上级目录路径<br>isDirectory : 判断是否为目录/文件夹<br>isFile : 判断是否为文件<br>length : 获取该文件的大小<br>list : 列出该目录下的所有文件（夹），返回String数组<br>listFiles : 列出该目录下的所有文件（夹），返回File数组<br>mkdirs : 创建目录/文件夹<br>renameTo : 重命名文件，其实就是移动文件到指定目录</p>
-<p>Environment类</p>
-<p>Environment类是Android中获取各种目录信息的工具，主要方法如下：<br>getDataDirectory : 获得系统data目录的路径<br>getDownloadCacheDirectory : 获得下载缓存目录的路径<br>getExternalStorageState : 获得外部存储的状态<br>SD卡操作</p>
-<p>下载请求</p>
-<p>要想使用下载功能，首先得构建一个下载请求，说明从哪里下载、下载参数为何、下载的文件保存到哪里等等。这个下载请求便是DownloadManager的子类Request，下面是该类的常用方法<br>Request构造函数 : 指定从哪个网络地址下载文件。<br>Request.setAllowedNetworkTypes : 指定允许进行下载的网络类型。Request.NETWORK_WIFI表示wifi环境（推荐），Request.NETWORK_MOBILE表示数据连接环境（不推荐），Request.NETWORK_BLUETOOTH表示蓝牙环境。<br>Request.setDestinationInExternalFilesDir : 设置下载文件在本地的保存路径。<br>Request.addRequestHeader : 给HTTP请求添加头部参数。<br>Request.setMimeType : 设置下载文件的媒体类型。<br>Request.setVisibleInDownloadsUi : 设置下载页面是否可见。<br>下载操作</p>
-<p>构建下载请求完毕，然后才能进行下载的相关操作。下面是DownloadManager常用的下载方法：<br>enqueue : 将下载请求加入到任务队列中，即开始下载任务。该方法返回本次下载任务的编号。<br>remove : 取消指定编号的下载任务。<br>restartDownload : 重新下载指定编号的任务。<br>openDownloadedFile : 打开下载完成的文件。<br>getMimeTypeForDownloadedFile : 获取下载完成的文件的媒体类型。</p>
+            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Toolbar，SearchView，SlidingPaneLayout，RecyclerView，RecyclerView.Adapter，LinearLayoutManager，GridLayoutManager，StaggeredGridLayoutManager，SwipeRefreshLayout，导航视图NavigationView，画廊Gallery，图像切换ImageSwitcher，卡片视图CardView，视频播放方式：使用MediaPlayer结合SurfaceView进行播放<br>VideoView结合MediaController<br>MediaRecorder/MediaPlayer<br>屏幕捕捉：给屏幕截图用到了ImageReader，它的常用方法说明如下：<br>把用户在屏幕上的操作行为录制成视频，我们称之为录屏<br>集合动画AnimationSet，属性动画组合AnimatorSet，插值器和估值器<br>水波图形RippleDrawable，水波动画RippleView<br>矢量图形VectorDrawable，组标签group，根标签vector，路径标签path<br>协调布局CoordinatorLayout，应用栏布局AppBarLayout<br>可折叠工具栏布局CollapsingToolbarLayout<br>自定义行为Behavior<br>文本输入布局TextInputLayout</p>
 
           
         
@@ -346,8 +2080,8 @@
             
               
                 
-                <a class="post-title-link" href="/2018/07/03/N_Android12开发总结/" itemprop="url">
-                  Android开发总结
+                <a class="post-title-link" href="/2018/07/03/N_Android16进阶/" itemprop="url">
+                  Android进阶
                 </a>
               
             
@@ -360,7 +2094,7 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T11:20:03+08:00" content="2018-07-03">
+            <time itemprop="dateCreated" datetime="2018-07-03T15:52:53+08:00" content="2018-07-03">
               2018-07-03
             </time>
           </span>
@@ -390,849 +2124,17 @@
       
         
           
-            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Android项目开发建议：</p>
-<p>1、全部Activity可继承自BaseActivity，便于统一风格与处理公共事件，构建对话框，统一构造器的建立，万一需要整体变动，一处改动个处处有效。</p>
-<p>2、数据库表字段常量和SQL逻辑分离，更清晰，建议使用Lite系列狂降LiteOrm库，超级清晰且重心可以放在业务上不用关心数据库细节</p>
-<p>3、全局变量放全局类中，模块私有放自己的管理类中，让常量清晰且集中</p>
-<p>4、不要相信庞大的管理类的东西会带来什么好处，可能是一场灾难，而要时刻注意单一原则，一个类专心做好一件事</p>
-<p>Android两种方式事件处理</p>
-<p>1、基于回调的事件处理</p>
-<p>2、基于监听器的事件处理</p>
-<p>Android的事件处理机制是一种委派式（Delegation）事件处理方式<br>普通组件（事件源）将整个事件处理委托给特定的对象（事件监听器），当该事件源发生制定的事件时，就通知所委托的事件监听器，由监听器处理这个事件。<br>Android默认约定当UI线程阻塞超过20秒，会引发ANR(Application Not Responding)异常</p>
-<p>为了找起来方便，暂且分为七大类：显示、存储、通信、发布与调优、进阶用法、与时俱进、继续精进。</p>
-<p>显示又分为八块：屏幕、文本、图形、简单控件、自定义视图、动画、窗口、复杂控件；</p>
-<p>存储分为六块：资源、内存、键值对、数据库、文件、网络存储；</p>
-<p>通信分作六块：组件通信、事件通信、多线程通信、跨进程通信、设备通信、网络通信；</p>
-<p>发布与调优分为五块：打包、安全、性能、健壮、兼容；</p>
-<p>进阶用法分为六块：java细节、设计模式、图像处理、高级控件、第三方sdk、开发者工具；</p>
-<p>与时俱进分为六块：新版控件、多媒体开发、高级动画、行为协调、页面切换、花样输入；</p>
-<p>继续精进分为六块：人工智能、混合开发、三维动画、物联网、屏幕特效、视频加工；</p>
-<p>dp和px的转换<br>屏幕分辨率getWindowManager<br>Drawable资源目录</p>
-<p>drawable文件放在res目录的各个drawable目录下，\res\drawable一般放的是描述性的xml文件，图片文件一般放在具体分辨率的drawable目录下。例如<br>drawable-ldpi里面主要放低分辨率的图片，如QVGA（240×320）<br>drawable-mdpi里面主要放中等分辨率的图片，如HVGA（320×480）<br>drawable-hdpi里面主要放高分辨率的图片，如WVGA（480×800），FWVGA（480×854）<br>drawable-xhdpi里面主要放加高分辨率的图片，如Nexus（720×1280）以上分辨率<br>drawable-xxhdpi里面主要放超高分辨率的图片，如Nexus（1080×1920）以上分辨率<br>StateListDrawable是在一个xml文件中定义不同状态下呈现的图像。下面是一个例子btn_visit_selector.xml<br>state_pressed：为true时表示按下，一般用于按钮Button，图形设置于android:background<br>state_checked：为true时表示勾选，一般用于单选框RadioButton、复选框CheckBox，图形设置于android:drawableLeft<br>state_selected：为true时表示选中，一般用于单选框RadioButton、复选框CheckBox，图形设置于android:background<br>state_focused：为true时表示获取焦点，一般用于文本框EditText，图形设置于android:background</p>
-<p>shape的定义文件是xml，以shape元素为根节点。根节点下定义了六个节点：corners（圆角）、gradien（渐变）、padding（间隔）、size（尺寸）、solid（填充）、stroke（描边），各节点的属性值主要是各种长宽、半径、角度，以及颜色。<br>visibility各取值的区别 : 该属性有三个取值，分别是：visible表示可见，invisible表示不可见，gone表示消失</p>
-<p>View是单个视图，所有的控件类都是从它派生出来；而ViewGroup是个视图组织，所有的布局视图类都是从它派生出来。由于View和ViewGroup是基类，因此很少会直接使用，偶尔用到的场景，主要有如下几个：<br>1、页面上需要单独显示一条横线或者竖线。如果填充图片显然不够经济，最简单的做法，就是在xml布局中增加一个View控件，高度或宽度设置为1dp，背景颜色设置为线条颜色，这样便实现了单独显示线条的需求。<br>2、点击事件的处理函数onClick(View v)，这里面我们要调用View的getId方法获取发生点击事件的控件id，从而进行该控件对应的点击处理。<br>3、在代码中设置某控件为可见或不可见或消失，此时需要使用View类的三个变量，分别是View.VISIBLE、View.INVISIBLE和View.GONE。</p>
-<p>Button是文本按钮（继承自TextView），而ImageButton是图像按钮（继承自ImageView）。两者之间的区别在于：<br>1、Button即可显示文本也可显示图形（通过设置背景图），而ImageButton只能显示图形不能显示文本；<br>2、Button可在文本周围区域显示小图，而ImageButton无法在某个区域显示小图；<br>3、ImageButton上的图像可按比例进行拉伸，而Button上的大图会拉伸变形（因为背景图无法按比例拉伸）；<br>从上面可以看出，Button的适应面更广，所以实际开发中基本使用Button。</p>
-<p>CheckBox</p>
-<p>CheckBox是复选框，点击勾选，再点击则取消勾选。CheckBox是CompoundButton的一个子类，所以继承了CompoundButton的所有属性和方法。</p>
-<p>RadioGroup和RadioButton</p>
-<p>RadioButton是单选框，点击选中，但是再点击不会取消选中。只有点击同组的其他RadioButton，原来勾选的RadioButton才会取消选中。RadioButton也是CompoundButton的一个子类，所以继承了CompoundButton的所有属性和方法。<br>RadioGroup是容纳多个RadioButton的组布局，同组中只能有一个RadioButton被选中。下面是RadioGroup常用的几个方法：<br>setCheckedId : 选中指定ID的RadioButton。<br>getCheckedRadioButtonId : 获取选中状态RadioButton的ID。<br>setOnCheckedChangeListener : 设置勾选变化的监听器。<br>自定义视图存在三个构造函数，分别是<br>//只有一个参数，用于在代码中构造对象<br>public SignatureView(Context context) {<br>super(context);<br>}</p>
-<p>//有两个参数，用于在XML布局中构造对象<br>public SignatureView(Context context, AttributeSet attrs) {<br>super(context, attrs);<br>if (attrs != null) {<br>TypedArray attrArray=getContext().obtainStyledAttributes( attrs, R.styleable.SignatureView);<br>mPaintColor = attrArray.getColor(R.styleable.SignatureView_paint_color, 0);<br>attrArray.recycle();<br>}<br>}</p>
-<p>//有三个参数，用于在XML布局中构造对象<br>public SignatureView(Context context, AttributeSet attrs, int defStyleAttr) {<br>super(context, attrs, defStyleAttr);<br>}<br>三个可进行绘制的方法</p>
-<p>在自定义视图中，有三个函数可以重写用于界面绘制，在视图创建过程中，三个函数的执行顺序依次是：onLayout、onDraw、dispatchDraw。<br>1、onLayout(boolean changed, int left, int top, int right, int bottom) :<br>onLayout用于定位该视图在上级视图中的位置，从其参数中就可以看出来。由于该函数没有画布，因此只适合绘制现成的视图控件。<br>2、onDraw(Canvas canvas) :<br>自定义控件一般是重写onDraw方法，在画布中绘制各种图形。<br>3、dispatchDraw(Canvas canvas) :<br>dispatchDraw与onDraw的区别在于：onDraw在绘制下级视图之前，而dispatchDraw在绘制下级视图之后，所以如果不想自己的绘图被下级视图覆盖的话，就要在dispatchDraw中进行绘制操作。为方便记忆，只要是从ViewGroup衍生出的视图，都用dispatchDraw，其他小控件都用onDraw。</p>
-<p>菜单Menu</p>
-<p>Android的菜单分为两类：选项菜单和上下文菜单，默认使用选项菜单。菜单的布局文件存放在res/menu目录下，使用ADT新建一个Android工程，首页代码MainActivity中会自动生成onMenuOpened和onMenuItemSelected函数代码。<br>下面是选项菜单需要重写的方法：<br>onMenuOpened : 在菜单弹出时调用，一般无需重写<br>onMenuItemSelected : 在菜单项选择时调用，查看该方法的源码，会发现该方法内部做分支处理，判断如果是选项菜单则调用onOptionsItemSelected，如果是上下文菜单则调用onContextItemSelected。一般无需重写<br>onCreateOptionsMenu : 在页面打开时调用，需要重写指定菜单项目<br>onOptionsItemSelected : 在选项菜单的菜单项选中时调用，需要重写对不同菜单项做分支处理<br>onPrepareOptionsMenu : 在准备打开选项菜单时调用，一般无需重写<br>onOptionsMenuClosed : 在选项菜单关闭时调用，一般无需重写<br>AlertDialog</p>
-<p>Android中最常用的对话框是AlertDialog，它可以完成常见的交互操作，如提示、确认、选择等等，然后就是进度对话框ProgressDialog<br>AlertDialog没有公开的构造函数，必须借助于AlertDialog.Builder才能完成参数设置。Builder的常用方法如下：<br>setIcon : 设置标题的图标。<br>setTitle : 设置标题的文本。<br>setCustomTitle : 设置自定义的标题视图。<br>–以上方法用于设置标题部分。注意setTitle和setCustomTitle只能设置其一，不能重复设置。<br>setMessage : 设置内容的文本。<br>setView : 设置自定义的内容视图。<br>setAdapter : 设置List方式的内容视图。使用较麻烦，一般不用。<br>setItems : 设置Spinner方式的内容视图。窗口显示与对话框模式的Spinner极为相似，没有底部的按钮，一旦选中某项就立即关闭对话框。<br>setSingleChoiceItems : 设置单选列表的内容视图。与setItems的区别在于有显示底部的交互按钮，并且每项右边有单选按钮。<br>setMultiChoiceItems : 设置多选列表的内容视图。底部有交互按钮，并且每项右边有复选按钮。<br>–以上方法用于设置内容部分。注意这些方法互相冲突，同时只能设置其一。<br>setPositiveButton : 设置肯定按钮的信息，如文本、点击监听器。<br>setNegativeButton : 设置否定按钮的信息，如文本、点击监听器。<br>setNeutralButton : 设置中性按钮的信息，如文本、点击监听器。<br>–以上方法用于设置交互按钮。</p>
-<p>WindowManager<br>getDefaultDisplay : 获取默认的显示屏信息。通常用该方法获取屏幕分辨率<br>addView : 往窗口添加视图。第二个参数为WindowManager.LayoutParams对象。<br>updateViewLayout : 更新指定视图的布局参数。第二个参数为WindowManager.LayoutParams对象。<br>removeView : 往窗口移除指定视图。</p>
-<p>TabBar<br>1、使用TabActivity。其中在布局文件中设置TabHost、TabWidget和RadioButton，在代码文件中应用TabActivity、TabSpec和CompoundButton。<br>2、使用ActivityGroup。将几个栏目的首页Activity都放入ActivityGroup，然后根据点击事件选择切换到哪个Activity。<br>3、使用FragmentActivity和Fragment。将几个栏目的首页Fragment都放入FragmentActivity，可自动响应点击事件。<br>其中TabActivity继承自ActivityGroup，目前Android声称TabActivity与ActivityGroup都已废弃，建议采用Fragment和FragmentManager来代替。从实现代码来看，TabActivity和ActivityGroup两种方式的代码量都较多，而FragmentActivity方式的代码就显得很简洁，所以博主也推荐第三种方式。</p>
-<p>标题栏ActionBar<br>1、在AndroidManifest.xml中给activity设置无标题栏的主题，就关闭ActionBar。否则就显示</p>
-<p><activity android:theme="@android:style/Theme.Holo.NoActionBar"><br>2、在styles.xml的当前主题中加入一个项android:windowNoTitle，为true时表示关闭ActionBar；为false表示显示</activity></p>
-<p><item name="android:windowNoTitle">true</item><br>3、在Activity代码的setContentView之前加入下面代码，就关闭ActionBar。否则就显示<br>requestWindowFeature(Window.FEATURE_NO_TITLE);<br>4、在Activity代码中获得ActionBar实例，调用该实例的hide方法表示关闭ActionBar；调用show方法表示显示<br>ActionBar actionBar = getActionBar();<br>if (actionBar != null) {<br>actionBar.hide();  //隐藏ActionBar<br>actionBar.show();  //显示ActionBar<br>}</p>
-<p>ViewPager<br>下面是ViewPager的常用方法：<br>setAdapter : 设置ViewPager的适配器<br>setCurrentItem : 设置当前的页码，即默认打开ViewPager时显示哪一页的内容。<br>setOnPageChangeListener : 设置ViewPager的页面变化监听器。<br>ViewPager的适配器<br>ViewPager的监听器</p>
-<p>ViewPager一般不监听每个页面项的点击事件，而是监听页面滑动的监听事件，对应的监听器类是OnPageChangeListener。该类的三个方法介绍如下：<br>onPageScrollStateChanged : 翻页状态改变时调用，状态参数取值说明为：0表示静止，1表示正在滑动，2表示滑动完毕。在翻页过程中，状态值变化依次为：正在滑动-&gt;滑动完毕-&gt;静止。<br>onPageScrolled : 在翻页过程中调用。该方法的三个参数取值说明为：第一个参数表示当前页面的序号；第二个参数表示当前页面偏移的百分比，最小值为0，最大值为1；第三个参数表示当前页面的偏移距离，单位px。<br>onPageSelected : 在页面选择时调用，该方法用得较多。位置参数表示当前页面的序号。</p>
-<p>WaterfallGridView,StaggeredGridView,PinterestLikeAdapterView</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/07/03/N_Android11开发整理/" itemprop="url">
-                  Android开发整理
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-07-03T10:09:31+08:00" content="2018-07-03">
-              2018-07-03
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>做安卓开发也算是有一些时间了，一直都没有想过要整理一些东西，最近不是太忙，想着能整理一些，对自己也是一个提升吧。<br>我没有什么整理的头绪，也没有什么脉络，其实网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Android项目目录结构<br>Activity：应用被打开时显示的界面<br>src：项目代码<br>R.java：项目所有的资源文件<br>Android.jar：Android的jar包，倒入此包方可使用Android的api<br>libs：导入第三方jar包<br>assets：存放资源文件，比如mp3，视频文件<br>bin：存放编译打包的文件<br>res：存放资源文件<br>drawable：存放图片文件<br>layout：存放布局文件<br>menu：定义菜单的样式<br>String.xml:存放字符串资源</p>
-<p>Android的配置文件<br>指定应用的包名<br>package= “com.item.helloworld”<br>data/data/com.item.helloworld<br>应用生成的文件都在此路径<br>Android的四大组件使用前全部都需要在此清单文件中配置</p>
-<p>常用的adb指令<br>adb start-server ：启动adb进程<br>adb kill-server: 杀死进程<br>adb divices :查看当前开发环境链接的设备<br>adb install xxx.apk 往模拟器安装apk<br>adb uninstall 包名： 删除模拟器中应用<br>adb shell ： 进入linux命令</p>
-<p>常用布局：线性布局<br>LinerLayout<br>指定各个节点排列方向<br>android：orientation = “horizontal”<br>设置右对齐<br>android：layout_gravity=”right”<br>当竖直布局时，只能左右对齐和水平居中，顶部底部对齐竖直剧中无效<br>当水平对齐时，只能顶部底部对齐，和竖直居中<br>线性布局非常重要的一个属性：权重<br>android：layout_weight=’1’<br>权重：按照比例分配屏幕的剩余宽度或者高度</p>
-<p>常见布局：相对布局<br>RelativeLayout<br>组件默认左对齐，顶部对齐<br>设置组件制定组件的右边<br>android:layout_toRightOf=”id/tv1”<br>设置右对齐父控件<br>android：layout_alignParentRight=”true”</p>
-<p>帧布局：FrameLayout<br>默认组件都是左对齐和顶部对齐，每个组件相当于一个div</p>
-<p>文件读写操作<br>Ram内存：运行内存，相当于电脑内存<br>Rom内存：内部存储空间，相当于电脑硬盘<br>sd卡：外部存储空间，相当于电脑移动硬盘<br>//持久化保存数据<br>File file = new File(“data/data/com.itheima.rwinrom/info.txt”);<br>FileOutputStream fos = new FileOutputStream(file);<br>fos.write((name + “##” + pass).getBytes());<br>fos.close();<br>读取数据前先检测文件是否存在<br>if(file.exists())<br>读取保存的数据，也是直接开文件输入流读取<br>File file = new File(“data/data/com.itheima.rwinrom/info.txt”);<br>FileInputStream fis = new FileInputStream(file);<br>//把字节流转换成字符流<br>BufferedReader br = new BufferedReader(new InputStreamReader(fis));<br>String text = br.readLine();<br>String[] s = text.split(“##”);</p>
-<p>SharePreference<br>用于存储账号密码<br>往SharePrefreence写数据<br>拿到一个SharePreference对象<br>SharePrefrence sp = getSharePrefenrences(“config”,MODE_PRIVATE);<br>拿到编辑器<br>Editor ed = sp.edit();<br>写数据<br>ed.putBoolen(“name”,name)<br>ed.commit();<br>从SharedPreference里取数据<br>SharedPreferences sp = getSharedPreferences(“config”, MODE_PRIVATE);<br>//从SharedPreference里取数据<br>String name = sp.getBoolean(“name”, “”);</p>
-<p>ListView<br>MVC结构<br>M：model模型层，要显示的数据集合<br>V：view试图层，用户看到的界面–ListView<br>C：controller控制层，操作数据如何显示—adapter对象</p>
-<p>BaseAdapter</p>
-<p>必须实现的两个方法</p>
-<p>第一个</p>
-<p>//系统调用此方法，用来获知模型层有多少条数据<br>@Override<br>public int getCount() {<br>return people.size();<br>}</p>
-<p>第二个</p>
-<p>//系统调用此方法，获取要显示至ListView的View对象<br>//position:是return的View对象所对应的数据在集合中的位置<br>@Override<br>public View getView(int position, View convertView, ViewGroup parent) {<br>System.out.println(“getView方法调用” + position);<br>TextView tv = new TextView(MainActivity.this);<br>//拿到集合中的元素<br>Person p = people.get(position);<br>tv.setText(p.toString());</p>
-<p>//把TextView的对象返回出去，它会变成ListView的条目<br>return tv;<br>}</p>
-<p>消息队列<br>主线程创建时，系统会同事创建消息队列对象（MessageQueue）和消息轮询器对象（Looper）<br>轮询器的作用，就是不停的检测消息队列中是否有消息（Message）<br>Looper一旦发现Message Queue中有消息，就会把消息取出来，然后把消息扔给Handler对象，Handler会调用自己HandleMessage方法处理这条消息<br>Handler handler = new Handler() {<br>主线程有一个消息轮询器looper，不断检测消息队列是否有新消息，如果发现有新消息，自动调用此方法，注意：此方法是主线程运行的<br>public void handleMessage(android.os.Message msg) {</p>
-<p>}<br>}<br>在子线程中使用Handler对象往消息队列里发消息<br>创建消息对象<br>Message msg = new Message（）；<br>//消息的obj属性可以付给任意对象，通过这个属性可以携带数据<br>msg.obj = bm;<br>//what属性相当于一个标签，用于区分不同的消息，从而运行不同的代码<br>msg.what = 1<br>handler.sendMessage(msg);</p>
-<p>Activity生命周期（掌握）</p>
-<p>void onCreate()</p>
-<p>Activity已经被创建完毕<br>void onStart()</p>
-<p>Activity已经显示在屏幕，但没有得到焦点<br>void onResume()</p>
-<p>Activity得到焦点，可以与用户交互<br>void onPause()</p>
-<p>Activity失去焦点，无法再与用户交互，但依然可见<br>void onStop()</p>
-<p>Activity不可见，进入后台<br>void onDestroy()</p>
-<p>Activity被销毁<br>void onRestart()</p>
-<p>Activity从不可见变成可见时会执行此方法</p>
-<p>横竖屏写死<br>android:screenOrientation=”landscape”<br>android:screenOrientation=”portrait”<br>让系统的环境 不再去敏感横竖屏的切换。</p>
-<p>android:configChanges=”orientation|screenSize|keyboardHidden”</p>
-<p>进程优先级（掌握）</p>
-<p>前台进程：拥有一个正在与用户交互的activity（onResume方法被调用）的进程<br>可见进程：拥有一个非前台，但是对用户可见的activity（onPause方法被调用）的进程<br>服务进程：拥有一个通过startService方法启动的服务的进程<br>后台进程：拥有一个后台activity（onStop方法被调用）的进程<br>空进程：没有拥有任何活动的应用组件的进程，也就是没有任何服务和activity在运行</p>
-<p>样式与主题（熟悉）</p>
-<p>样式与主题定义方式一样<br>样式用于布局文件中的组件<br>主题用于Activity</p>
-<p>Fragment（重要）</p>
-<p>用途：在一个Activity里切换界面，切换界面时只切换Fragment里面的内容<br>生命周期方法跟Activity一致，可以理解把其为就是一个Activity<br>fragment切换时会销毁旧的，再创建新的<br>定义布局文件作为Fragment的显示内容<br>//此方法返回的View就会被显示在Fragment上<br>@Override<br>public View onCreateView(LayoutInflater inflater, ViewGroup container,<br>Bundle savedInstanceState) {<br>// TODO Auto-generated method stub<br>//用布局文件填充成一个View对象，返回出去，那么就显示在Fragment上了<br>View v = inflater.inflate(R.layout.fragment01, null);<br>return v;<br>}<br>把Fragment显示至指定ViewGroup中</p>
-<p>//把fragment显示至界面<br>//new出fragment对象<br>Fragment01 fg = new Fragment01();<br>FragmentManager fm = getFragmentManager();<br>//开启事务<br>FragmentTransaction ft = fm.beginTransaction();<br>//把fragment对象显示到指定资源id的组件里面<br>ft.replace(R.id.fl, fg);<br>ft.commit();<br>生命周期（重要）</p>
-<p>fragment切换时旧fragment对象会销毁，新的fragment对象会被创建<br>在drawable目录下定义xml文件，子节点为animation-list，在这里定义要显示的图片和每张图片的显示时长</p>
-<p><animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false"></animation-list></p>
-<p><item android:drawable="@drawable/g1" android:duration="200"></item></p>
-<p><item android:drawable="@drawable/g2" android:duration="200"></item></p>
-<p><item android:drawable="@drawable/g3" android:duration="200"><br><br>ImageView iv = (ImageView) findViewById(R.id.iv);<br>//把动画文件设置为imageView的背景<br>iv.setBackgroundResource(R.drawable.animations);<br>AnimationDrawable ad = (AnimationDrawable) iv.getBackground();<br>//播放动画<br>ad.start();</item></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/06/M_Swift86傲慢与偏见读后感/" itemprop="url">
-                  傲慢与偏见读后感
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-06T15:18:22+08:00" content="2018-06-06">
-              2018-06-06
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>今天好好读了一下这本书，傲慢与偏见。我很少读国外文学，今天算是真正的读了一下国外的文学,昨天又搁浅了，没有读完，很遗憾，只知道玩游戏了，这个游戏是真的很坑，你怎么打都不赢的时候，你真的是没有办法，现在最好的办法就是练习，如果就这样气馁了，真的是不是太好，所以我打算好好游戏，好好学习，这也是为自己做准备吧，打算趁着现在没有事情，好好练习一下这个英雄，能够让自己不致于太尴尬，所以，我想我时候做一点让自己都不遗憾的事情了，这真的很重要。<br>哈哈，说了半天，其实我是要写这本书的，感觉没有写，很无奈啊，这样吧，我再写写，争取能写好。<br>哈哈，我感觉我这个人怎么越来越没有恒心，越来越没有毅力了，真的是这样，这样让我很失望，我想我不能摆脱的话就不要去摆脱，没有必要，只要自己足够努力，我想一定会成功，不要着急，耐心点，再好好的耐心的等一等，相信自己，一定会有一个好的收获，就像去年学车一样，从一开始就保持一个耐心的姿态，不也很快就拿到驾照了嘛，所以，还是要好好的努力为主。<br>不要相信那些没有用的，只有自己是对的。<br>说了半天没有用的，我现在想好好说说这个外国文学了，外国的东西还是让我感觉有点不一样的，我们很多时候写文章都会要描述一下环境，用一些词藻，但是这个外国文学不是这样，他很不耐烦的讲述事情，讲的很细，每个人说的每句话好像都说了，就像是你在看一部电影一样，一句一句话的跟你说，我感觉这更像是一个编剧写出来的东西，真的是的。<br>还有就是在人物性格方面，我感觉这个傲慢和偏见很直接，就是单纯的从一个人的说话和弹出中去描述，不添加任何修饰，感觉很直接，让我们一下子就能感觉到人物性格。<br>今天早上玩个游戏气死我了，我很努力的在玩，但是连个人头和助攻都混不到，然后我想再玩一把把，把刚才的失败赎回来，没想到，这次越玩越差，尼玛，跟人家吵架的心都有了。真的是很生气，不知道为什么，很郁闷，这真的很难。怎么这么乱。<br>我</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/06/M_Swift88小小的一天/" itemprop="url">
-                  小小一天
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-06T09:35:26+08:00" content="2018-06-06">
-              2018-06-06
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>从昨天的思考，到今天，我想是时候说一下无聊的东西了，这样一天天的，是的，没事做的心情，继续写一点东西吧，谈谈人生，谈谈理想，说一些胡话，就算是聊以慰藉吧。<br>日子一天一天，很快，不知道这样是好是坏，我们总是打算着很多事情，但是有的时候到头来却是一场空，我不知道这样的日子还能多久，我也不想，但是我想，我需要写点东西，我需要让人生充实，我想有的人可以用很多东西来写东西，有的人就是这样。<br>哈哈，感觉头绪有点乱，真的不知道写什么好。天气热的要死，一出门，就是热浪腾腾。今天倒是还好，有点阴天，雾茫茫的，总算是没有大太阳了。<br>好像在说一堆没用的事情，但是人生就是这样，你不知道你会在哪里遇见什么人，你也不知道下一个路口在什么地方，总之，你就这样走着，这样活着，我们说是行尸走肉，其实我们每个人何尝又不是，每个人在社会上其实都是活着，别说你意义很大，其实你处的位置决定了你的作为，所以，不必惊讶，也不必低沉，其实我们都一样。<br>有钱人过的生活我们是享受不了，但是有钱人也有我们不曾有过的焦虑，其实都一样，他们说他们很忙，也好吧，其实说是有意义，当我们真正到老了，真的不知道是不是还是乐观的说有什么意思。<br>真的我们也许在有的时候会很天真，有的时候又很无聊，生活就是这样。<br>好了，不知道又胡扯了什么，今天看了一个新闻，说有声阅读将成为下一个风口，我想确实有一定的作用，但是我们不可否认，当我们没有事情可以做的时候，新闻称为了我们最大的慰藉，这有着一股神奇的力量，我想这有点可怕，我想现在的新闻变了，变成我们不认识的样子，真的是的，我现在发现，我打字真的是又点查，工作这么多年了，竟然打字一直都这样差，真的是有点说不过去，不过也就这样吧，平时写代码，真的不是太纠结打字速度的，但是当你写文字的时候，对于打字这个问题，还是比较注重的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/05/M_Swift87小思考/" itemprop="url">
-                  小思考
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-06-05T10:30:15+08:00" content="2018-06-05">
-              2018-06-05
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>今天也是没有什么重要的事情，昨天晚上的苹果开发者大会，发布了很多操作系统的优化，没有一件硬件产品，所以，我想，这个世界可能真的就是在变慢，这样感觉也挺好，起码，我们一时半会还没有被淘汰，但是，当我们没有事情的时候，我们应该干点什么呢，我想，是不是应该写一个app去实现一些东西，这个真的是一个我一直以来都想要去尝试的东西，因为搞这个开发。真的是你闲下来的时候就会手痒痒，这真的是一个让人头疼的问题，但是，其实创新是一件最让人头疼的问题，这就是一个麻烦了，我想我是否能够做一个东西，能够清楚的了解很多东西，就像是一些游戏，我能清楚的知道这个东西应该是什么，应该怎么做，应该怎么样去做，我想做一个工具类的东西，比如说现在高考就要结束了，那么大学是哪个好，专业选哪个好，真的是一个让人头疼的问题，那么我们能不能用一个攻略的东西，让这个事情变的好一点，我想是不是应该有个东西叫做百事通，这个真的是一个让人头疼的问题。<br>我突然想到一个很有意思的问题，既然现在游戏这么火爆，微信又凭借一个朋友圈火爆四射，那么我们能不能就是来模仿一个微信和王者荣耀，就模仿一把腾讯如何。<br>现在简单的想法是这样的，我们做一个类似微信发现页面的功能，内容是王者荣耀，这样就能够很好的通用性，然后再加上很多直播等内容的丰富，能不能做到比王者荣耀助手好很多的功能，我现在看王者荣耀助手，感觉很无聊，感觉一点都没有用，还有就是你的很多功能不能得到很好的发展。<br>现在我定义一下，这么一个app，他首先的定位是工具类。然后能够直播，然后能够慢动作分析。<br>我想现在像nba一样，一场比赛都会有很多慢动作分析，那么我们能不能分析局势啊，我们能不能把王者荣耀做在沙盘上进行演示？？<br>还有一个最重要的问题就是，腾讯肯定不会为我们提供这么多的权限，我们也不可能得到王者荣耀用户数据，比如账号名称，等等<br>但是，我们有英雄，就像我们是一个NBA球迷一样，你肯定有支持的球队，或者你肯定有喜欢的球员，那么这就是一个入手点。<br>我们是一个荣耀爱好者，那么你肯定就会有你喜欢玩的位置，喜欢玩的英雄。那么这就是入手点。<br>好了，应用有了，那么你能为英雄做什么呢？这就是我们的功能，说白了，每个爱好者都是想玩好游戏，但是全部的游戏攻略都普遍存在一个问题，就是对游戏认知太浅，感觉就不是一个会玩的玩家写出来的东西，这真的是一个让人头疼的问题。我也不是一个会玩的玩家，我怎么写这些东西呢？？<br>还有就是我们怎么样才能写好一本书，我曾经多次强调过，一个好的app就应该是一本书，一本很有诱惑的书，你打开之后就爱不释手的感觉，这真的很重要。但是我这个认知比较浅的人，真的能做到吗？<br>好了，也许大千网友能做到，就好了，认知很重要。我可以向所有人发起这个认知活动，应该是有好心人能够给到一个最好的答案。应该有钱就有人出来贡献吧。<br>好了，人物已经出来了，但是，就像书一样，我看完了，那么我下次再看的时候又能给我带来什么呢？更可怕的是，有的时候有些人根本不喜欢看第二遍。<br>这是一个问题，我想我们可以通过很多友好的东西来去做这些东西，我们可以添加一些东西，比如说书签，可以让用户自己编写一些东西，让用户能够更清楚的认识到自己的不足。<br>就像打篮球一样，我们每次都想找几个人打，每次打完，都没有发现自己有什么进步，这真的让人头疼。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/10/Q_3孩子一岁/" itemprop="url">
-                  孩子一岁生日
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-05-10T10:10:45+08:00" content="2018-05-10">
-              2018-05-10
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>一转眼，孩子已经一岁了，感觉时间很快，说实话我真的没有怎么陪伴孩子，五一的时候我请了三天假，跟着五一一起，相当于在家呆了一个星期，差不多跟过年也差不多了，在家呆了那么久，孩子始终都没有学会叫爸爸，这确实很难，也说明了我陪伴孩子的真的是少。<br>以前我想着孩子大一点，我带着孩子来北京，我们一家人能在一起，从我上次在家里呆了一个星期之后，我这种想法彻底破灭了，孩子正在成长的时候，孩子喜欢玩了，这个时候每天都希望出去转转，真的是不能在家里窝着的，但是如果在北京的话，真的是只能在家里窝着，因为我要去上班，这真的是一个头疼的问题，一方面想要陪伴，一方面想让孩子自由。<br>好了，不说那么头疼的问题了，现在孩子真的是越来越淘气了，有时候感觉这孩子特别的娇气，动不动的就会哭，这真的让我很失望，我不希望小小年纪就有多坚强，但是也不能动不动就哭，这真的是太娇气了，更可气的是不吃饭，真的是，我看那么多孩子，都胖嘟嘟的，这孩子真的是一点都不胖，虽说不是多瘦吧，肉也挺结实的，但是，我真的是觉得应该要好好吃饭的，对于饮食上的问题，我觉得真的是要好好的注意，不能小小年纪就惯成不好的饮食习惯，这真的不应该是一个农村孩子应该有的体制。淘气其实我觉得还是可以理解的，毕竟是孩子嘛，但是真的不希望坏的习惯早早的出现在孩子身上，我不能在家里陪伴孩子，说实话，孩子的成长，我至今都没有做任何工作，但是我真的希望孩子能养成好的习惯，这对将来真的很重要，我真的不知道该怎么做了，如果让孩子来北京的话，确实是太痛苦了，但是在家里的话，我真的是没有时间去教育孩子的，这是一个很大的问题。<br>我结下来讲的问题是独立的问题，我想孩子你已经一岁了，至少也需要慢慢的减少母亲的陪伴了，有的时候要学会自己玩乐，学会跟孩子玩乐了，也要学会母亲不在的时候，不要哭哭啼啼了。我其实很像给孩子买个婴儿床，这个问题我觉得很重要，孩子慢慢的长大了，要学会独立了，不致于早早的独立生活，但至少要有一些独立生活的行为，自己睡觉我觉得应该是一个常识，我问题我同事，他家的孩子很早的时候就自己睡，我觉得这样很好。<br>说到睡觉，这孩子真的是不省心，睡觉的姿势真的是千奇百怪，我真的很无语，睡着的时候需要翻来覆去的半天，最后轰然趴倒在被窝里，就这样跟趴着睡着了，我们再把她弄到被窝里，但是不一会她就会把被子蹬到一边去，然后睡着睡着，竟然会横过来，头一个劲的往上顶，顶到枕头里，顶到整个头都仰着，歪着，那姿势，我觉得需要一定的柔韧，反正我是做不到。<br>家里床是很大，让孩子自己睡一个床，有时候觉得确实有点占地方，这真的是一个头疼的问题。我想这个床真的是应该买的。<br>我没有照顾孩子，但是从目前来看，孩子的身上确实有一些小的毛病，我知道媳妇一直很疼爱孩子，其实照顾孩子真的不容易，在这里说一句，孩子她妈妈辛苦了。<br>话说回来，有些问题，我们看到了，但是我们不知道怎么解决。也许只有孩子的妈妈能解决吧，我只能是一个旁观者，有的时候话多了，反而是显得的不干活，还净是一些事。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/04/28/N_Android10安卓引擎开发总结/" itemprop="url">
-                  安卓开发总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-04-28T11:21:51+08:00" content="2018-04-28">
-              2018-04-28
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近一段时间算是非常的忙碌，已经很久时间没有更新内容了。最近一直在写安卓，想想也是奇怪，我一个开发IOS的现在竟然也走到这条路上，一直都认为安卓开发不是太难，所以也就走过来了，现在想想也确实是没有想象中的那么难，但是，人总是这样，一步一步的走的时候确实需要一个困难，确实需要勇气去面对，我想也许世界上很多事情都是这样，你可能认为会非常的困难，但是其实并没有那么难，所以，别妄自菲薄，别妄加评论别人的生活。你自己的就是最好的。<br>好了，最近写那么长时间的安卓，总是要有一些收获的，感觉其实安卓开发我还是不行，还是写不动代码，但是，我想时间是解药，能够满满的治愈这些东西，但是安卓真的是很难找bug，真的这是让我最无语的问题，我感觉每次遇到问题，都是要上下翻找控制台的日志，而且你还不确定哪个日志是对的，而且很多时候，那些日志你根本看不出来是因为啥，莫名其妙啊。<br>还有一个问题，我发现我慢慢的已经习惯了，我慢慢的磨时间的话，有些问题，真的是能够让我们去发现的，我感觉却是是让我有点改变，却是需要耐心，耐心真的很重要，如果你耐心更多一点，那个问题真的就让你找到了，我以前工作就是耐心比较差，好在有荣娜配合一下，让我也不至于那么无助，现在的我真的是只能用时间来打磨了。我想这也是给我最大的收获吧。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/21/N_Android9开发规范/" itemprop="url">
-                  Android开发代码规范
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-03-21T10:32:04+08:00" content="2018-03-21">
-              2018-03-21
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近公司安卓项目比较紧，所以让我去帮忙写一点安卓，我也有幸能写一下安卓，感觉对我有很大的帮助，这种机会是不能少的，我赶紧学习了一番。现在需求差不多了，感觉写的不是太好，但是也不至于太差，现在是时候总结一下了。<br>1.类中对象以m开头，后面跟对象属性，然后是对象名称。<br>2.类中方法以set，get为主，所有m对象无法直接访问，都是通过set，get方法间接访问。<br>3.selector，这个是在Android中发现的一个比较有意思的东西，真的特别的好，非常实用，可以很好的更改UI，让一个控件显示很多不同的风格。<br>4.安卓中很少写宽高，很少直接写，都是间接写，或者用padding撑起来。<br>5.安卓中的生命周期还是需要了解的，安卓中所有对象都是围绕着activity来的</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/03/21/N_Android8 Sutdio使用/" itemprop="url">
-                  Android Studio使用笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2018-03-21T10:14:25+08:00" content="2018-03-21">
-              2018-03-21
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近公司需求忙于安卓的开发，我也顺手帮忙开发了一点点，感觉还是挺舒服，虽然一开始压力有点，但是，现在感觉有点清爽很多，感觉也没有那么复杂，今天，需求已经是忙的差不多了，感觉可以休息一下了，所以写写文档，反思一下Android开发，也好为以后开发做准备。<br>刚才看了一下，感觉使用Android是一个问题，所以线把这个问题放在中心位置上了，先百度一下吧<br>1.安卓开发，下载工具，没有太多问题。<br>2.安卓开发设备调试，如何真机调试，一开始我刚会用手机调试，连断点都不会使用，后来知道怎么打断点，怎么用了。<br>还有一个问题就是查看Log日志，这个问题我确实很纠结，Log日志台太多日志了，有的时候高德你都不知道哪个日志是对的，感觉挺麻烦，不过这也许就是安卓吧。<br>下面是百度结果</p>
-<h2 id="Android-Studio目录结构"><a href="#Android-Studio目录结构" class="headerlink" title="Android Studio目录结构"></a>Android Studio目录结构</h2><p>新建工程项目后AS的Product目录结构如下所示：<br>.idea：//AS生成的工程配置文件，类似Eclipse的project.properties。<br>app：//AS创建工程中的一个Module。<br>gradle：//构建工具系统的jar和wrapper等，jar告诉了AS如何与系统安装的gradle构建联系。<br>External Libraries：//不是一个文件夹，只是依赖lib文件，如SDK等。</p>
-<h2 id="新建工程项目后AS的Module目录结构如下所示："><a href="#新建工程项目后AS的Module目录结构如下所示：" class="headerlink" title="新建工程项目后AS的Module目录结构如下所示："></a>新建工程项目后AS的Module目录结构如下所示：</h2><p>build：//构建目录，相当于Eclipse中默认Java工程的bin目录，鼠标放在上面右键Show in Exploer即可打开文件夹，<br>编译生成的apk也在这个目录的outs子目录，不过在AS的工程里是默认不显示out目录的，就算有编译结果也<br>不显示，右键打开通过文件夹直接可以看。<br>libs：//依赖包，包含jar包和jni等包。<br>src：//源码，相当于eclipse的工程。<br>main：//主文件夹<br>java：//Java代码，包含工程和新建是默认产生的Test工程源码。<br>res：//资源文件，类似Eclipse。<br>layout：//App布局及界面元素配置，雷同Eclipse。<br>menu：//App菜单配置，雷同Eclipse。<br>values：//雷同Eclipse。<br>dimens.xml：//定义css的配置文件。<br>strings.xml：//定义字符串的配置文件。<br>styles.xml：//定义style的配置文件。<br>……：//arrays等其他文件。<br>……：//assets等目录<br>AndroidManifest.xml：//App基本信息（Android管理文件）<br>ic_launcher-web.png：//App图标<br>build.gradle：//Module的Gradle构建脚本</p>
-<h2 id="AS的工程根目录下的build-gradle文件："><a href="#AS的工程根目录下的build-gradle文件：" class="headerlink" title="AS的工程根目录下的build.gradle文件："></a>AS的工程根目录下的build.gradle文件：</h2><p>buildscript {       //设置脚本的运行环境<br>repositories {  //支持java依赖库管理（maven/ivy等）,用于项目的依赖<br>//mavenCentral()    //仅仅是不同的网络仓库而已<br>jcenter()           //推荐使用这个仓库<br>}<br>//依赖包的定义。支持maven/ivy、远程、本地库、单文件，前面定义了repositories{}jcenter库，使用jcenter的依赖只需要按照<br>//类似于com.android.tools.build:gradle:1.0.0-rc2，gradle就会自动的往远程库下载相应的依赖。<br>dependencies {<br>classpath ‘com.android.tools.build:gradle:1.0.0-rc2’</p>
-<p>// NOTE: Do not place your application dependencies here; they belong<br>// in the individual module build.gradle files<br>}<br>}<br>//多项目的集中配置，多数构建工具，对于子项目的配置，都是基于继承的方式。Gradle除了提供继承方式设置子项目，还提供这种配置<br>allprojects {<br>repositories {<br>jcenter()<br>}<br>}</p>
-<h2 id="AS的工程根目录下的settings-gradle文件："><a href="#AS的工程根目录下的settings-gradle文件：" class="headerlink" title="AS的工程根目录下的settings.gradle文件："></a>AS的工程根目录下的settings.gradle文件：</h2><p>include ‘:app’ //module  include ‘:my_lib’ //module(build as lib)<br>AS的工程根目录下的Module的build.gradle文件（此处以一个简单的Lib module的gradle为例）：</p>
-<p>//plugin在AS里取值一般为’com.android.library’或者’com.android.application’<br>apply plugin: ‘com.android.library’ //构建为lib</p>
-<p>android {<br>compileSdkVersion 17            //编译需要SDK版本<br>buildToolsVersion “19.1.0”      //SDK Manager确定本地安装该版本才可以</p>
-<p>defaultConfig {<br>minSdkVersion 8         //最小版本<br>targetSdkVersion 17     //目标版本<br>}</p>
-<p>buildTypes {                //编译项<br>release {<br>minifyEnabled false<br>proguardFiles getDefaultProguardFile(‘proguard-android.txt’), ‘proguard-rules.txt’<br>}<br>}<br>}</p>
-<p>dependencies {                  //依赖支持<br>compile ‘com.android.support:support-v4:18.+’<br>}</p>
-<h2 id="查看类中方法"><a href="#查看类中方法" class="headerlink" title="查看类中方法"></a>查看类中方法</h2><p>这个是我比较希望看到的一个，我百度了一下，Android Studio中还是有这种方法的，在Xcode中，我们特别喜欢用这种工具，直接一下子就能看穿一个类，我也感觉这样特别清爽，现在真的不用纠结了，一下子就能看到了，方法是<br>Navigate -》File Structure</p>
+            <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>接口interface</p>
+<p>interface是一些功能的集合，但它只定义了对象必须实现的成员，而不包含成员的实现代码，成员的具体代码由实现接口的类提供。Android对接口的使用场景主要有三类：事件监听器接口、对象序列化结构、线程类相关接口。<br>事件监听器接口</p>
+<p>这类接口名称一般以Listener或者CallBack结尾，监听器定义了事件触发时应该进行的操作方法，具体操作步骤需要自定义实现。常见的监听器接口有：<br>对象序列化接口<br>线程类相关接口<br>抽象类abtract class<br>部分基础控件<br>适配器<br>适配器在实际使用时都要派生重写，所以sdk里的适配器类都是抽象类或接口，包括：<br>1、列表适配器，如ListAdapter、SpinnerAdapter、BaseAdapter等等；<br>2、页面适配器，如PagerAdapter、FragmentPagerAdapter、FragmentStatePagerAdapter等等</p>
+<p>静态static<br>静态方法<br>1、静态方法中只能调用静态方法，不能调用非静态方法；<br>静态变量在运行时一般无需修改，如果在运行时修改了变量值，可能会得到非预期的结果。<br>2、静态方法中只能使用静态的类变量，不能使用非静态的类变量；<br>3、静态方法中不能使用this和super，即使this后面跟的是静态类变量也不行；<br>静态类<br>静态类指的是名称前加了static修饰符的类，一般用于开放给外部使用的类中内部类，这样就可以通过“上级类的类名.内部类的类名”来访问。比如说AlertDialog类的内部类Builder，可通过AlertDialog.Builder来调用；再比如Build类的内部类VERSION，可通过Build.VERSION来调用。<br>终态final</p>
+<p>单例模式有三个特点；<br>1、某个类只能有一个实例；<br>2、它要自行创建这个实例；<br>3、它只有唯一途径向整个系统提供这个实例。<br>public class SingletonInner {</p>
+<p>private static class SingletonHolder {<br>private static SingletonInner instance = new SingletonInner();<br>}</p>
+<p>private SingletonInner() {<br>}</p>
+<p>public static SingletonInner getInstance() {<br>return SingletonHolder.instance;<br>}</p>
+<p>}<br>类工厂</p>
+<p>类工厂的输入参数为类名，这得用模板来表示了。类工厂用的就比较多，比如java的容器类ArrayList、HashMap等等都用到了类工厂</p>
+<p>策略模式<br>装饰模式</p>
 
           
         
@@ -1265,7 +2167,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1306,7 +2208,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">212</span>
+              <span class="site-state-item-count">223</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
