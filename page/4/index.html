@@ -228,8 +228,8 @@
             
               
                 
-                <a class="post-title-link" href="/2019/06/25/M_Swift124数据结构/" itemprop="url">
-                  数据结构
+                <a class="post-title-link" href="/2019/06/25/M_Swift121iOS不常用方法/" itemprop="url">
+                  iOS不常用方法
                 </a>
               
             
@@ -272,35 +272,224 @@
       
         
           
-            <p>1、数组<br>数组是可以再内存中连续存储多个元素的结构，在内存中的分配也是连续的，数组中的元素通过数组下标进行访问，数组下标从0开始。例如下面这段代码就是将数组的第一个元素赋值为 1。<br>优点：<br>1、按照索引查询元素速度快<br>2、按照索引遍历数组方便</p>
-<p>缺点：<br>1、数组的大小固定后就无法扩容了<br>2、数组只能存储一种类型的数据<br>3、添加，删除的操作慢，因为要移动其他的元素。<br>适用场景：<br>频繁查询，对存储空间要求不大，很少增加和删除的情况。</p>
-<p>寻找数组中第二小的元素<br>示例代码一：先把数组进行升序排序 排完序后再进行遍历比较<br>遍历数组，定义max和second，找到max，<br>if (v[i] &gt; max) {<br>           second = max;<br>           max = v[i];<br>       } else if (v[i] &gt; second) {<br>           second = v[i];<br>       }<br>找到数组中第一个不重复出现的整数<br>双重for循环，找位置，如果找到最后位置是当前位置，则没有重复<br>合并两个有序数组<br>混合插入有序数组，由于两个数组都是有序的，所以只要按顺序比较大小即可。题目中说了nums1数组有足够大的空间，说明我们不用resize数组，又给了我们m和n，那就知道了混合之后的数组大小，这样我们就从nums1和nums2数组的末尾开始一个一个比较，把较大的数，按顺序从后往前加入混合之后的数组末尾。需要三个变量i，j，k，分别指向nums1,nums2,和混合数组的末尾。进行while循环，如果i和j都大于0，再看如果nums1[i] &gt; nums2[j]，说明要把nums1[i]先加入混合数组的末尾，加入后k和i都要自减1；else，就把nums2[j]加入混合数组的末尾，之后j和k也要自减1。循环结束后，有可能i和j还大于等于0，若j大于等于0，那么需要继续循环，将nums2中的数字继续拷入nums1。若是i大于等于0，那么就不用管，因为混合数组本身就房子nums1中。<br>重新排列数组中的正值和负值</p>
-<p>2、栈</p>
-<p>栈是一种特殊的线性表，仅能在线性表的一端操作，栈顶允许操作，栈底不允许操作。 栈的特点是：先进后出，或者说是后进先出，从栈顶放入元素的操作叫入栈，取出元素叫出栈。<br>栈的结构就像一个集装箱，越先放进去的东西越晚才能拿出来，所以，栈常应用于实现递归功能方面的场景，例如斐波那契数列。<br>java使用栈计算后缀表达式<br>stack = new Stack<integer>();<br>对栈的元素进行排序<br>判断表达式是否括号平衡<br>3、队列</integer></p>
-<p>队列与栈一样，也是一种线性表，不同的是，队列可以在一端添加元素，在另一端取出元素，也就是：先进先出。从一端放入元素的操作称为入队，取出元素为出队，示例图如下：<br>使用场景：因为队列先进先出的特点，在多线程阻塞队列管理中非常适用。<br>面试题：反转队列前K个元素<br>直接把前k个元素压栈，放入新队列中，追加剩余的队列元素<br>使用队列表示栈<br>对队列的前k个元素倒序<br>使用队列生成从1到n的二进制数<br>4、链表</p>
-<p>链表是物理存储单元上非连续的、非顺序的存储结构，数据元素的逻辑顺序是通过链表的指针地址实现，每个元素包含两个结点，一个是存储元素的数据域 (内存空间)，另一个是指向下一个结点地址的指针域。根据指针的指向，链表能形成不同的结构，例如单链表，双向链表，循环链表等。<br>链表的优点：<br>链表是很常用的一种数据结构，不需要初始化容量，可以任意加减元素；<br>添加或者删除元素时只需要改变前后两个元素结点的指针域指向地址即可，所以添加，删除很快；</p>
-<p>缺点：<br>因为含有大量的指针域，占用空间较大；<br>查找元素需要遍历链表来查找，非常耗时。</p>
-<p>适用场景：<br>数据量较小，需要频繁增加，删除操作的场景<br>反转链表<br>检测链表中的循环<br>返回链表倒数第N个节点<br>删除链表中的重复项</p>
-<p>5、树</p>
-<p>树是一种数据结构，它是由n（n&gt;=1）个有限节点组成一个具有层次关系的集合。把它叫做 “树” 是因为它看起来像一棵倒挂的树，也就是说它是根朝上，而叶朝下的。它具有以下的特点：</p>
-<p>每个节点有零个或多个子节点；<br>没有父节点的节点称为根节点；<br>每一个非根节点有且只有一个父节点；<br>除了根节点外，每个子节点可以分为多个不相交的子树；<br>在日常的应用中，我们讨论和用的更多的是树的其中一种结构，就是二叉树。<br>二叉树是树的特殊一种，具有如下特点：</p>
-<p>1、每个结点最多有两颗子树，结点的度最大为2。<br>2、左子树和右子树是有顺序的，次序不能颠倒。<br>3、即使某结点只有一个子树，也要区分左右子树。</p>
-<p>二叉树是一种比较有用的折中方案，它添加，删除元素都很快，并且在查找方面也有很多的算法优化，所以，二叉树既有链表的好处，也有数组的好处，是两者的优化方案，在处理大批量的动态数据方面非常有用。</p>
-<p>扩展：<br>二叉树有很多扩展的数据结构，包括平衡二叉树、红黑树、B+树等，这些数据结构二叉树的基础上衍生了很多的功能，在实际应用中广泛用到，例如mysql的数据库索引结构用的就是B+树，还有HashMap的底层源码中用到了红黑树。这些二叉树的功能强大，但算法上比较复杂，想学习的话还是需要花时间去深入的。<br>求二叉树的高度<br>在二叉搜索树中查找第k个最大值<br>查找与根节点距离k的节点<br>在二叉树中查找给定节点的祖先节点</p>
-<p>计算字典树中的总单词数<br>打印存储在字典树中的所有单词<br>使用字典树对数组的元素进行排序<br>使用字典树从字典中形成单词<br>构建T9字典（字典树+ DFS ）<br>6、散列表</p>
-<p>散列表，也叫哈希表，是根据关键码和值 (key和value) 直接进行访问的数据结构，通过key和value来映射到集合中的一个位置，这样就可以很快找到集合中的对应元素。</p>
-<p>记录的存储位置=f(key)</p>
-<p>这里的对应关系 f 成为散列函数，又称为哈希 (hash函数)，而散列表就是把Key通过一个固定的算法函数既所谓的哈希函数转换成一个整型数字，然后就将该数字对数组长度进行取余，取余结果就当作数组的下标，将value存储在以该数字为下标的数组空间里，这种存储空间可以充分利用数组的查找优势来查找元素，所以查找的速度很快。</p>
-<p>哈希表在应用中也是比较常见的，就如Java中有些集合类就是借鉴了哈希原理构造的，例如HashMap，HashTable等，利用hash表的优势，对于集合的查找元素时非常方便的，然而，因为哈希表是基于数组衍生的数据结构，在添加删除元素方面是比较慢的，所以很多时候需要用到一种数组链表来做，也就是拉链法。拉链法是数组结合链表的一种结构，较早前的hashMap底层的存储就是采用这种结构，直到jdk1.8之后才换成了数组加红黑树的结构，其示例图如下：<br>7、堆</p>
-<p>堆是一种比较特殊的数据结构，可以被看做一棵树的数组对象，具有以下的性质：</p>
-<p>堆中某个节点的值总是不大于或不小于其父节点的值；</p>
-<p>堆总是一棵完全二叉树。</p>
-<p>将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆。常见的堆有二叉堆、斐波那契堆等。</p>
-<p>堆的定义如下：n个元素的序列{k1,k2,ki,…,kn}当且仅当满足下关系时，称之为堆。<br>(ki &lt;= k2i,ki &lt;= k2i+1)或者(ki &gt;= k2i,ki &gt;= k2i+1), (i = 1,2,3,4…n/2)，满足前者的表达式的成为小顶堆，满足后者表达式的为大顶堆，这两者的结构图可以用完全二叉树排列出来，示例图如下： </p>
-<p>8、图</p>
-<p>图是由结点的有穷集合V和边的集合E组成。其中，为了与树形结构加以区别，在图结构中常常将结点称为顶点，边是顶点的有序偶对，若两个顶点之间存在一条边，就表示这两个顶点具有相邻关系。</p>
-<p>按照顶点指向的方向可分为无向图和有向图：<br>图是一种比较复杂的数据结构，在存储数据上有着比较复杂和高效的算法，分别有邻接矩阵 、邻接表、十字链表、邻接多重表、边集数组等存储结构，这里不做展开，读者有兴趣可以自己学习深入。<br>实现广度和深度优先搜索<br>检查图是否为树<br>计算图的边数<br>找到两个顶点之间的最短路径</p>
-<p>在数组中查找对称键值对<br>追踪遍历的完整路径<br>查找数组是否是另一个数组的子集<br>检查给定的数组是否不相交</p>
+            <h2 id="UITableView收起键盘"><a href="#UITableView收起键盘" class="headerlink" title="UITableView收起键盘"></a>UITableView收起键盘</h2><p>何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDismissModeInteractive，表示在键盘内部滑动，键盘逐渐下去。</p>
+<h2 id="禁止手机睡眠"><a href="#禁止手机睡眠" class="headerlink" title="禁止手机睡眠"></a>禁止手机睡眠</h2><p>[UIApplication sharedApplication].idleTimerDisabled = YES;</p>
+<h2 id="tableView-beginUpdates-和-endUpdates"><a href="#tableView-beginUpdates-和-endUpdates" class="headerlink" title="tableView  beginUpdates 和 endUpdates"></a>tableView  beginUpdates 和 endUpdates</h2><p>1.beginUpdates 和 endUpdates必须成对使用<br>2、使用beginUpdates和endUpdates可以在改变一些行（row）的高度时自带动画，并且不需要Reload row（不用调用cellForRow，仅仅需要调用heightForRow，这样效率最高）。<br>3、在beginUpdates和endUpdates中执行insert,delete,select,reload row时，动画效果更加同步和顺滑，否则动画卡顿且table的属性（如row count）可能会失效。<br>4、在beginUpdates 和 endUpdates中执行 reloadData 方法和直接reloadData一样，没有相应的中间动画。</p>
+<h2 id="统一收起键盘"><a href="#统一收起键盘" class="headerlink" title="统一收起键盘"></a>统一收起键盘</h2><p>[[[UIApplication sharedApplication] keyWindow] endEditing:YES];</p>
+<h2 id="wkwebview报错"><a href="#wkwebview报错" class="headerlink" title="wkwebview报错"></a>wkwebview报错</h2><p>使用wkwebview时，push后，再pop返回，报错了：<br>Cannot form weak reference to instance (xxxx) of class xxxx. It is possible that this object was over-released, or is in the process of deallocation.<br>原因是给webView.scrollView设置了代理：webView.scrollView.delegate = self ；<br>解决办法：<br>-(void)dealloc<br>{<br>webView.scrollView.delegate = nil;<br>}</p>
+<h2 id="linker-command-failed-with-exit-code-1"><a href="#linker-command-failed-with-exit-code-1" class="headerlink" title="linker command failed with exit code 1"></a>linker command failed with exit code 1</h2><p>原因和解决办法：<br>1、看看是不是有新添加的文件跟之前文件同名<br>2、错误信息中出现了某个类的名字，去原文件中看看#import了哪些第三方库，把这些库挨个注释排除，找到出错的那个库，然后按照官方提供的步骤重新添加一遍。<br>3、SVN或git忽略了某些文件，如.o 等文件没能update下来，查看.o文件可能是红色的，可以重新添加或者修改SVN(git)的忽略设置<br>4、把.a文件删除再重新拖到项目中解决问题<br>5、可能重复添加了文件（也可能没勾选 Copy items if neded 这个选项），建议删除后重新添加<br>6、工程中文件名重复了 也会出现同样的错误<br>7、Build Settings”-&gt;”Enable Bitcode”设置为NO ，因为有些SDK不支持Bitcode<br>8、可能在引用的时候 可能写的是#import “XXXXX.m” ，如果是改为#import “XXXXX.h”<br>9、可能你导入的SDK只能在真机下才能运行，模拟器会报错！<br>10、找到 Build settings-&gt;Linking-&gt;Other Linker Flags将此属性修改成-all_load 或者 -ObjC<br>11、Build settings-&gt;Search Path-&gt;Library Search Paths 添加静态库的相应路径</p>
+<h2 id="CABasicAnimation-按home键后台之后，再切回来动画就停止"><a href="#CABasicAnimation-按home键后台之后，再切回来动画就停止" class="headerlink" title="CABasicAnimation 按home键后台之后，再切回来动画就停止"></a>CABasicAnimation 按home键后台之后，再切回来动画就停止</h2><p>CABasicAnimation有个属性removedOnCompletion，默认值为YES,意思是动画在指定时间段内完成后，就会从层上自动移除。<br>如果CABasicAnimation 按home键后台之后，再切回来动画就停止，只要将removedOnCompletion属性设为no动画就不会停止，直到你移除该动画</p>
+<h2 id="播放一张张连续的图片"><a href="#播放一张张连续的图片" class="headerlink" title="播放一张张连续的图片"></a>播放一张张连续的图片</h2><p>// 方法一<br>imageView.animationImages = @[[UIImage imageNamed:@”animate_1”], [UIImage imageNamed:@”animate_2”], [UIImage imageNamed:@”animate<em>3”]];<br>imageView.animationDuration = 1.0;<br>// 方法二<br>imageView.image = [UIImage animatedImageNamed:@”animate</em>“ duration:1.0];<br>// 方法二解释下，这个方法会加载animate_为前缀的，后边0-1024，也就是animate_0、animate_1一直到animate_1024</p>
+<h2 id="判断两个rect是否有交叉"><a href="#判断两个rect是否有交叉" class="headerlink" title="判断两个rect是否有交叉"></a>判断两个rect是否有交叉</h2><p>if (CGRectIntersectsRect(rect1, rect2)) {<br>}</p>
+<h2 id="键盘上方增加工具栏"><a href="#键盘上方增加工具栏" class="headerlink" title="键盘上方增加工具栏"></a>键盘上方增加工具栏</h2><p>UIToolbar <em>keyboardDoneButtonView = [[UIToolbar alloc] init];<br>[keyboardDoneButtonView sizeToFit];<br>UIBarButtonItem </em>doneButton = [[UIBarButtonItem alloc] initWithTitle:@”Done”<br>style:UIBarButtonItemStyleBordered target:self<br>action:@selector(doneClicked:)];<br>[keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];<br>txtField.inputAccessoryView = keyboardDoneButtonView;</p>
+<h2 id="判断一个view是否为另一个view的子视图"><a href="#判断一个view是否为另一个view的子视图" class="headerlink" title="判断一个view是否为另一个view的子视图"></a>判断一个view是否为另一个view的子视图</h2><p>// 如果myView是self.view本身，也会返回yes<br>BOOL isSubView = [myView isDescendantOfView:self.view];</p>
+<h2 id="判断某一行的cell是否已经显示"><a href="#判断某一行的cell是否已经显示" class="headerlink" title="判断某一行的cell是否已经显示"></a>判断某一行的cell是否已经显示</h2><p>CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];<br>BOOL completelyVisible = CGRectContainsRect(tableView.bounds, cellRect);</p>
+<h2 id="隐藏UITextView-UITextField光标"><a href="#隐藏UITextView-UITextField光标" class="headerlink" title="隐藏UITextView/UITextField光标"></a>隐藏UITextView/UITextField光标</h2><p>textField.tintColor = [UIColor clearColor];</p>
+<h2 id="当UITextView-UITextField中没有文字时，禁用回车键"><a href="#当UITextView-UITextField中没有文字时，禁用回车键" class="headerlink" title="当UITextView/UITextField中没有文字时，禁用回车键"></a>当UITextView/UITextField中没有文字时，禁用回车键</h2><p>textField.enablesReturnKeyAutomatically = YES;</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/06/25/M_Swift122总结/" itemprop="url">
+                  总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>很久没有写博客了，有一年多的时间了吧，这中间风风雨雨，我想是不是忘记了自己的初衷了，今天好像一天都没有工作，我想写点东西吧，纪念一下自己的30岁，不知道30岁以后的人生是什么样，我想是时候y需要规划一下了。<br>总之很多问题，我好像随波逐流的在这一年里干了很多事情，也好像什么也没干<br>孩子出生了，我也没回家看过几次。。。<br>房子买了，真的是满纸荒唐言，一把心酸泪，很扯，但愿以后的结果让我们很满意吧。<br>这段时间我觉得最大的成功就是写了公交规划这个项目吧，我觉得对我来说确实挺爽的，这个项目我觉得还是挺有收获的，因为是我一个人独立完成的，而且是用java，总之，还是挺有意义的。效率不能算是非常的好，但是我觉得代码很简洁，还是有一点能力的，自夸一下吧。算是对自己信心上的一个提高<br>现在在说地图数据编译，其实代码都是已经写好的，我只不过是用这编译罢了，没有多少技术含量，但是每次编译的时候都需要熬夜似的编译，让我确实很疲惫，不知道以后会不会好点。<br>总之对地图数据这方面我也算是有了一点点的收获，还是挺高兴的。<br>下面的事情我想我也不知道怎么办了，卖完房子，现金方面就不是太充足了，还借了一些钱，希望也是尽快能还上<br>明天也不知道是什么情况，公司搬到海淀这个地方对我h来说还是挺难受的，我每天早上要6点40左右就要醒来，然后赶将近两个小时的时间的公交和地铁去上班，下班也是，这样一天天的让我身心很疲惫，每到周末想好好的放松一下的时候，我又上了打游戏的瘾，天天打游戏到深夜，也还是疲惫。总之这种状态不是很好<br>这个疫情让我在家里呆了很长很长一段时间，导致我都有点胖了，真的不是个好现象。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/06/25/M_Swift123开根号/" itemprop="url">
+                  开根号
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>static double  newSqrt(double n) {<br>    double low, high, mid, tmp;<br>    double ACCURACY = 0.001;<br>    // 获取上下界<br>    if (n &gt; 1) {<br>        low = 1;<br>        high = n;<br>    } else {<br>        low = n;<br>        high = 1;<br>    }</p>
+<pre><code>// 二分法求开方
+while (low &lt;= high) {
+    mid = (low + high) / 2.000;
+
+    tmp = mid * mid;
+
+    if (tmp - n &lt;= ACCURACY &amp;&amp; tmp - n &gt;= ACCURACY * -1) {
+        return mid;
+    } else if (tmp &gt; n) {
+        high = mid;
+    } else {
+        low = mid;
+    }
+}
+return -1.000;
+</code></pre><p>}</p>
 
           
         
@@ -531,8 +720,8 @@ return MaxLen[length1][length2];
             
               
                 
-                <a class="post-title-link" href="/2019/06/25/M_Swift123开根号/" itemprop="url">
-                  开根号
+                <a class="post-title-link" href="/2019/06/25/M_Swift124数据结构/" itemprop="url">
+                  数据结构
                 </a>
               
             
@@ -575,224 +764,35 @@ return MaxLen[length1][length2];
       
         
           
-            <p>static double  newSqrt(double n) {<br>    double low, high, mid, tmp;<br>    double ACCURACY = 0.001;<br>    // 获取上下界<br>    if (n &gt; 1) {<br>        low = 1;<br>        high = n;<br>    } else {<br>        low = n;<br>        high = 1;<br>    }</p>
-<pre><code>// 二分法求开方
-while (low &lt;= high) {
-    mid = (low + high) / 2.000;
-
-    tmp = mid * mid;
-
-    if (tmp - n &lt;= ACCURACY &amp;&amp; tmp - n &gt;= ACCURACY * -1) {
-        return mid;
-    } else if (tmp &gt; n) {
-        high = mid;
-    } else {
-        low = mid;
-    }
-}
-return -1.000;
-</code></pre><p>}</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/06/25/M_Swift122总结/" itemprop="url">
-                  总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>很久没有写博客了，有一年多的时间了吧，这中间风风雨雨，我想是不是忘记了自己的初衷了，今天好像一天都没有工作，我想写点东西吧，纪念一下自己的30岁，不知道30岁以后的人生是什么样，我想是时候y需要规划一下了。<br>总之很多问题，我好像随波逐流的在这一年里干了很多事情，也好像什么也没干<br>孩子出生了，我也没回家看过几次。。。<br>房子买了，真的是满纸荒唐言，一把心酸泪，很扯，但愿以后的结果让我们很满意吧。<br>这段时间我觉得最大的成功就是写了公交规划这个项目吧，我觉得对我来说确实挺爽的，这个项目我觉得还是挺有收获的，因为是我一个人独立完成的，而且是用java，总之，还是挺有意义的。效率不能算是非常的好，但是我觉得代码很简洁，还是有一点能力的，自夸一下吧。算是对自己信心上的一个提高<br>现在在说地图数据编译，其实代码都是已经写好的，我只不过是用这编译罢了，没有多少技术含量，但是每次编译的时候都需要熬夜似的编译，让我确实很疲惫，不知道以后会不会好点。<br>总之对地图数据这方面我也算是有了一点点的收获，还是挺高兴的。<br>下面的事情我想我也不知道怎么办了，卖完房子，现金方面就不是太充足了，还借了一些钱，希望也是尽快能还上<br>明天也不知道是什么情况，公司搬到海淀这个地方对我h来说还是挺难受的，我每天早上要6点40左右就要醒来，然后赶将近两个小时的时间的公交和地铁去上班，下班也是，这样一天天的让我身心很疲惫，每到周末想好好的放松一下的时候，我又上了打游戏的瘾，天天打游戏到深夜，也还是疲惫。总之这种状态不是很好<br>这个疫情让我在家里呆了很长很长一段时间，导致我都有点胖了，真的不是个好现象。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/06/25/M_Swift121iOS不常用方法/" itemprop="url">
-                  iOS不常用方法
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="UITableView收起键盘"><a href="#UITableView收起键盘" class="headerlink" title="UITableView收起键盘"></a>UITableView收起键盘</h2><p>何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDismissModeInteractive，表示在键盘内部滑动，键盘逐渐下去。</p>
-<h2 id="禁止手机睡眠"><a href="#禁止手机睡眠" class="headerlink" title="禁止手机睡眠"></a>禁止手机睡眠</h2><p>[UIApplication sharedApplication].idleTimerDisabled = YES;</p>
-<h2 id="tableView-beginUpdates-和-endUpdates"><a href="#tableView-beginUpdates-和-endUpdates" class="headerlink" title="tableView  beginUpdates 和 endUpdates"></a>tableView  beginUpdates 和 endUpdates</h2><p>1.beginUpdates 和 endUpdates必须成对使用<br>2、使用beginUpdates和endUpdates可以在改变一些行（row）的高度时自带动画，并且不需要Reload row（不用调用cellForRow，仅仅需要调用heightForRow，这样效率最高）。<br>3、在beginUpdates和endUpdates中执行insert,delete,select,reload row时，动画效果更加同步和顺滑，否则动画卡顿且table的属性（如row count）可能会失效。<br>4、在beginUpdates 和 endUpdates中执行 reloadData 方法和直接reloadData一样，没有相应的中间动画。</p>
-<h2 id="统一收起键盘"><a href="#统一收起键盘" class="headerlink" title="统一收起键盘"></a>统一收起键盘</h2><p>[[[UIApplication sharedApplication] keyWindow] endEditing:YES];</p>
-<h2 id="wkwebview报错"><a href="#wkwebview报错" class="headerlink" title="wkwebview报错"></a>wkwebview报错</h2><p>使用wkwebview时，push后，再pop返回，报错了：<br>Cannot form weak reference to instance (xxxx) of class xxxx. It is possible that this object was over-released, or is in the process of deallocation.<br>原因是给webView.scrollView设置了代理：webView.scrollView.delegate = self ；<br>解决办法：<br>-(void)dealloc<br>{<br>webView.scrollView.delegate = nil;<br>}</p>
-<h2 id="linker-command-failed-with-exit-code-1"><a href="#linker-command-failed-with-exit-code-1" class="headerlink" title="linker command failed with exit code 1"></a>linker command failed with exit code 1</h2><p>原因和解决办法：<br>1、看看是不是有新添加的文件跟之前文件同名<br>2、错误信息中出现了某个类的名字，去原文件中看看#import了哪些第三方库，把这些库挨个注释排除，找到出错的那个库，然后按照官方提供的步骤重新添加一遍。<br>3、SVN或git忽略了某些文件，如.o 等文件没能update下来，查看.o文件可能是红色的，可以重新添加或者修改SVN(git)的忽略设置<br>4、把.a文件删除再重新拖到项目中解决问题<br>5、可能重复添加了文件（也可能没勾选 Copy items if neded 这个选项），建议删除后重新添加<br>6、工程中文件名重复了 也会出现同样的错误<br>7、Build Settings”-&gt;”Enable Bitcode”设置为NO ，因为有些SDK不支持Bitcode<br>8、可能在引用的时候 可能写的是#import “XXXXX.m” ，如果是改为#import “XXXXX.h”<br>9、可能你导入的SDK只能在真机下才能运行，模拟器会报错！<br>10、找到 Build settings-&gt;Linking-&gt;Other Linker Flags将此属性修改成-all_load 或者 -ObjC<br>11、Build settings-&gt;Search Path-&gt;Library Search Paths 添加静态库的相应路径</p>
-<h2 id="CABasicAnimation-按home键后台之后，再切回来动画就停止"><a href="#CABasicAnimation-按home键后台之后，再切回来动画就停止" class="headerlink" title="CABasicAnimation 按home键后台之后，再切回来动画就停止"></a>CABasicAnimation 按home键后台之后，再切回来动画就停止</h2><p>CABasicAnimation有个属性removedOnCompletion，默认值为YES,意思是动画在指定时间段内完成后，就会从层上自动移除。<br>如果CABasicAnimation 按home键后台之后，再切回来动画就停止，只要将removedOnCompletion属性设为no动画就不会停止，直到你移除该动画</p>
-<h2 id="播放一张张连续的图片"><a href="#播放一张张连续的图片" class="headerlink" title="播放一张张连续的图片"></a>播放一张张连续的图片</h2><p>// 方法一<br>imageView.animationImages = @[[UIImage imageNamed:@”animate_1”], [UIImage imageNamed:@”animate_2”], [UIImage imageNamed:@”animate<em>3”]];<br>imageView.animationDuration = 1.0;<br>// 方法二<br>imageView.image = [UIImage animatedImageNamed:@”animate</em>“ duration:1.0];<br>// 方法二解释下，这个方法会加载animate_为前缀的，后边0-1024，也就是animate_0、animate_1一直到animate_1024</p>
-<h2 id="判断两个rect是否有交叉"><a href="#判断两个rect是否有交叉" class="headerlink" title="判断两个rect是否有交叉"></a>判断两个rect是否有交叉</h2><p>if (CGRectIntersectsRect(rect1, rect2)) {<br>}</p>
-<h2 id="键盘上方增加工具栏"><a href="#键盘上方增加工具栏" class="headerlink" title="键盘上方增加工具栏"></a>键盘上方增加工具栏</h2><p>UIToolbar <em>keyboardDoneButtonView = [[UIToolbar alloc] init];<br>[keyboardDoneButtonView sizeToFit];<br>UIBarButtonItem </em>doneButton = [[UIBarButtonItem alloc] initWithTitle:@”Done”<br>style:UIBarButtonItemStyleBordered target:self<br>action:@selector(doneClicked:)];<br>[keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];<br>txtField.inputAccessoryView = keyboardDoneButtonView;</p>
-<h2 id="判断一个view是否为另一个view的子视图"><a href="#判断一个view是否为另一个view的子视图" class="headerlink" title="判断一个view是否为另一个view的子视图"></a>判断一个view是否为另一个view的子视图</h2><p>// 如果myView是self.view本身，也会返回yes<br>BOOL isSubView = [myView isDescendantOfView:self.view];</p>
-<h2 id="判断某一行的cell是否已经显示"><a href="#判断某一行的cell是否已经显示" class="headerlink" title="判断某一行的cell是否已经显示"></a>判断某一行的cell是否已经显示</h2><p>CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];<br>BOOL completelyVisible = CGRectContainsRect(tableView.bounds, cellRect);</p>
-<h2 id="隐藏UITextView-UITextField光标"><a href="#隐藏UITextView-UITextField光标" class="headerlink" title="隐藏UITextView/UITextField光标"></a>隐藏UITextView/UITextField光标</h2><p>textField.tintColor = [UIColor clearColor];</p>
-<h2 id="当UITextView-UITextField中没有文字时，禁用回车键"><a href="#当UITextView-UITextField中没有文字时，禁用回车键" class="headerlink" title="当UITextView/UITextField中没有文字时，禁用回车键"></a>当UITextView/UITextField中没有文字时，禁用回车键</h2><p>textField.enablesReturnKeyAutomatically = YES;</p>
+            <p>1、数组<br>数组是可以再内存中连续存储多个元素的结构，在内存中的分配也是连续的，数组中的元素通过数组下标进行访问，数组下标从0开始。例如下面这段代码就是将数组的第一个元素赋值为 1。<br>优点：<br>1、按照索引查询元素速度快<br>2、按照索引遍历数组方便</p>
+<p>缺点：<br>1、数组的大小固定后就无法扩容了<br>2、数组只能存储一种类型的数据<br>3、添加，删除的操作慢，因为要移动其他的元素。<br>适用场景：<br>频繁查询，对存储空间要求不大，很少增加和删除的情况。</p>
+<p>寻找数组中第二小的元素<br>示例代码一：先把数组进行升序排序 排完序后再进行遍历比较<br>遍历数组，定义max和second，找到max，<br>if (v[i] &gt; max) {<br>           second = max;<br>           max = v[i];<br>       } else if (v[i] &gt; second) {<br>           second = v[i];<br>       }<br>找到数组中第一个不重复出现的整数<br>双重for循环，找位置，如果找到最后位置是当前位置，则没有重复<br>合并两个有序数组<br>混合插入有序数组，由于两个数组都是有序的，所以只要按顺序比较大小即可。题目中说了nums1数组有足够大的空间，说明我们不用resize数组，又给了我们m和n，那就知道了混合之后的数组大小，这样我们就从nums1和nums2数组的末尾开始一个一个比较，把较大的数，按顺序从后往前加入混合之后的数组末尾。需要三个变量i，j，k，分别指向nums1,nums2,和混合数组的末尾。进行while循环，如果i和j都大于0，再看如果nums1[i] &gt; nums2[j]，说明要把nums1[i]先加入混合数组的末尾，加入后k和i都要自减1；else，就把nums2[j]加入混合数组的末尾，之后j和k也要自减1。循环结束后，有可能i和j还大于等于0，若j大于等于0，那么需要继续循环，将nums2中的数字继续拷入nums1。若是i大于等于0，那么就不用管，因为混合数组本身就房子nums1中。<br>重新排列数组中的正值和负值</p>
+<p>2、栈</p>
+<p>栈是一种特殊的线性表，仅能在线性表的一端操作，栈顶允许操作，栈底不允许操作。 栈的特点是：先进后出，或者说是后进先出，从栈顶放入元素的操作叫入栈，取出元素叫出栈。<br>栈的结构就像一个集装箱，越先放进去的东西越晚才能拿出来，所以，栈常应用于实现递归功能方面的场景，例如斐波那契数列。<br>java使用栈计算后缀表达式<br>stack = new Stack<integer>();<br>对栈的元素进行排序<br>判断表达式是否括号平衡<br>3、队列</integer></p>
+<p>队列与栈一样，也是一种线性表，不同的是，队列可以在一端添加元素，在另一端取出元素，也就是：先进先出。从一端放入元素的操作称为入队，取出元素为出队，示例图如下：<br>使用场景：因为队列先进先出的特点，在多线程阻塞队列管理中非常适用。<br>面试题：反转队列前K个元素<br>直接把前k个元素压栈，放入新队列中，追加剩余的队列元素<br>使用队列表示栈<br>对队列的前k个元素倒序<br>使用队列生成从1到n的二进制数<br>4、链表</p>
+<p>链表是物理存储单元上非连续的、非顺序的存储结构，数据元素的逻辑顺序是通过链表的指针地址实现，每个元素包含两个结点，一个是存储元素的数据域 (内存空间)，另一个是指向下一个结点地址的指针域。根据指针的指向，链表能形成不同的结构，例如单链表，双向链表，循环链表等。<br>链表的优点：<br>链表是很常用的一种数据结构，不需要初始化容量，可以任意加减元素；<br>添加或者删除元素时只需要改变前后两个元素结点的指针域指向地址即可，所以添加，删除很快；</p>
+<p>缺点：<br>因为含有大量的指针域，占用空间较大；<br>查找元素需要遍历链表来查找，非常耗时。</p>
+<p>适用场景：<br>数据量较小，需要频繁增加，删除操作的场景<br>反转链表<br>检测链表中的循环<br>返回链表倒数第N个节点<br>删除链表中的重复项</p>
+<p>5、树</p>
+<p>树是一种数据结构，它是由n（n&gt;=1）个有限节点组成一个具有层次关系的集合。把它叫做 “树” 是因为它看起来像一棵倒挂的树，也就是说它是根朝上，而叶朝下的。它具有以下的特点：</p>
+<p>每个节点有零个或多个子节点；<br>没有父节点的节点称为根节点；<br>每一个非根节点有且只有一个父节点；<br>除了根节点外，每个子节点可以分为多个不相交的子树；<br>在日常的应用中，我们讨论和用的更多的是树的其中一种结构，就是二叉树。<br>二叉树是树的特殊一种，具有如下特点：</p>
+<p>1、每个结点最多有两颗子树，结点的度最大为2。<br>2、左子树和右子树是有顺序的，次序不能颠倒。<br>3、即使某结点只有一个子树，也要区分左右子树。</p>
+<p>二叉树是一种比较有用的折中方案，它添加，删除元素都很快，并且在查找方面也有很多的算法优化，所以，二叉树既有链表的好处，也有数组的好处，是两者的优化方案，在处理大批量的动态数据方面非常有用。</p>
+<p>扩展：<br>二叉树有很多扩展的数据结构，包括平衡二叉树、红黑树、B+树等，这些数据结构二叉树的基础上衍生了很多的功能，在实际应用中广泛用到，例如mysql的数据库索引结构用的就是B+树，还有HashMap的底层源码中用到了红黑树。这些二叉树的功能强大，但算法上比较复杂，想学习的话还是需要花时间去深入的。<br>求二叉树的高度<br>在二叉搜索树中查找第k个最大值<br>查找与根节点距离k的节点<br>在二叉树中查找给定节点的祖先节点</p>
+<p>计算字典树中的总单词数<br>打印存储在字典树中的所有单词<br>使用字典树对数组的元素进行排序<br>使用字典树从字典中形成单词<br>构建T9字典（字典树+ DFS ）<br>6、散列表</p>
+<p>散列表，也叫哈希表，是根据关键码和值 (key和value) 直接进行访问的数据结构，通过key和value来映射到集合中的一个位置，这样就可以很快找到集合中的对应元素。</p>
+<p>记录的存储位置=f(key)</p>
+<p>这里的对应关系 f 成为散列函数，又称为哈希 (hash函数)，而散列表就是把Key通过一个固定的算法函数既所谓的哈希函数转换成一个整型数字，然后就将该数字对数组长度进行取余，取余结果就当作数组的下标，将value存储在以该数字为下标的数组空间里，这种存储空间可以充分利用数组的查找优势来查找元素，所以查找的速度很快。</p>
+<p>哈希表在应用中也是比较常见的，就如Java中有些集合类就是借鉴了哈希原理构造的，例如HashMap，HashTable等，利用hash表的优势，对于集合的查找元素时非常方便的，然而，因为哈希表是基于数组衍生的数据结构，在添加删除元素方面是比较慢的，所以很多时候需要用到一种数组链表来做，也就是拉链法。拉链法是数组结合链表的一种结构，较早前的hashMap底层的存储就是采用这种结构，直到jdk1.8之后才换成了数组加红黑树的结构，其示例图如下：<br>7、堆</p>
+<p>堆是一种比较特殊的数据结构，可以被看做一棵树的数组对象，具有以下的性质：</p>
+<p>堆中某个节点的值总是不大于或不小于其父节点的值；</p>
+<p>堆总是一棵完全二叉树。</p>
+<p>将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆。常见的堆有二叉堆、斐波那契堆等。</p>
+<p>堆的定义如下：n个元素的序列{k1,k2,ki,…,kn}当且仅当满足下关系时，称之为堆。<br>(ki &lt;= k2i,ki &lt;= k2i+1)或者(ki &gt;= k2i,ki &gt;= k2i+1), (i = 1,2,3,4…n/2)，满足前者的表达式的成为小顶堆，满足后者表达式的为大顶堆，这两者的结构图可以用完全二叉树排列出来，示例图如下： </p>
+<p>8、图</p>
+<p>图是由结点的有穷集合V和边的集合E组成。其中，为了与树形结构加以区别，在图结构中常常将结点称为顶点，边是顶点的有序偶对，若两个顶点之间存在一条边，就表示这两个顶点具有相邻关系。</p>
+<p>按照顶点指向的方向可分为无向图和有向图：<br>图是一种比较复杂的数据结构，在存储数据上有着比较复杂和高效的算法，分别有邻接矩阵 、邻接表、十字链表、邻接多重表、边集数组等存储结构，这里不做展开，读者有兴趣可以自己学习深入。<br>实现广度和深度优先搜索<br>检查图是否为树<br>计算图的边数<br>找到两个顶点之间的最短路径</p>
+<p>在数组中查找对称键值对<br>追踪遍历的完整路径<br>查找数组是否是另一个数组的子集<br>检查给定的数组是否不相交</p>
 
           
         
@@ -1154,8 +1154,8 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
             
               
                 
-                <a class="post-title-link" href="/2018/12/13/M_Swift118新项目总结/" itemprop="url">
-                  新项目总结
+                <a class="post-title-link" href="/2018/12/13/M_Swift119和约车简介/" itemprop="url">
+                  和约车简介
                 </a>
               
             
@@ -1198,7 +1198,9 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
       
         
           
-            <p>今天可能需要休息一下，并没有那么忙碌了。<br>临时的话，手里的工作没有那么多了，所以想写点东西<br>前段时间写了一个ios的app，感觉重新写iOS的感觉就是爽。<br>很快就写完了，可能并没有那么复杂吧，但是我觉得很爽，虽然加了很多的班，但是感觉是值得的。<br>突然就想说，一个iOS开发者，一个安卓开发者，一个前端的综合开发者，应该具备什么样的能力，也许我能力还浅，但是我很想说一下，很想在说的同时对自己也有提高吧。<br>感觉其实，经常在写东西，但是只是熟悉，真的是收获很少。<br>有的时候，感觉学不到。<br>不过写起来还是挺爽的，我基本上坚持了使用代码去写，很少的使用xib，我知道xib使用多了，就一定会发生卡顿，所以，我想我的坚持是对的，xib那种东西其实没有太多的技术含量，我觉得不能用太多，特别是一个控制器里的多个view，我们如果用多了，真的不好。<br>再说说开发吧，我觉得iOS开发还是要快捷很多，无论是连手机测试，还是打端点编译，都非常的快捷便利，android真的是让人头疼，我每次运行android一段时间以后我一定要关一下电脑，不关的话真的是卡的要命，电脑嗡嗡的响的时候，编译一直过不去的时候，真的是脑袋都炸掉了。<br>再看一下现在互联网行业吧，真的是让人头疼，感觉现在给钱的都是大公司，小公司真的是扣的要命，一分钱都要分好几份话的样子。<br>有的时候一直在想，我应该怎么办，有的时候一直在想，我能有什么样的后路，这真的是让人头疼的问题。<br>回家吧幸福，回家看一看父母。</p>
+            <p>经过两个多星期的奋战，和约车差不多成型了总感觉缺少点什么，但是无所谓了，服务的事情能解决应该就不要客户端去调整了。<br>这两天写了一下开发申请单，也完善了一下功能模块。<br>在写申请单的时候，也对工程有了一个规划，模块分的也更详细了<br>从工程角度来讲，我觉得是有收获的，以后再开发一个东西的时候，我们会更方便的了解这个东西，也能更全面的去分析项目，也能更全面的把握项目，不至于手忙脚乱，不至于代码写的一团糟。<br>和约车功能模块<br>    工程配置<br>    网络服务<br>    第三方SDK<br>    资源文件<br>    app业务模块<br>和地图APP模块名称<br>    主页<br>        主页面<br>    添加路线<br>        添加路线页面<br>    消息<br>        我的消息页面<br>        聊天页面<br>    我的<br>        个人中心页面<br>        历史订单页面<br>        历史评价页面<br>        个人信息页面<br>        修改昵称页面<br>        设置页面<br>        关于页面<br>        上下班设置页面<br>    车主认证<br>        车主认证页面<br>        车型选择页面<br>    发单<br>        发单页面<br>    订单<br>        等待接单页面<br>        订单详情页面<br>        订单支付页面<br>    登录<br>        验证码登录页面<br>        密码登录页面<br>        密码修改页面<br>        服务协议页面<br>    选点<br>        地图选点搜索页面</p>
+<p>资源文件<br>        统一登录SDK<br>        极光推送SDK<br>        高德搜索SDK<br>        地图SDK<br>Libs<br>        网络请求<br>        列表空试图显示<br>        日志输出<br>        Toast<br>images<br>        图片资源</p>
+<p>工程描述<br>    数据存储<br>        因为项目不是特别的大，所以数据存储这方面我全部使用了NSUserdefult，专门写了一个类，用户所有数据存储，提供接口，外面调用<br>    常量<br>        项目中不免会用到一些配置的东西，我都是写在这里，一些sdk的key，版本号，通用的颜色，通知名称，屏幕宽高等等<br>        此外还包括了一些常用的类，方便头文件中写太多。<br>    单例<br>        在开发中不免使用到单例，我想和约车选择起点和终点用单例是再好不过了，因为我们不用考虑那么多了，在进程生命周期内也会一直存在。<br>    时间处理<br>        这个有点坑，说实话，我到现在也有点晕，很多时候获取的时间老是不准。</p>
 
           
         
@@ -1248,8 +1250,8 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
             
               
                 
-                <a class="post-title-link" href="/2018/12/13/M_Swift119和约车简介/" itemprop="url">
-                  和约车简介
+                <a class="post-title-link" href="/2018/12/13/M_Swift118新项目总结/" itemprop="url">
+                  新项目总结
                 </a>
               
             
@@ -1292,9 +1294,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
       
         
           
-            <p>经过两个多星期的奋战，和约车差不多成型了总感觉缺少点什么，但是无所谓了，服务的事情能解决应该就不要客户端去调整了。<br>这两天写了一下开发申请单，也完善了一下功能模块。<br>在写申请单的时候，也对工程有了一个规划，模块分的也更详细了<br>从工程角度来讲，我觉得是有收获的，以后再开发一个东西的时候，我们会更方便的了解这个东西，也能更全面的去分析项目，也能更全面的把握项目，不至于手忙脚乱，不至于代码写的一团糟。<br>和约车功能模块<br>    工程配置<br>    网络服务<br>    第三方SDK<br>    资源文件<br>    app业务模块<br>和地图APP模块名称<br>    主页<br>        主页面<br>    添加路线<br>        添加路线页面<br>    消息<br>        我的消息页面<br>        聊天页面<br>    我的<br>        个人中心页面<br>        历史订单页面<br>        历史评价页面<br>        个人信息页面<br>        修改昵称页面<br>        设置页面<br>        关于页面<br>        上下班设置页面<br>    车主认证<br>        车主认证页面<br>        车型选择页面<br>    发单<br>        发单页面<br>    订单<br>        等待接单页面<br>        订单详情页面<br>        订单支付页面<br>    登录<br>        验证码登录页面<br>        密码登录页面<br>        密码修改页面<br>        服务协议页面<br>    选点<br>        地图选点搜索页面</p>
-<p>资源文件<br>        统一登录SDK<br>        极光推送SDK<br>        高德搜索SDK<br>        地图SDK<br>Libs<br>        网络请求<br>        列表空试图显示<br>        日志输出<br>        Toast<br>images<br>        图片资源</p>
-<p>工程描述<br>    数据存储<br>        因为项目不是特别的大，所以数据存储这方面我全部使用了NSUserdefult，专门写了一个类，用户所有数据存储，提供接口，外面调用<br>    常量<br>        项目中不免会用到一些配置的东西，我都是写在这里，一些sdk的key，版本号，通用的颜色，通知名称，屏幕宽高等等<br>        此外还包括了一些常用的类，方便头文件中写太多。<br>    单例<br>        在开发中不免使用到单例，我想和约车选择起点和终点用单例是再好不过了，因为我们不用考虑那么多了，在进程生命周期内也会一直存在。<br>    时间处理<br>        这个有点坑，说实话，我到现在也有点晕，很多时候获取的时间老是不准。</p>
+            <p>今天可能需要休息一下，并没有那么忙碌了。<br>临时的话，手里的工作没有那么多了，所以想写点东西<br>前段时间写了一个ios的app，感觉重新写iOS的感觉就是爽。<br>很快就写完了，可能并没有那么复杂吧，但是我觉得很爽，虽然加了很多的班，但是感觉是值得的。<br>突然就想说，一个iOS开发者，一个安卓开发者，一个前端的综合开发者，应该具备什么样的能力，也许我能力还浅，但是我很想说一下，很想在说的同时对自己也有提高吧。<br>感觉其实，经常在写东西，但是只是熟悉，真的是收获很少。<br>有的时候，感觉学不到。<br>不过写起来还是挺爽的，我基本上坚持了使用代码去写，很少的使用xib，我知道xib使用多了，就一定会发生卡顿，所以，我想我的坚持是对的，xib那种东西其实没有太多的技术含量，我觉得不能用太多，特别是一个控制器里的多个view，我们如果用多了，真的不好。<br>再说说开发吧，我觉得iOS开发还是要快捷很多，无论是连手机测试，还是打端点编译，都非常的快捷便利，android真的是让人头疼，我每次运行android一段时间以后我一定要关一下电脑，不关的话真的是卡的要命，电脑嗡嗡的响的时候，编译一直过不去的时候，真的是脑袋都炸掉了。<br>再看一下现在互联网行业吧，真的是让人头疼，感觉现在给钱的都是大公司，小公司真的是扣的要命，一分钱都要分好几份话的样子。<br>有的时候一直在想，我应该怎么办，有的时候一直在想，我能有什么样的后路，这真的是让人头疼的问题。<br>回家吧幸福，回家看一看父母。</p>
 
           
         

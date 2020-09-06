@@ -487,141 +487,6 @@ TCP使用滑动窗口机制来进行流量控制。
             
               
                 
-                <a class="post-title-link" href="/2019/09/29/M_Swift131RunLoop/" itemprop="url">
-                  未命名
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-09-29T09:56:33+08:00" content="2019-09-29">
-              2019-09-29
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <hr>
-<h2 id="title-RunLoop"><a href="#title-RunLoop" class="headerlink" title="title:RunLoop"></a>title:RunLoop</h2><p>概念<br>数据结构<br>事件循环机制<br>RunLoop和NStimer<br>RunLoop和多线程<br>RunLoop是通过内部维护的事件循环来对事件/消息进行管理的一个对象<br>没有消息需要处理时，休眠以避免资源占用<br>用户态-》核心态<br>有消息处理时，立即被唤醒<br>核心态-〉用户态</p>
-<p>CFRunLoop<br>CFRunLoopMode<br>Source/Timer/Observer</p>
-<p>source0<br>需要手动唤醒线程<br>source1<br>具备唤醒线程的能力</p>
-<p>CFRunLoopObserver<br>观测时间点<br>kCFRunLoopEntry<br>kCFRunLoopBeforeTimers</p>
-<p>CommonMode的特性<br>NSRunLoopCommonModes<br>commonMode不是实际存在的一种mode<br>是同步Source/Timer/Observer到多个Mode中的一种技术方案</p>
-<p>如何实现一个常驻线程<br>给子线程添加RunLoop<br> @autoreleasepool {<br>    // 子线程对应的runloop需要自己创建并开启<br>    // 创建子线程对应的runloop,使子线程一直存在<br>    NSRunLoop *currentRunloop = [NSRunLoop currentRunLoop];<br>    // 给runloop添加一个基于port的事件(系统事件),让runloop的运行模式不为空,保证runloop不退出<br>    [currentRunloop addPort:[NSPort port] forMode:NSDefaultRunLoopMode];<br>    // 开启运行循环<br>    [currentRunloop run];<br>    }<br>利用 runloop 解释一下页面的渲染的过程？</p>
-<p>当我们调用 [UIView setNeedsDisplay] 时，这时会调用当前 View.layer 的 [view.layer setNeedsDisplay]方法。</p>
-<p>这等于给当前的 layer 打上了一个脏标记，而此时并没有直接进行绘制工作。而是会到当前的 Runloop 即将休眠，也就是 beforeWaiting 时才会进行绘制工作。</p>
-<p>紧接着会调用 [CALayer display]，进入到真正绘制的工作。CALayer 层会判断自己的 delegate 有没有实现异步绘制的代理方法 displayer:，这个代理方法是异步绘制的入口，如果没有实现这个方法，那么会继续进行系统绘制的流程，然后绘制结束。</p>
-<p>CALayer 内部会创建一个 Backing Store，用来获取图形上下文。接下来会判断这个 layer 是否有 delegate。</p>
-<p>如果有的话，会调用 [layer.delegate drawLayer:inContext:]，并且会返回给我们 [UIView DrawRect:] 的回调，让我们在系统绘制的基础之上再做一些事情。</p>
-<p>如果没有 delegate，那么会调用 [CALayer drawInContext:]。</p>
-<p>以上两个分支，最终 CALayer 都会将位图提交到 Backing Store，最后提交给 GPU。</p>
-<p>至此绘制的过程结束。</p>
-<p>二 你在开发过程中怎么使用RunLoop？什么应用场景？</p>
-<p>开启一个常驻线程（让一个子线程不进入消亡状态，等待其他线程发来的消息，处理其他事件）</p>
-<p>在子线程中开启一个定时器</p>
-<p>在子线程中进行一些长期监控</p>
-<p>可以控制定时器在特定模式下运行</p>
-<p>可以让某些事件（行为，任务）在特定模式下执行</p>
-<p>可以添加observer监听RunLoop的状态，比如监听点击事件的处理（比如在所有点击事件前做一些处理）<br>   1）NSTimer</p>
-<p>   2）ImageView显示：控制方法在特定的模式下可用</p>
-<p>   3）PerformSelector</p>
-<p>   4）常驻线程：在子线程中开启一个runloop</p>
-<p>   5）自动释放池</p>
-<pre><code>第一次创建：进入runloop的时候
-
-最后一次释放：runloop退出的时候
-
-其它创建和释放：当runloop即将休眠的时候会把之前的自动释放池释放，然后重新创建一个新的释放池
-</code></pre><p>// 高性能定时器<br>__block int timeout=300; //倒计时时间<br>dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_source_t _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0,queue);<br>dispatch_source_set_timer(_timer,dispatch_walltime(NULL, 0),1.0*NSEC_PER_SEC, 0); //每秒执行<br>dispatch_source_set_event_handler(_timer, ^{<br>    if(timeout&lt;=0){ //倒计时结束，关闭<br>        dispatch_source_cancel(_timer);<br>        dispatch_async(dispatch_get_main_queue(), ^{<br>            //设置界面的按钮显示 根据自己需求设置<br>            NSLog(@”=====”)<br>        });</p>
-<pre><code>}else{
-    int minutes = timeout / 60;
-    int seconds = timeout % 60;
-    NSString *strTime = [NSString stringWithFormat:@&quot;%d分%.2d秒后重新获取验证码&quot;,minutes, seconds];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@&quot;*******&quot;);
-    }); 
-    timeout--; 
-} 
-</code></pre><p>});<br>dispatch_resume(_timer); </p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2019/09/29/M_Swift128OC属性/" itemprop="url">
                   未命名
                 </a>
@@ -733,6 +598,141 @@ void objc_removeAssociatedObjects(id object)
 <p>return a&gt;b?a:b; } </p>
 <p>static inline作用是和宏类似,只不过是方便调试(宏不能断掉调 试,static inline 可以)。运行时候是一样的。<br>一般 c/c++短小的函数都用 static inline 内联函数 </p>
 <p>load不是去类对象方法列表，遍历查找的，而是直接找到对象，拿到内存地址去调用的<br>先调用父类的load方法再调用子类的load方法</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/09/29/M_Swift131RunLoop/" itemprop="url">
+                  未命名
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-09-29T09:56:33+08:00" content="2019-09-29">
+              2019-09-29
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<h2 id="title-RunLoop"><a href="#title-RunLoop" class="headerlink" title="title:RunLoop"></a>title:RunLoop</h2><p>概念<br>数据结构<br>事件循环机制<br>RunLoop和NStimer<br>RunLoop和多线程<br>RunLoop是通过内部维护的事件循环来对事件/消息进行管理的一个对象<br>没有消息需要处理时，休眠以避免资源占用<br>用户态-》核心态<br>有消息处理时，立即被唤醒<br>核心态-〉用户态</p>
+<p>CFRunLoop<br>CFRunLoopMode<br>Source/Timer/Observer</p>
+<p>source0<br>需要手动唤醒线程<br>source1<br>具备唤醒线程的能力</p>
+<p>CFRunLoopObserver<br>观测时间点<br>kCFRunLoopEntry<br>kCFRunLoopBeforeTimers</p>
+<p>CommonMode的特性<br>NSRunLoopCommonModes<br>commonMode不是实际存在的一种mode<br>是同步Source/Timer/Observer到多个Mode中的一种技术方案</p>
+<p>如何实现一个常驻线程<br>给子线程添加RunLoop<br> @autoreleasepool {<br>    // 子线程对应的runloop需要自己创建并开启<br>    // 创建子线程对应的runloop,使子线程一直存在<br>    NSRunLoop *currentRunloop = [NSRunLoop currentRunLoop];<br>    // 给runloop添加一个基于port的事件(系统事件),让runloop的运行模式不为空,保证runloop不退出<br>    [currentRunloop addPort:[NSPort port] forMode:NSDefaultRunLoopMode];<br>    // 开启运行循环<br>    [currentRunloop run];<br>    }<br>利用 runloop 解释一下页面的渲染的过程？</p>
+<p>当我们调用 [UIView setNeedsDisplay] 时，这时会调用当前 View.layer 的 [view.layer setNeedsDisplay]方法。</p>
+<p>这等于给当前的 layer 打上了一个脏标记，而此时并没有直接进行绘制工作。而是会到当前的 Runloop 即将休眠，也就是 beforeWaiting 时才会进行绘制工作。</p>
+<p>紧接着会调用 [CALayer display]，进入到真正绘制的工作。CALayer 层会判断自己的 delegate 有没有实现异步绘制的代理方法 displayer:，这个代理方法是异步绘制的入口，如果没有实现这个方法，那么会继续进行系统绘制的流程，然后绘制结束。</p>
+<p>CALayer 内部会创建一个 Backing Store，用来获取图形上下文。接下来会判断这个 layer 是否有 delegate。</p>
+<p>如果有的话，会调用 [layer.delegate drawLayer:inContext:]，并且会返回给我们 [UIView DrawRect:] 的回调，让我们在系统绘制的基础之上再做一些事情。</p>
+<p>如果没有 delegate，那么会调用 [CALayer drawInContext:]。</p>
+<p>以上两个分支，最终 CALayer 都会将位图提交到 Backing Store，最后提交给 GPU。</p>
+<p>至此绘制的过程结束。</p>
+<p>二 你在开发过程中怎么使用RunLoop？什么应用场景？</p>
+<p>开启一个常驻线程（让一个子线程不进入消亡状态，等待其他线程发来的消息，处理其他事件）</p>
+<p>在子线程中开启一个定时器</p>
+<p>在子线程中进行一些长期监控</p>
+<p>可以控制定时器在特定模式下运行</p>
+<p>可以让某些事件（行为，任务）在特定模式下执行</p>
+<p>可以添加observer监听RunLoop的状态，比如监听点击事件的处理（比如在所有点击事件前做一些处理）<br>   1）NSTimer</p>
+<p>   2）ImageView显示：控制方法在特定的模式下可用</p>
+<p>   3）PerformSelector</p>
+<p>   4）常驻线程：在子线程中开启一个runloop</p>
+<p>   5）自动释放池</p>
+<pre><code>第一次创建：进入runloop的时候
+
+最后一次释放：runloop退出的时候
+
+其它创建和释放：当runloop即将休眠的时候会把之前的自动释放池释放，然后重新创建一个新的释放池
+</code></pre><p>// 高性能定时器<br>__block int timeout=300; //倒计时时间<br>dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_source_t _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0,queue);<br>dispatch_source_set_timer(_timer,dispatch_walltime(NULL, 0),1.0*NSEC_PER_SEC, 0); //每秒执行<br>dispatch_source_set_event_handler(_timer, ^{<br>    if(timeout&lt;=0){ //倒计时结束，关闭<br>        dispatch_source_cancel(_timer);<br>        dispatch_async(dispatch_get_main_queue(), ^{<br>            //设置界面的按钮显示 根据自己需求设置<br>            NSLog(@”=====”)<br>        });</p>
+<pre><code>}else{
+    int minutes = timeout / 60;
+    int seconds = timeout % 60;
+    NSString *strTime = [NSString stringWithFormat:@&quot;%d分%.2d秒后重新获取验证码&quot;,minutes, seconds];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@&quot;*******&quot;);
+    }); 
+    timeout--; 
+} 
+</code></pre><p>});<br>dispatch_resume(_timer); </p>
 
           
         
@@ -1240,100 +1240,6 @@ Class nextSiblingClass;
             
               
                 
-                <a class="post-title-link" href="/2019/06/25/M_Swift120总结/" itemprop="url">
-                  总结
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>很久没有写总结的东西了，最近也总是很浮躁，不知道怎么写，以前静下心来的时候，总是会写一点博客，不管是好东西还是坏的东西，总之是写了不少，现在不知道为什么，这种写的欲望都没有了，好像感觉没啥可写的了。<br>这确实让我很头疼，没事总不知道要干点什么，以前总是积极的想弄点这弄点那，现在连这点积极的态度都没有了，不禁想问自己，我到底怎么了，我应该干点什么，我想是时候反思一下自己了。<br>这个公交的项目，到现在一直淅淅沥沥的进行着，看似不紧张，实际上我觉得应该非常的紧张，但是我一个人的能力有限，我也没有办法去主导，所以就这样等着吧。<br>我想我是时候要学习一点新的东西了，这将是我下一步突破的重点。我想过很多，我觉得服务端开发是很重要的，我觉得前段开发，我也需要做很深的了解，如果这次的公交项目能够很好的参与的话，我想对我来说也是一个很大的收获。<br>下一步怎么走，我一直在等，我还在玩游戏，有时候感觉真的，这个游戏让人很头疼，玩了很多的肉类英雄，感觉那种无奈，是你无法做到的，我想我是时候突破一下，用一些比较有挑战点的英雄了。<br>不说这个了，感觉越来越难受，写点有用的吧，最近需要学习点知识了，感觉很多知识自己只是了解，没法记住，很多东西需要去背了。<br>不说了，去背点知识了。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2019/06/25/N_Android19管理类/" itemprop="url">
                   未命名
                 </a>
@@ -1549,6 +1455,100 @@ NFC传统类型    MifareClassic
           
             <hr>
 <h2 id="title-反思"><a href="#title-反思" class="headerlink" title="title :反思"></a>title :反思</h2><p>从毕业到现在已经6年了，工作了这么长时间了，我想是时候得反思一下自己了。<br>这些年你都学会了什么，这些年，有什么成就是值得你骄傲的，我感觉我想不到。<br>看着一个一个的同事面试，走了，我很难过，我很无助，心里翻江倒海。我该何去何从。<br>这些年一直看低自己，一直觉得自己水平低，不能看的太高，一些大的公司，根本就不敢去。<br>回头看看其实无非就是对自己逃避现实找的一个一个的借口，什么学历了，什么专业了都是借口。<br>今年随着疫情的到来，我本来想着是这个时候，还是不要跳槽的好，安稳一些还是比较好的，但是让我万万没有想到的是<br>所有的人都走了，就剩下了我自己，我记得好像是去年，好像是跟去年一摸一样的场景。<br>我真的是再一次经历这样的人生，我记得去年的这个时候，我就是一直在摇摆，经过一次面试失败对我打击还是挺大的<br>后来我努力跟新的团队融合，当我们融合起来的时候，好像一切又都破碎了。<br>现在我想我是时候开始努力了，30岁还不算太晚<br>从现在起，努力积累知识，特别是算法方面的知识，我想通过我的一步步的努力，我能找到一个理想的工作<br>加油吧！少年。放下手机，努力吧</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/06/25/M_Swift120总结/" itemprop="url">
+                  总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>很久没有写总结的东西了，最近也总是很浮躁，不知道怎么写，以前静下心来的时候，总是会写一点博客，不管是好东西还是坏的东西，总之是写了不少，现在不知道为什么，这种写的欲望都没有了，好像感觉没啥可写的了。<br>这确实让我很头疼，没事总不知道要干点什么，以前总是积极的想弄点这弄点那，现在连这点积极的态度都没有了，不禁想问自己，我到底怎么了，我应该干点什么，我想是时候反思一下自己了。<br>这个公交的项目，到现在一直淅淅沥沥的进行着，看似不紧张，实际上我觉得应该非常的紧张，但是我一个人的能力有限，我也没有办法去主导，所以就这样等着吧。<br>我想我是时候要学习一点新的东西了，这将是我下一步突破的重点。我想过很多，我觉得服务端开发是很重要的，我觉得前段开发，我也需要做很深的了解，如果这次的公交项目能够很好的参与的话，我想对我来说也是一个很大的收获。<br>下一步怎么走，我一直在等，我还在玩游戏，有时候感觉真的，这个游戏让人很头疼，玩了很多的肉类英雄，感觉那种无奈，是你无法做到的，我想我是时候突破一下，用一些比较有挑战点的英雄了。<br>不说这个了，感觉越来越难受，写点有用的吧，最近需要学习点知识了，感觉很多知识自己只是了解，没法记住，很多东西需要去背了。<br>不说了，去背点知识了。</p>
 
           
         
