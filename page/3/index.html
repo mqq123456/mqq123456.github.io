@@ -391,6 +391,245 @@
             
               
                 
+                <a class="post-title-link" href="/2019/09/29/M_Swift134设计模式/" itemprop="url">
+                  设计模式
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-09-29T09:56:33+08:00" content="2019-09-29">
+              2019-09-29
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h2><pre><code>单一职责原则
+开闭原则
+接口隔离原则
+依赖倒置原则
+里氏替换原则
+迪米特法则
+</code></pre><h2 id="内存设计"><a href="#内存设计" class="headerlink" title="内存设计"></a>内存设计</h2><pre><code>存储的Size
+淘汰策略 LRU算法
+</code></pre><h2 id="磁盘设计"><a href="#磁盘设计" class="headerlink" title="磁盘设计"></a>磁盘设计</h2><pre><code>存储方式
+大小限制
+淘汰策略
+</code></pre><h2 id="网络设计"><a href="#网络设计" class="headerlink" title="网络设计"></a>网络设计</h2><pre><code>图片请求最大并发
+请求超时策略
+请求优先级
+</code></pre><h2 id="图片解码"><a href="#图片解码" class="headerlink" title="图片解码"></a>图片解码</h2><pre><code>对于不同格式的图片，解码采用什么方式
+应用策略模式对不同图片格式进行解码
+在那个阶段做图片解码处理
+</code></pre><h2 id="记录上传器"><a href="#记录上传器" class="headerlink" title="记录上传器"></a>记录上传器</h2><pre><code>关于延时上传具体场景有哪些
+前后台切换
+从无网络到有网络的变化
+通用轻量接口少捎带
+</code></pre><h2 id="MVVM框架思想"><a href="#MVVM框架思想" class="headerlink" title="MVVM框架思想"></a>MVVM框架思想</h2><pre><code>即模型-视图-视图模型
+在MVVM的框架下视图和模型是不能直接通信的。它们通过ViewModel来通信，ViewModel通常要实现一个observer观察者，当数据发生变化，ViewModel能够监听到数据的这种变化，然后通知到对应的视图做自动更新，而当用户操作视图，ViewModel也能监听到视图的变化，然后通知数据做改动，这实际上就实现了数据的双向绑定。并且MVVM中的View 和 ViewModel可以互相通信。
+</code></pre><h2 id="ReactNative的数据流思想"><a href="#ReactNative的数据流思想" class="headerlink" title="ReactNative的数据流思想"></a>ReactNative的数据流思想</h2><p>Flux是Facebook用来构建用户端的web应用的应用程序体系架构。它通过利用数据的单向流动为React的可复用的视图组件提供了补充。相比于形式化的框架它更像是一个架构思想，不需要太多新的代码你就可以马上使用Flux构建你的应用。<br>一个 Flux 应用主要包含四个部分：<br>dispatcher<br>处理动作分发，维护 Store 之间的依赖关系</p>
+<p>stores<br>数据和逻辑部分</p>
+<p>views<br>React 组件，这一层可以看作 controller-views，作为视图同时响应用户交互</p>
+<p>actions<br>提供给 dispatcher 传递数据给 store</p>
+<h2 id="系统UIView更新机制的思想"><a href="#系统UIView更新机制的思想" class="headerlink" title="系统UIView更新机制的思想"></a>系统UIView更新机制的思想</h2><h2 id="FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想"><a href="#FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想" class="headerlink" title="FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想"></a>FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想</h2><p><a href="https://blog.csdn.net/qq_36747738/article/details/106537874" target="_blank" rel="external">https://blog.csdn.net/qq_36747738/article/details/106537874</a><br>AsyncDisplayKit</p>
+<p>AsyncDisplayKit 是 Facebook 推出的用于保持界面流畅性的框架，其原理大致如下：</p>
+<p>UI 线程中一旦出现繁重的任务就会导致界面卡顿，这类任务通常分为3类：排版，绘制，UI对象操作。</p>
+<p>排版通常包括计算视图大小、计算文本高度、重新计算子式图的排版等操作。<br>绘制一般有文本绘制 (例如 CoreText)、图片绘制 (例如预先解压)、元素绘制 (Quartz)等操作。<br>UI对象操作通常包括 UIView/CALayer 等 UI 对象的创建、设置属性和销毁。</p>
+<p>其中前两类操作可以通过各种方法扔到后台线程执行，而最后一类操作只能在主线程完成，并且有时后面的操作需要依赖前面操作的结果 （例如TextView创建时可能需要提前计算出文本的大小）。ASDK 所做的，就是尽量将能放入后台的任务放入后台，不能的则尽量推迟 (例如视图的创建、属性的调整)。</p>
+<p>为此，ASDK 创建了一个名为 ASDisplayNode 的对象，并在内部封装了 UIView/CALayer，它具有和 UIView/CALayer 相似的属性，例如 frame、backgroundColor等。所有这些属性都可以在后台线程更改，开发者可以只通过 Node 来操作其内部的 UIView/CALayer，这样就可以将排版和绘制放入了后台线程。但是无论怎么操作，这些属性总需要在某个时刻同步到主线程的 UIView/CALayer 去。</p>
+<p>ASDK 仿照 QuartzCore/UIKit 框架的模式，实现了一套类似的界面更新的机制：即在主线程的 RunLoop 中添加一个 Observer，监听了 kCFRunLoopBeforeWaiting 和 kCFRunLoopExit 事件，在收到回调时，遍历所有之前放入队列的待处理的任务，然后一一执行。</p>
+<p>作者：柳大官人<br>链接：<a href="https://www.jianshu.com/p/17045f7dade6" target="_blank" rel="external">https://www.jianshu.com/p/17045f7dade6</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/09/29/M_Swift129RunTime/" itemprop="url">
+                  NSObject数据结构
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-09-29T09:56:33+08:00" content="2019-09-29">
+              2019-09-29
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="object-class"><a href="#object-class" class="headerlink" title="object_class"></a>object_class</h2><p>继承:objc_object<br>内部：<br>Class superClass; 父类<br>cache_t cache;  缓存<br>class_data_bits_t bits  数据</p>
+<p>isa指针关系<br>实例对象其指针指向类对象<br>类对象其指针指向元类对象</p>
+<p>cache_t<br><a href="https://www.jianshu.com/p/45d409e77806" target="_blank" rel="external">https://www.jianshu.com/p/45d409e77806</a><br>用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查找速度，底层结构如下：<br>用于快速查找方法执行函数<br>是可增量扩展的哈希表结构<br>是局部性原理的最佳应用<br>cache 本质是一个 Hash表。存储bucket_t<br>bucket_t存储<br>cache_key_t _key;//@selector()<br>IMP _imp;//函数地址<br>哈希查找：发现当发生碰撞的时候，索引会+1，查找下一个。<br>槽位如果不够，_mask 会变换，变为原来的2倍，并且扩展槽位的时候，会清空数组里原有的缓存内容<br>子类没有实现方法会调用父类的方法，会将父类方法加入到子类自己的cache 里。<br>为什么要创建新的新的buckets来替换原有的buckets并抹掉原有的buckets的方案，而不是在在原有buckets的基础上进行扩容？<br>减少对方法快速查找流程的影响：调用objc_msgSend时会触发方法快速查找，如果进行扩容需要做一些读写操作，对快速查找影响比较大。<br>对性能要求比较高：开辟新的buckets空间并抹掉原有buckets的消耗比在原有buckets上进行扩展更加高效<br>当扩容后，会把新mask设置为newCapacity长度减一，然后清空缓存。<br>所有散列表(哈希表)的原理都是一样的，都是通过一个函数，这个函数传入一个key，通过这个key算出一个索引，如果索引冲突了就加一或者减一，直至不冲突为止，不同的就是算法不一样。</p>
+<p>struct class_rw_t {<br>    uint32_t flags;<br>    uint32_t version;</p>
+<pre><code>const class_ro_t *ro;
+
+method_array_t methods;
+property_array_t properties; //属性，和变量的区别，属性是名称，变量是值
+protocol_array_t protocols;
+
+Class firstSubclass;
+Class nextSiblingClass;
+</code></pre><p>};<br>class_rw_t结构体内有一个指向class_ro_t结构体的指针。</p>
+<p>细看两个结构体的成员变量会发现很多相同的地方，他们都存放着当前类的属性、实例变量、方法、协议等等。区别在于：class_ro_t存放的是编译期间就确定的；而class_rw_t是在runtime时才确定，它会先将class_ro_t的内容拷贝过去，然后再将当前类的分类的这些属性、方法等拷贝到其中。所以可以说class_rw_t是class_ro_t的超集，当然实际访问类的方法、属性等也都是访问的class_rw_t中的内容</p>
+<p>哈希碰撞<br>开放地址法<br>链地址法</p>
+<p>struct method_t {<br>    SEL name; //函数名<br>    const char *types; //编码（返回值类型、参数类型）<br>    IMP imp;//指向函数的指针（函数地址）<br>};</p>
+<p>instance对象的isa指向class对象<br>class对象的isa指向meta-class对象<br>meta-class对象的isa指向基类的meta-class对象</p>
+<p>发消息的步骤<br>检查target是不是nil    ObjC的特性允许对一个nil对象发消息而不会崩溃<br>通过isa，<br>对象方法查找类对象（类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找类对象的方法列表中遍历class_rw_t，从后向前的遍历<br>查找父类的类对象—-同上，直至nsobjcect<br>类方法查找元类对象（元类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找元类对象的方法列表中遍历class_rw_t，从后向前的遍历</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2019/09/29/M_Swift131RunLoop/" itemprop="url">
                   RunLoop
                 </a>
@@ -628,8 +867,8 @@
             
               
                 
-                <a class="post-title-link" href="/2019/09/29/M_Swift129RunTime/" itemprop="url">
-                  NSObject数据结构
+                <a class="post-title-link" href="/2019/09/29/M_Swift126UI/" itemprop="url">
+                  UI
                 </a>
               
             
@@ -672,183 +911,45 @@
       
         
           
-            <h2 id="object-class"><a href="#object-class" class="headerlink" title="object_class"></a>object_class</h2><p>继承:objc_object<br>内部：<br>Class superClass; 父类<br>cache_t cache;  缓存<br>class_data_bits_t bits  数据</p>
-<p>isa指针关系<br>实例对象其指针指向类对象<br>类对象其指针指向元类对象</p>
-<p>cache_t<br><a href="https://www.jianshu.com/p/45d409e77806" target="_blank" rel="external">https://www.jianshu.com/p/45d409e77806</a><br>用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查找速度，底层结构如下：<br>用于快速查找方法执行函数<br>是可增量扩展的哈希表结构<br>是局部性原理的最佳应用<br>cache 本质是一个 Hash表。存储bucket_t<br>bucket_t存储<br>cache_key_t _key;//@selector()<br>IMP _imp;//函数地址<br>哈希查找：发现当发生碰撞的时候，索引会+1，查找下一个。<br>槽位如果不够，_mask 会变换，变为原来的2倍，并且扩展槽位的时候，会清空数组里原有的缓存内容<br>子类没有实现方法会调用父类的方法，会将父类方法加入到子类自己的cache 里。<br>为什么要创建新的新的buckets来替换原有的buckets并抹掉原有的buckets的方案，而不是在在原有buckets的基础上进行扩容？<br>减少对方法快速查找流程的影响：调用objc_msgSend时会触发方法快速查找，如果进行扩容需要做一些读写操作，对快速查找影响比较大。<br>对性能要求比较高：开辟新的buckets空间并抹掉原有buckets的消耗比在原有buckets上进行扩展更加高效<br>当扩容后，会把新mask设置为newCapacity长度减一，然后清空缓存。<br>所有散列表(哈希表)的原理都是一样的，都是通过一个函数，这个函数传入一个key，通过这个key算出一个索引，如果索引冲突了就加一或者减一，直至不冲突为止，不同的就是算法不一样。</p>
-<p>struct class_rw_t {<br>    uint32_t flags;<br>    uint32_t version;</p>
-<pre><code>const class_ro_t *ro;
-
-method_array_t methods;
-property_array_t properties; //属性，和变量的区别，属性是名称，变量是值
-protocol_array_t protocols;
-
-Class firstSubclass;
-Class nextSiblingClass;
-</code></pre><p>};<br>class_rw_t结构体内有一个指向class_ro_t结构体的指针。</p>
-<p>细看两个结构体的成员变量会发现很多相同的地方，他们都存放着当前类的属性、实例变量、方法、协议等等。区别在于：class_ro_t存放的是编译期间就确定的；而class_rw_t是在runtime时才确定，它会先将class_ro_t的内容拷贝过去，然后再将当前类的分类的这些属性、方法等拷贝到其中。所以可以说class_rw_t是class_ro_t的超集，当然实际访问类的方法、属性等也都是访问的class_rw_t中的内容</p>
-<p>哈希碰撞<br>开放地址法<br>链地址法</p>
-<p>struct method_t {<br>    SEL name; //函数名<br>    const char *types; //编码（返回值类型、参数类型）<br>    IMP imp;//指向函数的指针（函数地址）<br>};</p>
-<p>instance对象的isa指向class对象<br>class对象的isa指向meta-class对象<br>meta-class对象的isa指向基类的meta-class对象</p>
-<p>发消息的步骤<br>检查target是不是nil    ObjC的特性允许对一个nil对象发消息而不会崩溃<br>通过isa，<br>对象方法查找类对象（类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找类对象的方法列表中遍历class_rw_t，从后向前的遍历<br>查找父类的类对象—-同上，直至nsobjcect<br>类方法查找元类对象（元类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找元类对象的方法列表中遍历class_rw_t，从后向前的遍历</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/09/29/M_Swift128OC属性/" itemprop="url">
-                  OC属性
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-09-29T09:56:33+08:00" content="2019-09-29">
-              2019-09-29
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><h3 id="分类中l可以添加那些内容"><a href="#分类中l可以添加那些内容" class="headerlink" title="分类中l可以添加那些内容"></a>分类中l可以添加那些内容</h3><pre><code>实力方法
-类方法
-协议
-属性（关联对象：）
-</code></pre><h3 id="为什么不能添加属性"><a href="#为什么不能添加属性" class="headerlink" title="为什么不能添加属性"></a>为什么不能添加属性</h3><pre><code>我们知道在一个类中用@property声明属性，编译器会自动帮我们生成_成员变量和setter/getter，
-但分类的指针结构体中，根本没有属性列表。所以在分类中用@property声明属性，
-既无法生成_成员变量也无法生成setter/getter。
-因此结论是：我们可以用@property声明属性，编译和运行都会通过，只要不使用程序也不会崩溃。
-但如果调用了_成员变量和setter/getter方法，报错就在所难免了。
-可以使用关联对象以及两个方法来模拟构成属性的三个要素。
-</code></pre><h3 id="分类的结构"><a href="#分类的结构" class="headerlink" title="分类的结构"></a>分类的结构</h3><pre><code>Category 是表示一个指向分类的结构体的指针，其定义如下：
-typedef struct objc_category *Category;
-struct objc_category {
-  char *category_name                          OBJC2_UNAVAILABLE; // 分类名
-  char *class_name                             OBJC2_UNAVAILABLE; // 分类所属的类名
-  struct objc_method_list *instance_methods    OBJC2_UNAVAILABLE; // 实例方法列表
-  struct objc_method_list *class_methods       OBJC2_UNAVAILABLE; // 类方法列表
-  struct objc_protocol_list *protocols         OBJC2_UNAVAILABLE; // 分类所实现的协议列表
-}
-</code></pre><h3 id="类扩展与分类的区别如下："><a href="#类扩展与分类的区别如下：" class="headerlink" title="类扩展与分类的区别如下："></a>类扩展与分类的区别如下：</h3><pre><code>&gt;&gt; OC分类属于Runtime运行时特性，是OC语言独有的创新，其他编程语言所不具备这样的特性！ 类扩展属于编译器特性，在编译阶段就会被添加合并到原类中！
-</code></pre><h3 id="分类是如何实现的"><a href="#分类是如何实现的" class="headerlink" title="分类是如何实现的"></a>分类是如何实现的</h3><pre><code>获取cls中未完成整合的所有分类 unattachendCategoriesForClass
-将分类拼接到class上 attachCategories
-倒序遍历所有分类
-获取该分类的方法、协议添加到主类上
-// 添加方法
-rw-&gt;methods.attachLists(mlists,mcount);
-// 添加类方法
-rw-&gt;properties.attachLists(proplists,propcount);
-// 添加协议
-rw-&gt;properties.attachLists(protolists,protocount);
-计算拼接后的元素总数，根据新的总数重新分配内存
-重新设置元素总数
-执行内存移位
-</code></pre><h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><pre><code>分类添加的方法可以覆盖原类方法
-原因：分类是在运行时添加到原类上的
-同名分类方法是能生效决定于编译顺序（倒序遍历所有分类）
-名字相同的分类会引起编译报错
-</code></pre><h2 id="关联对象"><a href="#关联对象" class="headerlink" title="关联对象"></a>关联对象</h2><pre><code>关联对象的实现
-获取其维护的一个HashMap，是一个全局容器
-根据对象指针，查找对象对应的ObjectAssociationMap中的map
-添加关联对象
-</code></pre><h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><pre><code>void objc_setAssociatedObject (id object, void*key, id value, objc_AssociationPolicy policy)
-此方法以给定的键和策略为某对象设置关联值。
-id objc_getAssociatedObject(id object, void *key)
-此方法根据给定的键从某对象中获取相应的关联对象值。
-void objc_removeAssociatedObjects(id object)
-此方法移除指定对象的全部关联对象。
-</code></pre><h3 id="为什么分类不能添加属性"><a href="#为什么分类不能添加属性" class="headerlink" title="为什么分类不能添加属性"></a>为什么分类不能添加属性</h3><pre><code>在runtime 中，objc_class 结构体大小是固定的，不可能往这里添加数据，只能修改。
-所以，ivars 指向了一个固定区域，只能修改成员变量的值，不能增加成员变量的个数。
-方法列表是一个二维数组，可以修改 *methodLists的值来增加成员方法，虽然没办法扩展methodLists指向的内存区域，
-却可以改变这个内存区域的值（里面存的是指针），因此，可以动态添加方法，不可以添加成员变量。
-</code></pre><h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>编译时决定<br>只以声明的形式存在，多数情况下寄生于宿主的.m类中<br>不能为系统类添加扩展<br>类扩展不仅可以增加方法，还可以增加实例变量（或者属性），只是该实例变量默认是@private类型的（<br>用范围只能在自身类，而不是子类或其他地方）；<br>类扩展是在编译阶段被添加到类中，而类别是在运行时添加到类中<br>类扩展不能像类别那样拥有独立的实现部分（@implementation部分），也就是说，类扩展所声明的方法必须依托对应类的实现部分来实现。<br>其实.m文件中@interface和@implementation就是扩展声明和实现，扩展的实现必须依托原类</p>
-<p>代理<br>代理模式是一种消息传递方式，一个完整的代理模式包括：委托对象、代理对象和协议。<br>代理属性使用weak<br>weak和assign是一种“非拥有关系”的指针，通过这两种修饰符修饰的指针变量，都不会改变被引用对象的引用计数。但是在一个对象被释放后，weak会自动将指针指向nil，而assign则不会。在iOS中，向nil发送消息时不会导致崩溃的，所以assign就会导致野指针的错误<br>代理更加面相过程，block则更面向结果。<br>从性能上来说，block的性能消耗要略大于delegate，因为block会涉及到栈区向堆区拷贝等操作，时间和空间上的消耗都大于代理。而代理只是定义了一个方法列表，在遵守协议对象的objc_protocol_list中添加一个节点，在运行时向遵守协议的对象发送消息即可。</p>
-<p>通知<br>KVO<br>KVC<br>属性关键字</p>
-<p>Objective-C具有相当多的动态特性，表现为三方面：动态类型（Dynamic typing）、动态绑定（Dynamic binding）和动态加载（Dynamic loading）。动态——必须到运行时（run time）才会做的一些事情。</p>
-<p>动态类型：即运行时再决定对象的类型，这种动态特性在日常的应用中非常常见，简单来说就是id类型。事实上，由于静态类型的固定性和可预知性，从而使用的更加广泛。静态类型是强类型，而动态类型属于弱类型，运行时决定接受者。</p>
-<p>动态绑定：基于动态类型，在某个实例对象被确定后，其类型便被确定了，该对象对应的属性和响应消息也被完全确定。</p>
-<p>动态加载：根据需求加载所需要的资源，最基本就是不同机型的适配，例如，在Retina设备上加载@2x的图片，而在老一些的普通苹设备上加载原图，让程序在运行时添加代码模块以及其他资源，用户可根据需要加载一些可执行代码和资源，而不是在启动时就加载所有组件，可执行代码可以含有和程序运行时整合的新类。</p>
-<p>#include与#import的区别、#import 与@class 的区别</p>
-<p>#include 和#import其效果相同,都是查询类中定义的行为(方法);</p>
-<p>#import不会引起交叉编译,确保头文件只会被导入一次；</p>
-<p>@class 的表明,只定 义了类的名称,而具体类的行为是未知的,一般用于.h 文件；</p>
-<p>@class 比#import 编译效率更高。<br> 解释 const, static, inline 关键字<br>const 修饰指针,或者常量,比如不可变,<br>static 修饰变量表示作用域,比如全局的私有变量,函数内部的 static 是内部的私有变量。<br>Static 修饰函数表示函数是文件作用域<br>Inline 表示内联。一般来说 inline 需要和 static 联合用 一般用法是 static inline int max(int a, int b) { </p>
-<p>return a&gt;b?a:b; } </p>
-<p>static inline作用是和宏类似,只不过是方便调试(宏不能断掉调 试,static inline 可以)。运行时候是一样的。<br>一般 c/c++短小的函数都用 static inline 内联函数 </p>
-<p>load不是去类对象方法列表，遍历查找的，而是直接找到对象，拿到内存地址去调用的<br>先调用父类的load方法再调用子类的load方法</p>
+            <p>程序绘制流程<br>[UIView setNeedsDisplay];<br>[view.layer setNeedsDisplay];<br>[CALayer display];<br>[layer.delegate respondsTo:@selector(displayLayer:)];<br>yes-&gt; 异步绘制入口<br>no-&gt; 系统绘制流程<br>绘制是CPU和GPU共同协作的<br>通过CoreGraphics、CoreImage由CPU预处理，最终通过OpenGL ES将数据传送到屏幕<br>1、CoreAnimation提交会话，包括自己和子树（view hierarchy）的layout状态等；<br>2、RenderServer解析提交的子树状态，生成绘制指令；<br>3、GPU执行绘制指令；<br>4、显示渲染后的数据；<br>调用-setNeedsDisplay的时候，仅会设置图层为dirty。当渲染系统准备就绪，调用视图的-display方法，同时装配像素存储空间，建立一个CoreGraphics上下文（CGContextRef），将上下文push进上下文堆栈，绘图程序进入对应的内存存储空间。<br>渲染时机</p>
+<p>上面已经提到过：Core Animation 在 RunLoop 中注册了一个 Observer 监听 BeforeWaiting(即将进入休眠) 和 Exit (即将退出Loop) 事件 。当在操作 UI 时，比如改变了 Frame、更新了 UIView/CALayer 的层次时，或者手动调用了 UIView/CALayer 的 setNeedsLayout/setNeedsDisplay方法后，这个 UIView/CALayer 就被标记为待处理，并被提交到一个全局的容器去。当Oberver监听的事件到来时，回调执行函数中会遍历所有待处理的UIView/CAlayer 以执行实际的绘制和调整，并更新 UI 界面。<br>打包layers并发送到渲染server；递归提交子树的layers；<br>如果子树太复杂，会消耗很大，对性能造成影响；</p>
+<p>事件响应流程<br>点击屏幕-》UIApplication-〉UIWindow-》hitTest：withEvent：-〉pointInside：withEvent：<br>-》subviews-〉UIView-》倒序遍历-〉hitTest：withEvent：<br>hitTest：withEvent内部实现</p>
+<p>GPU<br>顶点着色<br>图元装配<br>光栅化<br>片着色<br>片段处理</p>
+<p>UI卡顿掉帧原理<br>Display 16.7ms<br>GPU<br>CPU<br>在 VSync 信号到来后，系统图形服务会通过 CADisplayLink 等机制通知 App，App 主线程开始在 CPU 中计算显示内容，比如视图的创建、布局计算、图片解码、文本绘制等。随后 CPU 会将计算好的内容提交到 GPU 去，由 GPU 进行变换、合成、渲染。随后 GPU 会把渲染结果提交到帧缓冲区去，等待下一次 VSync 信号到来时显示到屏幕上。由于垂直同步的机制，如果在一个 VSync 时间内，CPU 或者 GPU 没有完成内容提交，则那一帧就会被丢弃，等待下一次机会再显示，而这时显示屏会保留之前的内容不变。这就是界面卡顿的原因。</p>
+<p>滑动优化方案<br>CPU<br>对象创建，调整，销毁<br>预排版（布局计算、文字计算）<br>预渲染（文字等异步绘制l、图片解码等）<br>GPU<br>纹理渲染<br>试图混合</p>
+<p>离屏渲染<br>GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作<br>何时会触发<br>圆角（当和maskToBounds一起使用时）<br>图层蒙版<br>阴影<br>光栅化</p>
+<p>问题：<br>UI事件的传递机制<br>使tableView滚动流畅的方案和思路<br>什么是离屏渲染<br>UIView和CALayer的关系</p>
+<p>.dSYM文件</p>
+<h2 id="CALayer"><a href="#CALayer" class="headerlink" title="CALayer"></a>CALayer</h2><p>layer给view提供了基础设施，使得绘制内容和呈现更高效动画更容易、更低耗<br>layer不参与view的事件处理、不参与响应链<br>layer的内容生成一个位图(bitmap)<br>,触发动画的时候，是把这个动画和状态信息传递给图形硬件，<br>图形硬件使用这两个数据就可以构造动画了。处理位图对于图形硬件更快。</p>
+<p>阴影是根据layer的alpha值来生成的。模拟一下生成的过程：分配一块同样大小的shadowlayer,在原layer的alpha不为0的地方，shadowlayer填上shadowColor，就跟现实里的影子生成原理一样，不透明的部分才生成阴影。然后把这个shadowlayer做一个偏移(shadowOffset)加到原layer下面。<br>也就是阴影层是根据内容即时计算出来的，而且会触发离屏渲染，所以消耗巨大。</p>
+<p>mask是一个layer层，并且作为背景层和组成层之间的一个遮罩层通道，默认是nil。并且如果要创建新的layer赋给mask，那么新的layer必须没有superlayer，也不支持含有子mask。</p>
+<p>mask作用的也不只是当前layer的内容，而是layer和它所有子layer的合成内容。这个也是可以测试的，设置viewA的layer的mask,然后不管在viewA上加多少个视图都是会被mask作用到。</p>
+<p>我们都知道控件view有一个alpha属性用来设置透明度，默认alpha＝1，只有当alpha不为0是我们才能正常的看到View的样子，alpha其实改变的是mask和background layer的透明度，来实现透明效果。而mask是控件view上的一层layer，mask也有一个alpha，要想看到view，只有当mask的透明度不为0时，我们才能看到mask后面的view的样子，view自带的masklayer是不透明的。新创建的masklayer的是透明的，因此，我们只需要给新创建的masklayer一个颜色，使他不透明就能看见蒙板后的View了，而蒙板外是透明的，这样就能实现蒙板效果了。原理大概是这样了。</p>
+<p>如何高性能给UIImageView加圆角</p>
+<p>如何使用核心动画？</p>
+<p>创建<br>设置相关属性<br>添加到 CALayer 上，会自动执行动画</p>
+<p>修改View的响应范围<br>重写View的</p>
+<ul>
+<li>(BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event;<br>hitTest：withEvent内部实现<br>首先调用当前视图的pointInside:withEvent:方法判断触摸点是否在当前视图内；<br>若返回NO,则hitTest:withEvent:返回nil;<br>若返回YES,则向当前视图的所有子视图(subviews)发送hitTest:withEvent:消息，所有子视图的遍历顺序是从top到bottom，即从subviews数组的末尾向前遍历,直到有子视图返回非空对象或者全部子视图遍历完毕；<br>若第一次有子视图返回非空对象,则hitTest:withEvent:方法返回此对象，处理结束；<br>如所有子视图都返回非，则hitTest:withEvent:方法返回自身(self)。<br>渲染具体步骤</li>
+</ul>
+<p>动画和屏幕上组合的图层实际上被一个单独的进程管理，即所谓的渲染服务。<br>当运行一段动画时，这个过程会被四个分离的阶段打破：</p>
+<p>布局–准备视图的层级关系，设置图层属性<br>显示–图层的寄宿图片被绘制的阶段。涉及到-drawRect和-drawLayer:inContext：等方法<br>准备–准备发送动画数据给渲染服务的阶段。比如图片解码<br>提交–打包所有图层和动画属性，通过IPC发送到渲染服务<br>渲染服务拿到数据后，反序列化成一个叫做渲染树的图层树，使用这个树状结构，渲染服务队动画的每一帧做如下工作：</p>
+<p>对所有的图层属性计算中间值，设置OpenGL几何形状（纹理化三角形）来执行渲染<br>在屏幕上渲染可见的三角形<br>所以一共六个阶段：最后两个阶段在动画过程中不停地重复，前五个阶段都在软件层面处理（通过CPU），只有最后一个被GPU执行。而且，你真正只能控制前两个阶段：布局和显示。剩下的在CoreAnimation内部处理。</p>
+<p>1、帧率一般在多少？</p>
+<p>60帧每秒；（TimeProfiler）<br>2、是否存在CPU和GPU瓶颈？ （查看占有率）</p>
+<p>更少的使用CPU和GPU可以有效的保存电量；<br>3、额外的使用CPU来进行渲染？</p>
+<p>重写了drawRect会导致CPU渲染；在CPU进行渲染时，GPU大多数情况是处于等待状态；<br>4、是否存在过多离屏渲染？</p>
+<p>越少越好；离屏渲染会导致上下文切换，GPU产生idle；<br>5、是否渲染过多视图？</p>
+<p>视图越少越好；透明度为1的视图更受欢迎；<br>6、使用奇怪的图片格式和大小？</p>
+<p>避免格式转换和调整图片大小；一个图片如果不被GPU支持，那么需要CPU来转换。（Xcode有对PNG图片进行特殊的算法优化）<br>7、使用昂贵的特效？</p>
+<p>理解特效的消耗，同时调整合适的大小；例如前面提到的UIBlurEffect；</p>
+<p>8、视图树上不必要的元素？</p>
+<p>理解视图树上所有点的必要性，去掉不必要的元素；忘记remove视图是很常见的事情，特别是当View的类比较大的时候。</p>
+<p>性能优化实例<br>1、阴影<br>2、圆角<br>不要使用不必要的mask，可以预处理图片为圆形；或者添加中间为圆形透明的白色背景视图。即使添加额外的视图，会导致额外的计算；但仍然会快一点，因为相对于切换上下文，GPU更擅长渲染。<br>离屏渲染会导致GPU利用率不到100%，帧率却很低。（切换上下文会产生idle time）</p>
+<p>3、工具</p>
+<p>使用instruments的CoreAnimation工具来检查离屏渲染，黄色是我们不希望看到的颜色。</p>
+<p>layoutSubviews<br>继承于UIView的子类重写，进行布局更新，刷新视图。如果某个视图自身的bounds或者子视图的bounds发生改变，那么这个方法会在当前runloop结束的时候被调用。为什么不是立即调用呢？因为渲染毕竟比较消耗性能，特别是视图层级复杂的时候。这种机制下任何UI控件布局上的变动不会立即生效，而是每次间隔一个周期，所有UI控件在布局上的变动统一生效并且在视图上更新，苹果通过这种高性能的机制保障了视图渲染的流畅性。<br>setNeedsLayout<br>标记为需要重新布局，异步调用layoutIfNeeded刷新布局，不立即刷新，在下一轮runloop结束前刷新，对于这一轮runloop之内的所有布局和UI上的更新只会刷新一次，layoutSubviews一定会被调用。<br>layoutIfNeeded<br>如果有需要刷新的标记，立即调用layoutSubviews进行布局（如果没有标记，不会调用layoutSubviews）</p>
+<p>如果想在当前runloop中立即刷新，调用顺序应该是<br>[self setNeedsLayout];<br>[self layoutIfNeeded];</p>
 
           
         
@@ -1009,325 +1110,6 @@ Class nextSiblingClass;
             
               
                 
-                <a class="post-title-link" href="/2019/09/29/M_Swift126UI/" itemprop="url">
-                  UI
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-09-29T09:56:33+08:00" content="2019-09-29">
-              2019-09-29
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>程序绘制流程<br>[UIView setNeedsDisplay];<br>[view.layer setNeedsDisplay];<br>[CALayer display];<br>[layer.delegate respondsTo:@selector(displayLayer:)];<br>yes-&gt; 异步绘制入口<br>no-&gt; 系统绘制流程<br>绘制是CPU和GPU共同协作的<br>通过CoreGraphics、CoreImage由CPU预处理，最终通过OpenGL ES将数据传送到屏幕<br>1、CoreAnimation提交会话，包括自己和子树（view hierarchy）的layout状态等；<br>2、RenderServer解析提交的子树状态，生成绘制指令；<br>3、GPU执行绘制指令；<br>4、显示渲染后的数据；<br>调用-setNeedsDisplay的时候，仅会设置图层为dirty。当渲染系统准备就绪，调用视图的-display方法，同时装配像素存储空间，建立一个CoreGraphics上下文（CGContextRef），将上下文push进上下文堆栈，绘图程序进入对应的内存存储空间。<br>渲染时机</p>
-<p>上面已经提到过：Core Animation 在 RunLoop 中注册了一个 Observer 监听 BeforeWaiting(即将进入休眠) 和 Exit (即将退出Loop) 事件 。当在操作 UI 时，比如改变了 Frame、更新了 UIView/CALayer 的层次时，或者手动调用了 UIView/CALayer 的 setNeedsLayout/setNeedsDisplay方法后，这个 UIView/CALayer 就被标记为待处理，并被提交到一个全局的容器去。当Oberver监听的事件到来时，回调执行函数中会遍历所有待处理的UIView/CAlayer 以执行实际的绘制和调整，并更新 UI 界面。<br>打包layers并发送到渲染server；递归提交子树的layers；<br>如果子树太复杂，会消耗很大，对性能造成影响；</p>
-<p>事件响应流程<br>点击屏幕-》UIApplication-〉UIWindow-》hitTest：withEvent：-〉pointInside：withEvent：<br>-》subviews-〉UIView-》倒序遍历-〉hitTest：withEvent：<br>hitTest：withEvent内部实现</p>
-<p>GPU<br>顶点着色<br>图元装配<br>光栅化<br>片着色<br>片段处理</p>
-<p>UI卡顿掉帧原理<br>Display 16.7ms<br>GPU<br>CPU<br>在 VSync 信号到来后，系统图形服务会通过 CADisplayLink 等机制通知 App，App 主线程开始在 CPU 中计算显示内容，比如视图的创建、布局计算、图片解码、文本绘制等。随后 CPU 会将计算好的内容提交到 GPU 去，由 GPU 进行变换、合成、渲染。随后 GPU 会把渲染结果提交到帧缓冲区去，等待下一次 VSync 信号到来时显示到屏幕上。由于垂直同步的机制，如果在一个 VSync 时间内，CPU 或者 GPU 没有完成内容提交，则那一帧就会被丢弃，等待下一次机会再显示，而这时显示屏会保留之前的内容不变。这就是界面卡顿的原因。</p>
-<p>滑动优化方案<br>CPU<br>对象创建，调整，销毁<br>预排版（布局计算、文字计算）<br>预渲染（文字等异步绘制l、图片解码等）<br>GPU<br>纹理渲染<br>试图混合</p>
-<p>离屏渲染<br>GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作<br>何时会触发<br>圆角（当和maskToBounds一起使用时）<br>图层蒙版<br>阴影<br>光栅化</p>
-<p>问题：<br>UI事件的传递机制<br>使tableView滚动流畅的方案和思路<br>什么是离屏渲染<br>UIView和CALayer的关系</p>
-<p>.dSYM文件</p>
-<h2 id="CALayer"><a href="#CALayer" class="headerlink" title="CALayer"></a>CALayer</h2><p>layer给view提供了基础设施，使得绘制内容和呈现更高效动画更容易、更低耗<br>layer不参与view的事件处理、不参与响应链<br>layer的内容生成一个位图(bitmap)<br>,触发动画的时候，是把这个动画和状态信息传递给图形硬件，<br>图形硬件使用这两个数据就可以构造动画了。处理位图对于图形硬件更快。</p>
-<p>阴影是根据layer的alpha值来生成的。模拟一下生成的过程：分配一块同样大小的shadowlayer,在原layer的alpha不为0的地方，shadowlayer填上shadowColor，就跟现实里的影子生成原理一样，不透明的部分才生成阴影。然后把这个shadowlayer做一个偏移(shadowOffset)加到原layer下面。<br>也就是阴影层是根据内容即时计算出来的，而且会触发离屏渲染，所以消耗巨大。</p>
-<p>mask是一个layer层，并且作为背景层和组成层之间的一个遮罩层通道，默认是nil。并且如果要创建新的layer赋给mask，那么新的layer必须没有superlayer，也不支持含有子mask。</p>
-<p>mask作用的也不只是当前layer的内容，而是layer和它所有子layer的合成内容。这个也是可以测试的，设置viewA的layer的mask,然后不管在viewA上加多少个视图都是会被mask作用到。</p>
-<p>我们都知道控件view有一个alpha属性用来设置透明度，默认alpha＝1，只有当alpha不为0是我们才能正常的看到View的样子，alpha其实改变的是mask和background layer的透明度，来实现透明效果。而mask是控件view上的一层layer，mask也有一个alpha，要想看到view，只有当mask的透明度不为0时，我们才能看到mask后面的view的样子，view自带的masklayer是不透明的。新创建的masklayer的是透明的，因此，我们只需要给新创建的masklayer一个颜色，使他不透明就能看见蒙板后的View了，而蒙板外是透明的，这样就能实现蒙板效果了。原理大概是这样了。</p>
-<p>如何高性能给UIImageView加圆角</p>
-<p>如何使用核心动画？</p>
-<p>创建<br>设置相关属性<br>添加到 CALayer 上，会自动执行动画</p>
-<p>修改View的响应范围<br>重写View的</p>
-<ul>
-<li>(BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event;<br>hitTest：withEvent内部实现<br>首先调用当前视图的pointInside:withEvent:方法判断触摸点是否在当前视图内；<br>若返回NO,则hitTest:withEvent:返回nil;<br>若返回YES,则向当前视图的所有子视图(subviews)发送hitTest:withEvent:消息，所有子视图的遍历顺序是从top到bottom，即从subviews数组的末尾向前遍历,直到有子视图返回非空对象或者全部子视图遍历完毕；<br>若第一次有子视图返回非空对象,则hitTest:withEvent:方法返回此对象，处理结束；<br>如所有子视图都返回非，则hitTest:withEvent:方法返回自身(self)。<br>渲染具体步骤</li>
-</ul>
-<p>动画和屏幕上组合的图层实际上被一个单独的进程管理，即所谓的渲染服务。<br>当运行一段动画时，这个过程会被四个分离的阶段打破：</p>
-<p>布局–准备视图的层级关系，设置图层属性<br>显示–图层的寄宿图片被绘制的阶段。涉及到-drawRect和-drawLayer:inContext：等方法<br>准备–准备发送动画数据给渲染服务的阶段。比如图片解码<br>提交–打包所有图层和动画属性，通过IPC发送到渲染服务<br>渲染服务拿到数据后，反序列化成一个叫做渲染树的图层树，使用这个树状结构，渲染服务队动画的每一帧做如下工作：</p>
-<p>对所有的图层属性计算中间值，设置OpenGL几何形状（纹理化三角形）来执行渲染<br>在屏幕上渲染可见的三角形<br>所以一共六个阶段：最后两个阶段在动画过程中不停地重复，前五个阶段都在软件层面处理（通过CPU），只有最后一个被GPU执行。而且，你真正只能控制前两个阶段：布局和显示。剩下的在CoreAnimation内部处理。</p>
-<p>1、帧率一般在多少？</p>
-<p>60帧每秒；（TimeProfiler）<br>2、是否存在CPU和GPU瓶颈？ （查看占有率）</p>
-<p>更少的使用CPU和GPU可以有效的保存电量；<br>3、额外的使用CPU来进行渲染？</p>
-<p>重写了drawRect会导致CPU渲染；在CPU进行渲染时，GPU大多数情况是处于等待状态；<br>4、是否存在过多离屏渲染？</p>
-<p>越少越好；离屏渲染会导致上下文切换，GPU产生idle；<br>5、是否渲染过多视图？</p>
-<p>视图越少越好；透明度为1的视图更受欢迎；<br>6、使用奇怪的图片格式和大小？</p>
-<p>避免格式转换和调整图片大小；一个图片如果不被GPU支持，那么需要CPU来转换。（Xcode有对PNG图片进行特殊的算法优化）<br>7、使用昂贵的特效？</p>
-<p>理解特效的消耗，同时调整合适的大小；例如前面提到的UIBlurEffect；</p>
-<p>8、视图树上不必要的元素？</p>
-<p>理解视图树上所有点的必要性，去掉不必要的元素；忘记remove视图是很常见的事情，特别是当View的类比较大的时候。</p>
-<p>性能优化实例<br>1、阴影<br>2、圆角<br>不要使用不必要的mask，可以预处理图片为圆形；或者添加中间为圆形透明的白色背景视图。即使添加额外的视图，会导致额外的计算；但仍然会快一点，因为相对于切换上下文，GPU更擅长渲染。<br>离屏渲染会导致GPU利用率不到100%，帧率却很低。（切换上下文会产生idle time）</p>
-<p>3、工具</p>
-<p>使用instruments的CoreAnimation工具来检查离屏渲染，黄色是我们不希望看到的颜色。</p>
-<p>layoutSubviews<br>继承于UIView的子类重写，进行布局更新，刷新视图。如果某个视图自身的bounds或者子视图的bounds发生改变，那么这个方法会在当前runloop结束的时候被调用。为什么不是立即调用呢？因为渲染毕竟比较消耗性能，特别是视图层级复杂的时候。这种机制下任何UI控件布局上的变动不会立即生效，而是每次间隔一个周期，所有UI控件在布局上的变动统一生效并且在视图上更新，苹果通过这种高性能的机制保障了视图渲染的流畅性。<br>setNeedsLayout<br>标记为需要重新布局，异步调用layoutIfNeeded刷新布局，不立即刷新，在下一轮runloop结束前刷新，对于这一轮runloop之内的所有布局和UI上的更新只会刷新一次，layoutSubviews一定会被调用。<br>layoutIfNeeded<br>如果有需要刷新的标记，立即调用layoutSubviews进行布局（如果没有标记，不会调用layoutSubviews）</p>
-<p>如果想在当前runloop中立即刷新，调用顺序应该是<br>[self setNeedsLayout];<br>[self layoutIfNeeded];</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/06/25/N_Android18控件类/" itemprop="url">
-                  未命名
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Android控件类"><a href="#Android控件类" class="headerlink" title="Android控件类"></a>Android控件类</h1><pre><code>名称    类名    出处
-颜色    Color    
-可变字符串    Spannable、SpannableString    
-风格区域、URL区域    StyleSpan、URLSpan    
-状态图形    Drawable、StateListDrawable    
-形状图形    ShapeDrawable    
-点九图形    NinePatchDrawable    
-画布、画笔    Canvas、Paint    
-透明度动画    AlphaAnimation    
-过渡图形    TransitionDrawable    
-旋转动画    RotateAnimation    
-帧动画    AnimationDrawable    
-梯度图形    GradientDrawable    
-标签页    TabHost、TabWidget    
-标题栏    ActionBar    
-溢出菜单    OverflowMenu    
-导航栏    Navigation    
-定制视图    CustomView    
-搜索视图    SearchView    
-翻页视图    ViewPager    
-翻页标题    PagerTabStrip、PagerTitleStrip    
-飞掠视图    ViewFlipper    
-翻页适配器    PagerAdapter、FragmentStatePagerAdapter    
-日期和时间控件    DatePicker、TimePicker    
-对话框碎片    DialogFragment    
-布局视图    LinearLayout、RelativeLayout、FrameLayout    
-滚动视图    ScrollView、HorizontalScrollView    
-基本视图    View、ViewGroup    
-文本框、图像视图    TextView、EditText、ImageView    
-按钮、图像按钮    Button、ImageButton    
-复合按钮    CompoundButton    
-复选框、开关、单选框    CheckBox、Switch、RadioGroup、RadioButton    
-下拉框、列表视图、网格视图    Spinner、ListView、GridView    
-适配器视图    AdapterView、Adapter    
-基本适配器    BaseAdapter、ArrayAdapter、SimpleAdapter    
-自动完成编辑框    AutoCompleteTextView    
-进度条、进度对话框    ProgressBar、ProgressDialog    
-远程视图    RemoteViews    
-表面视图    SurfaceView、SurfaceHolder    
-媒体录制器、媒体播放器    MediaRecorder、MediaPlayer    
-拖动条    SeekBar    
-网页视图    WebView、WebSettings    
-网页视图客户端    WebViewClient、WebChromeClient    
-菜单、选项菜单、上下文菜单    Menu、OptionsMenu、ContextMenu    
-弹窗    PopupWindow    
-对话框    AlertDialog、Dialog    
-碎片    Fragment    
-占位视图    ViewStub    
-风格、主题    Style、Theme    
-汉字转拼音    HanziToPinyin    
-位图    Bitmap、BitmapDrawable    
-集合动画    AnimationSet    
-属性动画    ObjectAnimator、AnimatorSet    
-路径、矩阵    Path、Matrix    
-折叠列表视图    ExpandableListView、ExpandableListAdapter    
-列表碎片    ListFragment    
-文字转语音    TextToSpeech    
-参数设置碎片    PreferenceFragment    
-工具栏、搜索框    Toolbar、SearchView    
-侧滑布局    DrawerLayout、SlidingPaneLayout    
-弹出菜单、列表弹窗    PopupMenu、ListPopupWindow    
-循环器视图    RecyclerView    
-下拉刷新布局    SwipeRefreshLayout    
-画廊    Gallery   
-图像切换器    ImageSwitcher    
-调色板    Palette  
-卡片视图    CardView    
-视频视图    VideoView   
-媒体控制条    MediaController    
-音频录制    AudioRecord    
-音轨播放    AudioTrack    
-声音池    SoundPool    
-提示窗    Toast、Snackbar    
-裁剪图形    ClipDrawable    
-缩放图形    ScaleDrawable  
-旋转图形    RotateDrawable
-水波图形    RippleDrawable
-矢量图形    VectorDrawable
-矢量动画    AnimatedVectorDrawable
-导航视图    NavigationView    
-协调布局    CoordinatorLayout
-悬浮按钮    FloatingActionButton 
-底部弹窗    BottomSheetBehavior
-应用栏布局    AppBarLayout    
-嵌套滚动视图    NestedScrollView 
-可折叠工具栏布局    CollapsingToolbarLayout  
-文本输入布局    TextInputLayout    
-文本输入编辑框    TextInputEditText   
-碎片标签组    FragmentTabHost    
-栈视图    StackView    
-标签布局    TabLayout    
-约束布局    ConstraintLayout   
-OpenGL表面视图    GLSurfaceView 
-OpenGL画笔    GL10
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2019/06/25/M_Swift120总结/" itemprop="url">
                   总结
                 </a>
@@ -1422,8 +1204,8 @@ OpenGL画笔    GL10
             
               
                 
-                <a class="post-title-link" href="/2019/06/25/M_Swift121iOS不常用方法/" itemprop="url">
-                  iOS不常用方法
+                <a class="post-title-link" href="/2019/06/25/N_Android19管理类/" itemprop="url">
+                  未命名
                 </a>
               
             
@@ -1466,21 +1248,208 @@ OpenGL画笔    GL10
       
         
           
-            <h2 id="UITableView收起键盘"><a href="#UITableView收起键盘" class="headerlink" title="UITableView收起键盘"></a>UITableView收起键盘</h2><p>何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDismissModeInteractive，表示在键盘内部滑动，键盘逐渐下去。</p>
-<h2 id="禁止手机睡眠"><a href="#禁止手机睡眠" class="headerlink" title="禁止手机睡眠"></a>禁止手机睡眠</h2><p>[UIApplication sharedApplication].idleTimerDisabled = YES;</p>
-<h2 id="tableView-beginUpdates-和-endUpdates"><a href="#tableView-beginUpdates-和-endUpdates" class="headerlink" title="tableView  beginUpdates 和 endUpdates"></a>tableView  beginUpdates 和 endUpdates</h2><p>1.beginUpdates 和 endUpdates必须成对使用<br>2、使用beginUpdates和endUpdates可以在改变一些行（row）的高度时自带动画，并且不需要Reload row（不用调用cellForRow，仅仅需要调用heightForRow，这样效率最高）。<br>3、在beginUpdates和endUpdates中执行insert,delete,select,reload row时，动画效果更加同步和顺滑，否则动画卡顿且table的属性（如row count）可能会失效。<br>4、在beginUpdates 和 endUpdates中执行 reloadData 方法和直接reloadData一样，没有相应的中间动画。</p>
-<h2 id="统一收起键盘"><a href="#统一收起键盘" class="headerlink" title="统一收起键盘"></a>统一收起键盘</h2><p>[[[UIApplication sharedApplication] keyWindow] endEditing:YES];</p>
-<h2 id="wkwebview报错"><a href="#wkwebview报错" class="headerlink" title="wkwebview报错"></a>wkwebview报错</h2><p>使用wkwebview时，push后，再pop返回，报错了：<br>Cannot form weak reference to instance (xxxx) of class xxxx. It is possible that this object was over-released, or is in the process of deallocation.<br>原因是给webView.scrollView设置了代理：webView.scrollView.delegate = self ；<br>解决办法：<br>-(void)dealloc<br>{<br>webView.scrollView.delegate = nil;<br>}</p>
-<h2 id="linker-command-failed-with-exit-code-1"><a href="#linker-command-failed-with-exit-code-1" class="headerlink" title="linker command failed with exit code 1"></a>linker command failed with exit code 1</h2><p>原因和解决办法：<br>1、看看是不是有新添加的文件跟之前文件同名<br>2、错误信息中出现了某个类的名字，去原文件中看看#import了哪些第三方库，把这些库挨个注释排除，找到出错的那个库，然后按照官方提供的步骤重新添加一遍。<br>3、SVN或git忽略了某些文件，如.o 等文件没能update下来，查看.o文件可能是红色的，可以重新添加或者修改SVN(git)的忽略设置<br>4、把.a文件删除再重新拖到项目中解决问题<br>5、可能重复添加了文件（也可能没勾选 Copy items if neded 这个选项），建议删除后重新添加<br>6、工程中文件名重复了 也会出现同样的错误<br>7、Build Settings”-&gt;”Enable Bitcode”设置为NO ，因为有些SDK不支持Bitcode<br>8、可能在引用的时候 可能写的是#import “XXXXX.m” ，如果是改为#import “XXXXX.h”<br>9、可能你导入的SDK只能在真机下才能运行，模拟器会报错！<br>10、找到 Build settings-&gt;Linking-&gt;Other Linker Flags将此属性修改成-all_load 或者 -ObjC<br>11、Build settings-&gt;Search Path-&gt;Library Search Paths 添加静态库的相应路径</p>
-<h2 id="CABasicAnimation-按home键后台之后，再切回来动画就停止"><a href="#CABasicAnimation-按home键后台之后，再切回来动画就停止" class="headerlink" title="CABasicAnimation 按home键后台之后，再切回来动画就停止"></a>CABasicAnimation 按home键后台之后，再切回来动画就停止</h2><p>CABasicAnimation有个属性removedOnCompletion，默认值为YES,意思是动画在指定时间段内完成后，就会从层上自动移除。<br>如果CABasicAnimation 按home键后台之后，再切回来动画就停止，只要将removedOnCompletion属性设为no动画就不会停止，直到你移除该动画</p>
-<h2 id="播放一张张连续的图片"><a href="#播放一张张连续的图片" class="headerlink" title="播放一张张连续的图片"></a>播放一张张连续的图片</h2><p>// 方法一<br>imageView.animationImages = @[[UIImage imageNamed:@”animate_1”], [UIImage imageNamed:@”animate_2”], [UIImage imageNamed:@”animate<em>3”]];<br>imageView.animationDuration = 1.0;<br>// 方法二<br>imageView.image = [UIImage animatedImageNamed:@”animate</em>“ duration:1.0];<br>// 方法二解释下，这个方法会加载animate_为前缀的，后边0-1024，也就是animate_0、animate_1一直到animate_1024</p>
-<h2 id="判断两个rect是否有交叉"><a href="#判断两个rect是否有交叉" class="headerlink" title="判断两个rect是否有交叉"></a>判断两个rect是否有交叉</h2><p>if (CGRectIntersectsRect(rect1, rect2)) {<br>}</p>
-<h2 id="键盘上方增加工具栏"><a href="#键盘上方增加工具栏" class="headerlink" title="键盘上方增加工具栏"></a>键盘上方增加工具栏</h2><p>UIToolbar <em>keyboardDoneButtonView = [[UIToolbar alloc] init];<br>[keyboardDoneButtonView sizeToFit];<br>UIBarButtonItem </em>doneButton = [[UIBarButtonItem alloc] initWithTitle:@”Done”<br>style:UIBarButtonItemStyleBordered target:self<br>action:@selector(doneClicked:)];<br>[keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];<br>txtField.inputAccessoryView = keyboardDoneButtonView;</p>
-<h2 id="判断一个view是否为另一个view的子视图"><a href="#判断一个view是否为另一个view的子视图" class="headerlink" title="判断一个view是否为另一个view的子视图"></a>判断一个view是否为另一个view的子视图</h2><p>// 如果myView是self.view本身，也会返回yes<br>BOOL isSubView = [myView isDescendantOfView:self.view];</p>
-<h2 id="判断某一行的cell是否已经显示"><a href="#判断某一行的cell是否已经显示" class="headerlink" title="判断某一行的cell是否已经显示"></a>判断某一行的cell是否已经显示</h2><p>CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];<br>BOOL completelyVisible = CGRectContainsRect(tableView.bounds, cellRect);</p>
-<h2 id="隐藏UITextView-UITextField光标"><a href="#隐藏UITextView-UITextField光标" class="headerlink" title="隐藏UITextView/UITextField光标"></a>隐藏UITextView/UITextField光标</h2><p>textField.tintColor = [UIColor clearColor];</p>
-<h2 id="当UITextView-UITextField中没有文字时，禁用回车键"><a href="#当UITextView-UITextField中没有文字时，禁用回车键" class="headerlink" title="当UITextView/UITextField中没有文字时，禁用回车键"></a>当UITextView/UITextField中没有文字时，禁用回车键</h2><p>textField.enablesReturnKeyAutomatically = YES;</p>
+            <h1 id="Android控件类"><a href="#Android控件类" class="headerlink" title="Android控件类"></a>Android控件类</h1><pre><code>窗口管理    WindowManager   
+显示信息    Display、DisplayMetrics 
+标签页面    TabActivity    
+页面组    ActivityGroup   
+碎片页面    FragmentActivity 
+资源管理    Resources    
+资产管理    AssetManager
+打包结构    Parcelable    
+应用    Application    
+共享参数    SharedPreferences  
+SQLite数据库    SQLiteDatabase、SQLiteOpenHelper  
+游标    ContentValues、Cursor    
+环境管理    Environment    
+输入法管理    InputMethodManager   
+列表页面    ListActivity    
+页面    Activity    
+意图、意图过滤器    Intent、IntentFilter 
+包裹    Bundle    
+服务、异步服务    Service、IntentService 
+广播、广播接收器    Broadcast、BroadcastReceiver
+手势事件    MotionEvent    
+手势检测器    GestureDetector 
+滚动器    Scroller   
+定位管理    LocationManager、Criteria
+通话管理    TelephonyManager   
+基站信息    CellLocation、CellInfo 
+处理器    Handler、Looper、Message 
+异步任务    AsyncTask    
+倒计时器    CountDownTimer  
+定时器管理    AlarmManager   
+延迟的意图    PendingIntent    
+信使    Messenger、IBinder    
+通知管理    Notification、NotificationManager  
+远程接口    AIDL    
+内容提供者    ContentProvider   
+内容解决者    ContentResolver  
+内容观察者    ContentObserver 
+版本信息    Build    
+短信管理    SmsManager   
+摄像头    Camera   
+音频管理    AudioManager  
+震动器    Vibrator    
+传感器    Sensor、SensorManager   
+连接管理    ConnectivityManager    
+热点管理    WifiManager    
+下载管理    DownloadManager   
+json数据    JSONObject、JSONArray 
+窗口    Window    
+java原生接口    JNI  
+日志    Log   
+提示    Toast  
+代码混淆    Proguard  
+存储管理    StorageManager   
+流量统计    TrafficStats    
+打包管理    PackageManager、PackageInfo   
+活动管理    ActivityManager    
+屏幕配置    Configuration    
+剪贴板管理    ClipboardManager 
+参数设置页面    PreferenceActivity 
+仪器测试用例    InstrumentationTestCase  
+页面测试用例    ActivityTestCase   
+电源管理    PowerManager    
+电池管理    BatteryManager   
+窗口管理    WindowManager  
+电话管理    TelephonyManager
+媒体投影管理    MediaProjectionManager 
+图像读取    ImageReader    
+媒体编码与转换    MediaCodec、MediaMuxer 
+可缩放矢量图形    SVG    
+PDF文件渲染    PdfRenderer 
+任务调度    JobInfo、JobScheduler、JobService 
+NFC适配器    NfcAdapter    
+NFC传统类型    MifareClassic
+蓝牙适配器    BluetoothAdapter
+蓝牙设备    BluetoothDevice    
+红外遥控管理器    ConsumerIrManager 
+</code></pre>
+          
+        
+      
+    </div>
 
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/06/25/N_Android17常用类/" itemprop="url">
+                  未命名
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Android常用类"><a href="#Android常用类" class="headerlink" title="Android常用类"></a>Android常用类</h1><pre><code>名称    类名    
+基本数据类型    String、Integer、Double、BigDecimal    
+格式化工具    Formatter、DecimalFormat、NumberFormat    
+样式、匹配器    Pattern、Matcher    
+日期、日历    Date、SimpleDateFormat、Calendar    
+向量、队列、链表    Set/HashSet、ArrayList、LinkedList    
+矢量、栈    Vector、Stack    
+映射、哈希表    Map/HashMap、Hashtable    
+迭代器    Iterator  
+序列化结构    Serializable   
+文件    File    
+文件流    FileOutputStream、FileInputStream    
+缓存流    BufferedOutputStream、BufferedInputStream    
+任务    Runnable    
+线程    Thread    
+定时器    Timer、TimerTask   
+反射    reflect    
+xml解析    XmlPullParser、dom、sax、SAXParser    
+输入输出流    InputStream、OutputStream    
+http连接    HttpURLConnection、HttpClient    
+URL编码和解码    URLEncoder、URLDecoder    
+BASE64编码和解码    BASE64Encoder、BASE64Decoder    
+加密算法    Cipher、KeyGenerator、SecretKey、MessageDigest    
+线程池    Executors、ThreadPoolExecutor    
+定时器线程池    ScheduledExecutorService    
+异常    Exception  
+键值对属性    Properties    
+加锁    ReentrantLock、ReentrantReadWriteLock    
+字符串建造者    StringBuilder    
+数组、容器组    Arrays、Collections    
+数学函数    Math    
+套接字、网络地址    Socket、SocketServer、InetAddress
+</code></pre>
           
         
       
