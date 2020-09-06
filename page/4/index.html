@@ -228,113 +228,6 @@
             
               
                 
-                <a class="post-title-link" href="/2019/06/25/M_Swift121iOS不常用方法/" itemprop="url">
-                  iOS不常用方法
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="UITableView收起键盘"><a href="#UITableView收起键盘" class="headerlink" title="UITableView收起键盘"></a>UITableView收起键盘</h2><p>何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDismissModeInteractive，表示在键盘内部滑动，键盘逐渐下去。</p>
-<h2 id="禁止手机睡眠"><a href="#禁止手机睡眠" class="headerlink" title="禁止手机睡眠"></a>禁止手机睡眠</h2><p>[UIApplication sharedApplication].idleTimerDisabled = YES;</p>
-<h2 id="tableView-beginUpdates-和-endUpdates"><a href="#tableView-beginUpdates-和-endUpdates" class="headerlink" title="tableView  beginUpdates 和 endUpdates"></a>tableView  beginUpdates 和 endUpdates</h2><p>1.beginUpdates 和 endUpdates必须成对使用<br>2、使用beginUpdates和endUpdates可以在改变一些行（row）的高度时自带动画，并且不需要Reload row（不用调用cellForRow，仅仅需要调用heightForRow，这样效率最高）。<br>3、在beginUpdates和endUpdates中执行insert,delete,select,reload row时，动画效果更加同步和顺滑，否则动画卡顿且table的属性（如row count）可能会失效。<br>4、在beginUpdates 和 endUpdates中执行 reloadData 方法和直接reloadData一样，没有相应的中间动画。</p>
-<h2 id="统一收起键盘"><a href="#统一收起键盘" class="headerlink" title="统一收起键盘"></a>统一收起键盘</h2><p>[[[UIApplication sharedApplication] keyWindow] endEditing:YES];</p>
-<h2 id="wkwebview报错"><a href="#wkwebview报错" class="headerlink" title="wkwebview报错"></a>wkwebview报错</h2><p>使用wkwebview时，push后，再pop返回，报错了：<br>Cannot form weak reference to instance (xxxx) of class xxxx. It is possible that this object was over-released, or is in the process of deallocation.<br>原因是给webView.scrollView设置了代理：webView.scrollView.delegate = self ；<br>解决办法：<br>-(void)dealloc<br>{<br>webView.scrollView.delegate = nil;<br>}</p>
-<h2 id="linker-command-failed-with-exit-code-1"><a href="#linker-command-failed-with-exit-code-1" class="headerlink" title="linker command failed with exit code 1"></a>linker command failed with exit code 1</h2><p>原因和解决办法：<br>1、看看是不是有新添加的文件跟之前文件同名<br>2、错误信息中出现了某个类的名字，去原文件中看看#import了哪些第三方库，把这些库挨个注释排除，找到出错的那个库，然后按照官方提供的步骤重新添加一遍。<br>3、SVN或git忽略了某些文件，如.o 等文件没能update下来，查看.o文件可能是红色的，可以重新添加或者修改SVN(git)的忽略设置<br>4、把.a文件删除再重新拖到项目中解决问题<br>5、可能重复添加了文件（也可能没勾选 Copy items if neded 这个选项），建议删除后重新添加<br>6、工程中文件名重复了 也会出现同样的错误<br>7、Build Settings”-&gt;”Enable Bitcode”设置为NO ，因为有些SDK不支持Bitcode<br>8、可能在引用的时候 可能写的是#import “XXXXX.m” ，如果是改为#import “XXXXX.h”<br>9、可能你导入的SDK只能在真机下才能运行，模拟器会报错！<br>10、找到 Build settings-&gt;Linking-&gt;Other Linker Flags将此属性修改成-all_load 或者 -ObjC<br>11、Build settings-&gt;Search Path-&gt;Library Search Paths 添加静态库的相应路径</p>
-<h2 id="CABasicAnimation-按home键后台之后，再切回来动画就停止"><a href="#CABasicAnimation-按home键后台之后，再切回来动画就停止" class="headerlink" title="CABasicAnimation 按home键后台之后，再切回来动画就停止"></a>CABasicAnimation 按home键后台之后，再切回来动画就停止</h2><p>CABasicAnimation有个属性removedOnCompletion，默认值为YES,意思是动画在指定时间段内完成后，就会从层上自动移除。<br>如果CABasicAnimation 按home键后台之后，再切回来动画就停止，只要将removedOnCompletion属性设为no动画就不会停止，直到你移除该动画</p>
-<h2 id="播放一张张连续的图片"><a href="#播放一张张连续的图片" class="headerlink" title="播放一张张连续的图片"></a>播放一张张连续的图片</h2><p>// 方法一<br>imageView.animationImages = @[[UIImage imageNamed:@”animate_1”], [UIImage imageNamed:@”animate_2”], [UIImage imageNamed:@”animate<em>3”]];<br>imageView.animationDuration = 1.0;<br>// 方法二<br>imageView.image = [UIImage animatedImageNamed:@”animate</em>“ duration:1.0];<br>// 方法二解释下，这个方法会加载animate_为前缀的，后边0-1024，也就是animate_0、animate_1一直到animate_1024</p>
-<h2 id="判断两个rect是否有交叉"><a href="#判断两个rect是否有交叉" class="headerlink" title="判断两个rect是否有交叉"></a>判断两个rect是否有交叉</h2><p>if (CGRectIntersectsRect(rect1, rect2)) {<br>}</p>
-<h2 id="键盘上方增加工具栏"><a href="#键盘上方增加工具栏" class="headerlink" title="键盘上方增加工具栏"></a>键盘上方增加工具栏</h2><p>UIToolbar <em>keyboardDoneButtonView = [[UIToolbar alloc] init];<br>[keyboardDoneButtonView sizeToFit];<br>UIBarButtonItem </em>doneButton = [[UIBarButtonItem alloc] initWithTitle:@”Done”<br>style:UIBarButtonItemStyleBordered target:self<br>action:@selector(doneClicked:)];<br>[keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];<br>txtField.inputAccessoryView = keyboardDoneButtonView;</p>
-<h2 id="判断一个view是否为另一个view的子视图"><a href="#判断一个view是否为另一个view的子视图" class="headerlink" title="判断一个view是否为另一个view的子视图"></a>判断一个view是否为另一个view的子视图</h2><p>// 如果myView是self.view本身，也会返回yes<br>BOOL isSubView = [myView isDescendantOfView:self.view];</p>
-<h2 id="判断某一行的cell是否已经显示"><a href="#判断某一行的cell是否已经显示" class="headerlink" title="判断某一行的cell是否已经显示"></a>判断某一行的cell是否已经显示</h2><p>CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];<br>BOOL completelyVisible = CGRectContainsRect(tableView.bounds, cellRect);</p>
-<h2 id="隐藏UITextView-UITextField光标"><a href="#隐藏UITextView-UITextField光标" class="headerlink" title="隐藏UITextView/UITextField光标"></a>隐藏UITextView/UITextField光标</h2><p>textField.tintColor = [UIColor clearColor];</p>
-<h2 id="当UITextView-UITextField中没有文字时，禁用回车键"><a href="#当UITextView-UITextField中没有文字时，禁用回车键" class="headerlink" title="当UITextView/UITextField中没有文字时，禁用回车键"></a>当UITextView/UITextField中没有文字时，禁用回车键</h2><p>textField.enablesReturnKeyAutomatically = YES;</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
                 <a class="post-title-link" href="/2019/06/25/M_Swift122总结/" itemprop="url">
                   总结
                 </a>
@@ -720,6 +613,300 @@ return MaxLen[length1][length2];
             
               
                 
+                <a class="post-title-link" href="/2019/06/25/N_Android17常用类/" itemprop="url">
+                  未命名
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Android常用类"><a href="#Android常用类" class="headerlink" title="Android常用类"></a>Android常用类</h1><pre><code>名称    类名    
+基本数据类型    String、Integer、Double、BigDecimal    
+格式化工具    Formatter、DecimalFormat、NumberFormat    
+样式、匹配器    Pattern、Matcher    
+日期、日历    Date、SimpleDateFormat、Calendar    
+向量、队列、链表    Set/HashSet、ArrayList、LinkedList    
+矢量、栈    Vector、Stack    
+映射、哈希表    Map/HashMap、Hashtable    
+迭代器    Iterator  
+序列化结构    Serializable   
+文件    File    
+文件流    FileOutputStream、FileInputStream    
+缓存流    BufferedOutputStream、BufferedInputStream    
+任务    Runnable    
+线程    Thread    
+定时器    Timer、TimerTask   
+反射    reflect    
+xml解析    XmlPullParser、dom、sax、SAXParser    
+输入输出流    InputStream、OutputStream    
+http连接    HttpURLConnection、HttpClient    
+URL编码和解码    URLEncoder、URLDecoder    
+BASE64编码和解码    BASE64Encoder、BASE64Decoder    
+加密算法    Cipher、KeyGenerator、SecretKey、MessageDigest    
+线程池    Executors、ThreadPoolExecutor    
+定时器线程池    ScheduledExecutorService    
+异常    Exception  
+键值对属性    Properties    
+加锁    ReentrantLock、ReentrantReadWriteLock    
+字符串建造者    StringBuilder    
+数组、容器组    Arrays、Collections    
+数学函数    Math    
+套接字、网络地址    Socket、SocketServer、InetAddress
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2019/06/25/N_Android19管理类/" itemprop="url">
+                  未命名
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
+              2019-06-25
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Android控件类"><a href="#Android控件类" class="headerlink" title="Android控件类"></a>Android控件类</h1><pre><code>窗口管理    WindowManager   
+显示信息    Display、DisplayMetrics 
+标签页面    TabActivity    
+页面组    ActivityGroup   
+碎片页面    FragmentActivity 
+资源管理    Resources    
+资产管理    AssetManager
+打包结构    Parcelable    
+应用    Application    
+共享参数    SharedPreferences  
+SQLite数据库    SQLiteDatabase、SQLiteOpenHelper  
+游标    ContentValues、Cursor    
+环境管理    Environment    
+输入法管理    InputMethodManager   
+列表页面    ListActivity    
+页面    Activity    
+意图、意图过滤器    Intent、IntentFilter 
+包裹    Bundle    
+服务、异步服务    Service、IntentService 
+广播、广播接收器    Broadcast、BroadcastReceiver
+手势事件    MotionEvent    
+手势检测器    GestureDetector 
+滚动器    Scroller   
+定位管理    LocationManager、Criteria
+通话管理    TelephonyManager   
+基站信息    CellLocation、CellInfo 
+处理器    Handler、Looper、Message 
+异步任务    AsyncTask    
+倒计时器    CountDownTimer  
+定时器管理    AlarmManager   
+延迟的意图    PendingIntent    
+信使    Messenger、IBinder    
+通知管理    Notification、NotificationManager  
+远程接口    AIDL    
+内容提供者    ContentProvider   
+内容解决者    ContentResolver  
+内容观察者    ContentObserver 
+版本信息    Build    
+短信管理    SmsManager   
+摄像头    Camera   
+音频管理    AudioManager  
+震动器    Vibrator    
+传感器    Sensor、SensorManager   
+连接管理    ConnectivityManager    
+热点管理    WifiManager    
+下载管理    DownloadManager   
+json数据    JSONObject、JSONArray 
+窗口    Window    
+java原生接口    JNI  
+日志    Log   
+提示    Toast  
+代码混淆    Proguard  
+存储管理    StorageManager   
+流量统计    TrafficStats    
+打包管理    PackageManager、PackageInfo   
+活动管理    ActivityManager    
+屏幕配置    Configuration    
+剪贴板管理    ClipboardManager 
+参数设置页面    PreferenceActivity 
+仪器测试用例    InstrumentationTestCase  
+页面测试用例    ActivityTestCase   
+电源管理    PowerManager    
+电池管理    BatteryManager   
+窗口管理    WindowManager  
+电话管理    TelephonyManager
+媒体投影管理    MediaProjectionManager 
+图像读取    ImageReader    
+媒体编码与转换    MediaCodec、MediaMuxer 
+可缩放矢量图形    SVG    
+PDF文件渲染    PdfRenderer 
+任务调度    JobInfo、JobScheduler、JobService 
+NFC适配器    NfcAdapter    
+NFC传统类型    MifareClassic
+蓝牙适配器    BluetoothAdapter
+蓝牙设备    BluetoothDevice    
+红外遥控管理器    ConsumerIrManager 
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2019/06/25/M_Swift124数据结构/" itemprop="url">
                   数据结构
                 </a>
@@ -842,7 +1029,7 @@ return MaxLen[length1][length2];
             
               
                 
-                <a class="post-title-link" href="/2019/06/25/N_Android18控件类/" itemprop="url">
+                <a class="post-title-link" href="/2019/06/25/M_Swift125反思/" itemprop="url">
                   未命名
                 </a>
               
@@ -886,226 +1073,9 @@ return MaxLen[length1][length2];
       
         
           
-            <h1 id="Android控件类"><a href="#Android控件类" class="headerlink" title="Android控件类"></a>Android控件类</h1><pre><code>名称    类名    出处
-颜色    Color    
-可变字符串    Spannable、SpannableString    
-风格区域、URL区域    StyleSpan、URLSpan    
-状态图形    Drawable、StateListDrawable    
-形状图形    ShapeDrawable    
-点九图形    NinePatchDrawable    
-画布、画笔    Canvas、Paint    
-透明度动画    AlphaAnimation    
-过渡图形    TransitionDrawable    
-旋转动画    RotateAnimation    
-帧动画    AnimationDrawable    
-梯度图形    GradientDrawable    
-标签页    TabHost、TabWidget    
-标题栏    ActionBar    
-溢出菜单    OverflowMenu    
-导航栏    Navigation    
-定制视图    CustomView    
-搜索视图    SearchView    
-翻页视图    ViewPager    
-翻页标题    PagerTabStrip、PagerTitleStrip    
-飞掠视图    ViewFlipper    
-翻页适配器    PagerAdapter、FragmentStatePagerAdapter    
-日期和时间控件    DatePicker、TimePicker    
-对话框碎片    DialogFragment    
-布局视图    LinearLayout、RelativeLayout、FrameLayout    
-滚动视图    ScrollView、HorizontalScrollView    
-基本视图    View、ViewGroup    
-文本框、图像视图    TextView、EditText、ImageView    
-按钮、图像按钮    Button、ImageButton    
-复合按钮    CompoundButton    
-复选框、开关、单选框    CheckBox、Switch、RadioGroup、RadioButton    
-下拉框、列表视图、网格视图    Spinner、ListView、GridView    
-适配器视图    AdapterView、Adapter    
-基本适配器    BaseAdapter、ArrayAdapter、SimpleAdapter    
-自动完成编辑框    AutoCompleteTextView    
-进度条、进度对话框    ProgressBar、ProgressDialog    
-远程视图    RemoteViews    
-表面视图    SurfaceView、SurfaceHolder    
-媒体录制器、媒体播放器    MediaRecorder、MediaPlayer    
-拖动条    SeekBar    
-网页视图    WebView、WebSettings    
-网页视图客户端    WebViewClient、WebChromeClient    
-菜单、选项菜单、上下文菜单    Menu、OptionsMenu、ContextMenu    
-弹窗    PopupWindow    
-对话框    AlertDialog、Dialog    
-碎片    Fragment    
-占位视图    ViewStub    
-风格、主题    Style、Theme    
-汉字转拼音    HanziToPinyin    
-位图    Bitmap、BitmapDrawable    
-集合动画    AnimationSet    
-属性动画    ObjectAnimator、AnimatorSet    
-路径、矩阵    Path、Matrix    
-折叠列表视图    ExpandableListView、ExpandableListAdapter    
-列表碎片    ListFragment    
-文字转语音    TextToSpeech    
-参数设置碎片    PreferenceFragment    
-工具栏、搜索框    Toolbar、SearchView    
-侧滑布局    DrawerLayout、SlidingPaneLayout    
-弹出菜单、列表弹窗    PopupMenu、ListPopupWindow    
-循环器视图    RecyclerView    
-下拉刷新布局    SwipeRefreshLayout    
-画廊    Gallery   
-图像切换器    ImageSwitcher    
-调色板    Palette  
-卡片视图    CardView    
-视频视图    VideoView   
-媒体控制条    MediaController    
-音频录制    AudioRecord    
-音轨播放    AudioTrack    
-声音池    SoundPool    
-提示窗    Toast、Snackbar    
-裁剪图形    ClipDrawable    
-缩放图形    ScaleDrawable  
-旋转图形    RotateDrawable
-水波图形    RippleDrawable
-矢量图形    VectorDrawable
-矢量动画    AnimatedVectorDrawable
-导航视图    NavigationView    
-协调布局    CoordinatorLayout
-悬浮按钮    FloatingActionButton 
-底部弹窗    BottomSheetBehavior
-应用栏布局    AppBarLayout    
-嵌套滚动视图    NestedScrollView 
-可折叠工具栏布局    CollapsingToolbarLayout  
-文本输入布局    TextInputLayout    
-文本输入编辑框    TextInputEditText   
-碎片标签组    FragmentTabHost    
-栈视图    StackView    
-标签布局    TabLayout    
-约束布局    ConstraintLayout   
-OpenGL表面视图    GLSurfaceView 
-OpenGL画笔    GL10
-</code></pre>
-          
-        
-      
-    </div>
+            <hr>
+<h2 id="title-反思"><a href="#title-反思" class="headerlink" title="title :反思"></a>title :反思</h2><p>从毕业到现在已经6年了，工作了这么长时间了，我想是时候得反思一下自己了。<br>这些年你都学会了什么，这些年，有什么成就是值得你骄傲的，我感觉我想不到。<br>看着一个一个的同事面试，走了，我很难过，我很无助，心里翻江倒海。我该何去何从。<br>这些年一直看低自己，一直觉得自己水平低，不能看的太高，一些大的公司，根本就不敢去。<br>回头看看其实无非就是对自己逃避现实找的一个一个的借口，什么学历了，什么专业了都是借口。<br>今年随着疫情的到来，我本来想着是这个时候，还是不要跳槽的好，安稳一些还是比较好的，但是让我万万没有想到的是<br>所有的人都走了，就剩下了我自己，我记得好像是去年，好像是跟去年一摸一样的场景。<br>我真的是再一次经历这样的人生，我记得去年的这个时候，我就是一直在摇摆，经过一次面试失败对我打击还是挺大的<br>后来我努力跟新的团队融合，当我们融合起来的时候，好像一切又都破碎了。<br>现在我想我是时候开始努力了，30岁还不算太晚<br>从现在起，努力积累知识，特别是算法方面的知识，我想通过我的一步步的努力，我能找到一个理想的工作<br>加油吧！少年。放下手机，努力吧</p>
 
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2019/06/25/N_Android17常用类/" itemprop="url">
-                  未命名
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2019-06-25T10:29:25+08:00" content="2019-06-25">
-              2019-06-25
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Android常用类"><a href="#Android常用类" class="headerlink" title="Android常用类"></a>Android常用类</h1><pre><code>名称    类名    
-基本数据类型    String、Integer、Double、BigDecimal    
-格式化工具    Formatter、DecimalFormat、NumberFormat    
-样式、匹配器    Pattern、Matcher    
-日期、日历    Date、SimpleDateFormat、Calendar    
-向量、队列、链表    Set/HashSet、ArrayList、LinkedList    
-矢量、栈    Vector、Stack    
-映射、哈希表    Map/HashMap、Hashtable    
-迭代器    Iterator  
-序列化结构    Serializable   
-文件    File    
-文件流    FileOutputStream、FileInputStream    
-缓存流    BufferedOutputStream、BufferedInputStream    
-任务    Runnable    
-线程    Thread    
-定时器    Timer、TimerTask   
-反射    reflect    
-xml解析    XmlPullParser、dom、sax、SAXParser    
-输入输出流    InputStream、OutputStream    
-http连接    HttpURLConnection、HttpClient    
-URL编码和解码    URLEncoder、URLDecoder    
-BASE64编码和解码    BASE64Encoder、BASE64Decoder    
-加密算法    Cipher、KeyGenerator、SecretKey、MessageDigest    
-线程池    Executors、ThreadPoolExecutor    
-定时器线程池    ScheduledExecutorService    
-异常    Exception  
-键值对属性    Properties    
-加锁    ReentrantLock、ReentrantReadWriteLock    
-字符串建造者    StringBuilder    
-数组、容器组    Arrays、Collections    
-数学函数    Math    
-套接字、网络地址    Socket、SocketServer、InetAddress
-</code></pre>
           
         
       

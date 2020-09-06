@@ -84,22 +84,22 @@
 
 
 
-<meta name="description" content="title:NSObject数据结构object_class继承:objc_object内部：Class superClass; 父类cache_t cache;  缓存class_data_bits_t bits  数据
+<meta name="description" content="object_class继承:objc_object内部：Class superClass; 父类cache_t cache;  缓存class_data_bits_t bits  数据
 isa指针关系实例对象其指针指向类对象类对象其指针指向元类对象
-cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来">
+cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Men的博客">
+<meta property="og:title" content="NSObject数据结构">
 <meta property="og:url" content="http://yoursite.com/2019/09/29/M_Swift129RunTime/index.html">
 <meta property="og:site_name" content="Men的博客">
-<meta property="og:description" content="title:NSObject数据结构object_class继承:objc_object内部：Class superClass; 父类cache_t cache;  缓存class_data_bits_t bits  数据
+<meta property="og:description" content="object_class继承:objc_object内部：Class superClass; 父类cache_t cache;  缓存class_data_bits_t bits  数据
 isa指针关系实例对象其指针指向类对象类对象其指针指向元类对象
-cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来">
-<meta property="og:updated_time" content="2020-09-06T09:16:04.040Z">
+cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查">
+<meta property="og:updated_time" content="2020-09-06T09:29:02.335Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Men的博客">
-<meta name="twitter:description" content="title:NSObject数据结构object_class继承:objc_object内部：Class superClass; 父类cache_t cache;  缓存class_data_bits_t bits  数据
+<meta name="twitter:title" content="NSObject数据结构">
+<meta name="twitter:description" content="object_class继承:objc_object内部：Class superClass; 父类cache_t cache;  缓存class_data_bits_t bits  数据
 isa指针关系实例对象其指针指向类对象类对象其指针指向元类对象
-cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来">
+cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查">
 
 
 
@@ -122,7 +122,7 @@ cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来">
 
   <link rel="canonical" href="http://yoursite.com/2019/09/29/M_Swift129RunTime/"/>
 
-  <title>  | Men的博客 </title>
+  <title> NSObject数据结构 | Men的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -232,7 +232,7 @@ cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来">
             
             
               
-                
+                NSObject数据结构
               
             
           </h1>
@@ -272,8 +272,7 @@ cache_thttps://www.jianshu.com/p/45d409e77806用散列表(哈希表)来">
       
 
       
-        <hr>
-<h2 id="title-NSObject数据结构"><a href="#title-NSObject数据结构" class="headerlink" title="title:NSObject数据结构"></a>title:NSObject数据结构</h2><h2 id="object-class"><a href="#object-class" class="headerlink" title="object_class"></a>object_class</h2><p>继承:objc_object<br>内部：<br>Class superClass; 父类<br>cache_t cache;  缓存<br>class_data_bits_t bits  数据</p>
+        <h2 id="object-class"><a href="#object-class" class="headerlink" title="object_class"></a>object_class</h2><p>继承:objc_object<br>内部：<br>Class superClass; 父类<br>cache_t cache;  缓存<br>class_data_bits_t bits  数据</p>
 <p>isa指针关系<br>实例对象其指针指向类对象<br>类对象其指针指向元类对象</p>
 <p>cache_t<br><a href="https://www.jianshu.com/p/45d409e77806" target="_blank" rel="external">https://www.jianshu.com/p/45d409e77806</a><br>用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查找速度，底层结构如下：<br>用于快速查找方法执行函数<br>是可增量扩展的哈希表结构<br>是局部性原理的最佳应用<br>cache 本质是一个 Hash表。存储bucket_t<br>bucket_t存储<br>cache_key_t _key;//@selector()<br>IMP _imp;//函数地址<br>哈希查找：发现当发生碰撞的时候，索引会+1，查找下一个。<br>槽位如果不够，_mask 会变换，变为原来的2倍，并且扩展槽位的时候，会清空数组里原有的缓存内容<br>子类没有实现方法会调用父类的方法，会将父类方法加入到子类自己的cache 里。<br>为什么要创建新的新的buckets来替换原有的buckets并抹掉原有的buckets的方案，而不是在在原有buckets的基础上进行扩容？<br>减少对方法快速查找流程的影响：调用objc_msgSend时会触发方法快速查找，如果进行扩容需要做一些读写操作，对快速查找影响比较大。<br>对性能要求比较高：开辟新的buckets空间并抹掉原有buckets的消耗比在原有buckets上进行扩展更加高效<br>当扩容后，会把新mask设置为newCapacity长度减一，然后清空缓存。<br>所有散列表(哈希表)的原理都是一样的，都是通过一个函数，这个函数传入一个key，通过这个key算出一个索引，如果索引冲突了就加一或者减一，直至不冲突为止，不同的就是算法不一样。</p>
 <p>struct class_rw_t {<br>    uint32_t flags;<br>    uint32_t version;</p>
@@ -316,16 +315,16 @@ Class nextSiblingClass;
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/09/29/M_Swift127NSObject数据结构/" rel="next" title="NSObject数据结构">
-                <i class="fa fa-chevron-left"></i> NSObject数据结构
+              <a href="/2019/09/29/M_Swift128OC属性/" rel="next" title="OC属性">
+                <i class="fa fa-chevron-left"></i> OC属性
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/09/29/M_Swift126UI/" rel="prev" title="UI">
-                UI <i class="fa fa-chevron-right"></i>
+              <a href="/2019/09/29/M_Swift130Block/" rel="prev" title="Block">
+                Block <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -426,7 +425,7 @@ Class nextSiblingClass;
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#title-NSObject数据结构"><span class="nav-number">1.</span> <span class="nav-text">title:NSObject数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#object-class"><span class="nav-number">2.</span> <span class="nav-text">object_class</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#object-class"><span class="nav-number">1.</span> <span class="nav-text">object_class</span></a></li></ol></div>
             
           </div>
         </section>
