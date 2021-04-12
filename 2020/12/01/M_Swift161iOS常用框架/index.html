@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1.概念界面图形框架 – UIKit核心动画框架 – Core Animation苹果封装的图形框架 – Core Graphics &amp; Quartz 2D传统跨平台图形框架 – OpenGL ES苹果最新力推的图形框架 – Metal适合图片的苹果滤镜框架 – Core Image适合视频的第三方滤镜方案 – GPUImage游戏引擎 – Scene Kit (3D) 和 Sprite">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS常用框架">
+<meta property="og:url" content="http://example.com/2020/12/01/M_Swift161iOS%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="1.概念界面图形框架 – UIKit核心动画框架 – Core Animation苹果封装的图形框架 – Core Graphics &amp; Quartz 2D传统跨平台图形框架 – OpenGL ES苹果最新力推的图形框架 – Metal适合图片的苹果滤镜框架 – Core Image适合视频的第三方滤镜方案 – GPUImage游戏引擎 – Scene Kit (3D) 和 Sprite">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-01T06:11:50.000Z">
+<meta property="article:modified_time" content="2020-12-01T06:11:50.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/12/01/M_Swift161iOS%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>iOS常用框架 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/01/M_Swift161iOS%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS常用框架
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-01 14:11:50" itemprop="dateCreated datePublished" datetime="2020-12-01T14:11:50+08:00">2020-12-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-概念"><a href="#1-概念" class="headerlink" title="1.概念"></a>1.概念</h2><p>界面图形框架 – UIKit<br>核心动画框架 – Core Animation<br>苹果封装的图形框架 – Core Graphics &amp; Quartz 2D<br>传统跨平台图形框架 – OpenGL ES<br>苹果最新力推的图形框架 – Metal<br>适合图片的苹果滤镜框架 – Core Image<br>适合视频的第三方滤镜方案 – GPUImage<br>游戏引擎 – Scene Kit (3D) 和 Sprite Kit (2D)<br>计算机视觉在iOS的应用 – OpenCV for iOS<br>UIKit与Core Graphics的关系</p>
+<h2 id="UIKit"><a href="#UIKit" class="headerlink" title="UIKit"></a>UIKit</h2><p>在UIKit中，UIView类本身在绘制时自动创建一个图形环境，即Core Graphics层的CGContext类型，作为当前的图形绘制环境。在绘制时可以调用 UIGraphicsGetCurrentContext 函数获得当前的图形环境，例如：</p>
+<ul>
+<li>(void)drawRect:(CGRect)rect {<br>  // Drawing code<br>  NSLog(@”%s”,<strong>func</strong>);<br>  //1.获取上下文<br>  CGContextRef contextRef = UIGraphicsGetCurrentContext();<br>  //2.描述路径<br>  UIBezierPath * path = [UIBezierPath bezierPath];<br>  //起点<br>  [path moveToPoint:CGPointMake(10, 10)];<br>  //终点<br>  [path addLineToPoint:CGPointMake(100, 100)];<br>  //设置颜色<br>  [[UIColor whiteColor]setStroke];<br>  //3.添加路径<br>  CGContextAddPath(contextRef, path.CGPath);<br>  //显示路径<br>  CGContextStrokePath(contextRef);</li>
+</ul>
+<p>}</p>
+<h2 id="Core-Animation"><a href="#Core-Animation" class="headerlink" title="Core Animation"></a>Core Animation</h2><p>Core Animation 是一套Objective-C API，实现了一个高性能的复合引擎，并提供一个简单易用的编程接口，给用户UI添加平滑运动和动态反馈能力。</p>
+<p>Core Animation 是 UIKit 实现动画和变换的基础，也负责视图的复合功能。使用Core Animation可以实现定制动画和细粒度的动画控制，创建复杂的、支持动画和变换的layered 2D视图。</p>
+<p>Core Animation 不属于绘制系统，但它是以硬件复合和操作显示内容的基础设施。这个基础设施的核心是layer对象，用来管理和操作显示内容。在 iOS 中 每一个视图都对应Core Animation的一个层对象，与视图一样，层之间也组织为层关系树。一个层捕获视图内容为一个被图像硬件容易操作的位图。在多数应用中层作为管理视图的方式使用，但也可以创建独立的层到一个层关系树中来显示视图不够支持的显示内容。</p>
+<p>OpenGL ES的内容也可以与Core Animation内容进行集成。</p>
+<p>为了使用Core Animation实现动画，可以修改 层的属性值 来触发一个action对象的执行，不同的action对象实现不同的动画。</p>
+<h2 id="Core-Graphics"><a href="#Core-Graphics" class="headerlink" title="Core Graphics"></a>Core Graphics</h2><p>Core Graphics是一套C-based API， 支持向量图形，线、形状、图案、路径、剃度、位图图像和pdf 内容的绘制。</p>
+<h2 id="Quartz-2D"><a href="#Quartz-2D" class="headerlink" title="Quartz 2D"></a>Quartz 2D</h2><p>Quartz 2D是Core Graphics中的2D 绘制呈现引擎。Quartz是资源和设备无关的,提供路径绘制，anti-aliased呈现，剃度填充图案，图像，透明绘制和透明层、遮蔽和阴影、颜色管理，坐标转换，字体、offscreen呈现、pdf文档创建、显示和分析等功能。</p>
+<p>Quartz 2D能够与所有的图形和动画技术（如Core Animation, OpenGL ES, 和 UIKit 等）一起使用。</p>
+<p>Quartz 2D采用paint模式进行绘制。<br>Quartz 2D提供的主要类包括：</p>
+<p>CGContext：表示一个图形环境；<br>CGPath：使用向量图形来创建路径，并能够填充和stroke；<br>CGImage：用来表示位图；<br>CGLayer：用来表示一个能够用于重复绘制和offscreen绘制的绘制层；<br>CGPattern：用来表示Pattern，用于重复绘制；<br>CGShading和 CGGradient：用于绘制剃度；<br>CGColor 和 CGColorSpace；用来进行颜色和颜色空间管理；<br>CGFont, 用于绘制文本；<br>CGPDFContentStream、CGPDFScanner、CGPDFPage、CGPDFObject,CGPDFStream, CGPDFString等用来进行pdf文件的创建、解析和显示。</p>
+<p>在调用任何OpenGL ES 功能之前必须首先初始化一个EAGLContext 对象。每一个IOS应用的每一个线程都有一个当前context，在调用OpenGL ES函数时，使用或改变此context中的状态。</p>
+<p>EAGLContext 的类方法setCurrentContext: 用来设置当前线程的当前context。EAGLContext 的类方法currentContext 返回当前线程的当前context。在切换相同线程的两个上下文之前，必须调用glFlush函数来确保先前已提交的命令被提交到图形硬件中。<br>为了创建全屏幕的视图或使OpenGL ES内容与UIKit视图集成，可以使用GLKit。在使用GLKit时，GLKit提供的类GLKView类本身实现呈现目标及创建和维护一个framebuffer。<br>1） GLKView 和GLKViewController类提供一个标准的OpenGL ES视图和相关联的呈现循环。GLKView可以作为OpenGL ES内容的呈现目标，GLKViewController提供内容呈现的控制和动画。视图管理和维护一个framebuffer，应用只需在framebuffer进行绘画即可。</p>
+<p>2）GLKTextureLoader 为应用提供从IOS支持的各种图像格式的源自动加载纹理图像到OpenGL ES 图像环境的方式，并能够进行适当的转换，并支持同步和异步加载方式。</p>
+<p>3）数学运算库，提供向量、矩阵、四元数的实现和矩阵堆栈操作等OpenGL ES 1.1功能。</p>
+<p>4）Effect效果类提供标准的公共着色效果的实现。能够配置效果和相关的顶点数据，然后创建和加载适当的着色器。GLKit 包括三个可配置着色效果类：GLKBaseEffect实现OpenGL ES 1.1规范中的关键的灯光和材料模式, GLKSkyboxEffect提供一个skybox效果的实现, GLKReflectionMapEffect 在GLKBaseEffect基础上包括反射映射支持。</p>
+<p>如果想要一个 iOS 上高性能的并行计算库，答案非常简单。Metal 是唯一的选择。OpenGL 在 iOS 上是私有框架，而 Core Image (使用了 OpenGL) 对这样的任务来说既不够强大又不够灵活。</p>
+<h2 id="Core-Image"><a href="#Core-Image" class="headerlink" title="Core Image"></a>Core Image</h2><p>Core Image 是 iOS5 新加入到 iOS 平台的一个图像处理框架，提供了强大高效的图像处理功能， 用来对基于像素的图像进行操作与分析， 内置了很多强大的滤镜(Filter) (目前数量超过了180种)， 这些Filter 提供了各种各样的效果， 并且还可以通过 滤镜链 将各种效果的 Filter叠加 起来形成强大的自定义效果</p>
+<p>Core Image 的另外一个优势，就是可以根据需求选择 CPU 或者 GPU 来处理。</p>
+<p>// 创建基于 CPU 的 CIContext 对象 (默认是基于 GPU，CPU 需要额外设置参数)<br>context = [CIContext contextWithOptions: [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kCIContextUseSoftwareRenderer]];</p>
+<p>// 创建基于 GPU 的 CIContext 对象<br>context = [CIContext contextWithOptions: nil];</p>
+<p>// 创建基于 GPU 的 CIContext 对象<br>EAGLContext *eaglctx = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];<br>context = [CIContext contextWithEAGLContext:eaglctx];<br>GPUImage 在视频处理上有更好的表现。<br>GPUImage 的代码完成公开，实现透明。<br>可以根据自己的业务需求，定制更加复杂的管线操作。可定制程度高。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/01/M_Swift164%E5%AD%97%E8%8A%82%E5%BA%8F%E9%97%AE%E9%A2%98/" rel="prev" title="字节序问题">
+      <i class="fa fa-chevron-left"></i> 字节序问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/01/M_Swift163iOS%E5%9C%B0%E5%9B%BESDK%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1/" rel="next" title="地图SDK开发设计">
+      地图SDK开发设计 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">1.概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UIKit"><span class="nav-number">2.</span> <span class="nav-text">UIKit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Core-Animation"><span class="nav-number">3.</span> <span class="nav-text">Core Animation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Core-Graphics"><span class="nav-number">4.</span> <span class="nav-text">Core Graphics</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Quartz-2D"><span class="nav-number">5.</span> <span class="nav-text">Quartz 2D</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Core-Image"><span class="nav-number">6.</span> <span class="nav-text">Core Image</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一 const 修饰的数据类型是指常类型，常类型的变量或对象的值是不能被更新的。  const关键字的作用主要有以下几点：（1）可以定义const常量，具有不可变性。 例如：const int Max&#x3D;100; int Array[Max];（2）便于进行类型检查，使编译器对处理内容有更多了解，消除了一些隐患。例如： void f(const int i) { ………} 编译器就会知道i是一个常">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C语言中的关键字">
+<meta property="og:url" content="http://example.com/2016/07/30/A_C5%E5%B8%B8%E7%94%A8%E5%85%B3%E9%94%AE%E5%AD%97/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="一 const 修饰的数据类型是指常类型，常类型的变量或对象的值是不能被更新的。  const关键字的作用主要有以下几点：（1）可以定义const常量，具有不可变性。 例如：const int Max&#x3D;100; int Array[Max];（2）便于进行类型检查，使编译器对处理内容有更多了解，消除了一些隐患。例如： void f(const int i) { ………} 编译器就会知道i是一个常">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-07-30T13:45:49.000Z">
+<meta property="article:modified_time" content="2016-07-30T13:45:49.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/07/30/A_C5%E5%B8%B8%E7%94%A8%E5%85%B3%E9%94%AE%E5%AD%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>C语言中的关键字 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/A_C5%E5%B8%B8%E7%94%A8%E5%85%B3%E9%94%AE%E5%AD%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C语言中的关键字
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-30 21:45:49" itemprop="dateCreated datePublished" datetime="2016-07-30T21:45:49+08:00">2016-07-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>一 const 修饰的数据类型是指常类型，常类型的变量或对象的值是不能被更新的。</p>
+</blockquote>
+<p>const关键字的作用主要有以下几点：<br>（1）可以定义const常量，具有不可变性。 例如：<br>const int Max=100; int Array[Max];<br>（2）便于进行类型检查，使编译器对处理内容有更多了解，消除了一些隐患。例如： void f(const int i) { ………} 编译器就会知道i是一个常量，不允许修改；<br>（3）可以避免意义模糊的数字出现，同样可以很方便地进行参数的调整和修改。<br>（4）可以保护被修饰的东西，防止意外的修改，增强程序的健壮性。 还是上面的例子，如果在函数体内修改了i，编译器就会报错； 例如：<br>void f(const int i) { i=10;//error! }<br>（5） 为函数重载提供了一个参考。<br>class A { ……<br>void f(int i) {……} //一个函数<br>void f(int i) const {……} //上一个函数的重载 ……<br>};<br>（6） 可以节省空间，避免不必要的内存分配。 例如：<br>#define PI 3.14159 //常量宏<br>const doulbe Pi=3.14159; //此时并未将Pi放入ROM中 ……<br>double i=Pi; //此时为Pi分配内存，以后不再分配！<br>double I=PI; //编译期间进行宏替换，分配内存<br>double j=Pi; //没有内存分配<br>double J=PI; //再进行宏替换，又一次分配内存！<br>const定义常量从汇编的角度来看，只是给出了对应的内存地址，而不是象#define一样给出的是立即数，所以，const定义的常量在程序运行过程中只有一份拷贝，而#define定义的常量在内存中有若干个拷贝。<br>（7） 提高了效率。 编译器通常不为普通const常量分配存储空间，而是将它们保存在符号表中，这使得它成为一个编译期间的常量，没有了存储与读内存的操作，使得它的效率也很高。</p>
+<blockquote>
+<p>二  外部变量，局部变量以及extern，static关键字</p>
+</blockquote>
+<p>1）外部变量又叫全局变量，管全局变量叫外部变量是因为该变量在函数外部声明<br>（1）全局变量在声明的时候初始化，那么该全局变量的值为被初始化的那个值全局变量在声明的时候若未初始化，那么系统会自动把它初始化为0.<br>（2）全局变量的作用域：是从全局变量声明到该文件的结尾<br>（3）如果在一个全局变量的作用域内的函数里面声明一个局部变量跟全局变量的名字相同，在该函数内全局变量是不可见的，用的只是那个局部变量。也可以说这个相同名字的局部变量在该变量作用域内会屏蔽掉那个全局变量<br>注意：全局变量是很危险的，因为任何一个函数都有可能改掉该全局变量，而造成不可预期的错误。可以用const这个关键字来修饰一个全局变量而使其成为一个只读变量，这样可以避免全局变量所遇到到一些危险操作。<br>2）局部变量：auto自动变量，平时在声明一个变量的时候若是不加该关键字，系统默认成自动变量，例如：<br>int a;<br>虽然没有加auto关键字，但是系统已经认为他是auto类型的变量。<br>（1）局部变量的作用域仅限于该变量在某一个代码块内声明到该代码块退出，当然作用域也是变量的生存周期。例如：</p>
+<blockquote>
+<p>三 extern关键字</p>
+</blockquote>
+<p>（1）当前文件用到其他文件中的全局变量<br>extern int my_global;<br>（2）使用当前文件里所没有的函数，而使用的函数是在别的文件里定义的，需要声明<br>该函数是其他文件里的函数，而在当前文件如下声明：<br>extern char *my_strcpy(char *str1,const char *str2);<br>4）static关键字,一般管static修饰的变量叫做静态变量，static修饰的函数叫做静态函数。<br>static代表什么意思呢？<br>1）如果是static 修饰的是变量，那么它说明该变量只能在当前文件里用，而外部其他<br>文件则不能通过外部链接来使用该变量。例如：</p>
+<p>/<em>file1.c</em>/</p>
+<p>static int my_static_variable=12;</p>
+<p>/<em>file2.c</em>/<br>extern int my_static_variable;           //这一条语句符合语法要求，因为任何一<br>个文件都有权利引用外部链接的一个变量<br>int main(void)<br>{<br>printf(“%d\n”,my_static_variable);      //这条语句会有错误，因为这两个<br>文件里找不到对第二个文件可用的<br>my_static_variable变量.<br>return 0;<br>}<br>file2.c这种声明方式是没有问题的，但在用my_static_variable时却找不到该变量。<br>因为在file1.c里面我把my_static_variable 变量声明为了静态变量，表示该变量的<br>作用域只能在file1.c文件生效，其他文件不能在通过外部链接使用该变量。<br>2）static修饰函数时，表示该函数只在＝当前文件生效，而通过外部链接是找不到的该<br>函数的，具体的情况描述同1）相同。</p>
+<blockquote>
+<p>四 随机数相关函数和动态内存分配</p>
+</blockquote>
+<p>1）随机数<br>srand(time(NULL));<br>sroand以时间设置一个种子<br>rand（）<br>rand（）通过一个算法计算得到一个很大的数如果生成的这个随机数在某个范围内，例如：骰子能表达的数是1-6，那我我用随机数产生的数据应该是1-6，按照下面的方法得到<br>n＝rand()%6+1；<br>2）动态内存分配<br>void 修饰函数表示函数没有返回值<br>void *修饰返回值表示函数的返回值为任意指针类型（char *,int *,double *,struct book *）<br>void *malloc(size_t size);<br>char *p;<br>p=malloc(100);<br>if(p==NULL)<br>{<br>printf(“malloc failed!\n”);<br>return -1;<br>}<br>malloc执行成功的时候，用完这块内存，我们需要手动的释放掉该内存。因为操作系统不会帮我们释放掉在堆空间申请的内存。程序员可以用free（）函数来释放掉我们手动申请的内存。例如把上面的内存释放掉可以用<br>下述方法：<br>free(p);</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/30/A_C3%E6%95%B0%E7%BB%84%E3%80%81%E6%8C%87%E9%92%88%E5%92%8C%E7%BB%93%E6%9E%84%E4%BD%93/" rel="prev" title="C语言数组、指针和结构体">
+      <i class="fa fa-chevron-left"></i> C语言数组、指针和结构体
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/30/A_C1%E7%BB%88%E7%AB%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="next" title="终端的一些常用命令">
+      终端的一些常用命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

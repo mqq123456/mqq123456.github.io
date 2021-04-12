@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="存储属性  Swift中的存储属性就是以前学习OC中的普通属性在结构体或者类中定义的属性, 默认就是存储属性struct Person {var name: Stringvar age: Int}var p:Person &#x3D; Person(name: “cdh”, age: 20)  常量存储属性  常量存储属性只能在定义时或构造时修改构造好一个对象之后不能对常量存储属性进行修改struct P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器">
+<meta property="og:url" content="http://example.com/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="存储属性  Swift中的存储属性就是以前学习OC中的普通属性在结构体或者类中定义的属性, 默认就是存储属性struct Person {var name: Stringvar age: Int}var p:Person &#x3D; Person(name: “cdh”, age: 20)  常量存储属性  常量存储属性只能在定义时或构造时修改构造好一个对象之后不能对常量存储属性进行修改struct P">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-08-01T09:15:40.000Z">
+<meta property="article:modified_time" content="2016-08-01T09:15:40.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 17:15:40" itemprop="dateCreated datePublished" datetime="2016-08-01T17:15:40+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>存储属性</p>
+</blockquote>
+<p>Swift中的存储属性就是以前学习OC中的普通属性<br>在结构体或者类中定义的属性, 默认就是存储属性<br>struct Person {<br>var name: String<br>var age: Int<br>}<br>var p:Person = Person(name: “cdh”, age: 20)</p>
+<blockquote>
+<p>常量存储属性</p>
+</blockquote>
+<p>常量存储属性只能在定义时或构造时修改<br>构造好一个对象之后不能对常量存储属性进行修改<br>struct Person1 {<br>var name: String<br>var age: Int<br>let card: String // 身份证<br>}<br>var p1: Person1 = Person1(name: “cdh”, age: 20, card: “123456”)<br>p1.name = “CDH”<br>p1.age = 50<br>//构造好对象之后不能修改常量存储属性<br>//以下写法是错误的<br>//p1.card = “56789”</p>
+<p>结构体和枚举是值类型<br>因此不能修改结构体常量中的属性<br>不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>类是引用类型<br>可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>struct Person2 {<br>var name: String<br>var age: Int<br>}<br>let p2: Person2 = Person2(name: “cdh”, age: 20)<br>//因为结构体是值类型, 所以不能修改结构体常量中的属性<br>//不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>//以下写法错误<br>//p2.name = “CDH” //不能修改结构体常量对象的值<br>//以下写法错误<br>//p2 = Person2(name: “CDH”, age: 50)</p>
+<p>class Person3 {<br>var name: String = “cdh”<br>var age: Int = 20<br>}<br>let p3:Person3 = Person3()<br>//可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>p3.name = “CDH”<br>//不可以修改类常量的指向<br>//以下写法是错误的<br>//p3 = Person4()</p>
+<blockquote>
+<p>延迟存储属性</p>
+</blockquote>
+<p>Swift语言中所有的存储属性必须有初始值, 也就是当构造完一个对象后, 对象中所有的存储属性必须有初始值<br>但是也有例外, 其中延迟存储属性可以将属性的初始化推迟到该属性第一次被调用的时候<br>这个延时属性对应于 OC中的懒加载的概念<br>苹果的设计思想:希望所有的对象在使用时才真正加载到内存中<br>和OC不同的是swift有专门的关键字来实现懒加载<br>lazy关键字可以用于定义某一个属性懒加载<br>懒加载应用场景:<br>有可能不会用到<br>依赖于其它值<br>class Line {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    如果不是lazy属性,定义的时候对象还没有初始化,所以不能访问self<br>//    如果加上lazy,代表使用时才会加载,也就是使用到length属性时才会调用self<br>//    而访问一个类的属性必须通过对象方法<br>//    所以访问时对象已经初始化完成了,可以使用self<br>lazy var length: Double = self.getLenght()<br>//    通过闭包懒加载<br>lazy var container: Array<AnyObject> = {<br>print(“懒加载”)<br>var arrM = []<br>return arrM as [AnyObject]<br>}()<br>func getLenght() -&gt;Double<br>{<br>print(“懒加载”)<br>return end - start<br>}<br>}<br>var line = Line()<br>line.end = 150.0<br>print(“创建对象完毕”)<br>print(line.length)<br>var arrM = line.container<br>arrM.append(“1”)<br>arrM.append(5)<br>print(arrM)<br>//输出结果:<br>//创建对象完毕<br>//懒加载<br>//150.0<br>//懒加载<br>//[1, 5]</p>
+<blockquote>
+<p>计算属性</p>
+</blockquote>
+<p>1.Swift中的计算属性不直接存储值<br>跟存储属性不同,没有任何的”后端存储与之对应”<br>2.计算属性用于计算, 可以实现setter和getter这两种计算方法<br>3.枚举不可以有存储属性, 但是允许有计算属性<br>setter 对象.属性 = 值<br>getter var value = 对象.属性<br>struct Rect {<br>var origion: (x: Double, y: Double) = (0, 0)<br>var size: (w: Double, h: Double) = (0, 0)<br>//    由于center的值是通过起点和宽高计算出来的, 所以没有必要提供一个存储属性<br>var center: (x: Double, y: Double) {<br>get{<br>return (origion.x + size.w/2, origion.y + size.h/2)<br>}<br>set{<br>//            注意: 计算属性不具备存储功能, 所以不能给计算属性赋值<br>//            如果赋值会发生运行时错误<br>//            注意: setter可以自己传递一个参数, 也可以使用系统默认的参数newValue<br>//            如果要使用系统自带的参数, 必须删除自定义参数<br>origion.x = newValue.x - size.w / 2<br>origion.y = newValue.y - size.h / 2<br>}<br>}<br>}<br>var r = Rect()<br>r.origion = (0, 0)<br>r.size = (100, 100)<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果: center.x = 50.0 center.y = 50.0<br>r.center = (100, 100)<br>print(“origion.x = (r.origion.x) origion.y = (r.origion.y)”)<br>//输出结果: origion.x = 50.0 origion.y = 50.0<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果:center.x = 100.0 center.y = 100.0</p>
+<blockquote>
+<p>只读计算属性</p>
+</blockquote>
+<p>对应OC中的readonly属性<br>所谓的只读属性就是只提供了getter方法, 没有提供setter方法<br>class Line1 {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    只读属性, 只读属性必须是变量var, 不能是常量let<br>//    例如想获取长度<br>//    只能通过计算获得, 而不需要外界设置, 可以设置为只读计算属性<br>var length: Double{<br>//        只读属性的简写, 可以省略get{}<br>return end - start<br>}<br>}<br>var line1 = Line1()<br>line1.end = 100<br>print(line1.length)<br>//输出结果: 100.0<br>//错误,不可设置只读属性<br>line1.length = 100</p>
+<blockquote>
+<p>属性观察器</p>
+</blockquote>
+<p>类似OC中的KVO<br>可以用于监听属性什么时候被修改, 只有属性被修改才会调用<br>有两种属性观察器:<br>1.willSet, 在设置新值之前调用<br>2.didSet, 在设置新值之后调用<br>可以直接为除计算属性和lazy属性之外的存储属性添加属性观察器<br>但是可以在继承类中为父类的计算属性提供属性观察器<br>因为在计算属性中也可以监听到属性的改变<br>所以给计算属性添加属性观察器没有任何意义<br>class Line2 {<br>var start:Double = 0.0{<br>willSet{<br>print(“willSet newValue = (newValue)”)<br>}<br>didSet{<br>print(“didSet oldValue = (oldValue)”)<br>}<br>}<br>var end: Double = 0.0<br>}<br>var l2 = Line2()<br>l2.start = 10.0<br>//输出结果:<br>//willSet newValue = 10.0<br>//didSet oldValue = 0.0<br>//开发中使用didSet较多</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/08/01/H_1Htmlhtml%E3%80%81css%E3%80%81js%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%83%85%E5%86%B5/" rel="prev" title="html、css、js文件加载顺序及执行情况">
+      <i class="fa fa-chevron-left"></i> html、css、js文件加载顺序及执行情况
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/" rel="next" title="枚举,枚举原始值,枚举相关值,switch提取枚举关联值">
+      枚举,枚举原始值,枚举相关值,switch提取枚举关联值 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

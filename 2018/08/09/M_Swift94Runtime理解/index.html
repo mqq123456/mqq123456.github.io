@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="类结构体模型&#x2F;&#x2F; objc_object对象模型 struct objc_object &amp;#123;     private:     isa_t isa;     public:     Class ISA();     Class getIsa();     &#x2F;&#x2F; 省略其余方法     ... &amp;#125; &#x2F;&#x2F; objc_class类模型 struct objc_class : objc_o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解Runtime">
+<meta property="og:url" content="http://example.com/2018/08/09/M_Swift94Runtime%E7%90%86%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="类结构体模型&#x2F;&#x2F; objc_object对象模型 struct objc_object &amp;#123;     private:     isa_t isa;     public:     Class ISA();     Class getIsa();     &#x2F;&#x2F; 省略其余方法     ... &amp;#125; &#x2F;&#x2F; objc_class类模型 struct objc_class : objc_o">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-09T09:45:14.000Z">
+<meta property="article:modified_time" content="2018-08-09T09:45:14.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/08/09/M_Swift94Runtime%E7%90%86%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>理解Runtime | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/09/M_Swift94Runtime%E7%90%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          理解Runtime
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-09 17:45:14" itemprop="dateCreated datePublished" datetime="2018-08-09T17:45:14+08:00">2018-08-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="类结构体模型"><a href="#类结构体模型" class="headerlink" title="类结构体模型"></a>类结构体模型</h2><pre><code>// objc_object对象模型
+struct objc_object &#123;
+    private:
+    isa_t isa;
+    public:
+    Class ISA();
+    Class getIsa();
+    // 省略其余方法
+    ...
+&#125;
+// objc_class类模型
+struct objc_class : objc_object &#123;
+    Class isa  //所属类的指针
+    Class super_class//指向父类的指针                                        
+    const char *name //类名                                     
+    long version // 版本                                 
+    long info //供运行期使用的一些位标识。                             
+    long instance_size //实例大小                                 
+    struct objc_ivar_list *ivars//成员变量数组                      
+    struct objc_method_list **methodLists//方法列表                  
+    struct objc_cache *cache//指向最近使用的方法.用于方法调用的优化                            
+    struct objc_protocol_list *protocols//协议的数组                     
+&#125;
+在objc_class结构体中定义了对象的method list，
+protocal，ivar list等，表示对象的行为。
+</code></pre>
+<h3 id="为什么说类也是对象"><a href="#为什么说类也是对象" class="headerlink" title="为什么说类也是对象"></a>为什么说类也是对象</h3><pre><code>类被定义为objc_class结构体，objc_class结构体继承自
+objc_objct,对象是用 objc_object 结构体表示的，所以类也
+是对象。
+oc中的类和元类也是一样，都是结构体构成的，由于类的结构体定义
+继承自objc_object所以其也是一个对象，并且具有对象的isa特
+征。
+在应用程序中，类对象只会被创建一份。
+</code></pre>
+<h3 id="Meta-Class元类"><a href="#Meta-Class元类" class="headerlink" title="Meta Class元类"></a>Meta Class元类</h3><pre><code>isa指针指向Meta Class，因为Objc的类的本身也是一个
+Object，为了处理这个关系，runtime就创造了Meta Class，
+当给类发送[NSObject alloc]这样消息时，实际上是把这个
+消息发给了Class Object
+因为一个类是一个对象，它是元类(metaclass)的对象。
+元类是关于类对象的描述，
+就像类是普通实例对象的描述一样。实际上，元类的方法列表正
+是#类方法#：该类对象响应的选择器。
+</code></pre>
+<h3 id="什么是isa指针"><a href="#什么是isa指针" class="headerlink" title="什么是isa指针"></a>什么是isa指针</h3><pre><code>每个对象都有一个标识对象类的isa实例变量。
+运行时使用此指针来确定对象需要时的实际类。
+1、 id类型是一个objc_object结构体的指针。
+2、objc_object结构体包含一个Class 类型的变量isa。
+3、 Class是objc_class结构体的指针。
+</code></pre>
+<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><pre><code>objc_msgSend第一个参数类型为id，大家对它都不陌生，
+它是一个指向类实例的指针：
+typedef struct objc_object *id;
+那objc_object又是啥呢：
+struct objc_object &#123; Class isa; &#125;;
+objc_object结构体包含一个isa指针，根据isa指针就可以
+顺藤摸瓜找到对象所属的类。
+</code></pre>
+<h3 id="为什么id类型可以指向OC中任意对象"><a href="#为什么id类型可以指向OC中任意对象" class="headerlink" title="为什么id类型可以指向OC中任意对象"></a>为什么id类型可以指向OC中任意对象</h3><pre><code>id类型被定义为指向对象的指针
+NSObject只有一个Class对象isa，而objc_object也是只有一个Class对
+象isa,也就是说id等价于NSObject*。所以id是一个一个比较灵活的对象指
+针，并且是一个指向任何一个继承了Object（或者NSObject）类的对象
+</code></pre>
+<h3 id="为什么不能用isa判断一个类的继承关系"><a href="#为什么不能用isa判断一个类的继承关系" class="headerlink" title="为什么不能用isa判断一个类的继承关系"></a>为什么不能用isa判断一个类的继承关系</h3><pre><code>isa指针不总是指向实例对象所属的类，不能依靠它来确定
+类型，而是应该用class方法来确定实例对象的类。
+因为KVO的实现机理就是将被观察对象的isa指针指向一个中间类
+</code></pre>
+<h2 id="类结构关系"><a href="#类结构关系" class="headerlink" title="类结构关系"></a>类结构关系</h2><pre><code>实例对象在运行时被表示成objc_object类型结构体，结构体内部
+有个isa指针指向objc_class结构体。objc_class内部保存了类
+的变量和方法列表以及其他一些信息，并且还有一个isa指针。这个
+isa指针会指向meteClass(元类)，元类里保存了这个类的类方法
+列表。
+runtime中设计了meta class， 通过meta class来创建类对
+象，所以类对象的isa指向对应的meta class。而meta class也
+是一个对象，所有元类的isa都指向其根元类，根元类的isa指针指
+向自己，通过这种设计，isa的整体结构形成了一个闭环。为了完整
+性，其实元类里也有一个isa指针，这个isa指针，指向的是根元
+类，根元类的isa指针指向自己
+实例对象--(runtime)--&gt;objc_object--(isa)--
+&gt;objc_class--(isa)--&gt;元类--isa--&gt;根元类--isa--&gt;自
+己。
+类和元类都有自己的继承体系，但它们都有共同的根父类
+NSObject，而NSObject的父类指向nil。Root 
+Class（Class）是NSObject类对象，而Root Class（Meta）
+是NSObject的元类对象。对于像NSObject这样的类来说，它其实
+代表的是一个类对象，本质上还是一个普通的实例对象，类对象的、
+self指针应该指向的是这个类对象自身。
+</code></pre>
+<h3 id="继承实现"><a href="#继承实现" class="headerlink" title="继承实现"></a>继承实现</h3><pre><code>当我们调用某个类的方法时，如果这个类的方法列表里没有该方法，
+则会去找这个类的父类的方法列表。这种机制就是通过
+objc_class的第二个变量super_class指针实现的。
+并且这种继承关系会扩展到元类。
+</code></pre>
+<h2 id="内存布局："><a href="#内存布局：" class="headerlink" title="内存布局："></a>内存布局：</h2><pre><code>类的本质时结构体，在结构体中包含一些成员变量，
+如method list，ivar list等，这些都是结构体的一部分，
+method protocol，property的实现这些都可以放到类中，
+所有对象调用同一份即可，但对象的成员变量不可以放在一起，
+因为每个对象的成员变量值都是不同的。
+</code></pre>
+<h3 id="为什么不能添加变量"><a href="#为什么不能添加变量" class="headerlink" title="为什么不能添加变量"></a>为什么不能添加变量</h3><pre><code>创建实例对象时，会根据其对应的Class分配内存，内存构成
+是ivar+isa_t.并且实例变量不只是包含当前class的ivars，
+也会包含其继承链的ivars，ivars的内存布局在编译时就已经
+决定，运行时需要根据ivars内存布局创建对象，所以runtime
+不能动态修改ivars，会破坏已有的内存布局。
+</code></pre>
+<h3 id="不能向编译后得到的类中增加实例变量"><a href="#不能向编译后得到的类中增加实例变量" class="headerlink" title="不能向编译后得到的类中增加实例变量"></a>不能向编译后得到的类中增加实例变量</h3><pre><code>因为编译后的类已经注册在runtime中，类结构体中的
+objc_ivar_list实例变量的链表和instance_size
+实例变量的内存大小已经确定，同时runtime会调用
+class_setIvarLayout或class_WeakIvarLayout
+来处理strong weak引用，所以不能向存在的类中添加实例变量
+运行时创建的类时可以添加实例变量，调用class_addIvar函数
+，但是得在调用objc_allocateClassPari之后，
+objc_registerClassPair之前，原因同上。
+</code></pre>
+<h3 id="系统如何解决新增实例冲突"><a href="#系统如何解决新增实例冲突" class="headerlink" title="系统如何解决新增实例冲突"></a>系统如何解决新增实例冲突</h3><pre><code>类的结构体在编译时都是固定的，如果想修改类的结构需要重新编译
+原来UIViewController的结构体中增加了
+childViewControllers属性，这个时候和子类的内存偏移就
+发生了冲突，只不过，runtime有检测内存地址冲突的机制，
+在类生成实例变量时，会判断实例变量是否有地址冲突，
+如果发生冲突则调整对象的地址偏移。
+</code></pre>
+<h2 id="ivars-methodLists"><a href="#ivars-methodLists" class="headerlink" title="ivars methodLists"></a>ivars methodLists</h2><pre><code>在objc_class结构体中：ivars是objc_ivar_list指针；
+methodLists是指向objc_method_list指针的指针。
+也就是说可以动态修改 *methodLists 的值来添加成员方法，
+这也是Category实现的原理.
+</code></pre>
+<h2 id="IMP："><a href="#IMP：" class="headerlink" title="IMP："></a>IMP：</h2><pre><code>//结构
+typedef void (*IMP)(void /* id, SEL, ... */ );
+在runtime中IMP本质上就是一个函数指针
+在IMP中有两个默认的参数id和SEL，id也就是方法的self
+这和objc_msgSend()函数传递的参数一样；
+Runtime提供很多对于IMP的操作API，我们很多Runtime函数都
+是IMP操作
+</code></pre>
+<h2 id="Method："><a href="#Method：" class="headerlink" title="Method："></a>Method：</h2><pre><code>//结构
+typedef struct method_t *Method;
+struct method_t &#123; 
+    SEL name;
+    const char *types;
+    IMP imp; 
+&#125;;
+用来表示方法，其中包含SEL和IMP
+</code></pre>
+<h2 id="Property："><a href="#Property：" class="headerlink" title="Property："></a>Property：</h2><pre><code>在runtime中定义了属性的结构体，用来表示对象中定义的属性。
+@property修饰符用来修饰属性，修饰后的属性为
+objc_property_t类型，其本质是property_t结构体
+    struct property_t &#123;
+    const char *name; 
+    const char *attributes;
+&#125;;
+</code></pre>
+<h2 id="ivar读写"><a href="#ivar读写" class="headerlink" title="ivar读写"></a>ivar读写</h2><pre><code>实例变量的isa_t指针会指向其所属的类，对象中并不会包含
+method，property，protocol，ivar等信息，这些信息在编
+译时都保存在只读结构体class_ro_t中。在class_ro_t中ivar
+时const只读的，在image load时copy到class_rw_t中时，
+是不会copy ivars的，并且class_rw_t中并没有定义ivars
+的字段。
+在防伪某个成员变量时，直接通过isa_t找到对应的objc_class
+并通过其class_ro_t的ivar list做地址偏移，查找对应的对象
+内存，正是由于这种方式，所以对象的内存地址是固定不可改变的。
+</code></pre>
+<h2 id="方法传参："><a href="#方法传参：" class="headerlink" title="方法传参："></a>方法传参：</h2><pre><code>当调用实例变量的方法时，会通过objc_msgSend（）发起调用。
+调用是会传入self和SEL，函数内部通过isa在类的内部查找方法
+列表对应的IMP，传入对应的参数并发起调用，如果调用的方法涉
+及到当前对象的成员变量的访问，这是就是通过objc_msgSend()
+内部，通过类的ivar list判断地址偏移，取出ivar并传入调
+用的IMP中的。
+调用super的方式时则调用objc_msgSendSuper()函数实现
+</code></pre>
+<h2 id="isa-t"><a href="#isa-t" class="headerlink" title="isa_t:"></a>isa_t:</h2><pre><code>对于对象指针也是一样，在oc1.0时，isa时一个真的指针，
+指向一堆区的地址，而在oc2.0时代，一个指针长度时八个字节
+也就是64位，在64位中直接存储着对象的信息。当查找对象所属
+的类时，直接在isa指针中进行位运算即可，而且由于在栈区进
+行操作，查找速度非常快。
+例如，isa_t本质时一个结构体，如果创建结构体再用指针指向这
+个结构体，内存占用是很大的，但是Tagged Pointer特性中，
+直接把结构体的值都存储到指针中，这样就相当节省内存了。
+苹果不允许直接访问isa指针，和Tagged Pointer也是有关
+系的，因为tagged Pointer的情况下，isa并不是一个指针指
+向另一块内存区，而是直接表示对象的值，所以通过直接访问
+isa获取到的信息是错误的。
+</code></pre>
+<h2 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a>SEL</h2><pre><code>它是selector在Objc中的表示类型（Swift中是
+Selector类）。selector是方法选择器，
+可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
+typedef struct objc_selector *SEL;
+从源码中看其实是一个const *的常量字符串，只代表名字而已
+其实它就是个映射到方法的C字符串，你可以用 Objc 
+编译器命令@selector()或者 Runtime 系统的
+sel_registerName函数来获得一个SEL类型的方法选择器。
+常见来两个相同的类，并定规两个相同的方法，通过@selector
+获取SEL并打印，我们发现SEL都是同一个对象，地址都是相同的，
+不同类的相同SEL是同一个对象。
+在runtime中维护一个SEL列表，这个表不按照类存储，
+只要相同SEL就算作一个，并存储到表中。
+</code></pre>
+<h2 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h2><pre><code>协议存储在protocol_t结构体中，而protocol_t继承objc_object，所以也就具备对象特征
+struct protocol_t : objc_object &#123;
+    const char *mangledName;
+    struct protocol_list_t *protocols; 
+    method_list_t *instanceMethods; 
+    method_list_t *classMethods;
+    method_list_t *optionalInstanceMethods;
+    method_list_t *optionalClassMethods;
+    property_list_t *instanceProperties;
+    uint32_t size; // sizeof(protocol_t) 
+    uint32_t flags;
+    const char **_extendedMethodTypes; 
+    const char *_demangledName; 
+    property_list_t *_classProperties;
+&#125;;
+既然具备了对象的特征，那么也有isa指针，在Protocol中所有的isa都指向同一个类Protocol。Protocol类并没有元类
+</code></pre>
+<h2 id="runtime如何实现weak变量的自动置nil"><a href="#runtime如何实现weak变量的自动置nil" class="headerlink" title="runtime如何实现weak变量的自动置nil"></a>runtime如何实现weak变量的自动置nil</h2><pre><code>runtime 对注册的类， 会进行布局，对于 weak 对象会放入一个 hash 表
+中。 用 weak 指向的对象内存地址作为 key，当此对象的引用计数为0的时
+候会 dealloc，假如 weak 指向的对象内存地址是a，那么就会以a为键， 
+在这个 weak 表中搜索，找到所有以a为键的 weak 对象，从而设置为 nil
+</code></pre>
+<h2 id="map-images-函数Runtime-初始化操作"><a href="#map-images-函数Runtime-初始化操作" class="headerlink" title="map_images 函数Runtime 初始化操作"></a>map_images 函数Runtime 初始化操作</h2><pre><code>在runtime中所有类都存在一个哈希表中，在table的buckets中存储
+1. 加载所有类到类的gdb_objc_realized_classes表中
+2. 对所有类做重映射
+3. 将所有SEL都注册到namedSelectors表中
+4. 修复函数指针遗留
+5. 将所有Protocol添加到protocol_map表中
+6. 将所有Protocol重映射
+7. 初始化所有非懒加载的类，进行rw，ro操作 
+8. 便利所有懒加载类，执行初始化
+9. 处理所有Category包括Class和MetaClass
+10. 初始化所有未初始化类
+</code></pre>
+<h2 id="load方法"><a href="#load方法" class="headerlink" title="load方法"></a>load方法</h2><pre><code>Load方法是在类加载的时候调用的，是在类加载到运行时的时候调用的，
+在mian函数之前，由系统调用，所以比较适合在load中调用钩子方法。只调用
+一次，注意load方法是直接调用的，并没有走运行时的objc_msgSend函数
+load方法顺序应该是，父类-&gt;子类-&gt;分类
+</code></pre>
+<h2 id="initialize"><a href="#initialize" class="headerlink" title="initialize"></a>initialize</h2><pre><code>initialize是由Runtime调用的，与load不同的是，initialize方法是第
+一次调用类所属方法时才会调用，如果当前类方法永远不被调用的话
+initialize有可能永远不会执行。
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/09/M_Swift101%E5%B8%B8%E8%A7%81UI%E9%97%AE%E9%A2%98/" rel="prev" title="常见UI问题">
+      <i class="fa fa-chevron-left"></i> 常见UI问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/10/M_Swift92%E7%AE%97%E6%B3%95%E4%B9%8B%E6%8E%92%E5%BA%8F/" rel="next" title="算法之排序">
+      算法之排序 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E7%BB%93%E6%9E%84%E4%BD%93%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">类结构体模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4%E7%B1%BB%E4%B9%9F%E6%98%AF%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.1.</span> <span class="nav-text">为什么说类也是对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Meta-Class%E5%85%83%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">Meta Class元类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFisa%E6%8C%87%E9%92%88"><span class="nav-number">1.3.</span> <span class="nav-text">什么是isa指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#id"><span class="nav-number">1.4.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88id%E7%B1%BB%E5%9E%8B%E5%8F%AF%E4%BB%A5%E6%8C%87%E5%90%91OC%E4%B8%AD%E4%BB%BB%E6%84%8F%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.5.</span> <span class="nav-text">为什么id类型可以指向OC中任意对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E7%94%A8isa%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E5%85%B3%E7%B3%BB"><span class="nav-number">1.6.</span> <span class="nav-text">为什么不能用isa判断一个类的继承关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E7%BB%93%E6%9E%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">类结构关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.1.</span> <span class="nav-text">继承实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">内存布局：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%B7%BB%E5%8A%A0%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.</span> <span class="nav-text">为什么不能添加变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%83%BD%E5%90%91%E7%BC%96%E8%AF%91%E5%90%8E%E5%BE%97%E5%88%B0%E7%9A%84%E7%B1%BB%E4%B8%AD%E5%A2%9E%E5%8A%A0%E5%AE%9E%E4%BE%8B%E5%8F%98%E9%87%8F"><span class="nav-number">3.2.</span> <span class="nav-text">不能向编译后得到的类中增加实例变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E6%96%B0%E5%A2%9E%E5%AE%9E%E4%BE%8B%E5%86%B2%E7%AA%81"><span class="nav-number">3.3.</span> <span class="nav-text">系统如何解决新增实例冲突</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivars-methodLists"><span class="nav-number">4.</span> <span class="nav-text">ivars methodLists</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMP%EF%BC%9A"><span class="nav-number">5.</span> <span class="nav-text">IMP：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method%EF%BC%9A"><span class="nav-number">6.</span> <span class="nav-text">Method：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Property%EF%BC%9A"><span class="nav-number">7.</span> <span class="nav-text">Property：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ivar%E8%AF%BB%E5%86%99"><span class="nav-number">8.</span> <span class="nav-text">ivar读写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BC%A0%E5%8F%82%EF%BC%9A"><span class="nav-number">9.</span> <span class="nav-text">方法传参：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isa-t"><span class="nav-number">10.</span> <span class="nav-text">isa_t:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SEL"><span class="nav-number">11.</span> <span class="nav-text">SEL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Protocol"><span class="nav-number">12.</span> <span class="nav-text">Protocol</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#runtime%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0weak%E5%8F%98%E9%87%8F%E7%9A%84%E8%87%AA%E5%8A%A8%E7%BD%AEnil"><span class="nav-number">13.</span> <span class="nav-text">runtime如何实现weak变量的自动置nil</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#map-images-%E5%87%BD%E6%95%B0Runtime-%E5%88%9D%E5%A7%8B%E5%8C%96%E6%93%8D%E4%BD%9C"><span class="nav-number">14.</span> <span class="nav-text">map_images 函数Runtime 初始化操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#load%E6%96%B9%E6%B3%95"><span class="nav-number">15.</span> <span class="nav-text">load方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#initialize"><span class="nav-number">16.</span> <span class="nav-text">initialize</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

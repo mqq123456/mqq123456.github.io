@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="iOS中的数据存储方式  ● Plist(NSArray\NSDictionary)● Preference(偏好设置\NSUserDefaults)● NSCoding(NSKeyedArchiver\NSkeyedUnarchiver)● SQLite3● Core Data  SQLite  ● 什么是SQLite● SQLite是一款轻型的嵌入式数据库● 它占用资源非常的低,在嵌入式设备">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLite">
+<meta property="og:url" content="http://example.com/2016/08/01/D_Net18SQLite/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="iOS中的数据存储方式  ● Plist(NSArray\NSDictionary)● Preference(偏好设置\NSUserDefaults)● NSCoding(NSKeyedArchiver\NSkeyedUnarchiver)● SQLite3● Core Data  SQLite  ● 什么是SQLite● SQLite是一款轻型的嵌入式数据库● 它占用资源非常的低,在嵌入式设备">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-08-01T02:25:40.000Z">
+<meta property="article:modified_time" content="2016-08-01T02:25:40.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/08/01/D_Net18SQLite/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>SQLite | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/D_Net18SQLite/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SQLite
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 10:25:40" itemprop="dateCreated datePublished" datetime="2016-08-01T10:25:40+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>iOS中的数据存储方式</p>
+</blockquote>
+<p>● Plist(NSArray\NSDictionary)<br>● Preference(偏好设置\NSUserDefaults)<br>● NSCoding(NSKeyedArchiver\NSkeyedUnarchiver)<br>● SQLite3<br>● Core Data</p>
+<blockquote>
+<p>SQLite</p>
+</blockquote>
+<p>● 什么是SQLite<br>● SQLite是一款轻型的嵌入式数据库<br>● 它占用资源非常的低,在嵌入式设备中,可能只需要几百K的内存就够了<br>● 它的处理速度比Mysql、PostgreSQL这两款著名的数据库都还快<br>● 什么是数据库<br>● 数据库(Database)是按照数据结构来组织、存储和管理数据的仓库<br>● 数据库可以分为2大种类 • 关系型数据库(主流)<br>• 对象型数据库<br>● 常用关系型数据库<br>● PC端:Oracle、MySQL、SQL Server、Access、DB2、Sybase<br>● 嵌入式\移动客户端:SQLite</p>
+<blockquote>
+<p>如何存储数据</p>
+</blockquote>
+<p>● 数据库是如何存储数据的<br>● 数据库的存储结构和excel很像,以表(table)为单位<br>● 数据库存储数据的步骤<br>● 新建一张表(table)<br>● 添加多个字段(column,列,属性)<br>● 添加多行记录(row,record,每行存放多个字段对应的值)</p>
+<blockquote>
+<p>SQL语句</p>
+</blockquote>
+<p>● 如何在程序运行过程中操作数据库中的数据<br>● 那得先学会使用SQL语句<br>● 什么是SQL<br>● SQL(structured query language):结构化查询语言<br>● SQL是一种对关系型数据库中的数据进行定义和操作的语言<br>● SQL语言简洁,语法简单,好学好用<br>● 什么是SQL语句<br>● 使用SQL语言编写出来的句子\代码,就是SQL语句<br>● 在程序运行过程中,要想操作(增删改查,CRUD)数据库中的数据,必须使 用SQL语句</p>
+<blockquote>
+<p>SQL语句的特点</p>
+</blockquote>
+<p>● 不区分大小写(比如数据库认为user和UsEr是一样的)<br>● 每条语句都必须以分号 ; 结尾<br>● SQL中的常用关键字有<br>● select、insert、update、delete、from、create、where、desc、order、by、grou<br>p、table、alter、view、index等等</p>
+<blockquote>
+<p>SQL语句的种类</p>
+</blockquote>
+<p>● 数据库中不可以使用关键字来命名表、字段<br>数据定义语句(DDL:Data Definition Language)<br>● 包括create和drop等操作<br>● 在数据库中创建新表或删除表(create table或 drop table)<br>● 数据操作语句(DML:Data Manipulation Language)<br>● 包括insert、update、delete等操作<br>● 上面的3种操作分别用于添加、修改、删除表中的数据<br>● 数据查询语句(DQL:Data Query Language)<br>● 可以用于查询获得表中的数据<br>● 关键字select是DQL(也是所有SQL)用得最多的操作<br>● 其他DQL常用的关键字有where,order by,group by和having</p>
+<blockquote>
+<p>创表</p>
+</blockquote>
+<p>● 格式<br>● create table 表名 (字段名1 字段类型1, 字段名2 字段类型2, …) ;<br>● create table if not exists 表名 (字段名1 字段类型1, 字段名2 字段类型2, …) ;<br>● 示例<br>● create table t_student (id integer, name text, age inetger, score real) ;</p>
+<blockquote>
+<p>字段类型</p>
+</blockquote>
+<p>● SQLite将数据划分为以下几种存储类型:<br>● integer : 整型值<br>● real : 浮点值<br>● text : 文本字符串<br>● blob : 二进制数据(比如文件)<br>● 实际上SQLite是无类型的<br>● 就算声明为integer类型,还是能存储字符串文本(主键除外)<br>● 建表时声明啥类型或者不声明类型都可以,也就意味着创表语句可以这么写:<br>• create table t_student(name, age);<br>● 为了保持良好的编程规范、方便程序员之间的交流,编写建表语句的时候最好 加上每个字段的具体类型</p>
+<blockquote>
+<p>删表</p>
+</blockquote>
+<p>● 格式<br>● drop table 表名 ;<br>● drop table if exists 表名 ;<br>● 示例<br>● drop table t_student ;</p>
+<blockquote>
+<p>插入数据(insert)</p>
+</blockquote>
+<p>● 格式<br>● insert into 表名 (字段1, 字段2, …) values (字段1的值, 字段2的值, …) ;<br>● 示例<br>● insert into t_student (name, age) values (‘mj’, 10) ;<br>● 注意<br>● 数据库中的字符串内容应该用单引号 ’ 括住</p>
+<blockquote>
+<p>更新数据(update)</p>
+</blockquote>
+<p>● 格式<br>● update 表名 set 字段1 = 字段1的值, 字段2 = 字段2的值, … ;<br>● 示例<br>● update t_student set name = ‘jack’, age = 20 ;<br>● 注意<br>● 上面的示例会将t_student表中所有记录的name都改为jack,age都改为20</p>
+<blockquote>
+<p>删除数据(delete)</p>
+</blockquote>
+<p>● 格式<br>● delete from 表名 ;<br>● 示例<br>● delete from t_student ;<br>● 注意<br>● 上面的示例会将t_student表中所有记录都删掉</p>
+<blockquote>
+<p>条件语句</p>
+</blockquote>
+<p>● 如果只想更新或者删除某些固定的记录,那就必须在DML语句后加上一些条件<br>● 条件语句的常见格式<br>● where字段=某个值; //不能用两个=<br>● where字段is某个值; //is相当于=<br>● where 字段 != 某个值 ;<br>● where字段isnot某个值; //isnot相当于!=<br>● where字段&gt;某个值;<br>● where 字段1 = 某个值 and 字段2 &gt; 某个值 ; // and相当于C语言中的 &amp;&amp;<br>● where字段1=某个值or字段2=某个值; // or相当于C语言中的||</p>
+<blockquote>
+<p>排序</p>
+</blockquote>
+<p>● 查询出来的结果可以用order by进行排序<br>● select * from t_student order by 字段 ;<br>• select * from t_student order by age ;<br>● 默认是按照升序排序(由小到大),也可以变为降序(由大到小)<br>● select * from t_student order by age desc ; //降序<br>● select * from t_student order by age asc ; // 升序(默认)<br>● 也可以用多个字段进行排序<br>● select * from t_student order by age asc, height desc ;</p>
+<blockquote>
+<p>limit</p>
+</blockquote>
+<p>● 使用limit可以精确地控制查询结果的数量,比如每次只查询10条数据<br>● 格式<br>● select * from 表名 limit 数值1, 数值2 ;<br>● 示例<br>● select * from t_student limit 4, 8 ;<br>• 可以理解为:跳过最前面4条语句,然后取8条记录<br>• 先按照年龄排序(升序),年龄相等就按照身高排序(降序)</p>
+<blockquote>
+<p>简单约束</p>
+</blockquote>
+<p>● 建表时可以给特定的字段设置一些约束条件,常见的约束有<br>● not null :规定字段的值不能为null<br>● unique :规定字段的值必须唯一<br>● default :指定字段的默认值 (建议:尽量给字段设定严格的约束,以保证数据的规范性)<br>● 示例<br>● create table t_student (id integer, name text not null unique, age integer not null<br>default 1) ;<br>• name字段不能为null,并且唯一<br>• age字段不能为null,并且默认为1</p>
+<blockquote>
+<p>主键约束</p>
+</blockquote>
+<p>● 如果t_student表中就name和age两个字段,而且有些记录的name和age字段的 值都一样时,那么就没法区分这些数据,造成数据库的记录不唯一,这样就不 方便管理数据<br>● 良好的数据库编程规范应该要保证每条记录的唯一性,为此,增加了主键约束<br>● 也就是说,每张表都必须有一个主键,用来标识记录的唯一性<br>● 什么是主键<br>● 主键(Primary Key,简称PK)用来唯一地标识某一条记录<br>● 例如t_student可以增加一个id字段作为主键,相当于人的身份证<br>● 主键可以是一个字段或多个字段<br>主键的设计原则<br>● 主键应当是对用户没有意义的 ● 永远也不要更新主键<br>● 主键不应包含动态变化的数据 ● 主键应当由计算机自动生成<br> 主键的声明<br>● 在创表的时候用primary key声明一个主键<br>● create table t_student (id integer primary key, name text, age integer) ;<br>● integer类型的id作为t_student表的主键<br>● 主键字段<br>● 只要声明为primary key,就说明是一个主键字段<br>● 主键字段默认就包含了not null 和 unique 两个约束<br>● 如果想要让主键自动增长(必须是integer类型),应该增加autoincrement<br>● create table t_student (id integer primary key autoincrement, name text, age integer) ;</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/31/D_Net17%E9%9F%B3%E9%A2%91/" rel="prev" title="音频">
+      <i class="fa fa-chevron-left"></i> 音频
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/01/H_1Htmlhtml%E3%80%81css%E3%80%81js%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%83%85%E5%86%B5/" rel="next" title="html、css、js文件加载顺序及执行情况">
+      html、css、js文件加载顺序及执行情况 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="计算经纬度之间的距离  &#x2F;*!     @brief 计算经纬度之间的距离     @param a a点     @param b b点     @return 距离，单位：米     *&#x2F;    CLLocationDistance MAMetersBetweenMapPoints(CLLocationCoordinate2D a, CLLocationCoordinate2D b)    {">
+<meta property="og:type" content="article">
+<meta property="og:title" content="地图计算">
+<meta property="og:url" content="http://example.com/2020/11/02/M_Swift162iOS%E5%9C%B0%E5%9B%BE%E8%AE%A1%E7%AE%97/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="计算经纬度之间的距离  &#x2F;*!     @brief 计算经纬度之间的距离     @param a a点     @param b b点     @return 距离，单位：米     *&#x2F;    CLLocationDistance MAMetersBetweenMapPoints(CLLocationCoordinate2D a, CLLocationCoordinate2D b)    {">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-02T01:38:22.000Z">
+<meta property="article:modified_time" content="2020-11-02T01:38:22.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/11/02/M_Swift162iOS%E5%9C%B0%E5%9B%BE%E8%AE%A1%E7%AE%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>地图计算 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/02/M_Swift162iOS%E5%9C%B0%E5%9B%BE%E8%AE%A1%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          地图计算
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-02 09:38:22" itemprop="dateCreated datePublished" datetime="2020-11-02T09:38:22+08:00">2020-11-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="计算经纬度之间的距离"><a href="#计算经纬度之间的距离" class="headerlink" title="计算经纬度之间的距离"></a>计算经纬度之间的距离</h2><p>  /*!<br>     @brief 计算经纬度之间的距离<br>     @param a a点<br>     @param b b点<br>     @return 距离，单位：米<br>     */<br>    CLLocationDistance MAMetersBetweenMapPoints(CLLocationCoordinate2D a, CLLocationCoordinate2D b)<br>    {<br>        CLLocation *curLocation = [[CLLocation alloc] initWithLatitude:a.latitude longitude:a.longitude];<br>        CLLocation *otherLocation = [[CLLocation alloc] initWithLatitude:b.latitude longitude:b.longitude];<br>        return [curLocation distanceFromLocation:otherLocation];<br>    }</p>
+<p>static const double a = 6378245.0;<br>static const double ee = 0.00669342162296594323;<br>static const double pi = M_PI;<br>static const double xPi = M_PI  * 3000.0 / 180.0;</p>
+<h2 id="GPS转高德"><a href="#GPS转高德" class="headerlink" title="GPS转高德"></a>GPS转高德</h2><ul>
+<li>(CLLocationCoordinate2D)transformFromWGSToGCJ:(CLLocationCoordinate2D)wgsLoc {<br>  CLLocationCoordinate2D adjustLoc;<br>  if([self isLocationOutOfChina:wgsLoc]) {<pre><code>  adjustLoc = wgsLoc;
+</code></pre>
+  }<br>  else {<pre><code>  double adjustLat = [self transformLatWithX:wgsLoc.longitude - 105.0 withY:wgsLoc.latitude - 35.0];
+  double adjustLon = [self transformLonWithX:wgsLoc.longitude - 105.0 withY:wgsLoc.latitude - 35.0];
+  long double radLat = wgsLoc.latitude / 180.0 * pi;
+  long double magic = sin(radLat);
+  magic = 1 - ee * magic * magic;
+  long double sqrtMagic = sqrt(magic);
+  adjustLat = (adjustLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * pi);
+  adjustLon = (adjustLon * 180.0) / (a / sqrtMagic * cos(radLat) * pi);
+  adjustLoc.latitude = wgsLoc.latitude + adjustLat;
+  adjustLoc.longitude = wgsLoc.longitude + adjustLon;
+</code></pre>
+  }<br>  return adjustLoc;<br>}<h2 id="GPS转百度"><a href="#GPS转百度" class="headerlink" title="GPS转百度"></a>GPS转百度</h2></li>
+<li>(CLLocationCoordinate2D)transformFromWGSToBaidu:(CLLocationCoordinate2D)p {<br>  CLLocationCoordinate2D coo =[NSValue transformFromWGSToGCJ:p];<br>  return [NSValue transformFromGCJToBaidu:coo];<br>}<h2 id="百度转GPS"><a href="#百度转GPS" class="headerlink" title="百度转GPS"></a>百度转GPS</h2></li>
+<li>(CLLocationCoordinate2D)transformFromBaiduToWGS:(CLLocationCoordinate2D)p {<br>   CLLocationCoordinate2D start_coor = [NSValue transformFromBaiduToGCJ:p];<br>   return [NSValue transformFromGCJToWGS:start_coor];<br>}<h2 id="百度转高德"><a href="#百度转高德" class="headerlink" title="百度转高德"></a>百度转高德</h2></li>
+<li>(CLLocationCoordinate2D)transformFromBaiduToGCJ:(CLLocationCoordinate2D)p {<br>  double x = p.longitude - 0.0065, y = p.latitude - 0.006;<br>  double z = sqrt(x * x + y * y) - 0.00002 * sin(y * xPi);<br>  double theta = atan2(y, x) - 0.000003 * cos(x * xPi);<br>  CLLocationCoordinate2D geoPoint;<br>  geoPoint.latitude  = z * sin(theta);<br>  geoPoint.longitude = z * cos(theta);<br>  return geoPoint;<br>}<h2 id="高德转百度"><a href="#高德转百度" class="headerlink" title="高德转百度"></a>高德转百度</h2></li>
+<li>(CLLocationCoordinate2D)transformFromGCJToBaidu:(CLLocationCoordinate2D)p {<br>  long double z = sqrt(p.longitude * p.longitude + p.latitude * p.latitude) + 0.00002 * sqrt(p.latitude * pi);<br>  long double theta = atan2(p.latitude, p.longitude) + 0.000003 * cos(p.longitude * pi);<br>  CLLocationCoordinate2D geoPoint;<br>  geoPoint.latitude  = (z * sin(theta) + 0.006);<br>  geoPoint.longitude = (z * cos(theta) + 0.0065);<br>  return geoPoint;<br>}<h2 id="高德转GPS"><a href="#高德转GPS" class="headerlink" title="高德转GPS"></a>高德转GPS</h2></li>
+<li>(CLLocationCoordinate2D)transformFromGCJToWGS:(CLLocationCoordinate2D)p {<br>  double threshold = 0.00001;  // The boundary<br>  double minLat = p.latitude - 0.5;<br>  double maxLat = p.latitude + 0.5;<br>  double minLng = p.longitude - 0.5;<br>  double maxLng = p.longitude + 0.5;  double delta = 1;<br>  int maxIteration = 30;<br>  // Binary search<br>  while(true) {<pre><code>  CLLocationCoordinate2D leftBottom  = [[self class] transformFromWGSToGCJ:(CLLocationCoordinate2D)&#123;.latitude = minLat,.longitude = minLng&#125;];
+  CLLocationCoordinate2D rightBottom = [[self class] transformFromWGSToGCJ:(CLLocationCoordinate2D)&#123;.latitude = minLat,.longitude = maxLng&#125;];
+  CLLocationCoordinate2D leftUp      = [[self class] transformFromWGSToGCJ:(CLLocationCoordinate2D)&#123;.latitude = maxLat,.longitude = minLng&#125;];
+  CLLocationCoordinate2D midPoint    = [[self class] transformFromWGSToGCJ:(CLLocationCoordinate2D)&#123;.latitude = ((minLat + maxLat) / 2),.longitude = ((minLng + maxLng) / 2)&#125;];
+  delta = fabs(midPoint.latitude - p.latitude) + fabs(midPoint.longitude - p.longitude);
+  
+  if(maxIteration-- &lt;= 0 || delta &lt;= threshold) &#123;
+      return (CLLocationCoordinate2D)&#123;.latitude = ((minLat + maxLat) / 2),.longitude = ((minLng + maxLng) / 2)&#125;;
+  &#125;
+  
+  if(isContains(p, leftBottom, midPoint)) &#123;
+      maxLat = (minLat + maxLat) / 2;
+      maxLng = (minLng + maxLng) / 2;
+  &#125; else if(isContains(p, rightBottom, midPoint)) &#123;
+      maxLat = (minLat + maxLat) / 2;
+      minLng = (minLng + maxLng) / 2;
+  &#125; else if(isContains(p, leftUp, midPoint)) &#123;
+      minLat = (minLat + maxLat) / 2;
+      maxLng = (minLng + maxLng) / 2;
+  &#125; else &#123;
+      minLat = (minLat + maxLat) / 2;
+      minLng = (minLng + maxLng) / 2;
+  &#125;
+</code></pre>
+  }</li>
+</ul>
+<p>}</p>
+<ul>
+<li>(double)transformLatWithX:(double)x withY:(double)y {<br>  double lat = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * sqrt(fabs(x));<br>  lat += (20.0 * sin(6.0 * x * pi) + 20.0 *sin(2.0 * x * pi)) * 2.0 / 3.0;<br>  lat += (20.0 * sin(y * pi) + 40.0 * sin(y / 3.0 * pi)) * 2.0 / 3.0;<br>  lat += (160.0 * sin(y / 12.0 * pi) + 320 * sin(y * pi / 30.0)) * 2.0 / 3.0;<br>  return lat;<br>}</li>
+<li>(double)transformLonWithX:(double)x withY:(double)y {<br>  double lon = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * sqrt(fabs(x));<br>  lon += (20.0 * sin(6.0 * x * pi) + 20.0 * sin(2.0 * x * pi)) * 2.0 / 3.0;<br>  lon += (20.0 * sin(x * pi) + 40.0 * sin(x / 3.0 * pi)) * 2.0 / 3.0;<br>  lon += (150.0 * sin(x / 12.0 * pi) + 300.0 * sin(x / 30.0 * pi)) * 2.0 / 3.0;<br>  return lon;<br>}<h2 id="判断某个点point是否在p1和p2之间"><a href="#判断某个点point是否在p1和p2之间" class="headerlink" title="判断某个点point是否在p1和p2之间"></a>判断某个点point是否在p1和p2之间</h2>static bool isContains(CLLocationCoordinate2D point, CLLocationCoordinate2D p1, CLLocationCoordinate2D p2) {<br>  return (point.latitude &gt;= MIN(p1.latitude, p2.latitude) &amp;&amp; point.latitude &lt;= MAX(p1.latitude, p2.latitude)) &amp;&amp; (point.longitude &gt;= MIN(p1.longitude,p2.longitude) &amp;&amp; point.longitude &lt;= MAX(p1.longitude, p2.longitude));<br>}</li>
+</ul>
+<h2 id="粗略判断是不是在中国"><a href="#粗略判断是不是在中国" class="headerlink" title="粗略判断是不是在中国"></a>粗略判断是不是在中国</h2><ul>
+<li>(BOOL)isLocationOutOfChina:(CLLocationCoordinate2D)location {<br>  if (location.longitude &lt; 72.004 || location.longitude &gt; 137.8347 || location.latitude &lt; 0.8293 || location.latitude &gt; 55.8271)<pre><code>  return YES;
+</code></pre>
+  return NO;<br>}<h2 id="弧线计算"><a href="#弧线计算" class="headerlink" title="弧线计算"></a>弧线计算</h2>double x1 = pArc.startCoordinate.longitude;<br>double y1 = pArc.startCoordinate.latitude;<br>double x2 = pArc.passedCoordinate.longitude;<br>double y2 = pArc.passedCoordinate.latitude;<br>double x3 = pArc.endCoordinate.longitude;<br>double y3 = pArc.endCoordinate.latitude;<br>double a = 2 * (x2 - x1);<br>double b = 2 * (y2 - y1);<br>double c = x2 * x2 + y2 * y2 - x1 * x1 - y1 * y1;<br>double d = 2 * (x3 - x2);<br>double e = 2 * (y3 - y2);<br>double f = x3 * x3 + y3 * y3 - x2 * x2 - y2 * y2;<br>double x = (b * f - e * c) / (b * d - e * a);<br>double y = (d * c - a * f) / (b * d - e * a);<br>double r = sqrt((x - x1) * (x - x1) + (y - y1) * (y - y1));<br>double angle1 = acos((x1 - x) / r);<br>if (y1 - y &lt; 0)<br>  angle1 = -angle1;<br>double angle2 = acos((x2 - x) / r);<br>if (y2 - y &lt; 0)<br>  angle2 = -angle2;<br>double angle3 = acos((x3 - x) / r);<br>if (y3 - y &lt; 0)<br>  angle3 = -angle3;<br>double deltaAngle1 = angle1 - angle2;</li>
+</ul>
+<p>while (deltaAngle1 &gt; M_PI)<br>    deltaAngle1 -= M_PI * 2;<br>while (deltaAngle1 &lt;= -M_PI)<br>    deltaAngle1 += M_PI * 2;<br>int numPoints1 = (int) (128 * fabs(deltaAngle1) / M_PI);<br>double phase1 = deltaAngle1 / numPoints1;<br>double deltaAngle2 = angle2 - angle3;<br>while (deltaAngle2 &gt; M_PI)<br>    deltaAngle2 -= M_PI * 2;<br>while (deltaAngle2 &lt;= -M_PI)<br>    deltaAngle2 += M_PI * 2;<br>int numPoints2 = (int) (128 * fabs(deltaAngle2) / M_PI);<br>double phase2 = deltaAngle2 / numPoints2;<br>int pointCnt = numPoints1 + numPoints2 + 1;<br>CLLocationCoordinate2D coos[pointCnt];<br>pointCnt = 0;<br>coos[pointCnt] = CLLocationCoordinate2DMake(y1, x1);<br>pointCnt++;<br>for (int i = 1; i &lt; numPoints1; i++) {<br>    coos[pointCnt] = CLLocationCoordinate2DMake((y + r * sin(angle1 - phase1 * i)),(x + r * cos(angle1 - phase1 * i)));<br>    pointCnt++;<br>}<br>coos[pointCnt] = CLLocationCoordinate2DMake(y2, x2);<br>pointCnt++;<br>for (int i = 1; i &lt; numPoints2; i++) {<br>    coos[pointCnt] = CLLocationCoordinate2DMake((y + r * sin(angle2 - phase2 * i)),(x + r * cos(angle2 - phase2 * i)));<br>    pointCnt++;<br>}<br>coos[pointCnt] = CLLocationCoordinate2DMake(y3, x3);<br>pointCnt++;</p>
+<h2 id="图片截图"><a href="#图片截图" class="headerlink" title="图片截图"></a>图片截图</h2><ul>
+<li>(UIImage *)takeSnapshotInRect:(CGRect)rect {<br>  UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, [UIScreen mainScreen].scale);<br>  [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];<br>  UIImage *image = UIGraphicsGetImageFromCurrentImageContext();<br>  UIGraphicsEndImageContext();<br>  if (CGRectEqualToRect(rect, self.bounds)) {<pre><code>  return image;
+</code></pre>
+  }<br>  CGFloat scale = image.scale;<br>  CGRect scaledRect = CGRectMake(rect.origin.x * scale, rect.origin.y * scale, rect.size.width * scale, rect.size.height * scale);<br>  CGImageRef rectImage = CGImageCreateWithImageInRect(image.CGImage,scaledRect);<br>  return [UIImage imageWithCGImage:rectImage];<br>}<h2 id="地图手势"><a href="#地图手势" class="headerlink" title="地图手势"></a>地图手势</h2>// 单击<br>UITapGestureRecognizer * singletapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onSingleTap:)];<br>  [singletapGesture setNumberOfTapsRequired:1];<br>  [singletapGesture setNumberOfTouchesRequired:1];<br>  [self addGestureRecognizer:singletapGesture];<br>双击<br>  UITapGestureRecognizer * doubletapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onDoubleTap:)];<br>  [doubletapGesture setNumberOfTapsRequired: 2];<br>  [doubletapGesture setNumberOfTouchesRequired: 1];<br>  [self addGestureRecognizer:doubletapGesture];<br>  [singletapGesture requireGestureRecognizerToFail:doubletapGesture];<br>长按<br>  UILongPressGestureRecognizer* longPressGr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];<br>  [self addGestureRecognizer:longPressGr];<br>缩放<br>  UITapGestureRecognizer *m_pZoomoutGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onZoomOut:)];<br>  [m_pZoomoutGesture setNumberOfTapsRequired:1];<br>  [m_pZoomoutGesture setNumberOfTouchesRequired:2];<br>  [self addGestureRecognizer:m_pZoomoutGesture];<br>拖拽<br>  m_pSinglePanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onScroll:)];<br>  [m_pSinglePanGesture setMaximumNumberOfTouches:1];<br>  [self addGestureRecognizer:m_pSinglePanGesture];<br>旋转<br>  UIPanGestureRecognizer * doublePanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onOverlook:)];<br>  [doublePanGesture setMinimumNumberOfTouches:2];<br>  [self addGestureRecognizer:doublePanGesture];<br>  m_pPinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(onPinch:)];<br>  m_pPinchGesture.delegate = self;<br>  [self addGestureRecognizer:m_pPinchGesture];<br>缩放<br>  m_pRotateGesture = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(onRotate:)];<br>  m_pRotateGesture.delegate = self;<br>  [self addGestureRecognizer:m_pRotateGesture];</li>
+</ul>
+<h2 id="比例尺绘制"><a href="#比例尺绘制" class="headerlink" title="比例尺绘制"></a>比例尺绘制</h2><ul>
+<li><p>(void)drawRect:(CGRect)rect {</p>
+<p>  CGContextRef context = UIGraphicsGetCurrentContext();</p>
+<p>  CGContextSetRGBStrokeColor(context, 0.0f, 0.0f, 0.0f, 1.0f); //画笔颜色<br>  CGContextSetLineWidth(context, 1.0); //线宽</p>
+<p>  CGFloat scale = [UIScreen mainScreen].scale;<br>  int zoomLevel = self.zoomLevel;</p>
+<p>  int iLength = (MASCALE_DISTANCES[zoomLevel] /([self.mapView metersPerPointForZoomLevel:zoomLevel] * scale));<br>  if (iLength &gt;200) {</p>
+<pre><code>  iLength = 200;
+</code></pre>
+<p>  }<br>  int iStartX = rect.origin.x;<br>  int iStartY = rect.size.height - 12;<br>  int iEndY = rect.size.height - 9;<br>  NSString *name = MASCALE_DISTANCESNAME[zoomLevel];<br>  [name drawInRect:CGRectMake(iStartX + SCALE_NAME_STARTX, iStartY - 13, rect.size.width, rect.size.height) withFont:[UIFont systemFontOfSize:10.0]];</p>
+<p>  CGPoint points[2];//坐标点<br>  points[0] = CGPointMake(iStartX, iEndY);//坐标1<br>  points[1] = CGPointMake(iStartX + iLength, iEndY);//坐标2<br>  CGContextAddLines(context, points, 2);//添加线<br>  CGContextDrawPath(context, kCGPathStroke);</p>
+<p>  points[0] = CGPointMake(iStartX, iStartY); //坐标1<br>  points[1] = CGPointMake(iStartX, iEndY); //坐标2<br>  CGContextAddLines(context, points, 2); //添加线<br>  CGContextDrawPath(context, kCGPathStroke);</p>
+<p>  points[0] = CGPointMake(iStartX + iLength, iStartY);//坐标1<br>  points[1] = CGPointMake(iStartX + iLength, iEndY);//坐标2<br>  CGContextAddLines(context, points, 2);//添加线<br>  CGContextDrawPath(context, kCGPathStroke);<br>}</p>
+</li>
+</ul>
+<h2 id="点到直线的距离"><a href="#点到直线的距离" class="headerlink" title="点到直线的距离"></a>点到直线的距离</h2><ul>
+<li>(CGFloat)lineDistance:(CGPoint)point linePoint1:(CGPoint)line1 linePoint2:(CGPoint)line2<br>{<br>  CGFloat se =  (line1.x-line2.x)<em>(line1.x-line2.x)+(line1.y-line2.y)</em>(line1.y-line2.y);//线段两点距离平方<br>  CGFloat p = ((point.x-line1.x)<em>(line2.x-line1.x)+(point.y-line1.y)</em>(line2.y-line1.y)); //向量点乘=|a|<em>|b|<em>cosA<br>  CGFloat r = p / se; //r即点到线段的投影长度与线段长度比<br>  CGFloat outx = line1.x + r * (line2.x-line1.x);<br>  CGFloat outy = line1.y+r</em>(line2.y-line1.y);<br>  CGFloat des =(point.x-outx)</em>(point.x-outx)+(point.y-outy)*(point.y-outy);<br>  return sqrt(des);<br>}</li>
+</ul>
+<h2 id="检查某点是否包含在多边形的范围内-判断多边形是否被点击"><a href="#检查某点是否包含在多边形的范围内-判断多边形是否被点击" class="headerlink" title="检查某点是否包含在多边形的范围内(判断多边形是否被点击"></a>检查某点是否包含在多边形的范围内(判断多边形是否被点击</h2><ul>
+<li>(BOOL)PointInPoly:(CGPoint *)poly count:(int)count point:(CGPoint)pt {<br>  BOOL c = false;<br>  int i = -1, l = count;<br>  for (int j = l - 1; ++i &lt; l; j = i){<pre><code>  ((poly[i].y &lt;= pt.y &amp;&amp; pt.y &lt; poly[j].y) || (poly[j].y &lt;= pt.y &amp;&amp; pt.y &lt; poly[i].y)) &amp;&amp; (pt.x &lt; (poly[j].x - poly[i].x) * (pt.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x) &amp;&amp; (c = !c);
+</code></pre>
+  }<br>  return c;<br>}<h2 id="判断折线是否被点击"><a href="#判断折线是否被点击" class="headerlink" title="判断折线是否被点击"></a>判断折线是否被点击</h2>  原理：点到线的距离是否大与线的宽度<br>  MAPolylineRenderer *line = (MAPolylineRenderer *)ovlay;<br>  CLLocationCoordinate2D *coo = line.polyline.points;<br>  long count = line.polyline.pointCount;<br>  for (int i = 0; i &lt; count - 1; i++) {<pre><code>  CLLocationCoordinate2D item = coo[i];
+  CLLocationCoordinate2D item1 = coo[i + 1];
+  CGPoint point1 = [m_pSkMap lonlat2Pixel:item];
+  CGPoint point2 = [m_pSkMap lonlat2Pixel:item1];
+  CGFloat dis = [self lineDistance:point linePoint1:point1 linePoint2:point2];
+  if (dis &lt; line.lineWidth * 3) &#123; // 为了防止点不上，给进行了加大处理
+      return line.polyline;
+  &#125;
+</code></pre>
+  }<h2 id="判断是否在弧形上"><a href="#判断是否在弧形上" class="headerlink" title="判断是否在弧形上"></a>判断是否在弧形上</h2>  原理：同线的点击<br>  MAArcRenderer *arcRenderer = (MAArcRenderer *)ovlay;<br>  MAArc *arc = arcRenderer.arc;<br>  int count = arc.pointCount;<br>  CLLocationCoordinate2D *coo = arc.points;<br>  for (int i = 0; i &lt; count - 1; i++) {<pre><code>  CLLocationCoordinate2D item = coo[i];
+  CLLocationCoordinate2D pointCoo = [m_pSkMap pixel2LonLat:point];
+  CLLocationDistance dis = MAMetersBetweenMapPoints(item,pointCoo);
+  CGFloat zoom = [m_pSkMap getZoom];
+ if (dis &lt; arcRenderer.lineWidth * 500 / zoom) &#123; // 为了防止点不上，给进行了加大处理
+     return arc;
+ &#125;
+</code></pre>
+ }<h2 id="判断是否在圆内"><a href="#判断是否在圆内" class="headerlink" title="判断是否在圆内"></a>判断是否在圆内</h2>  原理：点到圆心的距离小于半径<br>  MACircleRenderer *circle = (MACircleRenderer *)ovlay;<br>  CLLocationCoordinate2D coo = circle.circle.coordinate;<br>  CLLocationCoordinate2D sele = [m_pSkMap pixel2LonLat:point];<br>  double dis = MAMetersBetweenMapPoints(coo,sele);<br>  if (dis &lt; circle.circle.radius) {<pre><code>  return circle.circle;
+</code></pre>
+  }<h2 id="判断矩形画图标是否被点击"><a href="#判断矩形画图标是否被点击" class="headerlink" title="判断矩形画图标是否被点击"></a>判断矩形画图标是否被点击</h2>  判断点击是否在矩形图标rect内<br>  MAMarkerRenderer *mark = (MAMarkerRenderer *)ovlay;<br>  CGPoint markPoint = [m_pSkMap lonlat2Pixel:mark.marker.coordinate];<br>  CGSize imageSize = mark.imageSize;<br>  CGFloat scale = 1;<br>  if (mark.image) { // 不规则图形处理<pre><code>  scale = mark.imageSize.height / mark.imageSize.width;
+  if (scale &gt; 1) &#123;
+      imageSize.width = mark.imageSize.width / scale;
+      imageSize.height = mark.imageSize.height / scale;
+      markPoint.x = markPoint.x + imageSize.width / scale;
+  &#125;else&#123;
+      imageSize.width = mark.imageSize.width * scale;
+      imageSize.height = mark.imageSize.height * scale;
+  &#125;
+</code></pre>
+  }<br>  CGRect rect = CGRectMake(markPoint.x, markPoint.y, imageSize.width,imageSize.height);<br>  if (CGRectContainsPoint(rect,point)) {<pre><code>  return mark.marker;
+</code></pre>
+  }</li>
+</ul>
+<h2 id="覆盖物的拖拽："><a href="#覆盖物的拖拽：" class="headerlink" title="覆盖物的拖拽："></a>覆盖物的拖拽：</h2><pre><code>1.通过长按手势触发拖拽
+2.通过判断是否点击了多边形，判断是否在拖拽覆盖物
+3.计算移动的坐标数量，获取覆盖物新的坐标位置
+4.修改覆盖物坐标位置
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/02/M_Swift154OpenGL%E6%9C%AF%E8%AF%AD/" rel="prev" title="OpenGL术语">
+      <i class="fa fa-chevron-left"></i> OpenGL术语
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/24/M_Swift156OpenGLES%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/" rel="next" title="OpenGL常用函数">
+      OpenGL常用函数 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E7%BB%8F%E7%BA%AC%E5%BA%A6%E4%B9%8B%E9%97%B4%E7%9A%84%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.</span> <span class="nav-text">计算经纬度之间的距离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GPS%E8%BD%AC%E9%AB%98%E5%BE%B7"><span class="nav-number">2.</span> <span class="nav-text">GPS转高德</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GPS%E8%BD%AC%E7%99%BE%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">GPS转百度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BE%E5%BA%A6%E8%BD%ACGPS"><span class="nav-number">4.</span> <span class="nav-text">百度转GPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BE%E5%BA%A6%E8%BD%AC%E9%AB%98%E5%BE%B7"><span class="nav-number">5.</span> <span class="nav-text">百度转高德</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%BE%B7%E8%BD%AC%E7%99%BE%E5%BA%A6"><span class="nav-number">6.</span> <span class="nav-text">高德转百度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%BE%B7%E8%BD%ACGPS"><span class="nav-number">7.</span> <span class="nav-text">高德转GPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%9F%90%E4%B8%AA%E7%82%B9point%E6%98%AF%E5%90%A6%E5%9C%A8p1%E5%92%8Cp2%E4%B9%8B%E9%97%B4"><span class="nav-number">8.</span> <span class="nav-text">判断某个点point是否在p1和p2之间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%97%E7%95%A5%E5%88%A4%E6%96%AD%E6%98%AF%E4%B8%8D%E6%98%AF%E5%9C%A8%E4%B8%AD%E5%9B%BD"><span class="nav-number">9.</span> <span class="nav-text">粗略判断是不是在中国</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%A7%E7%BA%BF%E8%AE%A1%E7%AE%97"><span class="nav-number">10.</span> <span class="nav-text">弧线计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E6%88%AA%E5%9B%BE"><span class="nav-number">11.</span> <span class="nav-text">图片截图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%B0%E5%9B%BE%E6%89%8B%E5%8A%BF"><span class="nav-number">12.</span> <span class="nav-text">地图手势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E4%BE%8B%E5%B0%BA%E7%BB%98%E5%88%B6"><span class="nav-number">13.</span> <span class="nav-text">比例尺绘制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%B9%E5%88%B0%E7%9B%B4%E7%BA%BF%E7%9A%84%E8%B7%9D%E7%A6%BB"><span class="nav-number">14.</span> <span class="nav-text">点到直线的距离</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%9F%90%E7%82%B9%E6%98%AF%E5%90%A6%E5%8C%85%E5%90%AB%E5%9C%A8%E5%A4%9A%E8%BE%B9%E5%BD%A2%E7%9A%84%E8%8C%83%E5%9B%B4%E5%86%85-%E5%88%A4%E6%96%AD%E5%A4%9A%E8%BE%B9%E5%BD%A2%E6%98%AF%E5%90%A6%E8%A2%AB%E7%82%B9%E5%87%BB"><span class="nav-number">15.</span> <span class="nav-text">检查某点是否包含在多边形的范围内(判断多边形是否被点击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%8A%98%E7%BA%BF%E6%98%AF%E5%90%A6%E8%A2%AB%E7%82%B9%E5%87%BB"><span class="nav-number">16.</span> <span class="nav-text">判断折线是否被点击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%9C%A8%E5%BC%A7%E5%BD%A2%E4%B8%8A"><span class="nav-number">17.</span> <span class="nav-text">判断是否在弧形上</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%9C%A8%E5%9C%86%E5%86%85"><span class="nav-number">18.</span> <span class="nav-text">判断是否在圆内</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E7%9F%A9%E5%BD%A2%E7%94%BB%E5%9B%BE%E6%A0%87%E6%98%AF%E5%90%A6%E8%A2%AB%E7%82%B9%E5%87%BB"><span class="nav-number">19.</span> <span class="nav-text">判断矩形画图标是否被点击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E7%89%A9%E7%9A%84%E6%8B%96%E6%8B%BD%EF%BC%9A"><span class="nav-number">20.</span> <span class="nav-text">覆盖物的拖拽：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

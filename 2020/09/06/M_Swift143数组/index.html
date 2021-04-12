@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="旋转数组本题的难点在于如何处理数组，一个是开辟另一个数组进行处理，另一个是多次旋转数组实现 方法 1：暴力 最简单的方法是旋转 k 次，每次将数组旋转 1 个元素。 public class Solution &amp;#123;     public void rotate(int[] nums, int k) &amp;#123;         int temp, previous;         for">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数组">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift143%E6%95%B0%E7%BB%84/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="旋转数组本题的难点在于如何处理数组，一个是开辟另一个数组进行处理，另一个是多次旋转数组实现 方法 1：暴力 最简单的方法是旋转 k 次，每次将数组旋转 1 个元素。 public class Solution &amp;#123;     public void rotate(int[] nums, int k) &amp;#123;         int temp, previous;         for">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:30:21.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:30:21.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift143%E6%95%B0%E7%BB%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数组 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift143%E6%95%B0%E7%BB%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数组
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:21" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:21+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="旋转数组"><a href="#旋转数组" class="headerlink" title="旋转数组"></a>旋转数组</h2><pre><code>本题的难点在于如何处理数组，一个是开辟另一个数组进行处理，另一个是多次旋转数组实现
+方法 1：暴力
+最简单的方法是旋转 k 次，每次将数组旋转 1 个元素。
+public class Solution &#123;
+    public void rotate(int[] nums, int k) &#123;
+        int temp, previous;
+        for (int i = 0; i &lt; k; i++) &#123;
+            previous = nums[nums.length - 1];
+            for (int j = 0; j &lt; nums.length; j++) &#123;
+                temp = nums[j];
+                nums[j] = previous;
+                previous = temp;
+            &#125;
+        &#125;
+    &#125;
+&#125;
+方法 2：使用额外的数组
+public class Solution &#123;
+    public void rotate(int[] nums, int k) &#123;
+        int[] a = new int[nums.length];
+        for (int i = 0; i &lt; nums.length; i++) &#123;
+            a[(i + k) % nums.length] = nums[i];
+        &#125;
+        for (int i = 0; i &lt; nums.length; i++) &#123;
+            nums[i] = a[i];
+        &#125;
+    &#125;
+&#125;
+方法 3：使用环状替换
+public class Solution &#123;
+    public void rotate(int[] nums, int k) &#123;
+        k = k % nums.length;
+        int count = 0;
+        for (int start = 0; count &lt; nums.length; start++) &#123;
+            int current = start;
+            int prev = nums[start];
+            do &#123;
+                int next = (current + k) % nums.length;
+                int temp = nums[next];
+                nums[next] = prev;
+                prev = temp;
+                current = next;
+                count++;
+            &#125; while (start != current);
+        &#125;
+    &#125;
+&#125;
+方法 4：使用反转
+原始数组                  : 1 2 3 4 5 6 7
+反转所有数字后             : 7 6 5 4 3 2 1
+反转前 k 个数字后          : 5 6 7 4 3 2 1
+反转后 n-k 个数字后        : 5 6 7 1 2 3 4 --&gt; 结果
+
+public class Solution &#123;
+    public void rotate(int[] nums, int k) &#123;
+        k %= nums.length;
+        reverse(nums, 0, nums.length - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, nums.length - 1);
+    &#125;
+    public void reverse(int[] nums, int start, int end) &#123;
+        while (start &lt; end) &#123;
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="数组迭代"><a href="#数组迭代" class="headerlink" title="数组迭代"></a>数组迭代</h2><pre><code>给你一个嵌套的整型列表。请你设计一个迭代器，使其能够遍历这个整型列表中的所有整数。
+列表中的每一项或者为一个整数，或者是另一个列表。其中列表的元素也可能是整数或是其他列表。
+输入: [[1,1],2,[1,1]]
+输出: [1,1,2,1,1]
+解释: 通过重复调用 next 直到 hasNext 返回 false，next 返回的元素的顺序应该是: [1,1,2,1,1]。
+
+public class NestedIterator implements Iterator&lt;Integer&gt; &#123;
+Queue&lt;Integer&gt; res = new LinkedList&lt;&gt;();
+
+public NestedIterator(List&lt;NestedInteger&gt; nestedList) &#123;
+    for(NestedInteger temp : nestedList)
+        DFS(temp);
+&#125;
+
+@Override
+public Integer next() &#123;
+    return res.poll();
+&#125;
+
+@Override
+public boolean hasNext() &#123;
+    if(res.isEmpty())
+        return false;
+    return true;
+    
+&#125;
+public void DFS(NestedInteger Node)&#123;
+    /* 深度遍历 */
+    if(Node.isInteger())
+        res.offer(Node.getInteger());
+    for(NestedInteger temp :Node.getList())
+        DFS(temp);
+&#125;
+&#125;
+</code></pre>
+<h2 id="调整数组顺序使奇数位于偶数前面"><a href="#调整数组顺序使奇数位于偶数前面" class="headerlink" title="调整数组顺序使奇数位于偶数前面"></a>调整数组顺序使奇数位于偶数前面</h2><pre><code>本题的难点在入如何交换数据，采用i，j双指针，直到都不为奇偶才交换
+public int[] exchange(int[] nums) &#123;
+       if(nums.length == 0) return nums;
+       int i = 0,j = nums.length-1;
+       while(i != j)&#123;
+           while(nums[i] %2 != 0 &amp;&amp; i&lt;j )&#123;
+               i++;
+           &#125;
+           while(nums[j] %2 == 0 &amp;&amp; i&lt;j )&#123;
+               j--;
+           &#125;
+           if(i&lt;j)&#123;
+               int temp = nums[i];
+               nums[i] = nums[j];
+               nums[j] = temp;
+           &#125;
+       &#125;
+       return nums;
+   &#125;
+</code></pre>
+<h2 id="数组中出现次数超过一半的数字"><a href="#数组中出现次数超过一半的数字" class="headerlink" title="数组中出现次数超过一半的数字"></a>数组中出现次数超过一半的数字</h2><pre><code>   哈希表统计法，用 HashMap 统计各数字的数量
+   数组排序法：由于众数的数量超过数组长度一半，
+   因此 数组中点的元素 一定为众数
+   摩尔投票法：核心理念为 “正负抵消” 
+   当 n=x ： 抵消的所有数字中，有一半是众数    
+   n不等x ： 抵消的所有数字中，少于或等于一半是众数 x
+   利用此特性，每轮假设都可以 缩小剩余数组区间 。当遍历完成时，最后一轮假
+   设的数字即为众数（由于众数超过一半，最后一轮的票数和必为正数）
+
+   public int majorityElement(int[] nums) &#123;
+       int x = 0, votes = 0;
+       for(int num : nums)&#123;
+           if(votes == 0) x = num;
+           votes += num == x ? 1 : -1;
+       &#125;
+       return x;
+   &#125;
+</code></pre>
+<h2 id="连续子数组的最大和"><a href="#连续子数组的最大和" class="headerlink" title="连续子数组的最大和"></a>连续子数组的最大和</h2><pre><code>    这种最适合动态规划了，慢慢的变化，将前面的结构给到nums[i]
+       输入一个整型数组，数组里有正数也有负数。数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值。
+   class Solution &#123;
+       public int maxSubArray(int[] nums) &#123;
+           int res = nums[0];
+           for(int i = 1; i &lt; nums.length; i++) &#123;
+               nums[i] += Math.max(nums[i - 1], 0);
+               res = Math.max(res, nums[i]);
+           &#125;
+           return res;
+       &#125;
+   &#125;
+</code></pre>
+<h2 id="1～n整数中1出现的次数"><a href="#1～n整数中1出现的次数" class="headerlink" title="1～n整数中1出现的次数"></a>1～n整数中1出现的次数</h2><pre><code>从个位到最高位的变量递推公式为
+# 当 high 和 cur 同时为 0 时，说明已经越过最高位，因此跳出
+# 将 cur 加入 low ，组成下轮 low
+# 下轮 cur 是本轮 high 的最低位
+# 将本轮 high 最低位删除，得到下轮 high
+# 位因子每轮 × 10
+   class Solution &#123;
+       public int countDigitOne(int n) &#123;
+           int digit = 1, res = 0;
+           int high = n / 10, cur = n % 10, low = 0;
+           while(high != 0 || cur != 0) &#123;
+               if(cur == 0) res += high * digit;
+               else if(cur == 1) res += high * digit + low + 1;
+               else res += (high + 1) * digit;
+               low += cur * digit;
+               cur = high % 10;
+               high /= 10;
+               digit *= 10;
+           &#125;
+           return res;
+       &#125;
+   &#125;
+</code></pre>
+<h2 id="数字序列中某一位的数字"><a href="#数字序列中某一位的数字" class="headerlink" title="数字序列中某一位的数字"></a>数字序列中某一位的数字</h2><pre><code>   数字以0123456789101112131415…的格式序列化到一个字符序列中
+   迭代 + 求整 / 求余
+       count=9×start×digit，num = start + (n - 1)
+
+       class Solution &#123;
+       public int findNthDigit(int n) &#123;
+           int digit = 1;
+           long start = 1;
+           long count = 9;
+           while (n &gt; count) &#123; // 1.
+               n -= count;
+               digit += 1;
+               start *= 10;
+               count = digit * start * 9;
+           &#125;
+           long num = start + (n - 1) / digit; // 2.
+           return Long.toString(num).charAt((n - 1) % digit) - &#39;0&#39;; // 3.
+       &#125;
+   &#125;
+</code></pre>
+<h2 id="和为s的两个数字"><a href="#和为s的两个数字" class="headerlink" title="和为s的两个数字"></a>和为s的两个数字</h2><pre><code>        双指针法，分别指向数组的两端，如果两个数的和大于target则j--如果小于target则i++，直至相等 
+class Solution &#123;
+    public int[] twoSum(int[] nums, int target) &#123;
+        int i = 0, j = nums.length - 1;
+        while(i &lt; j) &#123;
+            int s = nums[i] + nums[j];
+            if(s &lt; target) i++;
+            else if(s &gt; target) j--;
+            else return new int[] &#123; nums[i], nums[j] &#125;;
+        &#125;
+        return new int[0];
+    &#125;
+&#125;
+</code></pre>
+<h2 id="给定两个数组，编写一个函数来计算它们的交集。"><a href="#给定两个数组，编写一个函数来计算它们的交集。" class="headerlink" title="给定两个数组，编写一个函数来计算它们的交集。"></a>给定两个数组，编写一个函数来计算它们的交集。</h2><pre><code>方法一：哈希表
+首先遍历第一个数组，并在哈希表中记录第一个数组中的每个数字以及对应出现的次数，然后遍历第二个数组，对于第二个数组中的每个数字，如果在哈希表中存在这个数字，则将该数字添加到答案，并减少哈希表中该数字出现的次数。
+为了降低空间复杂度，首先遍历较短的数组并在哈希表中记录每个数字以及对应出现的次数，然后遍历较长的数组得到交集。
+class Solution &#123;
+    public int[] intersect(int[] nums1, int[] nums2) &#123;
+        if (nums1.length &gt; nums2.length) &#123;
+            return intersect(nums2, nums1);
+        &#125;
+        Map&lt;Integer, Integer&gt; map = new HashMap&lt;Integer, Integer&gt;();
+        for (int num : nums1) &#123;
+            int count = map.getOrDefault(num, 0) + 1;
+            map.put(num, count);
+        &#125;
+        int[] intersection = new int[nums1.length];
+        int index = 0;
+        for (int num : nums2) &#123;
+            int count = map.getOrDefault(num, 0);
+            if (count &gt; 0) &#123;
+                intersection[index++] = num;
+                count--;
+                if (count &gt; 0) &#123;
+                    map.put(num, count);
+                &#125; else &#123;
+                    map.remove(num);
+                &#125;
+            &#125;
+        &#125;
+        return Arrays.copyOfRange(intersection, 0, index);
+    &#125;
+&#125;
+方法二：排序
+如果两个数组是有序的，则可以便捷地计算两个数组的交集。
+class Solution &#123;
+    public int[] intersect(int[] nums1, int[] nums2) &#123;
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        int length1 = nums1.length, length2 = nums2.length;
+        int[] intersection = new int[Math.min(length1, length2)];
+        int index1 = 0, index2 = 0, index = 0;
+        while (index1 &lt; length1 &amp;&amp; index2 &lt; length2) &#123;
+            if (nums1[index1] &lt; nums2[index2]) &#123;
+                index1++;
+            &#125; else if (nums1[index1] &gt; nums2[index2]) &#123;
+                index2++;
+            &#125; else &#123;
+                intersection[index] = nums1[index1];
+                index1++;
+                index2++;
+                index++;
+            &#125;
+        &#125;
+        return Arrays.copyOfRange(intersection, 0, index);
+    &#125;
+&#125;
+</code></pre>
+<h2 id="给定一个未排序的数组，判断这个数组中是否存在长度为-3-的递增子序列。"><a href="#给定一个未排序的数组，判断这个数组中是否存在长度为-3-的递增子序列。" class="headerlink" title="给定一个未排序的数组，判断这个数组中是否存在长度为 3 的递增子序列。"></a>给定一个未排序的数组，判断这个数组中是否存在长度为 3 的递增子序列。</h2><pre><code>class Solution &#123;
+public:
+    bool increasingTriplet(vector&lt;int&gt;&amp; nums) &#123;
+        int first = INT_MAX, sec = INT_MAX;     
+        for(int n : nums)                       //
+        &#123;
+            if(n &lt;= first)  first = n;          
+            else
+            &#123;
+                if(n &lt;= sec )   sec = n;        
+                else   return true;
+            &#125;
+        &#125;
+        return false;
+
+    &#125;
+&#125;;
+</code></pre>
+<h2 id="逆波兰表达式"><a href="#逆波兰表达式" class="headerlink" title="逆波兰表达式"></a>逆波兰表达式</h2><pre><code>是一种后缀表达式，所谓后缀就是指算符写在后面。
+平常使用的算式则是一种中缀表达式，如 ( 1 + 2 ) * ( 3 + 4 ) 。
+该算式的逆波兰表达式写法为 ( ( 1 2 + ) ( 3 4 + ) * ) 。
+class Solution &#123;
+    //纯数组模拟栈实现(推荐)   3 ms    36 MB
+    public static int evalRPN(String[] tokens) &#123;
+        int[] numStack = new int[tokens.length / 2 + 1];
+        int index = 0;
+        for (String s : tokens) &#123;
+            switch (s) &#123;
+            case &quot;+&quot;:
+                numStack[index - 2] += numStack[--index];
+                break;
+            case &quot;-&quot;:
+                numStack[index - 2] -= numStack[--index];
+                break;
+            case &quot;*&quot;:
+                numStack[index - 2] *= numStack[--index];
+                break;
+            case &quot;/&quot;:
+                numStack[index - 2] /= numStack[--index];
+                break;
+            default:
+                // numStack[index++] = Integer.valueOf(s);
+                //valueOf改为parseInt，减少自动拆箱装箱操作
+                numStack[index++] = Integer.parseInt(s);
+                break;
+            &#125;
+        &#125;
+        return numStack[0];
+    &#125;
+&#125;
+class Solution &#123;
+    // 栈实现   8 ms    36.7 MB    
+    public static int evalRPN(String[] tokens) &#123;
+        Stack&lt;Integer&gt; numStack = new Stack&lt;&gt;();
+        Integer op1, op2;
+        for (String s : tokens) &#123;
+            switch (s) &#123;
+            case &quot;+&quot;:
+                op2 = numStack.pop();
+                op1 = numStack.pop();
+                numStack.push(op1 + op2);
+                break;
+            case &quot;-&quot;:
+                op2 = numStack.pop();
+                op1 = numStack.pop();
+                numStack.push(op1 - op2);
+                break;
+            case &quot;*&quot;:
+                op2 = numStack.pop();
+                op1 = numStack.pop();
+                numStack.push(op1 * op2);
+                break;
+            case &quot;/&quot;:
+                op2 = numStack.pop();
+                op1 = numStack.pop();
+                numStack.push(op1 / op2);
+                break;
+            default:
+                numStack.push(Integer.valueOf(s));
+                break;
+            &#125;
+        &#125;
+        return numStack.pop();
+    &#125;
+&#125;
+</code></pre>
+<h2 id="除自身以外数组的乘积"><a href="#除自身以外数组的乘积" class="headerlink" title="除自身以外数组的乘积"></a>除自身以外数组的乘积</h2><pre><code>输入: [1,2,3,4]
+输出: [24,12,8,6]
+方法一：左右乘积列表
+我们不必将所有数字的乘积除以给定索引处的数字得到相应的答案，而是利用索引左侧所有数字的乘积和右侧所有数字的乘积（即前缀与后缀）相乘得到答案。
+class Solution &#123;
+    public int[] productExceptSelf(int[] nums) &#123;
+        int length = nums.length;
+
+    // L 和 R 分别表示左右两侧的乘积列表
+    int[] L = new int[length];
+    int[] R = new int[length];
+
+    int[] answer = new int[length];
+
+    // L[i] 为索引 i 左侧所有元素的乘积
+    // 对于索引为 &#39;0&#39; 的元素，因为左侧没有元素，所以 L[0] = 1
+    L[0] = 1;
+    for (int i = 1; i &lt; length; i++) &#123;
+        L[i] = nums[i - 1] * L[i - 1];
+    &#125;
+
+    // R[i] 为索引 i 右侧所有元素的乘积
+    // 对于索引为 &#39;length-1&#39; 的元素，因为右侧没有元素，所以 R[length-1] = 1
+    R[length - 1] = 1;
+    for (int i = length - 2; i &gt;= 0; i--) &#123;
+        R[i] = nums[i + 1] * R[i + 1];
+    &#125;
+
+    // 对于索引 i，除 nums[i] 之外其余各元素的乘积就是左侧所有元素的乘积乘以右侧所有元素的乘积
+    for (int i = 0; i &lt; length; i++) &#123;
+        answer[i] = L[i] * R[i];
+    &#125;
+
+    return answer;
+&#125;
+&#125;
+方法二：空间复杂度 
+第一个循环应该是表示下三角中自上而下对每一行做连乘，而第二个循环是对上三角自下而上的连乘
+class Solution &#123;
+    public int[] productExceptSelf(int[] nums) &#123;
+        int length = nums.length;
+        int[] answer = new int[length];
+
+    // answer[i] 表示索引 i 左侧所有元素的乘积
+    // 因为索引为 &#39;0&#39; 的元素左侧没有元素， 所以 answer[0] = 1
+    answer[0] = 1;
+    for (int i = 1; i &lt; length; i++) &#123;
+        answer[i] = nums[i - 1] * answer[i - 1];
+    &#125;
+
+    // R 为右侧所有元素的乘积
+    // 刚开始右边没有元素，所以 R = 1
+    int R = 1;
+    for (int i = length - 1; i &gt;= 0; i--) &#123;
+        // 对于索引 i，左边的乘积为 answer[i]，右边的乘积为 R
+        answer[i] = answer[i] * R;
+        // R 需要包含右边所有的乘积，所以计算下一个结果时需要将当前值乘到 R 上
+        R *= nums[i];
+    &#125;
+    return answer;
+&#125;
+&#125;
+</code></pre>
+<h2 id="和为s的连续正数序列-（滑动窗口）"><a href="#和为s的连续正数序列-（滑动窗口）" class="headerlink" title="和为s的连续正数序列  （滑动窗口）"></a>和为s的连续正数序列  （滑动窗口）</h2><pre><code>    窗口的左边界和右边界永远只能向右移动
+    当窗口的和小于 target 的时候，窗口的和需要增加，所以要扩大窗口，窗口的右边界向右移动
+    当窗口的和大于 target 的时候，窗口的和需要减少，所以要缩小窗口，窗口的左边界向右移动
+输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。
+序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
+什么是滑动窗口
+滑动窗口可以看成数组中框起来的一个部分。在一些数组类题目中，我们可以用滑动窗口来观察可能的候选结果。当滑动窗口从数组的左边滑到了右边，我们就可以从所有的候选结果中找到最优的结果。
+窗口的左边界和右边界永远只能向右移动
+第一个问题，窗口何时扩大，何时缩小？
+第二个问题，滑动窗口能找到全部的解吗？
+当窗口的和小于 target 的时候，窗口的和需要增加，所以要扩大窗口，窗口的右边界向右移动
+当窗口的和大于 target 的时候，窗口的和需要减少，所以要缩小窗口，窗口的左边界向右移动
+public int[][] findContinuousSequence(int target) &#123;
+    int i = 1; // 滑动窗口的左边界
+    int j = 1; // 滑动窗口的右边界
+    int sum = 0; // 滑动窗口中数字的和
+    List&lt;int[]&gt; res = new ArrayList&lt;&gt;();
+
+while (i &lt;= target / 2) &#123;
+    if (sum &lt; target) &#123;
+        // 右边界向右移动
+        sum += j;
+        j++;
+    &#125; else if (sum &gt; target) &#123;
+        // 左边界向右移动
+        sum -= i;
+        i++;
+    &#125; else &#123;
+        // 记录结果
+        int[] arr = new int[j-i];
+        for (int k = i; k &lt; j; k++) &#123;
+            arr[k-i] = k;
+        &#125;
+        res.add(arr);
+        // 左边界向右移动
+        sum -= i;
+        i++;
+    &#125;
+&#125;
+
+return res.toArray(new int[res.size()][]);
+</code></pre>
+<p>}</p>
+<h2 id="滑动窗口的最大值"><a href="#滑动窗口的最大值" class="headerlink" title="滑动窗口的最大值"></a>滑动窗口的最大值</h2><pre><code>给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+单调队列
+我们先看什么是单调的双向队列，双向队列大家都知道，既能在头部进行插入、删除操作，也能在尾部进行插入删除操作，而所谓的单调，就是我们人为规定从队列的头部到尾部，所存储的元素是依次递减（或依次递增）的。如下所示：
+
+也就是说，我们维护一个单调的双向队列，窗口在每次滑动的时候，我就从队列头部取当前窗口中的最大值，每次窗口新进来一个元素的时候，我就将它与队列中的元素进行大小比较：
+
+如果刚刚进来的元素比队列的尾部元素大，那么先将队列尾部的元素弹出，然后把刚刚进来的元素添到队列的尾部；
+如果刚刚进来的元素比队列的尾部元素小，那么把刚刚进来的元素直接添到队列的尾部即可。
+
+class Solution &#123;
+    public int[] maxSlidingWindow(int[] nums, int k) &#123;
+        if (nums == null || k &lt; 1 || nums.length &lt; k) &#123;
+            return new int[0];
+        &#125;
+
+    int index = 0;
+    int[] res = new int[nums.length - k + 1];
+    LinkedList&lt;Integer&gt; queue = new LinkedList&lt;&gt;();
+
+    for (int i = 0; i &lt; nums.length; i++) &#123;
+        // 在队列不为空的情况下，如果队列尾部的元素要比当前的元素小，或等于当前的元素
+        // 那么为了维持从大到小的原则，我必须让尾部元素弹出
+        while (!queue.isEmpty() &amp;&amp; nums[queue.peekLast()] &lt;= nums[i]) &#123;
+            queue.pollLast();
+        &#125;
+        // 不走 while 的话，说明我们正常在队列尾部添加元素
+        queue.addLast(i);
+        // 如果滑动窗口已经略过了队列中头部的元素，则将头部元素弹出
+        if (queue.peekFirst() == (i - k)) &#123;
+            queue.pollFirst();
+        &#125;
+        // 看看窗口有没有形成，只有形成了大小为 k 的窗口，我才能收集窗口内的最大值
+        if (i &gt;= (k - 1)) &#123;
+            res[index++] = nums[queue.peekFirst()];
+        &#125;
+    &#125;
+    return res;
+&#125;
+</code></pre>
+<p>}</p>
+<h2 id="将数组中所有-0-移动到数组末尾。"><a href="#将数组中所有-0-移动到数组末尾。" class="headerlink" title="将数组中所有 0 移动到数组末尾。"></a>将数组中所有 0 移动到数组末尾。</h2><pre><code>方法一：空间局部优化
+class Solution &#123;
+    public void moveZeroes(int[] nums) &#123;
+        if(nums==null) &#123;
+            return;
+        &#125;
+        //第一次遍历的时候，j指针记录非0的个数，只要是非0的统统都赋给nums[j]
+        int j = 0;
+        for(int i=0;i&lt;nums.length;++i) &#123;
+            if(nums[i]!=0) &#123;
+                nums[j++] = nums[i];
+            &#125;
+        &#125;
+        //非0元素统计完了，剩下的都是0了
+        //所以第二次遍历把末尾的元素都赋为0即可
+        for(int i=j;i&lt;nums.length;++i) &#123;
+            nums[i] = 0;
+        &#125;
+    &#125;
+&#125;    
+方法二：空间最优，操作局部优化（双指针）
+class Solution &#123;
+    public void moveZeroes(int[] nums) &#123;
+        if(nums==null) &#123;
+            return;
+        &#125;
+        //两个指针i和j
+        int j = 0;
+        for(int i=0;i&lt;nums.length;i++) &#123;
+            //当前元素!=0，就把其交换到左边，等于0的交换到右边
+            if(nums[i]!=0) &#123;
+                int tmp = nums[i];
+                nums[i] = nums[j];
+                nums[j++] = tmp;
+            &#125;
+        &#125;
+    &#125;
+&#125;    
+</code></pre>
+<h2 id="打乱数组"><a href="#打乱数组" class="headerlink" title="打乱数组"></a>打乱数组</h2><pre><code>方法一： 暴力 【通过】
+暴力算法简单的来说就是把每个数放在一个 ”帽子“ 里面，每次从 ”帽子“ 里面随机摸一个数出来
+class Solution &#123;
+    private int[] array;
+    private int[] original;
+
+private Random rand = new Random();
+
+private List&lt;Integer&gt; getArrayCopy() &#123;
+    List&lt;Integer&gt; asList = new ArrayList&lt;Integer&gt;();
+    for (int i = 0; i &lt; array.length; i++) &#123;
+        asList.add(array[i]);
+    &#125;
+    return asList;
+&#125;
+
+public Solution(int[] nums) &#123;
+    array = nums;
+    original = nums.clone();
+&#125;
+
+public int[] reset() &#123;
+    array = original;
+    original = original.clone();
+    return array;
+&#125;
+
+public int[] shuffle() &#123;
+    List&lt;Integer&gt; aux = getArrayCopy();
+
+    for (int i = 0; i &lt; array.length; i++) &#123;
+        int removeIdx = rand.nextInt(aux.size());
+        array[i] = aux.get(removeIdx);
+        aux.remove(removeIdx);
+    &#125;
+
+    return array;
+&#125;
+</code></pre>
+<p>}<br>    方法二： Fisher-Yates 洗牌算法 【通过】<br>    Fisher-Yates 洗牌算法跟暴力算法很像。在每次迭代中，生成一个范围在当前下标到数组末尾元素下标之间的随机整数。接下来，将当前元素和随机选出的下标所指的元素互相交换 - 这一步模拟了每次从 “帽子” 里面摸一个元素的过程，其中选取下标范围的依据在于每个被摸出的元素都不可能再被摸出来了。</p>
+<pre><code>class Solution &#123;
+    private int[] array;
+    private int[] original;
+
+Random rand = new Random();
+
+private int randRange(int min, int max) &#123;
+    return rand.nextInt(max - min) + min;
+&#125;
+
+private void swapAt(int i, int j) &#123;
+    int temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+&#125;
+
+public Solution(int[] nums) &#123;
+    array = nums;
+    original = nums.clone();
+&#125;
+
+public int[] reset() &#123;
+    array = original;
+    original = original.clone();
+    return original;
+&#125;
+
+public int[] shuffle() &#123;
+    for (int i = 0; i &lt; array.length; i++) &#123;
+        swapAt(i, randRange(i, array.length));
+    &#125;
+    return array;
+&#125;
+&#125;
+</code></pre>
+<h2 id="数组中的逆序对"><a href="#数组中的逆序对" class="headerlink" title="数组中的逆序对"></a>数组中的逆序对</h2><pre><code>public class Solution &#123;
+
+public int reversePairs(int[] nums) &#123;
+    int len = nums.length;
+
+    if (len &lt; 2) &#123;
+        return 0;
+    &#125;
+
+    int[] copy = new int[len];
+    for (int i = 0; i &lt; len; i++) &#123;
+        copy[i] = nums[i];
+    &#125;
+
+    int[] temp = new int[len];
+    return reversePairs(copy, 0, len - 1, temp);
+&#125;
+
+/**
+ * nums[left..right] 计算逆序对个数并且排序
+ *
+ * @param nums
+ * @param left
+ * @param right
+ * @param temp
+ * @return
+ */
+private int reversePairs(int[] nums, int left, int right, int[] temp) &#123;
+    if (left == right) &#123;
+        return 0;
+    &#125;
+
+    int mid = left + (right - left) / 2;
+    int leftPairs = reversePairs(nums, left, mid, temp);
+    int rightPairs = reversePairs(nums, mid + 1, right, temp);
+
+    if (nums[mid] &lt;= nums[mid + 1]) &#123;
+        return leftPairs + rightPairs;
+    &#125;
+
+    int crossPairs = mergeAndCount(nums, left, mid, right, temp);
+    return leftPairs + rightPairs + crossPairs;
+&#125;
+
+/**
+ * nums[left..mid] 有序，nums[mid + 1..right] 有序
+ *
+ * @param nums
+ * @param left
+ * @param mid
+ * @param right
+ * @param temp
+ * @return
+ */
+private int mergeAndCount(int[] nums, int left, int mid, int right, int[] temp) &#123;
+    for (int i = left; i &lt;= right; i++) &#123;
+        temp[i] = nums[i];
+    &#125;
+
+    int i = left;
+    int j = mid + 1;
+
+    int count = 0;
+    for (int k = left; k &lt;= right; k++) &#123;
+
+        if (i == mid + 1) &#123;
+            nums[k] = temp[j];
+            j++;
+        &#125; else if (j == right + 1) &#123;
+            nums[k] = temp[i];
+            i++;
+        &#125; else if (temp[i] &lt;= temp[j]) &#123;
+            nums[k] = temp[i];
+            i++;
+        &#125; else &#123;
+            nums[k] = temp[j];
+            j++;
+            count += (mid - i + 1);
+        &#125;
+    &#125;
+    return count;
+&#125;
+&#125;
+</code></pre>
+<h2 id="最小的k个数"><a href="#最小的k个数" class="headerlink" title="最小的k个数"></a>最小的k个数</h2><pre><code>    用快排最最最高效解决 TopK 问题：
+    大根堆(前 K 小) / 小根堆（前 K 大),Java中有现成的 PriorityQueue，实现起来最简单：
+    二叉搜索树也可以 解决 TopK 问题哦
+    数据范围有限时直接计数排序就行了：
+class Solution &#123;
+    public int[] getLeastNumbers(int[] arr, int k) &#123;
+        if (k == 0 || arr.length == 0) &#123;
+            return new int[0];
+        &#125;
+        // 最后一个参数表示我们要找的是下标为k-1的数
+        return quickSearch(arr, 0, arr.length - 1, k - 1);
+    &#125;
+
+private int[] quickSearch(int[] nums, int lo, int hi, int k) &#123;
+    // 每快排切分1次，找到排序后下标为j的元素，如果j恰好等于k就返回j以及j左边所有的数；
+    int j = partition(nums, lo, hi);
+    if (j == k) &#123;
+        return Arrays.copyOf(nums, j + 1);
+    &#125;
+    // 否则根据下标j与k的大小关系来决定继续切分左段还是右段。
+    return j &gt; k? quickSearch(nums, lo, j - 1, k): quickSearch(nums, j + 1, hi, k);
+&#125;
+
+// 快排切分，返回下标j，使得比nums[j]小的数都在j的左边，比nums[j]大的数都在j的右边。
+private int partition(int[] nums, int lo, int hi) &#123;
+    int v = nums[lo];
+    int i = lo, j = hi + 1;
+    while (true) &#123;
+        while (++i &lt;= hi &amp;&amp; nums[i] &lt; v);
+        while (--j &gt;= lo &amp;&amp; nums[j] &gt; v);
+        if (i &gt;= j) &#123;
+            break;
+        &#125;
+        int t = nums[j];
+        nums[j] = nums[i];
+        nums[i] = t;
+    &#125;
+    nums[lo] = nums[j];
+    nums[j] = v;
+    return j;
+&#125;
+&#125;
+我们用一个大根堆实时维护数组的前 k 小值。首先将前 k 个数插入大根堆中，随后从第 k+1 个数开始遍历，如果当前遍历到的数比大根堆的堆顶的数要小，就把堆顶的数弹出，再插入当前遍历到的数。最后将大根堆里的数存入数组返回即可。
+// 保持堆的大小为K，然后遍历数组中的数字，遍历的时候做如下判断：
+// 1. 若目前堆的大小小于K，将当前数字放入堆中。
+// 2. 否则判断当前数字与大根堆堆顶元素的大小关系，如果当前数字比大根堆堆顶还大，这个数就直接跳过；
+//    反之如果当前数字比大根堆堆顶小，先poll掉堆顶，再将该数字放入堆中。
+class Solution &#123;
+    public int[] getLeastNumbers(int[] arr, int k) &#123;
+        if (k == 0 || arr.length == 0) &#123;
+            return new int[0];
+        &#125;
+        // 默认是小根堆，实现大根堆需要重写一下比较器。
+        Queue&lt;Integer&gt; pq = new PriorityQueue&lt;&gt;((v1, v2) -&gt; v2 - v1);
+        for (int num: arr) &#123;
+            if (pq.size() &lt; k) &#123;
+                pq.offer(num);
+            &#125; else if (num &lt; pq.peek()) &#123;
+                pq.poll();
+                pq.offer(num);
+            &#125;
+        &#125;
+        
+        // 返回堆中的元素
+        int[] res = new int[pq.size()];
+        int idx = 0;
+        for(int num: pq) &#123;
+            res[idx++] = num;
+        &#125;
+        return res;
+    &#125;
+&#125;
+二叉搜索树也可以 O(NlogK)解决 TopK 问题哦
+与前两种方法相比，BST 有一个好处是求得的前K大的数字是有序的。
+class Solution &#123;
+public int[] getLeastNumbers(int[] arr, int k) &#123;
+    if (k == 0 || arr.length == 0) &#123;
+        return new int[0];
+    &#125;
+    // TreeMap的key是数字, value是该数字的个数。
+    // cnt表示当前map总共存了多少个数字。
+    TreeMap&lt;Integer, Integer&gt; map = new TreeMap&lt;&gt;();
+    int cnt = 0;
+    for (int num: arr) &#123;
+        // 1. 遍历数组，若当前map中的数字个数小于k，则map中当前数字对应个数+1
+        if (cnt &lt; k) &#123;
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            cnt++;
+            continue;
+        &#125; 
+        // 2. 否则，取出map中最大的Key（即最大的数字), 判断当前数字与map中最大数字的大小关系：
+        //    若当前数字比map中最大的数字还大，就直接忽略；
+        //    若当前数字比map中最大的数字小，则将当前数字加入map中，并将map中的最大数字的个数-1。
+        Map.Entry&lt;Integer, Integer&gt; entry = map.lastEntry();
+        if (entry.getKey() &gt; num) &#123;
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            if (entry.getValue() == 1) &#123;
+                map.pollLastEntry();
+            &#125; else &#123;
+                map.put(entry.getKey(), entry.getValue() - 1);
+            &#125;
+        &#125;
+    
+&#125;
+
+    // 最后返回map中的元素
+    int[] res = new int[k];
+    int idx = 0;
+    for (Map.Entry&lt;Integer, Integer&gt; entry: map.entrySet()) &#123;
+        int freq = entry.getValue();
+        while (freq-- &gt; 0) &#123;
+            res[idx++] = entry.getKey();
+        &#125;
+    &#125;
+    return res;
+&#125;
+&#125;
+四、数据范围有限时直接计数排序就行了：
+class Solution &#123;
+    public int[] getLeastNumbers(int[] arr, int k) &#123;
+        if (k == 0 || arr.length == 0) &#123;
+            return new int[0];
+        &#125;
+        // 统计每个数字出现的次数
+        int[] counter = new int[10001];
+        for (int num: arr) &#123;
+            counter[num]++;
+        &#125;
+        // 根据counter数组从头找出k个数作为返回结果
+        int[] res = new int[k];
+        int idx = 0;
+        for (int num = 0; num &lt; counter.length; num++) &#123;
+            while (counter[num]-- &gt; 0 &amp;&amp; idx &lt; k) &#123;
+                res[idx++] = num;
+            &#125;
+            if (idx == k) &#123;
+                break;
+            &#125;
+        &#125;
+        return res;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="把数组排成最小的数"><a href="#把数组排成最小的数" class="headerlink" title="把数组排成最小的数"></a>把数组排成最小的数</h2><pre><code>输入一个非负整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。
+    输入: [10,2]
+    输出: &quot;102&quot;
+    此题求拼接起来的 “最小数字” ，本质上是一个排序问题。
+class Solution &#123;
+    public String minNumber(int[] nums) &#123;
+        String[] strs = new String[nums.length];
+        for(int i = 0; i &lt; nums.length; i++)
+            strs[i] = String.valueOf(nums[i]);
+        fastSort(strs, 0, strs.length - 1);
+        StringBuilder res = new StringBuilder();
+        for(String s : strs)
+            res.append(s);
+        return res.toString();
+    &#125;
+    void fastSort(String[] strs, int l, int r) &#123;
+        if(l &gt;= r) return;
+        int i = l, j = r;
+        String tmp = strs[i];
+        while(i &lt; j) &#123;
+            while((strs[j] + strs[l]).compareTo(strs[l] + strs[j]) &gt;= 0 &amp;&amp; i &lt; j) j--;
+            while((strs[i] + strs[l]).compareTo(strs[l] + strs[i]) &lt;= 0 &amp;&amp; i &lt; j) i++;
+            tmp = strs[i];
+            strs[i] = strs[j];
+            strs[j] = tmp;
+        &#125;
+        strs[i] = strs[l];
+        strs[l] = tmp;
+        fastSort(strs, l, i - 1);
+        fastSort(strs, i + 1, r);
+    &#125;
+&#125;
+方法二：内置函数
+public String minNumber(int[] nums) &#123;
+        String[] strs = new String[nums.length];
+        for(int i = 0; i &lt; nums.length; i++) 
+            strs[i] = String.valueOf(nums[i]);
+        Arrays.sort(strs, (x, y) -&gt; (x + y).compareTo(y + x));
+        StringBuilder res = new StringBuilder();
+        for(String s : strs)
+            res.append(s);
+        return res.toString();
+    &#125;
+</code></pre>
+<h1 id="二维数组"><a href="#二维数组" class="headerlink" title="二维数组"></a>二维数组</h1><h2 id="二维数组中的查找"><a href="#二维数组中的查找" class="headerlink" title="二维数组中的查找"></a>二维数组中的查找</h2><pre><code>在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
+    由于给定的二维数组具备每行从左到右递增以及每列从上到下递增的特点，当访问到一个元素时，可以排除数组中的部分元素。
+
+从二维数组的右上角开始查找。如果当前元素等于目标值，则返回 true。如果当前元素大于目标值，则移到左边一列。如果当前元素小于目标值，则移到下边一行。
+
+可以证明这种方法不会错过目标值。如果当前元素大于目标值，说明当前元素的下边的所有元素都一定大于目标值，因此往下查找不可能找到目标值，往左查找可能找到目标值。如果当前元素小于目标值，说明当前元素的左边的所有元素都一定小于目标值，因此往左查找不可能找到目标值，往下查找可能
+
+class Solution &#123;
+    public boolean findNumberIn2DArray(int[][] matrix, int target) &#123;
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) &#123;
+            return false;
+        &#125;
+        int rows = matrix.length, columns = matrix[0].length;
+        int row = 0, column = columns - 1;
+        while (row &lt; rows &amp;&amp; column &gt;= 0) &#123;
+            int num = matrix[row][column];
+            if (num == target) &#123;
+                return true;
+            &#125; else if (num &gt; target) &#123;
+                column--;
+            &#125; else &#123;
+                row++;
+            &#125;
+        &#125;
+        return false;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="矩阵中的路径"><a href="#矩阵中的路径" class="headerlink" title="矩阵中的路径"></a>矩阵中的路径</h2><pre><code>请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一格开始，每一步可以在矩阵中向左、右、上、下移动一格。如果一条路径经过了矩阵的某一格，那么该路径不能再次进入该格子。例如，在下面的3×4的矩阵中包含一条字符串“bfce”的路径（路径中的字母用加粗标出）。
+[[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;e&quot;],
+[&quot;s&quot;,&quot;f&quot;,&quot;c&quot;,&quot;s&quot;],
+[&quot;a&quot;,&quot;d&quot;,&quot;e&quot;,&quot;e&quot;]]
+    算法原理：
+    深度优先搜索
+class Solution &#123;
+    public boolean exist(char[][] board, String word) &#123;
+        char[] words = word.toCharArray();
+        for(int i = 0; i &lt; board.length; i++) &#123;
+            for(int j = 0; j &lt; board[0].length; j++) &#123;
+                if(dfs(board, words, i, j, 0)) return true;
+            &#125;
+        &#125;
+        return false;
+    &#125;
+    boolean dfs(char[][] board, char[] word, int i, int j, int k) &#123;
+        if(i &gt;= board.length || i &lt; 0 || j &gt;= board[0].length || j &lt; 0 || board[i][j] != word[k]) return false;
+        if(k == word.length - 1) return true;
+        char tmp = board[i][j];
+        board[i][j] = &#39;/&#39;;
+        boolean res = dfs(board, word, i + 1, j, k + 1) || dfs(board, word, i - 1, j, k + 1) || 
+                      dfs(board, word, i, j + 1, k + 1) || dfs(board, word, i , j - 1, k + 1);
+        board[i][j] = tmp;
+        return res;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="机器人的运动范围"><a href="#机器人的运动范围" class="headerlink" title="机器人的运动范围"></a>机器人的运动范围</h2><pre><code>地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。一个机器人从坐标 [0, 0] 的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），也不能进入行坐标和列坐标的数位之和大于k的格子。例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。但它不能进入方格 [35, 38]，因为3+5+3+8=19。请问该机器人能够到达多少个格子？
+    本文选择使用广度优先搜索的方法来讲解。
+    public int movingCount(int m, int n, int k) &#123;
+        boolean[][] visited = new boolean[m][n];
+        return dfs(0, 0, m, n, k, visited);
+    &#125;
+    public int dfs(int i, int j, int m, int n, int k, boolean[][] visited) &#123;
+        if(i &gt;= m || j &gt;= n || k &lt; getSum(i) + getSum(j) || visited[i][j]) &#123;
+            return 0;
+        &#125;
+        visited[i][j] = true;
+        return 1 + dfs(i + 1, j, m, n, k, visited) + dfs(i, j + 1, m, n, k, visited);
+    &#125;
+
+private int getSum(int a) &#123;
+    int sum = a % 10;
+    int tmp = a / 10;
+    while(tmp &gt; 0) &#123;
+        sum += tmp % 10;
+        tmp /= 10;
+    &#125;
+    return sum;
+&#125;
+    
+</code></pre>
+<h2 id="顺时针打印矩阵"><a href="#顺时针打印矩阵" class="headerlink" title="顺时针打印矩阵"></a>顺时针打印矩阵</h2><pre><code>输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+输出：[1,2,3,6,9,8,7,4,5]
+可以模拟打印矩阵的路径。初始位置是矩阵的左上角，初始方向是向右，当路径超出界限或者进入之前访问过的位置时，则顺时针旋转，进入下一个方向。
+判断路径是否进入之前访问过的位置需要使用一个与输入矩阵大小相同的辅助矩阵 visited，其中的每个元素
+表示该位置是否被访问过。当一个元素被访问时，将 visited 中的对应位置的元素设为已访问。
+如何判断路径是否结束？由于矩阵中的每个元素都被访问一次，因此路径的长度即为矩阵中的元素数
+量，当路径的长度达到矩阵中的元素数量时即为完整路径，将该路径返回。
+ public int[] spiralOrder(int[][] matrix) &#123;
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) &#123;
+            return new int[0];
+        &#125;
+        int rows = matrix.length, columns = matrix[0].length;
+        boolean[][] visited = new boolean[rows][columns];
+        int total = rows * columns;
+        int[] order = new int[total];
+        int row = 0, column = 0;
+        int[][] directions = &#123;&#123;0, 1&#125;, &#123;1, 0&#125;, &#123;0, -1&#125;, &#123;-1, 0&#125;&#125;;
+        int directionIndex = 0;
+        for (int i = 0; i &lt; total; i++) &#123;
+            order[i] = matrix[row][column];
+            visited[row][column] = true;
+            int nextRow = row + directions[directionIndex][0], nextColumn = column + directions[directionIndex][1];
+            if (nextRow &lt; 0 || nextRow &gt;= rows || nextColumn &lt; 0 || nextColumn &gt;= columns || visited[nextRow][nextColumn]) &#123;
+                directionIndex = (directionIndex + 1) % 4;
+            &#125;
+            row += directions[directionIndex][0];
+            column += directions[directionIndex][1];
+        &#125;
+        return order;
+    &#125;
+</code></pre>
+<h2 id="给定一个-n-x-n-矩阵，其中每行和每列元素均按升序排序，找到矩阵中第-k-小的元素。"><a href="#给定一个-n-x-n-矩阵，其中每行和每列元素均按升序排序，找到矩阵中第-k-小的元素。" class="headerlink" title="给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。"></a>给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。</h2><pre><code>请注意，它是排序后的第 k 小元素，而不是第 k 个不同的元素。
+matrix = [
+   [ 1,  5,  9],
+   [10, 11, 13],
+   [12, 13, 15]
+],
+k = 8,
+
+返回 13。
+最直接的做法是将这个二维数组另存为为一维数组，并对该一维数组进行排序。最后这个一维数组中的第 k个数即为答案。
+class Solution &#123;
+    public int kthSmallest(int[][] matrix, int k) &#123;
+        int rows = matrix.length, columns = matrix[0].length;
+        int[] sorted = new int[rows * columns];
+        int index = 0;
+        for (int[] row : matrix) &#123;
+            for (int num : row) &#123;
+                sorted[index++] = num;
+            &#125;
+        &#125;
+        Arrays.sort(sorted);
+        return sorted[k - 1];
+    &#125;
+&#125;
+方法二：归并排序
+这个矩阵的每一行均为一个有序数组。问题即转化为从这 n 个有序数组中找第 
+k 大的数，可以想到利用归并排序的做法，归并到第 k 个数即可停止。
+
+class Solution &#123;
+    public int kthSmallest(int[][] matrix, int k) &#123;
+        PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;int[]&gt;(new Comparator&lt;int[]&gt;() &#123;
+            public int compare(int[] a, int[] b) &#123;
+                return a[0] - b[0];
+            &#125;
+        &#125;);
+        int n = matrix.length;
+        for (int i = 0; i &lt; n; i++) &#123;
+            pq.offer(new int[]&#123;matrix[i][0], i, 0&#125;);
+        &#125;
+        for (int i = 0; i &lt; k - 1; i++) &#123;
+            int[] now = pq.poll();
+            if (now[2] != n - 1) &#123;
+                pq.offer(new int[]&#123;matrix[now[1]][now[2] + 1], now[1], now[2] + 1&#125;);
+            &#125;
+        &#125;
+        return pq.poll()[0];
+    &#125;
+&#125;
+方法三：二分查找
+那么矩阵中不大于 mid 的数，肯定全部分布在矩阵的左上角。
+class Solution &#123;
+    public int kthSmallest(int[][] matrix, int k) &#123;
+        int n = matrix.length;
+        int left = matrix[0][0];
+        int right = matrix[n - 1][n - 1];
+        while (left &lt; right) &#123;
+            int mid = left + ((right - left) &gt;&gt; 1);
+            if (check(matrix, mid, k, n)) &#123;
+                right = mid;
+            &#125; else &#123;
+                left = mid + 1;
+            &#125;
+        &#125;
+        return left;
+    &#125;
+
+    public boolean check(int[][] matrix, int mid, int k, int n) &#123;
+        int i = n - 1;
+        int j = 0;
+        int num = 0;
+        while (i &gt;= 0 &amp;&amp; j &lt; n) &#123;
+            if (matrix[i][j] &lt;= mid) &#123;
+                num += i + 1;
+                j++;
+            &#125; else &#123;
+                i--;
+            &#125;
+        &#125;
+        return num &gt;= k;
+    &#125;
+&#125;
+
+可以将矩阵看成若干层，首先打印最外层的元素，其次打印次外层的元素，直到打印最内层的元素。
+定义4个顶点的坐标位置left、right、top、bottom
+1.从左到右遍历上侧元素， 当到达右顶点时停止
+2.从上到下遍历右侧元素，当到达下右顶点时停止
+3.从右向左侧遍历
+4.从下向上遍历
+遍历完毕后，四个顶点位置进行内缩
+left和top分别加一
+right和bottom分别减一，然后再遍历，直到遍历完所有元素为止。
+ public int[] spiralOrder(int[][] matrix) &#123;
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) &#123;
+            return new int[0];
+        &#125;
+        int rows = matrix.length, columns = matrix[0].length;
+        int[] order = new int[rows * columns];
+        int index = 0;
+        int left = 0, right = columns - 1, top = 0, bottom = rows - 1;
+        while (left &lt;= right &amp;&amp; top &lt;= bottom) &#123;
+            for (int column = left; column &lt;= right; column++) &#123;
+                order[index++] = matrix[top][column];
+            &#125;
+            for (int row = top + 1; row &lt;= bottom; row++) &#123;
+                order[index++] = matrix[row][right];
+            &#125;
+            if (left &lt; right &amp;&amp; top &lt; bottom) &#123;
+                for (int column = right - 1; column &gt; left; column--) &#123;
+                    order[index++] = matrix[bottom][column];
+                &#125;
+                for (int row = bottom; row &gt; top; row--) &#123;
+                    order[index++] = matrix[row][left];
+                &#125;
+            &#125;
+            left++;
+            right--;
+            top++;
+            bottom--;
+        &#125;
+        return order;
+    &#125;
+</code></pre>
+<h2 id="编写一个高效的算法来搜索-m-x-n-矩阵-matrix-中的一个目标值-target。"><a href="#编写一个高效的算法来搜索-m-x-n-矩阵-matrix-中的一个目标值-target。" class="headerlink" title="编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target。"></a>编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target。</h2><pre><code>该矩阵具有以下特性：
+
+每行的元素从左到右升序排列。
+每列的元素从上到下升序排列。
+方法一：暴力法
+方法二：二分法搜索
+class Solution &#123;
+    private boolean binarySearch(int[][] matrix, int target, int start, boolean vertical) &#123;
+        int lo = start;
+        int hi = vertical ? matrix[0].length-1 : matrix.length-1;
+
+    while (hi &gt;= lo) &#123;
+        int mid = (lo + hi)/2;
+        if (vertical) &#123; // searching a column
+            if (matrix[start][mid] &lt; target) &#123;
+                lo = mid + 1;
+            &#125; else if (matrix[start][mid] &gt; target) &#123;
+                hi = mid - 1;
+            &#125; else &#123;
+                return true;
+            &#125;
+        &#125; else &#123; // searching a row
+            if (matrix[mid][start] &lt; target) &#123;
+                lo = mid + 1;
+            &#125; else if (matrix[mid][start] &gt; target) &#123;
+                hi = mid - 1;
+            &#125; else &#123;
+                return true;
+            &#125;
+        &#125;
+    &#125;
+
+    return false;
+&#125;
+
+public boolean searchMatrix(int[][] matrix, int target) &#123;
+    // an empty matrix obviously does not contain `target`
+    if (matrix == null || matrix.length == 0) &#123;
+        return false;
+    &#125;
+
+    // iterate over matrix diagonals
+    int shorterDim = Math.min(matrix.length, matrix[0].length);
+    for (int i = 0; i &lt; shorterDim; i++) &#123;
+        boolean verticalFound = binarySearch(matrix, target, i, true);
+        boolean horizontalFound = binarySearch(matrix, target, i, false);
+        if (verticalFound || horizontalFound) &#123;
+            return true;
+        &#125;
+    &#125;
+    
+    return false; 
+&#125;
+&#125;
+方法三修剪矩阵
+首先，我们初始化一个指向矩阵左下角的 
+(row，col) 指针。然后，直到找到目标并返回 true（或者指针指向矩阵维度之外的 
+(row，col) 为止，我们执行以下操作：如果当前指向的值大于目标值，则可以 “向上” 移动一行。 否则，如果当前指向的值小于目标值，则可以移动一列。不难理解为什么这样做永远不会删减正确的答案；因为行是从左到右排序的，所以我们知道当前值右侧的每个值都较大。 因此，如果当前值已经大于目标值，我们知道它右边的每个值会比较大。也可以对列进行非常类似的论证，因此这种搜索方式将始终在矩阵中找到目标（如果存在）。
+class Solution &#123;
+    public boolean searchMatrix(int[][] matrix, int target) &#123;
+        // start our &quot;pointer&quot; in the bottom-left
+        int row = matrix.length-1;
+        int col = 0;
+
+    while (row &gt;= 0 &amp;&amp; col &lt; matrix[0].length) &#123;
+        if (matrix[row][col] &gt; target) &#123;
+            row--;
+        &#125; else if (matrix[row][col] &lt; target) &#123;
+            col++;
+        &#125; else &#123; // found it
+            return true;
+        &#125;
+    &#125;
+
+    return false;
+&#125;
+&#125;
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift127NSObject%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="prev" title="NSObject数据结构">
+      <i class="fa fa-chevron-left"></i> NSObject数据结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift144%E4%BA%8C%E5%8F%89%E6%A0%91/" rel="next" title="二叉树">
+      二叉树 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%8B%E8%BD%AC%E6%95%B0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">旋转数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E8%BF%AD%E4%BB%A3"><span class="nav-number">2.</span> <span class="nav-text">数组迭代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E6%95%B4%E6%95%B0%E7%BB%84%E9%A1%BA%E5%BA%8F%E4%BD%BF%E5%A5%87%E6%95%B0%E4%BD%8D%E4%BA%8E%E5%81%B6%E6%95%B0%E5%89%8D%E9%9D%A2"><span class="nav-number">3.</span> <span class="nav-text">调整数组顺序使奇数位于偶数前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E4%B8%AD%E5%87%BA%E7%8E%B0%E6%AC%A1%E6%95%B0%E8%B6%85%E8%BF%87%E4%B8%80%E5%8D%8A%E7%9A%84%E6%95%B0%E5%AD%97"><span class="nav-number">4.</span> <span class="nav-text">数组中出现次数超过一半的数字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%A4%A7%E5%92%8C"><span class="nav-number">5.</span> <span class="nav-text">连续子数组的最大和</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1%EF%BD%9En%E6%95%B4%E6%95%B0%E4%B8%AD1%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0"><span class="nav-number">6.</span> <span class="nav-text">1～n整数中1出现的次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E5%BA%8F%E5%88%97%E4%B8%AD%E6%9F%90%E4%B8%80%E4%BD%8D%E7%9A%84%E6%95%B0%E5%AD%97"><span class="nav-number">7.</span> <span class="nav-text">数字序列中某一位的数字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%92%8C%E4%B8%BAs%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97"><span class="nav-number">8.</span> <span class="nav-text">和为s的两个数字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E5%AE%9A%E4%B8%A4%E4%B8%AA%E6%95%B0%E7%BB%84%EF%BC%8C%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E6%9D%A5%E8%AE%A1%E7%AE%97%E5%AE%83%E4%BB%AC%E7%9A%84%E4%BA%A4%E9%9B%86%E3%80%82"><span class="nav-number">9.</span> <span class="nav-text">给定两个数组，编写一个函数来计算它们的交集。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E5%AE%9A%E4%B8%80%E4%B8%AA%E6%9C%AA%E6%8E%92%E5%BA%8F%E7%9A%84%E6%95%B0%E7%BB%84%EF%BC%8C%E5%88%A4%E6%96%AD%E8%BF%99%E4%B8%AA%E6%95%B0%E7%BB%84%E4%B8%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E9%95%BF%E5%BA%A6%E4%B8%BA-3-%E7%9A%84%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97%E3%80%82"><span class="nav-number">10.</span> <span class="nav-text">给定一个未排序的数组，判断这个数组中是否存在长度为 3 的递增子序列。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%86%E6%B3%A2%E5%85%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">11.</span> <span class="nav-text">逆波兰表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%A4%E8%87%AA%E8%BA%AB%E4%BB%A5%E5%A4%96%E6%95%B0%E7%BB%84%E7%9A%84%E4%B9%98%E7%A7%AF"><span class="nav-number">12.</span> <span class="nav-text">除自身以外数组的乘积</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%92%8C%E4%B8%BAs%E7%9A%84%E8%BF%9E%E7%BB%AD%E6%AD%A3%E6%95%B0%E5%BA%8F%E5%88%97-%EF%BC%88%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%EF%BC%89"><span class="nav-number">13.</span> <span class="nav-text">和为s的连续正数序列  （滑动窗口）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC"><span class="nav-number">14.</span> <span class="nav-text">滑动窗口的最大值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%86%E6%95%B0%E7%BB%84%E4%B8%AD%E6%89%80%E6%9C%89-0-%E7%A7%BB%E5%8A%A8%E5%88%B0%E6%95%B0%E7%BB%84%E6%9C%AB%E5%B0%BE%E3%80%82"><span class="nav-number">15.</span> <span class="nav-text">将数组中所有 0 移动到数组末尾。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E4%B9%B1%E6%95%B0%E7%BB%84"><span class="nav-number">16.</span> <span class="nav-text">打乱数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E9%80%86%E5%BA%8F%E5%AF%B9"><span class="nav-number">17.</span> <span class="nav-text">数组中的逆序对</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%9A%84k%E4%B8%AA%E6%95%B0"><span class="nav-number">18.</span> <span class="nav-text">最小的k个数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E6%95%B0%E7%BB%84%E6%8E%92%E6%88%90%E6%9C%80%E5%B0%8F%E7%9A%84%E6%95%B0"><span class="nav-number">19.</span> <span class="nav-text">把数组排成最小的数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84"><span class="nav-number"></span> <span class="nav-text">二维数组</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E6%9F%A5%E6%89%BE"><span class="nav-number">1.</span> <span class="nav-text">二维数组中的查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84"><span class="nav-number">2.</span> <span class="nav-text">矩阵中的路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9A%84%E8%BF%90%E5%8A%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">3.</span> <span class="nav-text">机器人的运动范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%BA%E6%97%B6%E9%92%88%E6%89%93%E5%8D%B0%E7%9F%A9%E9%98%B5"><span class="nav-number">4.</span> <span class="nav-text">顺时针打印矩阵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E5%AE%9A%E4%B8%80%E4%B8%AA-n-x-n-%E7%9F%A9%E9%98%B5%EF%BC%8C%E5%85%B6%E4%B8%AD%E6%AF%8F%E8%A1%8C%E5%92%8C%E6%AF%8F%E5%88%97%E5%85%83%E7%B4%A0%E5%9D%87%E6%8C%89%E5%8D%87%E5%BA%8F%E6%8E%92%E5%BA%8F%EF%BC%8C%E6%89%BE%E5%88%B0%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%AC%AC-k-%E5%B0%8F%E7%9A%84%E5%85%83%E7%B4%A0%E3%80%82"><span class="nav-number">5.</span> <span class="nav-text">给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E9%AB%98%E6%95%88%E7%9A%84%E7%AE%97%E6%B3%95%E6%9D%A5%E6%90%9C%E7%B4%A2-m-x-n-%E7%9F%A9%E9%98%B5-matrix-%E4%B8%AD%E7%9A%84%E4%B8%80%E4%B8%AA%E7%9B%AE%E6%A0%87%E5%80%BC-target%E3%80%82"><span class="nav-number">6.</span> <span class="nav-text">编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target。</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

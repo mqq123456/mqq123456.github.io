@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="创建buffers1、void glGenFramebuffers(GLsizei n,GLuint * framebuffers);创建frame buffers2、void glDeleteFramebuffers(GLsizei n,const GLuint * framebuffers);删除frame buffersn表示buffers数量,framebuffers 表示buffer的数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenGL常用函数">
+<meta property="og:url" content="http://example.com/2020/11/24/M_Swift156OpenGLES%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="创建buffers1、void glGenFramebuffers(GLsizei n,GLuint * framebuffers);创建frame buffers2、void glDeleteFramebuffers(GLsizei n,const GLuint * framebuffers);删除frame buffersn表示buffers数量,framebuffers 表示buffer的数">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-24T02:32:44.000Z">
+<meta property="article:modified_time" content="2021-04-12T08:09:51.514Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/11/24/M_Swift156OpenGLES%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>OpenGL常用函数 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/24/M_Swift156OpenGLES%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenGL常用函数
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-24 10:32:44" itemprop="dateCreated datePublished" datetime="2020-11-24T10:32:44+08:00">2020-11-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 16:09:51" itemprop="dateModified" datetime="2021-04-12T16:09:51+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="创建buffers"><a href="#创建buffers" class="headerlink" title="创建buffers"></a>创建buffers</h1><p>1、void glGenFramebuffers(GLsizei n,GLuint * framebuffers);<br>创建frame buffers<br>2、void glDeleteFramebuffers(GLsizei n,const GLuint * framebuffers);<br>删除frame buffers<br>n表示buffers数量,framebuffers 表示buffer的数组<br>3、void glGenRenderbuffers(GLsizei n,GLuint * renderbuffers);<br>创建render buffers<br>4、void glDeleteRenderbuffers(GLsizei n,const GLuint * renderbuffers);<br>删除 render buffers<br>5、void glFramebufferRenderbuffer(GLenum target,GLenum attachment,GLenum renderbuffertarget,GLuint renderbuffer);<br>将render buffer关联到GL_FRAMEBUFFER常量上面<br>target:取值必须为GL_FRAMEBUFFER<br>attachment:取值为GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, or GL_STENCIL_ATTACHMENT。一般视频渲染取GL_COLOR_ATTACHMENT0<br>renderbuffertarget:取值必须为GL_RENDERBUFFER<br>renderbuffer:要关联的render buffer的id(由glGenRenderbuffers()函数生成)<br>6、GLenum glCheckFramebufferStatus(GLenum target);<br>检查frame buffer相关是否成功，再glFramebufferRenderbuffer()之后调用去检查<br>tagert:GL_FRAMEBUFFER;<br>7.glEnableVertexAttribArray()或 者glDisableVertexAttribArray()<br>//— 告 诉 OpenGL ES 在接下来的渲染中是否使用缓存中的数据<br>glEnableVertexAttribArray(GLKVertexAttribPosition);</p>
+<h1 id="着色器相关函数"><a href="#着色器相关函数" class="headerlink" title="着色器相关函数"></a>着色器相关函数</h1><p>1、GLuint glCreateShader(GLenum shaderType);<br>创建着色器程序的句柄；成功返回非0整数<br>shaderType:着色器类型，顶点和片元；取值GL_VERTEX_SHADER和GL_FRAGMENT_SHADER<br>2、void glShaderSource(GLuint shader,GLsizei count,const GLchar * const *string,const GLint *length);<br>为着色器句柄添加GLSL源代码<br>shader:前面创建的着色器句柄<br>count:源代码个数<br>string:源代码字符串<br>lenght:源代码字符串长度<br>3、void glCompileShader(GLuint shader);<br>编译着色器GLSL源码<br>4、void glGetShaderiv(GLuint shader,GLenum pname,GLint *params);<br>获取着色器编译过程中的日志和检测是否编译成功<br>// 检查编译中日志,logLenght&gt;0则说明有日志<br>glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &amp;logLenght);<br>// 检查编译是否成功,成功status==GLTRUE<br>glGetShaderiv(shader, GL_COMPILE_STATUS, &amp;status);<br>5、GLuint glCreateProgram(void);<br>创建用于生成顶点着色器和片元着色器最终程序的句柄<br>6、void glAttachShader(GLuint program,GLuint shader);<br>添加顶点着色器和片元着色器<br>program:第五步创建的program<br>shader:为前面编译成功的着色器句柄<br>7、void glLinkProgram(GLuint program);<br>连接程序,就像C语言的连接一样，这里将顶点着色器和片元着色器连接起来<br>8、void glGetProgramiv(GLuint program,GLenum pname,GLint *params);<br>输出连接过程中的日志和检查连接是否成功<br>// 检查编译中日志,logLenght&gt;0则说明有日志<br>glGetProgramiv(filterProgram, GL_INFO_LOG_LENGTH, &amp;logLength);<br>// 检查编译是否成功,成功status==GLTRUE<br>glGetProgramiv(filterProgram, GL_LINK_STATUS, &amp;status);<br>9、void glUseProgram(GLuint program);<br>调用此函数后着色器程序才能正常使用，就相当于生成可执行程序后还得点击一下让其运行起来一样；之后才能使用第10个之后的函数<br>10、GLint glGetAttribLocation(GLuint program,const GLchar *name);<br>获取顶点着色器中的attribute修饰的变量的句柄，后面就可以通过该句柄从应用端向GLSL对应的变量传值了<br>program:对应的GLSL程序，该函数必须在GLSL程序运行后才能使用(即调用了glUseProgram()函数)<br>name:GLSL中attribute修饰的变量名<br>11、GLint glGetUniformLocation(GLuint program,const GLchar *name);<br>获取片元着色器中uniform sampler2D修饰的变量的句柄，后面就可以将该句柄和对应的纹理单元关联起来<br>program:对应的GLSL程序，该函数必须在GLSL程序运行后才能使用(即调用了glUseProgram()函数)<br>name:GLSL中uniform sampler2D修饰的变量名</p>
+<h1 id="视窗有关函数"><a href="#视窗有关函数" class="headerlink" title="视窗有关函数"></a>视窗有关函数</h1><p>1、void glClearColor(GLclampf red,GLclampf green,GLclampf blue,GLclampf alpha);<br>设置清屏的颜色,四个参数的范围都是0-1的浮点数，表示RGBA的组合<br>2、void glClear(GLbitfield mask);<br>用前面glClearColor(),glClearDepthf(),and glClearStencil()设置的颜色清除buffers;<br>mask在这个函数中的取值要与上面三个函数一一对应，可取值如下：<br>GL_COLOR_BUFFER_BIT:color buffer，前面如果调用了glClearColor()，则设置包含该值<br>GL_DEPTH_BUFFER_BIT：depth buffer，前面如果调用了glClearDepthf()，则设置包含该值<br>GL_STENCIL_BUFFER_BIT：stencil buffer，前面如果调用了glClearStencil()，则设置包含该值<br>mask可以是上面几个值的组合,比如GL_COLOR_BUFFER_BIT|GL_STENCIL_BUFFER_BIT,但前提是前面分别调用了glClearColor()和glClearDepthf()设置颜色</p>
+<p>3、void glViewport(GLint x,GLint y,GLsizei width,GLsizei height);<br>以当前视图的大小为基础(当前视图的左下角为坐标原点)在开辟一个(x,y,width,height)的渲染区域，该区域将作为后面顶点坐标等的参考坐标系。</p>
+<h1 id="纹理操作相关函数-应用端和opengl-es传值相关函数"><a href="#纹理操作相关函数-应用端和opengl-es传值相关函数" class="headerlink" title="纹理操作相关函数,应用端和opengl es传值相关函数"></a>纹理操作相关函数,应用端和opengl es传值相关函数</h1><p>4、void glPixelStorei(GLenum pname,GLint param);<br>设置像素的对齐方式；<br>pname:为GL_PACK_ALIGNMENT,会影响glReadPixels()函数从opengl es缓存中读取像素数据到app中的字节对齐方式<br>pname:为GL_UNPACK_ALIGNMENT，会影响glTexImage2D() 和 glTexSubImage2D()函数从app发送像素数据到opengl es的字节对齐方式<br>param:表示每次读取或者发送的像素数据是param的整数倍;举个例子，比如param为4，想要通过glTexImage2D()传输5x5像素的一张图片(25不是4的整数倍，所以需要手<br>动添加padding即添加3个字节到这个图片buf中,这样读取时才不会出错，如果param为1就没有这样的烦恼，但是可能性能会低，值越大吞吐量就越大，效率也越高。<br>那么上面两种方式的取值含义都是一样的,<br>默认值为4；取值如下：<br>1 (byte-alignment),<br>2 (rows aligned to even-numbered bytes),<br>4 (word-alignment),<br>8 (rows start on double-word boundaries).</p>
+<p>5、void glDrawArrays(GLenum mode,GLint first,GLsizei count);<br>确定要绘制的几何形状；通过mode指定，可取值如下：<br>GL_POINTS:绘制点，那么顶点着色器还需要有gl_PointSize内建变量指定顶点的大小<br>GL_LINES:绘制线<br>GL_TRIANGLE_STRIP:绘制三角形，比如绘制纹理图片就是这种类型<br>它处于渲染管线的第一阶段</p>
+<p>6、void glVertexAttribPointer(GLuint index,GLint size,GLenum type,GLboolean normalized,GLsizei stride,const GLvoid * pointer);<br>用一个数组的方式给GLSL中attribute修饰的属性变量赋值;<br>index:前面获取的GLSL变量的句柄<br>size:表示每几个元素表示一个attribute修饰的变量;比如对于attribute vec4 position;修饰的顶点,就表示四个数据(x,y,z,w)才能表示一个顶点坐标，如果这里size为<br>2，那么x,y有值，z，w将默认为0,依次类推。<br>type:每个元素的数据类型，取值为GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_FIXED, or GL_FLOAT<br>normalized:是否要对pointer中的数据进行归一化处理成(-1.0,1.0)范围的浮点型类型,如果已经是浮点型，这里传GL_FALSE即可。<br>stride:获取每一个元素是否需要跳字节，如果前面的type类型pointer中元素类型一致，这里传0<br>pointer:几何形状的各个顶点组成的数组;对于矩形来说，数组中顶点顺序为(左下角，右下角，左上角，右上角)<br>该赋值得用glEnableVertexAttribArray()函数启用后才会生效</p>
+<p>7、void glUniform1i(GLint location,GLint v0);<br>给片段着色器中的uniform sampler2D 修饰的纹理变量赋值，只有该函数调用后,片元着色器中的texture2D()函数才能正确工作<br>location:为片元着色器中uniform sampler2D 修饰的变量句柄<br>v0的取值为纹理单元的索引；比如想让激活的GL_TEXTURE2和上面的变量关联，则v0取值为2，那么片元着色器中的texture2D()函数将从该纹理单元对应的纹理里面查找像素</p>
+<p>8、void glEnableVertexAttribArray(GLuint index);<br>   void glDisableVertexAttribArray(GLuint index);<br>启用和禁用给attribute变量的赋值</p>
+<p>9、void glGetIntegerv(GLenum pname,GLint * params);<br>获取指定类型的值<br>GL_ACTIVE_TEXTURE:获取设备支持的纹理单元数目<br>GL_MAX_TEXTURE_SIZE:获取设备支持的纹理能渲染的最大的长或宽大小，超过此大小则必须先压缩再传给opengl es，否则opengl es无法渲染</p>
+<p>10、void glGenTextures(GLsizei n,GLuint * textures);<br>    void glDeleteTextures(GLsizei n,const GLuint * textures);<br>创建纹理Id和删除纹理Id<br>调用删除纹理Id函数会解除它与纹理类型对象的绑定</p>
+<p>11、void glActiveTexture(GLenum texture);<br>选择指定的纹理单元，texture取值范围GL_TEXTUREi(i取值为0-GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1)，其中GL_TEXTURE0默认激活的<br>方式一、glActioveTexture(GL_TEXTUREi);只能到GL_TEXTURE31<br>方式二、glActioveTexture(GL_TEXTURE0+i);i可以取值到GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1</p>
+<p>12、void glBindTexture(GLenum target,GLuint texture);<br>绑定纹理，当绑定完后，如果用其它texture再次与target绑定，则先前的绑定失效。或者调用glDeleteTextures()函数后，该绑定也将失效<br>target:纹理类型，可取值：GL_TEXTURE_2D、GL_TEXTURE_CUBE_MAP<br>texture:纹理id，由glGenTextures()函数生成<br>函数10和11的工作流程用伪代码表示如下：<br>GLenum curentTexutre;<br>GLESObj globalObj;<br>glActiveTexture(GLenum texture)<br>{<br>curentTexutre = texture;<br>}<br>glBindTexture(GLenum target,GLuint texture)<br>{<br>TextureUnit *texUnit = globalObj[curentTexutre];<br>switch(target)<br>{<br>case GL_TEXTURE_1D: texUnit-&gt;targetTexture1D = textureObject; break;<br>case GL_TEXTURE_2D: texUnit-&gt;targetTexture2D = textureObject; break;<br>case GL_TEXTURE_3D: texUnit-&gt;targetTexture3D = textureObject; break;<br>case GL_TEXTURE_CUBEMAP: texUnit-&gt;targetTextureCube = textureObject; break;<br>}<br>glTexImage2D(….)<br>{<br>    TextureUnit *texUnit = globalObj[curentTexutre];<br>    texUnit-&gt;targetTexture2D-&gt;TexImage2D(…);<br>    ……<br>}<br>所以如果调用glActiveTexture()之后不调用glBindTexture()函数，其实后面的glxxx()系列函数设置的参数只是对curentTexutre有效，会造成值被覆盖</p>
+<p>13、void glTexParameteri(GLenum target,GLenum pname,GLint param);<br>给指定的纹理类型对象设定参数<br>warping<br>纹理坐标的范围是(0,1)当给定的纹理坐标超过这个范围时，将通过如下方式对超过的纹理坐标进行采样<br>glTexParameter(GL_TEXTURE_2D,GL_TEXTURE_WARP_S,GL_REPEAT) S轴方向<br>glTexParameter(GL_TEXTURE_2D,GL_TEXTURE_WARP_T,GL_REPEAT) T轴方向<br>GL_REPEAT,GL_MIRRODED_REPEAT    (经过试验，此这两种方式视乎无效，GL_REPEAT默认)<br>GL_CLAMP_TO_EDGE 超出的部分坐标被设置成0或者1，行程边缘色<br>filter<br>实际纹理的分辨率大小与要显示的屏幕区域的分辨率大小往往不相等，也就是要根据屏幕的实际大小对纹理进行放大和缩小，这里就需要用到filter，取值如下：<br>GL_NEAREST:最邻近插值，取最近的纹素像素<br>GL_LINEAR:线性插值，取最近的点的线性平均值 (性能消耗较大)<br>glTexParameter(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR)<br>glTexParameter(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR)<br>mipmaps<br>它也是一种纹理过滤算法，按我的理解它是以空间换时间的一种技巧，具体原理就是事先根据纹理生成长和宽逐渐除以2的小纹理，比如原始纹理大小128x128，<br>采用此方法后，会生成64x64 32x32 16x16 8x8 4x4 2x2 1x1的一系列纹理，如果需要20x18的纹理，则取最近的32x32 16x16进行平均<br>该方法很好的解决了如下问题：<br>1、当纹理很大，但是屏幕区域很小，渲染出现的闪烁问题，因为根据最邻近插值和线性插值都无法很快计算出合理的像素<br>它可以取的值如下：<br>GL_NEAREST_MIPMAP_NEAREST 选择最近的mipmap层，然后再用最邻近过滤插值<br>GL_LINEAR_MIPMAP_NEAREST    选择最近mipmap层，然后再用线性插值<br>GL_NEAREST_MIPMAP_LINEAR    选择最近的2层mipmap用最邻近过滤插值<br>GL_LINEAR_MIPMAP_LINEAR       选择最邻近的2层mipmap用线性插值<br>使用如下函数生成mipmaps<br>glGenerateMipmap(GLenum target);</p>
+<p>14、void glTexImage2D(GLenum target,    // 纹理对象类型，取值GL_TEXTURE_2D, GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z或者<br>GLint level,    // 纹理压缩等级，0代表不压缩，默认0<br>GLint internalformat,// 内部每个像素的构成格式,取值GL_ALPHA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RGB, GL_RGBA.<br>GLsizei width,  // 纹理的宽，单位像素<br>GLsizei height, // 纹理的高，单位像素<br>GLint border,   // 设置为0 即可<br>GLenum format,  // data中每个像素的构成格式，必须与internalformat保持一直，取值为GL_ALPHA, GL_RGB, GL_RGBA, GL_LUMINANCE, and GL_LUMINANCE_ALPHA.<br>GLenum type,    // data中像素数据的组织方式,取值 GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, and GL_UNSIGNED_SHORT_5_5_5_1.<br>const GLvoid * data // 代表一张图片的像素数据<br>);<br>GL_ALPHA<br>表示data中每个像素只有一个透明通道，当它传递给opengl es时，自动将RGB填充为0。<br>GL_RGB<br>表示data中每个像素只由RGB三个数组成，当它传递给opengl es时，自动将Alpha填充为1。<br>GL_RGBA<br>表示data中每个像素只由RGBA四个数组成，传递给Opengl es时，原封不动的传递<br>GL_LUMINANCE<br>表示data中每个像素只有一个值组成，当它传递给opengl es时，自动将RGB填充为该值，alpha填充为1<br>GL_LUMINANCE_ALPHA<br>表示data中每个像素只有一个值组成，当它传递给opengl es时，自动将RGB填充为该值，alpha原封不动<br>GL_UNSIGNED_BYTE<br>表示组成每个像素的通道占用8位该值可以与前面任何格式搭配使用<br>GL_UNSIGNED_SHORT_5_6_5<br>表示RGB分别占用6 6 5位,一个像素两个字节，该值只能与前面GL_RGB搭配<br>GL_UNSIGNED_SHORT_4_4_4_4，<br>表示RGBA 分别占用4位，一个像素两个字节，该值只能与前面GL_RGB搭配GL_RGBA<br>GL_UNSIGNED_SHORT_5_5_5_1，<br>表示RGBA 分别占用 5551位，一个像素两个字节，该值只能与前面GL_RGB搭配GL_RGBA</p>
+<p>15、void glTexSubImage2D(    GLenum target,<br>GLint level,<br>GLint xoffset,<br>GLint yoffset,<br>GLsizei width,<br>GLsizei height,<br>GLenum format,<br>GLenum type,<br>const GLvoid * data);<br>用法和第15个函数一样，只不过可以选取data中的部分数据传递，更加灵活</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/02/M_Swift162iOS%E5%9C%B0%E5%9B%BE%E8%AE%A1%E7%AE%97/" rel="prev" title="地图计算">
+      <i class="fa fa-chevron-left"></i> 地图计算
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/24/M_Swift153GLSL%E8%AF%AD%E6%B3%95/" rel="next" title="GLES语法">
+      GLES语法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAbuffers"><span class="nav-number">1.</span> <span class="nav-text">创建buffers</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9D%80%E8%89%B2%E5%99%A8%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">着色器相关函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%86%E7%AA%97%E6%9C%89%E5%85%B3%E5%87%BD%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">视窗有关函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%B9%E7%90%86%E6%93%8D%E4%BD%9C%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0-%E5%BA%94%E7%94%A8%E7%AB%AF%E5%92%8Copengl-es%E4%BC%A0%E5%80%BC%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">纹理操作相关函数,应用端和opengl es传值相关函数</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

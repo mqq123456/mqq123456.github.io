@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="OC中的内存管理  alloc+init 方式创建对象, 一般情况下在堆上上,使用完一定要释放手动内存管理自动内存管理(自动引用计数-ARC)如何内存管理方式切换到手动内存管理?工程配置–&gt;TARGETS-&gt;Build Setting-&gt; 搜索 counting,  设置为NO  内存管理中常用的方法  alloc+init&#x2F;&#x2F;1.alloc+init&#x2F;&#x2F;alloc: 为对象申">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存管理">
+<meta property="og:url" content="http://example.com/2016/07/30/B_OC9%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="OC中的内存管理  alloc+init 方式创建对象, 一般情况下在堆上上,使用完一定要释放手动内存管理自动内存管理(自动引用计数-ARC)如何内存管理方式切换到手动内存管理?工程配置–&gt;TARGETS-&gt;Build Setting-&gt; 搜索 counting,  设置为NO  内存管理中常用的方法  alloc+init&#x2F;&#x2F;1.alloc+init&#x2F;&#x2F;alloc: 为对象申">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-07-30T15:14:52.000Z">
+<meta property="article:modified_time" content="2016-07-30T15:14:52.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/07/30/B_OC9%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>内存管理 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC9%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内存管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-30 23:14:52" itemprop="dateCreated datePublished" datetime="2016-07-30T23:14:52+08:00">2016-07-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>OC中的内存管理</p>
+</blockquote>
+<p>alloc+init 方式创建对象, 一般情况下在堆上上,使用完一定要释放<br>手动内存管理<br>自动内存管理(自动引用计数-ARC)<br>如何内存管理方式切换到手动内存管理?<br>工程配置–&gt;TARGETS-&gt;Build Setting-&gt; 搜索 counting,  设置为NO</p>
+<blockquote>
+<p>内存管理中常用的方法</p>
+</blockquote>
+<p>alloc+init<br>//1.alloc+init<br>//alloc: 为对象申请空间,把这块空间全部初始化为0<br>//alloc申请的对象一般情况下都在堆空间,必须考虑释放的问题<br>//init 初始化这个对象<br>Dog *princess = [[Dog alloc] init];<br>dealloc+release<br>retain+retainCount</p>
+<blockquote>
+<p>引用计数这种内存管理方式</p>
+</blockquote>
+<p>//获取对象被使用的次数<br>NSLog(@”count=%lu”,princess.retainCount);<br>//以后内存管理中有问题的<br>//retain: 让对象引用次数+1<br>//retain的对象也要release<br>[p release];<br>NSLog(@”count=%lu”,princess.retainCount);<br>//释放放在最后<br>//release作用:<br>//  如果retainCount&gt;1 说明有多个人在使用这个对象,不会释放,对象引用次数-1<br>//  如果retianCount==1<br>//  最后使用的”人”释放这个对象<br>//      调用dealloc真正释放对象<br>[princess release];<br>NSMutableString *str = [[NSMutableString alloc] initWithString:@”的麻烦了看什么地方了开始免费立刻马上离开父母萨洛克没放到里面是打发来看马萨拉蒂方面撒地方可拉伸的佛罗伦萨地方了”];<br>//特别值得注意的问题<br>//  最好千万不要在对象release之后使用对象<br>//什么是释放:<br>//  释放是失去了这块内存的使用权(内存还在)<br>//      一旦释放, 别人有可能使用这块内存<br>//      咱们在使用的就会出现问题<br>//[princess show];<br>copy+mutableCopy<br>//问题:<br>//  retain两个指针, 只有一个对象<br>//  copy复制这个对象<br>//  效果:  两个指针指向不同的对象<br>//  copy 返回不可变对象<br>//  mutableCopy返回可变对象<br>NSMutableString *pname = [name mutableCopy];</p>
+<blockquote>
+<p>内存管理原则:黄金法则<br>如果你对一个对象使用了 alloc,retain,copy/mutableCopy, 使用完这个对象之后需要调用对应的realese或autorelease<br>代码中alloc和release成对出现的retain和release也是成对出现的</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>代码中出现的各种内存管理情况</p>
+</blockquote>
+</blockquote>
+<p>(0)如果在方法内部定义了一个对象指针,指向了alloc申请的对象<br>需要在方法结束前释放这个对象</p>
+<blockquote>
+<p>init中为对象指针(类的实例变量)的申请对象</p>
+</blockquote>
+<p>需要在dealloc方法中释放 (重点)<br>//需求: 创建车的同时添加引擎<br>-(id)init<br>{<br>if(self = [super init])<br>{<br>//考虑到释放问题<br>//类中对象指针一般在init中申请对象<br>//  在dealloc中释放对象<br>_engine = [[Engine alloc] init];<br>//NSString *str = [[NSString alloc] init];<br>//[str release];<br>}<br>return self;<br>}<br>-(void)dealloc<br>{<br>NSLog(@”Car dealloc”);<br>[_engine release];<br>//这句放在最后<br>[super dealloc];<br>}</p>
+<blockquote>
+<p>对象指针的setter方法</p>
+</blockquote>
+<p>//_engine实现设置方法<br>-(void)setEngine:(Engine *)engine<br>{<br>//以前的写法<br>//_engine = engine;<br>//传入的指针和保存指针相同,返回即可<br>if(_engine == engine)<br>{<br>return;<br>}<br>//旧的对象不用了, 立即释放<br>[_engine release];<br>//多一个指针指向engine对象<br>//引用次数+1,调用retian方法<br>_engine = [engine retain];<br>}</p>
+<blockquote>
+<p>对象指针的getter方法</p>
+</blockquote>
+<p>//_engine实现获取方法<br>-(Engine *)engine<br>{<br>//以前的实现<br>//return _engine;<br>//retain: 返回的对象类外的指针指向, 多了一个使用, 引用+1<br>//  autorelease谁使用,谁释放<br>//      不能用release, 立即使用<br>return [[_engine retain] autorelease];<br>}</p>
+<blockquote>
+<p>各种实例变量的property (重点)</p>
+</blockquote>
+<p>//使用property实例变量添加getter和setter<br>// 一般情况, NSString 使用copy作为属性修饰符<br>//copy, 把传入的字符串拷贝一个份新的<br>//字符串,字典,数组用copy最好<br>@property (copy) NSString *type;<br>//assign表示直接赋值, 不retain也不copy<br>//  默认是assign, assgin可以不写<br>//@property (assign) float price;<br>@property float price;<br>//retain表示实现的setter中添加retain,getter也会添加retain<br>@property (retain) Engine *engine;</p>
+<p>//代理设计模式中<br>//  代理的属性修饰符必须是assgin,不能是retain,否则会引起无法释放的问题<br>@property (assign) id delegate;</p>
+<blockquote>
+<p>取消线程保护 nonautomic</p>
+</blockquote>
+<p>//nonatomic取消多线程保护<br>//1.什么是多线程(多任务)<br>// 迅雷下载(界面响应用户点击,下载数据)<br>//2.为啥要加这一句啊<br>//  多线程保护比较耗时, 取消提供代码速度<br>@property (nonatomic) float speed;</p>
+<blockquote>
+<p>类方法创建对象如何写?</p>
+</blockquote>
+<p>//类方法创建的对象无需释放, 也不能释放<br>创建对象的方法,类方法<br>+(id)car<br>{<br>//干两件事情<br>Car *car = [[Car alloc] init];<br>//if(car)<br>//{<br>//设置car的属性<br>//}<br>//alloc和autorelease对应起来<br>return [car autorelease];<br>}</p>
+<blockquote>
+<p>数组中的添加对象内存管理  NSArray</p>
+</blockquote>
+<p>//数组被释放的时候会给数组中每个对象发送release<br>[array release];</p>
+<blockquote>
+<p>字符串的内存管理</p>
+</blockquote>
+<p>//  特点: 特立独行,有性格<br>//字符串常量的引用数是极大值,不需要释放<br>//总结:<br>以alloc创建的字符串最后使用release释放<br>字符串常量和以类方法创建的字符串不需要释放</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/30/B_OC7plist,%E5%BD%92%E6%A1%A3%E5%92%8CJson/" rel="prev" title="plist,归档和Json">
+      <i class="fa fa-chevron-left"></i> plist,归档和Json
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/30/B_OC8%E5%8D%8F%E8%AE%AE%E3%80%81%E4%BB%A3%E7%90%86/" rel="next" title="协议、代理">
+      协议、代理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

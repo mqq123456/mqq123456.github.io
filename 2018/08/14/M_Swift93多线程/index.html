@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU， 则它根本不可能真正同时进行一个以上的线程，它只能把CPU运 行时间划分为若干了时间段，再将时间段分配给各个线程执行， 在一个时间段的线程代码运行时，其他线程处于挂起状。这 种方式我们称之为并发。 2.并行，系统有一个以上CPU时，则线程的操作有可能非并发， 当一个cpu执行一个线程时，另一个cpu可以执行另一个线程， 两个线">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程">
+<meta property="og:url" content="http://example.com/2018/08/14/M_Swift93%E5%A4%9A%E7%BA%BF%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="并发和并行的区别1.并发，当有多个线程在操作时，如果系统只有一个CPU， 则它根本不可能真正同时进行一个以上的线程，它只能把CPU运 行时间划分为若干了时间段，再将时间段分配给各个线程执行， 在一个时间段的线程代码运行时，其他线程处于挂起状。这 种方式我们称之为并发。 2.并行，系统有一个以上CPU时，则线程的操作有可能非并发， 当一个cpu执行一个线程时，另一个cpu可以执行另一个线程， 两个线">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-14T11:55:26.000Z">
+<meta property="article:modified_time" content="2018-08-14T11:55:26.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/08/14/M_Swift93%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>多线程 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift93%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          多线程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-14 19:55:26" itemprop="dateCreated datePublished" datetime="2018-08-14T19:55:26+08:00">2018-08-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="并发和并行的区别"><a href="#并发和并行的区别" class="headerlink" title="并发和并行的区别"></a>并发和并行的区别</h2><pre><code>1.并发，当有多个线程在操作时，如果系统只有一个CPU，
+则它根本不可能真正同时进行一个以上的线程，它只能把CPU运
+行时间划分为若干了时间段，再将时间段分配给各个线程执行，
+在一个时间段的线程代码运行时，其他线程处于挂起状。这
+种方式我们称之为并发。
+2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，
+当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，
+两个线程互相不抢占cpu资源，可以同时进行，这种方式称为并行。
+区别：并发和并行是既相似又有区别的两个概念，并行是指两个活
+着多个时间在同一时刻发生；而并发是指两个或多个事件同一
+时间间隔内发生。
+</code></pre>
+<h2 id="你理解的多线程"><a href="#你理解的多线程" class="headerlink" title="你理解的多线程"></a>你理解的多线程</h2><h3 id="第一种：pthread"><a href="#第一种：pthread" class="headerlink" title="第一种：pthread"></a>第一种：pthread</h3><pre><code>a.特点：
+    1）一套通用的多线程API
+    2）适用于Unix\Linux\Windows等系统
+    3）跨平台\可移植
+    4）使用难度大
+b.使用语言：c语言
+c.使用频率：几乎不用
+d.线程生命周期：由程序员进行管理
+</code></pre>
+<h3 id="第二种：NSThread"><a href="#第二种：NSThread" class="headerlink" title="第二种：NSThread"></a>第二种：NSThread</h3><pre><code>a.特点：
+    1）使用更加面向对象
+    2）简单易用，可直接操作线程对象
+    b.使用语言：OC语言
+    c.使用频率：偶尔使用
+    d.线程生命周期：由程序员进行管理
+</code></pre>
+<h3 id="第三种：GCD"><a href="#第三种：GCD" class="headerlink" title="第三种：GCD"></a>第三种：GCD</h3><pre><code>a.特点：
+    1）旨在替代NSThread等线程技术
+    2）充分利用设备的多核（自动）
+b.使用语言：C语言
+c.使用频率：经常使用
+d.线程生命周期：自动管理
+</code></pre>
+<h3 id="第四种：NSOperation"><a href="#第四种：NSOperation" class="headerlink" title="第四种：NSOperation"></a>第四种：NSOperation</h3><pre><code>a.特点：
+    1）基于GCD（底层是GCD）
+    2）比GCD多了一些更简单实用的功能
+    3）使用更加面向对象
+b.使用语言：OC语言
+c.使用频率：经常使用
+d.线程生命周期：自动管理
+</code></pre>
+<h2 id="多线程的原理"><a href="#多线程的原理" class="headerlink" title="多线程的原理"></a>多线程的原理</h2><pre><code>同一时间，CPU只能处理1条线程，只有1条线程在工作（执行）
+多线程并发（同时）执行，其实是CPU快速地在多条线程之间
+调度（切换）
+如果CPU调度线程的时间足够快，就造成了多线程并发执行的假象
+思考：如果线程非常非常多，会发生什么情况？
+CPU会在N多线程之间调度，CPU会累死，消耗大量的CPU资源
+每条线程被调度执行的频次会降低（线程的执行效率降低）
+</code></pre>
+<h2 id="多线程的优点"><a href="#多线程的优点" class="headerlink" title="多线程的优点"></a>多线程的优点</h2><pre><code>能适当提高程序的执行效率    
+能适当提高资源利用率（CPU、内存利用率）
+</code></pre>
+<h2 id="多线程的缺点"><a href="#多线程的缺点" class="headerlink" title="多线程的缺点"></a>多线程的缺点</h2><pre><code>开启线程需要占用一定的内存空间（默认情况下，主线程占用1M，
+子线程占用512KB），如果开启大量的线程，会占用大量的内存
+空间，降低程序的性能
+线程越多，CPU在调度线程上的开销就越大
+程序设计更加复杂：比如线程之间的通信、多线程的数据共享
+</code></pre>
+<h2 id="GCD和NSOperation区别，你更倾向于哪一种？"><a href="#GCD和NSOperation区别，你更倾向于哪一种？" class="headerlink" title="GCD和NSOperation区别，你更倾向于哪一种？"></a>GCD和NSOperation区别，你更倾向于哪一种？</h2><h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><pre><code>1.GCD是底层的C语言构成的API，而NSOperationQueue及
+相关对象是Objc的对象。在GCD中，在队列中执行的是由block
+构成的任务，这是一个轻量级的数据结构；而Operation作为一
+个对象，为我们提供了更多的选择；
+2.在NSOperationQueue中，我们可以随时取消已经设定要准备
+执行的任务(当然，已经开始的任务就无法阻止了)，而GCD没法停
+止已经加入queue的block(其实是有的，但需要许多复杂的代码)；
+3.NSOperation能够方便地设置依赖关系，我们可以让一个
+Operation依赖于另一个Operation，这样的话尽管两个
+Operation处于同一个并行队列中，但前者会直到后者执行完毕后
+再执行；
+4.我们能将KVO应用在NSOperation中，可以监听一
+个Operation是否完成或取消，这样子能比GCD更加有效地掌控
+我们执行的后台任务；
+5.在NSOperation中，我们能够设置NSOperation的
+priority优先级，能够使同一个并行队列中的任务区分先后地执
+行，而在GCD中，我们只能区分不同任务队列的优先级，如果要区分
+block任务的优先级，也需要大量的复杂代码；
+6.我们能够对NSOperation进行继承，在这之上添加成员变量与成
+员方法，提高整个代码的复用度，这比简单地将block任务排入执行
+队列更有自由度，能够在其之上添加更多自定制的功能。
+总的来说，Operationqueue提供了更多你在编写多线程程序时需
+要的功能，并隐藏了许多线程调度，线程取消与线程优先级的复杂代
+码，为我们提供简单的API入口。从编程原则来说，一般我们需要尽
+可能的使用高等级、封装完美的API，在必须时才使用底层API。但
+是我认为当我们的需求能够以更简单的底层代码完成的时候，简洁的
+GCD或许是个更好的选择，而Operationqueue 为我们提供能更多
+的选择。
+</code></pre>
+<h3 id="倾向于GCD："><a href="#倾向于GCD：" class="headerlink" title="倾向于GCD："></a>倾向于GCD：</h3><pre><code>1.GCD是纯C语言的API，轻量级 。
+2.GCD的执行速度比NSOperationQueue快。
+3.代码更底层简洁
+</code></pre>
+<h3 id="倾向于：NSOperation"><a href="#倾向于：NSOperation" class="headerlink" title="倾向于：NSOperation"></a>倾向于：NSOperation</h3><pre><code>NSOperation拥有更多的函数可用
+NSOperationQueue可以方便的设置operation之间的依
+赖关系，GCD则需要很多代码。
+NSOperationQueue支持KVO，可以检测operation是
+否正在执行（isExecuted）,是否结束（isFinished）,
+是否取消（isCanceled）
+GCD 只支持FIFO 的队列，NSOperationQueue可以调
+整队列的执行顺序（通过调整权重）。NSOperationQueue可
+以方便的管理并发、NSOperation之间的优先级。
+</code></pre>
+<h3 id="使用场合："><a href="#使用场合：" class="headerlink" title="使用场合："></a>使用场合：</h3><pre><code>任务之间不太相互依赖，一般的需求很简单的多线程操作，
+用GCD都可以了，简单高效。
+任务之间有依赖或要监听任务的执行情况用 NSOperationQueue
+</code></pre>
+<h2 id="ios-几种线程锁"><a href="#ios-几种线程锁" class="headerlink" title="ios 几种线程锁"></a>ios 几种线程锁</h2><pre><code>锁是最常用的同步工具。一段代码段在同一个时间只能允许被一个线程访问
+，比如一个线程A进入加锁代码之后由于已经加锁，另一个线程B就无法访问，
+只有等待前一个线程A执行完加锁代码后解锁，B线程才能访问加锁代码。
+@synchronized 一个对象层面的锁，锁住了整个对象，底层使用了互斥递归锁来实现
+pathread_mutex 互斥锁（c语言）和信号量的实现原理类似，也是阻塞线程并进入睡眠，需要进行上下文切换。
+NSLock 对象锁-简单的互斥锁（内部封装了一个 pthread_mutex）
+NSCondition （封装了一个互斥锁和条件变量。互斥锁保证线程安全，条件
+变量保证执行顺序）同样实现了NSLocking协议，
+所以它和NSLock一样，也有NSLocking协议的lock和unlock方法，
+可以当做NSLock来使用解决线程同步问题，用法完全一样。NSCondition
+提供更高级的用法。wait和signal
+NSCondition和NSLock、@synchronized等是不同的是，
+NSCondition可以给每个线程分别加锁，加锁后不影响其他线程进入临界区。
+这是非常强大。
+NSConditionLock （借助 NSCondition 来实现，本质是生产者-消费者模型）
+也可以像NSCondition一样做多线程之间的任务等待调用，而且是线程安全的。
+NSRecursiveLock 递归锁有时候“加锁代码”中存在递归调用，递归开始前加
+锁，递归调用开始后会重复执行此方法以至于反复执行加锁代码最终造成死锁，
+这个时候可以使用递归锁来解决。使用递归锁可以在一个线程中反复获取锁而不
+造成死锁，这个过程中会记录获取锁和释放锁的次数，只有最后两者平衡锁才被
+最终释放。
+dispatch_semaphore GCD中信号量，也可以解决资源抢占问题,
+支持信号通知和信号等待。每当发送一个信号通知，则信号量+1；
+每当发送一个等待信号时信号量-1,；如果信号量为0则信号会处于等待状态，
+直到信号量大于0开始执行
+OSSpinLock 自旋锁(不建议使用)
+自旋锁的实现原理比较简单，就是死循环。当a线程获得锁以后，b线程想要获取
+锁就需要等待a线程释放锁。在没有获得锁的期间，b线程会一直处于忙等的状
+态。如果a线程在临界区的执行时间过长，则b线程会消耗大量的cpu时间，不太
+划算。所以，自旋锁用在临界区执行时间比较短的环境性能会很高。
+</code></pre>
+<h2 id="自旋和互斥对比"><a href="#自旋和互斥对比" class="headerlink" title="自旋和互斥对比"></a>自旋和互斥对比</h2><pre><code>相同点：都能保证同一时间只有一个线程访问共享资源。
+都能保证线程安全。
+不同点：
+互斥锁：如果共享数据已经有其他线程加锁了，线程会进入
+休眠状态等待锁。一旦被访问的资源被解锁，则等待资源的
+线程会被唤醒。
+自旋锁：如果共享数据已经有其他线程加锁了，线程会以死循环
+的方式等待锁，一旦被访问的资源被解锁，则等待资源的线程会
+立即执行。
+自旋锁的效率高于互斥锁。
+由于自旋时不释放CPU，因而持有自旋锁的线程应该尽快释放
+自旋锁，否则等待该自旋锁的线程会一直在哪里自旋，这就会浪
+费CPU时间。
+持有自旋锁的线程在sleep之前应该释放自旋锁以便其他可以获得
+该自旋锁。内核编程中，如果持有自旋锁的代码sleep了就可能
+导致整个系统挂起。
+</code></pre>
+<h2 id="GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><a href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）" class="headerlink" title="GCD的一些常用的函数？（group， barrier，信号量 线程同步）"></a>GCD的一些常用的函数？（group， barrier，信号量 线程同步）</h2><pre><code>延迟函数dispatch_after
+一次性 dispatch_once
+创建串行队列 dispatch_queue_create 
+获取并发队列 dispatch_get_global_queue
+获取主队列 dispatch_get_main_queue
+异步执行任务 dispatch_async
+同步执行任务 dispatch_sync
+提交一个调度队列 dispatch_group_async
+新建的queue设置优先级 dispatch_set_target_queue
+任务执行完成通知回调 dispatch_group_notify 
+让当前任务等待queue其他任务完成再执行 dispatch_barrier_async
+</code></pre>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><pre><code>-(void)clickButton &#123;
+    dispatch_sync(dispath_get_main_queue(), ^(void)&#123;
+        NSLog(&quot;test&quot;);
+    &#125;);
+&#125;
+以上代码座位一个UIButton的响应方法有什么问题，能看到log吗？
+原因如下：
+在ios使用 dispatch_sync(dispatch_get_main_queue()^()&#123;block体&#125;)；
+dispath向主队列加一个同步的block；
+此时主队列在等待    dispatch_sync(dispatch_get_main_queue()，^()&#123;block体&#125;)；执行
+dispatch_sync在等待主队列执行完毕。
+造成死锁。
+</code></pre>
+<h2 id="同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"><a href="#同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件" class="headerlink" title="同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"></a>同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件</h2><pre><code>首先创建并行队列，创建队列组，将队列和需要处理的网络请求分别
+添加到组中，当组中所有队列处理完事件后调用
+dispatch_group_notify，我们需要在里边处理事件。由于队列
+在处理网络请求时将”发送完一个请求”作为事件完成的标记（此时还
+未获得网络请求返回数据），所以在这里需要用信号量进行控制，在
+执行dispatch_group_notify前发起信号等待（三次信号等待，
+分别对应每个队列的信号通知），在每个队列获取到网络请求返回数
+据时发出信号通知。这样就能完成需求中的要求。
+如果需求中改为：同时存在A,B,C三个任务，要求ABC依次进行处
+理，当上一个完成时再进行下一个任务，当三个任务都完成时再处理
+事件。这时只需要将队列改为串行队列即可（不在需要信号量控
+制）。
+</code></pre>
+<h2 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h2><pre><code>信号量是一个计数器，常用于处理进程或线程的同步问题，特别是对临界资源的同步访问。
+临界资源可以简单的理解为在某一时刻只能由一个进程或线程进行操作的资源，这里的资源
+可以是一段代码、一个变量或某种硬件资源。信号量的值大于或等于0时表示可供并发进程使用的
+资源实体数；小于0时代表正在等待使用临界资源的进程数。
+注意：这里的信号量跟信号是没有关系的。
+3、信号量的操作
+信号量的值与相应资源的使用情况有关，当它的值大于0时，表示当前可用资源的数量，当他的值小于0时，其绝对值表示等待
+使用这个资源的进程个数。信号量的值仅能由PV操作来改变。
+</code></pre>
+<h2 id="某些线程执行完之后去执行其他线程"><a href="#某些线程执行完之后去执行其他线程" class="headerlink" title="某些线程执行完之后去执行其他线程"></a>某些线程执行完之后去执行其他线程</h2><pre><code>1.利用GCD中的barrier
+dispatch_async — A
+dispatch_async — B
+dispatch_barrier_async — middle
+dispatch_async — C
+2.利用GCD中的group
+创建一个dispatch_group_t
+dispatch_group_async — 依次添加并发操作
+dispatch_group_notify
+</code></pre>
+<h2 id="两个线程的notification怎么实现，除GCD"><a href="#两个线程的notification怎么实现，除GCD" class="headerlink" title="两个线程的notification怎么实现，除GCD"></a>两个线程的notification怎么实现，除GCD</h2><pre><code>这里讲到了“重定向”，就是我们在Notification所在的默认线程
+中捕获这些分发的通知，然后将其重定向到指定的线程中。
+一种重定向的实现思路是自定义一个通知队列(注意，不是
+NSNotificationQueue对象，而是一个数组)，让这个队列去维
+护那些我们需要重定向的Notification。我们仍然是像平常一样
+去注册一个通知的观察者，当Notification来了时，先看看post
+这个Notification的线程是不是我们所期望的线程，如果不是，
+则将这个Notification存储到我们的队列中，并发送一个信号
+(signal)到期望的线程中，来告诉这个线程需要处理一个
+Notification。指定的线程在收到信号后，将Notification从
+队列中移除，并进行处理。
+</code></pre>
+<h2 id="如何保证NSNotificationCenter线程安全"><a href="#如何保证NSNotificationCenter线程安全" class="headerlink" title="如何保证NSNotificationCenter线程安全"></a>如何保证NSNotificationCenter线程安全</h2><pre><code>当我们注册一个观察者是，通知中心会持有观察者的一个弱引用，来
+确保观察者是可用的。
+主线程调用dealloc操作会让Observer对象的引用计数减为0，这
+时对象会被释放掉。
+后台线程发送一个通知，如果此时Observer还未被释放，则会用其
+转出消息，并执行回调方法。而如果在回调执行的过程中对象被释放
+了，就会出现上面的问题。
+那我们该怎么做呢？这里有一些好的建议：
+尽量在一个线程中处理通知相关的操作，大部分情况下，这样做都能
+确保通知的正常工作。不过，我们无法确定到底会在哪个线程中调用
+dealloc方法，所以这一点还是比较困难。
+注册监听都时，使用基于block的API。这样我们在block还要继续
+调用self的属性或方法，就可以通过weak-strong的方式来处理。
+具体大家可以改造下上面的代码试试是什么效果。
+使用带有安全生命周期的对象，这一点对象单例对象来说再合适不过
+了，在应用的整个生命周期都不会被释放。
+使用代理。
+</code></pre>
+<h2 id="GCD-信号量控制并发"><a href="#GCD-信号量控制并发" class="headerlink" title="GCD 信号量控制并发"></a>GCD 信号量控制并发</h2><pre><code>信号量是一个整形值并且具有一个初始计数值，并且支持两个操作：
+信号通知和等待。当一个信号量被信号通知，其计数会被增加。当一
+个线程在一个信号量上等待时，线程会被阻塞（如果有必要的话），
+直至计数器大于零，然后线程会减少这个计数。
+dispatch_semaphore_signal是发送一个信号，自然会让信号
+总量加1，dispatch_semaphore_wait等待信号，当信号总量少
+于0的时候就会一直等待，否则就可以正常的执行，并让信号总、
+量-1，根据这样的原理，我们便可以快速的创建一个并发控制来同步
+任务和有限资源访问控制。
+</code></pre>
+<h2 id="iOS线程间的通信"><a href="#iOS线程间的通信" class="headerlink" title="iOS线程间的通信"></a>iOS线程间的通信</h2><pre><code>iOS中，两个线程之间要想互相通信，可以使用：NSMachPort 
+首先NSMarchPort是一个task内线程之间异步通信用的 
+你需要在你的两个object内重写handlePortMessage:方法来截
+取接收到的消息，使用NSPortMessage来发送消息 
+消息一般都是有唯一id和数据组成的 
+数据需要经过序列化通过NSPortMessage的components来传递 
+接收到数据之后需要进行反序列化 
+</code></pre>
+<h2 id="get和set的属性如何保证线程的安全"><a href="#get和set的属性如何保证线程的安全" class="headerlink" title="get和set的属性如何保证线程的安全"></a>get和set的属性如何保证线程的安全</h2><pre><code>property 的 atomic 是采用 spinlock_t 也就是俗称的自旋
+锁实现的。
+atomic通过这种方法，在运行时保证 set,get方法的原子性。 
+仅仅是保证了set,get方法的原子性。 
+这种线程是不安全的。
+self.intA 是原子操作，但是self.intA = self.intA + 1
+这个表达式并不是原子操作。 
+所以线程是不安全的。 
+threadA 在执行表达式 self.intA之后 self.intA = 
+self.intA + 1;并没有执行完毕 
+此时threadB 执行self.intA = self.intA + 1; 
+再回到threadA时，self.intA的数值就被更新了
+所以仅仅使用atomic并不能保证线程安全。
+</code></pre>
+<h2 id="GCD-的珊栏方法"><a href="#GCD-的珊栏方法" class="headerlink" title="GCD 的珊栏方法"></a>GCD 的珊栏方法</h2><pre><code>我们有时需要异步执行两组操作，而且第一组操作执行完之后，才能
+开始执行第二组操作。这样我们就需要一个相当于栅栏一样的一个方
+法将两组异步执行的操作组给分割起来，当然这里的操作组里可以包
+含一个或多个任务。这就需要用到dispatch_barrier_async方
+法在两个操作组间形成栅栏
+</code></pre>
+<h2 id="延时操作主要有4种方式"><a href="#延时操作主要有4种方式" class="headerlink" title="延时操作主要有4种方式"></a>延时操作主要有4种方式</h2><pre><code>1.sleep方式
+[NSThread sleepForTimeInterval:1.0f];
+[self delayMethod];
+使用sleep方式在主线程和子线程中均可执行,但是这是中阻塞线程
+的方式,所以建议放到子线程中使用,以免卡住主线程使界面卡住.
+没有发现取消执行的方法.
+2.NSTimer定时器方式
+[NSTimer scheduledTimerWithTimeInterval:1.0f 
+target:self selector:@selector(delayMethod) 
+userInfo:nil repeats:NO];
+使用定时器方式必须放到主线程中使用,否则无效. 是一种非阻塞的
+方式.
+可以通过- (void)invalidate;方法取消执行。
+3.GCD方式
+dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;
+//write code here
+&#125;);
+该方式可选择线程去执行,是一种非阻塞的方式.
+没有发现取消执行的方法.
+4.performSelector方式
+[self performSelector:@selector(delayMethod) 
+withObject:nil afterDelay:1.0f];
+使用该方式必须放到主线程中使用,否则无效. 是一种非阻塞的方式.
+取消执行方法如下:
+[[self class] 
+cancelPreviousPerformRequestsWithTarget:self 
+selector:@selector(delayMethod) object:nil];
+</code></pre>
+<h2 id="NSLock死锁"><a href="#NSLock死锁" class="headerlink" title="NSLock死锁"></a>NSLock死锁</h2><pre><code>使用锁最容易犯的一个错误就是在递归或循环中造成死锁
+如下代码中，因为在线程1中的递归block中，锁会被多次的lock，
+所以自己也被阻塞了。
+此处将NSLock换成NSRecursiveLock，便可解决问题。
+NSRecursiveLock类定义的锁可以在同一线程多次lock，而不会
+造成死锁。
+递归锁会跟踪它被多少次lock。每次成功的lock都必须平衡调用
+unlock操作。
+只有所有的锁住和解锁操作都平衡的时候，锁才真正被释放给其他线
+程获得。
+</code></pre>
+<h2 id="NSNotificationCenter的同步和异步"><a href="#NSNotificationCenter的同步和异步" class="headerlink" title="NSNotificationCenter的同步和异步"></a>NSNotificationCenter的同步和异步</h2><pre><code>默认的NSNotificationCenter是同步的
+您可以通过NSNotificationQueue的
+enqueueNotification:postingStyle:和enqueueNotification:postingStyle:coalesceMask:f
+orModes:方法将通告放入队列，实现异步发送，在把通告放入队列
+之后，这些方法会立即将控制权返回给调用对象。
+通过这里的时间间隔可以看出， 通过通知队列来管理通知，不会再
+造成阻塞。
+</code></pre>
+<h2 id="NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"><a href="#NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作" class="headerlink" title="NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"></a>NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作</h2><pre><code>开辟子线程：（使用子线程的runloop）
+NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(newThread) object:nil];
+[thread start];
+- (void)newThread
+&#123;     @autoreleasepool
+        &#123;
+            [NSTimer scheduledTimerWithTimeInterval:2.0 
+            target:self selector:@selector(addTime) 
+            userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] run];
+        &#125;
+&#125;
+</code></pre>
+<h2 id="原子属性"><a href="#原子属性" class="headerlink" title="原子属性"></a>原子属性</h2><pre><code>原子属性（线程安全），是针对多线程设计的，是默认属性
+多个线程在写入原子属性时（调用 setter 方法），能够保证同一
+时间只有一个线程执行写入操作
+原子属性是一种单(线程)写多(线程)读的多线程技术
+原子属性的效率比互斥锁高，不过可能会出现脏数据
+在定义属性时，必须显示地指定 nonatomic，否则默认为atomic
+多线程——atomic nonatomic的区别
+原子性atomic ,默认属性，编译器会在property上自动添加原子锁
+非原子性nonatomic，不考虑多线程情况时使用，提高效率
+原子属性内部的锁是自旋锁，自旋锁的执行效率比互斥锁高
+atomic本质上就是给get/set方法加锁，即原子锁，以避免线程A
+还没执行完setter，线程B又开始执行的，导致读取数据错误的问
+题。
+</code></pre>
+<h3 id="atomic一定是线程安全的么？"><a href="#atomic一定是线程安全的么？" class="headerlink" title="atomic一定是线程安全的么？"></a>atomic一定是线程安全的么？</h3><pre><code>不一定，首先atomic的释义是原子性，并不是线程安全。原子性这
+个概念表示一个操作序列就像一个操作一样不被打断，而不像一个操
+作序列一样中间容许被打断。所以nonatomic一定是线程不安全
+的，但是atomic却不一定是线程安全的。
+假设线程A执行在对某属性get之前线程B release了该属性，会导
+致程序崩溃。
+原子属性内部的锁是自旋锁，自旋锁的执行效率比互斥锁高
+</code></pre>
+<h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2><pre><code>一般说来，确保线程安全的方法有这几个：竞争与原子操作、同步与
+锁、可重入、过度优化。
+竞争与原子操作 
+多个线程同时访问和修改一个数据，可能造成很严重的后果。出现严
+重后果的原因是很多操作被操作系统编译为汇编代码之后不止一条指
+令，因此在执行的时候可能执行了一半就被调度系统打断了而去执行
+别的代码了。一般将单指令的操作称为原子的(Atomic)，因为不管
+怎样，单条指令的执行是不会被打断的。
+因此，为了避免出现多线程操作数据的出现异常，Linux系统提供了
+一些常用操作的原子指令，确保了线程的安全。但是，它们只适用于
+比较简单的场合，在复杂的情况下就要选用其他的方法了。
+同步与锁 
+为了避免多个线程同时读写一个数据而产生不可预料的后果，开发人
+员要将各个线程对同一个数据的访问同步，也就是说，在一个线程访
+问数据未结束的时候，其他线程不得对同一个数据进行访问。
+同步的最常用的方法是使用锁(Lock)，它是一种非强制机制，每个
+线程在访问数据或资源之前首先试图获取锁，并在访问结束之后释放
+锁；在锁已经被占用的时候试图获取锁时，线程会等待，直到锁重新
+可用。
+二元信号量是最简单的一种锁，它只有两种状态：占用与非占用，它
+适合只能被唯一一个线程独占访问的资源。对于允许多个线程并发访
+问的资源，要使用多元信号量(简称信号量)。
+可重入 
+一个函数被重入，表示这个函数没有执行完成，但由于外部因素或内
+部因素，又一次进入该函数执行。一个函数称为可重入的，表明该函
+数被重入之后不会产生任何不良后果。可重入是并发安全的强力保
+障，一个可重入的函数可以在多线程环境下放心使用。
+过度优化 
+在很多情况下，即使我们合理地使用了锁，也不一定能够保证线程安
+全，因此，我们可能对代码进行过度的优化以确保线程安全。
+我们可以使用volatile关键字试图阻止过度优化，它可以做两件
+事：第一，阻止编译器为了提高速度将一个变量缓存到寄存器而不写
+回；第二，阻止编译器调整操作volatile变量的指令顺序。
+在另一种情况下，CPU的乱序执行让多线程安全保障的努力变得很困
+难，通常的解决办法是调用CPU提供的一条常被称作barrier的指
+令，它会阻止CPU将该指令之前的指令交换到barrier之后，反之亦
+然。
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/14/M_Swift95OC%E5%8F%91%E6%B6%88%E6%81%AF%E6%AD%A5%E9%AA%A4/" rel="prev" title="OC发消息">
+      <i class="fa fa-chevron-left"></i> OC发消息
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/15/M_Swift98%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="next" title="内存管理">
+      内存管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%92%8C%E5%B9%B6%E8%A1%8C%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">并发和并行的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%A0%E7%90%86%E8%A7%A3%E7%9A%84%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">你理解的多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%EF%BC%9Apthread"><span class="nav-number">2.1.</span> <span class="nav-text">第一种：pthread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%EF%BC%9ANSThread"><span class="nav-number">2.2.</span> <span class="nav-text">第二种：NSThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%A7%8D%EF%BC%9AGCD"><span class="nav-number">2.3.</span> <span class="nav-text">第三种：GCD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%A7%8D%EF%BC%9ANSOperation"><span class="nav-number">2.4.</span> <span class="nav-text">第四种：NSOperation</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">多线程的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">多线程的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">5.</span> <span class="nav-text">多线程的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD%E5%92%8CNSOperation%E5%8C%BA%E5%88%AB%EF%BC%8C%E4%BD%A0%E6%9B%B4%E5%80%BE%E5%90%91%E4%BA%8E%E5%93%AA%E4%B8%80%E7%A7%8D%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">GCD和NSOperation区别，你更倾向于哪一种？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%88%AB"><span class="nav-number">6.1.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%BE%E5%90%91%E4%BA%8EGCD%EF%BC%9A"><span class="nav-number">6.2.</span> <span class="nav-text">倾向于GCD：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%BE%E5%90%91%E4%BA%8E%EF%BC%9ANSOperation"><span class="nav-number">6.3.</span> <span class="nav-text">倾向于：NSOperation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E5%90%88%EF%BC%9A"><span class="nav-number">6.4.</span> <span class="nav-text">使用场合：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ios-%E5%87%A0%E7%A7%8D%E7%BA%BF%E7%A8%8B%E9%94%81"><span class="nav-number">7.</span> <span class="nav-text">ios 几种线程锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E6%97%8B%E5%92%8C%E4%BA%92%E6%96%A5%E5%AF%B9%E6%AF%94"><span class="nav-number">8.</span> <span class="nav-text">自旋和互斥对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0%EF%BC%9F%EF%BC%88group%EF%BC%8C-barrier%EF%BC%8C%E4%BF%A1%E5%8F%B7%E9%87%8F-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%EF%BC%89"><span class="nav-number">9.</span> <span class="nav-text">GCD的一些常用的函数？（group， barrier，信号量 线程同步）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">10.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%97%B6%E5%AD%98%E5%9C%A8A-B-C%E4%B8%89%E4%B8%AA%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%EF%BC%8C%E8%A6%81%E6%B1%82%E5%90%8C%E6%97%B6%E5%8F%91%E8%B5%B7%E4%B8%89%E4%B8%AA%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%EF%BC%8C%E5%BD%93%E4%B8%89%E4%B8%AA%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E9%83%BD%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E4%BB%A5%E5%90%8E%E5%86%8D%E5%A4%84%E7%90%86%E4%BA%8B%E4%BB%B6"><span class="nav-number">11.</span> <span class="nav-text">同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">12.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%90%E4%BA%9B%E7%BA%BF%E7%A8%8B%E6%89%A7%E8%A1%8C%E5%AE%8C%E4%B9%8B%E5%90%8E%E5%8E%BB%E6%89%A7%E8%A1%8C%E5%85%B6%E4%BB%96%E7%BA%BF%E7%A8%8B"><span class="nav-number">13.</span> <span class="nav-text">某些线程执行完之后去执行其他线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E7%BA%BF%E7%A8%8B%E7%9A%84notification%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%EF%BC%8C%E9%99%A4GCD"><span class="nav-number">14.</span> <span class="nav-text">两个线程的notification怎么实现，除GCD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81NSNotificationCenter%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">15.</span> <span class="nav-text">如何保证NSNotificationCenter线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD-%E4%BF%A1%E5%8F%B7%E9%87%8F%E6%8E%A7%E5%88%B6%E5%B9%B6%E5%8F%91"><span class="nav-number">16.</span> <span class="nav-text">GCD 信号量控制并发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS%E7%BA%BF%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="nav-number">17.</span> <span class="nav-text">iOS线程间的通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get%E5%92%8Cset%E7%9A%84%E5%B1%9E%E6%80%A7%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%89%E5%85%A8"><span class="nav-number">18.</span> <span class="nav-text">get和set的属性如何保证线程的安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD-%E7%9A%84%E7%8F%8A%E6%A0%8F%E6%96%B9%E6%B3%95"><span class="nav-number">19.</span> <span class="nav-text">GCD 的珊栏方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E6%97%B6%E6%93%8D%E4%BD%9C%E4%B8%BB%E8%A6%81%E6%9C%894%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">20.</span> <span class="nav-text">延时操作主要有4种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSLock%E6%AD%BB%E9%94%81"><span class="nav-number">21.</span> <span class="nav-text">NSLock死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSNotificationCenter%E7%9A%84%E5%90%8C%E6%AD%A5%E5%92%8C%E5%BC%82%E6%AD%A5"><span class="nav-number">22.</span> <span class="nav-text">NSNotificationCenter的同步和异步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSTimer%E5%9C%A8%E5%AD%90%E7%BA%BF%E7%A8%8B%E5%8F%AF%E4%BB%A5%E6%89%A7%E8%A1%8C%E5%90%97%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%83%B3%E6%89%A7%E8%A1%8C%E7%9A%84%E8%AF%9Drunloop%E9%87%8C%E8%A6%81%E6%80%8E%E4%B9%88%E6%93%8D%E4%BD%9C"><span class="nav-number">23.</span> <span class="nav-text">NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E5%B1%9E%E6%80%A7"><span class="nav-number">24.</span> <span class="nav-text">原子属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#atomic%E4%B8%80%E5%AE%9A%E6%98%AF%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E4%B9%88%EF%BC%9F"><span class="nav-number">24.1.</span> <span class="nav-text">atomic一定是线程安全的么？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">25.</span> <span class="nav-text">线程安全</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

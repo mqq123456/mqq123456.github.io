@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_36747738&#x2F;article&#x2F;details&#x2F;106537874 共用体方法查找公用体 位运算，|，&amp; encding :编码 方法缓存（散列表） key IMP seleter &amp;  _mask 就是数据在索引中位置   或者求% 如果找到相同的key不同，就是i - 1或者+1  msgSend如何查找SEL  key;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="其他问题">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift137%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="https:&#x2F;&#x2F;blog.csdn.net&#x2F;qq_36747738&#x2F;article&#x2F;details&#x2F;106537874 共用体方法查找公用体 位运算，|，&amp; encding :编码 方法缓存（散列表） key IMP seleter &amp;  _mask 就是数据在索引中位置   或者求% 如果找到相同的key不同，就是i - 1或者+1  msgSend如何查找SEL  key;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:29:42.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:29:42.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift137%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>其他问题 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift137%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          其他问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:29:42" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:42+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36747738/article/details/106537874">https://blog.csdn.net/qq_36747738/article/details/106537874</a></p>
+<h2 id="共用体方法查找"><a href="#共用体方法查找" class="headerlink" title="共用体方法查找"></a>共用体方法查找</h2><pre><code>公用体
+位运算，|，&amp;
+encding :编码
+方法缓存（散列表）
+key IMP
+seleter &amp;  _mask 就是数据在索引中位置   或者求%
+如果找到相同的key不同，就是i - 1或者+1
+</code></pre>
+<h2 id="msgSend如何查找"><a href="#msgSend如何查找" class="headerlink" title="msgSend如何查找"></a>msgSend如何查找</h2><pre><code>SEL  key;       //方法名称
+IMP imp;       //方法的实现，imp是一个函数指针类型
+msgSend
+// objc_msgSend(person, sel_registerName(&quot;test&quot;));
+search_method_list // 排序的（二分查找），线性的、填充缓存
+lookUpImpOrForward
+cache_getImp
+getMethodNoSuper_nolock
+cache_fill
+</code></pre>
+<h2 id="msgSend参数都有哪些；"><a href="#msgSend参数都有哪些；" class="headerlink" title="msgSend参数都有哪些；"></a>msgSend参数都有哪些；</h2><pre><code>第一个参数：消息接受的对象实例
+第二个参数：执行的方法
+</code></pre>
+<h2 id="class方法相关"><a href="#class方法相关" class="headerlink" title="class方法相关"></a>class方法相关</h2><pre><code>class在nsobject中实现，谁调用返回的就是谁
+isKaidof[NSObect class] 无论谁调用都分会yes
+print能调用成功是应为通过对象找到的就是 isa
+</code></pre>
+<h1 id="UI相关"><a href="#UI相关" class="headerlink" title="UI相关"></a>UI相关</h1><h2 id="tableViewCell的自适应如何实现，如何保证性能"><a href="#tableViewCell的自适应如何实现，如何保证性能" class="headerlink" title="tableViewCell的自适应如何实现，如何保证性能"></a>tableViewCell的自适应如何实现，如何保证性能</h2><pre><code>提前计算好每个cell的高度，保存在一个frameModel中，每次从frameModel中取
+</code></pre>
+<h2 id="转场动画相关操作"><a href="#转场动画相关操作" class="headerlink" title="转场动画相关操作"></a>转场动画相关操作</h2><pre><code>前面提到转场的本质是下一个场景的视图替换当前场景的视图，从当前场景过渡下一个场景。下面称即将消失的
+场景的视图为 fromView，对应的视图控制器为 fromVC，即将出现的视图为 toView，对应的视图控制器称之为 toVC。
+交互控制器(Interaction Controller)
+转场环境(Transition Context)
+转场协调器(Transition Coordinator)
+</code></pre>
+<h2 id="绘图相关知识-coreGraphics框架的使用"><a href="#绘图相关知识-coreGraphics框架的使用" class="headerlink" title="绘图相关知识(coreGraphics框架的使用)"></a>绘图相关知识(coreGraphics框架的使用)</h2><pre><code>绘图周期
+iOS在运行循环中会整合所有的绘图请求，并一次将它们绘制出来
+不能在子线程中绘制，也不能进行复杂的操作，否则会造成主线程卡顿
+视图绘制
+调用UIView的drawRect:方法进行绘制。如果调用一个视图的setNeedsDisplay方法
+，那么该视图就被标记为重新绘制，并且会在下一次绘制周期中重新绘制，自动调用drawRect:方法。
+视图布局
+调用UIView的layoutSubviews方法。如果调用一个视图的setNeedsLayout方法，
+那么该视图就被标记为需要重新布局，UIKit会自动调用layoutSubviews
+方法及其子视图的layoutSubviews方法。
+在绘图时，我们应该尽量多使用布局，少使用绘制，是因为布局使用的是GPU，而
+绘制使用的是CPU。GPU对于图形处理有优势，而CPU要处理的事情较多，且不擅长
+处理图形，所以尽量使用GPU来处理图形。
+
+绘图原理
+context：imageContext：图片上下文，
+CGPathRef / UIBezierPath图形的绘制需要绘制一个路径
+</code></pre>
+<h2 id="view的生命周期"><a href="#view的生命周期" class="headerlink" title="view的生命周期"></a>view的生命周期</h2><pre><code>1).initWithCoder
+2).awakeFromNib: 此时frameh还没有完成。
+2.手写代码：
+1.initWithCoder
+initWithFrame
+view采用懒加载的方式，只有用到view时才会被创建，即才会被调用
+loadView-&gt;viewDidLoad这一系列函数，控制器的View
+是延迟加载的: 创建控制器并不一定会创建控制器的view,等用到时再加载。
+</code></pre>
+<h2 id="系统UIView更新机制的思想"><a href="#系统UIView更新机制的思想" class="headerlink" title="系统UIView更新机制的思想"></a>系统UIView更新机制的思想</h2><pre><code>UIView提供了layoutSubViews方法来处理。
+需要注意的时layoutSubViews方法由系统来调用，不能程序员来调用。
+可以调用setNeedsLayout方法进行标记,以保证在UI下个刷屏系统中会调用layoutSubviews。
+或者layoutIfNedded直接请求系统调用layoutIfNeeded直接请求系统调用layoutSubviews。
+layoutSubViews的被调用时机:
+1.addSubView会触发layoutSubviews,比如ivewA add ViewB，
+第一次添加A和B的layoutSubviews都会被调用，而第二次( viewA 已经有了viewB)只调用viewB的。
+2.view的frame改变会触发layoutSubViews。
+3.滚动一个UIScrollView会触发layoutSubviews。
+4.旋转Screen会触发UIView的layoutSubviews。
+5.改变transform属性时，当然frame也会变。
+6.处于key window的UIView才会被调用( 程序同一时间只有一个window为keyWindow，
+可以简单理解为显示在最前面的window的keywindow)
+</code></pre>
+<h2 id="drawRect常用作用"><a href="#drawRect常用作用" class="headerlink" title="drawRect常用作用"></a>drawRect常用作用</h2><pre><code>实际需求：1、在当前画板上画图像，曲线、虚线、几何图形、写字等等。
+
+2、UITextView添加自定义placeholder的需求中，将holder的label添加在写drawRect内，设置holder字符串时调用setNeedsDisplay重绘UITextView。
+</code></pre>
+<h2 id="layoutSubView和drawRect的调用时机；"><a href="#layoutSubView和drawRect的调用时机；" class="headerlink" title="layoutSubView和drawRect的调用时机；"></a>layoutSubView和drawRect的调用时机；</h2><h2 id="用UIView实现Scrollview。"><a href="#用UIView实现Scrollview。" class="headerlink" title="用UIView实现Scrollview。"></a>用UIView实现Scrollview。</h2><pre><code>而子视图的frame正是基于父视图的坐标系，当我们更改父视图bounds中origin的
+时候子视图的位置就发生了变化，这就是实现scrollView的关键点！！！
+通过contentSize限制scrollView的内部空间，实现代码如下
+</code></pre>
+<h2 id="轮播图的实现"><a href="#轮播图的实现" class="headerlink" title="轮播图的实现"></a>轮播图的实现</h2><pre><code>基于collectionView进行的封装（推荐）
+基于scrollView的无限轮播（首尾各多创建一个展示图片的ImageView）
+同样是基于scrollView的无限轮播（总共就创建三个ImageView）
+（答定时器，标志位判断，代理方法）
+</code></pre>
+<h2 id="CGSize-intrinsicContentSize-是干什么用的？"><a href="#CGSize-intrinsicContentSize-是干什么用的？" class="headerlink" title="-(CGSize)intrinsicContentSize:是干什么用的？"></a>-(CGSize)intrinsicContentSize:是干什么用的？</h2><pre><code>属性来获取内置大小
+答：固有大小。顾名思义，在AutoLayout中，它作为UIView的属性（不是语法上的属性），
+意思就是说我知道自己的大小，如果你没有为我指定大小，我就按照这个大小来。
+</code></pre>
+<h2 id="渲染UI为什么要在主线程？"><a href="#渲染UI为什么要在主线程？" class="headerlink" title="渲染UI为什么要在主线程？"></a>渲染UI为什么要在主线程？</h2><pre><code>因为UIKit框架不是线程安全的，所以涉及多个线程同时对UI进行操作会造成什么影响、
+问题、错误，这里就不再赘述。那么，就有人会问为什么不把UIKit框架设置为线程安全呢？
+因为线程安全需要加锁，我们都知道加锁就会消耗性能，影响处理速度，影响渲染速度，
+我们通常自己在写@property时都会写nonatomic来追求高性能高效率。
+而UI又是最追求速度流畅，体验无顿挫感的，给UI加锁是不可能的，这辈子都不可能的，
+想要UI极度流畅，但线程安全又得不到保障，怎么办呢？
+</code></pre>
+<h2 id="如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？"><a href="#如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？" class="headerlink" title="如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？"></a>如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？</h2><pre><code>（答一般block里面回调的话，数据还是会回来的。但是，如果控制器销毁了的话，self置为nil，对nil的操作一般也是安全的，就是浪费了流量。）；
+</code></pre>
+<h2 id="scrollview与消息响应链冲突？"><a href="#scrollview与消息响应链冲突？" class="headerlink" title="scrollview与消息响应链冲突？"></a>scrollview与消息响应链冲突？</h2><pre><code>1、设置是否延时传递给内部组件
+self.delaysContentTouches = NO;
+设置返回值为YES
+-(BOOL)touchesShouldCancelInContentView:(UIView *)view
+&#123;
+    [super touchesShouldCancelInContentView:view];
+    return YES;
+&#125;
+同时识别多个手势
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+自定义手势
+</code></pre>
+<h2 id="Core-Graphics的更底层的是什么；"><a href="#Core-Graphics的更底层的是什么；" class="headerlink" title="Core Graphics的更底层的是什么；"></a>Core Graphics的更底层的是什么；</h2><pre><code>　1）获取上下文
+　2）绘制路径
+　3）添加路径到上下文
+　4）修改图形状态参数
+　5）渲染上下文
+　CGContextRef、CGPathRef、UIBezierPath
+</code></pre>
+<h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><h2 id="指针和引用的区别"><a href="#指针和引用的区别" class="headerlink" title="指针和引用的区别"></a>指针和引用的区别</h2><pre><code>指针指对象的地址，引用是对象的引用计数
+指针调用和函数调用
+原因：调用函数的时候，由于runtime机制，通过方法objc_msgSend() 把函数的调用对象和方法名发送出去
+根据对象名找到对象类存储的函数函数列表MethordList,再根据方法名找到MethordList 中的函数指针method_imp，再根据函数指针调用响应函数
+</code></pre>
+<h2 id="内存泄漏的原因"><a href="#内存泄漏的原因" class="headerlink" title="内存泄漏的原因"></a>内存泄漏的原因</h2><pre><code>内存泄漏（memory leak）：是指申请的内存空间使用完毕之后未回收。
+一次内存泄露危害可以忽略，但若一直泄漏，无论有多少内存，迟早都会被占用光，
+最终导致程序crash。（因此，开发中我们要尽量避免内存泄漏的出现）
+内存溢出（out of memory）：是指程序在申请内存时，没有足够的内存空间供其使用。
+通俗理解就是内存不够用了，通常在运行大型应用或游戏时，应用或游戏所需要
+的内存远远超出了你主机内安装的内存所承受大小，就叫内存溢出。最终导致机器重启或者程序crash。
+第一种：静态分析方法（Analyze）
+第二种：动态分析方法（Instrument工具库里的Leaks）。一般推荐使用第二种。
+</code></pre>
+<h2 id="什么是虚拟内存、共享内存、物理内存"><a href="#什么是虚拟内存、共享内存、物理内存" class="headerlink" title="什么是虚拟内存、共享内存、物理内存"></a>什么是虚拟内存、共享内存、物理内存</h2><pre><code>物理内存就是实打实的存放数据的硬件，
+虚拟内存是在物理内存上的一层与具体硬件无关的抽象
+共享内存：进程在运行过程中，会加载许多操作系统的动态库，比如 libc.so、libld.so等。
+这些库对于每个进程而言都是公用的，它们在内存中实际只会加载一份，这部分称为共享内存。
+</code></pre>
+<h2 id="举例一些I-O操作的例子"><a href="#举例一些I-O操作的例子" class="headerlink" title="举例一些I/O操作的例子"></a>举例一些I/O操作的例子</h2><pre><code>1）阻塞IO
+2）非阻塞IO
+3）IO复用（select和poll）
+4）信号驱动IO（sigio）
+5）异步IO（aio_）
+</code></pre>
+<h2 id="如何开辟一块内存；"><a href="#如何开辟一块内存；" class="headerlink" title="如何开辟一块内存；"></a>如何开辟一块内存；</h2><pre><code>其实结论就是 实际分配内存是按照16字节对齐的 内存大小都是16 的倍数。
+</code></pre>
+<h2 id="什么时候深复制，什么时候浅复制；"><a href="#什么时候深复制，什么时候浅复制；" class="headerlink" title="什么时候深复制，什么时候浅复制；"></a>什么时候深复制，什么时候浅复制；</h2><pre><code>string 是拷贝的（指针）
+copy是内容的复制。
+不可变对象用浅复制。
+可变对象用深复制
+自定义对象的copy我们要实现NSCoding协议
+</code></pre>
+<h2 id="怎么控制内存和优化内存；如果是你考虑怎么优化内存-从什么地方着手"><a href="#怎么控制内存和优化内存；如果是你考虑怎么优化内存-从什么地方着手" class="headerlink" title="怎么控制内存和优化内存；如果是你考虑怎么优化内存,从什么地方着手"></a>怎么控制内存和优化内存；如果是你考虑怎么优化内存,从什么地方着手</h2><pre><code>（答 检查是否有野指针,检查是否有循环引用,优化数组存取等）；
+复用机制
+少使用xib
+不要阻塞线程
+图片优化
+合理使用数组字典优化查找速度
+懒加载
+缓存
+一些objects的初始化很慢，比如NSDateFormatter和NSCalendar。可以用单例来处理，避免日期格式转换
+选择正确的数据格式，json、xml、二进制数据流
+少使用webView
+优化tableView
+选择正确的数据持久化
+</code></pre>
+<h2 id="问堆和栈的区别。"><a href="#问堆和栈的区别。" class="headerlink" title="问堆和栈的区别。"></a>问堆和栈的区别。</h2><pre><code>（答对于栈来讲，是由编译器自动管理，无需我们手工控制；对于堆来说，释放工作由程序员控制，容易产生memory leak。）
+</code></pre>
+<h2 id="Block的创建，何时被释放。"><a href="#Block的创建，何时被释放。" class="headerlink" title="Block的创建，何时被释放。"></a>Block的创建，何时被释放。</h2><pre><code>（答Block在栈区创建，用copy从栈区拷贝到堆区保证安全，由系统回收，何时回收）；
+如果没有其他对象强引用，block执行完毕就会被释
+</code></pre>
+<h2 id="dynamic的应用场景？"><a href="#dynamic的应用场景？" class="headerlink" title="@dynamic的应用场景？"></a>@dynamic的应用场景？</h2><pre><code>@dynamic 就是要来告诉编译器，代码中用@dynamic修饰的属性，其getter和setter方法会
+在程序运行的时候或者用其他方式动态绑定，以便让编译器通过编译。其主要的作用就是
+用在NSManageObject对象的属性声明上，由于此类对象的属性一般是从Core Data
+的属性中生成的，Core Data框架会在程序运行的时候为此类属性生成getter和Setter方法。
+</code></pre>
+<h2 id="问题：-property-copy-NSMutableArray-array"><a href="#问题：-property-copy-NSMutableArray-array" class="headerlink" title="问题：@property (copy) NSMutableArray *array;"></a>问题：@property (copy) NSMutableArray *array;</h2><pre><code>答1、添加,删除,修改数组内的元素的时候,程序会因为找不到对应的方法而崩
+溃.因为copy就是复制一个不可变NSArray的对象；
+2、使用了atomic属性会影响性能。
+</code></pre>
+<h1 id="OC语言相关"><a href="#OC语言相关" class="headerlink" title="OC语言相关"></a>OC语言相关</h1><h2 id="blcok，NSNotification，delegate，Observer比较"><a href="#blcok，NSNotification，delegate，Observer比较" class="headerlink" title="blcok，NSNotification，delegate，Observer比较"></a>blcok，NSNotification，delegate，Observer比较</h2><pre><code>代理是一种回调机制，且是一对一的关系，通知是一对多的关系，一个对向所有的观察者提供变更通知；
+效率：Delegate比NSNOtification高；
+Delegate和Block一般是一对一的通信；
+Delegate需要定义协议方法，代理对象实现协议方法，并且需要建立代理关系才可以实现通信；
+Block：Block更加简洁，不需要定义繁琐的协议方法，但通信事件比较多的话，建议使用Delegate；
+</code></pre>
+<h2 id="const-extern-static-用法区别"><a href="#const-extern-static-用法区别" class="headerlink" title="const extern static 用法区别"></a>const extern static 用法区别</h2><pre><code>只要使用static修改局部变量之后, 当执行到定义局部变量的代码就会
+分配存储空间, 但是只有程序结束才会释放该存储空间
+extern：此变量/函数是在别处定义的，要在此处引用
+</code></pre>
+<h2 id="写一个宏定义函数，实现返回三个数中最大的"><a href="#写一个宏定义函数，实现返回三个数中最大的" class="headerlink" title="写一个宏定义函数，实现返回三个数中最大的"></a>写一个宏定义函数，实现返回三个数中最大的</h2><pre><code>#define MAX(a,b,c) (a&gt;b?(a&gt;c?a:c):(b&gt;c?b:c))
+</code></pre>
+<h2 id="static和extern的访问范围，用extern的情况下什么时候程序会报错"><a href="#static和extern的访问范围，用extern的情况下什么时候程序会报错" class="headerlink" title="static和extern的访问范围，用extern的情况下什么时候程序会报错"></a>static和extern的访问范围，用extern的情况下什么时候程序会报错</h2><pre><code>静态变量用static修饰，其目的是声明一个变量只能被此文件里的函数享有。因而它的主要工作就是防止变量被外部函数使用
+extern存储类型的目的却是允许几个源文件可以共享同一个变量
+编译器当然不会答应他俩修饰同一个变量。
+</code></pre>
+<h2 id="inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？"><a href="#inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？" class="headerlink" title="inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？"></a>inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？</h2><pre><code>避免了频繁调用函数对栈内存重复开辟所带来的消耗
+inline函数仅仅是一个对编译器的建议，所以最后能否真正内联，看编译器的意思，
+它如果认为函数不复杂，能在调用点展开，就会真正内联，并不是说声明了内联就会内联，声明内联只是一个建议而已。
+</code></pre>
+<h2 id="OC里的基本数据类型如数组字典等的数据结构是怎样的；"><a href="#OC里的基本数据类型如数组字典等的数据结构是怎样的；" class="headerlink" title="OC里的基本数据类型如数组字典等的数据结构是怎样的；"></a>OC里的基本数据类型如数组字典等的数据结构是怎样的；</h2><pre><code>数组字典都是使用工厂方法创建的，根据不同数据，生成类不同
+字典本质上是一个hash表，根据字典的key进行哈希取位置
+开放定址法的结构通常允许在通列表的数量达到了某个阈值，通常是通列表长度的80%使用量
+时，对通列表进行一次扩充grow，然后重新计算数据的keyHash放入新桶中
+但是不断扩容的空间就是其弊端，因此开放地址法最好存储的是临时需要，尽快释放的资源
+例如字典参数和associated object，拉链法就保证了资源的可控性，像这种@synchronized
+锁就可以根据地址拉链出一条对应的使用线程即可，随时使用。
+正如你会猜测的，__NSArrayM 用了环形缓冲区 (circular buffer)。这个数据结构相当简单，
+只是比常规数组或缓冲区复杂点。环形缓冲区的内容能在到达任意一端时绕向另一端。
+环形缓冲区有一些非常酷的属性。尤其是，除非缓冲区满了，否则在任意一端插入
+或删除均不会要求移动任何内存。我们来分析这个类如何充分利用环形缓冲区来使得自身比 C
+数组强大得多。在任意一端插入或者删除，只是修改offset参数，不需要移动内存，我们访问的时
+候只是不和普通的数组一样index多少就是多少，这里会计算加上offset之后处理的值取数据，而不
+是插入头和尾巴的时候，环形结构会根据最少移动内存指针的方式插入，例如要在A和B之间插入，按照
+C的数组，我们需要把B到E的元素移动内存，但是环形缓冲区的设计，我们只要把A的值向前移动一
+个单位内存，即可，同时修改offset偏移量，就能保证最小的移动单元来完成中间插入
+可以看到插入头尾只是修改offset指针而已，如果插入数据到达阀值，一样需要扩容。
+往中部插入对象有非常相似的结果。合理的解释就是，__NSArrayM 试着去最
+小化内存的移动，因此会移动最少的一边元素。
+</code></pre>
+<h2 id="sychronized实现原理"><a href="#sychronized实现原理" class="headerlink" title="sychronized实现原理"></a>sychronized实现原理</h2><pre><code>你调用 sychronized 的每个对象，Objective-C runtime 都会为其分配一个递归锁并存储在哈希表中。
+如果在 sychronized 内部对象被释放或被设为 nil 看起来都 OK。不过这没在文档中说明，所以我不会再生产代码中依赖这条。
+注意不要向你的 sychronized block 传入 nil！这将会从代码中移走线程安全。
+你可以通过在 objc_sync_nil 上加断点来查看是否发生了这样的事情。
+</code></pre>
+<h2 id="问NSTimer的底层实现原理"><a href="#问NSTimer的底层实现原理" class="headerlink" title="问NSTimer的底层实现原理"></a>问NSTimer的底层实现原理</h2><pre><code>NSTimer可以选择是否重复执行，为了保证NSTimer调用的方法中传递的
+对象生命周期，NSTimer会对外界传递的对象进行一次retain。
+进行invalidate，NSTimer才会消失，这时Object对象也就会释放了
+NSTimer会默认为我们添加到Runloop的NSDefaultRunLoopMode中，而
+且由于是在主线程中，所以Runloop是开启的，不需要我们手动打开
+</code></pre>
+<h2 id="block中为什么要用Strong类型的引用来保持self；"><a href="#block中为什么要用Strong类型的引用来保持self；" class="headerlink" title="block中为什么要用Strong类型的引用来保持self；"></a>block中为什么要用Strong类型的引用来保持self；</h2><pre><code>确保strongSelf在block中不会被释放。
+</code></pre>
+<h2 id="问-ifdef-cplusplus-extern-“C-“"><a href="#问-ifdef-cplusplus-extern-“C-“" class="headerlink" title="问#ifdef __cplusplus extern “C “"></a>问#ifdef __cplusplus extern “C “</h2><pre><code>&#123; #endif………… …………#ifdef __cplusplus &#125; #endif这段代码为什么总是会出现
+答：编译器判断是否支持c++，涉及到c++命名问题，如果是c++编译器，要加上extern &quot;C&quot;
+</code></pre>
+<h2 id="说下ASCII和unicode的区别utf-8的优势"><a href="#说下ASCII和unicode的区别utf-8的优势" class="headerlink" title="说下ASCII和unicode的区别utf-8的优势"></a>说下ASCII和unicode的区别utf-8的优势</h2><pre><code>ASCII 码一共规定了128个字符的编码
+Unicode 当然是一个很大的集合，现在的规模可以容纳100多万个符号
+UTF-8 最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节
+表示一个符号，根据不同的符号而变化字节长度。
+</code></pre>
+<h2 id="iOS-launchwith-options-返回no有什么作用；"><a href="#iOS-launchwith-options-返回no有什么作用；" class="headerlink" title="iOS launchwith options 返回no有什么作用；"></a>iOS launchwith options 返回no有什么作用；</h2><pre><code> application:openURL:options: 方法是否执行
+ 当 return YES 时执行，return NO 时不执行
+</code></pre>
+<h1 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h1><h2 id="CommonMode的特性"><a href="#CommonMode的特性" class="headerlink" title="CommonMode的特性"></a>CommonMode的特性</h2><pre><code>1. 首先runloop对象到自己的common modes里面拿出被标记的运行模式commonModes.
+2. 匹配commonModes和modes-&gt;model-&gt;name.
+3. 匹配成功的模式，将timer加入到对应model-&gt;timers里面.
+4. source, observer同timer.
+</code></pre>
+<h2 id="runloop与autoreleasepool的关系"><a href="#runloop与autoreleasepool的关系" class="headerlink" title="runloop与autoreleasepool的关系"></a>runloop与autoreleasepool的关系</h2><pre><code>(AutoreleasePool并没有单独的结构，而是由若干个AutoreleasePoolPage以双向链表的形式组成)
+AutoreleasePoolPage每个对象会开辟4096字节内存（也就是虚拟内存一页的大小），
+除了上面的实例变量所占空间，剩下的空间全部用来储存autorelease对象的地址
+iOS里的TaggedPointer不适用autorelesepool
+AutoreleasePool 在 runloop 在开始时被push，在runloop休眠时(beforewaiting状态)pop
+</code></pre>
+<h2 id="GCD-在Runloop中的使用"><a href="#GCD-在Runloop中的使用" class="headerlink" title="GCD 在Runloop中的使用"></a>GCD 在Runloop中的使用</h2><pre><code>GCD由 子线程 返回到 主线程,只有在这种情况下才会触发 RunLoop。会触发 RunLoop 的 Source 1 事件。
+</code></pre>
+<h2 id="GCD-Global队列创建线程进行耗时操作的风险"><a href="#GCD-Global队列创建线程进行耗时操作的风险" class="headerlink" title="GCD Global队列创建线程进行耗时操作的风险"></a>GCD Global队列创建线程进行耗时操作的风险</h2><pre><code>dispatch_async 函数分发到全局队列不一定会新建线程执行任务，全局队列底层有一个的线程池，如果线程池满了，
+那么后续的任务会被 block 住，等待前面的任务执行完成，才会继续执行。如果线程池中的线程
+长时间不结束，后续堆积的任务会越来越多，此时就会存在 APP crash的风险。
+避免使用 GCD Global 队列创建 Runloop 常驻线程
+</code></pre>
+<h2 id="CADispalyTimer和Timer哪个更精确"><a href="#CADispalyTimer和Timer哪个更精确" class="headerlink" title="CADispalyTimer和Timer哪个更精确"></a>CADispalyTimer和Timer哪个更精确</h2><pre><code>CADisplayLink 更精确
+iOS设备的屏幕刷新频率是固定的，CADisplayLink在正常情况下会在每次刷新结束都被调用，精确度相当高。
+CADisplayLink使用场合相对专一，适合做UI的不停重绘，比如自定义动画引擎或者视
+频播放的渲染。NSTimer的使用范围要广泛的多，各种需要单次或者循环定时处理的任务都可
+以使用。在UI相关的动画或者显示内容使用 CADisplayLink比起用NSTimer的
+好处就是我们不需要在格外关心屏幕的刷新
+频率了，因为它本身就是跟屏幕刷新同步的。
+</code></pre>
+<h2 id="怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作"><a href="#怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作" class="headerlink" title="怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作"></a>怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作</h2><pre><code>我们就可以将更新UI事件放在主线程的NSDefaultRunLoopMode上执行即可，这样
+就会等用户不再滑动页面，主线程RunLoop由UITrackingRunLoopMode切
+换到NSDefaultRunLoopMode时再去更新UI
+</code></pre>
+<h2 id="分析线程同步串行、同步并行、异步串行、异步并行问题"><a href="#分析线程同步串行、同步并行、异步串行、异步并行问题" class="headerlink" title="分析线程同步串行、同步并行、异步串行、异步并行问题"></a>分析线程同步串行、同步并行、异步串行、异步并行问题</h2><h2 id="GCD执行原理、问题分析"><a href="#GCD执行原理、问题分析" class="headerlink" title="GCD执行原理、问题分析"></a>GCD执行原理、问题分析</h2><pre><code>GCD底层有一个线程池，这个线程池存放的是一个个的线程，这个线程池中
+的线程可以重用，当一段时间这个线程没有被调用就会被销毁，
+开辟多少线程不是由同步异步决定的而是底层线程池决定的，线程池是系统维护，
+</code></pre>
+<h2 id="dispatch-once如何实现一次性代码"><a href="#dispatch-once如何实现一次性代码" class="headerlink" title="dispatch_once如何实现一次性代码"></a>dispatch_once如何实现一次性代码</h2><pre><code>定义一个dispatch_once_t(其实也就是整型)静态变量，
+意义：作为标识下面dispatch_once的block是否已执行过。
+ static修饰会默认将其初始化为0，当值为0时才会执行block。
+ 当block执行完成，底层会将onceToken设置为1，这也就是为什
+ 么要传onceToken的地址（static修饰的变量可以通过地址修改
+ onceToken的值），同时底层会加锁来保证这个方法是线程安全的
+</code></pre>
+<h2 id="NSOperation数据结构"><a href="#NSOperation数据结构" class="headerlink" title="NSOperation数据结构"></a>NSOperation数据结构</h2><pre><code>addDependency操作依赖性
+KVO 兼容属性
+cancelAllOperations 响应取消命令
+start;执行操作
+NSBlockOperation：用于管理一个或多个block的并发执行。
+NSInvocationOperation：NSInvocationOperation类是NSOperation的一个具体
+子类，用于开启一个操作，该操作包括在指定对象上调用一个selector。
+</code></pre>
+<h2 id="重写NSOperation需要注意的点"><a href="#重写NSOperation需要注意的点" class="headerlink" title="重写NSOperation需要注意的点"></a>重写NSOperation需要注意的点</h2><pre><code>1、如果需要自定义并发执行的 Operation，必须重写start、main、isExecuting、isFinished、isAsynchronous方法。
+2、在 operation 的 main 方法里面，必须提供 autorelease pool,因为你的 operation 完成后需要销毁。
+3、一旦你的 operation 开始了，必须通过 KVO，告诉所有的监听者，现在该operation的执行状态。
+4、调用时，如果需要并发执行 Operation，必须调用performOperation:方法，当然，也可以改为自定义其他方法或者直接在start方法添加多线程调用。
+5、对于自定义的 Operation 类，如果不需要并发执行，可以直接调用start
+</code></pre>
+<h2 id="进程中的哪些空间是线程所共有的？"><a href="#进程中的哪些空间是线程所共有的？" class="headerlink" title="进程中的哪些空间是线程所共有的？"></a>进程中的哪些空间是线程所共有的？</h2><pre><code>一个进程中的所有线程共享该进程的地址空间，但它们有各自独立的（/私有的）栈(stack)
+</code></pre>
+<h2 id="使用GCD需要注意什么；"><a href="#使用GCD需要注意什么；" class="headerlink" title="使用GCD需要注意什么；"></a>使用GCD需要注意什么；</h2><pre><code>dispatch_sync同步死锁（循环等待）
+重复的获取互斥资源引发的等待（加锁）
+开启过多线程
+线程和RunLoop，子线程不会开启runloop
+</code></pre>
+<h2 id="runloop跟runtime有没有关联"><a href="#runloop跟runtime有没有关联" class="headerlink" title="runloop跟runtime有没有关联"></a>runloop跟runtime有没有关联</h2><pre><code>个人想到的是autoreleasepool、其他的不好找
+runloop中事件源都是由运行时runtime触发
+</code></pre>
+<h2 id="CPU和GPU怎么相互合作的"><a href="#CPU和GPU怎么相互合作的" class="headerlink" title="CPU和GPU怎么相互合作的"></a>CPU和GPU怎么相互合作的</h2><pre><code>命令缓冲区包含了一个命令队列，由CPU向其中添加命令，而由GPU从中读取命令
+，添加和读取的过程是互相独立的。命令缓冲区使得CPU和GPU可以互相独立工作
+。当CPU需要渲染一些对象时，它可以向命令缓冲区中添加命令，而当GPU完成了上
+一次的渲染任务后，它就可以从命令队列中再取出一个命令并执行它。
+</code></pre>
+<h1 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h1><h2 id="HTTP请求头都有哪些内容"><a href="#HTTP请求头都有哪些内容" class="headerlink" title="HTTP请求头都有哪些内容"></a>HTTP请求头都有哪些内容</h2><pre><code>Accept: */*(客户端能接收的资源类型) 
+Accept-Language: en-us(客户端接收的语言类型) 
+Connection: Keep-Alive(维护客户端和服务端的连接关系) 
+Host: localhost:8080(连接的目标主机和端口号) 
+Referer: http://localhost/links.asp(告诉服务器我来自于哪里) 
+User-Agent: Mozilla/4.0(客户端版本号的名字) 
+Accept-Encoding: gzip, deflate(客户端能接收的压缩数据的类型) 
+If-Modified-Since: Tue, 11 Jul 2000 18:23:51 GMT(缓存时间)  
+Cookie(客户端暂存服务端的信息) 
+Date: Tue, 11 Jul 2000 18:23:51 GMT(客户端请求服务端的时间
+响应(服务端-&gt;客户端[response])
+HTTP/1.1(响应采用的协议和版本号) 200(状态码) OK(描述信息)
+Location: http://www.baidu.com(服务端需要客户端访问的页面路径) 
+Server:apache tomcat(服务端的Web服务端名)
+Content-Encoding: gzip(服务端能够发送压缩编码类型) 
+Content-Length: 80(服务端发送的压缩数据的长度) 
+Content-Language: zh-cn(服务端发送的语言类型) 
+Content-Type: text/html; charset=GB2312(服务端发送的类型及采用的编码方式)
+Last-Modified: Tue, 11 Jul 2000 18:23:51 GMT(服务端对该资源最后修改的时间)
+Refresh: 1;url=http://www.it315.org(服务端要求客户端1秒钟后，刷新，然后访问指定的页面路径)
+Content-Disposition: attachment; filename=aaa.zip(服务端要求客户端以下载文件的方式打开该文件)
+Transfer-Encoding: chunked(分块传递数据到客户端）  
+Set-Cookie:SS=Q0=5Lb_nQ; path=/search(服务端发送到客户端的暂存数据)
+Expires: -1//3种(服务端禁止客户端缓存页面数据)
+Cache-Control: no-cache(服务端禁止客户端缓存页面数据)  
+Pragma: no-cache(服务端禁止客户端缓存页面数据)   
+Connection: close(1.0)/(1.1)Keep-Alive(维护客户端和服务端的连接关系)  
+Date: Tue, 11 Jul 2000 18:23:51 GMT(服务端响应客户端的时间)
+</code></pre>
+<h2 id="哪些加密算法"><a href="#哪些加密算法" class="headerlink" title="哪些加密算法"></a>哪些加密算法</h2><pre><code>MD5加密算法
+RSA加密算法
+AES加密算法
+Base64加密算法
+</code></pre>
+<h2 id="TCP和UDP各自使用场景"><a href="#TCP和UDP各自使用场景" class="headerlink" title="TCP和UDP各自使用场景"></a>TCP和UDP各自使用场景</h2><pre><code>TCP应用场景：
+效率要求相对低，但对准确性要求相对高的场景。因为传输中需要对数据确认
+、重发、排序等操作，相比之下效率没有UDP高。举几个例子：文件传输
+（准确高要求高、但是速度可以相对慢）、接受邮件、远程登录。
+UDP应用场景：
+效率要求相对高，对准确性要求相对低的场景。举几个例子：QQ聊天、
+在线视频、网络语音电话（即时通讯，速度要求高，但是出现偶尔断续不是太大问题
+，并且此处完全不可以使用重发机制）、广播通信（广播、多播）。
+</code></pre>
+<h2 id="http为什么底层是tcp不是udp"><a href="#http为什么底层是tcp不是udp" class="headerlink" title="http为什么底层是tcp不是udp ?"></a>http为什么底层是tcp不是udp ?</h2><pre><code>tcp协议比udp更安全（结合tcp的特点讲）
+</code></pre>
+<h2 id="socket异常断开时，设计一个合理的重连机制。"><a href="#socket异常断开时，设计一个合理的重连机制。" class="headerlink" title="socket异常断开时，设计一个合理的重连机制。"></a>socket异常断开时，设计一个合理的重连机制。</h2><pre><code>当与服务器断开连接或网络出错时，先不要处理当前正在连接的socket，可能回应下当前UI的数据显示问题；
+可以另起一个socket服务，与服务器尝试连接，当连接成功时，通知当前Socket进行重新连接
+每六秒连接一次如果30秒仍未连接上则通知UI掉线，之后仍然继续连接，知道连接上为止
+</code></pre>
+<h2 id="有了mac地址为什么要有ip地址"><a href="#有了mac地址为什么要有ip地址" class="headerlink" title="有了mac地址为什么要有ip地址"></a>有了mac地址为什么要有ip地址</h2><pre><code>mac地址与我们的设备进行绑定，就能确定我们身份。其实MAC地址，并不能算是地址，更应该算是一个身份证，用来表明身份。
+只拥有MAC地址的话，只有在同一网络区域内，才能进行数据传输，不能跨网络区域。
+如果想跨网络区域进行数据传递，最现实的方法就是借助ISP提供的网络区域。
+ISP能提供全球互联的网络——因特网，借助因特网可以传输数据给连接因特网上的机器。
+</code></pre>
+<h2 id="断点续传怎么实现"><a href="#断点续传怎么实现" class="headerlink" title="断点续传怎么实现;"></a>断点续传怎么实现;</h2><pre><code>续传的文件就好说了，只要给一个续传的标识位置，和对应的字节流就可以了，代码如下:
+filePath:生成的文件,用来续传用
+content:将要写入的字节
+position:续传的字节位置
+</code></pre>
+<h2 id="大型文件怎么下载并保存到本地；"><a href="#大型文件怎么下载并保存到本地；" class="headerlink" title="大型文件怎么下载并保存到本地；"></a>大型文件怎么下载并保存到本地；</h2><pre><code>大型文件压缩、分割成小份文件
+</code></pre>
+<h2 id="xml和json的区别"><a href="#xml和json的区别" class="headerlink" title="xml和json的区别"></a>xml和json的区别</h2><pre><code>1，xml是重量级的，json是轻量级的。
+2，xml在传输过程中比较占带宽，json占带宽少，易于压缩。
+3，xml和json都用在项目交互下，xml多用于做配置文件，json用于数据交互。
+4，json可用jackson，gson等方法解析，xml可用dom，sax，demo4j等方式解析。
+</code></pre>
+<h2 id="加密解密的技术讲解。"><a href="#加密解密的技术讲解。" class="headerlink" title="加密解密的技术讲解。"></a>加密解密的技术讲解。</h2><pre><code>（密解密就是是base64加密、POST加密、MD5加密、时间戳密码等等）
+</code></pre>
+<h2 id="reachability如何检测到网络状态变化？"><a href="#reachability如何检测到网络状态变化？" class="headerlink" title="reachability如何检测到网络状态变化？"></a>reachability如何检测到网络状态变化？</h2><pre><code>Reachability 是苹果官方提供的示例源码，它是对 SystemConfiguration.framework 
+模块中的 SCNetworkReachability.h 头文件里提供的一系列网络连接状态相关的 C 函数进行简单封装
+Reachability 中提供了三个快速初始化方法，分别为
+reachabilityWithHostName:、reachabilityWithAddress: 和 reachabilityForInternetConnection。
+通过上述初始化方法获得一个 Reachability 对象后，可调用 startNotifier 方法开始进行网络状态变化的监听
+</code></pre>
+<h2 id="IP-地址用-int-保存和读取转化"><a href="#IP-地址用-int-保存和读取转化" class="headerlink" title="IP 地址用 int 保存和读取转化"></a>IP 地址用 int 保存和读取转化</h2><pre><code>/**
+     * 根据位运算把 byte[] -&gt; int
+     * @param bytes
+     * @return int
+     */
+    public static int bytesToInt(byte[] bytes) &#123;
+        int addr = bytes[3] &amp; 0xFF;
+        addr |= ((bytes[2] &lt;&lt; 8) &amp; 0xFF00);
+        addr |= ((bytes[1] &lt;&lt; 16) &amp; 0xFF0000);
+        addr |= ((bytes[0] &lt;&lt; 24) &amp; 0xFF000000);
+        return addr;
+    &#125;
+</code></pre>
+<h1 id="开发相关"><a href="#开发相关" class="headerlink" title="开发相关"></a>开发相关</h1><h2 id="instruments它为什么能检测内存泄漏"><a href="#instruments它为什么能检测内存泄漏" class="headerlink" title="instruments它为什么能检测内存泄漏"></a>instruments它为什么能检测内存泄漏</h2><pre><code>Activity Monitor（活动监视器）：监控进程的CPU,内存,磁盘，网络使用情况 是程序在手机运行真正占用的内存大小
+Cocoa Layout 观察NSLayoutConstraint对象的改变，帮助我们判断什么时间什么地点的constraint是否合理
+Energy Log  耗电量监控
+Leaks（泄漏）：一般的措施内存使用情况，检查泄漏的内存，并提供了所有活动的分
+配和泄漏模块的类对象分配统计信息以及内存地址历史记录；
+Core Animation（图形性能）这个模块显示程序显卡性能以及CPU使用情况
+Network 用链接工具分析你的程序如何使用TCP/IP和UDP/IP链接
+</code></pre>
+<h2 id="推送的原理"><a href="#推送的原理" class="headerlink" title="推送的原理"></a>推送的原理</h2><pre><code>1.由App向iOS设备发送一个注册通知，用户需要同意系统发送推送。
+2.iOS向APNs远程推送服务器发送App的Bundle Id和设备的UDID。
+3.APNs根据设备的UDID和App的Bundle Id生成deviceToken再发回给App。
+4.App再将deviceToken发送给远程推送服务器(自己的服务器), 由服务器保存在数据库中。
+5.当自己的服务器想发送推送时, 在远程推送服务器中输入要发送的消息并选择发给哪些用户的deviceToken，由远程推送服务器发送给APNs。
+6.APNs根据deviceToken发送给对应的用户。
+</code></pre>
+<h2 id="项目上线被拒原因"><a href="#项目上线被拒原因" class="headerlink" title="项目上线被拒原因"></a>项目上线被拒原因</h2><pre><code>设计类型的问题，图标、UI等
+app类型设置不准确
+第三方资源用到广告等资源
+</code></pre>
+<h2 id="项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线"><a href="#项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线" class="headerlink" title="项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线"></a>项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线</h2><pre><code>加载大图，内存崩溃
+时间戳问题
+复杂页面的设计
+页面之间交互
+</code></pre>
+<h2 id="iPhone自带的AssistiveTouch你如何实现"><a href="#iPhone自带的AssistiveTouch你如何实现" class="headerlink" title="iPhone自带的AssistiveTouch你如何实现"></a>iPhone自带的AssistiveTouch你如何实现</h2><pre><code>UIWindow进行实现；
+层级UIWindowLevelAlert + 1
+</code></pre>
+<h2 id="有了解过代码如何编译的嘛"><a href="#有了解过代码如何编译的嘛" class="headerlink" title="有了解过代码如何编译的嘛"></a>有了解过代码如何编译的嘛</h2><pre><code>LLVM编译一个源文件的过程：预处理 -&gt; 词法分析 -&gt; Token -&gt; 语法分析 -&gt; 
+AST -&gt; 代码生成 -&gt; LLVM IR -&gt; 优化 -&gt; 生成汇编代码 -&gt; Link -&gt; 目标文件
+</code></pre>
+<h2 id="编译好的目标文件有data-和text段他们两者有啥区别"><a href="#编译好的目标文件有data-和text段他们两者有啥区别" class="headerlink" title="编译好的目标文件有data 和text段他们两者有啥区别"></a>编译好的目标文件有data 和text段他们两者有啥区别</h2><pre><code>text段: 用于存放程序代码的区域， 编译时确定， 只读。
+data段 :用于存放在编译阶段(而非运行时)就能确定的数据，可读可写。也是通常
+所说的静态存储区，赋了初值的全局变量、常量和静态变量都存放在这个域。
+</code></pre>
+<h2 id="appstore上架流程"><a href="#appstore上架流程" class="headerlink" title="appstore上架流程"></a>appstore上架流程</h2><pre><code>1.申请开发者账号
+2.创建开发者证书
+3.创建项目app id
+4.添加测试设备
+5.生成描述文件
+6.itnues connect创建项目
+7.上传app
+8.提交以供审核
+</code></pre>
+<h2 id="一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ"><a href="#一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ" class="headerlink" title="一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ;"></a>一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ;</h2><pre><code>微信自己添加应用白名单，自己app通过k能否打开微信定义的url来判断用户是否安装
+</code></pre>
+<h2 id="针对线上版本的崩溃处理；"><a href="#针对线上版本的崩溃处理；" class="headerlink" title="针对线上版本的崩溃处理；"></a>针对线上版本的崩溃处理；</h2><pre><code>UIKit不是线程安全的，执行UIKit操作如果不在主线程很可能造成程序Crash
+KVO
+避免 Foundation 类Carsh
+容器越界（NSArray， NSDictionary,...）
+unrecognized selector crash (这个很多时候是由于class使用错误导致)
+第三方工具：友盟
+dSYMTools分析
+</code></pre>
+<h2 id="Xcode构建过程；"><a href="#Xcode构建过程；" class="headerlink" title="Xcode构建过程；"></a>Xcode构建过程；</h2><pre><code>解析项目文件，获取你项目中的所有文件、target 及其依赖关系、build settings，最后把它变成一个树形结构(有向图)。
+增量构建。
+</code></pre>
+<h2 id="js和Oc交互以及区别；"><a href="#js和Oc交互以及区别；" class="headerlink" title="js和Oc交互以及区别；"></a>js和Oc交互以及区别；</h2><pre><code>js调用oc、oc调用js、通过javaSpritCore实现，JavascriptBridge
+</code></pre>
+<h2 id="pod-install和pod-update有什么区别？"><a href="#pod-install和pod-update有什么区别？" class="headerlink" title="pod install和pod update有什么区别？"></a>pod install和pod update有什么区别？</h2><pre><code>pod install:执行该命令时，如果Podfile.lock文件存在, 则
+直接从此文件中读取框架信息并且它会只下载Podfile.lock
+文件中指定的版本安装。对于不在Podfile.lock文件中的pod库，pod
+install命令会搜索这个pod库在Podfile文件中指定的版本来安装
+pod update:只有当你想要更新pod库的版本时才使用pod update；它
+不管Podfile.lock是否存在, 都会读取Podfile文件的的框架信息去下载安装
+，下载好之后, 再根据下载好的框架信息, 生成Podfile.lock文件
+</code></pre>
+<h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><h2 id="为什么要做组件化"><a href="#为什么要做组件化" class="headerlink" title="为什么要做组件化"></a>为什么要做组件化</h2><pre><code>随着app业务发展过程中体积越来越大，堆叠大量的业务逻辑，不同业务之间相互调用，相互嵌套
+代码之间的耦合性越来越高，不方便维护
+</code></pre>
+<h2 id="你认为组件化的一些收益"><a href="#你认为组件化的一些收益" class="headerlink" title="你认为组件化的一些收益"></a>你认为组件化的一些收益</h2><pre><code>解耦合
+分工更加明确，提高开发效率
+复用性更好，能迅速的组成更多的App
+</code></pre>
+<h2 id="redux-单向数据流是怎么产生的-描述下"><a href="#redux-单向数据流是怎么产生的-描述下" class="headerlink" title="redux 单向数据流是怎么产生的 描述下"></a>redux 单向数据流是怎么产生的 描述下</h2><h2 id="Charts框架底层实现；"><a href="#Charts框架底层实现；" class="headerlink" title="Charts框架底层实现；"></a>Charts框架底层实现；</h2><pre><code>通过CoreGraphics绘制的，数据模型。不如js方便美观
+</code></pre>
+<h2 id="画出项目的结构图。"><a href="#画出项目的结构图。" class="headerlink" title="画出项目的结构图。"></a>画出项目的结构图。</h2><pre><code>Fundation 基础资源（配置信息、基础分类、宏、工具集合）
+Map 地图资源（地图单例对象）
+Navi 导航资源 （导航页面控制器相关全部）
+Net 网络资源 （业务层对应的网络、测试网、线网、版本）
+Lib 图片、第三方资源 
+App 业务层 （主页、我的、poi、路线规划）
+</code></pre>
+<h2 id="yyModel的逻辑"><a href="#yyModel的逻辑" class="headerlink" title="yyModel的逻辑"></a>yyModel的逻辑</h2><pre><code>（YYModel的核心是通过runtime获取结构体中得Ivars的值，
+将此值定义为key,然后给key赋value值，所以我们需要自己遍历容器
+（NSArray，NSSet，NSDictionary），获取每一个值，然后KVC进行处理）。
+</code></pre>
+<h2 id="解耦的方式"><a href="#解耦的方式" class="headerlink" title="解耦的方式"></a>解耦的方式</h2><pre><code>1、组件化
+2、结合MVVM架构和数据驱动UI模式对原有MVC架构进行了兼容性优化
+3、通过AOP技术对部分业务进行拆分解耦
+4、优化事件传递方式
+</code></pre>
+<h2 id="项目中用的技术以及实现；"><a href="#项目中用的技术以及实现；" class="headerlink" title="项目中用的技术以及实现；"></a>项目中用的技术以及实现；</h2><pre><code>1.复杂cell提前缓存行高和UI的frame
+2.网络请求库的封装
+3.组建化简单实现
+4.tableView嵌套滑动
+5.地图对象的单例封装
+6.用View代替ViewController的实现
+7.定时器使用
+</code></pre>
+<h2 id="就是项目中遇到的问题以及解决方式；"><a href="#就是项目中遇到的问题以及解决方式；" class="headerlink" title="就是项目中遇到的问题以及解决方式；"></a>就是项目中遇到的问题以及解决方式；</h2><h2 id="缓存机制是怎么清除数据的？"><a href="#缓存机制是怎么清除数据的？" class="headerlink" title="缓存机制是怎么清除数据的？"></a>缓存机制是怎么清除数据的？</h2><pre><code>沙盒：iOS系统为每一个应用程序创建一个文件目录,是一个的独立,封闭,安全的空间, 一个沙盒就是一个文件目录。沙盒规定了一个程序只能在自身的沙盒中进行操作,不能去访问其他应用程序的沙盒(iOS8已经部分开放访问)
+沙盒的作用: 用来存放非代码文件(图片, 音频, 视频, 属性列表(plist), sqlite数据库, 文本文件, 其他等等)
+</code></pre>
+<h2 id="如何进行安全测试；"><a href="#如何进行安全测试；" class="headerlink" title="如何进行安全测试；"></a>如何进行安全测试；</h2><pre><code>ipa包加壳（苹果）
+敏感信息存储位置
+通讯网络安全
+代码混淆
+</code></pre>
+<h2 id="涂鸦怎么实现；"><a href="#涂鸦怎么实现；" class="headerlink" title="涂鸦怎么实现；"></a>涂鸦怎么实现；</h2><pre><code>- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+最终我们决定放弃 drawRect 而选用图层 CAShapeLayer。CAShapeLayer 不仅在功能上满足了我们的需求，对比之下 CAShapeLayer 在性能方面表现也非常出色。
+</code></pre>
+<h2 id="实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；"><a href="#实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；" class="headerlink" title="实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；"></a>实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；</h2><h2 id="说下生产者-消费者模型，其中的同步机制是怎么样的"><a href="#说下生产者-消费者模型，其中的同步机制是怎么样的" class="headerlink" title="说下生产者-消费者模型，其中的同步机制是怎么样的"></a>说下生产者-消费者模型，其中的同步机制是怎么样的</h2><pre><code>产生数据的模块，就形象地称为生产者；而处理数据的模块，就称为消费者。
+在生产者与消费者之间在加个缓冲区，我们形象的称之为仓库，生产
+者负责往仓库了进商品，而消费者负责从仓库里拿商品，这就构成了生产者消费者模式。
+//生产者消费者
+   dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
+   self.array = [[NSMutableArray alloc] init];
+   dispatch_queue_t queue = dispatch_queue_create(&quot;cn.chutong.www&quot;, DISPATCH_QUEUE_CONCURRENT);
+  //生产
+   dispatch_async(queue, ^&#123;
+       while (YES) &#123;
+           int count = random()%10;
+           sleep(1);
+           dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+           [self.array addObject:[NSString stringWithFormat:@&quot;%d&quot;,count]];
+           dispatch_semaphore_signal(semaphore);
+           NSLog(@&quot;生产了%d&quot;,count);
+       &#125;
+   &#125;);
+   //消费
+   dispatch_async(queue, ^&#123;
+       while (YES) &#123;
+       if (self.array.count&gt;0) &#123;
+           NSLog(@&quot;消费了%@&quot;,self.array.lastObject);
+           dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+           [self.array removeLastObject];
+           dispatch_semaphore_signal(semaphore);
+       &#125;
+           
+       &#125;
+   &#125;);
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift136%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="prev" title="内存管理">
+      <i class="fa fa-chevron-left"></i> 内存管理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift138%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%88%97%E8%A1%A8/" rel="next" title="UI相关">
+      UI相关 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E7%94%A8%E4%BD%93%E6%96%B9%E6%B3%95%E6%9F%A5%E6%89%BE"><span class="nav-number">1.</span> <span class="nav-text">共用体方法查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#msgSend%E5%A6%82%E4%BD%95%E6%9F%A5%E6%89%BE"><span class="nav-number">2.</span> <span class="nav-text">msgSend如何查找</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#msgSend%E5%8F%82%E6%95%B0%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9B"><span class="nav-number">3.</span> <span class="nav-text">msgSend参数都有哪些；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#class%E6%96%B9%E6%B3%95%E7%9B%B8%E5%85%B3"><span class="nav-number">4.</span> <span class="nav-text">class方法相关</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UI%E7%9B%B8%E5%85%B3"><span class="nav-number"></span> <span class="nav-text">UI相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tableViewCell%E7%9A%84%E8%87%AA%E9%80%82%E5%BA%94%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%80%A7%E8%83%BD"><span class="nav-number">1.</span> <span class="nav-text">tableViewCell的自适应如何实现，如何保证性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AC%E5%9C%BA%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">转场动画相关操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%98%E5%9B%BE%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86-coreGraphics%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">绘图相关知识(coreGraphics框架的使用)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#view%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">4.</span> <span class="nav-text">view的生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9FUIView%E6%9B%B4%E6%96%B0%E6%9C%BA%E5%88%B6%E7%9A%84%E6%80%9D%E6%83%B3"><span class="nav-number">5.</span> <span class="nav-text">系统UIView更新机制的思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#drawRect%E5%B8%B8%E7%94%A8%E4%BD%9C%E7%94%A8"><span class="nav-number">6.</span> <span class="nav-text">drawRect常用作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#layoutSubView%E5%92%8CdrawRect%E7%9A%84%E8%B0%83%E7%94%A8%E6%97%B6%E6%9C%BA%EF%BC%9B"><span class="nav-number">7.</span> <span class="nav-text">layoutSubView和drawRect的调用时机；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8UIView%E5%AE%9E%E7%8E%B0Scrollview%E3%80%82"><span class="nav-number">8.</span> <span class="nav-text">用UIView实现Scrollview。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AE%E6%92%AD%E5%9B%BE%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">9.</span> <span class="nav-text">轮播图的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CGSize-intrinsicContentSize-%E6%98%AF%E5%B9%B2%E4%BB%80%E4%B9%88%E7%94%A8%E7%9A%84%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">-(CGSize)intrinsicContentSize:是干什么用的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%B2%E6%9F%93UI%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%9C%A8%E4%B8%BB%E7%BA%BF%E7%A8%8B%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">渲染UI为什么要在主线程？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E6%9C%89%E4%B8%80%E4%B8%AAcontroller%E8%AF%B7%E6%B1%82%E4%BA%86%E7%BD%91%E7%BB%9C%E6%95%B0%E6%8D%AE%EF%BC%8C%E4%BD%86%E6%95%B0%E6%8D%AE%E8%BF%98%E6%B2%A1%E8%BF%94%E5%9B%9E%E4%B9%8B%E5%89%8D%E5%B0%B1pop%E5%87%BA%E5%8E%BB%E4%BA%86%EF%BC%8C%E9%97%AE%EF%BC%8C%E6%95%B0%E6%8D%AE%E4%BC%9A%E6%80%8E%E4%B9%88%E6%A0%B7%EF%BC%9F"><span class="nav-number">12.</span> <span class="nav-text">如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scrollview%E4%B8%8E%E6%B6%88%E6%81%AF%E5%93%8D%E5%BA%94%E9%93%BE%E5%86%B2%E7%AA%81%EF%BC%9F"><span class="nav-number">13.</span> <span class="nav-text">scrollview与消息响应链冲突？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Core-Graphics%E7%9A%84%E6%9B%B4%E5%BA%95%E5%B1%82%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9B"><span class="nav-number">14.</span> <span class="nav-text">Core Graphics的更底层的是什么；</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number"></span> <span class="nav-text">内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%92%8C%E5%BC%95%E7%94%A8%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">指针和引用的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.</span> <span class="nav-text">内存泄漏的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E3%80%81%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E3%80%81%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98"><span class="nav-number">3.</span> <span class="nav-text">什么是虚拟内存、共享内存、物理内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B%E4%B8%80%E4%BA%9BI-O%E6%93%8D%E4%BD%9C%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-number">4.</span> <span class="nav-text">举例一些I&#x2F;O操作的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%BC%80%E8%BE%9F%E4%B8%80%E5%9D%97%E5%86%85%E5%AD%98%EF%BC%9B"><span class="nav-number">5.</span> <span class="nav-text">如何开辟一块内存；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%B7%B1%E5%A4%8D%E5%88%B6%EF%BC%8C%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E6%B5%85%E5%A4%8D%E5%88%B6%EF%BC%9B"><span class="nav-number">6.</span> <span class="nav-text">什么时候深复制，什么时候浅复制；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E6%8E%A7%E5%88%B6%E5%86%85%E5%AD%98%E5%92%8C%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98%EF%BC%9B%E5%A6%82%E6%9E%9C%E6%98%AF%E4%BD%A0%E8%80%83%E8%99%91%E6%80%8E%E4%B9%88%E4%BC%98%E5%8C%96%E5%86%85%E5%AD%98-%E4%BB%8E%E4%BB%80%E4%B9%88%E5%9C%B0%E6%96%B9%E7%9D%80%E6%89%8B"><span class="nav-number">7.</span> <span class="nav-text">怎么控制内存和优化内存；如果是你考虑怎么优化内存,从什么地方着手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E5%A0%86%E5%92%8C%E6%A0%88%E7%9A%84%E5%8C%BA%E5%88%AB%E3%80%82"><span class="nav-number">8.</span> <span class="nav-text">问堆和栈的区别。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Block%E7%9A%84%E5%88%9B%E5%BB%BA%EF%BC%8C%E4%BD%95%E6%97%B6%E8%A2%AB%E9%87%8A%E6%94%BE%E3%80%82"><span class="nav-number">9.</span> <span class="nav-text">Block的创建，何时被释放。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dynamic%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">@dynamic的应用场景？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9A-property-copy-NSMutableArray-array"><span class="nav-number">11.</span> <span class="nav-text">问题：@property (copy) NSMutableArray *array;</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#OC%E8%AF%AD%E8%A8%80%E7%9B%B8%E5%85%B3"><span class="nav-number"></span> <span class="nav-text">OC语言相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#blcok%EF%BC%8CNSNotification%EF%BC%8Cdelegate%EF%BC%8CObserver%E6%AF%94%E8%BE%83"><span class="nav-number">1.</span> <span class="nav-text">blcok，NSNotification，delegate，Observer比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#const-extern-static-%E7%94%A8%E6%B3%95%E5%8C%BA%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">const extern static 用法区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E4%B8%80%E4%B8%AA%E5%AE%8F%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0%EF%BC%8C%E5%AE%9E%E7%8E%B0%E8%BF%94%E5%9B%9E%E4%B8%89%E4%B8%AA%E6%95%B0%E4%B8%AD%E6%9C%80%E5%A4%A7%E7%9A%84"><span class="nav-number">3.</span> <span class="nav-text">写一个宏定义函数，实现返回三个数中最大的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#static%E5%92%8Cextern%E7%9A%84%E8%AE%BF%E9%97%AE%E8%8C%83%E5%9B%B4%EF%BC%8C%E7%94%A8extern%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%A8%8B%E5%BA%8F%E4%BC%9A%E6%8A%A5%E9%94%99"><span class="nav-number">4.</span> <span class="nav-text">static和extern的访问范围，用extern的情况下什么时候程序会报错</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inline%E7%9F%A5%E9%81%93%E5%90%97%EF%BC%9F%E8%AF%B4%E8%AF%B4%E5%AE%83%E7%9A%84%E4%BD%9C%E7%94%A8%E3%80%82inline%E5%9C%A8%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E5%B1%95%E5%BC%80%E3%80%81%E7%BC%96%E8%AF%91%E8%BF%98%E6%98%AF%E8%BF%90%E8%A1%8C%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OC%E9%87%8C%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%A6%82%E6%95%B0%E7%BB%84%E5%AD%97%E5%85%B8%E7%AD%89%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9B"><span class="nav-number">6.</span> <span class="nav-text">OC里的基本数据类型如数组字典等的数据结构是怎样的；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sychronized%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">sychronized实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AENSTimer%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">8.</span> <span class="nav-text">问NSTimer的底层实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block%E4%B8%AD%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8Strong%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BC%95%E7%94%A8%E6%9D%A5%E4%BF%9D%E6%8C%81self%EF%BC%9B"><span class="nav-number">9.</span> <span class="nav-text">block中为什么要用Strong类型的引用来保持self；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE-ifdef-cplusplus-extern-%E2%80%9CC-%E2%80%9C"><span class="nav-number">10.</span> <span class="nav-text">问#ifdef __cplusplus extern “C “</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E4%B8%8BASCII%E5%92%8Cunicode%E7%9A%84%E5%8C%BA%E5%88%AButf-8%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-number">11.</span> <span class="nav-text">说下ASCII和unicode的区别utf-8的优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS-launchwith-options-%E8%BF%94%E5%9B%9Eno%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8%EF%BC%9B"><span class="nav-number">12.</span> <span class="nav-text">iOS launchwith options 返回no有什么作用；</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number"></span> <span class="nav-text">多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CommonMode%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">CommonMode的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#runloop%E4%B8%8Eautoreleasepool%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">runloop与autoreleasepool的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD-%E5%9C%A8Runloop%E4%B8%AD%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">GCD 在Runloop中的使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD-Global%E9%98%9F%E5%88%97%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E8%BF%9B%E8%A1%8C%E8%80%97%E6%97%B6%E6%93%8D%E4%BD%9C%E7%9A%84%E9%A3%8E%E9%99%A9"><span class="nav-number">4.</span> <span class="nav-text">GCD Global队列创建线程进行耗时操作的风险</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CADispalyTimer%E5%92%8CTimer%E5%93%AA%E4%B8%AA%E6%9B%B4%E7%B2%BE%E7%A1%AE"><span class="nav-number">5.</span> <span class="nav-text">CADispalyTimer和Timer哪个更精确</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E6%A0%B7%E4%BF%9D%E8%AF%81%E5%AD%90%E7%BA%BF%E7%A8%8B%E6%95%B0%E6%8D%AE%E5%9B%9E%E6%9D%A5%E6%9B%B4%E6%96%B0UI%E7%9A%84%E6%97%B6%E5%80%99%E4%B8%8D%E6%89%93%E6%96%AD%E7%94%A8%E6%88%B7%E7%9A%84%E6%BB%91%E5%8A%A8%E6%93%8D%E4%BD%9C"><span class="nav-number">6.</span> <span class="nav-text">怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E4%B8%B2%E8%A1%8C%E3%80%81%E5%90%8C%E6%AD%A5%E5%B9%B6%E8%A1%8C%E3%80%81%E5%BC%82%E6%AD%A5%E4%B8%B2%E8%A1%8C%E3%80%81%E5%BC%82%E6%AD%A5%E5%B9%B6%E8%A1%8C%E9%97%AE%E9%A2%98"><span class="nav-number">7.</span> <span class="nav-text">分析线程同步串行、同步并行、异步串行、异步并行问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86%E3%80%81%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">8.</span> <span class="nav-text">GCD执行原理、问题分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dispatch-once%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E6%AC%A1%E6%80%A7%E4%BB%A3%E7%A0%81"><span class="nav-number">9.</span> <span class="nav-text">dispatch_once如何实现一次性代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSOperation%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">10.</span> <span class="nav-text">NSOperation数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%86%99NSOperation%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E7%82%B9"><span class="nav-number">11.</span> <span class="nav-text">重写NSOperation需要注意的点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%93%AA%E4%BA%9B%E7%A9%BA%E9%97%B4%E6%98%AF%E7%BA%BF%E7%A8%8B%E6%89%80%E5%85%B1%E6%9C%89%E7%9A%84%EF%BC%9F"><span class="nav-number">12.</span> <span class="nav-text">进程中的哪些空间是线程所共有的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8GCD%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E4%BB%80%E4%B9%88%EF%BC%9B"><span class="nav-number">13.</span> <span class="nav-text">使用GCD需要注意什么；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#runloop%E8%B7%9Fruntime%E6%9C%89%E6%B2%A1%E6%9C%89%E5%85%B3%E8%81%94"><span class="nav-number">14.</span> <span class="nav-text">runloop跟runtime有没有关联</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E5%92%8CGPU%E6%80%8E%E4%B9%88%E7%9B%B8%E4%BA%92%E5%90%88%E4%BD%9C%E7%9A%84"><span class="nav-number">15.</span> <span class="nav-text">CPU和GPU怎么相互合作的</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-number"></span> <span class="nav-text">网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E8%AF%B7%E6%B1%82%E5%A4%B4%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text">HTTP请求头都有哪些内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">哪些加密算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E5%92%8CUDP%E5%90%84%E8%87%AA%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">3.</span> <span class="nav-text">TCP和UDP各自使用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#http%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BA%95%E5%B1%82%E6%98%AFtcp%E4%B8%8D%E6%98%AFudp"><span class="nav-number">4.</span> <span class="nav-text">http为什么底层是tcp不是udp ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#socket%E5%BC%82%E5%B8%B8%E6%96%AD%E5%BC%80%E6%97%B6%EF%BC%8C%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E5%90%88%E7%90%86%E7%9A%84%E9%87%8D%E8%BF%9E%E6%9C%BA%E5%88%B6%E3%80%82"><span class="nav-number">5.</span> <span class="nav-text">socket异常断开时，设计一个合理的重连机制。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E4%BA%86mac%E5%9C%B0%E5%9D%80%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89ip%E5%9C%B0%E5%9D%80"><span class="nav-number">6.</span> <span class="nav-text">有了mac地址为什么要有ip地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0"><span class="nav-number">7.</span> <span class="nav-text">断点续传怎么实现;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E5%9E%8B%E6%96%87%E4%BB%B6%E6%80%8E%E4%B9%88%E4%B8%8B%E8%BD%BD%E5%B9%B6%E4%BF%9D%E5%AD%98%E5%88%B0%E6%9C%AC%E5%9C%B0%EF%BC%9B"><span class="nav-number">8.</span> <span class="nav-text">大型文件怎么下载并保存到本地；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xml%E5%92%8Cjson%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">9.</span> <span class="nav-text">xml和json的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E7%9A%84%E6%8A%80%E6%9C%AF%E8%AE%B2%E8%A7%A3%E3%80%82"><span class="nav-number">10.</span> <span class="nav-text">加密解密的技术讲解。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reachability%E5%A6%82%E4%BD%95%E6%A3%80%E6%B5%8B%E5%88%B0%E7%BD%91%E7%BB%9C%E7%8A%B6%E6%80%81%E5%8F%98%E5%8C%96%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">reachability如何检测到网络状态变化？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP-%E5%9C%B0%E5%9D%80%E7%94%A8-int-%E4%BF%9D%E5%AD%98%E5%92%8C%E8%AF%BB%E5%8F%96%E8%BD%AC%E5%8C%96"><span class="nav-number">12.</span> <span class="nav-text">IP 地址用 int 保存和读取转化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%9B%B8%E5%85%B3"><span class="nav-number"></span> <span class="nav-text">开发相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#instruments%E5%AE%83%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E6%A3%80%E6%B5%8B%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">instruments它为什么能检测内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E9%80%81%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">推送的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E4%B8%8A%E7%BA%BF%E8%A2%AB%E6%8B%92%E5%8E%9F%E5%9B%A0"><span class="nav-number">3.</span> <span class="nav-text">项目上线被拒原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%8C%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA%EF%BC%8C%E6%A8%A1%E5%9D%97%E5%88%86%E5%B8%83%EF%BC%8C%E8%AE%BE%E8%AE%A1%E7%B1%BB%E5%9B%BE%EF%BC%8C%E5%BC%80%E5%8F%91%EF%BC%8C%E8%87%AA%E6%B5%8B%EF%BC%8C%E4%B8%8A%E7%BA%BF"><span class="nav-number">4.</span> <span class="nav-text">项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iPhone%E8%87%AA%E5%B8%A6%E7%9A%84AssistiveTouch%E4%BD%A0%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">iPhone自带的AssistiveTouch你如何实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E4%BA%86%E8%A7%A3%E8%BF%87%E4%BB%A3%E7%A0%81%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E7%9A%84%E5%98%9B"><span class="nav-number">6.</span> <span class="nav-text">有了解过代码如何编译的嘛</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%A5%BD%E7%9A%84%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E6%9C%89data-%E5%92%8Ctext%E6%AE%B5%E4%BB%96%E4%BB%AC%E4%B8%A4%E8%80%85%E6%9C%89%E5%95%A5%E5%8C%BA%E5%88%AB"><span class="nav-number">7.</span> <span class="nav-text">编译好的目标文件有data 和text段他们两者有啥区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#appstore%E4%B8%8A%E6%9E%B6%E6%B5%81%E7%A8%8B"><span class="nav-number">8.</span> <span class="nav-text">appstore上架流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AAAPP%E5%A6%82%E4%BD%95%E6%A3%80%E6%B5%8B%E6%89%8B%E6%9C%BA%E4%B8%AD%E5%8F%A6%E4%B8%80%E4%B8%AAAPP%E7%9A%84%E5%AD%98%E5%9C%A8%EF%BC%9F%E8%A7%A3%E9%87%8A%E5%8E%9F%E7%90%86%EF%BC%9F%E4%BE%8B%E5%A6%82QQ"><span class="nav-number">9.</span> <span class="nav-text">一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E7%BA%BF%E4%B8%8A%E7%89%88%E6%9C%AC%E7%9A%84%E5%B4%A9%E6%BA%83%E5%A4%84%E7%90%86%EF%BC%9B"><span class="nav-number">10.</span> <span class="nav-text">针对线上版本的崩溃处理；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Xcode%E6%9E%84%E5%BB%BA%E8%BF%87%E7%A8%8B%EF%BC%9B"><span class="nav-number">11.</span> <span class="nav-text">Xcode构建过程；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#js%E5%92%8COc%E4%BA%A4%E4%BA%92%E4%BB%A5%E5%8F%8A%E5%8C%BA%E5%88%AB%EF%BC%9B"><span class="nav-number">12.</span> <span class="nav-text">js和Oc交互以及区别；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pod-install%E5%92%8Cpod-update%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">13.</span> <span class="nav-text">pod install和pod update有什么区别？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number"></span> <span class="nav-text">设计模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%81%9A%E7%BB%84%E4%BB%B6%E5%8C%96"><span class="nav-number">1.</span> <span class="nav-text">为什么要做组件化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%A0%E8%AE%A4%E4%B8%BA%E7%BB%84%E4%BB%B6%E5%8C%96%E7%9A%84%E4%B8%80%E4%BA%9B%E6%94%B6%E7%9B%8A"><span class="nav-number">2.</span> <span class="nav-text">你认为组件化的一些收益</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redux-%E5%8D%95%E5%90%91%E6%95%B0%E6%8D%AE%E6%B5%81%E6%98%AF%E6%80%8E%E4%B9%88%E4%BA%A7%E7%94%9F%E7%9A%84-%E6%8F%8F%E8%BF%B0%E4%B8%8B"><span class="nav-number">3.</span> <span class="nav-text">redux 单向数据流是怎么产生的 描述下</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Charts%E6%A1%86%E6%9E%B6%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0%EF%BC%9B"><span class="nav-number">4.</span> <span class="nav-text">Charts框架底层实现；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%BB%E5%87%BA%E9%A1%B9%E7%9B%AE%E7%9A%84%E7%BB%93%E6%9E%84%E5%9B%BE%E3%80%82"><span class="nav-number">5.</span> <span class="nav-text">画出项目的结构图。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yyModel%E7%9A%84%E9%80%BB%E8%BE%91"><span class="nav-number">6.</span> <span class="nav-text">yyModel的逻辑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E8%80%A6%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-number">7.</span> <span class="nav-text">解耦的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E4%B8%AD%E7%94%A8%E7%9A%84%E6%8A%80%E6%9C%AF%E4%BB%A5%E5%8F%8A%E5%AE%9E%E7%8E%B0%EF%BC%9B"><span class="nav-number">8.</span> <span class="nav-text">项目中用的技术以及实现；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%B1%E6%98%AF%E9%A1%B9%E7%9B%AE%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F%EF%BC%9B"><span class="nav-number">9.</span> <span class="nav-text">就是项目中遇到的问题以及解决方式；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E6%98%AF%E6%80%8E%E4%B9%88%E6%B8%85%E9%99%A4%E6%95%B0%E6%8D%AE%E7%9A%84%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">缓存机制是怎么清除数据的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95%EF%BC%9B"><span class="nav-number">11.</span> <span class="nav-text">如何进行安全测试；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%82%E9%B8%A6%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%EF%BC%9B"><span class="nav-number">12.</span> <span class="nav-text">涂鸦怎么实现；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E9%A1%B9%E7%9B%AE%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%A1%88%EF%BC%8C%E6%AF%94%E5%A6%82%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%AE%BE%E8%AE%A1%EF%BC%8C%E5%AD%97%E6%AE%B5%E7%9A%84%E8%AE%BE%E8%AE%A1%EF%BC%8C%E6%8E%A5%E5%8F%A3%E7%9A%84%E8%AE%BE%E8%AE%A1%EF%BC%9B"><span class="nav-number">13.</span> <span class="nav-text">实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E4%B8%8B%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%9E%8B%EF%BC%8C%E5%85%B6%E4%B8%AD%E7%9A%84%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6%E6%98%AF%E6%80%8E%E4%B9%88%E6%A0%B7%E7%9A%84"><span class="nav-number">14.</span> <span class="nav-text">说下生产者-消费者模型，其中的同步机制是怎么样的</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="UIView绘制原理当UIView调用setNeedDisplay之后,系统会调用view对应layer的  setNeedsDisplay方法,相当于在当前layer上打上了一个脏标记,然后会在 当前runloop即将结束的时候调用CALayer的display方法,才会真正的进入 当前视图的绘制流程当中,所以视图的绘制时机,是在当前runloop即将结束的 时候才会开始. CALayer的di">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UI相关">
+<meta property="og:url" content="http://example.com/2018/08/16/M_Swift114UI%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="UIView绘制原理当UIView调用setNeedDisplay之后,系统会调用view对应layer的  setNeedsDisplay方法,相当于在当前layer上打上了一个脏标记,然后会在 当前runloop即将结束的时候调用CALayer的display方法,才会真正的进入 当前视图的绘制流程当中,所以视图的绘制时机,是在当前runloop即将结束的 时候才会开始. CALayer的di">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-16T11:39:30.000Z">
+<meta property="article:modified_time" content="2018-08-16T11:39:30.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/08/16/M_Swift114UI%E7%9B%B8%E5%85%B3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>UI相关 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/16/M_Swift114UI%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UI相关
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-16 19:39:30" itemprop="dateCreated datePublished" datetime="2018-08-16T19:39:30+08:00">2018-08-16</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="UIView绘制原理"><a href="#UIView绘制原理" class="headerlink" title="UIView绘制原理"></a>UIView绘制原理</h2><pre><code>当UIView调用setNeedDisplay之后,系统会调用view对应layer的 
+setNeedsDisplay方法,相当于在当前layer上打上了一个脏标记,然后会在
+当前runloop即将结束的时候调用CALayer的display方法,才会真正的进入
+当前视图的绘制流程当中,所以视图的绘制时机,是在当前runloop即将结束的
+时候才会开始.
+CALayer的display方法的内部实现,首先会判断layer的delegete是否响
+应display方法,如果代理不响应就会进入到系统的绘制流程当中,如果响应,实
+际上就为我们提供了异步绘制的接口,这样就构成了UIView的绘制原理
+进行异步绘制,其实就是基于系统给我们开的口子layer.delegate,如果遵从
+或者实现了displayLayer方法,我们就可以进入到异步绘制流程当中,在异步
+绘制的过程当中
+1.就由delegete去负责生成bitmap位图
+2.设置改bitmap作为layer.content属性的值
+</code></pre>
+<h2 id="Masonry"><a href="#Masonry" class="headerlink" title="Masonry"></a>Masonry</h2><pre><code>https://www.cnblogs.com/ludashi/archive/2016/07/11/5591572.html
+是一个对系统NSLayoutConstraint进行封装的第三方自动布局框架，采用链
+式编程的方式提供给开发者API
+UIView的对象可以直接调用mas_makeConstraints方法来为相应的View对
+象添加约束。因为mas_makeConstraints方法位于UIView的
+View+MASAdditions类目中，所以UIView的对象可以直接调用。同样在
+View+MASAdditions类目还有其他方法供UIView的对象使用
+MASViewAttribute这个类名中我们就能看出，这个类是对UIView和
+NSLayoutAttribute的封装。使用等式来表示就是MASViewAttribute = 
+UIView + NSLayoutAttribute + item。在MASViewAttribute类中
+的view属性表示所约束的对象，而item就是该对象上可以被约束的部分。
+MASViewConstraint做的最核心的一件事情就是初始化
+NSLayoutConstriant对象，并将该对象添加在相应的视图上
+MASConstraintMaker类。该类就是一个工厂类，负责创建MASConstraint
+类型的对象（依赖于MASConstraint接口，而不依赖于具体实现）
+</code></pre>
+<h2 id="圆角性能问题"><a href="#圆角性能问题" class="headerlink" title="圆角性能问题"></a>圆角性能问题</h2><pre><code>OpenGL中，GPU屏幕渲染有以下两种方式：
+On-Screen Rendering
+意为当前屏幕渲染，指的是GPU的渲染操作是在当前用于显示的屏幕缓冲区中进行。
+Off-Screen Rendering
+意为离屏渲染，指的是GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作。
+相比于当前屏幕渲染，离屏渲染的代价是很高的，主要体现在两个方面：
+创建新缓冲区
+要想进行离屏渲染，首先要创建一个新的缓冲区。
+上下文切换
+离屏渲染触发方式
+设置了以下属性时，都会触发离屏绘制：
+shouldRasterize（光栅化）
+masks（遮罩）
+shadows（阴影）
+edge antialiasing（抗锯齿）
+group opacity（不透明）
+实现圆角cornerRadius要比mask高效很多。
+方案：
+直接使用setCornerRadius
+这种就是最常用的，也是最耗性能的。
+setCornerRadius设置圆角之后，shouldRasterize=YES光栅化
+avatarImageView.clipsToBounds = YES;
+[avatarImageView.layer setCornerRadius:50];
+avatarImageView.layer.shouldRasterize = YES;
+avatarImageViewUrl.layer.rasterizationScale=[UIScreen mainScreen].scale;
+直接覆盖一张中间为圆形透明的图片（推荐使用）
+这种方法就是多加了一张透明的图片，GPU计算多层的混合渲染blending也是会消耗一点性能的，但比第一种方法还是好上很多的。
+Core Graphics绘制圆角
+这种方式GPU损耗最低，但是UIButton上不知道怎么绘制，可以用UIimageView添加个点击手势当做UIButton使用。
+可以用Instruments的 GPU Driver进行测试：
+</code></pre>
+<h2 id="Target-Action-设计模式"><a href="#Target-Action-设计模式" class="headerlink" title="Target-Action 设计模式"></a>Target-Action 设计模式</h2><pre><code>Target-Action，意为 目标-行为，行为即要调用的方法，目标即消息的接收
+对象（Objective-C 语言使用消息机制，类似但不同于方法调用，该两种概
+念可能未来会进行探讨）。整个过程为：用户点击按钮，触发某事件发生，该消
+息由按钮传到另外的接收对象，接收对象再做相应处理。接收对象可以为任何对
+象，但通常为控制器
+[self.btnCooking addTarget:self    
+action:@selector(pressCooking:) 
+forControlEvents:UIControlEventTouchUpInside];
+1、self 指目标对象为当前对象，及WViewController； 
+2、action 即 在目标对象上的点击方法； 
+3、何时调用该方法，UIControlEventTouchUpInside即单击时。 
+</code></pre>
+<h2 id="layer与view的区别"><a href="#layer与view的区别" class="headerlink" title="layer与view的区别"></a>layer与view的区别</h2><pre><code>UIView相比CALayer最大区别是UIView可以响应用户事件，
+而CALayer不可以。UIView侧重于对显示内容的管理，CALayer侧重于对内
+容的绘制。
+UIView的继承结构为: UIResponder : NSObject。 
+UIResponder是用来响应事件的，也就是UIView可以响应用户事件。
+CALayer的继承结构为： NSObject。 
+直接从 NSObject继承，因为缺少了UIResponder类，所以CALayer悲催的
+不能响应任何用户事件。 
+CALayer定义了position、size、transform、animations 等基本属
+性。
+View和CALayer的Frame映射及View如何创建CALayer.
+一个 Layer 的 frame 是由它的 anchorPoint,position,bounds,和 
+transform 共同决定的，而一个 View 的 frame 只是简单的返回 Layer
+的 frame，同样 View 的 center和 bounds 也是返回 Layer 的一些属
+性。
+</code></pre>
+<h2 id="viewController-push生命周期"><a href="#viewController-push生命周期" class="headerlink" title="viewController push生命周期"></a>viewController push生命周期</h2><pre><code>------------------------PUSH---------------------------
+A-willDisappear --&gt; B-willAppear --&gt; A-didDisappear --&gt; B-didAppear
+---------------------NormalPresent---------------------
+A-willDisappear --&gt; B-willAppear --&gt; B-didAppear --&gt; A-didDisappear
+-----------------------TabBar切换------------------------
+B-willAppear --&gt; A-willDisappear --&gt; A-didDisappear --&gt; B-didAppear
+</code></pre>
+<h2 id="轮播图实现原理"><a href="#轮播图实现原理" class="headerlink" title="轮播图实现原理"></a>轮播图实现原理</h2><pre><code>第一种：基于collectionView进行的封装（推荐）
+这种方式应该是实现起来最简单的一种方式了，也是个人最喜欢的一种封装方
+式。它的原理就是几个collectionView，至于无限轮播，很简单，只需要你
+的轮播数组给collectionView赋值的时候乘以一个较大的数字即可（例如
+100），collectionView本身处理了重用等一系列问题。
+第二种：基于scrollView的无限轮播（首尾各多创建一个展示图片的
+ImageView）
+这种实现方式个人感觉是最麻烦，而且还需要考虑重用等性能问题的一种。基本
+的原理就是在根据你轮播数组的个数在首尾各多创建一个ImageView，当然首
+位之前多创建一个展示轮播数组最后一个的ImageView，而尾部多创建一个展
+示轮播数组第一个的ImageView。
+第三种：同样是基于scrollView的无限轮播（总共就创建三个ImageView）
+这种实现方式比第二种的好处就是不需要考虑重用问题，不论数组是多少个轮播
+图，我只创建三个ImageView。它与第二种的不同之处是其实用户每次看到的
+一直都是中间那张的ImageView,只是上边的内容改变了。其内部实现其实是在
+不断的改变那个轮播数组。    
+</code></pre>
+<h2 id="xib的约束，拖出线后系统默认为什么是weak"><a href="#xib的约束，拖出线后系统默认为什么是weak" class="headerlink" title="xib的约束，拖出线后系统默认为什么是weak"></a>xib的约束，拖出线后系统默认为什么是weak</h2><pre><code>IBOutlet的属性一般可以设为weak是因为它已经被view引用了，除非view
+被释放，否则IBOutlet的属性也不会被释放，另外IBOutlet属性的生命周期
+和view应该是一致的，所以IBOutlet属性一般设为weak。
+从storyboard或者xib上创建控件，在控件放在view上的时候，已经形成了
+如下的引用关系,以UIButton为例：
+UIViewController-&gt;UIView-&gt;subView-&gt;UIButton
+然后你为这个UIButton声明一个weak属性
+@property(nonatomic,weak) IBOOutlet UIButton *btn;
+相当于xib/sb对这个Button是强引用，你声明的属性对它是弱引用。
+</code></pre>
+<h2 id="label只设置上和左的约束正常，UIview这样设置为什么会有约束警告"><a href="#label只设置上和左的约束正常，UIview这样设置为什么会有约束警告" class="headerlink" title="label只设置上和左的约束正常，UIview这样设置为什么会有约束警告"></a>label只设置上和左的约束正常，UIview这样设置为什么会有约束警告</h2><pre><code>大概意思是并不是所有的View都有Intrinsic Content Size,而拥有
+Intrinsic Content Size的view有这样的特征：它们可以根据view中的
+内容来确定view的size。例如Button，我们可以不用指定它们已经计算好的
+size，只需要指定position即可。在Masonry中，UIButton的布局我们可
+以这样子写：
+Content Compression Resistance即为抗压缩阻力，而Content 
+Hugging即为抗拉伸阻力
+View    Intrinsic content size
+UIView and NSView    No intrinsic content size.
+Sliders    Defines only the width (iOS).
+Labels, buttons, switches, and text fields    Defines both the height and the width.
+Text views and image views    Intrinsic content size can vary.
+</code></pre>
+<h2 id="position与anchorPoint"><a href="#position与anchorPoint" class="headerlink" title="position与anchorPoint"></a>position与anchorPoint</h2><pre><code>每一个UIView内部都默认关联着一个CALayer, UIView有frame、bounds
+和center三个属性，CALayer也有类似的属性，分别为frame、bounds、
+position、anchorPoint。frame和bounds比较好理解，bounds可以视为
+x坐标和y坐标都为0的frame，那position、anchorPoint是什么呢？先看
+看两者的原型，可知都是CGPoint点。
+position是layer中的anchorPoint点在superLayer中的位置坐标。因此
+可以说, position点是相对suerLayer的，anchorPoint点是相对layer
+的，两者是相对不同的坐标空间的一个重合点。
+总结
+1、position是layer中的anchorPoint在superLayer中的位置坐标。 
+2、互不影响原则：单独修改position与anchorPoint中任何一个属性都不
+影响另一个属性。
+anchorPoint 是相对于自身的位置，而 position 是相对于父图层的，改
+变 anchorPoint 只是更改了图层自身旋转地位置，但始终还是要通过改变 
+frame 使 anchorPoint 和 position 重合
+</code></pre>
+<h2 id="显示动画和隐式动画区别"><a href="#显示动画和隐式动画区别" class="headerlink" title="显示动画和隐式动画区别"></a>显示动画和隐式动画区别</h2><pre><code>显式动画是指用户自己通过beginAnimations:context:和
+commitAnimations创建的动画。    
+隐式动画是指通过UIView的animateWithDuration:animations:方法创
+建的动画。
+区别就是使用隐式动画后，View会暂时不能接收用户的触摸、滑动等手势。这
+就造成了当一个列表滚动时，如果对其中的view使用了隐式动画，就会感觉滚
+动无法主动停止下来，必须等动画结束了才能停止。
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/16/M_Swift112Xcode%E7%9B%B8%E5%85%B3/" rel="prev" title="Xcode相关">
+      <i class="fa fa-chevron-left"></i> Xcode相关
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/16/M_Swift110%E7%AE%97%E6%B3%95-%E6%9F%A5%E6%89%BE/" rel="next" title="算法-查找">
+      算法-查找 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#UIView%E7%BB%98%E5%88%B6%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">UIView绘制原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Masonry"><span class="nav-number">2.</span> <span class="nav-text">Masonry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%86%E8%A7%92%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">圆角性能问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Target-Action-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">Target-Action 设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#layer%E4%B8%8Eview%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">5.</span> <span class="nav-text">layer与view的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#viewController-push%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">6.</span> <span class="nav-text">viewController push生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AE%E6%92%AD%E5%9B%BE%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">轮播图实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xib%E7%9A%84%E7%BA%A6%E6%9D%9F%EF%BC%8C%E6%8B%96%E5%87%BA%E7%BA%BF%E5%90%8E%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AFweak"><span class="nav-number">8.</span> <span class="nav-text">xib的约束，拖出线后系统默认为什么是weak</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#label%E5%8F%AA%E8%AE%BE%E7%BD%AE%E4%B8%8A%E5%92%8C%E5%B7%A6%E7%9A%84%E7%BA%A6%E6%9D%9F%E6%AD%A3%E5%B8%B8%EF%BC%8CUIview%E8%BF%99%E6%A0%B7%E8%AE%BE%E7%BD%AE%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89%E7%BA%A6%E6%9D%9F%E8%AD%A6%E5%91%8A"><span class="nav-number">9.</span> <span class="nav-text">label只设置上和左的约束正常，UIview这样设置为什么会有约束警告</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#position%E4%B8%8EanchorPoint"><span class="nav-number">10.</span> <span class="nav-text">position与anchorPoint</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E5%8A%A8%E7%94%BB%E5%92%8C%E9%9A%90%E5%BC%8F%E5%8A%A8%E7%94%BB%E5%8C%BA%E5%88%AB"><span class="nav-number">11.</span> <span class="nav-text">显示动画和隐式动画区别</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

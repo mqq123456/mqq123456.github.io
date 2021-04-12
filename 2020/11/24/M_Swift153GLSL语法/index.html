@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="GLSL(着色器编程语言)1、介绍是一个和C语言语法比较类似的着色器变成语言2、注释和C语言一样&#x2F;&#x2F; this is a comment&#x2F;*    this is muti comment &#x2F;备注：GLSL语言必须由ASCII码字符组成，如果包括非ascii码编译会出错3、变量命名GLSL的变量名必须以字母或者下划线开头，由英文字母，数字，_组成，且不能是gl_或__开头(都是系统预留的)，也不能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GLES语法">
+<meta property="og:url" content="http://example.com/2020/11/24/M_Swift153GLSL%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="GLSL(着色器编程语言)1、介绍是一个和C语言语法比较类似的着色器变成语言2、注释和C语言一样&#x2F;&#x2F; this is a comment&#x2F;*    this is muti comment &#x2F;备注：GLSL语言必须由ASCII码字符组成，如果包括非ascii码编译会出错3、变量命名GLSL的变量名必须以字母或者下划线开头，由英文字母，数字，_组成，且不能是gl_或__开头(都是系统预留的)，也不能">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-24T06:25:04.000Z">
+<meta property="article:modified_time" content="2021-04-12T08:09:15.021Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/11/24/M_Swift153GLSL%E8%AF%AD%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>GLES语法 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/24/M_Swift153GLSL%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GLES语法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-24 14:25:04" itemprop="dateCreated datePublished" datetime="2020-11-24T14:25:04+08:00">2020-11-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 16:09:15" itemprop="dateModified" datetime="2021-04-12T16:09:15+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="GLSL-着色器编程语言"><a href="#GLSL-着色器编程语言" class="headerlink" title="GLSL(着色器编程语言)"></a>GLSL(着色器编程语言)</h1><p>1、介绍<br>是一个和C语言语法比较类似的着色器变成语言<br>2、注释<br>和C语言一样<br>// this is a comment<br>/*</p>
+<ul>
+<li>  this is muti comment</li>
+<li>/<br>备注：GLSL语言必须由ASCII码字符组成，如果包括非ascii码编译会出错<br>3、变量命名<br>GLSL的变量名必须以字母或者下划线开头，由英文字母，数字，_组成，且不能是gl_或__开头(都是系统预留的)，也不能是系统关键字<br>4、预处理指令<br>预处理指令以#开头，#号之前不能有除了空白字符之外的任何字符。每一个指令独占一行。内置的预处理指令如下：<br>#define<br>#undef<br>#if<br>#ifdef<br>#ifndef<br>#else<br>#elif<br>#endif<br>#error<br>#pragma<br>#extension<br>#version<br>#line</li>
+</ul>
+<p>#pragma<br>编译指示。用来控制编译器的一些行为，开发和调试时可以设置为off，默认设为on。</p>
+<p>#pragma optimize(on)<br>#pragma optimize(off)</p>
+<p>开发和调试时可以打开debug选项，以便获取更多的调试信息。默认设为off。<br>#pragma debug(on)<br>#pragma debug(off)</p>
+<p>#extension<br>如果想使用GLGL默认不支持的操作，则必须启用对应的扩展，启用一个扩展可以使用下面的命令：</p>
+<p>#extension : behavior<br>#extension all : behavior<br>其中，extension_name是扩展的名称，all是指所有的编译器支持的扩展。<br>behavior是指对该扩展的具体操作。比如启用、禁用等等。详情如下：<br>behavior                                    作用<br>require                         启用该扩展。如果不支持，则报错。<br>enable                          启用该扩展。如果不支持，则会警告。extension_name是all的时候会报错。<br>warn                            启用该扩展。但是会检测到所有使用该扩展的地方，提出警告。<br>disable                         禁用该扩展。如果该扩展不被支持，则提出警告。</p>
+<p>5、预定义的变量<br>除此之外，还预定义了一些变量：<br><strong>LINE</strong> ：int类型，当前的行号，也就是在Source String中是第一行<br><strong>FILE</strong> ：int类型，当前Source String的唯一ID标识<br><strong>VERSION</strong> ：int类型，GLGL的版本<br>GL_ES ：对于嵌入式系统（Embed System，简称 ES），它的值为1，否则为0</p>
+<p>6、运算符及其优先级<br>| 1 |()<br>| 从右往左 |<br>| 3 | 乘除法 | * / % | 从左往右 |<br>| 4 | 加减法 | + - | 从左往右 |<br>| 5 | 位运算 移位 | &lt;&lt; &gt;&gt; | 从左往右 |<br>| 6 | 大小关系 | &lt; &gt; &lt;= &gt;= | 从左往右 |<br>| 7 | 相等性判断 | == != | 从左往右 |<br>| 8 | 位运算 与 | &amp; | 从左往右 |<br>| 9 | 位或算 非 | ^ | 从左往右 |<br>| 10 | 位或算 或 | | | 从左往右 |<br>| 11 | 逻辑与 | &amp;&amp; | 从左往右 |<br>| 12 | 逻辑或 | || | 从左往右 |</p>
+<p>7、关键词<br>列举一下GLSL中的关键词，这些全部是系统保留的，不可私自篡改。</p>
+<p>attribute const uniform varying<br>break continue do for while<br>if else<br>in out inout<br>float int void bool true false<br>lowp mediump highp precision invariant<br>discard return<br>mat2 mat3 mat4<br>vec2 vec3 vec4 ivec2 ivec3 ivec4 bvec2 bvec3 bvec4<br>sampler2D samplerCube<br>struct</p>
+<p>asm<br>class union enum typedef template this packed<br>goto switch default<br>inline noinline volatile public static extern external interface flat<br>long short double half fixed unsigned superp<br>input output<br>hvec2 hvec3 hvec4 dvec2 dvec3 dvec4 fvec2 fvec3 fvec4<br>sampler1D sampler3D<br>sampler1DShadow sampler2DShadow<br>sampler2DRect sampler3DRect sampler2DRectShadow<br>sizeof cast<br>namespace using</p>
+<p>除此之外，所有的以”__”开头的变量全部是预留的，自定义的变量不能以“__”开头。</p>
+<h1 id="着色器"><a href="#着色器" class="headerlink" title="着色器"></a>着色器</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/hankern/article/details/85316476">https://blog.csdn.net/hankern/article/details/85316476</a><br>1.1 Vertex Shader<br>对于发送给GPU的每一个Vertex(顶点)，都要执行一次Vertex Shader。其功能是把每个顶点在虚拟空间中的三维坐标变换为可以在屏幕上显示的二维坐标，并带有用于z-buffer的深度信息。Vertex Shader可以操作的属性有：位置、颜色、纹理坐标，但是不能创建新的顶点。</p>
+<p>vertex shader主要完成以下工作：1).基于点操作的矩阵乘法位置变换；2).根据光照公式计算每点的color值；3).生成或者转换纹理坐标。<br>Vertex Shader输入数据如下：<br>1).Attributes：由 vertext array 提供的顶点数据，如空间位置，法向量，纹理坐标以及顶点颜色，它是针对每一个顶点的数据。属性只在顶点着色器中才有，片元着色器中没有属性。属性可以理解为针对每一个顶点的输入数据。OpenGL ES 2.0 规定了所有实现应该支持的最大属性个数不能少于 8 个。<br>注：Vertex Attributes 是每点的属性数据。与一个index序号绑定。外部程序可通过 glBindAttribLocation将一个attribute 名与一个index绑定起来。当然，OPENGL ES 内部会自动绑定所有attributes.外部程序只需通过 glGetAttribLocation获取指定attribute名的index。 给Attribute传值可以通过 glVertexAttribPointer函数或者glVertexAttrib4fv</p>
+<p>2).Uniforms：uniforms保存由应用程序传递给着色器的只读常量数据。在顶点着色器中，这些数据通常是变换矩阵，光照参数，颜色等。由 uniform 修饰符修饰的变量属于全局变量，该全局性对顶点着色器与片元着色器均可见，也就是说，这两个着色器如果被连接到同一 个program Object，则它们共享同一份 uniform 全局变量集。因此如果在这两个着色器中都声明了同名的 uniform 变量，要保证这对同名变量完全相同：同名+同类型，因为它们实际是同一个变量。此外，uniform 变量存储在常量存储区，因此限制了 uniform 变量的个数，OpenGL ES 2.0 也规定了所有实现应该支持的最大顶点着色器 uniform 变量个数不能少于 128 个，最大的片元着色器 uniform 变量个数不能少于 16 个。</p>
+<p>3).Samplers：一种特殊的 uniform，在vertex shader中是可选的，用于呈现纹理。sampler 可用于顶点着色器和片元着色器。</p>
+<p>4).Shader program：由 main 声明的一段程序源码，描述在顶点上执行的操作：如坐标变换，计算光照公式来产生 per-vertex 颜色或计算纹理坐标。</p>
+<p>1.2 Fragment Shader<br>Pixel Shader(像素着色器)就是众所周知的Fragment Shader(片元着色器)，它计算每个像素的颜色和其它属性。它通过应用光照值、凹凸贴图，阴影，镜面高光，半透明等处理来计算像素的颜色并输出。它也可改变像素的深度(z-buffering)或在多个渲染目标被激活的状态下输出多种颜色。一个Pixel Shader不能产生复杂的效果，因为它只在一个像素上进行操作，而不知道场景的几何形状。</p>
+<p>Fragment Shader输入数据如下：<br>1).Varyings：这个在前面已经讲过了，顶点着色器阶段输出的 varying 变量在光栅化阶段被线性插值计算之后输出到片元着色器中作为它的输入，即上图中的 gl_FragCoord，gl_FrontFacing 和 gl_PointCoord。OpenGL ES 2.0 也规定了所有实现应该支持的最大 varying 变量个数不能少于 8 个。<br>2).Uniforms：前面也已经讲过，这里是用于片元着色器的常量，如雾化参数，纹理参数等；OpenGL ES 2.0 也规定了所有实现应该支持的最大的片元着色器 uniform 变量个数不能少于 16 个。<br>3).Samples：一种特殊的 uniform，用于呈现纹理。<br>4).Shader program：由 main 申明的一段程序源码，描述在片元上执行的操作。<br>FragmentShader输出为：<br>在顶点着色器阶段只有唯一的 varying 输出变量-即内建变量：gl_FragColor</p>
+<h1 id="缓存技术"><a href="#缓存技术" class="headerlink" title="缓存技术"></a>缓存技术</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/jxw167/article/details/55098260">https://blog.csdn.net/jxw167/article/details/55098260</a><br> 在游戏中模型的渲染显示，当模型被加载后，在引擎底层需要DX库或者OpenGL库提供数据缓冲从而将数据传输到GPU中渲染绘制，模型都是由数据组成的，这些数据需要OpenGL图形库渲染它们时开辟一块缓冲内存进行存放，OpenGL为我们开发者提供了很多函数接口供我们使用，作为开发者熟悉这些关于缓冲数据操作的接口对于学习Shader编程也非常有帮助，市面上的Unity引擎和UE4虚幻引擎也是基于这些函数开发的，本片博客主要是为读者揭秘OpenGL中的数据缓冲原理。<br> 在OpenGL中缓冲只是一块儿内存区域的对象，当把缓冲绑定到一个特定缓冲对象时，我们就给缓冲赋予了一个特殊的意义。当我们绑定到GL_ARRAY_BUFFER的时候，这个缓冲就是一个顶点数组缓冲，我们也可以简单地绑定到GL_ELEMENT_ARRAY_BUFFER。OpenGL内部为每个目标（target）储存一个缓冲，并基于目标来处理不同的缓冲。<br> 我们使用glBufferData函数填充缓冲对象管理的内存，这个函数分配了一块内存空间，然后把数据存入其中。如果我们向它的data这个参数传递的是NULL，那么OpenGL只会帮我们分配内存，而不会填充它。如果我们先打算开辟一些内存，稍后回到这个缓冲一点一点的填充数据，有些时候会很有用。</p>
+<p> 我们还可以调用glBufferSubData函数填充特定区域的缓冲，而不是一次填充整个缓冲。这个函数需要一个缓冲目标（target），一个偏移量（offset），数据的大小以及数据本身作为参数。这个函数新的功能是我们可以给它一个偏移量（offset）来指定我们打算填充缓冲的位置与起始位置之间的偏移量。这样我们就可以插入/更新指定区域的缓冲内存空间了。一定要确保修改的缓冲要有足够的内存分配，所以在调用glBufferSubData之前，调用glBufferData是必须的。注意，glBufferData函数接口在Shader编程中使用的非常广泛。它的函数接口如下所示：</p>
+<p> float data[] = {<br>   0.5f, 1.0f, -0.35f<br>   …<br> };</p>
+<p> glBindBuffer(GL_ARRAY_BUFFER, buffer);<br> // 获取当前绑定缓存buffer的内存地址<br> void* ptr = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);<br> // 向缓冲中写入数据<br> memcpy(ptr, data, sizeof(data));<br> // 完成够别忘了告诉OpenGL我们不再需要它了<br> glUnmapBuffer(GL_ARRAY_BUFFER);</p>
+<p>调用glUnmapBuffer函数可以告诉OpenGL我们已经用完指针了，OpenGL会知道你已经做完了。通过解映射（unmapping），指针会不再可用，如果OpenGL可以把你的数据映射到缓冲上，就会返回GL_TRUE。</p>
+<p>把数据直接映射到缓冲上使用glMapBuffer很有用，因为不用把它储存在临时内存里。你可以从文件读取数据然后直接复制到缓冲的内存里。</p>
+<p>使用glVertexAttribPointer函数可以指定缓冲内容的顶点数组的属性的布局(Layout)。我们已经知道，通过使用顶点属性指针我们可以交叉(Interleave)属性，也就是说我们可以把每个顶点的位置、法线、纹理坐标放在彼此挨着的地方。现在我们了解了更多的缓冲的内容，可以采取另一种方式了。我们可以做的是把每种类型的属性的所有向量数据批量保存在一个布局，而不是交叉布局。</p>
+<p>当从文件加载顶点数据时你通常获取一个位置数组，一个法线数组和一个纹理坐标数组。需要花点力气才能把它们结合为交叉数据。使用 glBufferSubData 可以简单的实现分批处理方式：<br>缓冲满足的条件：</p>
+<p>建构一个完整的帧缓冲必须满足以下条件：</p>
+<p>我们必须往里面加入至少一个附件（颜色、深度、模板缓冲）。<br>其中至少有一个是颜色附件。<br>所有的附件都应该是已经完全做好的（已经存储在内存之中）。<br>每个缓冲都应该有同样数目的样本。</p>
+<h1 id="投影相机"><a href="#投影相机" class="headerlink" title="投影相机"></a>投影相机</h1>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/24/M_Swift156OpenGLES%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/" rel="prev" title="OpenGL常用函数">
+      <i class="fa fa-chevron-left"></i> OpenGL常用函数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/01/M_Swift165%E5%9C%B0%E5%9B%BE%E5%BC%80%E5%8F%91%E6%8A%80%E8%83%BD/" rel="next" title="地图开发技能">
+      地图开发技能 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GLSL-%E7%9D%80%E8%89%B2%E5%99%A8%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">GLSL(着色器编程语言)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9D%80%E8%89%B2%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">着色器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%8A%80%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">缓存技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%95%E5%BD%B1%E7%9B%B8%E6%9C%BA"><span class="nav-number">4.</span> <span class="nav-text">投影相机</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

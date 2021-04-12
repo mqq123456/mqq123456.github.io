@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="AFN包括如下模块网络通信模块(AFURLSessionManager、AFHTTPSessionManger) 网络状态监听模块(Reachability) 网络通信安全策略模块(Security) 网络通信信息序列化&#x2F;反序列化模块(Serialization) 对于iOS UIKit库的扩展(UIKit)  AFN优点AFNetworking内置支持JSON,plist文件和XML文件的解析,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AFN SD做了哪些优化">
+<meta property="og:url" content="http://example.com/2018/08/14/M_Swift102AFN_SDWebImage/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="AFN包括如下模块网络通信模块(AFURLSessionManager、AFHTTPSessionManger) 网络状态监听模块(Reachability) 网络通信安全策略模块(Security) 网络通信信息序列化&#x2F;反序列化模块(Serialization) 对于iOS UIKit库的扩展(UIKit)  AFN优点AFNetworking内置支持JSON,plist文件和XML文件的解析,">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-14T11:54:20.000Z">
+<meta property="article:modified_time" content="2018-08-14T11:54:20.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/08/14/M_Swift102AFN_SDWebImage/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>AFN SD做了哪些优化 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift102AFN_SDWebImage/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AFN SD做了哪些优化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-14 19:54:20" itemprop="dateCreated datePublished" datetime="2018-08-14T19:54:20+08:00">2018-08-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="AFN包括如下模块"><a href="#AFN包括如下模块" class="headerlink" title="AFN包括如下模块"></a>AFN包括如下模块</h2><pre><code>网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
+网络状态监听模块(Reachability)
+网络通信安全策略模块(Security)
+网络通信信息序列化/反序列化模块(Serialization)
+对于iOS UIKit库的扩展(UIKit)
+</code></pre>
+<h2 id="AFN优点"><a href="#AFN优点" class="headerlink" title="AFN优点"></a>AFN优点</h2><pre><code>AFNetworking内置支持JSON,plist文件和XML文件的解析,使用比
+较方便我们能够有效的控制并观察一个网络请求的创建、进行、取消、
+完成、暂停恢复、异常等问题及状态
+可以帮助我们轻松友好的完成请求的创建、响应的系列化,网络状态的监控以
+及安全策略以及每一个请求operation的管理(operation的相互依赖或
+状态改变)。 
+</code></pre>
+<h2 id="SDWebImage-概论"><a href="#SDWebImage-概论" class="headerlink" title="SDWebImage 概论"></a>SDWebImage 概论</h2><pre><code>1.提供了一个UIImageView的category用来加载网
+络图片并且对网络图片的缓存进行管理
+2.采用异步方式来下载网络图片
+3.采用异步方式，使用memory＋disk来缓存网
+络图片，自动管理缓存。
+4.支持GIF动画
+5.支持WebP格式
+6.同一个URL的网络图片不会被重复下载
+7.失效的URL不会被无限重试
+8.耗时操作都在子线程，确保不会阻塞主线程
+9.使用GCD和ARC
+10.支持Arm64
+13.图片解码处理在一个 NSOperationQueue 完成，
+不会拖慢主线程 UI。如果有需要对下载的图片进行二次处理，
+最好也在这里完成，效率会好很多。
+</code></pre>
+<h1 id="AFN、SD缺点"><a href="#AFN、SD缺点" class="headerlink" title="AFN、SD缺点"></a>AFN、SD缺点</h1><pre><code>最近版早早已经支持NSURLSession了，但是不支持iOS7以下系统。
+且AFNetworking必须使用ARC
+SDWebImage 对gif的处理主要是在UIImage+GIF
+这个文件里面，利用ImageIO函数创建二进制数据，如下：
+由于SDWebImage通过动图数组来实现动态，
+会造成内存不能及时释放
+SDWebimage -静态图片加载会产生拉伸
+</code></pre>
+<h2 id="SD下载完图片为什么要解码"><a href="#SD下载完图片为什么要解码" class="headerlink" title="SD下载完图片为什么要解码"></a>SD下载完图片为什么要解码</h2><pre><code>在我们使用 UIImage 的时候，创建的图片通常不会直接加载到内存，而是在
+渲染的时候再进行解压并加载到内存。这就会导致 UIImage 在渲染的时候效
+率上不是那么高效。为了提高效率通过 decodedImageWithImage方法把图
+片提前解压加载到内存，这样这张新图片就不再需要重复解压了，提高了渲染效
+率。这是一种空间换时间的做法。
+</code></pre>
+<h2 id="旧版本AFN为什么加Runloop"><a href="#旧版本AFN为什么加Runloop" class="headerlink" title="旧版本AFN为什么加Runloop"></a>旧版本AFN为什么加Runloop</h2><pre><code>首先我们知道在旧版本的AFN中使用了 NSURLConnection 来发起并处理网
+络连接。AFN 的做法是把网络请求的发起和解析都放在同一个子线程中进行，
+但由于子线程默认不开启 runloop，它会向一个 C语言程序那样在运行完所有
+代码后退出线程。而网络请求是异步的，这会导致获取到请求数据时，线程已经
+退出，代理方法没有机会执行。因此，AFN 的做法是使用一个 runloop 来保
+证线程不死，也就是下面这段被讲烂了的代码:
+</code></pre>
+<h2 id="AFN多重代理如何实现"><a href="#AFN多重代理如何实现" class="headerlink" title="AFN多重代理如何实现"></a>AFN多重代理如何实现</h2><pre><code>https://www.jianshu.com/p/961cfc9a446b
+又有小伙伴问了，我们设置的这个代理不是NSURLSessionDelegate吗？怎
+么能响应NSUrlSession这么多代理呢？我们点到类的声明文件中去看看：
+我们可以看到这些代理都是继承关系，而在NSURLSession实现中，只要设置
+了这个代理，它会去判断这些所有的代理，是否respondsToSelector这些代
+理中的方法，如果响应了就会去调用。
+</code></pre>
+<h2 id="SDWebImage的缓存策略"><a href="#SDWebImage的缓存策略" class="headerlink" title="SDWebImage的缓存策略"></a>SDWebImage的缓存策略</h2><pre><code>Memory 和 Disk 双缓存    
+</code></pre>
+<h2 id="SDWebImage加载图片的流程"><a href="#SDWebImage加载图片的流程" class="headerlink" title="SDWebImage加载图片的流程"></a>SDWebImage加载图片的流程</h2><pre><code>1.入口 setImageWithURL:placeholderImage:options:会
+先把 placeholderImage显示，然后 SDWebImageManager根
+据 URL 开始处理图片。
+2.进入SDWebImageManager 类中
+downloadWithURL:delegate:options:userInfo:，交给
+SDImageCache从缓存查找图片是否已经下载
+queryDiskCacheForKey:delegate:userInfo:.
+3.先从内存图片缓存查找是否有图片，如果内存中已经有图片缓存，
+SDImageCacheDelegate回调 
+imageCache:didFindImage:forKey:userInfo:到
+SDWebImageManager。
+4.SDWebImageManagerDelegate 回调
+webImageManager:didFinishWithImage: 到 
+UIImageView+WebCache,等前端展示图片。
+5.如果内存缓存中没有，生成 ｀NSOperation ｀
+添加到队列，开始从硬盘查找图片是否已经缓存。
+6.根据 URL的MD5值Key在硬盘缓存目录下尝试读取图片文件。这
+一步是在 NSOperation 进行的操作，所以回主线程进行结果回
+调 notifyDelegate:。
+7.如果上一操作从硬盘读取到了图片，将图片添加到内存缓存中（如
+果空闲内存过小， 会先清空内存缓存）。
+SDImageCacheDelegate&#39;回调 
+imageCache:didFindImage:forKey:userInfo:`。进而
+回调展示图片。
+8.如果从硬盘缓存目录读取不到图片，说明所有缓存都不存在该图
+片，需要下载图片， 回调 
+imageCache:didNotFindImageForKey:userInfo:。
+9.共享或重新生成一个下载器 SDWebImageDownloader开始下载图片。
+10.图片下载由 NSURLConnection来做，实现相关 delegate
+来判断图片下载中、下载完成和下载失败。
+11.connection:didReceiveData: 中利用 ImageIO做了按
+图片下载进度加载效果。
+12.connectionDidFinishLoading: 数据下载完成后交给 
+SDWebImageDecoder做图片解码处理。
+13.图片解码处理在一个 NSOperationQueue完成，不会拖慢主
+线程 UI.如果有需要 对下载的图片进行二次处理，最好也在这里
+完成，效率会好很多。
+14.在主线程 notifyDelegateOnMainThreadWithInfo:
+宣告解码完成 
+imageDecoder:didFinishDecodingImage:userInfo: 
+回调给 SDWebImageDownloader`。
+15.imageDownloader:didFinishWithImage:回调给
+SDWebImageManager告知图片 下载完成。
+16. 通知所有的 downloadDelegates下载完成，回调给需要的
+地方展示图片。
+17.将图片保存到 SDImageCache中，内存缓存和硬盘缓存同时保
+存。写文件到硬盘 也在以单独 NSOperation 完成，避免拖慢主
+线程。
+18.SDImageCache 在初始化的时候会注册一些消息通知，
+在内存警告或退到后台的时 候清理内存图片缓存，应用结束的时候
+清理过期图片。
+</code></pre>
+<h2 id="SDWebimage对相同url图片问题"><a href="#SDWebimage对相同url图片问题" class="headerlink" title="SDWebimage对相同url图片问题"></a>SDWebimage对相同url图片问题</h2><pre><code>找出问题所在了，因为修改头像后，图片的url是不变的，而默认情
+况下，SDWebimage对相同url是优先使用缓存的，因此得加
+options属性
+[self.HeaderImage sd_setImageWithURL:[NSURL URLWithString:yhPic] placeholderImage:[UIImage imageNamed:@&quot;ameng_dh&quot;] options:SDWebImageRefreshCached];
+SDWebImageRefreshCached是专门用来处理相同url，图片不同
+的情况的。
+重点是在SDWebImageManager.m文件中，大概176行左右
+在(利用SDWebImageRefreshCached)的基础上，修改SD库
+添加这一段代码// remove 
+SDWebImageDownloaderUseNSURLCache flag 
+downloaderOptions &amp;= 
+~SDWebImageDownloaderUseNSURLCache;
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/14/M_Swift97RunLoop/" rel="prev" title="RunLoop">
+      <i class="fa fa-chevron-left"></i> RunLoop
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/14/M_Swift95OC%E5%8F%91%E6%B6%88%E6%81%AF%E6%AD%A5%E9%AA%A4/" rel="next" title="OC发消息">
+      OC发消息 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#AFN%E5%8C%85%E6%8B%AC%E5%A6%82%E4%B8%8B%E6%A8%A1%E5%9D%97"><span class="nav-number">1.</span> <span class="nav-text">AFN包括如下模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AFN%E4%BC%98%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">AFN优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDWebImage-%E6%A6%82%E8%AE%BA"><span class="nav-number">3.</span> <span class="nav-text">SDWebImage 概论</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AFN%E3%80%81SD%E7%BC%BA%E7%82%B9"><span class="nav-number"></span> <span class="nav-text">AFN、SD缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SD%E4%B8%8B%E8%BD%BD%E5%AE%8C%E5%9B%BE%E7%89%87%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%A7%A3%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">SD下载完图片为什么要解码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A7%E7%89%88%E6%9C%ACAFN%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8A%A0Runloop"><span class="nav-number">2.</span> <span class="nav-text">旧版本AFN为什么加Runloop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AFN%E5%A4%9A%E9%87%8D%E4%BB%A3%E7%90%86%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">AFN多重代理如何实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDWebImage%E7%9A%84%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5"><span class="nav-number">4.</span> <span class="nav-text">SDWebImage的缓存策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDWebImage%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">SDWebImage加载图片的流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SDWebimage%E5%AF%B9%E7%9B%B8%E5%90%8Curl%E5%9B%BE%E7%89%87%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">SDWebimage对相同url图片问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

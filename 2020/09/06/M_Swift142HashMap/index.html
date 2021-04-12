@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="HashMap存储相关（多用来存储唯一性数据，或数据数量的使用）数组中重复的数字由于只需要找出数组中任意一个重复的数字，因此遍历数组，遇到重复的 数字即返回。为了判断一个数字是否重复遇到，使用集合存储已经遇到 的数字，如果遇到的一个数字已经在集合中，则当前的数字是重复数字。 public int findRepeatNumber(int[] nums) &amp;#123;     Set&lt;Inte">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HashMap">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift142HashMap/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="HashMap存储相关（多用来存储唯一性数据，或数据数量的使用）数组中重复的数字由于只需要找出数组中任意一个重复的数字，因此遍历数组，遇到重复的 数字即返回。为了判断一个数字是否重复遇到，使用集合存储已经遇到 的数字，如果遇到的一个数字已经在集合中，则当前的数字是重复数字。 public int findRepeatNumber(int[] nums) &amp;#123;     Set&lt;Inte">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:30:12.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:30:12.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift142HashMap/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>HashMap | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift142HashMap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HashMap
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:12" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:12+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="HashMap存储相关（多用来存储唯一性数据，或数据数量的使用）"><a href="#HashMap存储相关（多用来存储唯一性数据，或数据数量的使用）" class="headerlink" title="HashMap存储相关（多用来存储唯一性数据，或数据数量的使用）"></a>HashMap存储相关（多用来存储唯一性数据，或数据数量的使用）</h1><h2 id="数组中重复的数字"><a href="#数组中重复的数字" class="headerlink" title="数组中重复的数字"></a>数组中重复的数字</h2><pre><code>由于只需要找出数组中任意一个重复的数字，因此遍历数组，遇到重复的
+数字即返回。为了判断一个数字是否重复遇到，使用集合存储已经遇到
+的数字，如果遇到的一个数字已经在集合中，则当前的数字是重复数字。
+public int findRepeatNumber(int[] nums) &#123;
+    Set&lt;Integer&gt; set = new HashSet&lt;Integer&gt;();
+    int repeat = -1;
+    for (int num : nums) &#123;
+        if (!set.add(num)) &#123;
+            repeat = num;
+            break;
+        &#125;
+    &#125;
+    return repeat;
+&#125;
+</code></pre>
+<h2 id="第一个只出现一次的字符"><a href="#第一个只出现一次的字符" class="headerlink" title="第一个只出现一次的字符"></a>第一个只出现一次的字符</h2><pre><code>在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。
+本题考察 哈希表 的使用，本文介绍 “哈希表” 和 “有序哈希表” 两种解法。其中
+，在字符串很长时， “有序哈希表” 解法理论上效率更高。
+public char firstUniqChar(String s) &#123;
+    HashMap&lt;Character, Boolean&gt; dic = new HashMap&lt;&gt;();
+    char[] sc = s.toCharArray();
+    for(char c : sc)
+        dic.put(c, !dic.containsKey(c));
+    for(char c : sc)
+        if(dic.get(c)) return c;
+    return &#39; &#39;;
+&#125;
+
+在哈希表的基础上，有序哈希表中的键值对是 按照插入顺序排序 的。
+基于此，可通过遍历有序哈希表，实现搜索首个 “数量为 1 的字符”。
+public char firstUniqChar(String s) &#123;
+    Map&lt;Character, Boolean&gt; dic = new LinkedHashMap&lt;&gt;();
+    char[] sc = s.toCharArray();
+    for(char c : sc)
+        dic.put(c, !dic.containsKey(c));
+    for(Map.Entry&lt;Character, Boolean&gt; d : dic.entrySet())&#123;
+       if(d.getValue()) return d.getKey();
+    &#125;
+    return &#39; &#39;;
+&#125;
+</code></pre>
+<h2 id="两个数组的交集"><a href="#两个数组的交集" class="headerlink" title="两个数组的交集"></a>两个数组的交集</h2><pre><code>首先遍历第一个数组，并在哈希表中记录第一个数组中的每个数字以及对应出现的次数，
+然后遍历第二个数组，对于第二个数组中的每个数字，如果在哈希表中存在这个数字，
+则将该数字添加到答案，并减少哈希表中该数字出现的次数。
+为了降低空间复杂度，首先遍历较短的数组并在哈希表中记录每个数字以及对应出现
+的次数，然后遍历较长的数组得到交集。
+public int[] intersect(int[] nums1, int[] nums2) &#123;
+    if (nums1.length &gt; nums2.length) &#123;
+        return intersect(nums2, nums1);
+    &#125;
+    Map&lt;Integer, Integer&gt; map = new HashMap&lt;Integer, Integer&gt;();
+    for (int num : nums1) &#123;
+        int count = map.getOrDefault(num, 0) + 1;
+        map.put(num, count);
+    &#125;
+    int[] intersection = new int[nums1.length];
+    int index = 0;
+    for (int num : nums2) &#123;
+        int count = map.getOrDefault(num, 0);
+        if (count &gt; 0) &#123;
+            intersection[index++] = num;
+            count--;
+            if (count &gt; 0) &#123;
+                map.put(num, count);
+            &#125; else &#123;
+                map.remove(num);
+            &#125;
+        &#125;
+    &#125;
+    return Arrays.copyOfRange(intersection, 0, index);
+&#125;
+</code></pre>
+<h2 id="复制带随机指针的链表"><a href="#复制带随机指针的链表" class="headerlink" title="复制带随机指针的链表"></a>复制带随机指针的链表</h2><pre><code>class Node &#123;
+    public int val;
+    public Node next;
+    public Node random;
+
+    public Node() &#123;&#125;
+
+    public Node(int _val,Node _next,Node _random) &#123;
+        val = _val;
+        next = _next;
+        random = _random;
+    &#125;
+&#125;;
+public Node copyRandomList(Node head) &#123;
+    if(head==null) &#123;
+        return null;
+    &#125;
+    //创建一个哈希表，key是原节点，value是新节点
+    Map&lt;Node,Node&gt; map = new HashMap&lt;Node,Node&gt;();
+    Node p = head;
+    //将原节点和新节点放入哈希表中
+    while(p!=null) &#123;
+        Node newNode = new Node(p.val);
+        map.put(p,newNode);
+        p = p.next;
+    &#125;
+    p = head;
+    //遍历原链表，设置新节点的next和random
+    while(p!=null) &#123;
+        Node newNode = map.get(p);
+        //p是原节点，map.get(p)是对应的新节点，p.next是原节点的下一个
+        //map.get(p.next)是原节点下一个对应的新节点
+        if(p.next!=null) &#123;
+            newNode.next = map.get(p.next);
+        &#125;
+        //p.random是原节点随机指向
+        //map.get(p.random)是原节点随机指向  对应的新节点 
+        if(p.random!=null) &#123;
+            newNode.random = map.get(p.random);
+        &#125;
+        p = p.next;
+    &#125;
+    //返回头结点，即原节点对应的value(新节点)
+    return map.get(head);
+&#125;
+</code></pre>
+<h2 id="判断链表中是否有环"><a href="#判断链表中是否有环" class="headerlink" title="判断链表中是否有环"></a>判断链表中是否有环</h2><pre><code>我们可以通过检查一个结点此前是否被访问过来判断链表是否为环形链表。常用的方法是使用哈希表。
+public boolean hasCycle(ListNode head) &#123;
+    Set&lt;ListNode&gt; nodesSeen = new HashSet&lt;&gt;();
+    while (head != null) &#123;
+        if (nodesSeen.contains(head)) &#123;
+            return true;
+        &#125; else &#123;
+            nodesSeen.add(head);
+        &#125;
+        head = head.next;
+    &#125;
+    return false;
+&#125;
+</code></pre>
+<h2 id="找树中两个指定节点的最近公共祖先。"><a href="#找树中两个指定节点的最近公共祖先。" class="headerlink" title="找树中两个指定节点的最近公共祖先。"></a>找树中两个指定节点的最近公共祖先。</h2><pre><code>哈希表存储所有节点的父节点，然后我们就可以利用节点的父节点信息从 p 结点
+开始不断往上跳，并记录已经访问过的节点，再从 q 节点开始不断往上跳，如果碰到已
+经访问过的节点，那么这个节点就是我们要找的最近公共祖先。
+class Solution &#123;
+Map&lt;Integer, TreeNode&gt; parent = new HashMap&lt;Integer, TreeNode&gt;();
+Set&lt;Integer&gt; visited = new HashSet&lt;Integer&gt;();
+
+public void dfs(TreeNode root) &#123;
+    if (root.left != null) &#123;
+        parent.put(root.left.val, root);
+        dfs(root.left);
+    &#125;
+    if (root.right != null) &#123;
+        parent.put(root.right.val, root);
+        dfs(root.right);
+    &#125;
+&#125;
+
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) &#123;
+    dfs(root);
+    while (p != null) &#123;
+        visited.add(p.val);
+        p = parent.get(p.val);
+    &#125;
+    while (q != null) &#123;
+        if (visited.contains(q.val)) &#123;
+            return q;
+        &#125;
+        q = parent.get(q.val);
+    &#125;
+    return null;
+&#125;
+&#125;
+</code></pre>
+<h2 id="缺失数字"><a href="#缺失数字" class="headerlink" title="缺失数字"></a>缺失数字</h2><pre><code>给定一个包含 0, 1, 2, ..., n 中 n 个数的序列，找出 0 .. n 中没有出现在序列中的那个数。
+public int missingNumber(int[] nums) &#123;
+    Set&lt;Integer&gt; numSet = new HashSet&lt;Integer&gt;();
+    for (int num : nums) numSet.add(num);
+
+    int expectedNumCount = nums.length + 1;
+    for (int number = 0; number &lt; expectedNumCount; number++) &#123;
+        if (!numSet.contains(number)) &#123;
+            return number;
+        &#125;
+    &#125;
+    return -1;
+&#125;
+</code></pre>
+<h2 id="找出最长连续序列的长度（通过将数组中的数字放入set中，然后遍历数组，查找set中是否有连续的序列）"><a href="#找出最长连续序列的长度（通过将数组中的数字放入set中，然后遍历数组，查找set中是否有连续的序列）" class="headerlink" title="找出最长连续序列的长度（通过将数组中的数字放入set中，然后遍历数组，查找set中是否有连续的序列）"></a>找出最长连续序列的长度（通过将数组中的数字放入set中，然后遍历数组，查找set中是否有连续的序列）</h2><pre><code>public int longestConsecutive(int[] nums) &#123;
+    Set&lt;Integer&gt; num_set = new HashSet&lt;Integer&gt;();
+    for (int num : nums) &#123;
+        num_set.add(num);
+    &#125;
+
+    int longestStreak = 0;
+
+    for (int num : num_set) &#123;
+        if (!num_set.contains(num - 1)) &#123;
+            int currentNum = num;
+            int currentStreak = 1;
+
+            while (num_set.contains(currentNum + 1)) &#123;
+                currentNum += 1;
+                currentStreak += 1;
+            &#125;
+
+            longestStreak = Math.max(longestStreak, currentStreak);
+        &#125;
+    &#125;
+
+    return longestStreak;
+&#125;
+</code></pre>
+<h2 id="扑克牌中的顺子"><a href="#扑克牌中的顺子" class="headerlink" title="扑克牌中的顺子"></a>扑克牌中的顺子</h2><pre><code>遍历五张牌，遇到大小王（即 0直接跳过。
+判别重复： 利用 Set 实现遍历判重， Set 
+获取最大 / 最小的牌： 借助辅助变量 ma 和 mi ，遍历统计即可。
+public boolean isStraight(int[] nums) &#123;
+    Set&lt;Integer&gt; repeat = new HashSet&lt;&gt;();
+    int max = 0, min = 14;
+    for(int num : nums) &#123;
+        if(num == 0) continue; // 跳过大小王
+        max = Math.max(max, num); // 最大牌
+        min = Math.min(min, num); // 最小牌
+        if(repeat.contains(num)) return false; // 若有重复，提前返回 false
+        repeat.add(num); // 添加此牌至 Set
+    &#125;
+    return max - min &lt; 5; // 最大牌 - 最小牌 &lt; 5 则可构成顺子
+&#125;
+</code></pre>
+<h2 id="四数相加（HashMap存一组，另一组和HashMap进行比对）"><a href="#四数相加（HashMap存一组，另一组和HashMap进行比对）" class="headerlink" title="四数相加（HashMap存一组，另一组和HashMap进行比对）"></a>四数相加（HashMap存一组，另一组和HashMap进行比对）</h2><pre><code>给定四个包含整数的数组列表 A , B , C , D ,计算有多少个元组和为0
+采用分为两组，HashMap存一组，另一组和HashMap进行比对。
+public int fourSumCount(int[] A, int[] B, int[] C, int[] D) &#123;
+    Map&lt;Integer, Integer&gt; map = new HashMap&lt;&gt;();
+    int res = 0;
+    for(int i = 0;i&lt;A.length;i++)&#123;
+        for(int j= 0;j&lt;B.length;j++)&#123;
+            int sumAB = A[i]+B[j];
+            if(map.containsKey(sumAB)) map.put(sumAB,map.get(sumAB)+1);
+            else map.put(sumAB,1);
+        &#125;
+    &#125;
+
+    for(int i = 0;i&lt;C.length;i++)&#123;
+        for(int j = 0;j&lt;D.length;j++)&#123;
+            int sumCD = -(C[i]+D[j]);
+            if(map.containsKey(sumCD)) res += map.get(sumCD);
+        &#125;
+    &#125;
+    return res;
+&#125;
+</code></pre>
+<h2 id="至少有K个重复字符的最长子串"><a href="#至少有K个重复字符的最长子串" class="headerlink" title="至少有K个重复字符的最长子串"></a>至少有K个重复字符的最长子串</h2><pre><code>先用hash表统计s中每个字符出现的次数，显然如果字符c出现的次数小于k
+，c必然不在最长子串里面，根据这个特性可以将原始s分割成多个子串递归地求解问
+题，我们用一个split数组依次来存放每个分割点的索引，对每个分割区间同样求
+解该问题(多路的分治问题)，并取结果的最大值保存在变量ans中，此处有一个小trick
+（如果当前求解的子串长度比已存在的ans还要小，则没有必要求解
+该区间，这样可以减少不必要的计算），最后递归的结束点就是当前求
+解的字符串s符合最长子串的要求。
+public:
+    int longestSubstring(string s, int k) &#123;
+        unordered_map&lt;char, int&gt; umap;
+        for (auto c : s) umap[c]++;
+        vector&lt;int&gt; split;
+        for (int i = 0; i &lt; s.size(); i++) &#123;
+            if (umap[s[i]] &lt; k) split.push_back(i);
+        &#125;
+        if (split.size() == 0) return s.length();
+        int ans = 0, left= 0;
+        split.push_back(s.length());
+        for (int i = 0; i &lt; split.size(); i++) &#123;
+            int len = split[i] - left;
+            if (len &gt; ans) ans = max(ans, longestSubstring(s.substr(left, len), k));
+            left = split[i]+1;
+        &#125;
+        return ans;
+    &#125;
+&#125;;
+</code></pre>
+<h2 id="给定两个字符串-s-和-t-，编写一个函数来判断-t-是否是-s-的字母异位词。"><a href="#给定两个字符串-s-和-t-，编写一个函数来判断-t-是否是-s-的字母异位词。" class="headerlink" title="给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。"></a>给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。</h2><pre><code>public boolean isAnagram(String s, String t) &#123;
+    if (s.length() != t.length()) &#123;
+        return false;
+    &#125;
+    int[] counter = new int[26];
+    for (int i = 0; i &lt; s.length(); i++) &#123;
+        counter[s.charAt(i) - &#39;a&#39;]++;
+        counter[t.charAt(i) - &#39;a&#39;]--;
+    &#125;
+    for (int count : counter) &#123;
+        if (count != 0) &#123;
+            return false;
+        &#125;
+    &#125;
+    return true;
+&#125;
+</code></pre>
+<h2 id="给定一个字符串，找到它的第一个不重复的字符"><a href="#给定一个字符串，找到它的第一个不重复的字符" class="headerlink" title="给定一个字符串，找到它的第一个不重复的字符"></a>给定一个字符串，找到它的第一个不重复的字符</h2><pre><code>public int firstUniqChar(String s) &#123;
+    HashMap&lt;Character, Integer&gt; count = new HashMap&lt;Character, Integer&gt;();
+    int n = s.length();
+    for (int i = 0; i &lt; n; i++) &#123;
+        char c = s.charAt(i);
+        count.put(c, count.getOrDefault(c, 0) + 1);
+    &#125;
+    
+    for (int i = 0; i &lt; n; i++) &#123;
+        if (count.get(s.charAt(i)) == 1) 
+            return i;
+    &#125;
+    return -1;
+&#125;
+</code></pre>
+<h2 id="最长不含重复字符的子字符串"><a href="#最长不含重复字符的子字符串" class="headerlink" title="最长不含重复字符的子字符串"></a>最长不含重复字符的子字符串</h2><pre><code>public int lengthOfLongestSubstring(String s) &#123;
+    Map&lt;Character, Integer&gt; dic = new HashMap&lt;&gt;();
+    int res = 0, tmp = 0;
+    for(int j = 0; j &lt; s.length(); j++) &#123;
+        int i = dic.getOrDefault(s.charAt(j), -1); // 获取索引 i
+        dic.put(s.charAt(j), j); // 更新哈希表
+        tmp = tmp &lt; j - i ? tmp + 1 : j - i; // dp[j - 1] -&gt; dp[j]
+        res = Math.max(res, tmp); // max(dp[j - 1], dp[j])
+    &#125;
+    return res;
+&#125;
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift141%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="prev" title="数据结构">
+      <i class="fa fa-chevron-left"></i> 数据结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift143%E9%93%BE%E8%A1%A8/" rel="next" title="链表">
+      链表 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#HashMap%E5%AD%98%E5%82%A8%E7%9B%B8%E5%85%B3%EF%BC%88%E5%A4%9A%E7%94%A8%E6%9D%A5%E5%AD%98%E5%82%A8%E5%94%AF%E4%B8%80%E6%80%A7%E6%95%B0%E6%8D%AE%EF%BC%8C%E6%88%96%E6%95%B0%E6%8D%AE%E6%95%B0%E9%87%8F%E7%9A%84%E4%BD%BF%E7%94%A8%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">HashMap存储相关（多用来存储唯一性数据，或数据数量的使用）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B0%E5%AD%97"><span class="nav-number">1.1.</span> <span class="nav-text">数组中重复的数字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E5%AD%97%E7%AC%A6"><span class="nav-number">1.2.</span> <span class="nav-text">第一个只出现一次的字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E6%95%B0%E7%BB%84%E7%9A%84%E4%BA%A4%E9%9B%86"><span class="nav-number">1.3.</span> <span class="nav-text">两个数组的交集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E5%B8%A6%E9%9A%8F%E6%9C%BA%E6%8C%87%E9%92%88%E7%9A%84%E9%93%BE%E8%A1%A8"><span class="nav-number">1.4.</span> <span class="nav-text">复制带随机指针的链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E9%93%BE%E8%A1%A8%E4%B8%AD%E6%98%AF%E5%90%A6%E6%9C%89%E7%8E%AF"><span class="nav-number">1.5.</span> <span class="nav-text">判断链表中是否有环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%BE%E6%A0%91%E4%B8%AD%E4%B8%A4%E4%B8%AA%E6%8C%87%E5%AE%9A%E8%8A%82%E7%82%B9%E7%9A%84%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88%E3%80%82"><span class="nav-number">1.6.</span> <span class="nav-text">找树中两个指定节点的最近公共祖先。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E5%A4%B1%E6%95%B0%E5%AD%97"><span class="nav-number">1.7.</span> <span class="nav-text">缺失数字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%BE%E5%87%BA%E6%9C%80%E9%95%BF%E8%BF%9E%E7%BB%AD%E5%BA%8F%E5%88%97%E7%9A%84%E9%95%BF%E5%BA%A6%EF%BC%88%E9%80%9A%E8%BF%87%E5%B0%86%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E6%95%B0%E5%AD%97%E6%94%BE%E5%85%A5set%E4%B8%AD%EF%BC%8C%E7%84%B6%E5%90%8E%E9%81%8D%E5%8E%86%E6%95%B0%E7%BB%84%EF%BC%8C%E6%9F%A5%E6%89%BEset%E4%B8%AD%E6%98%AF%E5%90%A6%E6%9C%89%E8%BF%9E%E7%BB%AD%E7%9A%84%E5%BA%8F%E5%88%97%EF%BC%89"><span class="nav-number">1.8.</span> <span class="nav-text">找出最长连续序列的长度（通过将数组中的数字放入set中，然后遍历数组，查找set中是否有连续的序列）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%91%E5%85%8B%E7%89%8C%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%AD%90"><span class="nav-number">1.9.</span> <span class="nav-text">扑克牌中的顺子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%95%B0%E7%9B%B8%E5%8A%A0%EF%BC%88HashMap%E5%AD%98%E4%B8%80%E7%BB%84%EF%BC%8C%E5%8F%A6%E4%B8%80%E7%BB%84%E5%92%8CHashMap%E8%BF%9B%E8%A1%8C%E6%AF%94%E5%AF%B9%EF%BC%89"><span class="nav-number">1.10.</span> <span class="nav-text">四数相加（HashMap存一组，另一组和HashMap进行比对）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%B3%E5%B0%91%E6%9C%89K%E4%B8%AA%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2"><span class="nav-number">1.11.</span> <span class="nav-text">至少有K个重复字符的最长子串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E5%AE%9A%E4%B8%A4%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2-s-%E5%92%8C-t-%EF%BC%8C%E7%BC%96%E5%86%99%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E6%9D%A5%E5%88%A4%E6%96%AD-t-%E6%98%AF%E5%90%A6%E6%98%AF-s-%E7%9A%84%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%E3%80%82"><span class="nav-number">1.12.</span> <span class="nav-text">给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E5%AE%9A%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%8C%E6%89%BE%E5%88%B0%E5%AE%83%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%8D%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%97%E7%AC%A6"><span class="nav-number">1.13.</span> <span class="nav-text">给定一个字符串，找到它的第一个不重复的字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E9%95%BF%E4%B8%8D%E5%90%AB%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.14.</span> <span class="nav-text">最长不含重复字符的子字符串</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

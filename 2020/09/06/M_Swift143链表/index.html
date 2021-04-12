@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="从尾到头打印链表栈的特点是后进先出，即最后压入栈的元素最先弹出。考虑到栈的这一特点，使用栈将链表元素顺序倒置。从链表的头节点开始，依次将每个节点压入栈内，然后依次弹出栈内的元素并存储到数组中。   public int[] reversePrint(ListNode head) &amp;#123;     Stack&lt;ListNode&gt; stack &#x3D; new Stack&lt;ListNo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="链表">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift143%E9%93%BE%E8%A1%A8/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="从尾到头打印链表栈的特点是后进先出，即最后压入栈的元素最先弹出。考虑到栈的这一特点，使用栈将链表元素顺序倒置。从链表的头节点开始，依次将每个节点压入栈内，然后依次弹出栈内的元素并存储到数组中。   public int[] reversePrint(ListNode head) &amp;#123;     Stack&lt;ListNode&gt; stack &#x3D; new Stack&lt;ListNo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:30:16.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:30:16.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift143%E9%93%BE%E8%A1%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>链表 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift143%E9%93%BE%E8%A1%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          链表
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:16" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:16+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="从尾到头打印链表"><a href="#从尾到头打印链表" class="headerlink" title="从尾到头打印链表"></a>从尾到头打印链表</h2><pre><code>栈的特点是后进先出，即最后压入栈的元素最先弹出。考虑到栈的这一特点，使用栈将链表元素顺序倒置。从链表的头节点开始，依次将每个节点压入栈内，然后依次弹出栈内的元素并存储到数组中。
+
+
+public int[] reversePrint(ListNode head) &#123;
+    Stack&lt;ListNode&gt; stack = new Stack&lt;ListNode&gt;();
+    ListNode temp = head;
+    while (temp != null) &#123;
+        stack.push(temp);
+        temp = temp.next;
+    &#125;
+    int size = stack.size();
+    int[] print = new int[size];
+    for (int i = 0; i &lt; size; i++) &#123;
+        print[i] = stack.pop().val;
+    &#125;
+    return print;
+&#125;
+</code></pre>
+<h2 id="反转链表"><a href="#反转链表" class="headerlink" title="反转链表"></a>反转链表</h2><pre><code>class Solution &#123;
+public:
+    ListNode* reverseList(ListNode* head) &#123;
+        ListNode* a=nullptr;
+        ListNode* b=head;
+        while(b!=nullptr)&#123;
+            ListNode* temp = b-&gt;next; // 拿到下一个
+            b-&gt;next = a; // 将当前反转
+            a=b; // 获取上一个指针
+            b=temp; // 获取下一个指针
+        &#125;
+        return a;
+    &#125;
+&#125;;
+递归
+public ListNode reverseList(ListNode head) &#123;
+    if (head == null || head.next == null) return head;
+    ListNode p = reverseList(head.next);
+    head.next.next = head;
+    head.next = null;
+    return p;
+&#125;
+</code></pre>
+<h2 id="删除链表的节点"><a href="#删除链表的节点" class="headerlink" title="删除链表的节点"></a>删除链表的节点</h2><pre><code>class Solution &#123;
+    //双指针
+    public ListNode deleteNode(ListNode head, int val) &#123;
+        if(head.val == val)&#123;
+            return head.next;
+        &#125;
+        ListNode cur = head;
+        ListNode se = cur.next ;
+        while(se != null)&#123;
+            if(se.val == val)&#123;
+                cur.next = se.next;
+                se = null;
+                break;
+            &#125;
+            cur = se;
+            se = se.next; 
+        &#125;
+        return head;
+        &#125;
+    //单指针
+    public ListNode deleteNode(ListNode head, int val) &#123;
+        if(head.val == val)&#123;
+            return head.next;
+        &#125;
+        ListNode cur = head;
+        while(cur.next != null)&#123;
+            if(cur.next.val == val)&#123;
+                cur.next = cur.next.next;
+                break;
+            &#125;
+            cur = cur.next;
+        &#125;
+        return head;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="链表中倒数第k个节点"><a href="#链表中倒数第k个节点" class="headerlink" title="链表中倒数第k个节点"></a>链表中倒数第k个节点</h2><pre><code>输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。例如，一个链表有6个节点，从头节点开始，它们的值依次是1、2、3、4、5、6。这个链表的倒数第3个节点是值为4的节点。
+双指针，前面的指针先走k步，然后两个指针一起走，知道走到最后，两个指针之间的位置就是 
+     public ListNode getKthFromEnd(ListNode head, int k) &#123;
+        ListNode former = head, latter = head;
+        for(int i = 0; i &lt; k; i++)
+            former = former.next;
+        while(former != null) &#123;
+            former = former.next;
+            latter = latter.next;
+        &#125;
+        return latter;
+    &#125;
+</code></pre>
+<h2 id="合并两个排序的链表"><a href="#合并两个排序的链表" class="headerlink" title="合并两个排序的链表"></a>合并两个排序的链表</h2><pre><code>双指针遍历两个链表，进行比较，小的放入新的链表中，直到两个链表都遍历完毕
+public ListNode mergeTwoLists(ListNode l1, ListNode l2) &#123;
+        ListNode dum = new ListNode(0), cur = dum;
+        while(l1 != null &amp;&amp; l2 != null) &#123;
+            if(l1.val &lt; l2.val) &#123;
+                cur.next = l1;
+                l1 = l1.next;
+            &#125;
+            else &#123;
+                cur.next = l2;
+                l2 = l2.next;
+            &#125;
+            cur = cur.next;
+        &#125;
+        cur.next = l1 != null ? l1 : l2;
+        return dum.next;
+    &#125;
+</code></pre>
+<h2 id="两个链表的第一个公共节点"><a href="#两个链表的第一个公共节点" class="headerlink" title="两个链表的第一个公共节点"></a>两个链表的第一个公共节点</h2><pre><code>一个长度为n-1的递增排序数组中的所有数字都是唯一的，并且每个数字都在范围0～n-1之内。在范围0～n-1内的n个数字中有且只有一个数字不在该数组中，请找出这个数字。
+大家的题解都是双指针双百解法。
+我来说一个这题的实际应用：
+求两个类最低一层的公共父类，就是两个树节点最低一层的公共祖先节点。
+这里的树节点内容不是left和right，而是指向父节点的指针。
+两个类都用.getSuperclass()方法生成直到Object的两个链表，
+再调用这个题的方法就求出了第一个公共祖先。
+我们使用两个指针 node1，node2 分别指向两个链表 headA，headB 的头结点，然后同时分别逐结点遍历，当 node1 到达链表 headA 的末尾时，重新定位到链表 headB 的头结点；当 node2 到达链表 headB 的末尾时，重新定位到链表 headA 的头结点。
+这样，当它们相遇时，所指向的结点就是第一个公共结点。
+public class Solution &#123;
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) &#123;
+        if(headA == null || headB == null) return null;
+        ListNode a = headA, b = headB;
+        int len1 = 0, len2 = 0, sum = 0;
+        while(a != null &amp;&amp; ++len1 &gt; 0) a = a.next;
+        while(b != null &amp;&amp; ++len2 &gt; 0) b = b.next;
+        a = headA;
+        b = headB;
+        while (a != b)&#123;
+            if(a.next == null) a = headB;
+            else a = a.next;
+            if(b.next == null) b = headA;
+            else b = b.next;
+            if(sum++ &gt; len1 + len2) return null;
+        &#125;
+        return a;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="复杂链表的复制"><a href="#复杂链表的复制" class="headerlink" title="复杂链表的复制"></a>复杂链表的复制</h2><pre><code>class Node &#123;
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) &#123;
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    &#125;
+&#125;
+public Node copyRandomList(Node head) &#123;
+        HashMap&lt;Node,Node&gt; map = new HashMap&lt;&gt;(); //创建HashMap集合
+        Node cur=head;
+        //复制结点值
+        while(cur!=null)&#123;
+            //存储put:&lt;key,value1&gt;
+            map.put(cur,new Node(cur.val)); //顺序遍历，存储老结点和新结点(先存储新创建的结点值)
+            cur=cur.next;
+        &#125;
+        //复制结点指向
+        cur = head;
+        while(cur!=null)&#123;
+            //得到get:&lt;key&gt;.value2,3
+            map.get(cur).next = map.get(cur.next); //新结点next指向同旧结点的next指向
+            map.get(cur).random = map.get(cur.random); //新结点random指向同旧结点的random指向
+            cur = cur.next;
+        &#125;
+
+        //返回复制的链表
+        return map.get(head);
+
+
+    &#125;
+</code></pre>
+<h2 id="设计链表"><a href="#设计链表" class="headerlink" title="设计链表"></a>设计链表</h2><pre><code>getIndex
+addHead
+addLast
+addAtIndex
+deleteIndex
+  public class ListNode &#123;
+      int val;
+      ListNode next;
+      ListNode(int x) &#123; val = x; &#125;
+    &#125;
+
+class MyLinkedList &#123;
+  int size;
+  ListNode head;  // sentinel node as pseudo-head
+  public MyLinkedList() &#123;
+    size = 0;
+    head = new ListNode(0);
+  &#125;
+
+  /** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */
+  public int get(int index) &#123;
+    // if index is invalid
+    if (index &lt; 0 || index &gt;= size) return -1;
+
+    ListNode curr = head;
+    // index steps needed 
+    // to move from sentinel node to wanted index
+    for(int i = 0; i &lt; index + 1; ++i) curr = curr.next;
+    return curr.val;
+  &#125;
+
+  /** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */
+  public void addAtHead(int val) &#123;
+    addAtIndex(0, val);
+  &#125;
+
+  /** Append a node of value val to the last element of the linked list. */
+  public void addAtTail(int val) &#123;
+    addAtIndex(size, val);
+  &#125;
+
+  /** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */
+  public void addAtIndex(int index, int val) &#123;
+    // If index is greater than the length, 
+    // the node will not be inserted.
+    if (index &gt; size) return;
+
+    // [so weird] If index is negative, 
+    // the node will be inserted at the head of the list.
+    if (index &lt; 0) index = 0;
+
+    ++size;
+    // find predecessor of the node to be added
+    ListNode pred = head;
+    for(int i = 0; i &lt; index; ++i) pred = pred.next;
+
+    // node to be added
+    ListNode toAdd = new ListNode(val);
+    // insertion itself
+    toAdd.next = pred.next;
+    pred.next = toAdd;
+  &#125;
+
+  /** Delete the index-th node in the linked list, if the index is valid. */
+  public void deleteAtIndex(int index) &#123;
+    // if the index is invalid, do nothing
+    if (index &lt; 0 || index &gt;= size) return;
+
+    size--;
+    // find predecessor of the node to be deleted
+    ListNode pred = head;
+    for(int i = 0; i &lt; index; ++i) pred = pred.next;
+
+    // delete pred.next 
+    pred.next = pred.next.next;
+  &#125;
+&#125;
+</code></pre>
+<h2 id="链表相交"><a href="#链表相交" class="headerlink" title="链表相交"></a>链表相交</h2><pre><code>给定两个（单向）链表，判定它们是否相交并返回交点。请注意相交的定义基于节点的引用，而不是基于节点的值。换句话说，如果一个链表的第k个节点与另一个链表的第j个节点是同一节点（引用完全相同），则这两个链表相交。
+public class Solution &#123;
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) &#123;
+        ListNode t1 = headA;
+        ListNode t2 = headB;
+        while(t1 != t2)&#123;
+            t1 = t1 != null ? t1.next : headB;
+            t2 = t2 != null ? t2.next : headA;
+        &#125;
+        return t2;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="环形链表"><a href="#环形链表" class="headerlink" title="环形链表"></a>环形链表</h2><pre><code>方法一：哈希表
+public boolean hasCycle(ListNode head) &#123;
+    Set&lt;ListNode&gt; nodesSeen = new HashSet&lt;&gt;();
+    while (head != null) &#123;
+        if (nodesSeen.contains(head)) &#123;
+            return true;
+        &#125; else &#123;
+            nodesSeen.add(head);
+        &#125;
+        head = head.next;
+    &#125;
+    return false;
+&#125;
+方法二：双指针
+通过使用具有 不同速度 的快、慢两个指针遍历链表，空间复杂度可以被降低至 O(1)。慢指针每次移动一步，而快指针每次移动两步。
+public boolean hasCycle(ListNode head) &#123;
+    if (head == null || head.next == null) &#123;
+        return false;
+    &#125;
+    ListNode slow = head;
+    ListNode fast = head.next;
+    while (slow != fast) &#123;
+        if (fast == null || fast.next == null) &#123;
+            return false;
+        &#125;
+        slow = slow.next;
+        fast = fast.next.next;
+    &#125;
+    return true;
+&#125;
+</code></pre>
+<h2 id="链表求和"><a href="#链表求和" class="headerlink" title="链表求和"></a>链表求和</h2><pre><code>输入：(7 -&gt; 1 -&gt; 6) + (5 -&gt; 9 -&gt; 2)，即617 + 295
+输出：2 -&gt; 1 -&gt; 9，即912
+class Solution &#123;
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) &#123;
+        //初始进位为0
+        int pre = 0;
+        //操作数
+        ListNode mid = new ListNode(0);
+        //返回头节点
+        ListNode anws = mid ;
+        //当l1和l2都不为null时进入while循环
+        while(l1!=null&amp;&amp;l2!=null)&#123;
+            //操作数赋值
+            mid.val = (l1.val+l2.val+pre)%10;
+            //更新进位
+            pre = (l1.val+l2.val+pre)/10;
+            //更新头节点
+            l1 = l1.next;
+            l2=l2.next;
+            //头节点更新后判断是否为空
+            if(l1==null)&#123;
+                //如果l1头节点为空且进位为0，则操作数的next直接为l2剩下的
+                if(pre==0) &#123;
+                    mid.next = l2;
+                    return anws;
+                &#125;else &#123;
+                    //如果有进位，则递归调用addTwoNumbers方法
+                    mid.next = addTwoNumbers(l2,new ListNode(pre));
+                    return anws;
+                &#125;
+            &#125;
+            //同上
+            if(l2 == null)&#123;
+                if(pre==0) &#123;
+                    mid.next = l1;
+                    return anws;
+                &#125;else &#123;
+                    mid.next = addTwoNumbers(l1,new ListNode(pre));
+                    return anws;
+                &#125;
+            &#125;
+            //l1 l2更新后都不为null，则设置操作数为0 进入下一次while循环
+            mid.next =new ListNode(0);
+            mid = mid.next;
+        &#125;
+        //l1为null，直接不能进入上面while循环的情况下，直接返回l2
+        if(l1==null)&#123;
+            return l2;
+        &#125;//同上
+        else if(l2 ==null)&#123;
+            return l1;
+        &#125;
+        return anws;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="回文链表"><a href="#回文链表" class="headerlink" title="回文链表"></a>回文链表</h2><pre><code>1，采用快慢两个指针去寻找链表的中间节点；
+2，根据链表的中间节点反转后一半的链表；
+class Solution &#123;
+    public boolean isPalindrome(ListNode head) &#123;
+        if(head == null) return true;
+
+    ListNode midNode = findMidNode(head);
+    ListNode secondHalfHead = reverseLinked(midNode.next);
+    ListNode curr1 = head;
+    ListNode curr2 = secondHalfHead;
+
+    boolean palindrome = true;
+    while(palindrome &amp;&amp; curr2 != null)&#123;
+        if(curr1.val != curr2.val) palindrome = false;
+        curr1 = curr1.next;
+        curr2 = curr2.next;
+    &#125;
+
+    return palindrome;
+&#125;
+
+/* 反转链表 */
+private ListNode reverseLinked(ListNode head)&#123;
+    ListNode cur = head;
+    ListNode prev = null;
+    while(cur != null)&#123;
+        ListNode nextTemp = cur.next;
+        cur.next = prev;
+        prev = cur;
+        cur = nextTemp;
+    &#125;
+    return prev;
+&#125;
+
+/* 快慢指针寻找中间节点 */
+private ListNode findMidNode(ListNode head)&#123;
+    ListNode fast = head;
+    ListNode low = head;
+    while(fast.next != null &amp;&amp; fast.next.next != null)&#123;
+        fast = fast.next.next;
+        low = low.next;
+    &#125;
+    return low;
+&#125;
+
+&#125;
+</code></pre>
+<h2 id="旋转链表"><a href="#旋转链表" class="headerlink" title="旋转链表"></a>旋转链表</h2><pre><code>先将链表闭合成环
+找到相应的位置断开这个环，确定新的链表头和链表尾
+class Solution &#123;
+  public ListNode rotateRight(ListNode head, int k) &#123;
+    // base cases
+    if (head == null) return null;
+    if (head.next == null) return head;
+
+// close the linked list into the ring
+ListNode old_tail = head;
+int n;
+for(n = 1; old_tail.next != null; n++)
+  old_tail = old_tail.next;
+old_tail.next = head;
+
+// find new tail : (n - k % n - 1)th node
+// and new head : (n - k % n)th node
+ListNode new_tail = head;
+for (int i = 0; i &lt; n - k % n - 1; i++)
+  new_tail = new_tail.next;
+ListNode new_head = new_tail.next;
+
+// break the ring
+new_tail.next = null;
+
+return new_head;
+  &#125;
+&#125;
+</code></pre>
+<h2 id="排序链表"><a href="#排序链表" class="headerlink" title="排序链表"></a>排序链表</h2><pre><code>归并排序（递归法）
+解答一：归并排序（递归法）
+分割 cut 环节： 找到当前链表中点，并从中点将链表断开（以便在下次递归 cut 时，链表片段拥有正确边界）；
+合并 merge 环节： 将两个排序链表合并，转化为一个排序链表
+class Solution &#123;
+    public ListNode sortList(ListNode head) &#123;
+        if (head == null || head.next == null)
+            return head;
+        ListNode fast = head.next, slow = head;
+        while (fast != null &amp;&amp; fast.next != null) &#123;
+            slow = slow.next;
+            fast = fast.next.next;
+        &#125;
+        ListNode tmp = slow.next;
+        slow.next = null;
+        ListNode left = sortList(head);
+        ListNode right = sortList(tmp);
+        ListNode h = new ListNode(0);
+        ListNode res = h;
+        while (left != null &amp;&amp; right != null) &#123;
+            if (left.val &lt; right.val) &#123;
+                h.next = left;
+                left = left.next;
+            &#125; else &#123;
+                h.next = right;
+                right = right.next;
+            &#125;
+            h = h.next;
+        &#125;
+        h.next = left != null ? left : right;
+        return res.next;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="奇偶链表"><a href="#奇偶链表" class="headerlink" title="奇偶链表"></a>奇偶链表</h2><pre><code>给定一个单链表，把所有的奇数节点和偶数节点分别排在一起
+将奇节点放在一个链表里，偶链表放在另一个链表里。然后把偶链表接在奇链表的尾部。
+public class Solution &#123;
+    public ListNode oddEvenList(ListNode head) &#123;
+        if (head == null) return null;
+        ListNode odd = head, even = head.next, evenHead = even;
+        while (even != null &amp;&amp; even.next != null) &#123;
+            odd.next = even.next;
+            odd = odd.next;
+            even.next = odd.next;
+            even = even.next;
+        &#125;
+        odd.next = evenHead;
+        return head;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="链表的中间结点"><a href="#链表的中间结点" class="headerlink" title="链表的中间结点"></a>链表的中间结点</h2><pre><code>方法一：数组
+class Solution &#123;
+    public ListNode middleNode(ListNode head) &#123;
+        ListNode[] A = new ListNode[100];
+        int t = 0;
+        while (head != null) &#123;
+            A[t++] = head;
+            head = head.next;
+        &#125;
+        return A[t / 2];
+    &#125;
+&#125;
+方法二：单指针法
+我们可以对链表进行两次遍历。第一次遍历时，我们统计链表中的元素个数 N；第二次遍历时，我们遍历到第 N/2 个元素（链表的首节点为第 0 个元素）时，将该元素返回即可。
+class Solution &#123;
+    public ListNode middleNode(ListNode head) &#123;
+        int n = 0;
+        ListNode cur = head;
+        while (cur != null) &#123;
+            ++n;
+            cur = cur.next;
+        &#125;
+        int k = 0;
+        cur = head;
+        while (k &lt; n / 2) &#123;
+            ++k;
+            cur = cur.next;
+        &#125;
+        return cur;
+    &#125;
+&#125;
+方法三：快慢指针法
+slow 一次走一步，fast 一次走两步。那么当 fast 到达链表的末尾时，slow 必然位于中间。
+class Solution &#123;
+    public ListNode middleNode(ListNode head) &#123;
+        ListNode slow = head, fast = head;
+        while (fast != null &amp;&amp; fast.next != null) &#123;
+            slow = slow.next;
+            fast = fast.next.next;
+        &#125;
+        return slow;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="K个一组翻转链表"><a href="#K个一组翻转链表" class="headerlink" title="K个一组翻转链表"></a>K个一组翻转链表</h2><pre><code>主要考虑翻转后如何链接
+const myReverse = (head, tail) =&gt; &#123;
+    let prev = tail.next;
+    let p = head;
+    while (prev !== tail) &#123;
+        const nex = p.next;
+        p.next = prev;
+        prev = p;
+        p = nex;
+    &#125;
+    return [tail, head];
+&#125;
+var reverseKGroup = function(head, k) &#123;
+    const hair = new ListNode(0);
+    hair.next = head;
+    let pre = hair;
+
+    while (head) &#123;
+        let tail = pre;
+        // 查看剩余部分长度是否大于等于 k
+        for (let i = 0; i &lt; k; ++i) &#123;
+            tail = tail.next;
+            if (!tail) &#123;
+                return hair.next;
+            &#125;
+        &#125;
+        const nex = tail.next;
+        [head, tail] = myReverse(head, tail);
+        // 把子链表重新接回原链表
+        pre.next = head;
+        tail.next = nex;
+        pre = tail;
+        head = tail.next;
+    &#125;
+    return hair.next;
+&#125;;
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift142HashMap/" rel="prev" title="HashMap">
+      <i class="fa fa-chevron-left"></i> HashMap
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift127NSObject%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="next" title="NSObject数据结构">
+      NSObject数据结构 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%B0%BE%E5%88%B0%E5%A4%B4%E6%89%93%E5%8D%B0%E9%93%BE%E8%A1%A8"><span class="nav-number">1.</span> <span class="nav-text">从尾到头打印链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8"><span class="nav-number">2.</span> <span class="nav-text">反转链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E8%8A%82%E7%82%B9"><span class="nav-number">3.</span> <span class="nav-text">删除链表的节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E4%B8%AD%E5%80%92%E6%95%B0%E7%AC%ACk%E4%B8%AA%E8%8A%82%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">链表中倒数第k个节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%88%E5%B9%B6%E4%B8%A4%E4%B8%AA%E6%8E%92%E5%BA%8F%E7%9A%84%E9%93%BE%E8%A1%A8"><span class="nav-number">5.</span> <span class="nav-text">合并两个排序的链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E9%93%BE%E8%A1%A8%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%85%AC%E5%85%B1%E8%8A%82%E7%82%B9"><span class="nav-number">6.</span> <span class="nav-text">两个链表的第一个公共节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B6"><span class="nav-number">7.</span> <span class="nav-text">复杂链表的复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E9%93%BE%E8%A1%A8"><span class="nav-number">8.</span> <span class="nav-text">设计链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E7%9B%B8%E4%BA%A4"><span class="nav-number">9.</span> <span class="nav-text">链表相交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8"><span class="nav-number">10.</span> <span class="nav-text">环形链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E6%B1%82%E5%92%8C"><span class="nav-number">11.</span> <span class="nav-text">链表求和</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%96%87%E9%93%BE%E8%A1%A8"><span class="nav-number">12.</span> <span class="nav-text">回文链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%8B%E8%BD%AC%E9%93%BE%E8%A1%A8"><span class="nav-number">13.</span> <span class="nav-text">旋转链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E9%93%BE%E8%A1%A8"><span class="nav-number">14.</span> <span class="nav-text">排序链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A5%87%E5%81%B6%E9%93%BE%E8%A1%A8"><span class="nav-number">15.</span> <span class="nav-text">奇偶链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E7%BB%93%E7%82%B9"><span class="nav-number">16.</span> <span class="nav-text">链表的中间结点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#K%E4%B8%AA%E4%B8%80%E7%BB%84%E7%BF%BB%E8%BD%AC%E9%93%BE%E8%A1%A8"><span class="nav-number">17.</span> <span class="nav-text">K个一组翻转链表</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

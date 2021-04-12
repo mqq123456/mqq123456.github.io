@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="UITableView收起键盘何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode &#x3D; UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS不常用方法">
+<meta property="og:url" content="http://example.com/2019/07/25/M_Swift121iOS%E4%B8%8D%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="UITableView收起键盘何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode &#x3D; UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-25T07:47:29.000Z">
+<meta property="article:modified_time" content="2019-07-25T07:47:29.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2019/07/25/M_Swift121iOS%E4%B8%8D%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>iOS不常用方法 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/07/25/M_Swift121iOS%E4%B8%8D%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS不常用方法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-25 15:47:29" itemprop="dateCreated datePublished" datetime="2019-07-25T15:47:29+08:00">2019-07-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="UITableView收起键盘"><a href="#UITableView收起键盘" class="headerlink" title="UITableView收起键盘"></a>UITableView收起键盘</h2><p>何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDismissModeInteractive，表示在键盘内部滑动，键盘逐渐下去。</p>
+<h2 id="禁止手机睡眠"><a href="#禁止手机睡眠" class="headerlink" title="禁止手机睡眠"></a>禁止手机睡眠</h2><p>[UIApplication sharedApplication].idleTimerDisabled = YES;</p>
+<h2 id="tableView-beginUpdates-和-endUpdates"><a href="#tableView-beginUpdates-和-endUpdates" class="headerlink" title="tableView  beginUpdates 和 endUpdates"></a>tableView  beginUpdates 和 endUpdates</h2><p>1.beginUpdates 和 endUpdates必须成对使用<br>2、使用beginUpdates和endUpdates可以在改变一些行（row）的高度时自带动画，并且不需要Reload row（不用调用cellForRow，仅仅需要调用heightForRow，这样效率最高）。<br>3、在beginUpdates和endUpdates中执行insert,delete,select,reload row时，动画效果更加同步和顺滑，否则动画卡顿且table的属性（如row count）可能会失效。<br>4、在beginUpdates 和 endUpdates中执行 reloadData 方法和直接reloadData一样，没有相应的中间动画。</p>
+<h2 id="统一收起键盘"><a href="#统一收起键盘" class="headerlink" title="统一收起键盘"></a>统一收起键盘</h2><p>[[[UIApplication sharedApplication] keyWindow] endEditing:YES];</p>
+<h2 id="wkwebview报错"><a href="#wkwebview报错" class="headerlink" title="wkwebview报错"></a>wkwebview报错</h2><p>使用wkwebview时，push后，再pop返回，报错了：<br>Cannot form weak reference to instance (xxxx) of class xxxx. It is possible that this object was over-released, or is in the process of deallocation.<br>原因是给webView.scrollView设置了代理：webView.scrollView.delegate = self ；<br>解决办法：<br>-(void)dealloc<br>{<br>webView.scrollView.delegate = nil;<br>}</p>
+<h2 id="linker-command-failed-with-exit-code-1"><a href="#linker-command-failed-with-exit-code-1" class="headerlink" title="linker command failed with exit code 1"></a>linker command failed with exit code 1</h2><p>原因和解决办法：<br>1、看看是不是有新添加的文件跟之前文件同名<br>2、错误信息中出现了某个类的名字，去原文件中看看#import了哪些第三方库，把这些库挨个注释排除，找到出错的那个库，然后按照官方提供的步骤重新添加一遍。<br>3、SVN或git忽略了某些文件，如.o 等文件没能update下来，查看.o文件可能是红色的，可以重新添加或者修改SVN(git)的忽略设置<br>4、把.a文件删除再重新拖到项目中解决问题<br>5、可能重复添加了文件（也可能没勾选 Copy items if neded 这个选项），建议删除后重新添加<br>6、工程中文件名重复了 也会出现同样的错误<br>7、Build Settings”-&gt;”Enable Bitcode”设置为NO ，因为有些SDK不支持Bitcode<br>8、可能在引用的时候 可能写的是#import “XXXXX.m” ，如果是改为#import “XXXXX.h”<br>9、可能你导入的SDK只能在真机下才能运行，模拟器会报错！<br>10、找到 Build settings-&gt;Linking-&gt;Other Linker Flags将此属性修改成-all_load 或者 -ObjC<br>11、Build settings-&gt;Search Path-&gt;Library Search Paths 添加静态库的相应路径</p>
+<h2 id="CABasicAnimation-按home键后台之后，再切回来动画就停止"><a href="#CABasicAnimation-按home键后台之后，再切回来动画就停止" class="headerlink" title="CABasicAnimation 按home键后台之后，再切回来动画就停止"></a>CABasicAnimation 按home键后台之后，再切回来动画就停止</h2><p>CABasicAnimation有个属性removedOnCompletion，默认值为YES,意思是动画在指定时间段内完成后，就会从层上自动移除。<br>如果CABasicAnimation 按home键后台之后，再切回来动画就停止，只要将removedOnCompletion属性设为no动画就不会停止，直到你移除该动画</p>
+<h2 id="播放一张张连续的图片"><a href="#播放一张张连续的图片" class="headerlink" title="播放一张张连续的图片"></a>播放一张张连续的图片</h2><p>// 方法一<br>imageView.animationImages = @[[UIImage imageNamed:@”animate_1”], [UIImage imageNamed:@”animate_2”], [UIImage imageNamed:@”animate_3”]];<br>imageView.animationDuration = 1.0;<br>// 方法二<br>imageView.image = [UIImage animatedImageNamed:@”animate_” duration:1.0];<br>// 方法二解释下，这个方法会加载animate_为前缀的，后边0-1024，也就是animate_0、animate_1一直到animate_1024</p>
+<h2 id="判断两个rect是否有交叉"><a href="#判断两个rect是否有交叉" class="headerlink" title="判断两个rect是否有交叉"></a>判断两个rect是否有交叉</h2><p>if (CGRectIntersectsRect(rect1, rect2)) {<br>}</p>
+<h2 id="键盘上方增加工具栏"><a href="#键盘上方增加工具栏" class="headerlink" title="键盘上方增加工具栏"></a>键盘上方增加工具栏</h2><p>UIToolbar *keyboardDoneButtonView = [[UIToolbar alloc] init];<br>[keyboardDoneButtonView sizeToFit];<br>UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@”Done”<br>style:UIBarButtonItemStyleBordered target:self<br>action:@selector(doneClicked:)];<br>[keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];<br>txtField.inputAccessoryView = keyboardDoneButtonView;</p>
+<h2 id="判断一个view是否为另一个view的子视图"><a href="#判断一个view是否为另一个view的子视图" class="headerlink" title="判断一个view是否为另一个view的子视图"></a>判断一个view是否为另一个view的子视图</h2><p>// 如果myView是self.view本身，也会返回yes<br>BOOL isSubView = [myView isDescendantOfView:self.view];</p>
+<h2 id="判断某一行的cell是否已经显示"><a href="#判断某一行的cell是否已经显示" class="headerlink" title="判断某一行的cell是否已经显示"></a>判断某一行的cell是否已经显示</h2><p>CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];<br>BOOL completelyVisible = CGRectContainsRect(tableView.bounds, cellRect);</p>
+<h2 id="隐藏UITextView-UITextField光标"><a href="#隐藏UITextView-UITextField光标" class="headerlink" title="隐藏UITextView/UITextField光标"></a>隐藏UITextView/UITextField光标</h2><p>textField.tintColor = [UIColor clearColor];</p>
+<h2 id="当UITextView-UITextField中没有文字时，禁用回车键"><a href="#当UITextView-UITextField中没有文字时，禁用回车键" class="headerlink" title="当UITextView/UITextField中没有文字时，禁用回车键"></a>当UITextView/UITextField中没有文字时，禁用回车键</h2><p>textField.enablesReturnKeyAutomatically = YES;</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/24/M_Swift120%E6%80%BB%E7%BB%93/" rel="prev" title="总结">
+      <i class="fa fa-chevron-left"></i> 总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/09/29/M_Swift189Linux%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4/" rel="next" title="Linux常用命令">
+      Linux常用命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#UITableView%E6%94%B6%E8%B5%B7%E9%94%AE%E7%9B%98"><span class="nav-number">1.</span> <span class="nav-text">UITableView收起键盘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E6%89%8B%E6%9C%BA%E7%9D%A1%E7%9C%A0"><span class="nav-number">2.</span> <span class="nav-text">禁止手机睡眠</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tableView-beginUpdates-%E5%92%8C-endUpdates"><span class="nav-number">3.</span> <span class="nav-text">tableView  beginUpdates 和 endUpdates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E6%94%B6%E8%B5%B7%E9%94%AE%E7%9B%98"><span class="nav-number">4.</span> <span class="nav-text">统一收起键盘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wkwebview%E6%8A%A5%E9%94%99"><span class="nav-number">5.</span> <span class="nav-text">wkwebview报错</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linker-command-failed-with-exit-code-1"><span class="nav-number">6.</span> <span class="nav-text">linker command failed with exit code 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CABasicAnimation-%E6%8C%89home%E9%94%AE%E5%90%8E%E5%8F%B0%E4%B9%8B%E5%90%8E%EF%BC%8C%E5%86%8D%E5%88%87%E5%9B%9E%E6%9D%A5%E5%8A%A8%E7%94%BB%E5%B0%B1%E5%81%9C%E6%AD%A2"><span class="nav-number">7.</span> <span class="nav-text">CABasicAnimation 按home键后台之后，再切回来动画就停止</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%92%AD%E6%94%BE%E4%B8%80%E5%BC%A0%E5%BC%A0%E8%BF%9E%E7%BB%AD%E7%9A%84%E5%9B%BE%E7%89%87"><span class="nav-number">8.</span> <span class="nav-text">播放一张张连续的图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E4%B8%A4%E4%B8%AArect%E6%98%AF%E5%90%A6%E6%9C%89%E4%BA%A4%E5%8F%89"><span class="nav-number">9.</span> <span class="nav-text">判断两个rect是否有交叉</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%AE%E7%9B%98%E4%B8%8A%E6%96%B9%E5%A2%9E%E5%8A%A0%E5%B7%A5%E5%85%B7%E6%A0%8F"><span class="nav-number">10.</span> <span class="nav-text">键盘上方增加工具栏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AAview%E6%98%AF%E5%90%A6%E4%B8%BA%E5%8F%A6%E4%B8%80%E4%B8%AAview%E7%9A%84%E5%AD%90%E8%A7%86%E5%9B%BE"><span class="nav-number">11.</span> <span class="nav-text">判断一个view是否为另一个view的子视图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%9F%90%E4%B8%80%E8%A1%8C%E7%9A%84cell%E6%98%AF%E5%90%A6%E5%B7%B2%E7%BB%8F%E6%98%BE%E7%A4%BA"><span class="nav-number">12.</span> <span class="nav-text">判断某一行的cell是否已经显示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%90%E8%97%8FUITextView-UITextField%E5%85%89%E6%A0%87"><span class="nav-number">13.</span> <span class="nav-text">隐藏UITextView&#x2F;UITextField光标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%93UITextView-UITextField%E4%B8%AD%E6%B2%A1%E6%9C%89%E6%96%87%E5%AD%97%E6%97%B6%EF%BC%8C%E7%A6%81%E7%94%A8%E5%9B%9E%E8%BD%A6%E9%94%AE"><span class="nav-number">14.</span> <span class="nav-text">当UITextView&#x2F;UITextField中没有文字时，禁用回车键</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="参考：https:&#x2F;&#x2F;segmentfault.com&#x2F;a&#x2F;1190000004023852   协议(Protocols)我已经提及了structs和enums之间的相似性。除了附加方法的能力之外，Swift也允许你在枚举中使用协议(Protocols)和协议扩展(Protocol Extension)。Swift协议定义一个接口或类型以供其他数据结构来遵循。enum当然也不例外。我们先从Sw">
+<meta property="og:type" content="article">
+<meta property="og:title" content="枚举进阶">
+<meta property="og:url" content="http://example.com/2016/08/01/M_3Swift%E6%9E%9A%E4%B8%BE%E8%BF%9B%E9%98%B6/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="参考：https:&#x2F;&#x2F;segmentfault.com&#x2F;a&#x2F;1190000004023852   协议(Protocols)我已经提及了structs和enums之间的相似性。除了附加方法的能力之外，Swift也允许你在枚举中使用协议(Protocols)和协议扩展(Protocol Extension)。Swift协议定义一个接口或类型以供其他数据结构来遵循。enum当然也不例外。我们先从Sw">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-08-01T10:25:37.000Z">
+<meta property="article:modified_time" content="2016-08-01T10:25:37.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/08/01/M_3Swift%E6%9E%9A%E4%B8%BE%E8%BF%9B%E9%98%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>枚举进阶 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_3Swift%E6%9E%9A%E4%B8%BE%E8%BF%9B%E9%98%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          枚举进阶
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 18:25:37" itemprop="dateCreated datePublished" datetime="2016-08-01T18:25:37+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000004023852">https://segmentfault.com/a/1190000004023852</a></p>
+</blockquote>
+<p> 协议(Protocols)<br>我已经提及了structs和enums之间的相似性。除了附加方法的能力之外，Swift也允许你在枚举中使用协议(Protocols)和协议扩展(Protocol Extension)。<br>Swift协议定义一个接口或类型以供其他数据结构来遵循。enum当然也不例外。我们先从Swift标准库中的一个例子开始.<br>CustomStringConvertible是一个以打印为目的的自定义格式化输出的类型。<br>protocol CustomStringConvertible {<br>var description: String { get }<br>}<br>该协议只有一个要求，即一个只读(getter)类型的字符串(String类型)。我们可以很容易为enum实现这个协议。<br>enum Trade: CustomStringConvertible {<br>case Buy, Sell<br>var description: String {<br>switch self {<br>case Buy: return “We’re buying something”<br>case Sell: return “We’re selling something”<br>}<br>}<br>}<br>let action = Trade.Buy<br>print(“this action is (action)”)<br>// prints: this action is We’re buying something<br>一些协议的实现可能需要根据内部状态来相应处理要求。例如定义一个管理银行账号的协议。<br>protocol AccountCompatible {<br>var remainingFunds: Int { get }<br>mutating func addFunds(amount: Int) throws<br>mutating func removeFunds(amount: Int) throws<br>}<br>你也许会简单地拿struct实现这个协议，但是考虑应用的上下文，enum是一个更明智的处理方法。不过你无法添加一个存储属性到enum中，就像var remainingFuns:Int。那么你会如何构造呢？答案灰常简单，你可以使用关联值完美解决:<br>enum Account {<br>case Empty<br>case Funds(remaining: Int)<br>enum Error: ErrorType {<br>case Overdraft(amount: Int)<br>}<br>var remainingFunds: Int {<br>switch self {<br>case Empty: return 0<br>case Funds(let remaining): return remaining<br>}<br>}<br>}<br>为了保持代码清爽，我们可以在enum的协议扩展(protocl extension)中定义必须的协议函数:<br>extension Account: AccountCompatible {</p>
+<p>mutating func addFunds(amount: Int) throws {<br>var newAmount = amount<br>if case let .Funds(remaining) = self {<br>newAmount += remaining<br>}<br>if newAmount &lt; 0 {<br>throw Error.Overdraft(amount: -newAmount)<br>} else if newAmount == 0 {<br>self = .Empty<br>} else {<br>self = .Funds(remaining: newAmount)<br>}<br>}</p>
+<p>mutating func removeFunds(amount: Int) throws {<br>try self.addFunds(amount * -1)<br>}</p>
+<p>}<br>var account = Account.Funds(remaining: 20)<br>print(“add: “, try? account.addFunds(10))<br>print (“remove 1: “, try? account.removeFunds(15))<br>print (“remove 2: “, try? account.removeFunds(55))<br>// prints:<br>// : add:  Optional(())<br>// : remove 1:  Optional(())<br>// : remove 2:  nil<br>正如你所看见的，我们通过将值存储到enum cases中实现了协议所有要求项。如此做法还有一个妙不可言的地方:现在整个代码基础上你只需要一个模式匹配就能测试空账号输入的情况。你不需要关心剩余资金是否等于零。</p>
+<p>同时，我们也在账号(Accout)中内嵌了一个遵循ErrorType协议的枚举，这样我们就可以使用Swift2.0语法来进行错误处理了。这里给出更详细的使用案例教程。</p>
+<p>扩展(Extensions)<br>正如刚才所见，枚举也可以进行扩展。最明显的用例就是将枚举的case和method分离，这样阅读你的代码能够简单快速地消化掉enum内容，紧接着转移到方法定义:<br>enum Entities {<br>case Soldier(x: Int, y: Int)<br>case Tank(x: Int, y: Int)<br>case Player(x: Int, y: Int)<br>}<br>现在，我们为enum扩展方法:<br>extension Entities {<br>mutating func move(dist: CGVector) {}<br>mutating func attack() {}<br>}<br>你同样可以通过写一个扩展来遵循一个特定的协议:<br>extension Entities: CustomStringConvertible {<br>var description: String {<br>switch self {<br>case let .Soldier(x, y): return “(x), (y)”<br>case let .Tank(x, y): return “(x), (y)”<br>case let .Player(x, y): return “(x), (y)”<br>}<br>}<br>}<br>枚举泛型(Generic Enums)<br>枚举也支持泛型参数定义。你可以使用它们以适应枚举中的关联值。就拿直接来自Swift标准库中的简单例子来说，即Optional类型。你主要可能通过以下几种方式使用它:可选链(optional chaining(?))、if-let可选绑定、guard let、或switch，但是从语法角度来说你也可以这么使用Optional:<br>let aValue = Optional<Int>.Some(5)<br>let noValue = Optional<Int>.None<br>if noValue == Optional.None { print(“No value”) }<br>这是Optional最直接的用例，并未使用任何语法糖，但是不可否认Swift中语法糖的加入使得你的工作更简单。如果你观察上面的实例代码，你恐怕已经猜到Optional内部实现是这样的5:<br>// Simplified implementation of Swift’s Optional<br>enum MyOptional<T> {<br>case Some(T)<br>case None<br>}<br>这里有啥特别呢？注意枚举的关联值采用泛型参数T作为自身类型，这样可选类型构造任何你想要的返回值。<br>枚举可以拥有多个泛型参数。就拿熟知的Either类为例，它并非是Swift标准库中的一部分，而是实现于众多开源库以及<br>其他函数式编程语言，比如Haskell或F#。设计想法是这样的:相比较仅仅返回一个值或没有值(née Optional)，你更期望返回一个成功值或者一些反馈信息(比如错误值)。<br>// The well-known either type is, of course, an enum that allows you to return either<br>// value one (say, a successful value) or value two (say an error) from a function<br>enum Either&lt;T1, T2&gt; {<br>case Left(T1)<br>case Right(T2)<br>}<br>最后，Swift中所有在class和struct中奏效的类型约束，在enum中同样适用。<br>// Totally nonsensical example. A bag that is either full (has an array with contents)<br>// or empty.<br>enum Bag&lt;T: SequenceType where T.Generator.Element==Equatable&gt; {<br>case Empty<br>case Full(contents: T)<br>}<br>递归 / 间接(Indirect)类型<br>间接类型是 Swift 2.0 新增的一个类型。 它们允许将枚举中一个 case 的关联值再次定义为枚举。举个例子，假设我们想定义一个文件系统，用来表示文件以及包含文件的目录。如果将文件和目录定义为枚举的 case，则目录 case 的关联值应该再包含一个文件的数组作为它的关联值。因为这是一个递归的操作，编译器需要对此进行一个特殊的准备。Swift 文档中是这么写的：</p>
+<p>枚举和 case 可以被标记为间接的(indrect)，这意味它们的关联值是被间接保存的，这允许我们定义递归的数据结构。<br>所以，如果我们要定义 FileNode 的枚举，它应该会是这样的：</p>
+<p>enum FileNode {<br>case File(name: String)<br>indirect case Folder(name: String, files: [FileNode])<br>}<br>此处的 indrect 关键字告诉编译器间接地处理这个枚举的 case。也可以对整个枚举类型使用这个关键字。作为例子，我们来定义一个二叉树:</p>
+<p>indirect enum Tree&lt;Element: Comparable&gt; {<br>case Empty<br>case Node(Tree<Element>,Element,Tree<Element>)<br>}<br>这是一个很强大的特性，可以让我们用非常简洁的方式来定义一个有着复杂关联的数据结构。</p>
+<p>使用自定义类型作为枚举的值<br>如果我们忽略关联值，则枚举的值就只能是整型，浮点型，字符串和布尔类型。如果想要支持别的类型，则可以通过实现 StringLiteralConvertible 协议来完成，这可以让我们通过对字符串的序列化和反序列化来使枚举支持自定义类型。</p>
+<p>作为一个例子，假设我们要定义一个枚举来保存不同的 iOS 设备的屏幕尺寸：</p>
+<p>enum Devices: CGSize {<br>case iPhone3GS = CGSize(width: 320, height: 480)<br>case iPhone5 = CGSize(width: 320, height: 568)<br>case iPhone6 = CGSize(width: 375, height: 667)<br>case iPhone6Plus = CGSize(width: 414, height: 736)<br>}<br>然而，这段代码不能通过编译。因为 CGPoint 并不是一个常量，不能用来定义枚举的值。我们需要为想要支持的自定义类型增加一个扩展，让其实现 StringLiteralConvertible 协议。这个协议要求我们实现三个构造方法，这三个方法都需要使用一个String类型的参数，并且我们需要将这个字符串转换成我们需要的类型(此处是CGSize)。</p>
+<p>extension CGSize: StringLiteralConvertible {<br>public init(stringLiteral value: String) {<br>let size = CGSizeFromString(value)<br>self.init(width: size.width, height: size.height)<br>}</p>
+<p>public init(extendedGraphemeClusterLiteral value: String) {<br>let size = CGSizeFromString(value)<br>self.init(width: size.width, height: size.height)<br>}</p>
+<p>public init(unicodeScalarLiteral value: String) {<br>let size = CGSizeFromString(value)<br>self.init(width: size.width, height: size.height)<br>}<br>}<br>现在就可以来实现我们需要的枚举了，不过这里有一个缺点：初始化的值必须写成字符串形式，因为这就是我们定义的枚举需要接受的类型(记住，我们实现了 StringLiteralConvertible，因此String可以转化成CGSize类型)</p>
+<p>enum Devices: CGSize {<br>case iPhone3GS = “{320, 480}”<br>case iPhone5 = “{320, 568}”<br>case iPhone6 = “{375, 667}”<br>case iPhone6Plus = “{414, 736}”<br>}<br>终于，我们可以使用 CGPoint 类型的枚举了。需要注意的是，当要获取真实的 CGPoint 的值的时候，我们需要访问枚举的是 rawValue 属性。</p>
+<p>let a = Devices.iPhone5<br>let b = a.rawValue<br>print(“the phone size string is (a), width is (b.width), height is (b.height)”)<br>// prints : the phone size string is iPhone5, width is 320.0, height is 568.0<br>使用字符串序列化的形式，会让使用自定义类型的枚举比较困难，然而在某些特定的情况下，这也会给我们增加不少便利(比较使用NSColor / UIColor的时候)。不仅如此，我们完全可以对自己定义的类型使用这个方法。</p>
+<p>对枚举的关联值进行比较<br>在通常情况下，枚举是很容易进行相等性判断的。一个简单的 enum T { case a, b } 实现默认支持相等性判断 T.a == T.b, T.b != T.a</p>
+<p>然而，一旦我们为枚举增加了关联值，Swift 就没有办法正确地为两个枚举进行相等性判断，需要我们自己实现 == 运行符。这并不是很困难：</p>
+<p>enum Trade {<br>case Buy(stock: String, amount: Int)<br>case Sell(stock: String, amount: Int)<br>}<br>func ==(lhs: Trade, rhs: Trade) -&gt; Bool {<br>switch (lhs, rhs) {<br>case let (.Buy(stock1, amount1), .Buy(stock2, amount2))<br>where stock1 == stock2 &amp;&amp; amount1 == amount2:<br>return true<br>case let (.Sell(stock1, amount1), .Sell(stock2, amount2))<br>where stock1 == stock2 &amp;&amp; amount1 == amount2:<br>return true<br>default: return false<br>}<br>}<br>正如我们所见，我们通过 switch 语句对两个枚举的 case 进行判断，并且只有当它们的 case 是匹配的时候(比如 Buy 和 Buy)才对它们的真实关联值进行判断。</p>
+<p>自定义构造方法<br>在 静态方法 一节当中我们已经提到它们可以作为从不同数据构造枚举的方便形式。在之前的例子里也展示过，对出版社经常误用的苹果设备名返回正确的名字：</p>
+<p>enum Device {<br>case AppleWatch<br>static func fromSlang(term: String) -&gt; Device? {<br>if term == “iWatch” {<br>return .AppleWatch<br>}<br>return nil<br>}<br>}<br>我们也可以使用自定义构造方法来替换静态方法。枚举与结构体和类的构造方法最大的不同在于，枚举的构造方法需要将隐式的 self 属性设置为正确的 case。</p>
+<p>enum Device {<br>case AppleWatch<br>init?(term: String) {<br>if term == “iWatch” {<br>self = .AppleWatch<br>}<br>return nil<br>}<br>}<br>在这个例子中，我们使用了可失败(failable)的构造方法。但是，普通的构造方法也可以工作得很好：</p>
+<p>enum NumberCategory {<br>case Small<br>case Medium<br>case Big<br>case Huge<br>init(number n: Int) {<br>if n &lt; 10000 { self = .Small }<br>else if n &lt; 1000000 { self = .Medium }<br>else if n &lt; 100000000 { self = .Big }<br>else { self = .Huge }<br>}<br>}<br>let aNumber = NumberCategory(number: 100)<br>print(aNumber)<br>// prints: “Small”<br>对枚举的 case 进行迭代<br>一个特别经常被问到的问题就是如何对枚举中的 case 进行迭代。可惜的是，枚举并没有遵守SequenceType协议，因此没有一个官方的做法来对其进行迭代。取决于枚举的类型，对其进行迭代可能也简单，也有可能很困难。在StackOverflow上有一个很好的讨论贴。贴子里面讨论到的不同情况太多了，如果只在这里摘取一些会有片面性，而如果将全部情况都列出来，则会太多。</p>
+<p>对 Objective-C 的支持<br>基于整型的枚举，如 enum Bit: Int { case Zero = 0; case One = 1 } 可以通过 @objc 标识来将其桥接到 Objective-C 当中。然而，一旦使用整型之外的类型(如 String)或者开始使用关联值，我们就无法在 Objective-C 当中使用这些枚举了。</p>
+<p>有一个名为_ObjectiveCBridgeable的隐藏协议，可以让规范我们以定义合适的方法，如此一来，Swift 便可以正确地将枚举转成 Objective-C 类型，但我猜这个协议被隐藏起来一定是有原因的。然而，从理论上来讲，这个协议还是允许我们将枚举(包括其实枚举值)正确地桥接到 Objective-C 当中。</p>
+<p>但是，我们并不一定非要使用上面提到的这个方法。为枚举添加两个方法，使用 @objc 定义一个替代类型，如此一来我们便可以自由地将枚举进行转换了，并且这种方式不需要遵守私有协议：</p>
+<p>enum Trade {<br>case Buy(stock: String, amount: Int)<br>case Sell(stock: String, amount: Int)<br>}</p>
+<p>// 这个类型也可以定义在 Objective-C 的代码中<br>@objc class OTrade: NSObject {<br>var type: Int<br>var stock: String<br>var amount: Int<br>init(type: Int, stock: String, amount: Int) {<br>self.type = type<br>self.stock = stock<br>self.amount = amount<br>}<br>}</p>
+<p>extension Trade  {</p>
+<p>func toObjc() -&gt; OTrade {<br>switch self {<br>case let .Buy(stock, amount):<br>return OTrade(type: 0, stock: stock, amount: amount)<br>case let .Sell(stock, amount):<br>return OTrade(type: 1, stock: stock, amount: amount)<br>}<br>}</p>
+<p>static func fromObjc(source: OTrade) -&gt; Trade? {<br>switch (source.type) {<br>case 0: return Trade.Buy(stock: source.stock, amount: source.amount)<br>case 1: return Trade.Sell(stock: source.stock, amount: source.amount)<br>default: return nil<br>}<br>}<br>}<br>这个方法有一个的缺点，我们需要将枚举映射为 Objective-C 中的 NSObject 基础类型(我们也可以直接使用 NSDictionary)，但是，当我们碰到一些确实需要在 Objective-C 当中获取有关联值的枚举时，这是一个可以使用的方法。</p>
+<p>枚举底层<br>Erica Sadun 写过一篇很流弊的关于枚举底层的博客，涉及到枚举底层的方方面面。在生产代码中绝不应该使用到这些东西，但是学习一下还是相当有趣的。在这里，我准备只提到那篇博客中一条，如果想了解更多，请移步到原文：</p>
+<p>枚举通常都是一个字节长度。[…]如果你真的很傻很天真，你当然可以定义一个有成百上千个 case 的枚举，在这种情况下，取决于最少所需要的比特数，枚举可能占据两个字节或者更多。<br>Swift 标准库中的枚举<br>在我们准备继续探索枚举在项目中的不同用例之前，先看一下在 Swift 标准库当中是如何使用枚举可能会更诱人，所以现在让我们先来看看。</p>
+<p>Bit 这个枚举有两个值，One 和 Zero。它被作为 CollectionOfOne<T> 中的 Index 类型。<br>FloatingPointClassification 这个枚举定义了一系列 IEEE 754 可能的类别，比如 NegativeInfinity, PositiveZero 或 SignalingNaN。<br>Mirror.AncestorRepresentation 和 Mirror.DisplayStyle 这两个枚举被用在 Swift 反射 API 的上下文当中。<br>Optional 这个就不用多说了<br>Process 这个枚举包含了当前进程的命令行参数(Process.argc, Process.arguments)。这是一个相当有趣的枚举类型，因为在 Swift 1.0 当中，它是被作为一个结构体来实现的。<br>实践用例<br>我们已经在前面几个小节当中看过了许多有用的枚举类型。包括 Optional，Either, FileNode 还有二叉树。然而，还存在很多场合，使用枚举要胜过使用结构体和类。一般来讲，如果问题可以被分解为有限的不同类别，则使用枚举应该就是正确的选择。即使只有两种 case，这也是一个使用枚举的完美场景，正如 Optional 和 Either 类型所展示的。</p>
+<p>以下列举了一些枚举类型在实战中的使用示例，可以用来点燃你的创造力。</p>
+<p>错误处理<br>说到枚举的实践使用，当然少不了在 Swift 2.0 当中新推出的错误处理。标记为可抛出的函数可以抛出任何遵守了 ErrorType 空协议的类型。正如 Swift 官方文档中所写的：</p>
+<p>Swift 的枚举特别适用于构建一组相关的错误状态，可以通过关联值来为其增加额外的附加信息。<br>作为一个示例，我们来看下流行的JSON解析框架 Argo。当 JSON 解析失败的时候，它有可能是以下两种主要原因：</p>
+<p>JSON 数据缺少某些最终模型所需要的键(比如你的模型有一个 username 的属性，但是 JSON 中缺少了)<br>存在类型不匹配，比如说 username 需要的是 String 类型，而 JSON 中包含的是 NSNull6。<br>除此之外，Argo 还为不包含在上述两个类别中的错误提供了自定义错误。它们的 ErrorType 枚举是类似这样的：</p>
+<p>enum DecodeError: ErrorType {<br>case TypeMismatch(expected: String, actual: String)<br>case MissingKey(String)<br>case Custom(String)<br>}<br>所有的 case 都有一个关联值用来包含关于错误的附加信息。</p>
+<p>一个更加通用的用于完整 HTTP / REST API 错误处理的ErrorType应该是类似这样的：</p>
+<p>enum APIError : ErrorType {<br>// Can’t connect to the server (maybe offline?)<br>case ConnectionError(error: NSError)<br>// The server responded with a non 200 status code<br>case ServerError(statusCode: Int, error: NSError)<br>// We got no data (0 bytes) back from the server<br>case NoDataError<br>// The server response can’t be converted from JSON to a Dictionary<br>case JSONSerializationError(error: ErrorType)<br>// The Argo decoding Failed<br>case JSONMappingError(converstionError: DecodeError)<br>}<br>这个 ErrorType 实现了完整的 REST 程序栈解析有可能出现的错误，包含了所有在解析结构体与类时会出现的错误。</p>
+<p>如果你看得够仔细，会发现在JSONMappingError中，我们将Argo中的DecodeError封装到了我们的APIError类型当中，因为我们会用 Argo 来作实际的 JSON 解析。</p>
+<p>更多关于ErrorType以及此种枚举类型的示例可以参看官方文档。</p>
+<p>观察者模式<br>在 Swift 当中，有许多方法来构建观察模式。如果使用 @objc 兼容标记，则我们可以使用 NSNotificationCenter 或者 KVO。即使不用这个标记，didSet语法也可以很容易地实现简单的观察模式。在这里可以使用枚举，它可以使被观察者的变化更加清晰明了。设想我们要对一个集合进行观察。如果我们稍微思考一下就会发现这只有几种可能的情况：一个或多个项被插入，一个或多个项被删除，一个或多个项被更新。这听起来就是枚举可以完成的工作：</p>
+<p>enum Change {<br>case Insertion(items: [Item])<br>case Deletion(items: [Item])<br>case Update(items: [Item])<br>}<br>之后，观察对象就可以使用一个很简洁的方式来获取已经发生的事情的详细信息。这也可以通过为其增加 oldValue 和 newValue 的简单方法来扩展它的功能。</p>
+<p>状态码<br>如果我们正在使用一个外部系统，而这个系统使用了状态码(或者错误码)来传递错误信息，类似 HTTP 状态码，这种情况下枚举就是一种很明显并且很好的方式来对信息进行封装7 。</p>
+<p>enum HttpError: String {<br>case Code400 = “Bad Request”<br>case Code401 = “Unauthorized”<br>case Code402 = “Payment Required”<br>case Code403 = “Forbidden”<br>case Code404 = “Not Found”<br>}<br>结果类型映射(Map Result Types)<br>枚举也经常被用于将 JSON 解析后的结果映射成 Swift 的原生类型。这里有一个简短的例子：</p>
+<p>enum JSON {<br>case JSONString(Swift.String)<br>case JSONNumber(Double)<br>case JSONObject([String : JSONValue])<br>case JSONArray([JSONValue])<br>case JSONBool(Bool)<br>case JSONNull<br>}<br>类似地，如果我们解析了其它的东西，也可以使用这种方式将解析结果转化我们 Swift 的类型。</p>
+<p>UIKit 标识<br>枚举可以用来将字符串类型的重用标识或者 storyboard 标识映射为类型系统可以进行检查的类型。假设我们有一个拥有很多原型 Cell 的 UITableView：</p>
+<p>enum CellType: String {<br>case ButtonValueCell = “ButtonValueCell”<br>case UnitEditCell = “UnitEditCell”<br>case LabelCell = “LabelCell”<br>case ResultLabelCell = “ResultLabelCell”<br>}<br>单位<br>单位以及单位转换是另一个使用枚举的绝佳场合。可以将单位及其对应的转换率映射起来，然后添加方法来对单位进行自动的转换。以下是一个相当简单的示例：</p>
+<p>enum Liquid: Float {<br>case ml = 1.0<br>case l = 1000.0<br>func convert(amount amount: Float, to: Liquid) -&gt; Float {<br>if self.rawValue &lt; to.rawValue {<br>return (self.rawValue / to.rawValue) * amount<br>} else {<br>return (self.rawValue * to.rawValue) * amount<br>}<br>}<br>}<br>// Convert liters to milliliters<br>print (Liquid.l.convert(amount: 5, to: Liquid.ml))<br>另一个示例是货币的转换。以及数学符号(比如角度与弧度)也可以从中受益。</p>
+<p>游戏<br>游戏也是枚举中的另一个相当好的用例，屏幕上的大多数实体都属于一个特定种族的类型(敌人，障碍，纹理，…)。相对于本地的 iOS 或者 Mac 应用，游戏更像是一个白板。即开发游戏我们可以使用全新的对象以及全新的关联创造一个全新的世界，而 iOS 或者 OSX 需要使用预定义的 UIButtons，UITableViews，UITableViewCells 或者 NSStackView.</p>
+<p>不仅如此，由于枚举可以遵守协议，我们可以利用协议扩展和基于协议的编程为不同为游戏定义的枚举增加功能。这里是一个用来展示这种层级的的简短示例：</p>
+<p>enum FlyingBeast { case Dragon, Hippogriff, Gargoyle }<br>enum Horde { case Ork, Troll }<br>enum Player { case Mage, Warrior, Barbarian }<br>enum NPC { case Vendor, Blacksmith }<br>enum Element { case Tree, Fence, Stone }</p>
+<p>protocol Hurtable {}<br>protocol Killable {}<br>protocol Flying {}<br>protocol Attacking {}<br>protocol Obstacle {}</p>
+<p>extension FlyingBeast: Hurtable, Killable, Flying, Attacking {}<br>extension Horde: Hurtable, Killable, Attacking {}<br>extension Player: Hurtable, Obstacle {}<br>extension NPC: Hurtable {}<br>extension Element: Obstacle {}<br>字符串类型化<br>在一个稍微大一点的 Xcode 项目中，我们很快就会有一大堆通过字符串来访问的资源。在前面的小节中，我们已经提过重用标识和 storyboard 的标识，但是除了这两样，还存在很多资源：图像，Segues，Nibs，字体以及其它资源。通常情况下，这些资源都可以分成不同的集合。如果是这样的话，一个类型化的字符串会是一个让编译器帮我们进行类型检查的好方法。</p>
+<p>enum DetailViewImages: String {<br>case Background = “bg1.png”<br>case Sidebar = “sbg.png”<br>case ActionButton1 = “btn1_1.png”<br>case ActionButton2 = “btn2_1.png”<br>}<br>对于 iOS 开发者，R.swift这个第三方库可以为以上提到的情况自动生成结构体。但是有些时候你可能需要有更多的控制(或者你可能是一个Mac开发者8)。</p>
+<p>API 端点<br>Rest API 是枚举的绝佳用例。它们都是分组的，它们都是有限的 API 集合，并且它们也可能会有附加的查询或者命名的参数，而这可以使用关联值来实现。</p>
+<p>这里有个 Instagram API 的简化版：</p>
+<p>enum Instagram {<br>enum Media {<br>case Popular<br>case Shortcode(id: String)<br>case Search(lat: Float, min_timestamp: Int, lng: Float, max_timestamp: Int, distance: Int)<br>}<br>enum Users {<br>case User(id: String)<br>case Feed<br>case Recent(id: String)<br>}<br>}<br>Ash Furrow的Moya框架就是基本这个思想，使用枚举对 rest 端点进行映射。</p>
+<p>链表<br>Airspeed Velocity有一篇极好的文章说明了如何使用枚举来实现一个链表。那篇文章中的大多数代码都超出了枚举的知识，并涉及到了大量其它有趣的主题9，但是，链表最基本的定义是类似这样的(我对其进行了一些简化)：</p>
+<p>enum List {<br>case End<br>indirect case Node(Int, next: List)<br>}<br>每一个节点(Node) case 都指向了下一个 case， 通过使用枚举而非其它类型，我们可以避免使用一个可选的 next 类型以用来表示链表的结束。</p>
+<p>Airspeed Velocity 还写过一篇超赞的博客，关于如何使用 Swift 的间接枚举类型来实现红黑树，所以如果你已经阅读过关于链表的博客，你可能想继续阅读这篇关于红黑树的博客。</p>
+<p>设置字典(Setting Dictionaries)<br>这是 Erica Sadun 提出的非常非常机智的解决方案。简单来讲，就是任何我们需要用一个属性的字典来对一个项进行设置的时候，都应该使用一系列有关联值的枚举来替代。使用这方法，类型检查系统可以确保配置的值都是正确的类型。</p>
+<p>关于更多的细节，以及合适的例子，可以阅读下她的文章。</p>
+<p>局限<br>与之前类似，我将会用一系列枚举的局限性来结束本篇文章。</p>
+<p>提取关联值<br>David Owens写过一篇文章，他觉得当前的关联值提取方式是很笨重的。我墙裂推荐你去看一下他的原文，在这里我对它的要旨进行下说明：为了从一个枚举中获取关联值，我们必须使用模式匹配。然而，关联值就是关联在特定枚举 case 的高效元组。而元组是可以使用更简单的方式来获取它内部值，即 .keyword 或者 .0。</p>
+<p>// Enums<br>enum Ex { case Mode(ab: Int, cd: Int) }<br>if case Ex.Mode(let ab, let cd) = Ex.Mode(ab: 4, cd: 5) {<br>print(ab)<br>}<br>// vs tuples:<br>let tp = (ab: 4, cd: 5)<br>print(tp.ab)<br>如果你也同样觉得我们应该使用相同的方法来对枚举进行解构(deconstruct)，这里有个 rdar: rdar://22704262 (译者注：一开始我不明白 rdar 是啥意思，后来我 google 了下，如果你也有兴趣，也可以自己去搜索一下)</p>
+<p>相等性<br>拥有关联值的枚举没有遵守 equatable 协议。这是一个遗憾，因为它为很多事情增加了不必要的复杂和麻烦。深层的原因可能是因为关联值的底层使用是使用了元组，而元组并没有遵守 equatable 协议。然而，对于限定的 case 子集，如果这些关联值的类型都遵守了 equatable 类型，我认为编译器应该默认为其生成 equatable 扩展。</p>
+<p>// Int 和 String 是可判等的, 所以 Mode 应该也是可判等的<br>enum Ex { case Mode(ab: Int, cd: String) }</p>
+<p>// Swift 应该能够自动生成这个函数<br>func == (lhs: Ex.Mode, rhs: Ex.Mode) -&gt; Bool {<br>switch (lhs, rhs) {<br>case (.Mode(let a, let b), .Mode(let c, let d)):<br>return a == c &amp;&amp; b == d<br>default:<br>return false<br>}<br>}<br>元组(Tuples)<br>最大的问题就是对元组的支持。我喜欢使用元组，它们可以使很多事情变得更简单，但是他们目前还处于无文档状态并且在很多场合都无法使用。在枚举当中，我们无法使用元组作为枚举的值：</p>
+<p>enum Devices: (intro: Int, name: String) {<br>case iPhone = (intro: 2007, name: “iPhone”)<br>case AppleTV = (intro: 2006, name: “Apple TV”)<br>case AppleWatch = (intro: 2014, name: “Apple Watch”)<br>}<br>这似乎看起来并不是一个最好的示例，但是我们一旦开始使用枚举，就会经常陷入到需要用到类似上面这个示例的情形中。</p>
+<p>迭代枚举的所有case<br>这个我们已经在前面讨论过了。目前还没有一个很好的方法来获得枚举中的所有 case 的集合以使我们可以对其进行迭代。</p>
+<p>默认关联值<br>另一个会碰到的事是枚举的关联值总是类型，但是我们却无法为这些类型指定默认值。假设有这样一种情况:</p>
+<p>enum Characters {<br>case Mage(health: Int = 70, magic: Int = 100, strength: Int = 30)<br>case Warrior(health: Int = 100, magic: Int = 0, strength: Int = 100)<br>case Neophyte(health: Int = 50, magic: Int = 20, strength: Int = 80)<br>}<br>我们依然可以使用不同的值创建新的 case，但是角色的默认设置依然会被映射。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/" rel="prev" title="枚举,枚举原始值,枚举相关值,switch提取枚举关联值">
+      <i class="fa fa-chevron-left"></i> 枚举,枚举原始值,枚举相关值,switch提取枚举关联值
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/03/M_5Swift_initializer/" rel="next" title="initializer">
+      initializer <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

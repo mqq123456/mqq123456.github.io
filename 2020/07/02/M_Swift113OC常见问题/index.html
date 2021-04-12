@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="函数式编程和响应式编程https:&#x2F;&#x2F;blog.csdn.net&#x2F;johnwcheung&#x2F;article&#x2F;details&#x2F;73136476 函数式编程是一系列被不公平对待的编程思想的保护伞，它的核心思想是，它是 一种将程序看成是数学方法的求值、不会改变状态、不会产生副作用（后面我们 马上会谈到）的编程方式。 响应式实际上是观察者模式加上事件源的完成通知能力、错误传播能力和监听者 同事件源通信的能力">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OC常见问题">
+<meta property="og:url" content="http://example.com/2020/07/02/M_Swift113OC%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="函数式编程和响应式编程https:&#x2F;&#x2F;blog.csdn.net&#x2F;johnwcheung&#x2F;article&#x2F;details&#x2F;73136476 函数式编程是一系列被不公平对待的编程思想的保护伞，它的核心思想是，它是 一种将程序看成是数学方法的求值、不会改变状态、不会产生副作用（后面我们 马上会谈到）的编程方式。 响应式实际上是观察者模式加上事件源的完成通知能力、错误传播能力和监听者 同事件源通信的能力">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-02T09:29:42.000Z">
+<meta property="article:modified_time" content="2020-07-02T09:29:42.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/07/02/M_Swift113OC%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>OC常见问题 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/02/M_Swift113OC%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OC常见问题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-02 17:29:42" itemprop="dateCreated datePublished" datetime="2020-07-02T17:29:42+08:00">2020-07-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="函数式编程和响应式编程"><a href="#函数式编程和响应式编程" class="headerlink" title="函数式编程和响应式编程"></a>函数式编程和响应式编程</h2><pre><code>https://blog.csdn.net/johnwcheung/article/details/73136476
+函数式编程是一系列被不公平对待的编程思想的保护伞，它的核心思想是，它是
+一种将程序看成是数学方法的求值、不会改变状态、不会产生副作用（后面我们
+马上会谈到）的编程方式。
+响应式实际上是观察者模式加上事件源的完成通知能力、错误传播能力和监听者
+同事件源通信的能力。
+</code></pre>
+<h2 id="TMCache"><a href="#TMCache" class="headerlink" title="TMCache"></a>TMCache</h2><pre><code>https://www.jianshu.com/p/a8a45c12d2d2
+</code></pre>
+<h2 id="NSProxy"><a href="#NSProxy" class="headerlink" title="NSProxy"></a>NSProxy</h2><pre><code>https://www.jianshu.com/p/32c63dbc1b05
+负责将消息转发到真正的target的代理类
+NSProxy是和NSObject同级的一个类,可以说它是一个虚拟类,它只是实现了
+&lt;NSObject&gt;的协议.它的作用有点类似于一个复制类,有人曾经笑谈它是卡卡
+西的复制忍术,想想其实也挺贴切的,其实原理确实如此.
+用一个继承于NSProxy的子类,在它内部实现一些方法,暴露一个公开方法
+transform,这个方法是使它变身的关键.然后它变身之后可以对那些对象发送
+消息,并且可以在内部拦截消息的内容并修改.
+可以说,几乎可以变身成为任何对象.
+</code></pre>
+<h2 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h2><pre><code>原有的单工程架构就不足以满足架构需求了
+业务模块间划分不清晰，模块之间耦合度很大，非常难维护。
+所有模块代码都编写在一个项目中，测试某个模块或功能，需要编译运行整个项目。
+组件化优点：
+业务划分更佳清晰，新人接手更佳容易，可以按组件分配开发任务。
+项目可维护性更强，提高开发效率。
+更好排查问题，某个组件出现问题，直接对组件进行处理。
+开发测试过程中，可以只编译自己那部分代码，不需要编译整个项目代码。
+实现：
+MGJRouter是一个单例对象，在其内部维护着一个“URL -&gt; block”格式的注
+册表，通过这个注册表来保存服务方注册的block，以及使调用方可以通过URL
+映射出block，并通过MGJRouter对服务方发起调用。
+在服务方组件中都对外提供一个接口类，在接口类内部实现block的注册工作，
+以及block对外提供服务的代码实现。每一个block都对应着一个URL，调用方
+可以通过URL对block发起调用。
+在程序开始运行时，需要将所有服务方的接口类实例化，以完成这个注册工作，
+使MGJRouter中所有服务方的block可以正常提供服务。在这个服务注册完成
+后，就可以被调用方调起并提供服务。
+Protocol方案的中间件
+为了解决MGJRouter方案中URL硬编码，以及字典参数类型不明确等问题，蘑
+菇街在原有组件化方案的基础上推出了Protocol方案。Protocol方案由两部
+分组成，进行组件间通信的ModuleManager类以及
+MGJComponentProtocol协议类。
+通过中间件ModuleManager进行消息的调用转发，在ModuleManager内部维
+护一张映射表，映射表由之前的&quot;URL -&gt; block&quot;变成&quot;Protocol -&gt; 
+Class&quot;。
+在中间件中创建MGJComponentProtocol文件，服务方组件将可以用来调用
+的方法都定义在Protocol中，将所有服务方的Protocol都分别定义到
+MGJComponentProtocol文件中，如果协议比较多也可以分开几个文件定
+义。这样所有调用方依然是只依赖中间件，不需要依赖除中间件之外的其他组
+件。
+Protocol方案中每个组件也需要一个“接口类”，此类负责实现当前组件对应的
+协议方法，也就是对外提供服务的实现。在程序开始运行时将自身的Class注册
+到ModuleManager中，并将Protocol反射出字符串当做key。这个注册过程
+和MGJRouter是类似的，都需要提前注册服务。
+蘑菇街是OpenURL和Protocol混用的方式，两种实现的调用方式不同，但大体
+调用逻辑和实现思路类似，所以下面的调用流程二者差不多。在OpenURL不能
+满足需求或调用不方便时，就可以通过Protocol的方式调用。
+整体调用流程
+在进入程序后，先使用MGJRouter对服务方组件进行注册。每个URL对应一个
+block的实现，block中的代码就是服务方对外提供的服务，调用方可以通过
+URL调用这个服务。
+调用方通过MGJRouter调用openURL:方法，并将被调用代码对应的URL传
+入，MGJRouter会根据URL查找对应的block实现，从而调用服务方组件的代
+码进行通信。
+调用和注册block时，block有一个字典用来传递参数。这样的优势就是参数类
+型和数量理论上是不受限制的，但是需要很多硬编码的key名在项目中。
+内存管理
+蘑菇街组件化方案有两种，Protocol和MGJRouter的方式，但都需要进行
+register操作。Protocol注册的是Class，MGJRouter注册的是Block，
+注册表是一个NSMutableDictionary类型的字典，而字典的拥有者又是一个
+单例对象，这样会造成内存的常驻。
+下面是对两种实现方式内存消耗的分析：
+首先说一下block实现方式可能导致的内存问题，block如果使用不当，很容易
+造成循环引用的问题。
+经过暴力测试，证明并不会导致内存问题。被保存在字典中是一个block对象，
+而block对象本身并不会占用多少内存。在调用block后会对block体中的方法
+进行执行，执行完成后block体中的对象释放。
+而block自身的实现只是一个结构体，也就相当于字典中存放的是很多结构体，
+所以内存的占用并不是很大。
+对于协议这种实现方式，和block内存常驻方式差不多。只是将存储的block对
+象换成Class对象，如果不是已经实例化的对象，内存占用还是比较小的。
+</code></pre>
+<h2 id="RAC"><a href="#RAC" class="headerlink" title="RAC"></a>RAC</h2><pre><code>https://www.jianshu.com/p/addad51569a1
+</code></pre>
+<h2 id="JSPathch"><a href="#JSPathch" class="headerlink" title="JSPathch"></a>JSPathch</h2><pre><code>能做到通过JS调用和改写OC方法最根本的原因是 Objective-C 是动态语
+言，OC上所有方法的调用/类的生成都通过 Objective-C Runtime 在运行
+时进行，我们可以通过类名/方法名反射得到相应的类和方法：
+对于 Objective-C 对象模型和动态消息发送的原理已有很多文章阐述得很详
+细，例如这篇，这里就不详细阐述了。理论上你可以在运行时通过类名/方法名
+调用到任何OC方法，替换任何类的实现以及新增任意类。所以 JSPatch 的原
+理就是：JS传递字符串给OC，OC通过 Runtime 接口调用和替换OC方法。这
+是最基础的原理，实际实现过程还有很多怪要打，接下来看看具体是怎样实现
+的。
+</code></pre>
+<h2 id="NSMutableArray的实现，包括系统提供的常用API的实现"><a href="#NSMutableArray的实现，包括系统提供的常用API的实现" class="headerlink" title="NSMutableArray的实现，包括系统提供的常用API的实现"></a>NSMutableArray的实现，包括系统提供的常用API的实现</h2><pre><code>用链表，每十个放在一段连续的存储空间里
+https://www.jianshu.com/p/3c77756a86ab    
+</code></pre>
+<h2 id="NSUserDefaults存储对象"><a href="#NSUserDefaults存储对象" class="headerlink" title="NSUserDefaults存储对象"></a>NSUserDefaults存储对象</h2><pre><code>NSUserDefaults支持的数据类型有：NSNumber（NSInteger、float、
+double），NSString，NSDate，NSArray，NSDictionary，BOOL.
+NSUserDefaults 存储的对象全是不可变的（这一点非常关键，弄错的话程序
+会出bug），例如，如果我想要存储一个NSMutableArray 对象，我必须先创
+建一个不可变数组（NSArray）再将它存入NSUserDefaults中去
+使用 NSUserDefaults 存储自定义对象
+第一步、将自定义类型转换为NSData类型，利用归档
+NSData*data = 
+[NSKeyedArchiverarchivedDataWithRootObject:student];
+</code></pre>
+<h2 id="纯函数"><a href="#纯函数" class="headerlink" title="纯函数"></a>纯函数</h2><pre><code>纯函数 我们应该还记得初中的一些数学知识，函数f的概念就是，对于输入x产
+生一个输出y=f（x），这就是普通的纯函数。它的定义是 相同的输入，结果总
+会得到相同的输出，而且没有任何可观察的副作用，也不依赖外部环境的状态。
+</code></pre>
+<h2 id="沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪"><a href="#沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪" class="headerlink" title="沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪"></a>沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪</h2><pre><code>沙盒根目录里有三个文件夹：
+Documents，一般应该把应用程序的数据文件存到这个文件夹里，用于存储用
+户数据或其他应该定期备份的信息。因为应用的沙盒机制，应用只能在几个目录
+下读写文件。苹果建议将程序中建立的或在程序中浏览到的文件数据保存在该目
+录下，iTunes备份和恢复的时候会包括此目录。
+Library，存储程序的默认设置或其它状态信息，其下有两个文件夹：Caches
+存储应用程序再次启动所需的信息，存放缓存文件，iTunes不会备份此目录，
+此目录下文件不会在应用退出删除；Preferences包含应用程序偏好设置文
+件，不过不要在这里修改偏好设置。
+tmp，提供一个即时创建临时文件的地方，即应用程序再次启动不需要的文件。
+通常来说，这个 mainbundle 就是 当前的可执行app 的在根目录下的绝对
+路径，
+</code></pre>
+<h2 id="反射方法"><a href="#反射方法" class="headerlink" title="反射方法"></a>反射方法</h2><pre><code>系统Foundation框架为我们提供了一些方法反射的API，我们可以通过这些
+API执行将字符串转为SEL等操作。由于OC语言的动态性，这些操作都是发生在
+运行时的。
+通过这些方法，我们可以在运行时选择创建那个实例，并动态选择调用哪个方
+法。这些操作甚至可以由服务器传回来的参数来控制，我们可以将服务器传回来
+的类名和方法名，实例为我们的对象。
+Class class = NSClassFromString(@&quot;ViewController&quot;);
+ViewController *vc = [[class alloc] init];
+SEL selector = NSSelectorFromString(@&quot;getDataList&quot;);
+[vc performSelector:selector];
+判断方法
+在NSObject类中为我们提供了一些基础方法，用来做一些判断操作，这些方法都是发生在运行时动态判断的
+// 当前对象是否这个类或其子类的实例
+- (BOOL)isKindOfClass:(Class)aClass;
+// 当前对象是否是这个类的实例
+- (BOOL)isMemberOfClass:(Class)aClass;
+// 当前对象是否遵守这个协议
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol;
+// 当前对象是否实现这个方法
+- (BOOL)respondsToSelector:(SEL)aSelector;    
+</code></pre>
+<h2 id="链表与数组的区别"><a href="#链表与数组的区别" class="headerlink" title="链表与数组的区别"></a>链表与数组的区别</h2><pre><code>链表的特性是在中间任意位置添加删除元素的都非常的快，不需要移动其它的元
+素。通常链表每一个元素都要保存一个指向下一个元素的指针（单链表）。双链
+表的话每个元素即要保存到下一个元素的指针，还要保存一个上一个元素的指
+针。循环链表则把最后一个元素中保存下一个元素指针指向第一个元素。   
+数组是一组具有相同类型和名称的变量的集合。这些变量称为数组的元素,每个
+数组元素都有一个编号,这个编号叫做下标,我们可以通过下标来区别这些元素。
+数组元素的个数有时也称之为数组的长度。  
+数组是将元素在内存中连续存放，由于每个元素占用内存相同，所以你可以通过
+下标迅速访问数组中任何元素。但是如果你要在数组中增加一个元素，你需要移
+动大量元素，在内存中空出一个元素的空间，然后将要增加的元素放在其中。同
+样的道理，如果你想删除一个元素，你同样需要移动大量元素去填掉被移动的元
+素。 
+链表恰好相反，链表中的元素在内存中不是顺序存储的，而是通过存在元素中的
+指针联系到一起。比如：上一个元素有个指针指到下一个元素，以此类推，直到
+最后一个元素。如果你要访问链表中一个元素，你需要从第一个元素开始，一直
+找到你需要的元素位置。但是增加和删除一个元素对于链表数据结构就非常简单
+了， 只要修改元素中的指针就可以了。
+</code></pre>
+<h2 id="设置了成员变量—str，属性里面也设置了-synchronized-property（）str，两种写法有什么区别"><a href="#设置了成员变量—str，属性里面也设置了-synchronized-property（）str，两种写法有什么区别" class="headerlink" title="设置了成员变量—str，属性里面也设置了@synchronized @property（）str，两种写法有什么区别"></a>设置了成员变量—str，属性里面也设置了@synchronized @property（）str，两种写法有什么区别</h2><pre><code>1)在.h头文件中:
+@property在头文件中应用于声明:
+@property NSInteger age;
+编译器会自动在.h头文件中声明了2个方法:(setter,getter方法)
+- (NSInteger)age;      - (void)setAge:(NSInteger)age;
+2)在.m实现文件中:
+@sythesize在.m实现文件中应用于实现:
+例如:
+@synthesize age = _age; 
+编译器会自动在.m文件中实现2个方法:(setter,getter方法)
+- (void)setAge:(NSInteger)age
+&#123;
+_age  =  age;
+&#125;
+- (NSInteger)age
+&#123;
+return   _age;
+&#125;
+</code></pre>
+<h2 id="组件化路由的实现方式（有url，meditor，自己的组件路由）"><a href="#组件化路由的实现方式（有url，meditor，自己的组件路由）" class="headerlink" title="组件化路由的实现方式（有url，meditor，自己的组件路由）"></a>组件化路由的实现方式（有url，meditor，自己的组件路由）</h2><h2 id="Masonry-update-remake区别"><a href="#Masonry-update-remake区别" class="headerlink" title="Masonry update remake区别"></a>Masonry update remake区别</h2><pre><code>mas_makeConstraints 只负责新增约束 Autolayout不能同时存在两条针
+对于同一对象的约束 否则会报错
+mas_updateConstraints 针对上面的情况 会更新在block中出现的约
+束 不会导致出现两个相同约束的情况
+mas_remakeConstraints 则会清除之前的所有约束 仅保留最新的约束
+</code></pre>
+<h2 id="常见动画"><a href="#常见动画" class="headerlink" title="常见动画"></a>常见动画</h2><pre><code>https://www.jianshu.com/p/9aead7675221
+</code></pre>
+<h2 id="分类和原来的类都有某个方法，如何保证安全性和规范性"><a href="#分类和原来的类都有某个方法，如何保证安全性和规范性" class="headerlink" title="分类和原来的类都有某个方法，如何保证安全性和规范性"></a>分类和原来的类都有某个方法，如何保证安全性和规范性</h2><pre><code>1.添加警告
+2.分类中方法执行完再执行原类方法
+</code></pre>
+<h2 id="设备唯一码怎么获取"><a href="#设备唯一码怎么获取" class="headerlink" title="设备唯一码怎么获取"></a>设备唯一码怎么获取</h2><pre><code>当我们从真机上卸载这个软件重新安装的时候，UUID变了(模拟器每次都变)，
+对，确实变了
+keychain的使用
+keychain的使用确实帮我们解决了这个问题，我们可以在第一次生成我们需要
+的UUID的时候，保存他，然后就用keychain里保存的值来代替他的UUID，这
+样卸载之后，生成新的UUID，但是keychain里的数据是不会消失的，这样就
+实现了唯一识别码的目的。
+</code></pre>
+<h2 id="GCD在什么场景下会死锁，代码怎么写"><a href="#GCD在什么场景下会死锁，代码怎么写" class="headerlink" title="GCD在什么场景下会死锁，代码怎么写"></a>GCD在什么场景下会死锁，代码怎么写</h2><pre><code>http://ios.jobbole.com/82622/
+</code></pre>
+<h2 id="GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整"><a href="#GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整" class="headerlink" title="GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整"></a>GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整</h2><h2 id="链表的单个节点的删除"><a href="#链表的单个节点的删除" class="headerlink" title="链表的单个节点的删除"></a>链表的单个节点的删除</h2><pre><code>实现一个算法，删除单向链表中间的某个结点，假定你只能访问该结点。 
+给定带删除的节点，请执行删除操作，若该节点为尾节点，返回false，否则返回true 
+算法思路： 
+利用该节点可以访问其下一个节点，可以将下一个节点的值复制给该节点，将下一个节点删除。
+</code></pre>
+<h2 id="如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）"><a href="#如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）" class="headerlink" title="如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）"></a>如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/02/M_Swift108%E9%80%9A%E7%9F%A5%E5%8E%9F%E7%90%86/" rel="prev" title="通知原理">
+      <i class="fa fa-chevron-left"></i> 通知原理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/02/M_Swift111%E7%BD%91%E7%BB%9C/" rel="next" title="网络">
+      网络 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%E5%92%8C%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">函数式编程和响应式编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TMCache"><span class="nav-number">2.</span> <span class="nav-text">TMCache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSProxy"><span class="nav-number">3.</span> <span class="nav-text">NSProxy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">组件化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RAC"><span class="nav-number">5.</span> <span class="nav-text">RAC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSPathch"><span class="nav-number">6.</span> <span class="nav-text">JSPathch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSMutableArray%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%8C%85%E6%8B%AC%E7%B3%BB%E7%BB%9F%E6%8F%90%E4%BE%9B%E7%9A%84%E5%B8%B8%E7%94%A8API%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">7.</span> <span class="nav-text">NSMutableArray的实现，包括系统提供的常用API的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSUserDefaults%E5%AD%98%E5%82%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.</span> <span class="nav-text">NSUserDefaults存储对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%AF%E5%87%BD%E6%95%B0"><span class="nav-number">9.</span> <span class="nav-text">纯函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B2%99%E7%9B%92%E5%AD%98%E5%82%A8%E7%9A%84%E8%B7%AF%E5%BE%84%E6%98%AFNSDocument%E8%BF%98%E6%98%AFNSLibrary%EF%BC%8Cmainbuneld%E5%9C%A8%E5%93%AA"><span class="nav-number">10.</span> <span class="nav-text">沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E6%96%B9%E6%B3%95"><span class="nav-number">11.</span> <span class="nav-text">反射方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E4%B8%8E%E6%95%B0%E7%BB%84%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">12.</span> <span class="nav-text">链表与数组的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E4%BA%86%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E2%80%94str%EF%BC%8C%E5%B1%9E%E6%80%A7%E9%87%8C%E9%9D%A2%E4%B9%9F%E8%AE%BE%E7%BD%AE%E4%BA%86-synchronized-property%EF%BC%88%EF%BC%89str%EF%BC%8C%E4%B8%A4%E7%A7%8D%E5%86%99%E6%B3%95%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">13.</span> <span class="nav-text">设置了成员变量—str，属性里面也设置了@synchronized @property（）str，两种写法有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E5%8C%96%E8%B7%AF%E7%94%B1%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%EF%BC%88%E6%9C%89url%EF%BC%8Cmeditor%EF%BC%8C%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BB%84%E4%BB%B6%E8%B7%AF%E7%94%B1%EF%BC%89"><span class="nav-number">14.</span> <span class="nav-text">组件化路由的实现方式（有url，meditor，自己的组件路由）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Masonry-update-remake%E5%8C%BA%E5%88%AB"><span class="nav-number">15.</span> <span class="nav-text">Masonry update remake区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%8A%A8%E7%94%BB"><span class="nav-number">16.</span> <span class="nav-text">常见动画</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E5%92%8C%E5%8E%9F%E6%9D%A5%E7%9A%84%E7%B1%BB%E9%83%BD%E6%9C%89%E6%9F%90%E4%B8%AA%E6%96%B9%E6%B3%95%EF%BC%8C%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8C%E8%A7%84%E8%8C%83%E6%80%A7"><span class="nav-number">17.</span> <span class="nav-text">分类和原来的类都有某个方法，如何保证安全性和规范性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E5%94%AF%E4%B8%80%E7%A0%81%E6%80%8E%E4%B9%88%E8%8E%B7%E5%8F%96"><span class="nav-number">18.</span> <span class="nav-text">设备唯一码怎么获取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD%E5%9C%A8%E4%BB%80%E4%B9%88%E5%9C%BA%E6%99%AF%E4%B8%8B%E4%BC%9A%E6%AD%BB%E9%94%81%EF%BC%8C%E4%BB%A3%E7%A0%81%E6%80%8E%E4%B9%88%E5%86%99"><span class="nav-number">19.</span> <span class="nav-text">GCD在什么场景下会死锁，代码怎么写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GCD%E5%92%8CNSOperationQueue%E9%83%BD%E5%8F%AF%E4%BB%A5%E8%B0%83%E6%95%B4%E9%98%9F%E5%88%97%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F%E5%90%97%EF%BC%9F%E5%A6%82%E4%BD%95%E8%B0%83%E6%95%B4"><span class="nav-number">20.</span> <span class="nav-text">GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E7%9A%84%E5%8D%95%E4%B8%AA%E8%8A%82%E7%82%B9%E7%9A%84%E5%88%A0%E9%99%A4"><span class="nav-number">21.</span> <span class="nav-text">链表的单个节点的删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%8E%BB%E8%AE%A9%E4%B8%80%E9%83%A8%E5%88%86%E5%AF%B9%E8%B1%A1%E8%B0%83%E5%8E%9F%E6%9D%A5%E7%9A%84%E7%B1%BB%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%8C%E4%B8%80%E9%83%A8%E5%88%86%E5%AF%B9%E8%B1%A1%E8%B0%83%E5%88%86%E7%B1%BB%E9%87%8C%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%9F%EF%BC%88%E6%96%B9%E6%B3%95%E5%88%97%E8%A1%A8%E6%9C%89%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%94%A8runtime%EF%BC%89"><span class="nav-number">22.</span> <span class="nav-text">如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本质：带有自动变量值的匿名函数 block的实质是一个oc对象，它有自己的isa指针、invoke变 量 ，是NSObject的子类，可以接收消息 1._NSConcreteGlobalBlock,全局的静态block，不会访问外部的变量。 就是说如果你的block没有调用其他 的外部变量，那你的block类型就是这 种。例如：你仅仅在你的block里面写一个NSLog(&quot;hello w">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Block理解">
+<meta property="og:url" content="http://example.com/2018/08/14/M_Swift99Block/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="本质：带有自动变量值的匿名函数 block的实质是一个oc对象，它有自己的isa指针、invoke变 量 ，是NSObject的子类，可以接收消息 1._NSConcreteGlobalBlock,全局的静态block，不会访问外部的变量。 就是说如果你的block没有调用其他 的外部变量，那你的block类型就是这 种。例如：你仅仅在你的block里面写一个NSLog(&quot;hello w">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-14T11:47:23.000Z">
+<meta property="article:modified_time" content="2018-08-14T11:47:23.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/08/14/M_Swift99Block/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Block理解 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift99Block/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Block理解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-14 19:47:23" itemprop="dateCreated datePublished" datetime="2018-08-14T19:47:23+08:00">2018-08-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <pre><code>本质：带有自动变量值的匿名函数
+block的实质是一个oc对象，它有自己的isa指针、invoke变
+量 ，是NSObject的子类，可以接收消息
+1._NSConcreteGlobalBlock,全局的静态block，不会访问外部的变量。
+就是说如果你的block没有调用其他 的外部变量，那你的block类型就是这
+种。例如：你仅仅在你的block里面写一个NSLog(&quot;hello world&quot;);
+2._NSConcreteStackBlock 保存在栈中的 block，当函数返回时会被销
+毁。这个block就是你声明的时候不用copy修饰，并且你的block访问了外部
+变量。
+3._NSConcreteMallocBlock 保存在堆中的 block，当引用计数为 0 时
+会被销毁。
+</code></pre>
+<h2 id="写法："><a href="#写法：" class="headerlink" title="写法："></a>写法：</h2><pre><code>void (^block)(void) = ^&#123;
+    NSLog(@&quot;无参无返回值&quot;);
+&#125;;
+void (^xiaoming1aa)() = ^(NSString *c)&#123;
+    NSLog(@&quot;带参数&quot;);
+&#125;;
+NSString *(^xiaming2)() = ^NSString *(NSString *dd) &#123;
+    return @&quot;带参数与返回&quot;;
+&#125;;
+@property (nonatomic, copy)
+void(^myBlock)();//无参无返回值
+@property (nonatomic, copy)
+void(^myBlock1)(NSString *);//带参数
+@property (nonatomic, copy)
+NSString *(^myBlock2)(NSString *);//带参数与返回
+</code></pre>
+<h2 id="block为什么不能修改外部变量"><a href="#block为什么不能修改外部变量" class="headerlink" title="block为什么不能修改外部变量"></a>block为什么不能修改外部变量</h2><pre><code> 默认情况下，在block中访问的外部变量是复制过去的，
+ 复制过去的是值，即：写操作不对原变量生效。
+</code></pre>
+<h2 id="block都做了什么？"><a href="#block都做了什么？" class="headerlink" title="__block都做了什么？"></a>__block都做了什么？</h2><pre><code>Block不允许修改外部变量的值，这里所说的外部变量的值，
+指的是栈中指针的内存地址。__block 所起到的作用就是
+只要观察到该变量被 block 所持有，就将“外部变量”
+在栈中的内存地址放到了堆中。
+进而在block内部也可以修改外部变量的值
+这也保证了原对象不被销毁，但与此同时，也会导致循环引用问题
+</code></pre>
+<h2 id="block为什么为引起循环引用"><a href="#block为什么为引起循环引用" class="headerlink" title="block为什么为引起循环引用"></a>block为什么为引起循环引用</h2><pre><code>因为block在拷贝到堆上的时候，会retain其引用的外部变量，
+那么如果block中如果引用了他的宿主对象，
+那很有可能引起循环引用
+循环引用发生的条件就是持有这个block的对象，
+被block里边加入的对象持有
+</code></pre>
+<h2 id="如何解决循环引用"><a href="#如何解决循环引用" class="headerlink" title="如何解决循环引用"></a>如何解决循环引用</h2><pre><code>使用__weak修饰self，使其在block中不被持有，打破循环引用。
+__weak typeof(self) weakSelf = self;
+</code></pre>
+<h2 id="Block为什么要用copy修饰"><a href="#Block为什么要用copy修饰" class="headerlink" title="Block为什么要用copy修饰"></a>Block为什么要用copy修饰</h2><pre><code>针对block的三种类型，
+也就是copy修饰的block。他的生命 周期就是随着对象的销毁而结束的。只要
+对象不销毁，我们就可以调用的到在堆中的block。这就是为什么我们要用
+copy来修饰block。因为不用copy修饰的访问外部变量的block，只在他所在
+的函数被调用的那一瞬间可以使用。之后就消失了。
+</code></pre>
+<h2 id="block执行过程中对象被释放"><a href="#block执行过程中对象被释放" class="headerlink" title="block执行过程中对象被释放"></a>block执行过程中对象被释放</h2><pre><code>在block执行开始时self对象还未被释放，而执行过程中，
+self被释放了，此时访问self时，就会发生错误。
+对于这种场景，应该在block中对 对象使用__strong修饰，
+使得在block期间对 对象持有，block执行结束后，解除其持有。
+注：此方法只能保证在block执行期间对象不被释放，
+如果对象在block执行执行之前已经被释放了，该方法也无效。
+</code></pre>
+<h2 id="什么情况下不回发生循环引用"><a href="#什么情况下不回发生循环引用" class="headerlink" title="什么情况下不回发生循环引用"></a>什么情况下不回发生循环引用</h2><pre><code>通用情况:在block本身不被self持有,而被别的对象持有,
+同时不产生循环引用的时候,就不需要使用weakself了
+UIView动画block，AFN的block
+UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
+所以循环无法形成 --&gt; 动画block不会造成循环引用的原因。
+</code></pre>
+<h2 id="函数和block区别"><a href="#函数和block区别" class="headerlink" title="函数和block区别"></a>函数和block区别</h2><pre><code>函数里面只能访问全局变量，而Block代码块不光能访问全局变量，
+还拥有当前栈内存和堆内存变量的可读性
+（当然通过__block访问指示符修饰的局部变量还可以在block代码块里面进行修改）。
+从内存的角度看，函数指针只不过是指向代码区的一段可执行代码，
+而block实际上是程序运行过程中在栈内存动态创建的对象，
+可以向其发送copy消息将block对象拷贝到堆内存，
+以延长其生命周期。
+</code></pre>
+<h2 id="如何区分block位置"><a href="#如何区分block位置" class="headerlink" title="如何区分block位置"></a>如何区分block位置</h2><pre><code>要点一:
+    当block在函数内部，
+    且定义的时候就使用了函数内部的变量，
+    那么这个block是存储在栈上的。 
+要点二:
+    当block定义在函数体外面，
+    或者定义在函数体内部且当时函数执行的时候，
+    block体中并没有需要使用函数内部的局部变量时，
+    也就是block在函数执行的时候只是静静地待在一边定义了一下
+    而不使用函数体的内容，
+    那么block将会被编译器存储为全局block。 
+要点三:
+    全局block存储在堆中，
+    对全局block使用copy操作会返回原函数指针；
+    而对栈中的block使用copy操作，
+    会产生两个不同的block地址，
+    也就是两个匿名函数的入口地址。 
+要点四:
+    ARC机制优化会将stack的block,
+    转为heap的block进行调用。
+</code></pre>
+<h2 id="delegate为什么用weak-它和block区别"><a href="#delegate为什么用weak-它和block区别" class="headerlink" title="delegate为什么用weak 它和block区别"></a>delegate为什么用weak 它和block区别</h2><pre><code>weak是为了解决循环引用的问题
+代理和block的共同特性是回调机制，不同的是，代理的方法比较多，比较分
+散，使用block的代码比较集中统一；代理运行成本比较低，一对一的关系，
+block需要将使用的数据从栈内存拷贝到堆内存中，对象的话就是加计数，代理
+制是保存一个对象指针，直接回调；block写法简单，注重传输，但是需要注意
+循环引用
+总结：公共接口，方法比较多的时候用delegate进行解耦，异步和简单的回调用block
+</code></pre>
+<h2 id="在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别"><a href="#在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别" class="headerlink" title="在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别"></a>在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别</h2><pre><code>在block中调用self会引起循环引用，但是在block中需要对
+weakSelf进行strong,保证代码在执行到block中，self不会被
+释放，当block执行完后，会自动释放该strongSelf
+进行大量调用会引起内存问题
+</code></pre>
+<h2 id="block嵌套block还用——strong两遍吗"><a href="#block嵌套block还用——strong两遍吗" class="headerlink" title="block嵌套block还用——strong两遍吗"></a>block嵌套block还用——strong两遍吗</h2><pre><code>只要在最后把外层的block执行一次, 内层的block才会真正地被
+加载进内存, 循环引用问题再次出现. 出现循环引用的原因其实也
+不难理解, 因为strongPerson说白了也是一个强引用, 它与一般
+强引用的区别在于, 它只会在被定义的block中对对象进行强引用, 
+在block过后就会把对象释放掉, 所以在第2层block中继续用
+strongPerson出现循环引用跟一般造成循环引用的原因其实是一
+样的, 解决方法也是如出一辙, 而且可以继续嵌套下去, 此处的警
+告同样是结果没被使用:
+加上修饰符strong时，当别处把变量释放掉，但调用该变量的
+block如果仍然没有执行结束，那么系统就会等待block执行完成后
+再释放，对该变量在block中的使用起到了保护作用。当block执行
+结束后会自动释放掉。
+</code></pre>
+<h2 id="block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在"><a href="#block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在" class="headerlink" title="block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在"></a>block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在</h2><pre><code>在执行Block语法的时候，Block语法表达式所使用的自动变量的值
+是被保存进了Block的结构体实例中，也就是Block自身中
+Block仅仅捕获了val的值，并没有捕获val的内存地址。
+</code></pre>
+<h2 id="block-和-delegate使用优先级"><a href="#block-和-delegate使用优先级" class="headerlink" title="block 和 delegate使用优先级"></a>block 和 delegate使用优先级</h2><pre><code>block 和 delegate 都可以通知外面。block 更轻型，使用更
+简单，能够直接访问上下文，这样类中不需要存储临时数据，使用 
+block 的代码通常会在同一个地方，这样读代码也连贯。
+delegate 更重一些，需要实现接口，它的方法分离开来，很多时
+候需要存储一些临时数据，另外相关的代码会被分离到各处，没有 
+block 好读。
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/14/M_Swift103%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94%E9%A1%BA%E5%BA%8F/" rel="prev" title="iOS事件响应顺序">
+      <i class="fa fa-chevron-left"></i> iOS事件响应顺序
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/14/M_Swift97RunLoop/" rel="next" title="RunLoop">
+      RunLoop <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E6%B3%95%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">写法：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E4%BF%AE%E6%94%B9%E5%A4%96%E9%83%A8%E5%8F%98%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">block为什么不能修改外部变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block%E9%83%BD%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">__block都做了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%BA%E5%BC%95%E8%B5%B7%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">block为什么为引起循环引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">如何解决循环引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Block%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8copy%E4%BF%AE%E9%A5%B0"><span class="nav-number">6.</span> <span class="nav-text">Block为什么要用copy修饰</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%AF%B9%E8%B1%A1%E8%A2%AB%E9%87%8A%E6%94%BE"><span class="nav-number">7.</span> <span class="nav-text">block执行过程中对象被释放</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8B%E4%B8%8D%E5%9B%9E%E5%8F%91%E7%94%9F%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8"><span class="nav-number">8.</span> <span class="nav-text">什么情况下不回发生循环引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%92%8Cblock%E5%8C%BA%E5%88%AB"><span class="nav-number">9.</span> <span class="nav-text">函数和block区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%8C%BA%E5%88%86block%E4%BD%8D%E7%BD%AE"><span class="nav-number">10.</span> <span class="nav-text">如何区分block位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#delegate%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8weak-%E5%AE%83%E5%92%8Cblock%E5%8C%BA%E5%88%AB"><span class="nav-number">11.</span> <span class="nav-text">delegate为什么用weak 它和block区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8block%E4%B8%AD%E5%AF%B9weakSelf%E5%86%8D%E8%BF%9B%E8%A1%8C%E2%80%94strong%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%8C%E7%84%B6%E5%90%8E%E4%BB%A5%E7%99%BE%E4%B8%87%E7%BA%A7%E7%9A%84%E6%95%B0%E9%87%8F%E5%8E%BB%E8%B0%83%E7%94%A8%E6%9F%90%E4%B8%AA%E6%96%B9%E6%B3%95%EF%BC%8C%E4%B8%8E%E7%9B%B4%E6%8E%A5%E7%94%A8weakSelf%E5%8E%BB%E8%B0%83%E7%94%A8%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">12.</span> <span class="nav-text">在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block%E5%B5%8C%E5%A5%97block%E8%BF%98%E7%94%A8%E2%80%94%E2%80%94strong%E4%B8%A4%E9%81%8D%E5%90%97"><span class="nav-number">13.</span> <span class="nav-text">block嵌套block还用——strong两遍吗</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block%E6%8D%95%E8%8E%B7%E8%BF%9B%E5%8E%BB%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F%EF%BC%8C%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%EF%BC%8C%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E4%BB%A5%E5%90%8E%EF%BC%8C%E5%9C%A8block%E5%86%85%E9%83%A8%E4%BB%A5%E4%BB%80%E4%B9%88%E5%BD%A2%E5%BC%8F%E5%AD%98%E5%9C%A8"><span class="nav-number">14.</span> <span class="nav-text">block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block-%E5%92%8C-delegate%E4%BD%BF%E7%94%A8%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">15.</span> <span class="nav-text">block 和 delegate使用优先级</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="同步串行 &#x2F;&#x2F; 队列引起的循环等待 &#x2F;&#x2F;    dispatch_sync(dispatch_get_main_queue(), ^&amp;#123; &#x2F;&#x2F;        [self print]; &#x2F;&#x2F;    &amp;#125;);  同步并行&#x2F;&#x2F; 同步并行 &#x2F;&#x2F;    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift133%E5%A4%9A%E7%BA%BF%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="同步串行 &#x2F;&#x2F; 队列引起的循环等待 &#x2F;&#x2F;    dispatch_sync(dispatch_get_main_queue(), ^&amp;#123; &#x2F;&#x2F;        [self print]; &#x2F;&#x2F;    &amp;#125;);  同步并行&#x2F;&#x2F; 同步并行 &#x2F;&#x2F;    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAU">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:29:23.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:29:23.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift133%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>多线程 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift133%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          多线程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:29:23" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:23+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="同步串行"><a href="#同步串行" class="headerlink" title="同步串行"></a>同步串行</h2><pre><code> // 队列引起的循环等待
+//    dispatch_sync(dispatch_get_main_queue(), ^&#123;
+//        [self print];
+//    &#125;);
+</code></pre>
+<h2 id="同步并行"><a href="#同步并行" class="headerlink" title="同步并行"></a>同步并行</h2><pre><code>// 同步并行
+//    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^&#123;
+//        NSLog(@&quot;1&quot;);
+//        dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^&#123;
+//            NSLog(@&quot;2&quot;);
+//        &#125;);
+//        NSLog(@&quot;3&quot;);
+//    &#125;);
+//
+</code></pre>
+<h2 id="异步串行"><a href="#异步串行" class="headerlink" title="异步串行"></a>异步串行</h2><pre><code>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^&#123;
+       NSLog(@&quot;1&quot;);
+       
+       [self performSelector:@selector(print) withObject:nil afterDelay:2];
+       [[NSRunLoop currentRunLoop] run];
+   &#125;);
+   NSLog(@&quot;3&quot;);
+    // 在gcd中开启的线程没有runloop，我们提交任务到runloop中是会失效的
+     //而performSelector:withObject:afterDelay:其实就是在内部创建了一个NSTimer，
+       //然后会添加到当前线程的Runloop中。所以当该方法添加到子线程中时，需要格外的注意两个地方
+       // 因为子线程中的runloop默认是没有启动的状态。使用run方法开启当前线程的runloop，但是一定要注意run方法和执行该延迟方法的顺序。
+       //而performSelector:withObject:afterDelay:其实就是在内部创建了一个NSTimer
+       //所以在子线程中两者的顺序必须是先执行performSelector延迟方法之后再执行run方法。
+   //因为run方法只是尝试想要开启当前线程中的runloop，但是如果该线程中并没有任何事件(source、timer、observer)的话，并不会成功的开启。
+</code></pre>
+<h2 id="异步并行"><a href="#异步并行" class="headerlink" title="异步并行"></a>异步并行</h2><p>NSOperation<br>需要和NSOperationQueue配合使用来实现多线程方案（如果直接start的话，是在主线程执行）<br>添加任务依赖<br>任务执行状态控制<br>最大并发量</p>
+<p>NSOperation 实现多线程的使用步骤分为三步：</p>
+<p>创建操作：先将需要执行的操作封装到一个 NSOperation 对象中。<br>创建队列：创建 NSOperationQueue 对象。<br>将操作加入到队列中：将 NSOperation 对象添加到 NSOperationQueue 对象中。<br>凡是添加到主队列中的操作，都会放到主线程中执行（注：不包括操作使用addExecutionBlock:添加的额外操作，额外操作可能在其他线程执行，感谢指正）<br>线程安全解决方案：可以给线程加锁，在一个线程执行该操作的时候，不允许其他线程进行操作。iOS 实现线程加锁有很多种方式。@synchronized、 NSLock、NSRecursiveLock、NSCondition、NSConditionLock、pthread_mutex、dispatch_semaphore、OSSpinLock、atomic(property) set/ge等等各种方式。</p>
+<p>系统是怎么移除一个isFinished=YES的NSOperation<br>通过KVO的方式</p>
+<p>常用属性方法<br>判断操作状态方法</p>
+<ul>
+<li>(void)cancel; 可取消操作，实质是标记 isCancelled 状态。</li>
+<li>(BOOL)isFinished; 判断操作是否已经结束。</li>
+<li>(BOOL)isCancelled; 判断操作是否已经标记为取消。</li>
+<li>(BOOL)isExecuting; 判断操作是否正在在运行。</li>
+<li>(BOOL)isReady; 判断操作是否处于准备就绪状态，这个值和操作的依赖关系相关。</li>
+</ul>
+<p>操作同步</p>
+<ul>
+<li>(void)waitUntilFinished; 阻塞当前线程，直到该操作结束。可用于线程执行顺序的同步。</li>
+<li>(void)setCompletionBlock:(void (^)(void))block; completionBlock 会在当前操作执行完毕时执行 completionBlock。</li>
+<li>(void)addDependency:(NSOperation *)op; 添加依赖，使当前操作依赖于操作 op 的完成。</li>
+<li>(void)removeDependency:(NSOperation *)op; 移除依赖，取消当前操作对操作 op 的依赖。<br>@property (readonly, copy) NSArray&lt;NSOperation *&gt; *dependencies; 在当前操作开始执行之前完成执行的所有操作对象数组。<br>NSOperationQueue 常用属性和方法</li>
+</ul>
+<p>取消/暂停/恢复操作</p>
+<ul>
+<li>(void)cancelAllOperations; 可以取消队列的所有操作。</li>
+<li>(BOOL)isSuspended; 判断队列是否处于暂停状态。 YES 为暂停状态，NO 为恢复状态。</li>
+<li>(void)setSuspended:(BOOL)b; 可设置操作的暂停和恢复，YES 代表暂停队列，NO 代表恢复队列。<br>操作同步</li>
+<li>(void)waitUntilAllOperationsAreFinished; 阻塞当前线程，直到队列中的操作全部执行完毕。<br>添加/获取操作</li>
+<li>(void)addOperationWithBlock:(void (^)(void))block; 向队列中添加一个 NSBlockOperation 类型操作对象。</li>
+<li>(void)addOperations:(NSArray *)ops waitUntilFinished:(BOOL)wait; 向队列中添加操作数组，wait 标志是否阻塞当前线程直到所有操作结束</li>
+<li>(NSArray *)operations; 当前在队列中的操作数组（某个操作执行结束后会自动从这个数组清除）。</li>
+<li>(NSUInteger)operationCount; 当前队列中的操作数。<br>获取队列</li>
+</ul>
+<ul>
+<li>(id)currentQueue; 获取当前队列，如果当前线程不是在 NSOperationQueue 上运行则返回 nil。</li>
+<li>(id)mainQueue; 获取主队列。</li>
+</ul>
+<p>NSThread启动流程<br>start-》创建pthread-〉main函数-》执行-〉结束</p>
+<p>iOS常见的锁<br>@synchronized 一般创建单例对象的时候使用<br>atomic<br>修饰属性的关键字<br>对被修饰对象进行院子性操作（不负责使用）<br>atomic作用：多线程下将属性设置为atomic可以保证读取数据的一致性。因为他将保证数据只能被一个线程占用，也就是说一个线程对属性进行写操作时，会使用自旋锁锁住该属性。不允许其他的线程对其进行读取操作了。<br>简而言之，atomic的作用只是给getter和setter加了个锁，atomic只能保证代码进入getter或者setter函数内部时是安全的，一旦出了getter和setter，多线程安全只能靠程序员自己保障了。所以atomic属性和使用property的多线程安全并没什么直接的联系。另外，atomic由于加锁也会带来一些性能损耗，所以我们在编写iOS代码的时候，一般声明property为nonatomic，在需要做多线程安全的场景，自己去额外加锁做同步。<br>atomic修饰的实际上是这个指针，也就是占8个字节内存的指针，因此就不可能随意使用多线程来操作这块内存的。因为这块内存是原子性的。是线程安全的。<br>真正不安全的是指针指向的那块内存区域，他是非原子性的，当多个线程去操作这块内存的时候，就会出现不安全的情况。<br>OSSpinLock循环等待询问，不释放资源，用于轻量级数据访问，简单的int值+ 1 -1操作<br>NSLock 互斥锁<br>//主线程中<br>NSLock *lock = [[NSLock alloc] init];</p>
+<p>//线程1<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>    [lock lock];<br>    NSLog(@”线程1”);<br>    sleep(2);<br>    [lock unlock];<br>    NSLog(@”线程1解锁成功”);<br>});</p>
+<p>//线程2<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>    sleep(1);//以保证让线程2的代码后执行<br>    [lock lock];<br>    NSLog(@”线程2”);<br>    [lock unlock];<br>});<br>2016-08-19 14:23:09.659 ThreadLockControlDemo[1754:129663] 线程1<br>2016-08-19 14:23:11.663 ThreadLockControlDemo[1754:129663] 线程1解锁成功<br>2016-08-19 14:23:11.665 ThreadLockControlDemo[1754:129659] 线程2<br>NSLock 对象是在应用中用于协调多个线程操作<br>你不应该把这个类实现递归锁。如果在同一个线程上调用两次lock方法，将会对这个线程永久上锁。使用NSRecursiveLock类来才可以实现递归锁。<br>解锁一个没有被锁定的锁是一个程序错误，这个地方需要注意。<br>某个线程A调用lock方法。这样，NSLock将被上锁。可以执行“关键部分”，完成后，调用unlock方法。<br>如果，在线程A 调用unlock方法之前，另一个线程B调用了同一锁对象的lock方法。那么，线程B只有等待。直到线程A调用了unlock。<br>同一个线程不能连续两次调用加锁</p>
+<p>NSRecursiveLock  递归锁<br>它允许同一线程多次加锁，而不会造成死锁。</p>
+<p>发挥CPU多核（多线程）的优势</p>
+<p>dispatch_semaphore_t 唤醒一个被动行为</p>
+<p>GCD的常见作用<br>延迟执行dispatch_time<br>一次执行dispatch_once<br>dispatch_group_async的使用，调度，当所有任务执行完成之后再执行dispatch_group_notify<br>dispatch_barrier_async等待一些任务完成之后才能继续执行，使用barrier来等待之前任务完成，避免数据竞争等问题。<br>dispatch_semaphore信号量</p>
+<p>多线程使用场景<br>类似聊天页的小视频和本地视频列表这样的tableView在显示视频的缩略图时，需要使用多线程来解决tableView的卡顿问题。因为对视频进行切图的操作是耗时的，如果在主线程进行，则会卡住tableView的滑动。<br>异步加载网络数据及解析<br>批量下载图片、图片压缩等处理，之后再刷新ui，<br>延迟执行</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift132%E7%BD%91%E7%BB%9C/" rel="prev" title="网络">
+      <i class="fa fa-chevron-left"></i> 网络
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift134%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="next" title="设计模式">
+      设计模式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E4%B8%B2%E8%A1%8C"><span class="nav-number">1.</span> <span class="nav-text">同步串行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E5%B9%B6%E8%A1%8C"><span class="nav-number">2.</span> <span class="nav-text">同步并行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E4%B8%B2%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">异步串行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%B9%B6%E8%A1%8C"><span class="nav-number">4.</span> <span class="nav-text">异步并行</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

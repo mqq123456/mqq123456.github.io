@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="包含min函数的栈定义栈的数据结构，请在该类型中实现一个能够得到栈的最小元素的 min 函数在该栈中，调用 min、push 及 pop 的时间复杂度都是 O(1)。 可通过建立辅助栈实现，栈A用于存储所有元素，栈B中中存储栈 A中非严格降序 的元素，栈A中最小元素始终位于栈B的顶端 Stack&lt;Integer&gt; A, B;     public MinStack() &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift146%E6%A0%88%E9%98%9F%E5%88%97/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="包含min函数的栈定义栈的数据结构，请在该类型中实现一个能够得到栈的最小元素的 min 函数在该栈中，调用 min、push 及 pop 的时间复杂度都是 O(1)。 可通过建立辅助栈实现，栈A用于存储所有元素，栈B中中存储栈 A中非严格降序 的元素，栈A中最小元素始终位于栈B的顶端 Stack&lt;Integer&gt; A, B;     public MinStack() &amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:30:33.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:30:33.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift146%E6%A0%88%E9%98%9F%E5%88%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>栈 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift146%E6%A0%88%E9%98%9F%E5%88%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          栈
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:33" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:33+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="包含min函数的栈"><a href="#包含min函数的栈" class="headerlink" title="包含min函数的栈"></a>包含min函数的栈</h2><pre><code>定义栈的数据结构，请在该类型中实现一个能够得到栈的最小元素的 min 函数在该栈中，调用 min、push 及 pop 的时间复杂度都是 O(1)。
+可通过建立辅助栈实现，栈A用于存储所有元素，栈B中中存储栈 A中非严格降序 的元素，栈A中最小元素始终位于栈B的顶端
+Stack&lt;Integer&gt; A, B;
+    public MinStack() &#123;
+        A = new Stack&lt;&gt;();
+        B = new Stack&lt;&gt;();
+    &#125;
+    public void push(int x) &#123;
+        A.add(x);
+        if(B.empty() || B.peek() &gt;= x)
+            B.add(x);
+    &#125;
+    public void pop() &#123;
+        if(A.pop().equals(B.peek()))
+            B.pop();
+    &#125;
+    public int top() &#123;
+        return A.peek();
+    &#125;
+    public int min() &#123;
+        return B.peek();
+    &#125;
+</code></pre>
+<h2 id="用两个栈实现队列"><a href="#用两个栈实现队列" class="headerlink" title="用两个栈实现队列"></a>用两个栈实现队列</h2><pre><code>用两个栈实现一个队列。队列的声明如下，请实现它的两个函数 appendTail 和 deleteHead ，分别完成在队列尾部插入整数和在队列头部删除整数的功能。(若队列中没有元素，deleteHead 操作返回 -1 )
+输入：
+[&quot;CQueue&quot;,&quot;appendTail&quot;,&quot;deleteHead&quot;,&quot;deleteHead&quot;]
+[[],[3],[],[]]
+输出：[null,null,3,-1]
+class CQueue &#123;
+    Deque&lt;Integer&gt; stack1;
+    Deque&lt;Integer&gt; stack2;
+
+public CQueue() &#123;
+    stack1 = new LinkedList&lt;Integer&gt;();
+    stack2 = new LinkedList&lt;Integer&gt;();
+&#125;
+
+public void appendTail(int value) &#123;
+    stack1.push(value);
+&#125;
+
+public int deleteHead() &#123;
+    // 如果第二个栈为空
+    if (stack2.isEmpty()) &#123;
+        while (!stack1.isEmpty()) &#123;
+            stack2.push(stack1.pop());
+        &#125;
+    &#125; 
+    if (stack2.isEmpty()) &#123;
+        return -1;
+    &#125; else &#123;
+        int deleteItem = stack2.pop();
+        return deleteItem;
+    &#125;
+&#125;
+</code></pre>
+<p>}</p>
+<h2 id="栈的压入、弹出序列"><a href="#栈的压入、弹出序列" class="headerlink" title="栈的压入、弹出序列"></a>栈的压入、弹出序列</h2><pre><code>输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。假设压入栈的所有数字均不相等。例如，序列 &#123;1,2,3,4,5&#125; 是某栈的压栈序列，序列 &#123;4,5,3,2,1&#125; 是该压栈序列对应的一个弹出序列，但 &#123;4,3,5,1,2&#125; 就不可能是该压栈序列的弹出序列。
+考虑借用一个辅助栈 stack ，模拟 压入 / 弹出操作的排列。根据是否模拟成功，即可得到结果。
+ public boolean validateStackSequences(int[] pushed, int[] popped) &#123;
+        Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();
+        int i = 0;
+        for(int num : pushed) &#123;
+            stack.push(num); // num 入栈
+            while(!stack.isEmpty() &amp;&amp; stack.peek() == popped[i]) &#123; // 循环判断与出栈
+                stack.pop();
+                i++;
+            &#125;
+        &#125;
+        return stack.isEmpty();
+    &#125;
+</code></pre>
+<h2 id="栈排序"><a href="#栈排序" class="headerlink" title="栈排序"></a>栈排序</h2><pre><code>对栈进行排序使最小元素位于栈顶
+用一个辅助栈
+
+class SortedStack &#123;
+
+private Stack&lt;Integer&gt; data = new Stack&lt;&gt;();
+private Stack&lt;Integer&gt; help = new Stack&lt;&gt;();
+
+public SortedStack() &#123;
+    super();
+&#125;
+
+public void push(int val) &#123;
+    if(isEmpty()) &#123; // 如果data ，没有数据，添加数据，添加help中数据
+        data.push(val);
+        while(!help.isEmpty()) &#123;
+            data.push(help.pop());
+        &#125;
+    &#125; else &#123; // 获取data 顶部元素。比较大小，如果大于，那么添加元素，否则help添加元素
+        int top = peek();
+        if(top &gt;= val) &#123;
+            data.push(val);
+            while(!help.isEmpty()) &#123;
+                data.push(help.pop());
+            &#125;
+        &#125; else &#123;
+            help.push(data.pop());
+            push(val);
+        &#125;
+    &#125;
+&#125;
+
+public void pop() &#123;
+    if(!isEmpty()) &#123;
+        data.pop();
+    &#125;
+&#125;
+
+public int peek() &#123;
+    if(isEmpty()) &#123;
+        return -1;
+    &#125; else &#123;
+        return data.peek();
+    &#125;
+&#125;
+
+public boolean isEmpty() &#123;
+    return data.isEmpty();
+&#125;
+&#125;
+</code></pre>
+<h2 id="用队列实现栈"><a href="#用队列实现栈" class="headerlink" title="用队列实现栈"></a>用队列实现栈</h2><pre><code>class MyStack &#123;
+           private Queue&lt;Integer&gt; q1 = new LinkedList&lt;&gt;();
+           private Queue&lt;Integer&gt; q2 = new LinkedList&lt;&gt;();
+           int top = 0;
+           MyStack() &#123;
+           &#125;
+           public void push(int x) &#123;
+               q1.add(x);
+               top = x;
+           &#125;
+           public int pop() &#123;
+                while (q1.size() &gt; 1) &#123;
+                       top = q1.remove();
+                       q2.add(top);
+               &#125;
+               int a = q1.remove();
+               Queue&lt;Integer&gt; temp = q1;
+               q1 = q2;  
+               q2 = temp;
+               return a;
+           &#125;
+           public int top() &#123;
+               return top;
+           &#125;
+           public boolean empty() &#123;
+               return q1.isEmpty();
+           &#125;
+&#125;;
+</code></pre>
+<h2 id="三合一"><a href="#三合一" class="headerlink" title="三合一"></a>三合一</h2><pre><code>描述如何只用一个数组来实现三个栈。
+首先要构建数组，3倍长度的size
+然后让另一个3的数组，存放和管理下标
+然后在根据结构分析
+class TripleInOne &#123;
+
+int[] a;
+int[] tt = new int[3];
+int size;
+public TripleInOne(int statckSize)&#123;
+    a = new int[3 * statckSize + 10];
+    size = statckSize;
+    for(int i = 0; i &lt; 3; i++)&#123;
+        tt[i] = i * statckSize - 1;
+    &#125;
+&#125;
+
+public boolean isFull(int stackNum)&#123;
+    return tt[stackNum] &gt;= size * (stackNum + 1) - 1;
+
+&#125;
+
+public void push(int stackNum, int value)&#123;
+    if(isFull(stackNum))    return;
+    a[++tt[stackNum]] = value;
+&#125;
+
+public int pop(int stackNum)&#123;
+    if(isEmpty(stackNum)) return -1;
+    tt[stackNum]--;
+    return a[tt[stackNum] + 1];
+&#125;
+
+public int peek(int stackNum)&#123;
+    if(isEmpty(stackNum))   return -1;
+    return a[tt[stackNum]];
+&#125;
+
+public boolean isEmpty(int stackNum)&#123;
+    return tt[stackNum] &lt; stackNum * size;
+&#125;
+</code></pre>
+<p>}</p>
+<h2 id="汉诺塔问题"><a href="#汉诺塔问题" class="headerlink" title="汉诺塔问题"></a>汉诺塔问题</h2><pre><code>在经典汉诺塔问题中，有 3 根柱子及 N 个不同大小的穿孔圆盘，盘子可以滑入任意一根柱子。一开始，所有盘子自上而下按升序依次套在第一根柱子上(即每一个盘子只能放在更大的盘子上面)。移动圆盘时受到以下限制:
+(1) 每次只能移动一个盘子;
+(2) 盘子只能从柱子顶端滑出移到下一根柱子;
+(3) 盘子只能叠在比它大的盘子上。
+
+请编写程序，用栈将所有盘子从第一根柱子移到最后一根柱子。
+解题思路：递归与分治
+    public void hanota(List&lt;Integer&gt; A, List&lt;Integer&gt; B, List&lt;Integer&gt; C) &#123;
+        hanoi(A.size(), A, B, C);
+    &#125;
+
+public void hanoi(int n, List&lt;Integer&gt; A, List&lt;Integer&gt; B, List&lt;Integer&gt; C)&#123;
+    
+    if(n == 1)&#123;
+        C.add(A.get(A.size() - 1));
+        A.remove(A.size() - 1);
+    &#125;else&#123;
+        //把A经过辅助C放到B上
+        hanoi(n - 1, A, C, B);
+        //把A放到C上
+        C.add(A.get(A.size() - 1));
+        A.remove(A.size() - 1);
+        //把B经过辅助A放到C上
+        hanoi(n - 1, B, A, C);
+    &#125;
+&#125;
+</code></pre>
+<h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><h2 id="用两个栈实现队列-1"><a href="#用两个栈实现队列-1" class="headerlink" title="用两个栈实现队列"></a>用两个栈实现队列</h2><pre><code>用两个栈实现一个队列。队列的声明如下，请实现它的两个函数 appendTail 和 deleteHead ，分别完成在队列尾部插入整数和在队列头部删除整数的功能。(若队列中没有元素，deleteHead 操作返回 -1 )
+输入：
+[&quot;CQueue&quot;,&quot;appendTail&quot;,&quot;deleteHead&quot;,&quot;deleteHead&quot;]
+[[],[3],[],[]]
+输出：[null,null,3,-1]
+class CQueue &#123;
+    Deque&lt;Integer&gt; stack1;
+    Deque&lt;Integer&gt; stack2;
+
+public CQueue() &#123;
+    stack1 = new LinkedList&lt;Integer&gt;();
+    stack2 = new LinkedList&lt;Integer&gt;();
+&#125;
+
+public void appendTail(int value) &#123;
+    stack1.push(value);
+&#125;
+
+public int deleteHead() &#123;
+    // 如果第二个栈为空
+    if (stack2.isEmpty()) &#123;
+        while (!stack1.isEmpty()) &#123;
+            stack2.push(stack1.pop());
+        &#125;
+    &#125; 
+    if (stack2.isEmpty()) &#123;
+        return -1;
+    &#125; else &#123;
+        int deleteItem = stack2.pop();
+        return deleteItem;
+    &#125;
+&#125;
+&#125;
+</code></pre>
+<h2 id="数据流中的中位数-（优先队列）"><a href="#数据流中的中位数-（优先队列）" class="headerlink" title="数据流中的中位数  （优先队列）"></a>数据流中的中位数  （优先队列）</h2><pre><code>优先队列 / 堆， 小顶堆，保存较大的一半， 大顶堆，保存较小的一半，堆顶的平均数即为中位数
+    class MedianFinder &#123;
+    Queue&lt;Integer&gt; A, B;
+    public MedianFinder() &#123;
+        A = new PriorityQueue&lt;&gt;(); // 小顶堆，保存较大的一半
+        B = new PriorityQueue&lt;&gt;((x, y) -&gt; (y - x)); // 大顶堆，保存较小的一半
+    &#125;
+    public void addNum(int num) &#123;
+        if(A.size() != B.size()) &#123;
+            A.add(num);
+            B.add(A.poll());
+        &#125; else &#123;
+            B.add(num);
+            A.add(B.poll());
+        &#125;
+    &#125;
+    public double findMedian() &#123;
+        return A.size() != B.size() ? A.peek() : (A.peek() + B.peek()) / 2.0;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="滑动窗口的最大值-单调队列"><a href="#滑动窗口的最大值-单调队列" class="headerlink" title="滑动窗口的最大值  单调队列"></a>滑动窗口的最大值  单调队列</h2><pre><code>    我们维护一个单调的双向队列，窗口在每次滑动的时候，我就从队列头部取当前窗口中的最大值，每次窗口新进来一个元素的时候，我就将它与队列中的元素进行大小比较
+    如果刚刚进来的元素比队列的尾部元素大，那么先将队列尾部的元素弹出，然后把刚刚进来的元素添到队列的尾部；
+    如果刚刚进来的元素比队列的尾部元素小，那么把刚刚进来的元素直接添到队列的尾部即可。
+    方法二：构建双端队列
+       保持队列大小不超过窗口，以及最大值在出端
+       读取新数据，入端操作，和之前的进入的数据比较，之前的数据小则剔除，直到比它大则停止，最大值还在出端
+       循环上面步骤，直到结束
+       public int[] maxSlidingWindow(int[] nums, int k) &#123;
+               if(nums.length == 0 || k == 0) return new int[0];
+               Deque&lt;Integer&gt; deque = new LinkedList&lt;&gt;(); // 队列
+               int[] res = new int[nums.length - k + 1];
+               for(int j = 0, i = 1 - k; j &lt; nums.length; i++, j++) &#123;
+                   if(i &gt; 0 &amp;&amp; deque.peekFirst() == nums[i - 1])
+                       deque.removeFirst(); // 删除 deque 中对应的 nums[i-1]
+                   while(!deque.isEmpty() &amp;&amp; deque.peekLast() &lt; nums[j])
+                       deque.removeLast(); // 保持 deque 递减
+                   deque.addLast(nums[j]);
+                   if(i &gt;= 0)
+                       res[i] = deque.peekFirst();  // 记录窗口最大值
+               &#125;
+               return res;
+           &#125;
+</code></pre>
+<h2 id="队列的最大值"><a href="#队列的最大值" class="headerlink" title="队列的最大值"></a>队列的最大值</h2><pre><code>请定义一个队列并实现函数 max_value 得到队列里的最大值，要求函数max_value、push_back 和 pop_front 的均摊时间复杂度都是O(1)。
+方法二：维护一个单调的双端队列
+public class MaxQueue &#123;
+
+    Queue&lt;Integer&gt; queue;
+    LinkedList&lt;Integer&gt; max;
+    public MaxQueue() &#123;
+        queue = new LinkedList&lt;&gt;();
+        max = new LinkedList&lt;&gt;();//LinkedList是双端链表
+    &#125;
+    
+    public int max_value() &#123;
+        return max.size()==0?-1:max.getFirst();
+    &#125;
+    
+    public void push_back(int value) &#123;
+        queue.add(value);
+        while(max.size()!=0&amp;&amp;max.getLast()&lt;value)&#123;//注意：这里第二个判断条件不能带等号，即max中对于当前queue中的具有相同值的元素会全部存储，而不是存储最近的那个。只添加递增
+            max.removeLast();
+        &#125;
+        max.add(value);
+    &#125;
+    
+    public int pop_front() &#123;
+        if(max.size()!=0&amp;&amp;queue.peek().equals(max.getFirst()))//Integer类型的值的比较不能直接使用==
+            max.removeFirst();
+        return queue.size()==0?-1:queue.poll();
+    &#125;
+&#125;
+</code></pre>
+<p>优先队列的主要操作<br>优先队列辅助操作<br>返回优先队列中键值为第k个最小最大的元素<br>返回优先队列的元素个数<br>基于键值的优先级将优先队列的元素进行排序<br>应用</p>
+<p>最短路径算法：Dijkstra算法<br>最小生成树算法：Prim算法<br>事件驱动仿真：顾客排队算法<br>选择问题：查找第k个最小元素</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift145%E4%BA%8C%E5%88%86%E5%8F%8A%E6%8E%92%E5%BA%8F/" rel="prev" title="二分查找">
+      <i class="fa fa-chevron-left"></i> 二分查找
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift147%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="next" title="字符串">
+      字符串 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%85%E5%90%ABmin%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88"><span class="nav-number">1.</span> <span class="nav-text">包含min函数的栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%B8%A4%E4%B8%AA%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97"><span class="nav-number">2.</span> <span class="nav-text">用两个栈实现队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%88%E7%9A%84%E5%8E%8B%E5%85%A5%E3%80%81%E5%BC%B9%E5%87%BA%E5%BA%8F%E5%88%97"><span class="nav-number">3.</span> <span class="nav-text">栈的压入、弹出序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%88%E6%8E%92%E5%BA%8F"><span class="nav-number">4.</span> <span class="nav-text">栈排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E6%A0%88"><span class="nav-number">5.</span> <span class="nav-text">用队列实现栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E5%90%88%E4%B8%80"><span class="nav-number">6.</span> <span class="nav-text">三合一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%89%E8%AF%BA%E5%A1%94%E9%97%AE%E9%A2%98"><span class="nav-number">7.</span> <span class="nav-text">汉诺塔问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%9F%E5%88%97"><span class="nav-number"></span> <span class="nav-text">队列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E4%B8%A4%E4%B8%AA%E6%A0%88%E5%AE%9E%E7%8E%B0%E9%98%9F%E5%88%97-1"><span class="nav-number">1.</span> <span class="nav-text">用两个栈实现队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0-%EF%BC%88%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">数据流中的中位数  （优先队列）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC-%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97"><span class="nav-number">3.</span> <span class="nav-text">滑动窗口的最大值  单调队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%9F%E5%88%97%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC"><span class="nav-number">4.</span> <span class="nav-text">队列的最大值</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

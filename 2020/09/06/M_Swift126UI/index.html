@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="程序绘制流程[UIView setNeedsDisplay];[view.layer setNeedsDisplay];[CALayer display];[layer.delegate respondsTo:@selector(displayLayer:)];yes-&gt; 异步绘制入口no-&gt; 系统绘制流程绘制是CPU和GPU共同协作的通过CoreGraphics、CoreImage由">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UI">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift126UI/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="程序绘制流程[UIView setNeedsDisplay];[view.layer setNeedsDisplay];[CALayer display];[layer.delegate respondsTo:@selector(displayLayer:)];yes-&gt; 异步绘制入口no-&gt; 系统绘制流程绘制是CPU和GPU共同协作的通过CoreGraphics、CoreImage由">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:26:04.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:26:04.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift126UI/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>UI | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift126UI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UI
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:26:04" itemprop="dateCreated datePublished" datetime="2020-09-06T17:26:04+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>程序绘制流程<br>[UIView setNeedsDisplay];<br>[view.layer setNeedsDisplay];<br>[CALayer display];<br>[layer.delegate respondsTo:@selector(displayLayer:)];<br>yes-&gt; 异步绘制入口<br>no-&gt; 系统绘制流程<br>绘制是CPU和GPU共同协作的<br>通过CoreGraphics、CoreImage由CPU预处理，最终通过OpenGL ES将数据传送到屏幕<br>1、CoreAnimation提交会话，包括自己和子树（view hierarchy）的layout状态等；<br>2、RenderServer解析提交的子树状态，生成绘制指令；<br>3、GPU执行绘制指令；<br>4、显示渲染后的数据；<br>调用-setNeedsDisplay的时候，仅会设置图层为dirty。当渲染系统准备就绪，调用视图的-display方法，同时装配像素存储空间，建立一个CoreGraphics上下文（CGContextRef），将上下文push进上下文堆栈，绘图程序进入对应的内存存储空间。<br>渲染时机</p>
+<p>上面已经提到过：Core Animation 在 RunLoop 中注册了一个 Observer 监听 BeforeWaiting(即将进入休眠) 和 Exit (即将退出Loop) 事件 。当在操作 UI 时，比如改变了 Frame、更新了 UIView/CALayer 的层次时，或者手动调用了 UIView/CALayer 的 setNeedsLayout/setNeedsDisplay方法后，这个 UIView/CALayer 就被标记为待处理，并被提交到一个全局的容器去。当Oberver监听的事件到来时，回调执行函数中会遍历所有待处理的UIView/CAlayer 以执行实际的绘制和调整，并更新 UI 界面。<br>打包layers并发送到渲染server；递归提交子树的layers；<br>如果子树太复杂，会消耗很大，对性能造成影响；</p>
+<p>事件响应流程<br>点击屏幕-》UIApplication-〉UIWindow-》hitTest：withEvent：-〉pointInside：withEvent：<br>-》subviews-〉UIView-》倒序遍历-〉hitTest：withEvent：<br>hitTest：withEvent内部实现</p>
+<p>GPU<br>顶点着色<br>图元装配<br>光栅化<br>片着色<br>片段处理</p>
+<p>UI卡顿掉帧原理<br>Display 16.7ms<br>GPU<br>CPU<br>在 VSync 信号到来后，系统图形服务会通过 CADisplayLink 等机制通知 App，App 主线程开始在 CPU 中计算显示内容，比如视图的创建、布局计算、图片解码、文本绘制等。随后 CPU 会将计算好的内容提交到 GPU 去，由 GPU 进行变换、合成、渲染。随后 GPU 会把渲染结果提交到帧缓冲区去，等待下一次 VSync 信号到来时显示到屏幕上。由于垂直同步的机制，如果在一个 VSync 时间内，CPU 或者 GPU 没有完成内容提交，则那一帧就会被丢弃，等待下一次机会再显示，而这时显示屏会保留之前的内容不变。这就是界面卡顿的原因。</p>
+<p>滑动优化方案<br>CPU<br>对象创建，调整，销毁<br>预排版（布局计算、文字计算）<br>预渲染（文字等异步绘制l、图片解码等）<br>GPU<br>纹理渲染<br>试图混合</p>
+<p>离屏渲染<br>GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作<br>何时会触发<br>圆角（当和maskToBounds一起使用时）<br>图层蒙版<br>阴影<br>光栅化</p>
+<p>问题：<br>UI事件的传递机制<br>使tableView滚动流畅的方案和思路<br>什么是离屏渲染<br>UIView和CALayer的关系</p>
+<p>.dSYM文件</p>
+<h2 id="CALayer"><a href="#CALayer" class="headerlink" title="CALayer"></a>CALayer</h2><p>layer给view提供了基础设施，使得绘制内容和呈现更高效动画更容易、更低耗<br>layer不参与view的事件处理、不参与响应链<br>layer的内容生成一个位图(bitmap)<br>,触发动画的时候，是把这个动画和状态信息传递给图形硬件，<br>图形硬件使用这两个数据就可以构造动画了。处理位图对于图形硬件更快。</p>
+<p>阴影是根据layer的alpha值来生成的。模拟一下生成的过程：分配一块同样大小的shadowlayer,在原layer的alpha不为0的地方，shadowlayer填上shadowColor，就跟现实里的影子生成原理一样，不透明的部分才生成阴影。然后把这个shadowlayer做一个偏移(shadowOffset)加到原layer下面。<br>也就是阴影层是根据内容即时计算出来的，而且会触发离屏渲染，所以消耗巨大。</p>
+<p>mask是一个layer层，并且作为背景层和组成层之间的一个遮罩层通道，默认是nil。并且如果要创建新的layer赋给mask，那么新的layer必须没有superlayer，也不支持含有子mask。</p>
+<p>mask作用的也不只是当前layer的内容，而是layer和它所有子layer的合成内容。这个也是可以测试的，设置viewA的layer的mask,然后不管在viewA上加多少个视图都是会被mask作用到。</p>
+<p>我们都知道控件view有一个alpha属性用来设置透明度，默认alpha＝1，只有当alpha不为0是我们才能正常的看到View的样子，alpha其实改变的是mask和background layer的透明度，来实现透明效果。而mask是控件view上的一层layer，mask也有一个alpha，要想看到view，只有当mask的透明度不为0时，我们才能看到mask后面的view的样子，view自带的masklayer是不透明的。新创建的masklayer的是透明的，因此，我们只需要给新创建的masklayer一个颜色，使他不透明就能看见蒙板后的View了，而蒙板外是透明的，这样就能实现蒙板效果了。原理大概是这样了。</p>
+<p>如何高性能给UIImageView加圆角</p>
+<p>如何使用核心动画？</p>
+<p>创建<br>设置相关属性<br>添加到 CALayer 上，会自动执行动画</p>
+<p>修改View的响应范围<br>重写View的</p>
+<ul>
+<li>(BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event;<br>hitTest：withEvent内部实现<br>首先调用当前视图的pointInside:withEvent:方法判断触摸点是否在当前视图内；<br>若返回NO,则hitTest:withEvent:返回nil;<br>若返回YES,则向当前视图的所有子视图(subviews)发送hitTest:withEvent:消息，所有子视图的遍历顺序是从top到bottom，即从subviews数组的末尾向前遍历,直到有子视图返回非空对象或者全部子视图遍历完毕；<br>若第一次有子视图返回非空对象,则hitTest:withEvent:方法返回此对象，处理结束；<br>如所有子视图都返回非，则hitTest:withEvent:方法返回自身(self)。<br>渲染具体步骤</li>
+</ul>
+<p>动画和屏幕上组合的图层实际上被一个单独的进程管理，即所谓的渲染服务。<br>当运行一段动画时，这个过程会被四个分离的阶段打破：</p>
+<p>布局–准备视图的层级关系，设置图层属性<br>显示–图层的寄宿图片被绘制的阶段。涉及到-drawRect和-drawLayer:inContext：等方法<br>准备–准备发送动画数据给渲染服务的阶段。比如图片解码<br>提交–打包所有图层和动画属性，通过IPC发送到渲染服务<br>渲染服务拿到数据后，反序列化成一个叫做渲染树的图层树，使用这个树状结构，渲染服务队动画的每一帧做如下工作：</p>
+<p>对所有的图层属性计算中间值，设置OpenGL几何形状（纹理化三角形）来执行渲染<br>在屏幕上渲染可见的三角形<br>所以一共六个阶段：最后两个阶段在动画过程中不停地重复，前五个阶段都在软件层面处理（通过CPU），只有最后一个被GPU执行。而且，你真正只能控制前两个阶段：布局和显示。剩下的在CoreAnimation内部处理。</p>
+<p>1、帧率一般在多少？</p>
+<p>60帧每秒；（TimeProfiler）<br>2、是否存在CPU和GPU瓶颈？ （查看占有率）</p>
+<p>更少的使用CPU和GPU可以有效的保存电量；<br>3、额外的使用CPU来进行渲染？</p>
+<p>重写了drawRect会导致CPU渲染；在CPU进行渲染时，GPU大多数情况是处于等待状态；<br>4、是否存在过多离屏渲染？</p>
+<p>越少越好；离屏渲染会导致上下文切换，GPU产生idle；<br>5、是否渲染过多视图？</p>
+<p>视图越少越好；透明度为1的视图更受欢迎；<br>6、使用奇怪的图片格式和大小？</p>
+<p>避免格式转换和调整图片大小；一个图片如果不被GPU支持，那么需要CPU来转换。（Xcode有对PNG图片进行特殊的算法优化）<br>7、使用昂贵的特效？</p>
+<p>理解特效的消耗，同时调整合适的大小；例如前面提到的UIBlurEffect；</p>
+<p>8、视图树上不必要的元素？</p>
+<p>理解视图树上所有点的必要性，去掉不必要的元素；忘记remove视图是很常见的事情，特别是当View的类比较大的时候。</p>
+<p>性能优化实例<br>1、阴影<br>2、圆角<br>不要使用不必要的mask，可以预处理图片为圆形；或者添加中间为圆形透明的白色背景视图。即使添加额外的视图，会导致额外的计算；但仍然会快一点，因为相对于切换上下文，GPU更擅长渲染。<br>离屏渲染会导致GPU利用率不到100%，帧率却很低。（切换上下文会产生idle time）</p>
+<p>3、工具</p>
+<p>使用instruments的CoreAnimation工具来检查离屏渲染，黄色是我们不希望看到的颜色。</p>
+<p>layoutSubviews<br>继承于UIView的子类重写，进行布局更新，刷新视图。如果某个视图自身的bounds或者子视图的bounds发生改变，那么这个方法会在当前runloop结束的时候被调用。为什么不是立即调用呢？因为渲染毕竟比较消耗性能，特别是视图层级复杂的时候。这种机制下任何UI控件布局上的变动不会立即生效，而是每次间隔一个周期，所有UI控件在布局上的变动统一生效并且在视图上更新，苹果通过这种高性能的机制保障了视图渲染的流畅性。<br>setNeedsLayout<br>标记为需要重新布局，异步调用layoutIfNeeded刷新布局，不立即刷新，在下一轮runloop结束前刷新，对于这一轮runloop之内的所有布局和UI上的更新只会刷新一次，layoutSubviews一定会被调用。<br>layoutIfNeeded<br>如果有需要刷新的标记，立即调用layoutSubviews进行布局（如果没有标记，不会调用layoutSubviews）</p>
+<p>如果想在当前runloop中立即刷新，调用顺序应该是<br>[self setNeedsLayout];<br>[self layoutIfNeeded];</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/02/M_Swift111%E7%BD%91%E7%BB%9C/" rel="prev" title="网络">
+      <i class="fa fa-chevron-left"></i> 网络
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift129RunTime/" rel="next" title="NSObject数据结构">
+      NSObject数据结构 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CALayer"><span class="nav-number">1.</span> <span class="nav-text">CALayer</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

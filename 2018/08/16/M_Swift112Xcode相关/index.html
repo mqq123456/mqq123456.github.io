@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="pod install与pod update的区别pod install一般是你第一次想要为项目添加pod的时候使用的，它同样也使 用在你为Podfile文件添加或移除pod库的时候。 每次pod install命令运行的时候，pod install会为每一个它安装的pod 库在Podfile.lock文件中写入其版本号。Podfile.lock文件追踪每一个安 装的pod库的版本号，并锁定这些版">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Xcode相关">
+<meta property="og:url" content="http://example.com/2018/08/16/M_Swift112Xcode%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="pod install与pod update的区别pod install一般是你第一次想要为项目添加pod的时候使用的，它同样也使 用在你为Podfile文件添加或移除pod库的时候。 每次pod install命令运行的时候，pod install会为每一个它安装的pod 库在Podfile.lock文件中写入其版本号。Podfile.lock文件追踪每一个安 装的pod库的版本号，并锁定这些版">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-08-16T11:38:54.000Z">
+<meta property="article:modified_time" content="2018-08-16T11:38:54.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/08/16/M_Swift112Xcode%E7%9B%B8%E5%85%B3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Xcode相关 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/16/M_Swift112Xcode%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Xcode相关
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-16 19:38:54" itemprop="dateCreated datePublished" datetime="2018-08-16T19:38:54+08:00">2018-08-16</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="pod-install与pod-update的区别"><a href="#pod-install与pod-update的区别" class="headerlink" title="pod install与pod update的区别"></a>pod install与pod update的区别</h2><pre><code>pod install一般是你第一次想要为项目添加pod的时候使用的，它同样也使
+用在你为Podfile文件添加或移除pod库的时候。
+每次pod install命令运行的时候，pod install会为每一个它安装的pod
+库在Podfile.lock文件中写入其版本号。Podfile.lock文件追踪每一个安
+装的pod库的版本号，并锁定这些版本号。
+当你运行pod install是，它将只解决不在Podfile.lock中的pod库依赖关
+系 
+对于在Podfile.lock文件中的pod库，pod install会只下载
+Podfile.lock文件中指定的版本，而不会去检查这个库是否有更新的版本。
+对于不在Podfile.lock文件中的pod库，pod install会搜索这个pod库在
+Podfile文件中指定的版本
+pod update
+当你运行了pod update PODNAME命令，CocoaPods会在不考虑
+Podfile.lock中版本的情况下试着去查找PODNAME的最新版本。pod 
+update PODNAME命令会将相应的pod更新到最新的版本（新版本仍然遵守你
+在Podfile中做的限制）
+用法
+通过pod update PODNAME,你可以只更新某个特定的pod库（检查是否存在
+新版本并更新相应的pod库）。相反，pod install则不会去更新已安装的
+pod库。
+当你向Podfile中添加了pod，你应该使用pod install而不是pod update
+去在不更新已安装的pod库的版本基础上安装新添加的pod库。
+当你想过更新某个特定pod库（或所有的库）的版本时你只需要使用pod 
+update
+</code></pre>
+<h2 id="pod-lock产生冲突的原因"><a href="#pod-lock产生冲突的原因" class="headerlink" title="pod.lock产生冲突的原因"></a>pod.lock产生冲突的原因</h2><pre><code>Podfile.lock 不一致的原因：
+Podfile.lock和Manifest.lock：
+项目中集成 cocoapods 的时候，运行 pod install 后，项目根目录中会
+生成Podfile.lock，而Pods目录中会有Manifest.lock。
+Xcode 编译项目的时候，会执行 Build Phases 中的[CP] Check Pods 
+Manifest.lock 脚本，这个脚本会比对Podfile.lock和
+Manifest.lock，如果两个文件不相同就会报错。
+Podfile.lock是什么：
+Podfile.lock 文件主要包含三个块：PODS、DEPENDENCIES、SPEC 
+CHECKSUMS，用来记录每个pod的版本号、依赖的其他库和每个库对应的
+podspec.json文件的 checksum(SHA-1算法)。通过这些信息可以确保多
+人协作的时候，大家使用的是相同版本的第三方库。
+删掉Pod.lock文件，然后重新执行pod install --verbose --no-
+repo-update
+</code></pre>
+<h2 id="CocoaPods原理和说明"><a href="#CocoaPods原理和说明" class="headerlink" title="CocoaPods原理和说明"></a>CocoaPods原理和说明</h2><pre><code>1、第三方库会被编译成.a静态库供我们真正的工程使用。    
+CocoaPods会将所有的第三方库以target的方式组成一个名为Pods的工程，
+该工程就放在刚才新生成的Pods目录下。整个第三方库工程会生成一个名称为
+libPods.a的静态库提供给我们自己的CocoaPodsTest工程使用。
+对于资源文件，CocoaPods提供了一个名为Pods-resources.sh的bash脚
+本，该脚本在每次项目编译的时候都会执行，将第三方库的各种资源文件复制到
+目标目录中。
+2、我们的工程和第三方库所在的工程会由一个新生成的workspace管理
+为了方便我们直观的管理工程和第三方库，CocoaPodsTest工程和Pods工程
+会被以workspace的形式组织和管理，也就是我们刚才看到的
+CocoaPodsTest.xcworkspace文件。
+3、原来的工程设置已经被更改了，这时候我们直接打开原来的工程文件去编译
+就会报错，只能使用新生成的workspace来进行项目管理。
+4、CocoaPods通过一个名为Pods.xcconfig的文件来在编译时设置所有的依
+赖和参数。
+</code></pre>
+<h2 id="dSYM-文件"><a href="#dSYM-文件" class="headerlink" title="dSYM 文件"></a>dSYM 文件</h2><pre><code>什么是 dSYM 文件    
+Xcode编译项目后，我们会看到一个同名的 dSYM 文件，dSYM 是保存 16 
+进制函数地址映射信息的中转文件，我们调试的 symbols 都会包含在这个文
+件中，并且每次编译项目的时候都会生成一个新的 dSYM 文件，位于 /
+Users/&lt;用户名&gt;/Library/Developer/Xcode/Archives 目录下，对于
+每一个发布版本我们都很有必要保存对应的 Archives 文件 
+( AUTOMATICALLY SAVE THE DSYM FILES 这篇文章介绍了通过脚本每次
+编译后都自动保存 dSYM 文件)。
+dSYM 文件有什么作用
+当我们软件 release 模式打包或上线后，不会像我们在 Xcode 中那样直观
+的看到用崩溃的错误，这个时候我们就需要分析 crash report 文件了，
+iOS 设备中会有日志文件保存我们每个应用出错的函数内存地址，通过 Xcode 
+的 Organizer 可以将 iOS 设备中的 DeviceLog 导出成 crash 文件，
+这个时候我们就可以通过出错的函数地址去查询 dSYM 文件中程序对应的函数
+名和文件名。大前提是我们需要有软件版本对应的 dSYM 文件，这也是为什么
+我们很有必要保存每个发布版本的 Archives 文件了。
+如何将文件一一对应
+每一个 xx.app 和 xx.app.dSYM 文件都有对应的 UUID，crash 文件也
+有自己的 UUID，只要这三个文件的 UUID 一致，我们就可以通过他们解析出
+正确的错误函数信息了。
+</code></pre>
+<h2 id="Git和SVN"><a href="#Git和SVN" class="headerlink" title="Git和SVN"></a>Git和SVN</h2><pre><code>1. Git是分布式的，SVN是集中式的，好处是跟其他同事不会有太多的冲突，
+自己写的代码放在自己电脑上，一段时间后再提交、合并，也可以不用联网在本
+地提交；
+2. Git下载下来后，在本地不必联网就可以看到所有的log，很方便学习，
+SVN却需要联网；
+3. Git鼓励分Branch，而SVN，说实话，我用Branch的次数还挺少的，SVN
+自带的Branch merge我还真没用过，有merge时用的是Beyond Compare工
+具合并后再Commit的；
+4. Tortoise也有出Git版本，真是好东西；
+5. SVN在Commit前，我们都建议是先Update一下，跟本地的代码编译没问
+题，并确保开发的功能正常后再提交，这样其实挺麻烦的，有好几次同事没有先
+Updata，就
+Commit了，发生了一些错误，耽误了大家时间，Git可能这种情况会少些。
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/16/M_Swift90%E7%AE%97%E6%B3%95%E4%B9%8B%E6%95%B0%E5%AD%A6%E8%AE%A1%E7%AE%97/" rel="prev" title="算法之数学计算">
+      <i class="fa fa-chevron-left"></i> 算法之数学计算
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/16/M_Swift114UI%E7%9B%B8%E5%85%B3/" rel="next" title="UI相关">
+      UI相关 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#pod-install%E4%B8%8Epod-update%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">pod install与pod update的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pod-lock%E4%BA%A7%E7%94%9F%E5%86%B2%E7%AA%81%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.</span> <span class="nav-text">pod.lock产生冲突的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CocoaPods%E5%8E%9F%E7%90%86%E5%92%8C%E8%AF%B4%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">CocoaPods原理和说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dSYM-%E6%96%87%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">dSYM 文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E5%92%8CSVN"><span class="nav-number">5.</span> <span class="nav-text">Git和SVN</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

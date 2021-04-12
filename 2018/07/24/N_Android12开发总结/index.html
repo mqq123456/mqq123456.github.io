@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。Android项目开发建议： 1、全部Activity可继承自BaseActivity，便于统一风格与处理公共事件，构建对话框，统一构造器的建立，万一需要整体变动，一处改动个处处有效。 2、数据库表字段常量和SQL逻辑分离，更清晰，建议使用Lite系列狂降LiteOrm库，超级清晰">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android开发总结">
+<meta property="og:url" content="http://example.com/2018/07/24/N_Android12%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。Android项目开发建议： 1、全部Activity可继承自BaseActivity，便于统一风格与处理公共事件，构建对话框，统一构造器的建立，万一需要整体变动，一处改动个处处有效。 2、数据库表字段常量和SQL逻辑分离，更清晰，建议使用Lite系列狂降LiteOrm库，超级清晰">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-07-24T12:01:43.000Z">
+<meta property="article:modified_time" content="2018-07-24T12:01:43.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/07/24/N_Android12%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android开发总结 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/N_Android12%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android开发总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-07-24 20:01:43" itemprop="dateCreated datePublished" datetime="2018-07-24T20:01:43+08:00">2018-07-24</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Android项目开发建议：</p>
+<p>1、全部Activity可继承自BaseActivity，便于统一风格与处理公共事件，构建对话框，统一构造器的建立，万一需要整体变动，一处改动个处处有效。</p>
+<p>2、数据库表字段常量和SQL逻辑分离，更清晰，建议使用Lite系列狂降LiteOrm库，超级清晰且重心可以放在业务上不用关心数据库细节</p>
+<p>3、全局变量放全局类中，模块私有放自己的管理类中，让常量清晰且集中</p>
+<p>4、不要相信庞大的管理类的东西会带来什么好处，可能是一场灾难，而要时刻注意单一原则，一个类专心做好一件事</p>
+<p>Android两种方式事件处理</p>
+<p>1、基于回调的事件处理</p>
+<p>2、基于监听器的事件处理</p>
+<p>Android的事件处理机制是一种委派式（Delegation）事件处理方式<br>普通组件（事件源）将整个事件处理委托给特定的对象（事件监听器），当该事件源发生制定的事件时，就通知所委托的事件监听器，由监听器处理这个事件。<br>Android默认约定当UI线程阻塞超过20秒，会引发ANR(Application Not Responding)异常</p>
+<p>为了找起来方便，暂且分为七大类：显示、存储、通信、发布与调优、进阶用法、与时俱进、继续精进。</p>
+<p>显示又分为八块：屏幕、文本、图形、简单控件、自定义视图、动画、窗口、复杂控件；</p>
+<p>存储分为六块：资源、内存、键值对、数据库、文件、网络存储；</p>
+<p>通信分作六块：组件通信、事件通信、多线程通信、跨进程通信、设备通信、网络通信；</p>
+<p>发布与调优分为五块：打包、安全、性能、健壮、兼容；</p>
+<p>进阶用法分为六块：java细节、设计模式、图像处理、高级控件、第三方sdk、开发者工具；</p>
+<p>与时俱进分为六块：新版控件、多媒体开发、高级动画、行为协调、页面切换、花样输入；</p>
+<p>继续精进分为六块：人工智能、混合开发、三维动画、物联网、屏幕特效、视频加工；</p>
+<p>dp和px的转换<br>屏幕分辨率getWindowManager<br>Drawable资源目录</p>
+<p>drawable文件放在res目录的各个drawable目录下，\res\drawable一般放的是描述性的xml文件，图片文件一般放在具体分辨率的drawable目录下。例如<br>drawable-ldpi里面主要放低分辨率的图片，如QVGA（240×320）<br>drawable-mdpi里面主要放中等分辨率的图片，如HVGA（320×480）<br>drawable-hdpi里面主要放高分辨率的图片，如WVGA（480×800），FWVGA（480×854）<br>drawable-xhdpi里面主要放加高分辨率的图片，如Nexus（720×1280）以上分辨率<br>drawable-xxhdpi里面主要放超高分辨率的图片，如Nexus（1080×1920）以上分辨率<br>StateListDrawable是在一个xml文件中定义不同状态下呈现的图像。下面是一个例子btn_visit_selector.xml<br>state_pressed：为true时表示按下，一般用于按钮Button，图形设置于android:background<br>state_checked：为true时表示勾选，一般用于单选框RadioButton、复选框CheckBox，图形设置于android:drawableLeft<br>state_selected：为true时表示选中，一般用于单选框RadioButton、复选框CheckBox，图形设置于android:background<br>state_focused：为true时表示获取焦点，一般用于文本框EditText，图形设置于android:background</p>
+<p>shape的定义文件是xml，以shape元素为根节点。根节点下定义了六个节点：corners（圆角）、gradien（渐变）、padding（间隔）、size（尺寸）、solid（填充）、stroke（描边），各节点的属性值主要是各种长宽、半径、角度，以及颜色。<br>visibility各取值的区别 : 该属性有三个取值，分别是：visible表示可见，invisible表示不可见，gone表示消失</p>
+<p>View是单个视图，所有的控件类都是从它派生出来；而ViewGroup是个视图组织，所有的布局视图类都是从它派生出来。由于View和ViewGroup是基类，因此很少会直接使用，偶尔用到的场景，主要有如下几个：<br>1、页面上需要单独显示一条横线或者竖线。如果填充图片显然不够经济，最简单的做法，就是在xml布局中增加一个View控件，高度或宽度设置为1dp，背景颜色设置为线条颜色，这样便实现了单独显示线条的需求。<br>2、点击事件的处理函数onClick(View v)，这里面我们要调用View的getId方法获取发生点击事件的控件id，从而进行该控件对应的点击处理。<br>3、在代码中设置某控件为可见或不可见或消失，此时需要使用View类的三个变量，分别是View.VISIBLE、View.INVISIBLE和View.GONE。</p>
+<p>Button是文本按钮（继承自TextView），而ImageButton是图像按钮（继承自ImageView）。两者之间的区别在于：<br>1、Button即可显示文本也可显示图形（通过设置背景图），而ImageButton只能显示图形不能显示文本；<br>2、Button可在文本周围区域显示小图，而ImageButton无法在某个区域显示小图；<br>3、ImageButton上的图像可按比例进行拉伸，而Button上的大图会拉伸变形（因为背景图无法按比例拉伸）；<br>从上面可以看出，Button的适应面更广，所以实际开发中基本使用Button。</p>
+<p>CheckBox</p>
+<p>CheckBox是复选框，点击勾选，再点击则取消勾选。CheckBox是CompoundButton的一个子类，所以继承了CompoundButton的所有属性和方法。</p>
+<p>RadioGroup和RadioButton</p>
+<p>RadioButton是单选框，点击选中，但是再点击不会取消选中。只有点击同组的其他RadioButton，原来勾选的RadioButton才会取消选中。RadioButton也是CompoundButton的一个子类，所以继承了CompoundButton的所有属性和方法。<br>RadioGroup是容纳多个RadioButton的组布局，同组中只能有一个RadioButton被选中。下面是RadioGroup常用的几个方法：<br>setCheckedId : 选中指定ID的RadioButton。<br>getCheckedRadioButtonId : 获取选中状态RadioButton的ID。<br>setOnCheckedChangeListener : 设置勾选变化的监听器。<br>自定义视图存在三个构造函数，分别是<br>//只有一个参数，用于在代码中构造对象<br>public SignatureView(Context context) {<br>super(context);<br>}</p>
+<p>//有两个参数，用于在XML布局中构造对象<br>public SignatureView(Context context, AttributeSet attrs) {<br>super(context, attrs);<br>if (attrs != null) {<br>TypedArray attrArray=getContext().obtainStyledAttributes( attrs, R.styleable.SignatureView);<br>mPaintColor = attrArray.getColor(R.styleable.SignatureView_paint_color, 0);<br>attrArray.recycle();<br>}<br>}</p>
+<p>//有三个参数，用于在XML布局中构造对象<br>public SignatureView(Context context, AttributeSet attrs, int defStyleAttr) {<br>super(context, attrs, defStyleAttr);<br>}<br>三个可进行绘制的方法</p>
+<p>在自定义视图中，有三个函数可以重写用于界面绘制，在视图创建过程中，三个函数的执行顺序依次是：onLayout、onDraw、dispatchDraw。<br>1、onLayout(boolean changed, int left, int top, int right, int bottom) :<br>onLayout用于定位该视图在上级视图中的位置，从其参数中就可以看出来。由于该函数没有画布，因此只适合绘制现成的视图控件。<br>2、onDraw(Canvas canvas) :<br>自定义控件一般是重写onDraw方法，在画布中绘制各种图形。<br>3、dispatchDraw(Canvas canvas) :<br>dispatchDraw与onDraw的区别在于：onDraw在绘制下级视图之前，而dispatchDraw在绘制下级视图之后，所以如果不想自己的绘图被下级视图覆盖的话，就要在dispatchDraw中进行绘制操作。为方便记忆，只要是从ViewGroup衍生出的视图，都用dispatchDraw，其他小控件都用onDraw。</p>
+<p>菜单Menu</p>
+<p>Android的菜单分为两类：选项菜单和上下文菜单，默认使用选项菜单。菜单的布局文件存放在res/menu目录下，使用ADT新建一个Android工程，首页代码MainActivity中会自动生成onMenuOpened和onMenuItemSelected函数代码。<br>下面是选项菜单需要重写的方法：<br>onMenuOpened : 在菜单弹出时调用，一般无需重写<br>onMenuItemSelected : 在菜单项选择时调用，查看该方法的源码，会发现该方法内部做分支处理，判断如果是选项菜单则调用onOptionsItemSelected，如果是上下文菜单则调用onContextItemSelected。一般无需重写<br>onCreateOptionsMenu : 在页面打开时调用，需要重写指定菜单项目<br>onOptionsItemSelected : 在选项菜单的菜单项选中时调用，需要重写对不同菜单项做分支处理<br>onPrepareOptionsMenu : 在准备打开选项菜单时调用，一般无需重写<br>onOptionsMenuClosed : 在选项菜单关闭时调用，一般无需重写<br>AlertDialog</p>
+<p>Android中最常用的对话框是AlertDialog，它可以完成常见的交互操作，如提示、确认、选择等等，然后就是进度对话框ProgressDialog<br>AlertDialog没有公开的构造函数，必须借助于AlertDialog.Builder才能完成参数设置。Builder的常用方法如下：<br>setIcon : 设置标题的图标。<br>setTitle : 设置标题的文本。<br>setCustomTitle : 设置自定义的标题视图。<br>–以上方法用于设置标题部分。注意setTitle和setCustomTitle只能设置其一，不能重复设置。<br>setMessage : 设置内容的文本。<br>setView : 设置自定义的内容视图。<br>setAdapter : 设置List方式的内容视图。使用较麻烦，一般不用。<br>setItems : 设置Spinner方式的内容视图。窗口显示与对话框模式的Spinner极为相似，没有底部的按钮，一旦选中某项就立即关闭对话框。<br>setSingleChoiceItems : 设置单选列表的内容视图。与setItems的区别在于有显示底部的交互按钮，并且每项右边有单选按钮。<br>setMultiChoiceItems : 设置多选列表的内容视图。底部有交互按钮，并且每项右边有复选按钮。<br>–以上方法用于设置内容部分。注意这些方法互相冲突，同时只能设置其一。<br>setPositiveButton : 设置肯定按钮的信息，如文本、点击监听器。<br>setNegativeButton : 设置否定按钮的信息，如文本、点击监听器。<br>setNeutralButton : 设置中性按钮的信息，如文本、点击监听器。<br>–以上方法用于设置交互按钮。</p>
+<p>WindowManager<br>getDefaultDisplay : 获取默认的显示屏信息。通常用该方法获取屏幕分辨率<br>addView : 往窗口添加视图。第二个参数为WindowManager.LayoutParams对象。<br>updateViewLayout : 更新指定视图的布局参数。第二个参数为WindowManager.LayoutParams对象。<br>removeView : 往窗口移除指定视图。</p>
+<p>TabBar<br>1、使用TabActivity。其中在布局文件中设置TabHost、TabWidget和RadioButton，在代码文件中应用TabActivity、TabSpec和CompoundButton。<br>2、使用ActivityGroup。将几个栏目的首页Activity都放入ActivityGroup，然后根据点击事件选择切换到哪个Activity。<br>3、使用FragmentActivity和Fragment。将几个栏目的首页Fragment都放入FragmentActivity，可自动响应点击事件。<br>其中TabActivity继承自ActivityGroup，目前Android声称TabActivity与ActivityGroup都已废弃，建议采用Fragment和FragmentManager来代替。从实现代码来看，TabActivity和ActivityGroup两种方式的代码量都较多，而FragmentActivity方式的代码就显得很简洁，所以博主也推荐第三种方式。</p>
+<p>标题栏ActionBar<br>1、在AndroidManifest.xml中给activity设置无标题栏的主题，就关闭ActionBar。否则就显示<br><activity android:theme="@android:style/Theme.Holo.NoActionBar"><br>2、在styles.xml的当前主题中加入一个项android:windowNoTitle，为true时表示关闭ActionBar；为false表示显示<br><item name="android:windowNoTitle">true</item><br>3、在Activity代码的setContentView之前加入下面代码，就关闭ActionBar。否则就显示<br>requestWindowFeature(Window.FEATURE_NO_TITLE);<br>4、在Activity代码中获得ActionBar实例，调用该实例的hide方法表示关闭ActionBar；调用show方法表示显示<br>ActionBar actionBar = getActionBar();<br>if (actionBar != null) {<br>actionBar.hide();  //隐藏ActionBar<br>actionBar.show();  //显示ActionBar<br>}</p>
+<p>ViewPager<br>下面是ViewPager的常用方法：<br>setAdapter : 设置ViewPager的适配器<br>setCurrentItem : 设置当前的页码，即默认打开ViewPager时显示哪一页的内容。<br>setOnPageChangeListener : 设置ViewPager的页面变化监听器。<br>ViewPager的适配器<br>ViewPager的监听器</p>
+<p>ViewPager一般不监听每个页面项的点击事件，而是监听页面滑动的监听事件，对应的监听器类是OnPageChangeListener。该类的三个方法介绍如下：<br>onPageScrollStateChanged : 翻页状态改变时调用，状态参数取值说明为：0表示静止，1表示正在滑动，2表示滑动完毕。在翻页过程中，状态值变化依次为：正在滑动-&gt;滑动完毕-&gt;静止。<br>onPageScrolled : 在翻页过程中调用。该方法的三个参数取值说明为：第一个参数表示当前页面的序号；第二个参数表示当前页面偏移的百分比，最小值为0，最大值为1；第三个参数表示当前页面的偏移距离，单位px。<br>onPageSelected : 在页面选择时调用，该方法用得较多。位置参数表示当前页面的序号。</p>
+<p>WaterfallGridView,StaggeredGridView,PinterestLikeAdapterView</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/24/N_Android11%E5%BC%80%E5%8F%91%E6%95%B4%E7%90%86/" rel="prev" title="Android开发整理">
+      <i class="fa fa-chevron-left"></i> Android开发整理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/24/N_Android13%E5%86%85%E5%AD%98/" rel="next" title="Android开发总结内存">
+      Android开发总结内存 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

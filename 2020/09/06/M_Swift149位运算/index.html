@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="异或求或 二进制中1的个数public int hammingWeight(int n) &amp;#123;     int bits &#x3D; 0;     int mask &#x3D; 1;     for (int i &#x3D; 0; i &lt; 32; i++) &amp;#123;         if ((n &amp; mask) !&#x3D; 0) &amp;#123;             bits++;         &amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="位运算">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift149%E4%BD%8D%E8%BF%90%E7%AE%97/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="异或求或 二进制中1的个数public int hammingWeight(int n) &amp;#123;     int bits &#x3D; 0;     int mask &#x3D; 1;     for (int i &#x3D; 0; i &lt; 32; i++) &amp;#123;         if ((n &amp; mask) !&#x3D; 0) &amp;#123;             bits++;         &amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:30:46.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:30:46.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift149%E4%BD%8D%E8%BF%90%E7%AE%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>位运算 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift149%E4%BD%8D%E8%BF%90%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          位运算
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:46" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:46+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>异或求或</p>
+<h2 id="二进制中1的个数"><a href="#二进制中1的个数" class="headerlink" title="二进制中1的个数"></a>二进制中1的个数</h2><pre><code>public int hammingWeight(int n) &#123;
+    int bits = 0;
+    int mask = 1;
+    for (int i = 0; i &lt; 32; i++) &#123;
+        if ((n &amp; mask) != 0) &#123;
+            bits++;
+        &#125;
+        mask &lt;&lt;= 1;
+    &#125;
+    return bits;
+&#125;
+方法 2：位操作的小技巧
+我们可以把前面的算法进行优化。我们不再检查数字的每一个位，而是不断把数字最后一个 1 反转，并把答案加一。当数字变成 
+0 的时候偶，我们就知道它没有 1 的位了，此时返回答案
+
+public int hammingWeight(int n) &#123;
+    int sum = 0;
+    while (n != 0) &#123;
+        sum++;
+        n &amp;= (n - 1);
+    &#125;
+    return sum;
+&#125;
+</code></pre>
+<h2 id="数组中数字出现的次数"><a href="#数组中数字出现的次数" class="headerlink" title="数组中数字出现的次数"></a>数组中数字出现的次数</h2><pre><code>一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次
+的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
+方法一：分组异或
+class Solution &#123;
+    public int[] singleNumbers(int[] nums) &#123;
+        //用于将所有的数异或起来
+        int k = 0;
+    
+    for(int num: nums) &#123;
+        k ^= num;
+    &#125;
+    
+    //获得k中最低位的1
+    int mask = 1;
+
+    //mask = k &amp; (-k) 这种方法也可以得到mask，具体原因百度 哈哈哈哈哈
+    while((k &amp; mask) == 0) &#123;
+        mask &lt;&lt;= 1;
+    &#125;
+    
+    int a = 0;
+    int b = 0;
+    
+    for(int num: nums) &#123;
+        if((num &amp; mask) == 0) &#123;
+            a ^= num;
+        &#125; else &#123;
+            b ^= num;
+        &#125;
+    &#125;
+    
+    return new int[]&#123;a, b&#125;;
+&#125;
+</code></pre>
+<p>}</p>
+<h2 id="圆圈中最后剩下的数字-约瑟夫环问题"><a href="#圆圈中最后剩下的数字-约瑟夫环问题" class="headerlink" title="圆圈中最后剩下的数字  约瑟夫环问题"></a>圆圈中最后剩下的数字  约瑟夫环问题</h2><pre><code>0,1,,n-1这n个数字排成一个圆圈，从数字0开始，每次从这个圆圈里删除第m个
+数字。求出这个圆圈里剩下的最后一个数字。
+例如，0、1、2、3、4这5个数字组成一个圆圈，从数字0开始每次删除第3个数
+字，则删除的前4个数字依次是2、0、4、1，因此最后剩下的数字是3。
+Java解决约瑟夫环问题，告诉你为什么模拟会超时！
+总结一下反推的过程，就是 (当前index + m) % 上一轮剩余数字的个数。
+class Solution &#123;
+    public int lastRemaining(int n, int m) &#123;
+        int ans = 0;
+        // 最后一轮剩下2个人，所以从2开始反推
+        for (int i = 2; i &lt;= n; i++) &#123;
+            ans = (ans + m) % i;
+        &#125;
+        return ans;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="不用加减乘除做加法"><a href="#不用加减乘除做加法" class="headerlink" title="不用加减乘除做加法"></a>不用加减乘除做加法</h2><pre><code>写一个函数，求两个整数之和，要求在函数体内不得使用 “+”、“-”、“*”、“/” 四则运算符号。
+class Solution &#123;
+    public int add(int a, int b) &#123;
+        while(b != 0) &#123; // 当进位为 0 时跳出
+            int c = (a &amp; b) &lt;&lt; 1;  // c = 进位
+            a ^= b; // a = 非进位和
+            b = c; // b = 进位
+        &#125;
+        return a;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="缺失的第一个正数"><a href="#缺失的第一个正数" class="headerlink" title="缺失的第一个正数"></a>缺失的第一个正数</h2><pre><code>给定一个包含 0, 1, 2, ..., n 中 n 个数的序列，找出 0 .. n 中没有出现在序列中的那个数。
+方法一：排序
+class Solution &#123;
+    public int missingNumber(int[] nums) &#123;
+        Arrays.sort(nums);
+
+    // 判断 n 是否出现在末位
+    if (nums[nums.length-1] != nums.length) &#123;
+        return nums.length;
+    &#125;
+    // 判断 0 是否出现在首位
+    else if (nums[0] != 0) &#123;
+        return 0;
+    &#125;
+
+    // 此时缺失的数字一定在 (0, n) 中
+    for (int i = 1; i &lt; nums.length; i++) &#123;
+        int expectedNum = nums[i-1] + 1;
+        if (nums[i] != expectedNum) &#123;
+            return expectedNum;
+        &#125;
+    &#125;
+
+    // 未缺失任何数字（保证函数有返回值）
+    return -1;
+&#125;
+&#125;
+方法二：哈希表
+class Solution &#123;
+    public int missingNumber(int[] nums) &#123;
+        Set&lt;Integer&gt; numSet = new HashSet&lt;Integer&gt;();
+        for (int num : nums) numSet.add(num);
+
+    int expectedNumCount = nums.length + 1;
+    for (int number = 0; number &lt; expectedNumCount; number++) &#123;
+        if (!numSet.contains(number)) &#123;
+            return number;
+        &#125;
+    &#125;
+    return -1;
+&#125;
+&#125;
+方法三：位运算
+class Solution &#123;
+    public int missingNumber(int[] nums) &#123;
+        int missing = nums.length;
+        for (int i = 0; i &lt; nums.length; i++) &#123;
+            missing ^= i ^ nums[i];
+        &#125;
+        return missing;
+    &#125;
+&#125;
+方法四：数学
+我们可以用 高斯求和公式 求出 [0..n] 的和，减去数组中所有数的和，就得到了缺失的数字。高斯求和公式即
+class Solution &#123;
+    public int missingNumber(int[] nums) &#123;
+        int expectedSum = nums.length*(nums.length + 1)/2;
+        int actualSum = 0;
+        for (int num : nums) actualSum += num;
+        return expectedSum - actualSum;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="判断一个数是不是2的指数"><a href="#判断一个数是不是2的指数" class="headerlink" title="判断一个数是不是2的指数"></a>判断一个数是不是2的指数</h2><pre><code>一个数如果是2的指数，那么他的二进制表示中一定y只含有一个1
+2^0 = 1 = 0b0001;
+2^1 = 2 = 0b0010;
+</code></pre>
+<h2 id="给定一个整数，写一个函数来判断它是否是-3-的幂次方。"><a href="#给定一个整数，写一个函数来判断它是否是-3-的幂次方。" class="headerlink" title="给定一个整数，写一个函数来判断它是否是 3 的幂次方。"></a>给定一个整数，写一个函数来判断它是否是 3 的幂次方。</h2><pre><code>方法一：循环迭代
+public class Solution &#123;
+    public boolean isPowerOfThree(int n) &#123;
+        if (n &lt; 1) &#123;
+            return false;
+        &#125;
+
+    while (n % 3 == 0) &#123;
+        n /= 3;
+    &#125;
+
+    return n == 1;
+&#125;
+&#125;
+方法二：基准转换
+我们所要做的就是将数字转换为以3为底的基数 ，并检查它是否为前导1，后跟所有 0
+public class Solution &#123;
+    public boolean isPowerOfThree(int n) &#123;
+        return Integer.toString(n, 3).matches(&quot;^10*$&quot;);
+    &#125;
+&#125;
+方法三：运算法
+public class Solution &#123;
+    public boolean isPowerOfThree(int n) &#123;
+        return (Math.log10(n) / Math.log10(3)) % 1 == 0;
+    &#125;
+&#125;
+方法四：整数限制
+ n 的类型是 int 在 Java 中说明了该变量是四个字节，他的最大值为 2147483647
+我们现在可以推断出 n 的最大值，也就是 3 的幂，是 1162261467
+因此我们只需要将 3的19次方  除以 n。若余数为 0 意味着 n 是 的除数，因此是 3 的幂
+public class Solution &#123;
+    public boolean isPowerOfThree(int n) &#123;
+        return n &gt; 0 &amp;&amp; 1162261467 % n == 0;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="给定一个Excel表格中的列名称，返回其相应的列序号。"><a href="#给定一个Excel表格中的列名称，返回其相应的列序号。" class="headerlink" title="给定一个Excel表格中的列名称，返回其相应的列序号。"></a>给定一个Excel表格中的列名称，返回其相应的列序号。</h2><pre><code>    本质就是26进制呗
+    A -&gt; 1
+        B -&gt; 2
+        C -&gt; 3
+    AA -&gt; 27
+        AB -&gt; 28 
+    class Solution &#123;
+        public int titleToNumber(String s) &#123;
+            int ans = 0;
+            for(int i=0;i&lt;s.length();i++) &#123;
+                int num = s.charAt(i) - &#39;A&#39; + 1;
+                ans = ans * 26 + num;
+            &#125;
+            return ans;
+        &#125;
+    &#125;
+</code></pre>
+<h2 id="阶乘后的零"><a href="#阶乘后的零" class="headerlink" title="阶乘后的零"></a>阶乘后的零</h2><pre><code>    方法1:一步一步的乘
+    方法2:因子5，看有多少对 5 的因子。
+    public int trailingZeroes(int n) &#123;
+            
+        // Calculate n!
+            BigInteger nFactorial = BigInteger.ONE;
+            for (int i = 2; i &lt;= n; i++) &#123;
+                nFactorial = nFactorial.multiply(BigInteger.valueOf(i));
+            &#125;
+                            
+            // Count how many 0&#39;s are on the end.
+            int zeroCount = 0;
+            
+            while (nFactorial.mod(BigInteger.TEN).equals(BigInteger.ZERO)) &#123;
+                nFactorial = nFactorial.divide(BigInteger.TEN);
+                zeroCount++;
+            &#125;
+            
+            return zeroCount;
+            
+    &#125;
+</code></pre>
+<h2 id="颠倒给定的-32-位无符号整数的二进制位。"><a href="#颠倒给定的-32-位无符号整数的二进制位。" class="headerlink" title="颠倒给定的 32 位无符号整数的二进制位。"></a>颠倒给定的 32 位无符号整数的二进制位。</h2><pre><code>    输入: 00000010100101000001111010011100
+    输出: 00111001011110000010100101000000
+    解释: 输入的二进制串 00000010100101000001111010011100 表示无符号整数 43261596，
+         因此返回 964176192，其二进制表示形式为 00111001011110000010100101000000。
+    解法1 取模求和
+    public class Solution &#123;
+        // you need treat n as an unsigned value
+        public int reverseBits(int n) &#123;
+            int res = 0;
+            for (int i = 0; i &lt; 32; i++) &#123;
+                res = (res &lt;&lt; 1) + (n &amp; 1);
+                n &gt;&gt;= 1;
+            &#125;
+            return res;
+        &#125;
+    &#125;
+    解法2 按位翻转
+    public class Solution &#123;
+        // you need treat n as an unsigned value
+        public int reverseBits(int n) &#123;
+            int res = 0;
+            for (int i = 0; i &lt;= 31; i++) &#123;            
+                // res += (n &amp; (1 &lt;&lt; i)) != 0 ? 1 &lt;&lt; (31 - i) : 0;
+                // res |= (n &amp; (1 &lt;&lt; i)) != 0 ? 1 &lt;&lt; (31 - i) : 0;
+                res ^= (n &amp; (1 &lt;&lt; i)) != 0 ? 1 &lt;&lt; (31 - i) : 0;
+            &#125;
+            return res;
+        &#125;
+    &#125;
+    解法3:分治合并
+    既然知道 int 值一共32位，那么可以采用分治思想，反转左右16位，然后反转每个16位中的左右8位，依次类推，最后反转2位，反转后合并即可，同时可以利用位运算在原地反转。
+    public class Solution &#123;
+        // you need treat n as an unsigned value
+        public int reverseBits(int n) &#123;
+            n = (n &gt;&gt;&gt; 16) | (n &lt;&lt; 16); 
+            n = ((n &amp; 0xff00ff00) &gt;&gt;&gt; 8) | ((n &amp; 0x00ff00ff) &lt;&lt; 8); 
+            n = ((n &amp; 0xf0f0f0f0) &gt;&gt;&gt; 4) | ((n &amp; 0x0f0f0f0f) &lt;&lt; 4); 
+            n = ((n &amp; 0xcccccccc) &gt;&gt;&gt; 2) | ((n &amp; 0x33333333) &lt;&lt; 2); 
+            n = ((n &amp; 0xaaaaaaaa) &gt;&gt;&gt; 1) | ((n &amp; 0x55555555) &lt;&lt; 1); 
+            return n;
+        &#125;
+    &#125;
+</code></pre>
+<h2 id="汉明重量"><a href="#汉明重量" class="headerlink" title="汉明重量"></a>汉明重量</h2><pre><code>    编写一个函数，输入是一个无符号整数，返回其二进制表达式中数字位数为 ‘1’ 的个数（也被称为汉明重量）。
+    输入：00000000000000000000000000001011
+    输出：3
+    解释：输入的二进制串 00000000000000000000000000001011 中，共有三位为 &#39;1&#39;。
+    方法 1：循环和位移动
+    public int hammingWeight(int n) &#123;
+        int bits = 0;
+        int mask = 1;
+        for (int i = 0; i &lt; 32; i++) &#123;
+            if ((n &amp; mask) != 0) &#123;
+                bits++;
+            &#125;
+            mask &lt;&lt;= 1;
+        &#125;
+        return bits;
+    &#125;
+    方法 2：位操作的小技巧
+    我们可以把前面的算法进行优化。我们不再检查数字的每一个位，而是不断把数字最后一个 1 反转，并把答案加一。当数字变成 
+    0 的时候偶，我们就知道它没有 1 的位了，此时返回答案
+
+    public int hammingWeight(int n) &#123;
+        int sum = 0;
+        while (n != 0) &#123;
+            sum++;
+            n &amp;= (n - 1);
+        &#125;
+        return sum;
+    &#125;
+</code></pre>
+<h2 id="统计所有小于非负整数-n-的质数的数量。"><a href="#统计所有小于非负整数-n-的质数的数量。" class="headerlink" title="统计所有小于非负整数 n 的质数的数量。"></a>统计所有小于非负整数 n 的质数的数量。</h2><pre><code>    输入: 10
+    输出: 4
+    解释: 小于 10 的质数一共有 4 个, 它们是 2, 3, 5, 7 。
+
+    int countPrimes(int n) &#123;
+        boolean[] isPrim = new boolean[n];
+        Arrays.fill(isPrim, true);
+        for (int i = 2; i * i &lt; n; i++) 
+            if (isPrim[i]) 
+                for (int j = i * i; j &lt; n; j += i) 
+                    isPrim[j] = false;
+    
+    int count = 0;
+    for (int i = 2; i &lt; n; i++)
+        if (isPrim[i]) count++;
+    
+    return count;
+    &#125;
+</code></pre>
+<h2 id="两数交换"><a href="#两数交换" class="headerlink" title="两数交换"></a>两数交换</h2><pre><code>1.给两个int a, b不用temp将数值调换；
+int a= 1, b = 2;
+a ^=b;
+b^ = a;
+a^ = b;
+</code></pre>
+<h2 id="利用或-操作大写转小写"><a href="#利用或-操作大写转小写" class="headerlink" title="利用或|操作大写转小写"></a>利用或|操作大写转小写</h2><pre><code>(&#39;a&#39; | &#39; &#39;) = &#39;a&#39;
+(&#39;A&#39;|&#39; &#39;) =&#39;a&#39;
+</code></pre>
+<h2 id="利用与-amp-操作和下划线转大写"><a href="#利用与-amp-操作和下划线转大写" class="headerlink" title="利用与&amp;操作和下划线转大写"></a>利用与&amp;操作和下划线转大写</h2><pre><code>(&#39;b&#39; &amp; &#39;_&#39;) = &#39;B&#39;
+</code></pre>
+<h2 id="利用异或-和空格进行大小写互换"><a href="#利用异或-和空格进行大小写互换" class="headerlink" title="利用异或^和空格进行大小写互换"></a>利用异或^和空格进行大小写互换</h2><pre><code>‘d’ ^ &#39; &#39; = &#39;D&#39;
+&#39;D&#39; ^ &#39; &#39; = &#39;d&#39;
+</code></pre>
+<h2 id="判断两个数是否异或"><a href="#判断两个数是否异或" class="headerlink" title="判断两个数是否异或"></a>判断两个数是否异或</h2><pre><code>int x = -1,y = 2;
+bool  f = ((x ^ y) &lt; 0) // true
+</code></pre>
+<h2 id="加一"><a href="#加一" class="headerlink" title="加一"></a>加一</h2><pre><code>n = -~n;
+</code></pre>
+<h2 id="减一"><a href="#减一" class="headerlink" title="减一"></a>减一</h2><pre><code>n = ~-n;
+</code></pre>
+<h2 id="消除数字n的二进制表示的最后一个1"><a href="#消除数字n的二进制表示的最后一个1" class="headerlink" title="消除数字n的二进制表示的最后一个1"></a>消除数字n的二进制表示的最后一个1</h2><pre><code>n&amp;(n-1)
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift148%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="prev" title="动态规划">
+      <i class="fa fa-chevron-left"></i> 动态规划
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift150%E7%AE%97%E6%B3%95%E6%95%B4%E7%90%86/" rel="next" title="算法整理">
+      算法整理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%B8%AD1%E7%9A%84%E4%B8%AA%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">二进制中1的个数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">数组中数字出现的次数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%86%E5%9C%88%E4%B8%AD%E6%9C%80%E5%90%8E%E5%89%A9%E4%B8%8B%E7%9A%84%E6%95%B0%E5%AD%97-%E7%BA%A6%E7%91%9F%E5%A4%AB%E7%8E%AF%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">圆圈中最后剩下的数字  约瑟夫环问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E7%94%A8%E5%8A%A0%E5%87%8F%E4%B9%98%E9%99%A4%E5%81%9A%E5%8A%A0%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">不用加减乘除做加法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E5%A4%B1%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E6%AD%A3%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">缺失的第一个正数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E6%95%B0%E6%98%AF%E4%B8%8D%E6%98%AF2%E7%9A%84%E6%8C%87%E6%95%B0"><span class="nav-number">6.</span> <span class="nav-text">判断一个数是不是2的指数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E5%AE%9A%E4%B8%80%E4%B8%AA%E6%95%B4%E6%95%B0%EF%BC%8C%E5%86%99%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E6%9D%A5%E5%88%A4%E6%96%AD%E5%AE%83%E6%98%AF%E5%90%A6%E6%98%AF-3-%E7%9A%84%E5%B9%82%E6%AC%A1%E6%96%B9%E3%80%82"><span class="nav-number">7.</span> <span class="nav-text">给定一个整数，写一个函数来判断它是否是 3 的幂次方。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%99%E5%AE%9A%E4%B8%80%E4%B8%AAExcel%E8%A1%A8%E6%A0%BC%E4%B8%AD%E7%9A%84%E5%88%97%E5%90%8D%E7%A7%B0%EF%BC%8C%E8%BF%94%E5%9B%9E%E5%85%B6%E7%9B%B8%E5%BA%94%E7%9A%84%E5%88%97%E5%BA%8F%E5%8F%B7%E3%80%82"><span class="nav-number">8.</span> <span class="nav-text">给定一个Excel表格中的列名称，返回其相应的列序号。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B6%E4%B9%98%E5%90%8E%E7%9A%84%E9%9B%B6"><span class="nav-number">9.</span> <span class="nav-text">阶乘后的零</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%A0%E5%80%92%E7%BB%99%E5%AE%9A%E7%9A%84-32-%E4%BD%8D%E6%97%A0%E7%AC%A6%E5%8F%B7%E6%95%B4%E6%95%B0%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%BD%8D%E3%80%82"><span class="nav-number">10.</span> <span class="nav-text">颠倒给定的 32 位无符号整数的二进制位。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B1%89%E6%98%8E%E9%87%8D%E9%87%8F"><span class="nav-number">11.</span> <span class="nav-text">汉明重量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E6%89%80%E6%9C%89%E5%B0%8F%E4%BA%8E%E9%9D%9E%E8%B4%9F%E6%95%B4%E6%95%B0-n-%E7%9A%84%E8%B4%A8%E6%95%B0%E7%9A%84%E6%95%B0%E9%87%8F%E3%80%82"><span class="nav-number">12.</span> <span class="nav-text">统计所有小于非负整数 n 的质数的数量。</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E6%95%B0%E4%BA%A4%E6%8D%A2"><span class="nav-number">13.</span> <span class="nav-text">两数交换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%88%96-%E6%93%8D%E4%BD%9C%E5%A4%A7%E5%86%99%E8%BD%AC%E5%B0%8F%E5%86%99"><span class="nav-number">14.</span> <span class="nav-text">利用或|操作大写转小写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E4%B8%8E-amp-%E6%93%8D%E4%BD%9C%E5%92%8C%E4%B8%8B%E5%88%92%E7%BA%BF%E8%BD%AC%E5%A4%A7%E5%86%99"><span class="nav-number">15.</span> <span class="nav-text">利用与&amp;操作和下划线转大写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E5%BC%82%E6%88%96-%E5%92%8C%E7%A9%BA%E6%A0%BC%E8%BF%9B%E8%A1%8C%E5%A4%A7%E5%B0%8F%E5%86%99%E4%BA%92%E6%8D%A2"><span class="nav-number">16.</span> <span class="nav-text">利用异或^和空格进行大小写互换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E4%B8%A4%E4%B8%AA%E6%95%B0%E6%98%AF%E5%90%A6%E5%BC%82%E6%88%96"><span class="nav-number">17.</span> <span class="nav-text">判断两个数是否异或</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E4%B8%80"><span class="nav-number">18.</span> <span class="nav-text">加一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%8F%E4%B8%80"><span class="nav-number">19.</span> <span class="nav-text">减一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E9%99%A4%E6%95%B0%E5%AD%97n%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%A1%A8%E7%A4%BA%E7%9A%84%E6%9C%80%E5%90%8E%E4%B8%80%E4%B8%AA1"><span class="nav-number">20.</span> <span class="nav-text">消除数字n的二进制表示的最后一个1</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

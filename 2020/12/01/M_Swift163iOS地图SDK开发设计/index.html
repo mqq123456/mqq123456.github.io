@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="设计方向1.距离计算 2.坐标转换 3.覆盖物的设计理念 4.弧线坐标获取逻辑 5.webgl截屏 6.地图手势 7.地图覆盖物管理 8.比例尺计算 9.定位计算 10.坐标转换 11.宏定义 12.覆盖物定义逻辑 13.poi点击  解决方案1.mark问题 目前采用了直接地图绘制marker的方式，后续考虑添加接口实现点击效果 2.地图样式问题 添加地图样式接口，目前配置文件没有其它样式数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="地图SDK开发设计">
+<meta property="og:url" content="http://example.com/2020/12/01/M_Swift163iOS%E5%9C%B0%E5%9B%BESDK%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="设计方向1.距离计算 2.坐标转换 3.覆盖物的设计理念 4.弧线坐标获取逻辑 5.webgl截屏 6.地图手势 7.地图覆盖物管理 8.比例尺计算 9.定位计算 10.坐标转换 11.宏定义 12.覆盖物定义逻辑 13.poi点击  解决方案1.mark问题 目前采用了直接地图绘制marker的方式，后续考虑添加接口实现点击效果 2.地图样式问题 添加地图样式接口，目前配置文件没有其它样式数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-01T06:11:56.000Z">
+<meta property="article:modified_time" content="2021-04-12T07:38:42.210Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/12/01/M_Swift163iOS%E5%9C%B0%E5%9B%BESDK%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>地图SDK开发设计 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/01/M_Swift163iOS%E5%9C%B0%E5%9B%BESDK%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          地图SDK开发设计
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-01 14:11:56" itemprop="dateCreated datePublished" datetime="2020-12-01T14:11:56+08:00">2020-12-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 15:38:42" itemprop="dateModified" datetime="2021-04-12T15:38:42+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="设计方向"><a href="#设计方向" class="headerlink" title="设计方向"></a>设计方向</h2><pre><code>1.距离计算
+2.坐标转换
+3.覆盖物的设计理念
+4.弧线坐标获取逻辑
+5.webgl截屏
+6.地图手势
+7.地图覆盖物管理
+8.比例尺计算
+9.定位计算
+10.坐标转换
+11.宏定义
+12.覆盖物定义逻辑
+13.poi点击
+</code></pre>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><pre><code>1.mark问题
+目前采用了直接地图绘制marker的方式，后续考虑添加接口实现点击效果
+2.地图样式问题
+添加地图样式接口，目前配置文件没有其它样式数据
+3.地图绘制文本
+
+4.地图导航图标绘制
+没有绘制成功，
+
+5.地图定位图标的绘制
+
+6.未完成接口
+1.Annomation 接口
+2.
+
+1.判断折线是否被点击
+    原理：点到线的距离是否大与线的宽度
+2.判断是否在弧形上
+    原理：点到圆心的距离相同。2点在弧形的三角形内
+2.判断是否在圆内
+    原理：点到圆心的距离小于半径
+3.判断是否在面内
+    原理：
+5.图形的点击
+    判断点是否在rect内
+
+7.覆盖物的选中和非选中状态
+
+6.覆盖物的拖拽：
+    原理是修改覆盖物的位置
+
+覆盖物的内容
+1.点 MAMarker
+2.线 MAPolyline
+3.面 MAPolygon
+4.圆 MACircle
+5.弧 MAArc
+6.3d图 MAGroundOverlay
+
+问题：
+比例尺不同 ：咱们这个好行0是最大
+倾斜角度不同 ：咱们是 0 - 90 度
+
+今天终点是定位，显示定位点，用marker实现，不用annimation
+
+定位点的显示逻辑
+1.是否定位
+2.是否显示定位点
+3.是否自定义定位点
+4.是否显示精度圈
+5.是否自定义精度圈
+
+
+
+初始完成
+默认定位是打开的，所以设置完代理时，启动定位
+默认显示用户位置，所以启动完定位，添加用户位置
+
+添加定位的逻辑
+
+
+Annimation使用
+由annimation转为view，在地图上添加view、可拖拽的view
+
+点击
+选中
+取消选中
+拖拽
+
+
+地图Annimation 的重用机制原理
+1.添加Annimation 
+2.当annimation 位置处在地图以外时，在地图上再添加annimation时，使用屏幕外的annimation 就可以了
+3.当annimation位置在、
+
+
+未实现覆盖物
+2.大地曲线
+4.路段纹理绘制
+5.车标绘制
+
+问题：
+1.贴图丢失
+2.转角问题
+3.大地曲线
+4.图片贴图显示问题
+
+
+https://www.cnblogs.com/csu-lmw/category/1555941.html
+
+
+未实现接口
+
+图标问题
+分段纹理
+
+室内地图
+点平滑移动
+绘制海量点
+获取地址
+
+
+1.内存问题，map对象不消失，一致占用较大内存
+2.室内地图缩放等级不对
+3.室内地图绘制poi
+4.室内地图事件回调
+5.
+
+重用机制
+：就是删除数据时候不将数据放到备用池中
+室内地图配色
+室内地图poi绘制
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/01/M_Swift161iOS%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6/" rel="prev" title="iOS常用框架">
+      <i class="fa fa-chevron-left"></i> iOS常用框架
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/02/M_Swift157OpenGL%E7%BB%98%E5%88%B6/" rel="next" title="OpenGL 渲染">
+      OpenGL 渲染 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%96%B9%E5%90%91"><span class="nav-number">1.</span> <span class="nav-text">设计方向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

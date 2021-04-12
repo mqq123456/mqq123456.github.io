@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一  数组及其特性  1）数组的3要素类型名  数组名［数组元素个数］（1）类型名：char ,int ,float, double,char * ,int *,float *,double 等等（2）数组名：只要符合c语言标识符规范即可。（3）数组元素个数：可以使常量，比如4，5等只要能够有确定值的表达式就可以2）声明一个有10个整型元素的数组int arr[10];      &lt;&#x3D;&#x3D;&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C语言数组、指针和结构体">
+<meta property="og:url" content="http://example.com/2016/07/30/A_C3%E6%95%B0%E7%BB%84%E3%80%81%E6%8C%87%E9%92%88%E5%92%8C%E7%BB%93%E6%9E%84%E4%BD%93/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="一  数组及其特性  1）数组的3要素类型名  数组名［数组元素个数］（1）类型名：char ,int ,float, double,char * ,int *,float *,double 等等（2）数组名：只要符合c语言标识符规范即可。（3）数组元素个数：可以使常量，比如4，5等只要能够有确定值的表达式就可以2）声明一个有10个整型元素的数组int arr[10];      &lt;&#x3D;&#x3D;&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-07-30T13:33:41.000Z">
+<meta property="article:modified_time" content="2016-07-30T13:33:41.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/07/30/A_C3%E6%95%B0%E7%BB%84%E3%80%81%E6%8C%87%E9%92%88%E5%92%8C%E7%BB%93%E6%9E%84%E4%BD%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>C语言数组、指针和结构体 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/A_C3%E6%95%B0%E7%BB%84%E3%80%81%E6%8C%87%E9%92%88%E5%92%8C%E7%BB%93%E6%9E%84%E4%BD%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C语言数组、指针和结构体
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-30 21:33:41" itemprop="dateCreated datePublished" datetime="2016-07-30T21:33:41+08:00">2016-07-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>一  数组及其特性</p>
+</blockquote>
+<p>1）数组的3要素<br>类型名  数组名［数组元素个数］<br>（1）类型名：char ,int ,float, double,char * ,int *,float *,double <em>等等<br>（2）数组名：只要符合c语言标识符规范即可。<br>（3）数组元素个数：可以使常量，比如4，5等只要能够有确定值的表达式就可以<br>2）声明一个有10个整型元素的数组<br>int arr[10];      &lt;==&gt;       int arr[2</em>5];<br>声明一个有10个字符元素的数组<br>char str[10];<br>其他类型，如float,double,char *,int *,float *,double *以此类推<br>3）整型数组初始化<br>（1）完全初始化（2）部分初始化<br>除了被初始化的元素是有确定的值，未被初始化的元素被系统设置为数值0<br>例如：int arr[10]={1,2,3,4};<br>这时该数组的10 个元素依次为：1，2，3，4，0，0，0，0，0，0<br>特例，极端的部分初始化，如int arr[10]={};这种用法很常见，数组所有元素<br>被系统设置为0        7<br>指定初始化，如int arr[10]={[1]=4,[2]=5};相当于把下标为1的元素初始化为4<br>把下标为2的元素初始化为5，未被初始化的元素被系统自动设为0<br>（3）其他类型的初始化也都遵循上述原则<br>注意：数组只有在初始化的时候可以整体赋值，单就赋值而言数组是不能被整体赋<br>值的<br>4）整型数组元素的引用<br>数组下标是从0开始的，数组名字［n］,这个相当于数组第n+1个元素<br>如int arr[10]={1,2,3,4,5,6,7,8,9,0};<br>arr[0]=1<br>arr[2]=3<br>arr[9]=0<br>数组下标是有范围的，还用上面的例子，显然数组的下标是0～9<br>int arr[100];       下标是0～99<br>int arr[4];            下标范围是0～3<br>如果引用数组元素时，下标超过了其表达范围，编译器在编译的时候是不会报错的，<br>但是执行结果时不确定，即有可能符合正确结果，或者直接报内存错误，总之结果<br>都是错误的，或者说是程序都是错误的。<br>一般习惯管超过下标所能表达范围时叫做越界，越界的程序结果是不可预测的。保<br>证程序不越界是程序员的责任。<br>5）数组名字：数组的名字是一个常量，即首元素的地址。<br>6）数组存储特性：<br>数组元素的地址在内存存储时是连续的。</p>
+<blockquote>
+<p>二  指针（间接访问）</p>
+</blockquote>
+<p>指针即内存地址，硬件厂商在做内存的时候，都是按照一定规律来制作内存的内存可以抽象为一排即有门牌号，又满足一个门牌号对应一个大小确定的存储空间。而作为门牌号的地址都是特殊的常量(4G大小内存可以表示的范围是0x0~0xffff ffff ffff ffff），而专门存储这些常量的变量被称为指针变量<br>注意：指针变量与普通变量的区别是指针变量存储的值只能是地址常量<br>1）type ＊  指针变量名（声明了type类型的一个指针）；<br>（1）类型：可以是基本数据类型，例如，char ,int ,float,double<br>也可以是构造类型，例如：struct student ,union mydir等等<br>（2）指针变量名：符合c语言标识符规范<br>（3）指针变量所占内存大小<br>2）声明一个整型指针<br>int *p;<br>int *  是一个类型，即整型指针类型。<br>p是一个变量，对应的有它自己所占用内存。而p既然是一个指针变量，那么<br>该指针变量所存储的值是一个地址，而且只能是一个地址。<br>例如：<br>int n=10;<br>int *p=&n; //<em>与一个数据类型共同构成指针类型，</em>仅仅只是一个标识符号<br><em>p=5;          //<em>在这里是一个间接取值运算符<br>//n=5;<br>通过指针途径修改一个变量的值，效率不如直接通过变量名修改。因为前者还牵涉到一个间接取值的运算。这里仅仅只是为了讲解指针的用法，仅仅修改变量的值显然不是指针的主要用法，指针的主要用法是可以指向内存地址或者说是在允许范围内指针可以自由的操作自己的内存空间。<br>注意：在声明一个指针变量的过程中所用的</em>与通过指针间接取用数值时候的</em>意义是不同的。后者是一个间接取值运算符，而前者充其量仅仅只是一个类型说明符的一部分。</p>
+<blockquote>
+<p>三  结构体</p>
+</blockquote>
+<p>1）结构体声明（结构体模板）<br>#define LENGTH  20<br>struct book<br>{<br>char   name[LENGTH] ;<br>char   author[LENGTH];<br>float   price;<br>int       edition;<br>};<br>注意：程序在运行的时候，结构体模板是不占内存的<br>2）声明结构体变量：结构体关键字＋结构体名字＝结构体类型名字<br>struct   book    是一个结构体类型，那么声明一个结构体变量如下：<br>struct  book    my_book;<br>my_book就是一个结构体变量，他是有对应的内存空间的，其实这个结构体是关于一本书的信息描述，并且有自己的内存空间，可以把这个变量当成一个对象。结构体变量所占内存大小并非是各个成员类型所占内存大小的和，需要通过sizeof运算符来进行测量。<br>struct  book   *book_pointer;<br>book_pointer是一个结构体指针变量，该指针变量只有存储一个内存地址<br>大小的空间<br>3）结构体成员访问<br>结构体成员访问方法与数组引用元素有些类似。数组是通过下标来引用对应的元素，而结构体是通过模板中的成员名字来引用。<br>引用的时候可以如下：<br>结构体变量引用成员和（.）运算符<br>struct  book    my_book;<br>my_book.name<br>my_book.author<br>my_book.price<br>my_book.edition<br>结构体指针引用成员和（-&gt;）运算符<br>struct  book  *book_pointer;<br>book_pointer-&gt;name<br>book_pointer-&gt;author<br>book_pointer-&gt;price<br>book_pointer-&gt;edition<br>数组是同种类型数据的集合，而结构体是各种类型数据的集合</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/30/A_C4%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E3%80%81%E6%8E%92%E5%BA%8F%E3%80%81%E5%87%BD%E6%95%B0/" rel="prev" title="C语言类型转换、排序、函数">
+      <i class="fa fa-chevron-left"></i> C语言类型转换、排序、函数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/30/A_C5%E5%B8%B8%E7%94%A8%E5%85%B3%E9%94%AE%E5%AD%97/" rel="next" title="C语言中的关键字">
+      C语言中的关键字 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

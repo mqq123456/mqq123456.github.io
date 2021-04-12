@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一  隐式类型转换，强制类型转换  1&gt;根据不同类型在内存中所占内存大小而进行默认的一个转换int  short int   long int    long long int   float  (double)系统默认的把一个所占内存空间小的类型的数据拷贝给了所占内存空间大的类型的数据2&gt;有时需要将所占内存大的类型的数据赋值给所占内存小的类型的变量。这就需要用到强制类型转换。例如:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C语言类型转换、排序、函数">
+<meta property="og:url" content="http://example.com/2016/07/30/A_C4%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E3%80%81%E6%8E%92%E5%BA%8F%E3%80%81%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="一  隐式类型转换，强制类型转换  1&gt;根据不同类型在内存中所占内存大小而进行默认的一个转换int  short int   long int    long long int   float  (double)系统默认的把一个所占内存空间小的类型的数据拷贝给了所占内存空间大的类型的数据2&gt;有时需要将所占内存大的类型的数据赋值给所占内存小的类型的变量。这就需要用到强制类型转换。例如:">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-07-30T13:33:04.000Z">
+<meta property="article:modified_time" content="2016-07-30T13:33:04.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/07/30/A_C4%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E3%80%81%E6%8E%92%E5%BA%8F%E3%80%81%E5%87%BD%E6%95%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>C语言类型转换、排序、函数 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/A_C4%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E3%80%81%E6%8E%92%E5%BA%8F%E3%80%81%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C语言类型转换、排序、函数
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-30 21:33:04" itemprop="dateCreated datePublished" datetime="2016-07-30T21:33:04+08:00">2016-07-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>一  隐式类型转换，强制类型转换</p>
+</blockquote>
+<p>1&gt;根据不同类型在内存中所占内存大小而进行默认的一个转换<br>int  short int   long int    long long int   float  (double)<br>系统默认的把一个所占内存空间小的类型的数据拷贝给了所占内存空间大的类型的数据<br>2&gt;有时需要将所占内存大的类型的数据赋值给所占内存小的类型的变量。这就需要用到强制类型转换。例如:<br>double num=4.5;<br>(int)num;          //这个结果是整数类型，舍掉小数点后的部分。<br>注意：虽然(int)num是一个整型，但是num还是原来的类型和原来的数据<br>即强制类型转换不会改变被强制类型转换的数据。</p>
+<blockquote>
+<p>二  排序算法</p>
+</blockquote>
+<p>1）冒泡排序法：相邻的两个元素进行比较，若前者比后者大则交换这两个数的位置，利用上述比较方法先找到所有数中最大的数放在最后一个元素的位置。然后再从剩余的元素当中选出来最大的数放到倒数第二个元素的位置。以此类推直到把所有元素拍完序。</p>
+<p>2）选择排序法：第一次找出所有数中最大的数并记录下标，如果下标与刚开始的时候不一样则拿这个最大的数与第一个位置的元素交换。然后在剩余的元素中再找出最大的数并记录下标，若下标变动则与第二个位置的元素交换位置。以此类推直至把整个数组所有元素排完序为止。</p>
+<p>3）插入排序法：把一个数插入到一个有序数组的合适位置，刚开始把第一个元素当作一个有序的数组，然后把第二个数插入到这个有序数组中。然后把第三个数插入到前两个数构成的有序数组当中适当的位置。依此类推，直至全部拍完序为止。</p>
+<blockquote>
+<p>三  函数</p>
+</blockquote>
+<p>1）函数的三个要素：<br>返回值     函数名     函数参数列表<br>int              main      (int argc, char <em>argv[])<br>（1）函数名：遵守标识符规范<br>（2）函数参数列表：就是函数从它的调用函数获得该函数所需要的信息<br>（3）函数的返回值：就是该函数把函数执行的结果返回给调用它的函数<br>2）函数在调用之前必须声明，函数声明之前需要定义函数，然后才可以调用该函数<br>＃include&lt;stdio.h&gt;<br>void my_print(void);             //函数的声明<br>int main(void)<br>{<br>my_print();                         //函数的调用<br>return 0;<br>}<br>void my_print(void)               //函数的定义<br>{<br>int i,j;<br>for(i=0; i&lt;5; i++) {<br>for(j=0 ; j&lt;=i; j++) {<br>putchar(‘</em>’);<br>}<br>putchar(‘\n’);<br>}<br>}<br>（1）函数的声明当然跟变量声明有些类似，不过函数的声明一般放在main函数前面,    而不是放在main函数里面调用语句之前。void my_print(void);<br>注意：函数的声明比较特殊，在有参数的情况下，在声明的时候，参数变量名字随便写，因为它既没有分配空间也没有其它用处，也完全可以不写。函数在声明的时候参数列表的作用就是告诉编译器有几个参数，每一个参数都是什么类型。<br>（2）函数的定义：函数肯定会具有一定的功能，而这些功能的实现离不开具体的代码<br>实现，而这个代码的具体实现就是函数实体<br>void  my_print(void)<br>{<br>函数实体（或者叫函数功能的具体代码实现）<br>}<br>这就是一个函数的定义<br>（3）函数的调用：就是上面例子中main函数中那一条语句：<br>my_print();</p>
+<p>注意：如果函数有参数，那么当该函数在调用时才会有函数栈空间，而函数栈空间包含参数变量所占内存空间。所以说只有函数在调用时，参数变量才分配了内存空间。<br>3）一般函数形式    ：<br>（1）最简单的一种函数类型<br>void   my_function(void)<br>（2）有参数，无返回值的函数<br>void   my_function(int n)<br>（3）有参数有返回值的函数<br>int   my_function(int a, int b)<br>4）形式参数：在函数定义的时候，参数列表里的参数变量叫做形参<br>实际参数：在调用函数的时候，在参数列表位置所写的参数表达式叫做实参<br>5）变量的作用域:<br>当一个函数在调用的时候会单独的开辟一块新的内存空间，这个内存空间被叫做这个函数的一个栈。而当函数调用完成后，该栈内存控制权交给操作系统，调用函数已经无权管理这块内存空间了。<br>对于一个自定义函数，其变量仅仅只在被调用的时候在内存中占有空间，被调用前或者被调用后都不占有空间。函数仅仅只在被调用的那一个时间段，是该函数变量的生存周期该函数的作用域是该函数存在的时候整个函数内部。<br>6）返回值关键字return<br>（1）把有用的信息返回给当前函数的调用函数<br>（2）表示当前程序结束，把程序的控制权从当前函数转换到当前函数的调用函数。<br>7）递归函数：自己调用自己的函数</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/30/A_C2%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E8%A1%A8%E8%BE%BE%E5%BC%8F/" rel="prev" title="C 语言常用运算符和表达式">
+      <i class="fa fa-chevron-left"></i> C 语言常用运算符和表达式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/30/A_C3%E6%95%B0%E7%BB%84%E3%80%81%E6%8C%87%E9%92%88%E5%92%8C%E7%BB%93%E6%9E%84%E4%BD%93/" rel="next" title="C语言数组、指针和结构体">
+      C语言数组、指针和结构体 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

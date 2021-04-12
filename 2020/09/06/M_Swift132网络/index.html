@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="请求报文方法 URL 协议版本号 首部字段 实体  响应报文版本 状态码 短语 首部字段 实体  HTTP请求方式GET、POST、HEAD、PUT、DELETE、OPTIONS  HTTP三次握手客户端发送SYN请求连接 服务端接受SYN，返回SYN和ACK 客户端接受SYN和ACK，返回服务端ACK “第三次握手”是客户端向服务器端发送数据，这个数据就是要告诉服务器，客户端有没有收到服务器“第">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift132%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="请求报文方法 URL 协议版本号 首部字段 实体  响应报文版本 状态码 短语 首部字段 实体  HTTP请求方式GET、POST、HEAD、PUT、DELETE、OPTIONS  HTTP三次握手客户端发送SYN请求连接 服务端接受SYN，返回SYN和ACK 客户端接受SYN和ACK，返回服务端ACK “第三次握手”是客户端向服务器端发送数据，这个数据就是要告诉服务器，客户端有没有收到服务器“第">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:29:17.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:29:17.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift132%E7%BD%91%E7%BB%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>网络 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift132%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:29:17" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:17+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="请求报文"><a href="#请求报文" class="headerlink" title="请求报文"></a>请求报文</h2><pre><code>方法 URL 协议版本号 首部字段 实体
+</code></pre>
+<h2 id="响应报文"><a href="#响应报文" class="headerlink" title="响应报文"></a>响应报文</h2><pre><code>版本 状态码 短语 首部字段 实体
+</code></pre>
+<h2 id="HTTP请求方式"><a href="#HTTP请求方式" class="headerlink" title="HTTP请求方式"></a>HTTP请求方式</h2><pre><code>GET、POST、HEAD、PUT、DELETE、OPTIONS
+</code></pre>
+<h2 id="HTTP三次握手"><a href="#HTTP三次握手" class="headerlink" title="HTTP三次握手"></a>HTTP三次握手</h2><pre><code>客户端发送SYN请求连接
+服务端接受SYN，返回SYN和ACK
+客户端接受SYN和ACK，返回服务端ACK
+“第三次握手”是客户端向服务器端发送数据，这个数据就是要告诉服务器，客户端有没有收到服务器“第二次握手”时传过去的数据。若发送的这个数据是“收到了”的信息，接收后服务器就正常建立TCP连接，否则建立TCP连接失败，服务器关闭连接端口。由此减少服务器开销和接收到失效请求发生的错误。
+</code></pre>
+<h2 id="HTTP四次挥手"><a href="#HTTP四次挥手" class="headerlink" title="HTTP四次挥手"></a>HTTP四次挥手</h2><pre><code>客户端发送FIN请求释放连接  FIN-WAIT-1阶段
+服务端返回ACK，服务端处于准备断开状态  CLOSE-WAIT阶段（半关闭状态），客户端收到，进入FIN-WAIT-2阶段
+服务端做好释放准备，再次向客户端发送FIN和ACK，LAST-ACK阶段
+客户端收到FIN和ACK，发送ACK断开连接，TIME-WAIT阶段
+随后客户端开始在TIME-WAIT阶段等待2MSL
+服务端收到客户端LAST-ACK，进入CLOSED阶段。
+与“三次挥手”一样，在客户端与服务器端传输的TCP报文中，双方的确认号Ack和序号Seq的值，都是在彼此Ack和Seq值的基础上进行计算的，这样做保证了TCP报文传输的连贯性，一旦出现某一方发出的TCP报文丢失，便无法继续&quot;挥手&quot;，以此确保了&quot;四次挥手&quot;的顺利完成。
+</code></pre>
+<h2 id="为什么“握手”是三次，“挥手”却要四次？"><a href="#为什么“握手”是三次，“挥手”却要四次？" class="headerlink" title="为什么“握手”是三次，“挥手”却要四次？"></a>为什么“握手”是三次，“挥手”却要四次？</h2><pre><code>建立连接时，被动方服务器端结束CLOSED阶段进入“握手”阶段并不需要任何准备，可以直接返回SYN和ACK报文，开始建立连接。
+释放连接时，被动方服务器，突然收到主动方客户端释放连接的请求时并不能立即释放连接，因为还有必要的数据需要处理，所以服务器先返回ACK确认收到报文，经过CLOSE-WAIT阶段准备好释放连接之后，才能返回FIN释放连接报文。
+</code></pre>
+<h2 id="为什么客户端在TIME-WAIT阶段要等2MSL"><a href="#为什么客户端在TIME-WAIT阶段要等2MSL" class="headerlink" title="为什么客户端在TIME-WAIT阶段要等2MSL?"></a>为什么客户端在TIME-WAIT阶段要等2MSL?</h2><pre><code>为的是确认服务器端是否收到客户端发出的ACK确认报文
+当客户端发出最后的ACK确认报文时，并不能确定服务器端能够收到该段报文。所以客户端在发送完ACK确认报文之后，会设置一个时长为2MSL的计时器。MSL指的是Maximum Segment Lifetime：一段TCP报文在传输过程中的最大生命周期。2MSL即是服务器端发出为FIN报文和客户端发出的ACK确认报文所能保持有效的最大时长。
+
+（1）序号（sequence number）：Seq序号，占32位，用来标识从TCP源端向目的端发送的字节流，发起方发送数据时对此进行标记。
+（2）确认号（acknowledgement number）：Ack序号，占32位，只有ACK标志位为1时，确认序号字段才有效，Ack=Seq+1。
+（3）标志位（Flags）：共6个，即URG、ACK、PSH、RST、SYN、FIN等。具体含义如下：
+URG：紧急指针（urgent pointer）有效。
+ACK：确认序号有效。
+PSH：接收方应该尽快将这个报文交给应用层。
+RST：重置连接。
+SYN：发起一个新连接。
+FIN：释放一个连接。
+</code></pre>
+<h2 id="HTTP特点"><a href="#HTTP特点" class="headerlink" title="HTTP特点"></a>HTTP特点</h2><pre><code>无连接：HTTP的持久性
+是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。
+Keep-Alive 功能使客户端到服务器端的连接持续有效，当出现对服务器的后继请求时，Keep-Alive 功能避免了建立或者重新建立连接
+无状态：Cookie/Session
+无状态是指协议对于事务处理没有记忆能力，服务器不知道客户端是什么状态。即我们给服务器发送 HTTP 请求之后，服务器根据请求，会给我们发送数据过来，但是，发送完，不会记录任何信息。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。
+HTTP 是一个无状态协议，这意味着每个请求都是独立的，Keep-Alive 没能改变这个结果。
+</code></pre>
+<h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h2><pre><code>即HTTP下加入SSL层
+SSL/TLS协议提供的服务主要有：
+1、认证用户和服务器，确保数据发送到正确的客户机和服务器；
+2、加密数据以防止数据中途被窃取；
+3、维护数据的完整性，确保数据在传输过程中不被改变。
+SSL安全机制
+
+1、身份验证机制
+基于证书利用数字签名方法对服务器和客户端进行身份验证，其中客户端的身份验证是可选的。
+2、数据传输的机密性
+利用对称密钥算法对传输的数据进行加密。
+3、消息完整性验证
+消息传输过程中使用MAC算法来检验消息的完整性。
+</code></pre>
+<h2 id="TLS的主要增强内容"><a href="#TLS的主要增强内容" class="headerlink" title="TLS的主要增强内容"></a>TLS的主要增强内容</h2><pre><code>TLS的主要目标是使SSL更安全，并使协议的规范更精确和完善。TLS 在SSL v3.0 的基础上，提供了以下增强内容：
+
+1、更安全的MAC算法
+2、更严密的警报
+3、“灰色区域”规范的更明确的定义
+</code></pre>
+<h2 id="TLS对于安全性的改进"><a href="#TLS对于安全性的改进" class="headerlink" title="TLS对于安全性的改进"></a>TLS对于安全性的改进</h2><pre><code>1、对于消息认证使用密钥散列法：TLS 使用“消息认证代码的密钥散列法”（HMAC），当记录在开放的网络（如因特网）上传送时，该代码确保记录不会被变更。SSLv3.0还提供键控消息认证，但HMAC比SSLv3.0使用的（消息认证代码）MAC 功能更安全。
+2、增强的伪随机功能（PRF）：PRF生成密钥数据。在TLS中，HMAC定义PRF。PRF使用两种散列算法保证其安全性。如果任一算法暴露了，只要第二种算法未暴露，则数据仍然是安全的。
+3、改进的已完成消息验证：TLS和SSLv3.0都对两个端点提供已完成的消息，该消息认证交换的消息没有被变更。然而，TLS将此已完成消息基于PRF和HMAC值之上，这也比SSLv3.0更安全。
+4、一致证书处理：与SSLv3.0不同，TLS试图指定必须在TLS之间实现交换的证书类型。
+5、特定警报消息：TLS提供更多的特定和附加警报，以指示任一会话端点检测到的问题。TLS还对何时应该发送某些警报进行记录。
+</code></pre>
+<h2 id="基本运行过程"><a href="#基本运行过程" class="headerlink" title="基本运行过程"></a>基本运行过程</h2><pre><code>1、客户端向服务器端索要并验证公钥。
+2、双方协商生成&quot;对话密钥&quot;。
+3、双方采用&quot;对话密钥&quot;进行加密通信。
+其中，前两个阶段，被称为“握手阶段”。
+
+TLS握手过程有单向验证和双向验证之分，简单解释一下，单向验证就是server端将证书发送给客户端，客户端验证server端证书的合法性等，例如百度、新浪、google等普通的https网站，双向验证则是不仅客户端会验证server端的合法性，同时server端也会验证客户端的合法性，例如银行网银登陆，支付宝登陆交易等。
+1、确认使用的加密通信协议版本，比如TLS 1.0版本。如果浏览器与服务器支持的版本不一致，服务器关闭加密通信。
+2、一个服务器生成的随机数（Sever Random），稍后用于生成&quot;对话密钥&quot;。
+3、确认使用的加密方法，比如RSA公钥加密。
+4、服务器证书（Certificate）。
+5、支持的一些SSL/TLS扩展。
+
+客户端需要对服务端的证书进行检查，如果证书不是可信机构颁布、或者证书中的域名与实际域名不一致、或者证书已经过期，就会向访问者显示一个警告，由其选择是否还要继续通信。如果证书没有问题，客户端就会从服务器证书中取出服务器的公钥。然后，向服务器发送下面三项信息：
+
+1、一个随机数（Pre Master Secret）。该随机数用服务器公钥加密，防止被窃听。
+2、编码改变通知（Change Chiper Spec），表示随后的信息都将用双方商定的加密方法和密钥发送。
+3、客户端握手结束通知，表示客户端的握手阶段已经结束。这一项同时也是前面发送的所有内容的hash值，用来供服务器校验。
+</code></pre>
+<h2 id="为什么一定要用三个随机数，来生成”会话密钥"><a href="#为什么一定要用三个随机数，来生成”会话密钥" class="headerlink" title="为什么一定要用三个随机数，来生成”会话密钥"></a>为什么一定要用三个随机数，来生成”会话密钥</h2><pre><code>&quot;不管是客户端还是服务器，都需要随机数，这样生成的密钥才不会每次都一样。由于SSL协议中证书是静态的，因此十分有必要引入一种随机因素来保证协商出来的密钥的随机性。
+对于RSA密钥交换算法来说，pre-master-key本身就是一个随机数，再加上hello消息中的随机，三个随机数通过一个密钥导出器最终导出一个对称密钥。
+pre master的存在在于SSL协议不信任每个主机都能产生完全随机的随机数，如果随机数不随机，那么pre master secret就有可能被猜出来，那么仅适用pre master secret作为密钥就不合适了，因此必须引入新的随机因素，那么客户端和服务器加上pre master secret三个随机数一同生成的密钥就不容易被猜出了，一个伪随机可能完全不随机，可是是三个伪随机就十分接近随机了，每增加一个自由度，随机性增加的可不是一。
+</code></pre>
+<h2 id="HTTPS通信的步骤"><a href="#HTTPS通信的步骤" class="headerlink" title="HTTPS通信的步骤"></a>HTTPS通信的步骤</h2><pre><code>①客户端发送报文进行SSL通信。报文中包含客户端支持的SSL的指定版本、加密组件列表（加密算法及密钥长度等）。
+②服务器应答，并在应答报文中包含SSL版本以及加密组件。服务器的加密组件内容是从接受到的客户端加密组件内筛选出来的。
+③服务器发送报文，报文中包含公开密钥证书。
+④服务器发送报文通知客户端，最初阶段SSL握手协商部分结束。
+⑤SSL第一次握手结束之后，客户端发送一个报文作为回应。报文中包含通信加密中使用的一种被称Pre-master secret的随机密码串。该密码串已经使用服务器的公钥加密。
+⑥客户端发送报文，并提示服务器，此后的报文通信会采用Pre-master secret密钥加密。
+⑦客户端发送Finished报文。该报文包含连接至今全部报文的整体校验值。这次握手协商是否能够完成成功，要以服务器是否能够正确解密该报文作为判定标准。
+⑧服务器同样发送Change Cipher Spec报文。
+⑨服务器同样发送Finished报文。
+⑩服务器和客户端的Finished报文交换完毕之后，SSL连接就算建立完成。
+⑪应用层协议通信，即发送HTTP响应。
+⑫最后由客户端断开链接。断开链接时，发送close_nofify报文
+</code></pre>
+<h2 id="中间人攻击（charles抓包原理）"><a href="#中间人攻击（charles抓包原理）" class="headerlink" title="中间人攻击（charles抓包原理）"></a>中间人攻击（charles抓包原理）</h2><pre><code>流程如下：
+1、截获客户端与服务器通信的通道
+2、然后在 SSL 建立连接的时候，进行中间人攻击
+3、将自己伪装成客户端，获取到服务器真实有效的 CA 证书（非对称加密的公钥）
+4、将自己伪装成服务器，获取到客服端的之后通信的密钥（对称加密的密钥）
+5、有了证书和密钥就可以监听之后通信的内容了
+抓取https包的时候,青花瓷会要求使用者 对抓包的设备(手机或其他设备)
+,安装一个证书,安装这个证书的时候,其实是安装了一个根证书(允许颁发CA的一个证书机构的根证书),当你安装了该根证书之后,该证书机构颁发的其他证书,默认都会被你的系统所信任,这个就是青花瓷完成https抓包的一个重要前提!!
+</code></pre>
+<h2 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h2><pre><code>UDP协议：
+
+无连接协议，也称透明协议，也位于传输层。
+UDP通讯协议的特点：
+
+将数据封装为数据包。面向无连接。
+每个数据包大小限制在64K。
+因为无连接，所以不可靠。
+因为不需要建立连接，所以速度快。
+UDP通讯是不分服务端和客服端的，只分发送端和接收端。
+
+两者区别：
+
+1） TCP提供面向连接的传输，通信前要先建立连接（三次握手机制）； UDP提供无连接的传输，通信前不需要建立连接。
+2） TCP提供可靠的传输（有序，无差错，不丢失，不重复）； UDP提供不可靠的传输。
+3） TCP面向字节流的传输，因此它能将信息分割成组，并在接收端将其重组； UDP是面向数据报的传输，没有分组开销。
+4） TCP提供拥塞控制和流量控制机制； UDP不提供拥塞控制和流量控制机制。
+</code></pre>
+<h2 id="TCP特点"><a href="#TCP特点" class="headerlink" title="TCP特点"></a>TCP特点</h2><pre><code>    基于连接（点对点）
+    传输数据前需要建立好连接，然后在传输
+    双工通信
+    TCP连接一旦建立，就可以在连接上进行双向的通信
+    基于字节流而非报文
+    将数据按字节大小进行编号，接收端通过ACK来确认收到的数据编号，通过这种机制能够保证TCP协议的有序性和完整性，因此TCP能够提供可靠性传输
+
+    可靠传输
+    拥塞控制
+    慢启动，拥塞避免，拥塞发生，快速恢复四个算法
+    流量控制能力
+通过滑动窗口控制数据的发送速率，滑动窗口的本质是动态缓冲区，接收区根据自己的能力在TCP的header中动态调整窗口大小，通过ACK应答包通知给发送端，发送端根据窗口大小调控发送速率
+</code></pre>
+<h2 id="TCP传输是可靠的原因"><a href="#TCP传输是可靠的原因" class="headerlink" title="TCP传输是可靠的原因"></a>TCP传输是可靠的原因</h2><pre><code>（1）TCP协议采用发送应答机制，即发送端发送的每个
+TCP报文段都必须得到接收方的应答，才能认为这个TCP报文段传输成功。
+（2）TCP协议采用超时重传机制，发送端在发送出一个TCP报文
+段之后启动定时器，如果在定时时间内未收到应答，它将重新发送该报文段。
+（3）由于TCP报文段最终是以IP数据报发送的，而IP数
+据报到达接收端可能乱序、重复、所以TCP协议还会将接收到的TCP报文段重排、整理、再交付给应用层。
+TCP使用滑动窗口机制来进行流量控制。
+建立连接时，各端分配一个缓冲区用来存储接收的数据，并将缓冲区的尺寸发送给
+另一端。接收方发送的确认消息中包含了自己剩余的缓冲区尺寸。剩余缓冲区空间的数
+量叫做窗口。其实就是建立连接的双虎互相知道彼此剩余的缓冲区大小。
+ （5）、拥塞控制
+ 拥塞控制：防止过多的数据注入到网路中，这样可以使网络中的路由器
+ 或链路不至于阻塞。拥塞控制是一个全局性的过程，和流量控制不同，流量控制是点对点的控制。
+ 2.拥塞避免：
+ 拥塞避免算法让拥塞窗口缓慢增长，即每经过一个往返时间RTT就把发送方的
+ 拥塞窗口cwnd加1，而不是加倍，这样拥塞窗口按照线性规律缓慢增长。
+</code></pre>
+<h2 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h2><pre><code>DNS服务器一般分三种，根DNS服务器，顶级DNS服务器，权威DNS服务器。
+1）浏览器缓存　　
+2）系统缓存　　
+3）路由器缓存　　　　
+4） ISP（互联网服务提供商）DNS缓存
+5）根域名服务器　　　
+6）顶级域名服务器　　
+8）保存结果至缓存
+</code></pre>
+<h2 id="DNS劫持"><a href="#DNS劫持" class="headerlink" title="DNS劫持"></a>DNS劫持</h2><pre><code>一般而言，用户上网的DNS服务器都是运营商分配的，所以，在这个节点上，运营商可以为所欲为。
+例如，访问http://jiankang.qq.com/index.html，
+正常DNS应该返回腾讯的ip，而DNS劫持后，会返回一个运营商的中间服务器ip。
+访问该服务器会一致性的返回302，让用户浏览器跳转到预处理好的带广告的网页，
+在该网页中再通过iframe打开用户原来访问的地址。
+</code></pre>
+<h2 id="HTTP劫持"><a href="#HTTP劫持" class="headerlink" title="HTTP劫持"></a>HTTP劫持</h2><pre><code>在运营商的路由器节点上，设置协议检测，一旦发现是HTTP请求，而
+且是html类型请求，则拦截处理。后续做法往往分为2种，1种是类
+似DNS劫持返回302让用户浏览器跳转到另外的地址，还有1种是在服务器返
+回的HTML数据中插入js或dom节点（广告）。
+</code></pre>
+<p>Cookie<br>Cookie就是这样的一种机制。它可以弥补HTTP协议无状态的不足。在Session出现之前，基本上所有的网站都采用Cookie来跟踪会话。<br>服务器在向客户端回传相应的超文本的同时也会发回这些个人信息存放于HTTP响应头（Response Header）；当客户端浏览器接收到来自服务器的响应之后，浏览器会将这些信息存放在一个统一的位置<br>自此，客户端再向服务器发送请求的时候，都会把相应的Cookie再次发回至服务器。<br>Cookie的maxAge决定着Cookie的有效期，单位为秒（Second）。Cookie中通过getMaxAge()方法与setMaxAge(int maxAge)方法来读写maxAge属性。 如果maxAge属性为正数，则表示该Cookie会在maxAge秒之后自动失效。<br>Cookie并不提供修改、删除操作。如果要修改某个Cookie，只需要新建一个同名的Cookie，添加到response中覆盖原来的Cookie。如果要删除某个Cookie，只需要新建一个同名的Cookie，并将maxAge设置为0，并添加到response中覆盖原来的Cookie。注意是0而不是负数。负数代表其他的意义。读者可以通过上例的程序进行验证，设置不同的属性。</p>
+<p>Session机制</p>
+<p>除了使用Cookie，Web应用程序中还经常使用Session来记录客户端状态。Session是服务器端使用的一种记录客户端状态的机制，使用上比Cookie简单一些，相应的也增加了服务器的存储压力。<br>Session技术则是服务端的解决方案，它是通过服务器来保持状态的。<br>URL地址重写是对客户端不支持Cookie的解决方案。URL地址重写的原理是将该用户Session的id信息重写到URL地址中。服务器能够解析重写后的URL获取Session的id。这样即使客户端不支持Cookie，也可以使用Session来记录用户状态。HttpServletResponse类提供了encodeURL(Stringurl)实现URL地址重写，例如：</p>
+<p>Cookie与Session的区别</p>
+<p>cookie数据存放在客户的浏览器上，session数据放在服务器上；<br>cookie不是很安全，别人可以分析存放在本地的COOKIE并进行COOKIE欺骗，考虑到安全应当使用session；<br>session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能。考虑到减轻服务器性能方面，应当使用COOKIE；<br>单个cookie在客户端的限制是3K，就是说一个站点在客户端存放的COOKIE不能超过3K；<br>Cookie和Session的方案虽然分别属于客户端和服务端，但是服务端的session的实现对客户端的cookie有依赖关系的，上面我讲到服务端执行session机制时候会生成session的id值，这个id值会发送给客户端，客户端每次请求都会把这个id值放到http请求的头部发送给服务端，而这个id值在客户端会保存下来，保存的容器就是cookie，因此当我们完全禁掉浏览器的cookie的时候，服务端的session也会不能正常使用（注意：有些资料说ASP解决这个问题，当浏览器的cookie被禁掉，服务端的session任然可以正常使用，ASP我没试验过，但是对于网络上很多用php和jsp编写的网站，我发现禁掉cookie，网站的session都无法正常的访问）。</p>
+<p>如何保证cookie的安全<br>对cookie进行加密处理<br>只在https上携带cookie<br>设置cookie为httpOnly，防止跨站脚本攻击</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift131RunLoop/" rel="prev" title="RunLoop">
+      <i class="fa fa-chevron-left"></i> RunLoop
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift133%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="next" title="多线程">
+      多线程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87"><span class="nav-number">1.</span> <span class="nav-text">请求报文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E6%8A%A5%E6%96%87"><span class="nav-number">2.</span> <span class="nav-text">响应报文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E8%AF%B7%E6%B1%82%E6%96%B9%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">HTTP请求方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">HTTP三次握手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">5.</span> <span class="nav-text">HTTP四次挥手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E2%80%9C%E6%8F%A1%E6%89%8B%E2%80%9D%E6%98%AF%E4%B8%89%E6%AC%A1%EF%BC%8C%E2%80%9C%E6%8C%A5%E6%89%8B%E2%80%9D%E5%8D%B4%E8%A6%81%E5%9B%9B%E6%AC%A1%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">为什么“握手”是三次，“挥手”却要四次？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9C%A8TIME-WAIT%E9%98%B6%E6%AE%B5%E8%A6%81%E7%AD%892MSL"><span class="nav-number">7.</span> <span class="nav-text">为什么客户端在TIME-WAIT阶段要等2MSL?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E7%89%B9%E7%82%B9"><span class="nav-number">8.</span> <span class="nav-text">HTTP特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS"><span class="nav-number">9.</span> <span class="nav-text">HTTPS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TLS%E7%9A%84%E4%B8%BB%E8%A6%81%E5%A2%9E%E5%BC%BA%E5%86%85%E5%AE%B9"><span class="nav-number">10.</span> <span class="nav-text">TLS的主要增强内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TLS%E5%AF%B9%E4%BA%8E%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="nav-number">11.</span> <span class="nav-text">TLS对于安全性的改进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%BF%90%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">12.</span> <span class="nav-text">基本运行过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%80%E5%AE%9A%E8%A6%81%E7%94%A8%E4%B8%89%E4%B8%AA%E9%9A%8F%E6%9C%BA%E6%95%B0%EF%BC%8C%E6%9D%A5%E7%94%9F%E6%88%90%E2%80%9D%E4%BC%9A%E8%AF%9D%E5%AF%86%E9%92%A5"><span class="nav-number">13.</span> <span class="nav-text">为什么一定要用三个随机数，来生成”会话密钥</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS%E9%80%9A%E4%BF%A1%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="nav-number">14.</span> <span class="nav-text">HTTPS通信的步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BA%BA%E6%94%BB%E5%87%BB%EF%BC%88charles%E6%8A%93%E5%8C%85%E5%8E%9F%E7%90%86%EF%BC%89"><span class="nav-number">15.</span> <span class="nav-text">中间人攻击（charles抓包原理）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP"><span class="nav-number">16.</span> <span class="nav-text">UDP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E7%89%B9%E7%82%B9"><span class="nav-number">17.</span> <span class="nav-text">TCP特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E4%BC%A0%E8%BE%93%E6%98%AF%E5%8F%AF%E9%9D%A0%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">18.</span> <span class="nav-text">TCP传输是可靠的原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS%E8%A7%A3%E6%9E%90"><span class="nav-number">19.</span> <span class="nav-text">DNS解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS%E5%8A%AB%E6%8C%81"><span class="nav-number">20.</span> <span class="nav-text">DNS劫持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E5%8A%AB%E6%8C%81"><span class="nav-number">21.</span> <span class="nav-text">HTTP劫持</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="object_class继承:objc_object内部：Class superClass; 父类cache_t cache;  缓存class_data_bits_t bits  数据 isa指针关系实例对象其指针指向类对象类对象其指针指向元类对象 cache_thttps:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;45d409e77806用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NSObject数据结构">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift127NSObject%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="object_class继承:objc_object内部：Class superClass; 父类cache_t cache;  缓存class_data_bits_t bits  数据 isa指针关系实例对象其指针指向类对象类对象其指针指向元类对象 cache_thttps:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;45d409e77806用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:30:19.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:30:19.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift127NSObject%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>NSObject数据结构 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift127NSObject%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NSObject数据结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:19" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:19+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="object-class"><a href="#object-class" class="headerlink" title="object_class"></a>object_class</h2><p>继承:objc_object<br>内部：<br>Class superClass; 父类<br>cache_t cache;  缓存<br>class_data_bits_t bits  数据</p>
+<p>isa指针关系<br>实例对象其指针指向类对象<br>类对象其指针指向元类对象</p>
+<p>cache_t<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/45d409e77806">https://www.jianshu.com/p/45d409e77806</a><br>用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查找速度，底层结构如下：<br>用于快速查找方法执行函数<br>是可增量扩展的哈希表结构<br>是局部性原理的最佳应用<br>cache 本质是一个 Hash表。存储bucket_t<br>bucket_t存储<br>cache_key_t _key;//@selector()<br>IMP _imp;//函数地址<br>哈希查找：发现当发生碰撞的时候，索引会+1，查找下一个。<br>槽位如果不够，_mask 会变换，变为原来的2倍，并且扩展槽位的时候，会清空数组里原有的缓存内容<br>子类没有实现方法会调用父类的方法，会将父类方法加入到子类自己的cache 里。<br>为什么要创建新的新的buckets来替换原有的buckets并抹掉原有的buckets的方案，而不是在在原有buckets的基础上进行扩容？<br>减少对方法快速查找流程的影响：调用objc_msgSend时会触发方法快速查找，如果进行扩容需要做一些读写操作，对快速查找影响比较大。<br>对性能要求比较高：开辟新的buckets空间并抹掉原有buckets的消耗比在原有buckets上进行扩展更加高效<br>当扩容后，会把新mask设置为newCapacity长度减一，然后清空缓存。<br>所有散列表(哈希表)的原理都是一样的，都是通过一个函数，这个函数传入一个key，通过这个key算出一个索引，如果索引冲突了就加一或者减一，直至不冲突为止，不同的就是算法不一样。</p>
+<p>struct class_rw_t {<br>    uint32_t flags;<br>    uint32_t version;</p>
+<pre><code>const class_ro_t *ro;
+
+method_array_t methods;
+property_array_t properties; //属性，和变量的区别，属性是名称，变量是值
+protocol_array_t protocols;
+
+Class firstSubclass;
+Class nextSiblingClass;
+</code></pre>
+<p>};<br>class_rw_t结构体内有一个指向class_ro_t结构体的指针。</p>
+<p>细看两个结构体的成员变量会发现很多相同的地方，他们都存放着当前类的属性、实例变量、方法、协议等等。区别在于：class_ro_t存放的是编译期间就确定的；而class_rw_t是在runtime时才确定，它会先将class_ro_t的内容拷贝过去，然后再将当前类的分类的这些属性、方法等拷贝到其中。所以可以说class_rw_t是class_ro_t的超集，当然实际访问类的方法、属性等也都是访问的class_rw_t中的内容</p>
+<p>哈希碰撞<br>开放地址法<br>链地址法</p>
+<p>struct method_t {<br>    SEL name; //函数名<br>    const char *types; //编码（返回值类型、参数类型）<br>    IMP imp;//指向函数的指针（函数地址）<br>};</p>
+<p>instance对象的isa指向class对象<br>class对象的isa指向meta-class对象<br>meta-class对象的isa指向基类的meta-class对象</p>
+<p>发消息的步骤<br>检查target是不是nil    ObjC的特性允许对一个nil对象发消息而不会崩溃<br>通过isa，<br>对象方法查找类对象（类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找类对象的方法列表中遍历class_rw_t，从后向前的遍历<br>查找父类的类对象—-同上，直至nsobjcect<br>类方法查找元类对象（元类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找元类对象的方法列表中遍历class_rw_t，从后向前的遍历</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift143%E9%93%BE%E8%A1%A8/" rel="prev" title="链表">
+      <i class="fa fa-chevron-left"></i> 链表
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift143%E6%95%B0%E7%BB%84/" rel="next" title="数组">
+      数组 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#object-class"><span class="nav-number">1.</span> <span class="nav-text">object_class</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

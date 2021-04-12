@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1&gt; 事件处理简介   PPT简介 3大事件：主要了解触摸事件。 什么是响应者对象 为什么继承UIResponder就能处理事件 想处理触摸事件，应该怎么办  2&gt;  01-view拖拽演练  为什么要自定义view：系统自带不能处理事件 演示触摸事件方法,触摸的完整过程。 介绍参数(NSSet,UITouch,UIEvent) 重点UITouch，  1.触摸事件方法中的UITouc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="事件处理简介">
+<meta property="og:url" content="http://example.com/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="1&gt; 事件处理简介   PPT简介 3大事件：主要了解触摸事件。 什么是响应者对象 为什么继承UIResponder就能处理事件 想处理触摸事件，应该怎么办  2&gt;  01-view拖拽演练  为什么要自定义view：系统自带不能处理事件 演示触摸事件方法,触摸的完整过程。 介绍参数(NSSet,UITouch,UIEvent) 重点UITouch，  1.触摸事件方法中的UITouc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-07-31T10:10:27.000Z">
+<meta property="article:modified_time" content="2016-07-31T10:10:27.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>事件处理简介 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          事件处理简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:10:27" itemprop="dateCreated datePublished" datetime="2016-07-31T18:10:27+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>1&gt; 事件处理简介</p>
+<ul>
+<li> PPT简介</li>
+<li>3大事件：主要了解触摸事件。</li>
+<li>什么是响应者对象</li>
+<li>为什么继承UIResponder就能处理事件</li>
+<li>想处理触摸事件，应该怎么办</li>
+</ul>
+<p>2&gt;  01-view拖拽演练</p>
+<ul>
+<li>为什么要自定义view：系统自带不能处理事件</li>
+<li>演示触摸事件方法,触摸的完整过程。</li>
+<li>介绍参数(NSSet,UITouch,UIEvent)</li>
+<li>重点UITouch，</li>
+</ul>
+<p>1.触摸事件方法中的UITouch都是同一个对象，因为一根手指对应一个UITouch.当手指移动或者抬起，并不会产生一个新的UITouch对象给你，而是改变UITouch里面的属性，<br>1.默认三个方法里面只能获取到一个手指，为什么。UIView不支持多点触控<br>2.怎么才能有两个手指，两个手指同时按，并且视图支持多点触控<br>3.UITouch的tapCount有什么用？可以判断用户当前是双击还是单击<br>4.UITouch的phase有什么用? 根据这个属性，判断当前需要调用哪个处理事件方法，begin,move,end<br>程序思路：</p>
+<ul>
+<li>在TouchMove里面做事情-为什么?因为用户手指在视图上移动的时候才需要移动视图。</li>
+<li>获取用户当前的位置，获取用户之前的位置，就知道用户从哪移动到哪,这个位置也是视图移动的位置</li>
+<li>当前视图的位置 = 上一次视图的位置 + 手指的偏移量</li>
+</ul>
+<p>3&gt; 02-事件传递</p>
+<ul>
+<li>  PPT简介</li>
+<li>事件，加入到一个由谁管理的事件队列中?UIApplication</li>
+<li>为什么用队列，不用栈。队列先进先出，意味着先产生的事件，先处理。</li>
+<li>  代码验证事件谁处理</li>
+<li>PPT上这么多view，验证哪个view处理事件。这么多view，都需要监重写一个方法，搞个父类。</li>
+<li>一个view能处理事件，意味着事件传递给他了，那怎么传递? 事件是由父控件传递给子控件。</li>
+<li>父控件不处理事件，子控件也不能。蓝色不接收事件，黄色也不会接收事件? 为什么，因为事件是从父控件传递给子控件的。父控件都没有事件，怎么传给子控件。</li>
+<li>  代码验证view不能处理事件</li>
+<li>一个view怎么不能处理事件。userInteractionEnabled = NO，hidden = YES，alpha &lt;= 0.01</li>
+<li>  代码验证UIImageView不允许交互</li>
+<li>UIImageView默认不允许用户交互，因此默认它上面的子控件不能接收事件。</li>
+<li>  怎么找到最合适的View？通过一个递归。</li>
+<li>第一个接收事件的控件是谁?窗口</li>
+<li>当事件传递给窗口的时候，就会让窗口去找最合适的view,1&gt; 判断自己能不能接收事件 2&gt; 点在不在窗口上 3&gt; 去找比自己更合适的view，从后往前遍历子控件，拿到子控件后，把事件传递给这个子控件 4&gt; 子控件拿到事件之后，又会做同样的判断，一直递归去找，直到找到最合适的view.</li>
+<li>  事件传递的目的何在?找到最合适的view,把事件交给他。</li>
+</ul>
+<p>4&gt; 03-hitText方法和pointInside方法(复制:02-事件传递代码)</p>
+<ul>
+<li>（了解hitText）学习一个方法必须了解：什么时候调用和这个方法有什么用</li>
+</ul>
+<ol>
+<li>hitText什么时候调用:当一个事件传递给一个控件的时候，控件就会调用这个方法</li>
+<li>hitText作用: 寻找到最合适的view。</li>
+</ol>
+<ul>
+<li>（回顾下事件传递），UIApplication -&gt; UIWindow</li>
+<li> UIWindow去寻找最合适的view? [UIWindow hitTest:withEvent:]里面做了什么事情？<br>1&gt; 判断窗口能不能处理事件? 如果不能，意味着窗口不是最合适的view，而且也不会去寻找比自己更合适的view,直接返回nil,通知UIApplication，没有最合适的view。<br>2&gt; 判断点在不在窗口<br>3&gt; 遍历自己的子控件，寻找有没有比自己更合适的view<br>4&gt; 如果子控件不接收事件，意味着子控件没有找到最合适的view,然后返回nil,告诉窗口没有找到更合适的view,窗口就知道没有比自己更合适的view,就自己处理事件。</li>
+<li>验证下hitTest方法返回nil，里面的子控件能处理事件吗？ 重写根控制器view的hitTest:withEvent:方法，</li>
+<li>验证这个方法是否真能找到最合适的view？</li>
+<li>如果点击屏幕任何一个地方，都是白色的view，怎么做。直接返回白色的view,就不会继续去找白色view的子控件了。</li>
+<li>介绍pointInside方法</li>
+<li>pointInside作用：判断一个点在不在一个控件上</li>
+<li>point参数:方法调用者坐标系上的点，PPT画图分析原理。</li>
+<li>这节课的重点：学习完了pointInside,就能实现下hitTest方法底层是怎么做的了。</li>
+</ul>
+<p>5&gt; 04-hitText练习</p>
+<ul>
+<li>分析思路：如果一个点，同时在黄色view和按钮上，由按钮处理事件，怎么做?</li>
+<li>分析事件传递: 当黄色按钮要处理事件，首先事件得传递到他身上</li>
+<li>重写hitTest方法：事件传递到某个控件，调用什么方法?hitTest</li>
+<li>返回nil什么意思？如果直接返回nil，意味着黄色的view，没有找到最合适的view,他的父控件，就会遍历下一个控件，也就是按钮，询问按钮是不是最合适的view.</li>
+<li>判断点在不在按钮上，在就交给他处理。</li>
+<li>pointInside实现。</li>
+</ul>
+<p>5&gt; 响应者链条(复制:02-事件传递代码)</p>
+<ul>
+<li>PPT简介</li>
+<li>touch默认做法:自己不处理事件，交给上一个响应者处理touch事件。</li>
+<li>响应者链条，点击绿色的view,如果不处理事件，就会往上传递。</li>
+<li>验证touch的默认做法 先恢复所有view的默认做法</li>
+<li>监听黄色点击，蓝色点击。</li>
+<li>黄色调用默认做法，事件传递给谁处理?蓝色</li>
+<li>得出结论：1&gt; touch的默认做法：自己不处理，交给上一个响应者。 2&gt; 上一个响应者默认是父控件</li>
+<li>两个view怎么同时处理事件?一个view处理方法，在调用父类默认的做法</li>
+<li>把事件传递给白色的view，怎么做?</li>
+<li>总结下事件传递的完整过程.</li>
+<li>把事件传递给控制器，测试白色view的上一个响应者是否是控制器。</li>
+<li>回顾响应者链条</li>
+</ul>
+<p>6&gt; 抽屉效果<br>添加子视图</p>
+<ul>
+<li>  简单的滑动效果</li>
+<li>监听控制器处理事件方法</li>
+<li>获取x轴偏移量</li>
+<li>改变主视图的frame</li>
+<li>  利用KVO做视图切换<br>往左移动，显示右边，隐藏左边<br>往右移动，显示左边，隐藏右边</li>
+<li> 复杂的滑动效果，PPT讲解（根据手指每移动一点，x轴的偏移量算出当前视图的frame）<br>假设x移到320时，y移动到60，算出没移动一点x，移动多少y<br>offsetY = offsetX * 60 / 320  手指每移动一点，x轴偏移量多少，y偏移多少<br>为了好看，x移动到320，距离上下的高度需要保持一致，而且有一定的比例去缩放他的尺寸。<br>怎么根据之前的frame，算出当前的frame,touchMove只能拿到之前的frame.<br>当前的高度 = 之前的高度 * 这个比例<br>缩放比例：当前的高度/之前的高度  (screenH - 2 * offsetY) / screenH<br>当前的宽度也一样求。<br>y值，计算比较特殊，不能直接用之前的y,加上offsetY,往左滑动，主视图应该往下走，但是offsetX是负数，导致主视图会往上走。<br>y = （screenH - 当前的高度）* 0.5<br>getCurrentFrameWithOffsetX</li>
+<li>  定位(滑动松开手指的时候，移动到目标点)<br>移动到左右目标点，根据偏移量 = 当前目标点的x - 之前视图的x，计算移动到目标点的frame<br>还原：当没有移动到目标点，就把主视图还原。</li>
+<li>  复位（当主视图不在原始的位置，点击屏幕，恢复原来位置）<br>判断手指是否移动，移动的时候就自动定位，不需要手动复位。</li>
+</ul>
+<p>7&gt; 手势识别<br>使用UIImageView原因：之前既能看见图片，又能监听点击的只有UIButton,学了手势，我们的UIImageView也可以。</p>
+<ul>
+<li>tap(代理：左边不能点，右边能点)</li>
+<li>longPress(allowableMovement:触发之前，最大的移动范围)<blockquote>
+<p>默认调用两次，开始一次，结束一次。</p>
+</blockquote>
+</li>
+<li>swipe:(一个手势只能识别一个方向)</li>
+<li>旋转：<br>基于上一次旋转</li>
+<li>复位：(手势的取值都是相对最原始的位置，我们应该是需要相对上一次，因此每次调用，就复位一下，每次都是从零开始旋转角度)<br>缩放：复位</li>
+<li>如何同时支持旋转和缩放？默认不支持多个手指，<br>Simultaneously：同时<br>当使用一个手势的时候会调用代理的Simultaneously方法，询问是否支持多个手势</li>
+<li>pan<br>获取平移的位置：translationInView<br>复位：setTranslation:inView: 需要传一个view，因为点的位置跟坐标系有关系，看他是基于哪个坐标系被清空的。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/31/D_Net9IOS%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" rel="prev" title="Info.plist,pch,UIApplication,IOS程序的启动过程">
+      <i class="fa fa-chevron-left"></i> Info.plist,pch,UIApplication,IOS程序的启动过程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/31/D_Net6CoreLocation/" rel="next" title="CoreLocation">
+      CoreLocation <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

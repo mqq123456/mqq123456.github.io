@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="设计原则单一职责原则 开闭原则 接口隔离原则 依赖倒置原则 里氏替换原则 迪米特法则  内存设计存储的Size 淘汰策略 LRU算法  磁盘设计存储方式 大小限制 淘汰策略  网络设计图片请求最大并发 请求超时策略 请求优先级  图片解码对于不同格式的图片，解码采用什么方式 应用策略模式对不同图片格式进行解码 在那个阶段做图片解码处理  记录上传器关于延时上传具体场景有哪些 前后台切换 从无网络到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift134%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="设计原则单一职责原则 开闭原则 接口隔离原则 依赖倒置原则 里氏替换原则 迪米特法则  内存设计存储的Size 淘汰策略 LRU算法  磁盘设计存储方式 大小限制 淘汰策略  网络设计图片请求最大并发 请求超时策略 请求优先级  图片解码对于不同格式的图片，解码采用什么方式 应用策略模式对不同图片格式进行解码 在那个阶段做图片解码处理  记录上传器关于延时上传具体场景有哪些 前后台切换 从无网络到">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:29:28.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:29:28.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift134%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>设计模式 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift134%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计模式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:29:28" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:28+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h2><pre><code>单一职责原则
+开闭原则
+接口隔离原则
+依赖倒置原则
+里氏替换原则
+迪米特法则
+</code></pre>
+<h2 id="内存设计"><a href="#内存设计" class="headerlink" title="内存设计"></a>内存设计</h2><pre><code>存储的Size
+淘汰策略 LRU算法
+</code></pre>
+<h2 id="磁盘设计"><a href="#磁盘设计" class="headerlink" title="磁盘设计"></a>磁盘设计</h2><pre><code>存储方式
+大小限制
+淘汰策略
+</code></pre>
+<h2 id="网络设计"><a href="#网络设计" class="headerlink" title="网络设计"></a>网络设计</h2><pre><code>图片请求最大并发
+请求超时策略
+请求优先级
+</code></pre>
+<h2 id="图片解码"><a href="#图片解码" class="headerlink" title="图片解码"></a>图片解码</h2><pre><code>对于不同格式的图片，解码采用什么方式
+应用策略模式对不同图片格式进行解码
+在那个阶段做图片解码处理
+</code></pre>
+<h2 id="记录上传器"><a href="#记录上传器" class="headerlink" title="记录上传器"></a>记录上传器</h2><pre><code>关于延时上传具体场景有哪些
+前后台切换
+从无网络到有网络的变化
+通用轻量接口少捎带
+</code></pre>
+<h2 id="MVVM框架思想"><a href="#MVVM框架思想" class="headerlink" title="MVVM框架思想"></a>MVVM框架思想</h2><pre><code>即模型-视图-视图模型
+在MVVM的框架下视图和模型是不能直接通信的。它们通过ViewModel来通信，ViewModel通常要实现一个observer观察者，当数据发生变化，ViewModel能够监听到数据的这种变化，然后通知到对应的视图做自动更新，而当用户操作视图，ViewModel也能监听到视图的变化，然后通知数据做改动，这实际上就实现了数据的双向绑定。并且MVVM中的View 和 ViewModel可以互相通信。
+</code></pre>
+<h2 id="ReactNative的数据流思想"><a href="#ReactNative的数据流思想" class="headerlink" title="ReactNative的数据流思想"></a>ReactNative的数据流思想</h2><p>Flux是Facebook用来构建用户端的web应用的应用程序体系架构。它通过利用数据的单向流动为React的可复用的视图组件提供了补充。相比于形式化的框架它更像是一个架构思想，不需要太多新的代码你就可以马上使用Flux构建你的应用。<br>一个 Flux 应用主要包含四个部分：<br>dispatcher<br>处理动作分发，维护 Store 之间的依赖关系</p>
+<p>stores<br>数据和逻辑部分</p>
+<p>views<br>React 组件，这一层可以看作 controller-views，作为视图同时响应用户交互</p>
+<p>actions<br>提供给 dispatcher 传递数据给 store</p>
+<h2 id="系统UIView更新机制的思想"><a href="#系统UIView更新机制的思想" class="headerlink" title="系统UIView更新机制的思想"></a>系统UIView更新机制的思想</h2><h2 id="FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想"><a href="#FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想" class="headerlink" title="FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想"></a>FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36747738/article/details/106537874">https://blog.csdn.net/qq_36747738/article/details/106537874</a><br>AsyncDisplayKit</p>
+<p>AsyncDisplayKit 是 Facebook 推出的用于保持界面流畅性的框架，其原理大致如下：</p>
+<p>UI 线程中一旦出现繁重的任务就会导致界面卡顿，这类任务通常分为3类：排版，绘制，UI对象操作。</p>
+<p>排版通常包括计算视图大小、计算文本高度、重新计算子式图的排版等操作。<br>绘制一般有文本绘制 (例如 CoreText)、图片绘制 (例如预先解压)、元素绘制 (Quartz)等操作。<br>UI对象操作通常包括 UIView/CALayer 等 UI 对象的创建、设置属性和销毁。</p>
+<p>其中前两类操作可以通过各种方法扔到后台线程执行，而最后一类操作只能在主线程完成，并且有时后面的操作需要依赖前面操作的结果 （例如TextView创建时可能需要提前计算出文本的大小）。ASDK 所做的，就是尽量将能放入后台的任务放入后台，不能的则尽量推迟 (例如视图的创建、属性的调整)。</p>
+<p>为此，ASDK 创建了一个名为 ASDisplayNode 的对象，并在内部封装了 UIView/CALayer，它具有和 UIView/CALayer 相似的属性，例如 frame、backgroundColor等。所有这些属性都可以在后台线程更改，开发者可以只通过 Node 来操作其内部的 UIView/CALayer，这样就可以将排版和绘制放入了后台线程。但是无论怎么操作，这些属性总需要在某个时刻同步到主线程的 UIView/CALayer 去。</p>
+<p>ASDK 仿照 QuartzCore/UIKit 框架的模式，实现了一套类似的界面更新的机制：即在主线程的 RunLoop 中添加一个 Observer，监听了 kCFRunLoopBeforeWaiting 和 kCFRunLoopExit 事件，在收到回调时，遍历所有之前放入队列的待处理的任务，然后一一执行。</p>
+<p>作者：柳大官人<br>链接：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/17045f7dade6">https://www.jianshu.com/p/17045f7dade6</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift133%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="prev" title="多线程">
+      <i class="fa fa-chevron-left"></i> 多线程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift135%E6%88%AA%E5%9B%BE%E5%88%86%E6%9E%90/" rel="next" title="截图">
+      截图 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">设计原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">内存设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.</span> <span class="nav-text">磁盘设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.</span> <span class="nav-text">网络设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E8%A7%A3%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">图片解码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%B0%E5%BD%95%E4%B8%8A%E4%BC%A0%E5%99%A8"><span class="nav-number">6.</span> <span class="nav-text">记录上传器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVVM%E6%A1%86%E6%9E%B6%E6%80%9D%E6%83%B3"><span class="nav-number">7.</span> <span class="nav-text">MVVM框架思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ReactNative%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B5%81%E6%80%9D%E6%83%B3"><span class="nav-number">8.</span> <span class="nav-text">ReactNative的数据流思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9FUIView%E6%9B%B4%E6%96%B0%E6%9C%BA%E5%88%B6%E7%9A%84%E6%80%9D%E6%83%B3"><span class="nav-number">9.</span> <span class="nav-text">系统UIView更新机制的思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FaceBook%E7%9A%84%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6AsyncDisplayKit%E5%85%B3%E4%BA%8E%E9%A2%84%E6%8E%92%E7%89%88%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-number">10.</span> <span class="nav-text">FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

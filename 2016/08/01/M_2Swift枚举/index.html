@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Swift枚举基本概念  Swift中的枚举比OC中的枚举强大, 因为Swift中的枚举是一等类型,它可以像类和结构体一样增加属性和方法enum Method{case 枚举值}2. 枚举的基本使用我们注意到，swift 的每个枚举项前面，都使用一个 case 关键字来标识。除了每行声明一个枚举项，也可以将这些枚举项放在一行中声明，每项之间用逗号分隔。enum Menthod1 {case Ad">
+<meta property="og:type" content="article">
+<meta property="og:title" content="枚举,枚举原始值,枚举相关值,switch提取枚举关联值">
+<meta property="og:url" content="http://example.com/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="Swift枚举基本概念  Swift中的枚举比OC中的枚举强大, 因为Swift中的枚举是一等类型,它可以像类和结构体一样增加属性和方法enum Method{case 枚举值}2. 枚举的基本使用我们注意到，swift 的每个枚举项前面，都使用一个 case 关键字来标识。除了每行声明一个枚举项，也可以将这些枚举项放在一行中声明，每项之间用逗号分隔。enum Menthod1 {case Ad">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-08-01T10:11:20.000Z">
+<meta property="article:modified_time" content="2016-08-01T10:11:20.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>枚举,枚举原始值,枚举相关值,switch提取枚举关联值 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          枚举,枚举原始值,枚举相关值,switch提取枚举关联值
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 18:11:20" itemprop="dateCreated datePublished" datetime="2016-08-01T18:11:20+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>Swift枚举基本概念</p>
+</blockquote>
+<p>Swift中的枚举比OC中的枚举强大, 因为Swift中的枚举是一等类型,<br>它可以像类和结构体一样增加属性和方法<br>enum Method{<br>case 枚举值<br>}<br>2. 枚举的基本使用<br>我们注意到，swift 的每个枚举项前面，都使用一个 case 关键字来标识。除了每行声明一个枚举项，也可以将这些枚举项放在一行中声明，每项之间用逗号分隔。<br>enum Menthod1 {<br>case Add, Sub, Mul, Div<br>}<br>可以使用枚举类型变量或常量接收枚举值<br>var m: Method = .Add<br>注意: 如果变量或常量没有指定类型, 那么前面必须加上该值属于哪个枚举类型<br>// var m1 =  .Add //直接报错<br>var m1 = Method.Add //正确写法<br>3.原始值<br>OC中枚举的本质就是整数, 所以OC中的枚举是有原始值的,默认是从0开始<br>而Swift中的枚举默认是没有原始值的, 但是可以在定义时告诉系统让枚举有原始值和OC中的枚举一样, 也可以指定原始值, 后面的值默认+1 , 但必须指定枚举的类型, 并且一定是 Int 类型<br>Swift中的枚举除了可以指定整形以外还可以指定其它类型, 但是如果指定其它类型, 必须给所有枚举值赋值, 因为不能自动递增<br>// 指定了枚举原始值类型为 Int , 所以并且给第一个枚举值定义了原始值, 则后面的值默认 +1<br>enum Method3: Int{<br>case Add = 5, Sub, Mul, Div<br>}<br>// 自定的枚举原始值的类型不是 Int , 所以后面的值不会默认 +1,<br>// 后面的也需要手动赋值<br>enum Method4: Double{<br>case Add = 5.0, Sub = 6.0, Mul = 6.1, Div = 8.0<br>}<br>原始值转换为枚举值<br>enum Method5: String{<br>case Add = “add”, Sub = “sub”, Mul = “mul”, Div = “div”<br>}<br>获取枚举原始值<br>rawValue代表将枚举值转换为原始值, 注意老版本中转换为原始值的方法名叫toRaw<br>Method4.Sub.rawValue<br>print(Method4.Sub.rawValue)<br>// 输出结果: 6.0<br>通过原始值创建枚举值<br>原始值区分大小写<br>返回的是一个可选值,因为原始值对应的枚举值不一定存在<br>老版本中为fromRaw(“add”)<br>let m2 = Method5(rawValue: “add”)<br>print(m2)</p>
+<p>func chooseMethod(op:String){<br>// 由于返回是可选类型, 所以有可能为nil, 最好使用可选绑定<br>if let opE = Method5(rawValue: op){<br>switch (opE){<br>case .Add:<br>print(“加法”)<br>case .Sub:<br>print(“减法”)<br>case .Mul:<br>print(“除法”)<br>case .Div:<br>print(“乘法”)<br>}<br>}<br>}<br>4. 枚举相关值<br>在 Swift 中，我们还可以定义这样的枚举类型，它的每一个枚举项都有一个附加信息，来扩充这个枚举项的信息表示，这又叫做关联值。加入我们有一个枚举类型 Shape 来表示形状。<br>enum lineSegmentDescriptor{<br>case StartAndEndPattern(start:Double, end:Double)<br>case StartAndLengthPattern(start: Double, length:Double)<br>}</p>
+<p>var lsd = lineSegmentDescriptor.StartAndLengthPattern(start: 0.0, length: 100.0)<br>lsd = lineSegmentDescriptor.StartAndEndPattern(start: 0.0, end: 50.0)</p>
+<p>print(lsd)<br>// 输出结果: StartAndEndPattern(0.0, 50.0)<br>利用switch提取枚举关联值<br>switch lsd {<br>case let .StartAndEndPattern(s, e):<br>print(“start = (s) end = (e)”)<br>case .StartAndLengthPattern(let s, let l):<br>print(“start = (s) lenght = (l)”)<br>}<br>// 输出结果: start = 0.0 end = 50.0</p>
+<blockquote>
+<p>嵌套枚举(Nesting Enums)</p>
+</blockquote>
+<p>如果你有特定子类型的需求，可以对enum进行嵌套。这样就允许你为实际的enum中包含其他明确信息的enum。以RPG游戏中的每个角色为例，每个角色能够拥有武器，因此所有角色都可以获取同一个武器集合。而游戏中的其他实例则无法获取这些武器(比如食人魔,它们仅使用棍棒)。<br>enum Character {<br>enum Weapon {<br>case Bow<br>case Sword<br>case Lance<br>case Dagger<br>}<br>enum Helmet {<br>case Wooden<br>case Iron<br>case Diamond<br>}<br>case Thief<br>case Warrior<br>case Knight<br>}</p>
+<blockquote>
+<p>属性(Properties)</p>
+</blockquote>
+<p>尽管增加一个存储属性到枚举中不被允许，但你依然能够创建计算属性。当然，计算属性的内容都是建立在枚举值下或者枚举关联值得到的。<br>enum Device {<br>case iPad, iPhone<br>var year: Int {<br>switch self {<br>case iPhone: return 2007<br>case iPad: return 2010<br>}<br>}</p>
+<blockquote>
+<p>静态方法(Static Methods)</p>
+</blockquote>
+<p>你也能够为枚举创建一些静态方法(static methods)。换言之通过一个非枚举类型来创建一个枚举。在这个示例中,我们需要考虑用户有时将苹果设备叫错的情况(比如AppleWatch叫成iWatch)，需要返回一个合适的名称。<br>enum Device {<br>case AppleWatch<br>static func fromSlang(term: String) -&gt; Device? {<br>if term == “iWatch” {<br>return .AppleWatch<br>}<br>return nil<br>}<br>}<br>print (Device.fromSlang(“iWatch”))</p>
+<blockquote>
+<p>可变方法(Mutating Methods)</p>
+</blockquote>
+<p>方法可以声明为mutating。这样就允许改变隐藏参数self的case值了3。<br>enum TriStateSwitch {<br>case Off, Low, High<br>mutating func next() {<br>switch self {<br>case Off:<br>self = Low<br>case Low:<br>self = High<br>case High:<br>self = Off<br>}<br>}<br>}<br>var ovenLight = TriStateSwitch.Low<br>ovenLight.next()<br>// ovenLight 现在等于.On<br>ovenLight.next()<br>// ovenLight 现在等于.Off</p>
+<blockquote>
+<p>小结</p>
+</blockquote>
+<p>枚举声明的类型是囊括可能状态的有限集，且可以具有附加值。通过内嵌(nesting),方法(method),关联值(associated values)和模式匹配(pattern matching),枚举可以分层次地定义任何有组织的数据。<br>现在我们已经对这个定义更加清晰了。确实，如果我们添加关联值和嵌套，enum就看起来就像一个封闭的、简化的struct。相比较struct，前者优势体现在能够为分类与层次结构编码。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/" rel="prev" title="Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器">
+      <i class="fa fa-chevron-left"></i> Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/01/M_3Swift%E6%9E%9A%E4%B8%BE%E8%BF%9B%E9%98%B6/" rel="next" title="枚举进阶">
+      枚举进阶 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

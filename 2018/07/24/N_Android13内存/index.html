@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。 res是Android项目工程中存放各类的目录，主要包括布局、图形与配置等等。res的子目录主要有： anim : 存放动画的描述文件drawable : 存放各类图形的描述文件，包括drawable的描述文件，以及三种图片格式：png（推荐）、jpg（支持）、gif（不推荐，因">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android开发总结内存">
+<meta property="og:url" content="http://example.com/2018/07/24/N_Android13%E5%86%85%E5%AD%98/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。 res是Android项目工程中存放各类的目录，主要包括布局、图形与配置等等。res的子目录主要有： anim : 存放动画的描述文件drawable : 存放各类图形的描述文件，包括drawable的描述文件，以及三种图片格式：png（推荐）、jpg（支持）、gif（不推荐，因">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-07-24T12:01:54.000Z">
+<meta property="article:modified_time" content="2018-07-24T12:01:54.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/07/24/N_Android13%E5%86%85%E5%AD%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android开发总结内存 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/N_Android13%E5%86%85%E5%AD%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android开发总结内存
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-07-24 20:01:54" itemprop="dateCreated datePublished" datetime="2018-07-24T20:01:54+08:00">2018-07-24</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。</p>
+<p>res是Android项目工程中存放各类的目录，主要包括布局、图形与配置等等。res的子目录主要有：</p>
+<p>anim : 存放动画的描述文件<br>drawable : 存放各类图形的描述文件，包括drawable的描述文件，以及三种图片格式：png（推荐）、jpg（支持）、gif（不推荐，因为ImageView只显示gif的第一帧）。以drawable打头的有好几个目录，分别存放不同分辨率的图片，这些目录的区别详见<br>layout : 存放页面的布局文件，主要在Acitivity、Fragment以及部分自定义控件中使用<br>menu : 存放菜单的布局文件<br>raw : 存放原始格式的文件，一般是二进制的流文件，比如音频文件、视频文件等等<br>values : 存放各类参数的配置文件，具体的配置文件说明如下<br>——arrays.xml : 存放各类数组的定义文件，字符串数组的根节点为string-array，整型数组的根节点为integer-array<br>——booleans.xml : 存放布尔类型的定义文件，根节点为resources，元素节点为bool<br>——attrs.xml : 存放自定义控件的属性信息，根节点为resources，元素节点为declare-styleable——attr<br>——colors.xml : 存放颜色的定义文件，根节点为resources，元素节点为color<br>——dimens.xml : 存放像素的定义文件，根节点为resources，元素节点为dimen<br>——ids.xml : 存放控件id的定义文件，根节点为resources，元素节点为item，type为id<br>——integers.xml : 存放整数类型的定义文件，根节点为resources，元素节点为integer<br>——strings.xml : 存放字符串类型的定义文件，根节点为resources，元素节点为string<br>——styles.xml : 存放控件风格的定义文件，根节点为resources，元素节点为style——item<br>xml : 存放其他的xml文件，比如说存放SearchView的searchable.xml属性定义文件</p>
+<p>其余目录下面的配置文件，一般需要在代码中解析数据结构，比如说图像、字符串、整型数、二进制流等等。具体的代码调用方式如下：</p>
+<p>drawable : 一般使用getResources().getDrawable(R.drawable.example);，gif文件使用getResources().getMovie(R.drawable.example);<br>raw : getResources().openRawResource(R.raw.example);<br>values :<br>——arrays.xml : 解析字符串数组使用getResources().getStringArray(R.array.city);，解析整型数组使用getResources().getIntArray(R.array.code);<br>——attrs.xml : 代码中不解析该文件的数据结构，在自定义控件的构造函数中通过如下方式使用：TypedArray attrArray=getContext().obtainStyledAttributes( attrs, R.styleable.example);<br>——booleans.xml : getResources().getBoolean(R.bool.example);<br>——colors.xml : getResources().getColor(R.color.example);<br>——dimens.xml : getResources().getDimension(R.dimen.example);<br>——ids.xml : 代码中不使用该文件配置，在布局文件中使用为：android:id=”@id/…”（注意与一般情况相比去掉了加号）<br>——integers.xml : getResources().getInteger(R.integer.example);<br>——strings.xml : getResources().getString(R.string.example);<br>——styles.xml : 代码中不解析该文件的数据结构，布局文件的使用在控件内部加上style属性：style=”@style/example”<br>xml : getResources().getXml(R.xml.example);</p>
+<p>assets目录用于存放应用程序的资产文件，该目录下的文件不会被系统编译，所以无法通过R.*.*这种方式来访问。Android专门为assets目录提供了一个工具类AssetManager，通过该工具，我们能够以字节流方式打开assets下的文件，并将字节流转换为文本或者图像。<br>ssetManager提供了如下方法用于处理assets：<br>1、 String[] list(String path);<br>列出该目录下的下级文件和文件夹名称<br>2、 InputStream open(String fileName);<br>以顺序读取模式打开文件，默认模式为ACCESS_STREAMING<br>3、 InputStream open(String fileName, int accessMode);<br>以指定模式打开文件。读取模式有以下几种：<br>ACCESS_UNKNOWN : 未指定具体的读取模式<br>ACCESS_RANDOM : 随机读取<br>ACCESS_STREAMING : 顺序读取<br>ACCESS_BUFFER : 缓存读取<br>4、 void close()<br>关闭AssetManager实例</p>
+<p>集合(Set/HashSet)</p>
+<p>集合中的元素是没有顺序的，而且不可以重复。这意味着，集合只能遍历而无法通过索引访问指定元素，并且如果重复添加相同值将不会增大集合。因为Set只是接口，所以实际用的是它的一个派生类HashSet。<br>集合的常用方法如下：<br>add : 添加元素<br>clear : 清空容器<br>contains : 判断容器中是否存在该元素<br>iterator : 获取第一个元素的指针<br>isEmpty : 判断容器是否为空<br>remove : 删除元素<br>size : 获取容器大小</p>
+<p>队列(ArrayList)</p>
+<p>队列与集合恰恰相反，队列中的元素是有顺序的，而且允许重复，所以队列可以使用索引来访问指定元素（类似数组的下标）。<br>队列的常用方法包括上面集合列出的几个，下面列出有变更或者添加的方法：<br>add : 提供了两个方法。默认在队列末尾添加元素；如果指定了索引位置，则在指定位置末尾添加元素<br>get : 获取指定位置的元素<br>indexOf : 获取指定元素的第一个索引位置<br>lastIndexOf : 获取指定元素的最后一个索引位置<br>remove : 提供了两个方法。除了删除元素之外，还可以删除指定位置的元素<br>set : 替换指定位置的元素<br>subList : 截取从开始位置到结束位置之间的子队列</p>
+<p>映射(Map/HashMap)</p>
+<p>映射保存的是键值对（即key—value）的映射关系，一个映射中不能包含相同的key，每个key只能映射一个value。但Map只是接口，实际中常用的是它的一个派生类HashMap。类似的，队列、链表、向量都是派生自List接口。<br>映射的常用方法如下：<br>clear : 清空容器<br>containsKey : 判断容器中是否存在该键（key）的元素<br>containsValue : 判断容器中是否存在该值（value）的元素<br>get : 根据指定键获得元素的值<br>isEmpty : 判断容器是否为空<br>keySet : 获取容器中键的集合<br>put : 设置键值对的映射关系。如原来没有该键，则添加元素；如果原来存在该键，则替换元素<br>remove : 删除指定键对应的元素<br>size : 获取容器的大小<br>values : 获取容器中值的集合</p>
+<p>Application组件</p>
+<p>Application是比Activity高级的组件，它的生命周期覆盖了APP运行的全过程；而Activity页面的生命周期很短暂，只要进入别的页面，原页面就被停止或者销毁；因此我们可以在Application中保存全局变量。在打开App时，系统会先初始化Application，然后才进入到开始的Activity页面。通常我们不需要指定一个Application，这时系统会自动帮我们创建，如果需要创建自己的Application，创建一个派生自Application的类，并在manifest的application标签中注册就好了。</p>
+<p>SharedPreferences存储数据</p>
+<p>下面是Properties的常用方法：<br>load : 从属性文件中加载属性对象<br>store : 把属性对象保存到属性文件<br>getProperty : 获取属性值<br>setProperty : 设置属性值<br>loadFromXML : 从XML格式的属性文件中加载属性对象<br>storeToXML : 把属性对象保存到XML格式的属性文件</p>
+<p>SQLite</p>
+<p>Realm应用背景</p>
+<p>File类</p>
+<p>File类是java中的文件操作工具类，它的常用方法如下：<br>File构造函数 : 根据文件路径构造File对象<br>delete : 删除文件<br>exists : 判断文件是否存在<br>getName : 获取文件的文件名<br>getPath : 获取文件的目录路径<br>getParent : 获取上级目录路径<br>isDirectory : 判断是否为目录/文件夹<br>isFile : 判断是否为文件<br>length : 获取该文件的大小<br>list : 列出该目录下的所有文件（夹），返回String数组<br>listFiles : 列出该目录下的所有文件（夹），返回File数组<br>mkdirs : 创建目录/文件夹<br>renameTo : 重命名文件，其实就是移动文件到指定目录</p>
+<p>Environment类</p>
+<p>Environment类是Android中获取各种目录信息的工具，主要方法如下：<br>getDataDirectory : 获得系统data目录的路径<br>getDownloadCacheDirectory : 获得下载缓存目录的路径<br>getExternalStorageState : 获得外部存储的状态<br>SD卡操作</p>
+<p>下载请求</p>
+<p>要想使用下载功能，首先得构建一个下载请求，说明从哪里下载、下载参数为何、下载的文件保存到哪里等等。这个下载请求便是DownloadManager的子类Request，下面是该类的常用方法<br>Request构造函数 : 指定从哪个网络地址下载文件。<br>Request.setAllowedNetworkTypes : 指定允许进行下载的网络类型。Request.NETWORK_WIFI表示wifi环境（推荐），Request.NETWORK_MOBILE表示数据连接环境（不推荐），Request.NETWORK_BLUETOOTH表示蓝牙环境。<br>Request.setDestinationInExternalFilesDir : 设置下载文件在本地的保存路径。<br>Request.addRequestHeader : 给HTTP请求添加头部参数。<br>Request.setMimeType : 设置下载文件的媒体类型。<br>Request.setVisibleInDownloadsUi : 设置下载页面是否可见。<br>下载操作</p>
+<p>构建下载请求完毕，然后才能进行下载的相关操作。下面是DownloadManager常用的下载方法：<br>enqueue : 将下载请求加入到任务队列中，即开始下载任务。该方法返回本次下载任务的编号。<br>remove : 取消指定编号的下载任务。<br>restartDownload : 重新下载指定编号的任务。<br>openDownloadedFile : 打开下载完成的文件。<br>getMimeTypeForDownloadedFile : 获取下载完成的文件的媒体类型。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/24/N_Android12%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/" rel="prev" title="Android开发总结">
+      <i class="fa fa-chevron-left"></i> Android开发总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/24/N_Android14%E9%80%9A%E4%BF%A1/" rel="next" title="Android通信相关">
+      Android通信相关 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

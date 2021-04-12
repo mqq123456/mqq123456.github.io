@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="数组数组元素在内存上连续存放，可以通过下表查找元素；插入，删除需要移动大量元素，比较适用于元素很少的情况 优点： 1、按照索引查询元素速度快 2、按照索引遍历数组方便 事物都有两面性，有优点自然就有缺点了 缺点： 1、数组的大小固定后就无法扩容了 2、数组只能存储一种类型的数据 3、添加，删除的操作慢，因为要移动其他的元素。 高级语言中所用数组结构 NSArrayM 用了环形缓冲区 (circul">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift141%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="数组数组元素在内存上连续存放，可以通过下表查找元素；插入，删除需要移动大量元素，比较适用于元素很少的情况 优点： 1、按照索引查询元素速度快 2、按照索引遍历数组方便 事物都有两面性，有优点自然就有缺点了 缺点： 1、数组的大小固定后就无法扩容了 2、数组只能存储一种类型的数据 3、添加，删除的操作慢，因为要移动其他的元素。 高级语言中所用数组结构 NSArrayM 用了环形缓冲区 (circul">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:30:08.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:30:08.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift141%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据结构 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift141%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:08" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:08+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><pre><code>数组元素在内存上连续存放，可以通过下表查找元素；插入，删除需要移动大量元素，比较适用于元素很少的情况
+优点：
+1、按照索引查询元素速度快
+2、按照索引遍历数组方便
+事物都有两面性，有优点自然就有缺点了
+缺点：
+1、数组的大小固定后就无法扩容了
+2、数组只能存储一种类型的数据
+3、添加，删除的操作慢，因为要移动其他的元素。
+高级语言中所用数组结构
+NSArrayM 用了环形缓冲区 (circular buffer)。环形缓冲区的内容能在到达任意一端时绕向另一端。
+NSArrayM 试着去最小化内存的移动，因此会移动最少的一边元素。
+</code></pre>
+<h2 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h2><pre><code>常见的字典结构都是hashmap实现的
+扩容：开放定址法的结构通常允许在通列表的数量达到了某个阈值，通常是通列表长度的80%使用量
+时，对通列表进行一次扩充grow，然后重新计算数据的keyHash放入新桶中
+但是不断扩容的空间就是其弊端，因此开放地址法最好存储的是临时需要，尽快释放的资源
+例如字典参数和associated object，拉链法就保证了资源的可控性，像这种@synchronized
+锁就可以根据地址拉链出一条对应的使用线程即可，随时使用。
+</code></pre>
+<h2 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h2><pre><code>链表中的元素在内存中不是顺序存储的，查找慢，插入、删除只需要对元素指针重新赋值，效率高
+</code></pre>
+<h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2><pre><code>堆是一种经过排序的树形数据结构，每个节点都有一个值，通常
+我们所说的堆的数据结构是指二叉树。所以堆在数据结构中通常
+可以被看做是一棵树的数组对象。而且堆需要满足一下两个性质：
+1.堆中某个节点的值总是不大于或不小于其父节点的值；
+2.堆总是一棵完全二叉树。
+堆常用来实现优先队列
+</code></pre>
+<h2 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h2><pre><code>栈是限定仅在表尾进行插入和删除操作的线性表。我们
+把允许插入和删除的一端称为栈顶，另一端称为栈底，不含任何数据
+元素的栈称为空栈。栈的特殊之处在于它限制了这个线性表的插入和删
+除位置，它始终只在栈顶进行。
+栈的应用—递归
+</code></pre>
+<h2 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h2><pre><code>队列是只允许在一端进行插入操作、而在另一端进行删除操作的线性表
+。允许插入的一端称为队尾，允许删除的一端称为队头。它是一种特殊的线性表
+，特殊之处在于它只允许在表的前端进行删除操作，而在表的后端进行插入操作
+，和栈一样，队列是一种操作受限制的线性表。
+</code></pre>
+<h2 id="树"><a href="#树" class="headerlink" title="树"></a>树</h2><h3 id="前缀树"><a href="#前缀树" class="headerlink" title="前缀树"></a>前缀树</h3><pre><code>典型应用是用于统计和排序大量的字符串（但不仅限于字符串），
+所以经常被搜索引擎系统用于文本词频统计。它的优点是：
+最大限度地减少无谓的字符串比较，查询效率比哈希表高。
+</code></pre>
+<h3 id="线段树"><a href="#线段树" class="headerlink" title="线段树"></a>线段树</h3><pre><code>线段树，类似区间树，是一个完全二叉树，它在各个节点保存一条线段
+（数组中的一段子数组），主要用于高效解决连续区间的动态查询问题，
+由于二叉结构的特性，它基本能保持每个操作的复杂度为O(lgN)!
+性质：父亲的区间是[a,b],(c=(a+b)/2)左儿子的区间是[a,c]，
+右儿子的区间是[c+1,b]，线段树需要的空间为数组大小的四倍
+</code></pre>
+<h3 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h3><pre><code>是每个结点最多有两个子树的树结构。通常子树被称作
+“左子树”（left subtree）和“右子树”（right subtree）。
+</code></pre>
+<h3 id="⼆叉搜索树"><a href="#⼆叉搜索树" class="headerlink" title="⼆叉搜索树"></a>⼆叉搜索树</h3><pre><code>假如固定左边子树小于根节点，右边子树大于根节点，
+让元素存入的时候就排序好，那么访问速度就加快了，我们称这样的树为二叉搜索树。
+1. 若任意节点的左⼦树不空，则左⼦树上所有结点的值均⼩于它的根结点的值；  
+2. 若任意节点的右⼦树不空，则右⼦树上所有结点的值均⼤于它的根结点的值；  
+3. 任意节点的左、右⼦树也分别为⼆叉查找树。
+</code></pre>
+<h3 id="树状数组"><a href="#树状数组" class="headerlink" title="树状数组"></a>树状数组</h3><pre><code>顾名思义，就是用数组来模拟树形结构呗。那么衍生出一个问题，
+为什么不直接建树？答案是没必要，因为树状数组能处理的问题就没必要建
+树。和Trie树的构造方式有类似之处。
+2.树状数组可以解决什么问题
+可以解决大部分基于区间上的更新以及求和问题。
+3.树状数组和线段树的区别在哪里
+树状数组可以解决的问题都可以用线段树解决，这两
+者的区别在哪里呢？树状数组的系数要少很多，就比如字符串模
+拟大数可以解决大数问题，也可以解决1+1的问题，但没人会
+在1+1的问题上用大数模拟。
+4.树状数组的优点和缺点
+修改和查询的复杂度都是O(logN)，而且相比线段树系数要少很多，比传统数组要快，而且容易写。
+缺点是遇到复杂的区间问题还是不能解决，功能还是有限。
+</code></pre>
+<p>总结算法和自己的模板。</p>
+<p>图</p>
+<p>优先队列<br>双端队列<br>有向图<br>无向图<br>复杂数据结构</p>
+<p>二叉树<br>树状数组<br>优先队列<br>双端队列<br>有向图<br>无向图<br>// 中序遍历<br>void dfs(TreeNode root) {<br>    if(root == null) return;<br>    dfs(root.left); // 左<br>    System.out.println(root.val); // 根<br>    dfs(root.right); // 右<br>}</p>
+<h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><p>冒泡排序<br>插入排序<br>归并排序<br>快速排序<br>拓扑排序<br>堆排序（大顶堆、小顶堆）<br>桶排序<br>二分搜索<br>广度优先搜索<br>深度优先搜索<br>递归<br>回溯<br>贪婪算法<br>动态规划<br>线性规划<br>区间规划<br>约束规划<br>自底向上<br>自定向下</p>
+<p>解体思路</p>
+<p>输入一棵二叉树的根结点，求该树的深度？<br>输入一课二叉树的根结点，判断该树是不是平衡二叉树？<br>写个算法，输出2~100的素数<br>写二叉树的先序遍历，然后用非递归写<br>写快排，并分析原理<br>在10亿个数中如何快速找到最大的前100个数？<br>C语言中strlen和sizeof的区别<br>链表反转；<br>字符串查找问题；<br>求k数<br>给一个数组，找出这样一些数，这个数左边的数都比它小，右边的数都比它大<br>算法题：leetcode1 两数之和，给出三种方法<br>剑指offer 62 圆圈中剩下的数字（约瑟夫环问题）<br>leetcode 41 缺失的第一个正数<br>汉洛塔<br>如果为了加快进度增加2根竹子 如何得到最优解<br>智力题：三个人分别点了三家外卖，又一个外卖小哥配送，他有多少种配送方式<br>手撕代码题：<br>两种方法链表翻转<br>最大上升子序列<br>问算法题两道反转列表和二分查找；<br>智力题：赛马题，网上能搜到<br>手撕代码：一棵树，从左边看，输出你能看到的结点（我说用层次遍历、队列、哨兵）<br>问了一题智力题：8个杯子，给5个球，每个杯子放一个球，求三个球连续的概率（排列组合知识遗忘+紧张，没做出来。。）<br>    总共有C（8,5）=56种方法<br>    三个空格相连有123、234、···678共6种<br>    而每种情况是等概率的<br>    所以三个空格相连的概率=6/56=3/28<br>给一个字符串去重；<br>决策树的实现原理<br>上海到北京有很多条公交路线，每条线有不同个数的站点，问：如何找到一条最优路线？<br>hash算法又解决了哪些问题，它的时间复杂度是多少等等；<br>问一个有关花开通知蜜蜂，花关通知蜜蜂的问题；<br>问给出二叉树的前序排序和中序排序结果重建二叉树<br>问 从字典中取数据，为什么比在数组中取数据快，底层原理是什么<br>问到大批量数据库导入如何处理优化；<br>问了些性能优化、重构的问题；<br>问用递归写一个阶乘算法；<br>问：要求想一个时间复杂度为O1的解法，来解决一个2的平方的算法题（答 无限空间换时间的策略）；<br>问二叉树翻转(递归翻转);<br>断开连接是只有客户端断开还是两方都能断开；<br>二叉树非递归遍历二叉树先序、中序、后序；<br>ACID银行家算法；<br>图片的获取与切割；<br>一个不多于5位数的整数，反序处理problem；<br>两个IP端是否有交集problem；<br>给字符串，内含很多整数，按指定要求排序后输出指定位置上的整数；<br>如何返回两个int型变量；<br>如何快速找到一个链表的中间节点；<br>1.给两个int a, b不用temp将数值调换；<br>    如: let a = 1,b=2;<br>    a的二进制: 0001<br>    b的二进制: 0010<br>    利用异或运算的规律：两个操作数的位中，相同返回0，不同相返回1<br>    a = a^b;//now a = 0011<br>    b = b^a;//a: 0011, b:0010, now b:0001<br>    a = a^b;//b:0001, a:0011, now a:0010<br>    达到互换<br>2.银行家算法；<br>3. public private；<br>4.先序遍历树；</p>
+<p>两个无限长度链表（也就是可能有环）判断有没有交点<br>10万个数中如何找出前K个数；<br>写一个算法，输出2到100之间的素数（然后不停地问你优化点）；<br>写二叉树的非递归前序遍历；<br>在很多的数据中如何快速找到最大的100个数？<br>二叉树的最大宽度<br>算法：单链表是否存在环；<br>问1秒钟有1000条数据，我只显示10条怎么做；<br>如何判断一个链表是否是无限长的（答判断next指针是否指向NULL）<br>非波拉切数求第n个数的值；<br>写一道二分查找；<br>用中文的数字表示一个十进制数；<br>两个有序数组，找出合并后的中位数。<br> 问了微信红包并发的问题的；<br> 算法：动态规划<br>搜索历史记录的关键字匹配（用的iOS自带的谓词做匹配筛选）<br> 算法：一个数组，有个滑动窗口，求每次窗口中的中位数。<br> 一个较复杂的排序算法:一个多边形分割方法;<br> 一个类似于从篮子里如何取苹果的一个算法;<br> 一个凸多边形，如何求面积。（答把多边形分割成N个三角形，三角形知道三个点的坐标就可以求出面积，全部相加求出总面积。）<br> 你知道矩阵吗？我说知道，他说那你用矩阵变换.<br> 二叉树的镜像；<br> 一组整数求加起来等于0的3个数；<br> 堆排序；<br> 求公共祖先问题<br> 复杂度代码实现；</p>
+<p> 复杂度推导。<br> 问：查找登陆次数最多的十个用户<br> 答：（不确定对不对，我的思路是）先用哈希表保存登陆次数和ID，然后用红黑树保存最大的十个数；<br> 问：简述排序算法。<br> 答：快排，partion函数的原理，堆排（不稳定），归并排序，基数排序；<br> 两个字符串，只打印一个字符串中在另一个字符串中出现的共有的字符<br> Vector是怎么实现的？<br>  最小路径算法（楼主说了Dijkstra和floyd算法）<br> 求一个二叉树的最大深度，该二叉树不确定是不是红黑树<br> 两个人掷硬币，先得到正面的人赢，游戏到有人赢结束。问先掷硬币的人赢的概率<br> 算法：两个链表求和<br> 法 求第n大的数。<br> 堆和优先队列有什么区别？什么是堆排序、最大堆、最小堆？<br> 什么是二分搜索树？什么是平衡二分搜索树？常见的平衡二分搜索树有那几种？AVL树、B树、红黑树有什么区别？<br> 什么是稳定排序？时间复杂度的定义是什么？<br> 算法题:如何计算x^n?</p>
+<p> Q3:算法题:给定二叉树Root以及任意两个节点p/q,问p,q的最近公共父亲节点是什么?</p>
+<p> 有15个瓶子，其中最多有一瓶有毒，现在有四只老鼠，喝了有毒的水之后，第二天就会死。如何在第二天就可以判断出哪个瓶子有毒<br> 答：开始我想到的是常规思路二分法，717，和面试官说了，发现四只老鼠根本不够，面试官友好的提示从老鼠面去想，这时候很快想到了一个老鼠有死和不死，也就0和1两个状态，四只老鼠有16个组合，正好是足够的。但是怎么分配瓶子，还没想好，演算了一会儿，因为面试官这边时间有限，就说思路是正确的。下面有兴趣在看怎么分哈。面试就到此结束了。</p>
+<p> 算法思路：二选一</p>
+<p> Q1:数学题:给一个棍子，随机砍两刀，组成一个三角形的概率是多少?</p>
+<p> Q2:有1000个一模一样的瓶子，其中有999瓶是普通的水，有1瓶是毒药。任何喝下毒药的生命都会在一星期之后死亡。现在你只有10只小白鼠和1个星期的时间，如何检验出哪个瓶子有毒药？<br> 如何用Core Graph画圆<br> ，现在我们来做两个算法题，先说一下nlogn的时间复杂度的排序，并调一种实现。</p>
+<p> 9，给定两个数组，第一个数组是无序的数长为n，第二个数组每个元素是一对下标[(1,3),(2,4)]，表示第一个数组中下标1-3的和和2-4的和，长度为m，我们要把其相对于第一个数组和求出来，选择一个比较优的算法，并分析其时间复杂度。</p>
+<p> 比如1-3和2-4 ，2-3这里出现了重复计算，我们可以用一个额外的数组去保存这些重复运算，这个数组长度为</p>
+<p> n，存储的值是，比如下标是1的时候相对于第一个数组下标0的值加下标1的值，下标是2的时候0+1+2，当我们要取数组的(2,5)范围的值，可以用新创建存储重复运算的数组，取其下标5减去其下标2就可以得出3+4+5的值。这题花了15分钟吧，问了三次面试官才知道题目的意思，一开始想用动态规划，后面得出这种用数组存储重复运算，想递归优化那种思路吧，面试官觉得这个答案正确，叫我说一下时间复杂度，最坏是(0,n)即0+1+2…n(这里是第一个数组的下标，这时候已经把所有可以重用的数据求出来了，即后面我们的运算只需要1的复杂度(2,5)-&gt;缓存数组[5]-缓存数组[2]，所以时间复杂度是n+m。这题差点想放弃，大家碰到算法题听不懂的时候不要太快放弃，面试官会很耐心的重复几次。<br>APP的相似照片检测算法<br>人脸识别能做吗？<br>就说了上个项目做类似朋友圈的优化思路，谈到了空间换时间，缓存，渲染相关的技术点。不得不惊叹腾讯的面试官的逻辑条理，很快抓住了问题的本质。</p>
+<p>该模块引申到的新话题还涉及到了增量更新，内存缓存，本地缓存。细节上还谈到了富文本绘制，Coretext框架的使用，但由于也好久没用了，最后只能凭借印象大概说了下绘制的流程，其实面试官都是由浅入深的，如果这边回答的不够深入。那么后面也就不会有更深入的探讨了。由于之前我们的产品需求比较简单，没有特别完善。这里我也只能说了大概。</p>
+<h1 id="公司性质问题"><a href="#公司性质问题" class="headerlink" title="公司性质问题"></a>公司性质问题</h1><p>自我介绍<br>谈谈自己做过的项目；<br>你还有什么问题问我<br>为什么想来<br>你有什么创新能力<br>聊人生<br>职业规划<br>.会问在之前的项目中担任什么角***r /&gt; 5.再根据你的角色问相关问题。</p>
+<p>为什么在快手实习要来抖音面试<br>你认为字节跳动最吸引你的地方或者说好的地方<br>你觉得你比其他人的优点在哪里<br>你觉得未来自己应该做哪些深入研究<br>你对于基础服务和需求featrue 哪个更有兴趣：<br>互联网上广告的形式都有哪几种；<br>产品设计时需要考虑的因素；<br>安卓和ios的区别和优缺点，并让设计一款更好的操作系统；</p>
+<p>认识到了自己的不足：<br>怎么改善提高：</p>
+<p>大数据中取前100大的数<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/zyq522376829/article/details/47686867">https://blog.csdn.net/zyq522376829/article/details/47686867</a><br>面试题：输入一个十进制整数，将这个数字转化成对应的十五进制数（在十五进制中，A表示10，B表示11，C表示12，D表示13， E表示14），请写入转换程序。例如：235表示为10A；</p>
+<p>地图相关的算法<br>三角剖分</p>
+<p>初期:<br>一.基本算法:<br>(1)枚举. (poj1753,poj2965)<br>(2)贪心(poj1328,poj2109,poj2586)<br>(3)递归和分治法.<br>(4)递推.<br>(5)构造法.(poj3295)<br>(6)模拟法.(poj1068,poj2632,poj1573,poj2993,poj2996)<br>二.图算法:<br>(1)图的深度优先遍历和广度优先遍历.<br>(2)最短路径算法(dijkstra,bellman-ford,floyd,heap+dijkstra)<br>(poj1860,poj3259,poj1062,poj2253,poj1125,poj2240)<br>(3)最小生成树算法(prim,kruskal)<br>(poj1789,poj2485,poj1258,poj3026)<br>(4)拓扑排序 (poj1094)<br>(5)二分图的最大匹配 (匈牙利算法) (poj3041,poj3020)<br>(6)最大流的增广路算法(KM算法). (poj1459,poj3436)<br>三.数据结构.<br>(1)串 (poj1035,poj3080,poj1936)<br>(2)排序(快排、归并排(与逆序数有关)、堆排) (poj2388,poj2299)<br>(3)简单并查集的应用.<br>(4)哈希表和二分查找等高效查找法(数的Hash,串的Hash)<br>(poj3349,poj3274,POJ2151,poj1840,poj2002,poj2503)<br> (5)哈夫曼树(poj3253)<br>(6)堆<br>(7)trie树(静态建树、动态建树) (poj2513)<br>四.简单搜索<br>(1)深度优先搜索 (poj2488,poj3083,poj3009,poj1321,poj2251)<br>(2)广度优先搜索(poj3278,poj1426,poj3126,poj3087.poj3414)<br>(3)简单搜索技巧和剪枝(poj2531,poj1416,poj2676,1129)<br>五.动态规划<br>(1)背包问题. (poj1837,poj1276)<br>(2)型如下表的简单DP(可参考lrj的书 page149):<br>1.E[j]=opt{D+w(i,j)} (poj3267,poj1836,poj1260,poj2533)<br>2.E[i,j]=opt{D[i-1,j]+xi,D[i,j-1]+yj,D[i-1][j-1]+zij} (最长公共子序列)<br>(poj3176,poj1080,poj1159)<br>3.C[i,j]=w[i,j]+opt{C[i,k-1]+C[k,j]}.(最优二分检索树问题)<br>六.数学<br>(1)组合数学:<br>1.加法原理和乘法原理.<br>2.排列组合.<br>3.递推关系.<br>(POJ3252,poj1850,poj1019,poj1942)<br>(2)数论.<br>1.素数与整除问题<br>2.进制位.<br>3.同余模运算.<br>(poj2635, poj3292,poj1845,poj2115)<br>(3)计算方法.<br>1.二分法求解单调函数相关知识.(poj3273,poj3258,poj1905,poj3122)<br>七.计算几何学.<br>(1)几何公式.<br>(2)叉积和点积的运用(如线段相交的判定,点到线段的距离等). (poj2031,poj1039)<br>(3)多边型的简单算法(求面积)和相关判定(点在多边型内,多边型是否相交)<br>(poj1408,poj1584)<br>(4)凸包. (poj2187,poj1113)<br>中级:<br>一.基本算法:<br>(1)C++的标准模版库的应用. (poj3096,poj3007)<br>(2)较为复杂的模拟题的训练(poj3393,poj1472,poj3371,poj1027,poj2706)<br>二.图算法:<br>(1)差分约束系统的建立和求解. (poj1201,poj2983)<br>(2)最小费用最大流(poj2516,poj2195)<br>(3)双连通分量(poj2942)<br>(4)强连通分支及其缩点.(poj2186)<br>(5)图的割边和割点(poj3352)<br>(6)最小割模型、网络流规约(poj3308, )<br>三.数据结构.<br>(1)线段树. (poj2528,poj2828,poj2777,poj2886,poj2750)<br>(2)静态二叉检索树. (poj2482,poj2352)<br>(3)树状树组(poj1195,poj3321)<br>(4)RMQ. (poj3264,poj3368)<br>(5)并查集的高级应用. (poj1703,2492)<br>(6)KMP算法. (poj1961,poj2406)<br>四.搜索<br>(1)最优化剪枝和可行性剪枝<br>(2)搜索的技巧和优化 (poj3411,poj1724)<br>(3)记忆化搜索(poj3373,poj1691)<br>五.动态规划<br>(1)较为复杂的动态规划(如动态规划解特别的施行商问题等)<br>(poj1191,poj1054,poj3280,poj2029,poj2948,poj1925,poj3034)<br>(2)记录状态的动态规划. (POJ3254,poj2411,poj1185)<br>(3)树型动态规划(poj2057,poj1947,poj2486,poj3140)<br>六.数学<br>(1)组合数学:<br>1.容斥原理.<br>2.抽屉原理.<br>3.置换群与Polya定理(poj1286,poj2409,poj3270,poj1026).<br>4.递推关系和母函数.<br>(2)数学.<br>1.高斯消元法(poj2947,poj1487, poj2065,poj1166,poj1222)<br>2.概率问题. (poj3071,poj3440)<br>3.GCD、扩展的欧几里德(中国剩余定理) (poj3101)<br>(3)计算方法.<br>1.0/1分数规划. (poj2976)<br>2.三分法求解单峰(单谷)的极值.<br>3.矩阵法(poj3150,poj3422,poj3070)<br>4.迭代逼近(poj3301)<br>(4)随机化算法(poj3318,poj2454)<br>(5)杂题.<br>(poj1870,poj3296,poj3286,poj1095)<br>七.计算几何学.<br>(1)坐标离散化.<br>(2)扫描线算法(例如求矩形的面积和周长并,常和线段树或堆一起使用).<br>(poj1765,poj1177,poj1151,poj3277,poj2280,poj3004)<br>(3)多边形的内核(半平面交)(poj3130,poj3335)<br>(4)几何工具的综合应用.(poj1819,poj1066,poj2043,poj3227,poj2165,poj3429<br>)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift140%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%95%B4%E7%90%861/" rel="prev" title="UI相关">
+      <i class="fa fa-chevron-left"></i> UI相关
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift142HashMap/" rel="next" title="HashMap">
+      HashMap <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HashMap"><span class="nav-number">2.</span> <span class="nav-text">HashMap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8"><span class="nav-number">3.</span> <span class="nav-text">链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86"><span class="nav-number">4.</span> <span class="nav-text">堆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%88"><span class="nav-number">5.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%9F%E5%88%97"><span class="nav-number">6.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%91"><span class="nav-number">7.</span> <span class="nav-text">树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BC%80%E6%A0%91"><span class="nav-number">7.1.</span> <span class="nav-text">前缀树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%AE%B5%E6%A0%91"><span class="nav-number">7.2.</span> <span class="nav-text">线段树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">7.3.</span> <span class="nav-text">二叉树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%BC%86%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91"><span class="nav-number">7.4.</span> <span class="nav-text">⼆叉搜索树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84"><span class="nav-number">7.5.</span> <span class="nav-text">树状数组</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number"></span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AC%E5%8F%B8%E6%80%A7%E8%B4%A8%E9%97%AE%E9%A2%98"><span class="nav-number"></span> <span class="nav-text">公司性质问题</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

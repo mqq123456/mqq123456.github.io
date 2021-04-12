@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="分类分类中l可以添加那些内容实力方法 类方法 协议 属性（关联对象：）  为什么不能添加属性我们知道在一个类中用@property声明属性，编译器会自动帮我们生成_成员变量和setter&#x2F;getter， 但分类的指针结构体中，根本没有属性列表。所以在分类中用@property声明属性， 既无法生成_成员变量也无法生成setter&#x2F;getter。 因此结论是：我们可以用@property声明属性，编">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OC属性">
+<meta property="og:url" content="http://example.com/2020/09/06/M_Swift128OC%E5%B1%9E%E6%80%A7/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="分类分类中l可以添加那些内容实力方法 类方法 协议 属性（关联对象：）  为什么不能添加属性我们知道在一个类中用@property声明属性，编译器会自动帮我们生成_成员变量和setter&#x2F;getter， 但分类的指针结构体中，根本没有属性列表。所以在分类中用@property声明属性， 既无法生成_成员变量也无法生成setter&#x2F;getter。 因此结论是：我们可以用@property声明属性，编">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-06T09:29:03.000Z">
+<meta property="article:modified_time" content="2020-09-06T09:29:03.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/09/06/M_Swift128OC%E5%B1%9E%E6%80%A7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>OC属性 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift128OC%E5%B1%9E%E6%80%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OC属性
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:29:03" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:03+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><h3 id="分类中l可以添加那些内容"><a href="#分类中l可以添加那些内容" class="headerlink" title="分类中l可以添加那些内容"></a>分类中l可以添加那些内容</h3><pre><code>实力方法
+类方法
+协议
+属性（关联对象：）
+</code></pre>
+<h3 id="为什么不能添加属性"><a href="#为什么不能添加属性" class="headerlink" title="为什么不能添加属性"></a>为什么不能添加属性</h3><pre><code>我们知道在一个类中用@property声明属性，编译器会自动帮我们生成_成员变量和setter/getter，
+但分类的指针结构体中，根本没有属性列表。所以在分类中用@property声明属性，
+既无法生成_成员变量也无法生成setter/getter。
+因此结论是：我们可以用@property声明属性，编译和运行都会通过，只要不使用程序也不会崩溃。
+但如果调用了_成员变量和setter/getter方法，报错就在所难免了。
+可以使用关联对象以及两个方法来模拟构成属性的三个要素。
+</code></pre>
+<h3 id="分类的结构"><a href="#分类的结构" class="headerlink" title="分类的结构"></a>分类的结构</h3><pre><code>Category 是表示一个指向分类的结构体的指针，其定义如下：
+typedef struct objc_category *Category;
+struct objc_category &#123;
+  char *category_name                          OBJC2_UNAVAILABLE; // 分类名
+  char *class_name                             OBJC2_UNAVAILABLE; // 分类所属的类名
+  struct objc_method_list *instance_methods    OBJC2_UNAVAILABLE; // 实例方法列表
+  struct objc_method_list *class_methods       OBJC2_UNAVAILABLE; // 类方法列表
+  struct objc_protocol_list *protocols         OBJC2_UNAVAILABLE; // 分类所实现的协议列表
+&#125;
+</code></pre>
+<h3 id="类扩展与分类的区别如下："><a href="#类扩展与分类的区别如下：" class="headerlink" title="类扩展与分类的区别如下："></a>类扩展与分类的区别如下：</h3><pre><code>&gt;&gt; OC分类属于Runtime运行时特性，是OC语言独有的创新，其他编程语言所不具备这样的特性！ 类扩展属于编译器特性，在编译阶段就会被添加合并到原类中！
+</code></pre>
+<h3 id="分类是如何实现的"><a href="#分类是如何实现的" class="headerlink" title="分类是如何实现的"></a>分类是如何实现的</h3><pre><code>获取cls中未完成整合的所有分类 unattachendCategoriesForClass
+将分类拼接到class上 attachCategories
+倒序遍历所有分类
+获取该分类的方法、协议添加到主类上
+// 添加方法
+rw-&gt;methods.attachLists(mlists,mcount);
+// 添加类方法
+rw-&gt;properties.attachLists(proplists,propcount);
+// 添加协议
+rw-&gt;properties.attachLists(protolists,protocount);
+计算拼接后的元素总数，根据新的总数重新分配内存
+重新设置元素总数
+执行内存移位
+</code></pre>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><pre><code>分类添加的方法可以覆盖原类方法
+原因：分类是在运行时添加到原类上的
+同名分类方法是能生效决定于编译顺序（倒序遍历所有分类）
+名字相同的分类会引起编译报错
+</code></pre>
+<h2 id="关联对象"><a href="#关联对象" class="headerlink" title="关联对象"></a>关联对象</h2><pre><code>关联对象的实现
+获取其维护的一个HashMap，是一个全局容器
+根据对象指针，查找对象对应的ObjectAssociationMap中的map
+添加关联对象
+</code></pre>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><pre><code>void objc_setAssociatedObject (id object, void*key, id value, objc_AssociationPolicy policy)
+此方法以给定的键和策略为某对象设置关联值。
+id objc_getAssociatedObject(id object, void *key)
+此方法根据给定的键从某对象中获取相应的关联对象值。
+void objc_removeAssociatedObjects(id object)
+此方法移除指定对象的全部关联对象。
+</code></pre>
+<h3 id="为什么分类不能添加属性"><a href="#为什么分类不能添加属性" class="headerlink" title="为什么分类不能添加属性"></a>为什么分类不能添加属性</h3><pre><code>在runtime 中，objc_class 结构体大小是固定的，不可能往这里添加数据，只能修改。
+所以，ivars 指向了一个固定区域，只能修改成员变量的值，不能增加成员变量的个数。
+方法列表是一个二维数组，可以修改 *methodLists的值来增加成员方法，虽然没办法扩展methodLists指向的内存区域，
+却可以改变这个内存区域的值（里面存的是指针），因此，可以动态添加方法，不可以添加成员变量。
+</code></pre>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p>编译时决定<br>只以声明的形式存在，多数情况下寄生于宿主的.m类中<br>不能为系统类添加扩展<br>类扩展不仅可以增加方法，还可以增加实例变量（或者属性），只是该实例变量默认是@private类型的（<br>用范围只能在自身类，而不是子类或其他地方）；<br>类扩展是在编译阶段被添加到类中，而类别是在运行时添加到类中<br>类扩展不能像类别那样拥有独立的实现部分（@implementation部分），也就是说，类扩展所声明的方法必须依托对应类的实现部分来实现。<br>其实.m文件中@interface和@implementation就是扩展声明和实现，扩展的实现必须依托原类</p>
+<p>代理<br>代理模式是一种消息传递方式，一个完整的代理模式包括：委托对象、代理对象和协议。<br>代理属性使用weak<br>weak和assign是一种“非拥有关系”的指针，通过这两种修饰符修饰的指针变量，都不会改变被引用对象的引用计数。但是在一个对象被释放后，weak会自动将指针指向nil，而assign则不会。在iOS中，向nil发送消息时不会导致崩溃的，所以assign就会导致野指针的错误<br>代理更加面相过程，block则更面向结果。<br>从性能上来说，block的性能消耗要略大于delegate，因为block会涉及到栈区向堆区拷贝等操作，时间和空间上的消耗都大于代理。而代理只是定义了一个方法列表，在遵守协议对象的objc_protocol_list中添加一个节点，在运行时向遵守协议的对象发送消息即可。</p>
+<p>通知<br>KVO<br>KVC<br>属性关键字</p>
+<p>Objective-C具有相当多的动态特性，表现为三方面：动态类型（Dynamic typing）、动态绑定（Dynamic binding）和动态加载（Dynamic loading）。动态——必须到运行时（run time）才会做的一些事情。</p>
+<p>动态类型：即运行时再决定对象的类型，这种动态特性在日常的应用中非常常见，简单来说就是id类型。事实上，由于静态类型的固定性和可预知性，从而使用的更加广泛。静态类型是强类型，而动态类型属于弱类型，运行时决定接受者。</p>
+<p>动态绑定：基于动态类型，在某个实例对象被确定后，其类型便被确定了，该对象对应的属性和响应消息也被完全确定。</p>
+<p>动态加载：根据需求加载所需要的资源，最基本就是不同机型的适配，例如，在Retina设备上加载@2x的图片，而在老一些的普通苹设备上加载原图，让程序在运行时添加代码模块以及其他资源，用户可根据需要加载一些可执行代码和资源，而不是在启动时就加载所有组件，可执行代码可以含有和程序运行时整合的新类。</p>
+<p>#include与#import的区别、#import 与@class 的区别</p>
+<p>#include 和#import其效果相同,都是查询类中定义的行为(方法);</p>
+<p>#import不会引起交叉编译,确保头文件只会被导入一次；</p>
+<p>@class 的表明,只定 义了类的名称,而具体类的行为是未知的,一般用于.h 文件；</p>
+<p>@class 比#import 编译效率更高。<br> 解释 const, static, inline 关键字<br>const 修饰指针,或者常量,比如不可变,<br>static 修饰变量表示作用域,比如全局的私有变量,函数内部的 static 是内部的私有变量。<br>Static 修饰函数表示函数是文件作用域<br>Inline 表示内联。一般来说 inline 需要和 static 联合用 一般用法是 static inline int max(int a, int b) { </p>
+<p>return a&gt;b?a:b; } </p>
+<p>static inline作用是和宏类似,只不过是方便调试(宏不能断掉调 试,static inline 可以)。运行时候是一样的。<br>一般 c/c++短小的函数都用 static inline 内联函数 </p>
+<p>load不是去类对象方法列表，遍历查找的，而是直接找到对象，拿到内存地址去调用的<br>先调用父类的load方法再调用子类的load方法</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift129RunTime/" rel="prev" title="NSObject数据结构">
+      <i class="fa fa-chevron-left"></i> NSObject数据结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/06/M_Swift130Block/" rel="next" title="Block">
+      Block <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E4%B8%ADl%E5%8F%AF%E4%BB%A5%E6%B7%BB%E5%8A%A0%E9%82%A3%E4%BA%9B%E5%86%85%E5%AE%B9"><span class="nav-number">1.1.</span> <span class="nav-text">分类中l可以添加那些内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%B7%BB%E5%8A%A0%E5%B1%9E%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">为什么不能添加属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">分类的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E6%89%A9%E5%B1%95%E4%B8%8E%E5%88%86%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="nav-number">1.4.</span> <span class="nav-text">类扩展与分类的区别如下：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84"><span class="nav-number">1.5.</span> <span class="nav-text">分类是如何实现的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">1.6.</span> <span class="nav-text">说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.</span> <span class="nav-text">关联对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%86%E7%B1%BB%E4%B8%8D%E8%83%BD%E6%B7%BB%E5%8A%A0%E5%B1%9E%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">为什么分类不能添加属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95"><span class="nav-number">3.</span> <span class="nav-text">扩展</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

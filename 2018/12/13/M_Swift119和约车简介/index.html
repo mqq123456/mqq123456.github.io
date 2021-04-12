@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="经过两个多星期的奋战，和约车差不多成型了总感觉缺少点什么，但是无所谓了，服务的事情能解决应该就不要客户端去调整了。这两天写了一下开发申请单，也完善了一下功能模块。在写申请单的时候，也对工程有了一个规划，模块分的也更详细了从工程角度来讲，我觉得是有收获的，以后再开发一个东西的时候，我们会更方便的了解这个东西，也能更全面的去分析项目，也能更全面的把握项目，不至于手忙脚乱，不至于代码写的一团糟。和约车功">
+<meta property="og:type" content="article">
+<meta property="og:title" content="和约车简介">
+<meta property="og:url" content="http://example.com/2018/12/13/M_Swift119%E5%92%8C%E7%BA%A6%E8%BD%A6%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="经过两个多星期的奋战，和约车差不多成型了总感觉缺少点什么，但是无所谓了，服务的事情能解决应该就不要客户端去调整了。这两天写了一下开发申请单，也完善了一下功能模块。在写申请单的时候，也对工程有了一个规划，模块分的也更详细了从工程角度来讲，我觉得是有收获的，以后再开发一个东西的时候，我们会更方便的了解这个东西，也能更全面的去分析项目，也能更全面的把握项目，不至于手忙脚乱，不至于代码写的一团糟。和约车功">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-12-13T03:57:07.000Z">
+<meta property="article:modified_time" content="2018-12-13T03:57:07.000Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2018/12/13/M_Swift119%E5%92%8C%E7%BA%A6%E8%BD%A6%E7%AE%80%E4%BB%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>和约车简介 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/13/M_Swift119%E5%92%8C%E7%BA%A6%E8%BD%A6%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          和约车简介
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-13 11:57:07" itemprop="dateCreated datePublished" datetime="2018-12-13T11:57:07+08:00">2018-12-13</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>经过两个多星期的奋战，和约车差不多成型了总感觉缺少点什么，但是无所谓了，服务的事情能解决应该就不要客户端去调整了。<br>这两天写了一下开发申请单，也完善了一下功能模块。<br>在写申请单的时候，也对工程有了一个规划，模块分的也更详细了<br>从工程角度来讲，我觉得是有收获的，以后再开发一个东西的时候，我们会更方便的了解这个东西，也能更全面的去分析项目，也能更全面的把握项目，不至于手忙脚乱，不至于代码写的一团糟。<br>和约车功能模块<br>    工程配置<br>    网络服务<br>    第三方SDK<br>    资源文件<br>    app业务模块<br>和地图APP模块名称<br>    主页<br>        主页面<br>    添加路线<br>        添加路线页面<br>    消息<br>        我的消息页面<br>        聊天页面<br>    我的<br>        个人中心页面<br>        历史订单页面<br>        历史评价页面<br>        个人信息页面<br>        修改昵称页面<br>        设置页面<br>        关于页面<br>        上下班设置页面<br>    车主认证<br>        车主认证页面<br>        车型选择页面<br>    发单<br>        发单页面<br>    订单<br>        等待接单页面<br>        订单详情页面<br>        订单支付页面<br>    登录<br>        验证码登录页面<br>        密码登录页面<br>        密码修改页面<br>        服务协议页面<br>    选点<br>        地图选点搜索页面</p>
+<p>资源文件<br>        统一登录SDK<br>        极光推送SDK<br>        高德搜索SDK<br>        地图SDK<br>Libs<br>        网络请求<br>        列表空试图显示<br>        日志输出<br>        Toast<br>images<br>        图片资源</p>
+<p>工程描述<br>    数据存储<br>        因为项目不是特别的大，所以数据存储这方面我全部使用了NSUserdefult，专门写了一个类，用户所有数据存储，提供接口，外面调用<br>    常量<br>        项目中不免会用到一些配置的东西，我都是写在这里，一些sdk的key，版本号，通用的颜色，通知名称，屏幕宽高等等<br>        此外还包括了一些常用的类，方便头文件中写太多。<br>    单例<br>        在开发中不免使用到单例，我想和约车选择起点和终点用单例是再好不过了，因为我们不用考虑那么多了，在进程生命周期内也会一直存在。<br>    时间处理<br>        这个有点坑，说实话，我到现在也有点晕，很多时候获取的时间老是不准。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/13/M_Swift118%E6%96%B0%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/" rel="prev" title="新项目总结">
+      <i class="fa fa-chevron-left"></i> 新项目总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/06/07/M_Swift152GLSL-%E5%8F%98%E9%87%8F%E5%92%8C%E7%B1%BB%E5%9E%8B/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
