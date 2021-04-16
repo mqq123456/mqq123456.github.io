@@ -148,6 +148,279 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net1NSThread/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net1NSThread/" class="post-title-link" itemprop="url">NSThread</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 00:08:41" itemprop="dateCreated datePublished" datetime="2016-07-31T00:08:41+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>什么是NSThread？</p>
+</blockquote>
+<p>NSThread 是ios提供的操作和使用线程的一个类<br>线程：<br>进程：理解，活着的程序，是程序执行的一个操作系统实体</p>
+<blockquote>
+<p>NSThread的创建线程</p>
+</blockquote>
+<p>//每个线程执行对应一个方法<br>NSThread *thread1=[[NSThread alloc]initWithTarget:self selector:@selector(thread1:) object:nil];<br>//启动线程<br>[thread1 start];</p>
+<p>//以类方法创建线程<br>//    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];<br>//可以实现同时执行的效果，以前都是先执行A后执行B，现在有了多线程，可以实现同时执行</p>
+<blockquote>
+<p>为什么要实行线程</p>
+</blockquote>
+<p>//UI界面中如果直接执行耗时任务的，界面会卡死，为了能让界面执行耗时任务的时候继续反应，使用新的线程去执行耗时任务<br>//应用场合：下载网络文件，同时执行多个任务，加载大文件，加载大数据<br>//3.为什么要实行线程<br>UIButton *button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(100, 100, 100, 30);<br>[button setTitle:@”耗时任务” forState:UIControlStateNormal];<br>[self.view addSubview:button];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>-(void)btnClick:(UIButton *)button<br>{<br>    //暂停5秒<br>    //    [NSThread sleepForTimeInterval:5];<br>    //    [self dealThread2:nil];<br>    //    如果直接执行的话UI界面会卡死，没有反应<br>    //开启一个新的线程执行<br>    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];</p>
+<p>}</p>
+<p>//4.监控线程的执行完成<br>//如何知道那个线程执行接收，使用block–以后要学<br>//4.监控线程的执行完成<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealThreadExit:) name:NSThreadWillExitNotification object:nil];<br>-(void)dealThreadExit:(NSNotification *)no<br>{<br>    NSLog(@”线程执行完成”);<br>    NSLog(@”ui=%@”,no.userInfo);<br>}<br>//5.线程的控制，线程同步<br>//遇到情况：多个线程访问同一块数据<br>//如何解决：<br>//a+10   1.先从内存拿出，修改，再放回去<br>//访问数据的时候加锁<br>//5.线程的控制，线程同步<br>_lock=[[NSLock alloc]init];</p>
+<p>[NSThread detachNewThreadSelector:@selector(addFunc:) toTarget:self withObject:nil];<br>[NSThread detachNewThreadSelector:@selector(subFunc) toTarget:self withObject:nil];</p>
+<p>[self setAddBlock:^(NSString *mmm){<br>    NSLog(@”hbbbgeregour====%@”,mmm);<br>}];</p>
+<p>#pragma mark - 线程同步<br>-(void)addFunc:(NSThread *)th<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        [_lock lock];<br>        _num++;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        [_lock unlock];</p>
+<pre><code>&#125;
+NSLog(@&quot;add num=%d&quot;,_num);
+if (self.addBlock)
+&#123;
+    self.addBlock(@&quot;add&quot;);
+&#125;
+</code></pre>
+<p>}<br>-(void)subFunc<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        //        [_lock lock];<br>        _num–;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        //        [_lock unlock];</p>
+<pre><code>&#125;
+NSLog(@&quot;sub num=%d&quot;,_num);
+</code></pre>
+<p>}</p>
+<p>//6.UI主线程如何操作UI？<br>//ui主线程，<br>//    工作子线程<br>//    注意：不要在子线程中直接操作UI，交给主线程UI；<br>[self howToUpDateUIInSubThread];<br>-(void)howToUpDateUIInSubThread<br>{<br>    _progress =[[UIProgressView alloc]initWithFrame:CGRectMake(10, 200, 300, 20)];<br>    [self.view addSubview:_progress];<br>    //添加一个按钮<br>    UIButton *button=[UIButton buttonWithType:UIButtonTypeSystem];<br>    button.frame=CGRectMake(100, 300, 100, 30);<br>    [button setTitle:@”下载文件” forState:UIControlStateNormal];<br>    [self.view addSubview:button];<br>    [button addTarget:self action:@selector(startDownloadClick:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)startDownloadClick:(UIButton *)button<br>{<br>    [NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:nil];<br>}<br>-(void)download:(NSThread <em>)thread<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //更新UI<br>        //        _progress.progress+=0.01;<br>        //在主线程中执行一个方法<br>        [self performSelectorOnMainThread:@selector(upDateUI) withObject:nil waitUntilDone:NO];<br>        [NSThread sleepForTimeInterval:0.001];<br>        NSLog(@”进度为%f%%”,_progress.progress</em>100);<br>    }<br>}<br>-(void)upDateUI<br>{<br>    _progress.progress+=0.001;<br>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/C_UI13UITableView/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/C_UI13UITableView/" class="post-title-link" itemprop="url">UITableView</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 00:00:01" itemprop="dateCreated datePublished" datetime="2016-07-31T00:00:01+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>我们为什么要实现单元格的复用机制</p>
+</blockquote>
+<p>单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存<br>单元格的复用机制原理<br>一开始的时候我们创建了桌面最多能显示的单元格数，cell<br>当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格<br>因此我们就做到了只生成了屏幕范围可显示的单元格个数，就实现滑动表格试图时，以后不会再init alloc单元格cell了，从而实现了节省内存的原理<br>单元格的复用机制<br>-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath<br>{</p>
+<p>定义一个cell标示符，用以区分不同的cell<br>以后有不同风格的cell就可以使用了<br>static NSString *cellID=@”cell”;<br>从cell复用池中拿到可用的cell<br>UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:cellID];<br>检测，拿到一个可用的cell<br>if(cell ==nil)<br>{<br>创建新的cell<br>cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];<br>}</p>
+<p>&lt;3&gt;显示分组数据<br>显示每段       多少section数据<br>-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView<br>{<br>return _dataArray.count;<br>}<br>告诉表格每段要显示多少行<br>重要参数：section每次传入制定序号<br>-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section<br>{<br>NSArray *array=_dataArray[section];<br>return array.count;<br>}</p>
+<blockquote>
+<p>单元格行的高度</p>
+</blockquote>
+<p>//通过这个方法可以指定任意行的高度。<br>-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath<br>{<br>    return 44.0f;<br>}</p>
+<p>单元格的背景<br>单元格的内容视图contentView</p>
+<blockquote>
+<p>某行选中的事件处理</p>
+</blockquote>
+<p>-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath<br>{}<br>//某行被取消选中了<br>-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath<br>{<br>NSLog(@”被取消选中了”);<br>}</p>
+<blockquote>
+<p>添加头部视图和尾部视图</p>
+</blockquote>
+<p>//    添加头部试图<br>UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];<br>imageView.image=[UIImage imageNamed:@”fenjing.jpg”];<br>_tableView.tableHeaderView=imageView;<br>//    添加尾部试图<br>UIImageView *footImage=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 150)];<br>footImage.image=[UIImage imageNamed:@”head2.jpg”];<br>_tableView.tableFooterView=footImage;</p>
+<blockquote>
+<p>表格视图的编辑(难点)</p>
+</blockquote>
+<p>&lt;1&gt;单元格的删除操作[重点, 必须掌握]</p>
+<p>&lt;2&gt;单元格的增加操作</p>
+<p>&lt;3&gt;单元格的移动操作</p>
+<p>&lt;4&gt;多行选中和多行删除操作</p>
+<p>2.表格视图的设置</p>
+<p>&lt;1&gt;设置表格的索引</p>
+<p>&lt;2&gt;设置段头和段尾</p>
+<p>&lt;3&gt;表格的分割线</p>
+<p>3.表格视图的搜索</p>
+<p>&lt;1&gt;添加搜索条 UISearchBar–&gt;tableHeaderView</p>
+<p>4.表格视图控制器</p>
+<blockquote>
+<p>cell的定制</p>
+</blockquote>
+<p>1.我们使用MVC模式实现cell的定制。<br>什么是MVC模式<br>V是：VIew视图     作用：展示数据，接收用户交互<br>C是：Controller控制器<br>作用：负责把数据从Model中拿出来放到View上。<br>根据View的操作区修改数据。<br>M是：Model模型    作用：存储和表示数据</p>
+<p>理解：简单理解为每个界面分为三层——Model，VIew，Controller<br>效果：让开发变得更简单，可维护性更强，可扩展性更强，可阅读性更强<br>下面我们就具体看一下MVC模式应该怎么设计，在MVC模式下如何定制cell<br>1.Model的设计<br>这里：你要建立数据模型，存储数据（数据模型：就是oc中的类）<br>现在获取的数据本质上是原始数据，<br>以后原始数据有很多中  plist  JSON  数据库  文本文件<br>注意：不要直接使用原始数据<br>把所有的原始数据存储到数据模型Model<br>将解析数据存储到Model中<br>建立数组接收每个Model对象。</p>
+<p>2.cell的定制<br>就是将cell上所有的空间全部封装成一个类。<br>在这个类里，我们创建这些控件，设置相应的坐标<br>将这些类添加到self.contentView</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI11UIScrollView/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/30/C_UI11UIScrollView/" class="post-title-link" itemprop="url">UIScrollView</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-30 23:54:29" itemprop="dateCreated datePublished" datetime="2016-07-30T23:54:29+08:00">2016-07-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>属性</p>
+</blockquote>
+<p>内容区域contentSize<br>@property(nonatomic) CGSize contentSize;<br>偏移量contentOffset<br>@property(nonatomic) CGPoint contentOffset;<br>弹簧效果bounces<br>@property(nonatomic) BOOL bounces;<br>分页效果pagingEnabled<br>@property(nonatomic,getter=isPagingEnabled) BOOL pagingEnabled;<br>允许滑动视图本身，如果设为no只能通过方法滑动，不能直接用手滑动<br>@property(nonatomic,getter=isScrollEnabled) BOOL scrollEnabled;<br>显示水平进度条showsHorizontalScrollIndicator<br>@property(nonatomic) BOOL showsHorizontalScrollIndicator;<br>显示垂直进度条showsVerticalScrollIndicator<br>@property(nonatomic) BOOL showsVerticalScrollIndicator;<br>放大和缩小的倍数<br>@property(nonatomic) CGFloat minimumZoomScale;<br>@property(nonatomic) CGFloat maximumZoomScale;</p>
+<p>1缩放到某个区域，（具体出现的区域受缩放倍数的影响）</p>
+<ul>
+<li>(void)zoomToRect:(CGRect)rect animated:(BOOL)animated;</li>
+</ul>
+<p>2种通过代码滑动视图的方法，一个是设置偏移量，一个是滑动到某个区域（常用第一个）</p>
+<ul>
+<li>(void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;</li>
+<li>(void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated;</li>
+</ul>
+<blockquote>
+<p>滚动视图的基本使用</p>
+</blockquote>
+<p>演示UIScrollView滚动试图基本使用<br>UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 11000, 5600)];<br>imageView.image=[UIImage imageNamed:@”1001.jpg”];<br>[self.view addSubview:imageView];<br>使用滚动试图<br>声明一个滚动试图<br>UIScrollView *scrollView=[[UIScrollView alloc]initWithFrame:self.view.bounds];<br>[self.view addSubview:scrollView];<br>imageView放到了滚动试图中<br>[scrollView addSubview:imageView];<br>滚动试图比较特殊，有两个大小。本身大小，其中内容大小<br>scrollView.contentSize=CGSizeMake(11000, 5600);<br>滚动试图常用属性<br>是否显示水平或竖直滚动条。<br>水平，横向<br>scrollView.showsHorizontalScrollIndicator=NO;<br>竖直，纵向<br>scrollView.showsVerticalScrollIndicator=NO;<br>设置分页滚动<br>scrollView.pagingEnabled=YES;<br>设置是否可以拉出空白区域，bounces蹦跳  scrollView.bounces=YES;</p>
+<blockquote>
+<p>滚动视图的基本原理 + 滚动视图的事件处理</p>
+</blockquote>
+<p>滚动试图缩放和基本原理UIScrollViewDelegate<br>scrollView.delegate=self;<br>开始拖拽<br>滚动。。。。。<br>结束拖拽<br>开始减速<br>滚动。。。。。<br>减速结束（滚动停止）；<br>【UIScrollViewDelegate】<br>代理方法<br>滑动过程中</p>
+<ul>
+<li>(void)scrollViewDidScroll:(UIScrollView *)scrollView;<br>开始拖动</li>
+<li>(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;<br>停止拖动</li>
+<li>(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;<br>开始滑动</li>
+<li>(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;<br>停止滑动</li>
+<li>(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView; </li>
+</ul>
+<blockquote>
+<p>滚动视图的缩放</p>
+</blockquote>
+<p>设置最大最小缩放比例<br>通过代理方法，告诉滚动试图，哪个试图应该缩放<br>scrollView.maximumZoomScale=10;<br>scrollView.minimumZoomScale=0.1;<br>代理方法，告诉scrollView哪个试图应该缩放<br>当试图滚动的时候执行<br>试图缩放。<br>允许缩放的视图(一个scrollview中只能有一个可以缩放且必须设置可以缩放的范围)<br>-(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView<br>{<br>返回被缩放的试图<br>return imageView;<br>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI12%E6%89%8B%E5%8A%BF/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -792,274 +1065,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI4UIView/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI4UIView/" class="post-title-link" itemprop="url">UIView</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:32:51" itemprop="dateCreated datePublished" datetime="2016-07-30T23:32:51+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>创建</p>
-</blockquote>
-<p>UIView *view=[[UIView alloc]init];</p>
-<blockquote>
-<p>坐标</p>
-</blockquote>
-<p>view.frame=CGRectMake(100, 100, 100, 100);</p>
-<blockquote>
-<p>中心位置</p>
-</blockquote>
-<p>view.center=CGPointMake(200, 200);</p>
-<blockquote>
-<p>大小   不想改变位置，想改变大小(设置bounds)</p>
-</blockquote>
-<p>view.bounds=CGRectMake(0, 0, 50, 50);</p>
-<blockquote>
-<p>tag值  区分不同控件（区分多个按钮）</p>
-</blockquote>
-<p>view.tag=100;</p>
-<blockquote>
-<p>是否打开用户交互</p>
-</blockquote>
-<p>有的控件UIImageView默认不支持<br>后果：按钮直接加到UIImageView无法点击<br>view.userInteractionEnabled=YES;    </p>
-<blockquote>
-<p>视图之间的相互组合嵌套</p>
-</blockquote>
-<pre><code>[view addSubview:view1]
-</code></pre>
-<blockquote>
-<p>视图的层次感（层级关系）</p>
-</blockquote>
-<p>视图层次感规律：先加入的在下面，后加入的在上面。</p>
-<ol>
-<li>获取window的所有子视图<br>NSLog(@”%@”,self.window.subviews);</li>
-</ol>
-<p>UIView *view1=[[UIView alloc]initWithFrame:CGRectMake(100, 240, 100, 100)];<br>view1.backgroundColor=[UIColor redColor];<br>[self.window addSubview:view1];<br>UIView *view2=[[UIView alloc]initWithFrame:CGRectMake(150, 310, 100, 100)];<br>view2.backgroundColor=[UIColor greenColor];<br>[self.window addSubview:view2];<br>UIView *view3=[[UIView alloc]initWithFrame:CGRectMake(200, 360, 100, 100)];<br>view3.backgroundColor=[UIColor blueColor];<br>[self.window addSubview:view3];<br>2.把view2放到最上面<br>[self.window bringSubviewToFront:view2];<br>3.把view2放到最下面<br>[self.window sendSubviewToBack:view2];<br>4.把某个视图插入到某个视图上面<br>UIView *view4=[[UIView alloc]initWithFrame:CGRectMake(120, 260, 100, 100)];<br>view4.backgroundColor=[UIColor purpleColor];<br>把视图插入到某个视图上面<br>[self.window insertSubview:view4 belowSubview:view1];<br>5.交换两个层<br>[self.window exchangeSubviewAtIndex:1 withSubviewAtIndex:2];<br>6.图层是可以放进数组里面<br>NSArray *subViews=self.window.subviews;<br>注意：当你交换了两个图层位置时，数组中相应的位置也会发生改变。<br>7.隐藏一个视图<br>view4.hidden=YES;<br>8.删除一个视图。<br>[view4 removeFromSuperview];</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI3UIImageView/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI3UIImageView/" class="post-title-link" itemprop="url">UIImageView</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:29:58" itemprop="dateCreated datePublished" datetime="2016-07-30T23:29:58+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>声明</p>
-</blockquote>
-<p>UIImageView *imageView = [[UIImageView alloc] init];<br>iphone5s 320x568<br>细节: 显示图片根据frame缩放</p>
-<blockquote>
-<p>设置位置</p>
-</blockquote>
-<p>imageView.frame = CGRectMake(0, 0, 320, 568);</p>
-<blockquote>
-<p>添加图片</p>
-</blockquote>
-<p>（注意：image是UIImageView的必备属性 ）<br>imageView.image = [UIImage imageNamed:@”back2.jpg”];</p>
-<blockquote>
-<p>显示到桌面</p>
-</blockquote>
-<p>[self.window addSubview:imageView];</p>
-<blockquote>
-<p>在设置背景图片时的拉伸问题</p>
-</blockquote>
-<p>图片拉伸中的问题。图片是向左向上拉伸的。<br>拉伸的距离相当于图片最顶端和最左边向里多少距离的位置向上向左拉伸<br>UIImageView *im=[[UIImageView alloc]initWithFrame:CGRectMake(100, 200, 100, 100)];<br>im.image=[[UIImage imageNamed:@”logo_title”]stretchableImageWithLeftCapWidth:4 topCapHeight:4];</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI2Button/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI2Button/" class="post-title-link" itemprop="url">UIButton</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:27:57" itemprop="dateCreated datePublished" datetime="2016-07-30T23:27:57+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>按钮的创建</p>
-</blockquote>
-<p>以后经常使用类方法创建按钮buttonWithType<br>UIButton *button = [[UIButton alloc]init];<br>系统样式的按钮          UIButtonTypeSystem<br>自定义的按钮              UIButtonTypeCustom<br>详情按钮         UIButtonTypeDetailDisclosure,<br>灰色按钮         UIButtonTypeInfoLight,<br>白色信息按钮      UIButtonTypeInfoDark,<br>加号按钮         UIButtonTypeContactAdd,<br>圆角按钮         UIButtonTypeRoundedRect<br>ios6系统按钮是圆角矩形<br>ios7取消了边框</p>
-<blockquote>
-<p>坐标</p>
-</blockquote>
-<p>button.frame= CGRectMake(100, 100, 100, 30);</p>
-<blockquote>
-<p>设置文本</p>
-</blockquote>
-<p>注意：按钮有多种状态，（正常，高亮，禁止）<br>UIControlStateNormal表示正常状态<br>UIControlStateHighlighted表示高亮状态<br>[button setTitle:@”按我啊” forState:UIControlStateNormal];<br>3.1文本颜色<br>设置文本颜色为红色。<br>[button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];<br>3.2设置文本字体<br>button.titleLabel.font=[UIFont systemFontOfSize:17];</p>
-<blockquote>
-<p>按钮的tag值</p>
-</blockquote>
-<p>button.tag=100; </p>
-<blockquote>
-<p>点击时效果</p>
-</blockquote>
-<p>点击时高亮button.showsTouchWhenHighlighted=YES;<br>禁用状态下按钮是否变暗adjustsImageWhenDisabled<br>高亮状态下按钮是否变暗adjustsImageWhenHighlighted</p>
-<blockquote>
-<p>按钮的点击事件处理</p>
-</blockquote>
-<p>告诉按谬你被执行我定义方法<br>UIControlEventTouchUpInside按钮被点击后弹起，<br>参数1，参数2，哪个对象哪个方法，<br>当按钮被点击弹起瞬间执行方法UIControlEventTouchUpInside<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];</p>
-<blockquote>
-<p>启用禁用按钮</p>
-</blockquote>
-<p>button.enabled=YES;</p>
-<blockquote>
-<p>设置圆角矩形</p>
-</blockquote>
-<p>button.layer.cornerRadius=5;<br>允许剪切，不加可能没有效果。<br>button.clipsToBounds=YES;</p>
-<blockquote>
-<p>图片按钮</p>
-</blockquote>
-<p>1.图片按钮要设置为自定义类型的按钮。<br>UIImage *image=[UIImage imageNamed:@”屏幕快照 2015-01-21 下午2.54.00.png”];<br>添加图片<br>[imageButton setBackgroundImage:image forState:UIControlStateNormal];<br>2.设置图片文字的位置（可以实现     图片文字在按钮上上下左右移动）<br>imageButton.imageEdgeInsets=UIEdgeInsetsMake(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right);<br>imageButton.titleEdgeInsets = UIEdgeInsetsMake(0, -100, 0, 0)<br>注意 ：setImage 和setBackgroundImage区别<br>setImage是设置图片，不可以改变图片的大小，可以通过imageEdgeInsetsMake设置图片的位置，<br>setBackgroundImage是将图片设置为按钮的背景，相当于平铺效果。</p>
-<blockquote>
-<p>在按钮上添加UIImageView</p>
-</blockquote>
-<p>1.声明<br>UIImageView *imageView = [[UIImageView alloc] init];<br>2.设置位置（注意以父视图为准）<br>imageView.frame = CGRectMake(0, 0, 150, 30);<br>3.添加图片<br>imageView.image = [UIImage imageNamed:@”back2.jpg”];<br>4.添加到按钮上<br>[imagebutton addSubview:imageView];</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1129,7 +1134,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-count">269</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

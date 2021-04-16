@@ -148,6 +148,227 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/N_Android11%E5%BC%80%E5%8F%91%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/07/24/N_Android11%E5%BC%80%E5%8F%91%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">Android开发整理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-07-24 20:01:11" itemprop="dateCreated datePublished" datetime="2018-07-24T20:01:11+08:00">2018-07-24</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>做安卓开发也算是有一些时间了，一直都没有想过要整理一些东西，最近不是太忙，想着能整理一些，对自己也是一个提升吧。<br>我没有什么整理的头绪，也没有什么脉络，其实网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Android项目目录结构<br>Activity：应用被打开时显示的界面<br>src：项目代码<br>R.java：项目所有的资源文件<br>Android.jar：Android的jar包，倒入此包方可使用Android的api<br>libs：导入第三方jar包<br>assets：存放资源文件，比如mp3，视频文件<br>bin：存放编译打包的文件<br>res：存放资源文件<br>drawable：存放图片文件<br>layout：存放布局文件<br>menu：定义菜单的样式<br>String.xml:存放字符串资源</p>
+<p>Android的配置文件<br>指定应用的包名<br>package= “com.item.helloworld”<br>data/data/com.item.helloworld<br>应用生成的文件都在此路径<br>Android的四大组件使用前全部都需要在此清单文件中配置</p>
+<p>常用的adb指令<br>adb start-server ：启动adb进程<br>adb kill-server: 杀死进程<br>adb divices :查看当前开发环境链接的设备<br>adb install xxx.apk 往模拟器安装apk<br>adb uninstall 包名： 删除模拟器中应用<br>adb shell ： 进入linux命令</p>
+<p>常用布局：线性布局<br>LinerLayout<br>指定各个节点排列方向<br>android：orientation = “horizontal”<br>设置右对齐<br>android：layout_gravity=”right”<br>当竖直布局时，只能左右对齐和水平居中，顶部底部对齐竖直剧中无效<br>当水平对齐时，只能顶部底部对齐，和竖直居中<br>线性布局非常重要的一个属性：权重<br>android：layout_weight=’1’<br>权重：按照比例分配屏幕的剩余宽度或者高度</p>
+<p>常见布局：相对布局<br>RelativeLayout<br>组件默认左对齐，顶部对齐<br>设置组件制定组件的右边<br>android:layout_toRightOf=”id/tv1”<br>设置右对齐父控件<br>android：layout_alignParentRight=”true”</p>
+<p>帧布局：FrameLayout<br>默认组件都是左对齐和顶部对齐，每个组件相当于一个div</p>
+<p>文件读写操作<br>Ram内存：运行内存，相当于电脑内存<br>Rom内存：内部存储空间，相当于电脑硬盘<br>sd卡：外部存储空间，相当于电脑移动硬盘<br>//持久化保存数据<br>File file = new File(“data/data/com.itheima.rwinrom/info.txt”);<br>FileOutputStream fos = new FileOutputStream(file);<br>fos.write((name + “##” + pass).getBytes());<br>fos.close();<br>读取数据前先检测文件是否存在<br>if(file.exists())<br>读取保存的数据，也是直接开文件输入流读取<br>File file = new File(“data/data/com.itheima.rwinrom/info.txt”);<br>FileInputStream fis = new FileInputStream(file);<br>//把字节流转换成字符流<br>BufferedReader br = new BufferedReader(new InputStreamReader(fis));<br>String text = br.readLine();<br>String[] s = text.split(“##”);</p>
+<p>SharePreference<br>用于存储账号密码<br>往SharePrefreence写数据<br>拿到一个SharePreference对象<br>SharePrefrence sp = getSharePrefenrences(“config”,MODE_PRIVATE);<br>拿到编辑器<br>Editor ed = sp.edit();<br>写数据<br>ed.putBoolen(“name”,name)<br>ed.commit();<br>从SharedPreference里取数据<br>SharedPreferences sp = getSharedPreferences(“config”, MODE_PRIVATE);<br>//从SharedPreference里取数据<br>String name = sp.getBoolean(“name”, “”);</p>
+<p>ListView<br>MVC结构<br>M：model模型层，要显示的数据集合<br>V：view试图层，用户看到的界面–ListView<br>C：controller控制层，操作数据如何显示—adapter对象</p>
+<p>BaseAdapter</p>
+<p>必须实现的两个方法</p>
+<p>第一个</p>
+<p>//系统调用此方法，用来获知模型层有多少条数据<br>@Override<br>public int getCount() {<br>return people.size();<br>}</p>
+<p>第二个</p>
+<p>//系统调用此方法，获取要显示至ListView的View对象<br>//position:是return的View对象所对应的数据在集合中的位置<br>@Override<br>public View getView(int position, View convertView, ViewGroup parent) {<br>System.out.println(“getView方法调用” + position);<br>TextView tv = new TextView(MainActivity.this);<br>//拿到集合中的元素<br>Person p = people.get(position);<br>tv.setText(p.toString());</p>
+<p>//把TextView的对象返回出去，它会变成ListView的条目<br>return tv;<br>}</p>
+<p>消息队列<br>主线程创建时，系统会同事创建消息队列对象（MessageQueue）和消息轮询器对象（Looper）<br>轮询器的作用，就是不停的检测消息队列中是否有消息（Message）<br>Looper一旦发现Message Queue中有消息，就会把消息取出来，然后把消息扔给Handler对象，Handler会调用自己HandleMessage方法处理这条消息<br>Handler handler = new Handler() {<br>主线程有一个消息轮询器looper，不断检测消息队列是否有新消息，如果发现有新消息，自动调用此方法，注意：此方法是主线程运行的<br>public void handleMessage(android.os.Message msg) {</p>
+<p>}<br>}<br>在子线程中使用Handler对象往消息队列里发消息<br>创建消息对象<br>Message msg = new Message（）；<br>//消息的obj属性可以付给任意对象，通过这个属性可以携带数据<br>msg.obj = bm;<br>//what属性相当于一个标签，用于区分不同的消息，从而运行不同的代码<br>msg.what = 1<br>handler.sendMessage(msg);</p>
+<p>Activity生命周期（掌握）</p>
+<p>void onCreate()</p>
+<p>Activity已经被创建完毕<br>void onStart()</p>
+<p>Activity已经显示在屏幕，但没有得到焦点<br>void onResume()</p>
+<p>Activity得到焦点，可以与用户交互<br>void onPause()</p>
+<p>Activity失去焦点，无法再与用户交互，但依然可见<br>void onStop()</p>
+<p>Activity不可见，进入后台<br>void onDestroy()</p>
+<p>Activity被销毁<br>void onRestart()</p>
+<p>Activity从不可见变成可见时会执行此方法</p>
+<p>横竖屏写死<br>android:screenOrientation=”landscape”<br>android:screenOrientation=”portrait”<br>让系统的环境 不再去敏感横竖屏的切换。</p>
+<p>android:configChanges=”orientation|screenSize|keyboardHidden”</p>
+<p>进程优先级（掌握）</p>
+<p>前台进程：拥有一个正在与用户交互的activity（onResume方法被调用）的进程<br>可见进程：拥有一个非前台，但是对用户可见的activity（onPause方法被调用）的进程<br>服务进程：拥有一个通过startService方法启动的服务的进程<br>后台进程：拥有一个后台activity（onStop方法被调用）的进程<br>空进程：没有拥有任何活动的应用组件的进程，也就是没有任何服务和activity在运行</p>
+<p>样式与主题（熟悉）</p>
+<p>样式与主题定义方式一样<br>样式用于布局文件中的组件<br>主题用于Activity</p>
+<p>Fragment（重要）</p>
+<p>用途：在一个Activity里切换界面，切换界面时只切换Fragment里面的内容<br>生命周期方法跟Activity一致，可以理解把其为就是一个Activity<br>fragment切换时会销毁旧的，再创建新的<br>定义布局文件作为Fragment的显示内容<br>//此方法返回的View就会被显示在Fragment上<br>@Override<br>public View onCreateView(LayoutInflater inflater, ViewGroup container,<br>Bundle savedInstanceState) {<br>// TODO Auto-generated method stub<br>//用布局文件填充成一个View对象，返回出去，那么就显示在Fragment上了<br>View v = inflater.inflate(R.layout.fragment01, null);<br>return v;<br>}<br>把Fragment显示至指定ViewGroup中</p>
+<p>//把fragment显示至界面<br>//new出fragment对象<br>Fragment01 fg = new Fragment01();<br>FragmentManager fm = getFragmentManager();<br>//开启事务<br>FragmentTransaction ft = fm.beginTransaction();<br>//把fragment对象显示到指定资源id的组件里面<br>ft.replace(R.id.fl, fg);<br>ft.commit();<br>生命周期（重要）</p>
+<p>fragment切换时旧fragment对象会销毁，新的fragment对象会被创建<br>在drawable目录下定义xml文件，子节点为animation-list，在这里定义要显示的图片和每张图片的显示时长</p>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
+<item android:drawable="@drawable/g1" android:duration="200" />
+<item android:drawable="@drawable/g2" android:duration="200" />
+<item android:drawable="@drawable/g3" android:duration="200" />
+</animation-list>
+ImageView iv = (ImageView) findViewById(R.id.iv);
+//把动画文件设置为imageView的背景
+iv.setBackgroundResource(R.drawable.animations);
+AnimationDrawable ad = (AnimationDrawable) iv.getBackground();
+//播放动画        
+ad.start();
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/M_Swift52%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/07/24/M_Swift52%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">工作总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-07-24 20:00:01" itemprop="dateCreated datePublished" datetime="2018-07-24T20:00:01+08:00">2018-07-24</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>这个星期本来打算搞点餐的项目的，没想到就这样搁置了，周一的时候想了一下，现在我已经不想了，我想这周末没事的时候可以跟我一个同学一起讨论一下，毕竟闲着也是闲着。<br>周一搞了一下那个东西以后，基站边界划分的问题也就出来了，我也没时间去考虑别的问题，直到今天周四，本来明天写这些东西的，我想了下也就算了，还是今天写吧。明天不知道又会有什么事。<br>但是我想我那个项目的事情是不能停的，我会继续写的，我如果有一天我写出来了，我想我会得到相应的回报的，至少要对自己有信心，是吧。<br>目前看来，我对大数据的能力越来越不足，我将很难担当起大数据的项目。从一开始我就不是一个领导的身份。我想接下来我要好好审视自己了，如何去做这些让人头疼的事情是一个问题。做不好怎么办，我很担心，我一直在弱化我自己的位置，不知道当有一天到来的时候，我能问心无愧的告诉自己，我付出了，我不后悔。<br>关于学习，这事那事的东西缠绕着，我也没有去学习Python，但是很多年轻人都在前赴后继的在这条学习的路上。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/25/M_Swift88%E5%B0%8F%E5%B0%8F%E7%9A%84%E4%B8%80%E5%A4%A9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/06/25/M_Swift88%E5%B0%8F%E5%B0%8F%E7%9A%84%E4%B8%80%E5%A4%A9/" class="post-title-link" itemprop="url">小小一天</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-06-25 17:19:52" itemprop="dateCreated datePublished" datetime="2018-06-25T17:19:52+08:00">2018-06-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>从昨天的思考，到今天，我想是时候说一下无聊的东西了，这样一天天的，是的，没事做的心情，继续写一点东西吧，谈谈人生，谈谈理想，说一些胡话，就算是聊以慰藉吧。<br>日子一天一天，很快，不知道这样是好是坏，我们总是打算着很多事情，但是有的时候到头来却是一场空，我不知道这样的日子还能多久，我也不想，但是我想，我需要写点东西，我需要让人生充实，我想有的人可以用很多东西来写东西，有的人就是这样。<br>哈哈，感觉头绪有点乱，真的不知道写什么好。天气热的要死，一出门，就是热浪腾腾。今天倒是还好，有点阴天，雾茫茫的，总算是没有大太阳了。<br>好像在说一堆没用的事情，但是人生就是这样，你不知道你会在哪里遇见什么人，你也不知道下一个路口在什么地方，总之，你就这样走着，这样活着，我们说是行尸走肉，其实我们每个人何尝又不是，每个人在社会上其实都是活着，别说你意义很大，其实你处的位置决定了你的作为，所以，不必惊讶，也不必低沉，其实我们都一样。<br>有钱人过的生活我们是享受不了，但是有钱人也有我们不曾有过的焦虑，其实都一样，他们说他们很忙，也好吧，其实说是有意义，当我们真正到老了，真的不知道是不是还是乐观的说有什么意思。<br>真的我们也许在有的时候会很天真，有的时候又很无聊，生活就是这样。<br>好了，不知道又胡扯了什么，今天看了一个新闻，说有声阅读将成为下一个风口，我想确实有一定的作用，但是我们不可否认，当我们没有事情可以做的时候，新闻称为了我们最大的慰藉，这有着一股神奇的力量，我想这有点可怕，我想现在的新闻变了，变成我们不认识的样子，真的是的，我现在发现，我打字真的是又点查，工作这么多年了，竟然打字一直都这样差，真的是有点说不过去，不过也就这样吧，平时写代码，真的不是太纠结打字速度的，但是当你写文字的时候，对于打字这个问题，还是比较注重的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/25/M_Swift87%E5%B0%8F%E6%80%9D%E8%80%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -553,191 +774,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/N_Android9%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/05/10/N_Android9%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/" class="post-title-link" itemprop="url">Android开发代码规范</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-05-10 11:00:29" itemprop="dateCreated datePublished" datetime="2018-05-10T11:00:29+08:00">2018-05-10</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近公司安卓项目比较紧，所以让我去帮忙写一点安卓，我也有幸能写一下安卓，感觉对我有很大的帮助，这种机会是不能少的，我赶紧学习了一番。现在需求差不多了，感觉写的不是太好，但是也不至于太差，现在是时候总结一下了。<br>1.类中对象以m开头，后面跟对象属性，然后是对象名称。<br>2.类中方法以set，get为主，所有m对象无法直接访问，都是通过set，get方法间接访问。<br>3.selector，这个是在Android中发现的一个比较有意思的东西，真的特别的好，非常实用，可以很好的更改UI，让一个控件显示很多不同的风格。<br>4.安卓中很少写宽高，很少直接写，都是间接写，或者用padding撑起来。<br>5.安卓中的生命周期还是需要了解的，安卓中所有对象都是围绕着activity来的</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/N_Android8%20Sutdio%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/05/10/N_Android8%20Sutdio%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Android Studio使用笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-05-10 11:00:27" itemprop="dateCreated datePublished" datetime="2018-05-10T11:00:27+08:00">2018-05-10</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近公司需求忙于安卓的开发，我也顺手帮忙开发了一点点，感觉还是挺舒服，虽然一开始压力有点，但是，现在感觉有点清爽很多，感觉也没有那么复杂，今天，需求已经是忙的差不多了，感觉可以休息一下了，所以写写文档，反思一下Android开发，也好为以后开发做准备。<br>刚才看了一下，感觉使用Android是一个问题，所以线把这个问题放在中心位置上了，先百度一下吧<br>1.安卓开发，下载工具，没有太多问题。<br>2.安卓开发设备调试，如何真机调试，一开始我刚会用手机调试，连断点都不会使用，后来知道怎么打断点，怎么用了。<br>还有一个问题就是查看Log日志，这个问题我确实很纠结，Log日志台太多日志了，有的时候高德你都不知道哪个日志是对的，感觉挺麻烦，不过这也许就是安卓吧。<br>下面是百度结果</p>
-<h2 id="Android-Studio目录结构"><a href="#Android-Studio目录结构" class="headerlink" title="Android Studio目录结构"></a>Android Studio目录结构</h2><p>新建工程项目后AS的Product目录结构如下所示：<br>.idea：//AS生成的工程配置文件，类似Eclipse的project.properties。<br>app：//AS创建工程中的一个Module。<br>gradle：//构建工具系统的jar和wrapper等，jar告诉了AS如何与系统安装的gradle构建联系。<br>External Libraries：//不是一个文件夹，只是依赖lib文件，如SDK等。</p>
-<h2 id="新建工程项目后AS的Module目录结构如下所示："><a href="#新建工程项目后AS的Module目录结构如下所示：" class="headerlink" title="新建工程项目后AS的Module目录结构如下所示："></a>新建工程项目后AS的Module目录结构如下所示：</h2><p>build：//构建目录，相当于Eclipse中默认Java工程的bin目录，鼠标放在上面右键Show in Exploer即可打开文件夹，<br>编译生成的apk也在这个目录的outs子目录，不过在AS的工程里是默认不显示out目录的，就算有编译结果也<br>不显示，右键打开通过文件夹直接可以看。<br>libs：//依赖包，包含jar包和jni等包。<br>src：//源码，相当于eclipse的工程。<br>main：//主文件夹<br>java：//Java代码，包含工程和新建是默认产生的Test工程源码。<br>res：//资源文件，类似Eclipse。<br>layout：//App布局及界面元素配置，雷同Eclipse。<br>menu：//App菜单配置，雷同Eclipse。<br>values：//雷同Eclipse。<br>dimens.xml：//定义css的配置文件。<br>strings.xml：//定义字符串的配置文件。<br>styles.xml：//定义style的配置文件。<br>……：//arrays等其他文件。<br>……：//assets等目录<br>AndroidManifest.xml：//App基本信息（Android管理文件）<br>ic_launcher-web.png：//App图标<br>build.gradle：//Module的Gradle构建脚本</p>
-<h2 id="AS的工程根目录下的build-gradle文件："><a href="#AS的工程根目录下的build-gradle文件：" class="headerlink" title="AS的工程根目录下的build.gradle文件："></a>AS的工程根目录下的build.gradle文件：</h2><p>buildscript {       //设置脚本的运行环境<br>repositories {  //支持java依赖库管理（maven/ivy等）,用于项目的依赖<br>//mavenCentral()    //仅仅是不同的网络仓库而已<br>jcenter()           //推荐使用这个仓库<br>}<br>//依赖包的定义。支持maven/ivy、远程、本地库、单文件，前面定义了repositories{}jcenter库，使用jcenter的依赖只需要按照<br>//类似于com.android.tools.build:gradle:1.0.0-rc2，gradle就会自动的往远程库下载相应的依赖。<br>dependencies {<br>classpath ‘com.android.tools.build:gradle:1.0.0-rc2’</p>
-<p>// NOTE: Do not place your application dependencies here; they belong<br>// in the individual module build.gradle files<br>}<br>}<br>//多项目的集中配置，多数构建工具，对于子项目的配置，都是基于继承的方式。Gradle除了提供继承方式设置子项目，还提供这种配置<br>allprojects {<br>repositories {<br>jcenter()<br>}<br>}</p>
-<h2 id="AS的工程根目录下的settings-gradle文件："><a href="#AS的工程根目录下的settings-gradle文件：" class="headerlink" title="AS的工程根目录下的settings.gradle文件："></a>AS的工程根目录下的settings.gradle文件：</h2><p>include ‘:app’ //module  include ‘:my_lib’ //module(build as lib)<br>AS的工程根目录下的Module的build.gradle文件（此处以一个简单的Lib module的gradle为例）：</p>
-<p>//plugin在AS里取值一般为’com.android.library’或者’com.android.application’<br>apply plugin: ‘com.android.library’ //构建为lib</p>
-<p>android {<br>compileSdkVersion 17            //编译需要SDK版本<br>buildToolsVersion “19.1.0”      //SDK Manager确定本地安装该版本才可以</p>
-<p>defaultConfig {<br>minSdkVersion 8         //最小版本<br>targetSdkVersion 17     //目标版本<br>}</p>
-<p>buildTypes {                //编译项<br>release {<br>minifyEnabled false<br>proguardFiles getDefaultProguardFile(‘proguard-android.txt’), ‘proguard-rules.txt’<br>}<br>}<br>}</p>
-<p>dependencies {                  //依赖支持<br>compile ‘com.android.support:support-v4:18.+’<br>}</p>
-<h2 id="查看类中方法"><a href="#查看类中方法" class="headerlink" title="查看类中方法"></a>查看类中方法</h2><p>这个是我比较希望看到的一个，我百度了一下，Android Studio中还是有这种方法的，在Xcode中，我们特别喜欢用这种工具，直接一下子就能看穿一个类，我也感觉这样特别清爽，现在真的不用纠结了，一下子就能看到了，方法是<br>Navigate -》File Structure</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/N_Android10%E5%AE%89%E5%8D%93%E5%BC%95%E6%93%8E%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/05/10/N_Android10%E5%AE%89%E5%8D%93%E5%BC%95%E6%93%8E%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">安卓开发总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-05-10 11:00:26" itemprop="dateCreated datePublished" datetime="2018-05-10T11:00:26+08:00">2018-05-10</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近一段时间算是非常的忙碌，已经很久时间没有更新内容了。最近一直在写安卓，想想也是奇怪，我一个开发IOS的现在竟然也走到这条路上，一直都认为安卓开发不是太难，所以也就走过来了，现在想想也确实是没有想象中的那么难，但是，人总是这样，一步一步的走的时候确实需要一个困难，确实需要勇气去面对，我想也许世界上很多事情都是这样，你可能认为会非常的困难，但是其实并没有那么难，所以，别妄自菲薄，别妄加评论别人的生活。你自己的就是最好的。<br>好了，最近写那么长时间的安卓，总是要有一些收获的，感觉其实安卓开发我还是不行，还是写不动代码，但是，我想时间是解药，能够满满的治愈这些东西，但是安卓真的是很难找bug，真的这是让我最无语的问题，我感觉每次遇到问题，都是要上下翻找控制台的日志，而且你还不确定哪个日志是对的，而且很多时候，那些日志你根本看不出来是因为啥，莫名其妙啊。<br>还有一个问题，我发现我慢慢的已经习惯了，我慢慢的磨时间的话，有些问题，真的是能够让我们去发现的，我感觉却是是让我有点改变，却是需要耐心，耐心真的很重要，如果你耐心更多一点，那个问题真的就让你找到了，我以前工作就是耐心比较差，好在有荣娜配合一下，让我也不至于那么无助，现在的我真的是只能用时间来打磨了。我想这也是给我最大的收获吧。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -807,7 +843,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-count">269</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

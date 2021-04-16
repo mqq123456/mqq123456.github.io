@@ -286,6 +286,228 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift194Spring%20boot%E6%B3%A8%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift194Spring%20boot%E6%B3%A8%E8%A7%A3/" class="post-title-link" itemprop="url">Spring 注解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-14 10:34:32" itemprop="dateModified" datetime="2021-04-14T10:34:32+08:00">2021-04-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>@Component：泛指组件，当组件不好归类的时候，我们可以使用这个注解进行标注。<br>@Controller: 标注一个控制器组件类<br>@Service: 标注一个业务逻辑组件类<br>@Repository: 标注一个DAO组件类<br>@PostMapping：post请求<br>@RequestBody： 请求体</p>
+<p>平时很少学习后端的东西，spring在后端占有着主导地位，需要学习一下，以便应付一些能力<br>@SpringBootApplication：申明让spring boot自动给程序进行必要的配置，这个配置等同于：<br>@Configuration ，@EnableAutoConfiguration 和 @ComponentScan 三个配置。<br>@ResponseBody：表示该方法的返回结果直接写入HTTP response body中，一般在异步获取数据时使用，用于构建RESTful的api。在使用@RequestMapping后，返回值通常解析为跳转路径，加上@esponsebody后返回结果不会被解析为跳转路径，而是直接写入HTTP response body中。比如异步获取json数据，加上@Responsebody后，会直接返回json数据。该注解一般会配合@RequestMapping一起使用。<br>@Controller：用于定义控制器类，在spring项目中由控制器负责将用户发来的URL请求转发到对应的服务接口（service层），一般这个注解在类中，通常方法需要配合注解@RequestMapping。<br>@RestController：用于标注控制层组件(如struts中的action)，@ResponseBody和@Controller的合集。<br>@RequestMapping：提供路由信息，负责URL到Controller中的具体函数的映射。<br>@EnableAutoConfiguration：SpringBoot自动配置（auto-configuration）：尝试根据你添加的jar依赖自动配置你的Spring应用。例如，如果你的classpath下存在HSQLDB，并且你没有手动配置任何数据库连接beans，那么我们将自动配置一个内存型（in-memory）数据库”。你可以将@EnableAutoConfiguration或者@SpringBootApplication注解添加到一个@Configuration类上来选择自动配置。如果发现应用了你不想要的特定自动配置类，你可以使用@EnableAutoConfiguration注解的排除属性来禁用它们。</p>
+<p>@ComponentScan：表示将该类自动发现扫描组件。个人理解相当于，如果扫描到有@Component、@Controller、@Service等这些注解的类，并注册为Bean，可以自动收集所有的Spring组件，包括@Configuration类。我们经常使用@ComponentScan注解搜索beans，并结合@Autowired注解导入。可以自动收集所有的Spring组件，包括@Configuration类。我们经常使用@ComponentScan注解搜索beans，并结合@Autowired注解导入。如果没有配置的话，Spring Boot会扫描启动类所在包下以及子包下的使用了@Service,@Repository等注解的类<br>@Configuration：相当于传统的xml配置文件，如果有些第三方库需要用到xml文件，建议仍然通过@Configuration类作为项目的配置主类——可以使用@ImportResource注解加载xml配置文件。<br>@Import：用来导入其他配置类。</p>
+<p>@ImportResource：用来加载xml配置文件。</p>
+<p>@Autowired：自动导入依赖的bean</p>
+<p>@Service：一般用于修饰service层的组件<br>@Repository：使用@Repository注解可以确保DAO或者repositories提供异常转译，这个注解修饰的DAO或者repositories类会被ComponetScan发现并配置，同时也不需要为它们提供XML配置项。<br>@Bean：用@Bean标注方法等价于XML中配置的bean。<br>@Value：注入Spring boot application.properties配置的属性的值。示例代码：</p>
+<p>@Inject：等价于默认的@Autowired，只是没有required属性；</p>
+<p>@Bean:相当于XML中的,放在方法的上面，而不是类，意思是产生一个bean,并交给spring管理。</p>
+<p>@AutoWired：自动导入依赖的bean。byType方式。把配置好的Bean拿来用，完成属性、方法的组装，它可以对类成员变量、方法及构造函数进行标注，完成自动装配的工作。当加上（required=false）时，就算找不到bean也不报错。</p>
+<p>@Qualifier：当有多个同一类型的Bean时，可以用@Qualifier(“name”)来指定。与@Autowired配合使用。@Qualifier限定描述符除了能根据名字进行注入，但能进行更细粒度的控制如何选择候选者，具体使用方式如下：</p>
+<p>@Resource(name=”name”,type=”type”)：没有括号内内容的话，默认byName。与@Autowired干类似的事。</p>
+<p>三、JPA注解</p>
+<p>@Entity：@Table(name=”“)：表明这是一个实体类。一般用于jpa这两个注解一般一块使用，但是如果表名和实体类名相同的话，@Table可以省略</p>
+<p>@MappedSuperClass:用在确定是父类的entity上。父类的属性子类可以继承。</p>
+<p>@NoRepositoryBean:一般用作父类的repository，有这个注解，spring不会去实例化该repository。</p>
+<p>@Column：如果字段名与列名相同，则可以省略。</p>
+<p>@Id：表示该属性为主键。</p>
+<p>@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = “repair_seq”)：表示主键生成策略是sequence（可以为Auto、IDENTITY、native等，Auto表示可在多个数据库间切换），指定sequence的名字是repair_seq。</p>
+<p>@SequenceGeneretor(name = “repair_seq”, sequenceName = “seq_repair”, allocationSize = 1)：name为sequence的名称，以便使用，sequenceName为数据库的sequence名称，两个名称可以一致。</p>
+<p>@Transient：表示该属性并非一个到数据库表的字段的映射,ORM框架将忽略该属性。如果一个属性并非数据库表的字段映射,就务必将其标示为@Transient,否则,ORM框架默认其注解为@Basic。@Basic(fetch=FetchType.LAZY)：标记可以指定实体属性的加载方式</p>
+<p>@JsonIgnore：作用是json序列化时将Java bean中的一些属性忽略掉,序列化和反序列化都受影响。<br>@JoinColumn（name=”loginId”）:一对一：本表中指向另一个表的外键。一对多：另一个表指向本表的外键。</p>
+<p>@OneToOne、@OneToMany、@ManyToOne：对应hibernate配置文件中的一对一，一对多，多对一。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift195Spring%20boot%20Bean/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift195Spring%20boot%20Bean/" class="post-title-link" itemprop="url">Spring Boot Bean</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-14 15:04:01" itemprop="dateModified" datetime="2021-04-14T15:04:01+08:00">2021-04-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>使用Spring框架之后，调用者无需主动获取被依赖对象，调用者只要被动接受Spring容器为调用者的成员变量赋值即可，由此可见，使用Spring后，调用者获取被依赖对象的方式由原来的主动获取，变成了被动接受——所以Rod Johnson称之为控制反转。<br>Spring容器中的Bean</p>
+<p>对于开发者来说，开发者使用Spring框架主要是做两件事：①开发Bean；②配置Bean。对于Spring框架来说，它要做的就是根据配置文件来创建Bean实例，并调用Bean实例的方法完成“依赖注入”——这就是所谓IoC的本质。<br>如果不指定Bean的作用域，Spring默认使用singleton作用域。<br>对于一次HTTP会话，session作用域的Bean将只生成一个实例，这意味着，在同一次HTTP会话内，程序每次请求该Bean，得到的总是同一个实例。只有在Web应用中使用Spring时，该作用域才真正有效；<br>global session: 每个全局的HTTP Session对应一个Bean实例。在典型的情况下，仅在使用portlet context的时候有效，同样只在Web应用中有效。</p>
+<p>什么是DTO：<br>DTO是Data Transfer Object 的简写，既数据传输对象。DTO用于在服务器与客户端之间或服务器与服务器之间进行数据传递</p>
+<p>mybatis-plus<br>注解<br>@TableName ： 表名注解<br>@TableId ： 主键注解<br>@TableField ： 字段注解</p>
+<p>代码生成器<br>通过 AutoGenerator 可以快速生成 Entity、Mapper、Mapper XML、Service、Controller 等各个模块的代码，极大的提升了开发效率。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift196%20Vue3%20TypeScript%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift196%20Vue3%20TypeScript%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">Vue3 TypeScript实践</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-16 17:13:40" itemprop="dateModified" datetime="2021-04-16T17:13:40+08:00">2021-04-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Vue3现在已经出来了，感觉用的还是不多，但是我们却是需要拥抱这种变化，特别是TypeScript得到了非常大的使用的情况下，未来可以想象TypeScript在前端将会出现越来越多的使用，现在就让我们走进Vue3，走进TypeScript吧<br>之前也是研究了一段时间的Vue3的变化，感觉却是跟vue2变化非常明显，如果要是一个vue2的项目转换成vue3，我感觉我劝你还是重写吧，特别是组合式api的引入，这让之前的vue的js写法直接废弃了，当然特别是ref、reactive的出现，让我感觉反而比之前的代码还要麻烦了，还要return出去，还要考虑解包。这让我感觉很不方便。<br>今天我又创建了一个vue的项目，准备来仔细研磨一下vue和typeScript，好吧，一上来就让我懵了，原来的defineComponent不负存在，变成了一个继承Vue的一个类，还有就是出现了@Options这种东西，让我好不适应。<br>更让我感到奇怪的是，我尝试写setup函数，竟然没有任何作用，我想vue3的这些特性呢？？？？真是见鬼了。当我百度半天后我才明白，vue3的特性js部分变化其实在对象这方面经过封装后是没有多少变化的，原来是什么样子还是什么样子的，这让我有点喜欢了，我们可以直接用看待java对象的形式，看待一个vue3的TypeScript代码。<br>你定义变量，其实就有ref、reactive类型<br>如：<br>data: any = {<br>    title : “title”,<br>    left : “left”,<br>  }<br>  console.log(isReactive(this.data),this.data);<br>  // true Proxy {title: “title”, left: “left”}<br>  但是ref让我很纠结，打印出来的始终是false<br>  public test = ref(2);<br>  console.log(isRef(this.test),this.test);<br>  // false 2<br>  生命周期方法，这个比较简单，跟所有面向对象，android、ios都比较相似，生命周期如下<br>     created() {<br>       const helloword = shallowRef&lt;ComponentPublicInstance<typeof HelloWorld>&gt;()<br>       console.log(“created”,helloword);<br>     }<br>     mounted() {<br>       console.log(“mounted”);<br>     }<br>     beforeCreate() {<br>       console.log(“mounted”);<br>     }<br>     beforeMount?(): void {<br>       console.log(“beforeMount”);<br>     }<br>     beforeUnmount?(): void {<br>       console.log(“beforeUnmount”);<br>     }<br>     unmounted?(): void {<br>       console.log(“unmounted”);<br>     }<br>     beforeUpdate?(): void {<br>       console.log(“beforeUpdate”);<br>     }<br>     updated?(): void {<br>       console.log(“updated”);<br>     }<br>     activated?(): void {<br>       console.log(“activated”);<br>     }<br>     deactivated?(): void {<br>       console.log(“deactivated”);<br>     }<br>     render?(){<br>       console.log(“render”);<br>     }</p>
+<p>@Options<br>这个东西让我也是比较的难受，其实里面的代码跟vue2的代码一摸一样，我不知道为什么要这样分开设计，感觉还是比较难受的，主要是包含三个部分，组建定义、属性定义、事件监听<br>@Options({<br>  components: { // 组建<br>    HelloWorld,<br>  },<br>  props: { // 属性<br>     msg: String!<br>  },<br>  watch: {// 事件监听<br>    age: {<br>      handler: function(newval,oldval) {<br>        console.log(“watch”,newval);<br>        //this.gotoAbourt();<br>      },<br>    }<br>  }<br>})<br>get方法，同vue中的 computed<br>public get age(): number {<br>  console.log(“get age”, this.mAge);<br>  return this.mAge;<br>}</p>
+<p>总体感觉是TypeScript的vue没有vue3那些弯弯绕绕，还是比较直接的，我想以后的发展应该也会越来越好，我感觉新项目的话值得尝试。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/05/M_Swift170Mac%20Homebrew%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -755,400 +977,6 @@ glScalef是openGL中的模型缩放函数，就是把当前矩阵与一个表示
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/02/M_Swift157OpenGL%E7%BB%98%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/02/M_Swift157OpenGL%E7%BB%98%E5%88%B6/" class="post-title-link" itemprop="url">OpenGL 渲染</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-02 11:56:09" itemprop="dateCreated datePublished" datetime="2020-12-02T11:56:09+08:00">2020-12-02</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="创建render-buffer-（渲染缓冲区）"><a href="#创建render-buffer-（渲染缓冲区）" class="headerlink" title="创建render buffer （渲染缓冲区）"></a>创建render buffer （渲染缓冲区）</h2><p> Render buffer 是OpenGL的一个对象，用于存放渲染过的图像。</p>
-<ul>
-<li>(void)setupRenderBuffer {<br>  glGenRenderbuffers(1, &amp;_colorRenderBuffer);<br>  glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);<br>  [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer];<br>}</li>
-</ul>
-<h2 id="创建一个-frame-buffer（帧缓冲区）"><a href="#创建一个-frame-buffer（帧缓冲区）" class="headerlink" title="创建一个 frame buffer（帧缓冲区）"></a>创建一个 frame buffer（帧缓冲区）</h2><ul>
-<li>(void)setupFrameBuffer {<br>  GLuint framebuffer;<br>  glGenFramebuffers(1, &amp;framebuffer);<br>  glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);<br>  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderBuffer);  // 深度测试<br>  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);<br>}<h2 id="深度测试"><a href="#深度测试" class="headerlink" title="深度测试"></a>深度测试</h2></li>
-<li>(void)setupDepthBuffer {<br>  glGenRenderbuffers(1, &amp;_depthRenderBuffer);<br>  glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);<br>  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, self.frame.size.width, self.frame.size.height);<br>}</li>
-</ul>
-<h2 id="加载着色器"><a href="#加载着色器" class="headerlink" title="加载着色器"></a>加载着色器</h2><ul>
-<li>(void)compileShaders {<br>  // 1<br>  GLuint vertexShader = [self compileShader:@”SimpleVertex5” withType:GL_VERTEX_SHADER];<br>  GLuint fragmentShader = [self compileShader:@”SimpleFragment5” withType:GL_FRAGMENT_SHADER];  // 2<br>  GLuint programHandle = glCreateProgram();<br>  glAttachShader(programHandle, vertexShader);<br>  glAttachShader(programHandle, fragmentShader);<br>  glLinkProgram(programHandle);  // 3 检查link状态<br>  GLint linkSuccess;<br>  glGetProgramiv(programHandle, GL_LINK_STATUS, &amp;linkSuccess);<br>  if (linkSuccess == GL_FALSE) {<pre><code>  GLchar messages[256];
-  glGetProgramInfoLog(programHandle, sizeof(messages), 0, &amp;messages[0]);
-  NSString *messageString = [NSString stringWithUTF8String:messages];
-  NSLog(@&quot;link no Success-------------%@&quot;, messageString);
-  exit(1);
-</code></pre>
-  }  // 4 让OpenGL执行glProgram<br>  glUseProgram(programHandle);  // 5<br>  _positionSlot = glGetAttribLocation(programHandle, “Position”);<br>  _colorSlot = glGetAttribLocation(programHandle, “SourceColor”);<br>  glEnableVertexAttribArray(_positionSlot);<br>  glEnableVertexAttribArray(_colorSlot);  // 投影<br>  _projectionUniform = glGetUniformLocation(programHandle, “Projection”);<br>  // 移动<br>  _modelViewUniform = glGetUniformLocation(programHandle, “Modelview”);<br>}</li>
-</ul>
-<h2 id="编译着色代码"><a href="#编译着色代码" class="headerlink" title="编译着色代码"></a>编译着色代码</h2><ul>
-<li>(GLuint)compileShader:(NSString *)shaderName withType:(GLenum)shaderType {<br>  // 1 查找shader文件<br>  NSString *shaderPath = [[NSBundle mainBundle] pathForResource:shaderName ofType:@”glsl”];<br>  NSFileManager *mg = [NSFileManager defaultManager];  if ([mg fileExistsAtPath:shaderPath]) {<pre><code>  NSLog(@&quot;ok&quot;);
-</code></pre>
-  }else{<pre><code>  NSLog(@&quot;no&quot;);
-</code></pre>
-  }  NSError *error;<br>  NSString *shaderString = [NSString stringWithContentsOfFile:shaderPath encoding:NSUTF8StringEncoding error:&amp;error];  if (!shaderString) {<pre><code>  NSLog(@&quot;-----------Error loading shader: %@&quot;, error.localizedDescription);
-  exit(1);
-</code></pre>
-  }  // 2 创建一个代表shader的OpenGL对象, 指定vertex或fragment shader<br>  GLuint shaderHandle = glCreateShader(shaderType);  // 3获取shader的source<br>  const char *shaderStringUTF8 = [shaderString UTF8String];<br>  int shaderStringLength = (int)[shaderString length];<br>  glShaderSource(shaderHandle, 1, &amp;shaderStringUTF8, &amp;shaderStringLength);  // 4 编译shader<br>  glCompileShader(shaderHandle);  // 5查询shader对象的信息<br>  GLint compileSuccess;<br>  glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &amp;compileSuccess);  if (compileSuccess == GL_FALSE) {<pre><code>  GLchar messages[256];
-  glGetShaderInfoLog(shaderHandle, sizeof(messages), 0, &amp;messages[0]);
-  NSString *messageString = [NSString stringWithUTF8String:messages];
-  NSLog(@&quot;compile no Success-----------%@&quot;, messageString);
-  exit(1);
-</code></pre>
-  }  return shaderHandle;<br>}<h2 id="清理屏幕"><a href="#清理屏幕" class="headerlink" title="清理屏幕"></a>清理屏幕</h2></li>
-<li>(void)render {<br>  glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);<br>  glClear(GL_COLOR_BUFFER_BIT);<br>  [_context presentRenderbuffer:GL_RENDERBUFFER];<br>}<h2 id="绘制流程"><a href="#绘制流程" class="headerlink" title="绘制流程"></a>绘制流程</h2>  /**<ol>
-<li>GL_ARRAY_BUFFER用于顶点数组</li>
-<li>绑定vertexBuffer到GL_ARRAY_BUFFER</li>
-<li>给VBO传递数据</li>
-<li>取出地址</li>
-<li>取出颜色</li>
-<li>glVertexAttribPointer的最后一个参数是要获取的参数在GL_ARRAY_BUFFER（每一个Vertex）的偏移量</li>
-</ol>
-  */</li>
-<li>(void)setupVBOs{  GLuint verticesBuffer;<br>  glGenBuffers(1, &amp;verticesBuffer);<br>  glBindBuffer(GL_ARRAY_BUFFER, verticesBuffer);<br>  glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);<br>  glEnableVertexAttribArray(GLKVertexAttribPosition);<br>  glEnableVertexAttribArray(GLKVertexAttribColor);<br>  glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (GLfloat *)NULL + 0);<br>  glVertexAttribPointer(GLKVertexAttribColor, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (GLfloat *)NULL + 3);<br>}</li>
-</ul>
-<p>b.流程代码化</p>
-<p>  一、配置渲染环境<br>    1) 配置渲染窗口 [ 继承自 UIView ]<br>    2) 配置渲染上下文<br>    3) 配置帧渲染<br>    4) 配置渲染缓存<br>    5) 帧缓存装载渲染缓存的内容<br>    6) 渲染上下文绑定渲染窗口（图层）<br>二、修改背景色</p>
-<p>  三、 初始化数据</p>
-<p>  四、 配置 OpenGL ES Shader</p>
-<pre><code>1) 编写 Vertex Shader Code 文件
-2) 编写 Fragment Shader Code 文件
-3) 配置 Vertex Shader
-4) 配置 Fragment Shader
-5) 创建 Shader Program
-6) 装载 Vertex Shader 和 Fragment Shader
-7) 链接 Shader Program
-</code></pre>
-<p>  五、渲染绘制</p>
-<pre><code>1) 清空旧渲染缓存
-2) 设置渲染窗口
-3) 使用 Shder Program
-4) **关联数据**
-5) 绘制图形
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/01/M_Swift163iOS%E5%9C%B0%E5%9B%BESDK%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/01/M_Swift163iOS%E5%9C%B0%E5%9B%BESDK%E5%BC%80%E5%8F%91%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">地图SDK开发设计</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-01 14:11:56" itemprop="dateCreated datePublished" datetime="2020-12-01T14:11:56+08:00">2020-12-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 15:38:42" itemprop="dateModified" datetime="2021-04-12T15:38:42+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="设计方向"><a href="#设计方向" class="headerlink" title="设计方向"></a>设计方向</h2><pre><code>1.距离计算
-2.坐标转换
-3.覆盖物的设计理念
-4.弧线坐标获取逻辑
-5.webgl截屏
-6.地图手势
-7.地图覆盖物管理
-8.比例尺计算
-9.定位计算
-10.坐标转换
-11.宏定义
-12.覆盖物定义逻辑
-13.poi点击
-</code></pre>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><pre><code>1.mark问题
-目前采用了直接地图绘制marker的方式，后续考虑添加接口实现点击效果
-2.地图样式问题
-添加地图样式接口，目前配置文件没有其它样式数据
-3.地图绘制文本
-
-4.地图导航图标绘制
-没有绘制成功，
-
-5.地图定位图标的绘制
-
-6.未完成接口
-1.Annomation 接口
-2.
-
-1.判断折线是否被点击
-    原理：点到线的距离是否大与线的宽度
-2.判断是否在弧形上
-    原理：点到圆心的距离相同。2点在弧形的三角形内
-2.判断是否在圆内
-    原理：点到圆心的距离小于半径
-3.判断是否在面内
-    原理：
-5.图形的点击
-    判断点是否在rect内
-
-7.覆盖物的选中和非选中状态
-
-6.覆盖物的拖拽：
-    原理是修改覆盖物的位置
-
-覆盖物的内容
-1.点 MAMarker
-2.线 MAPolyline
-3.面 MAPolygon
-4.圆 MACircle
-5.弧 MAArc
-6.3d图 MAGroundOverlay
-
-问题：
-比例尺不同 ：咱们这个好行0是最大
-倾斜角度不同 ：咱们是 0 - 90 度
-
-今天终点是定位，显示定位点，用marker实现，不用annimation
-
-定位点的显示逻辑
-1.是否定位
-2.是否显示定位点
-3.是否自定义定位点
-4.是否显示精度圈
-5.是否自定义精度圈
-
-
-
-初始完成
-默认定位是打开的，所以设置完代理时，启动定位
-默认显示用户位置，所以启动完定位，添加用户位置
-
-添加定位的逻辑
-
-
-Annimation使用
-由annimation转为view，在地图上添加view、可拖拽的view
-
-点击
-选中
-取消选中
-拖拽
-
-
-地图Annimation 的重用机制原理
-1.添加Annimation 
-2.当annimation 位置处在地图以外时，在地图上再添加annimation时，使用屏幕外的annimation 就可以了
-3.当annimation位置在、
-
-
-未实现覆盖物
-2.大地曲线
-4.路段纹理绘制
-5.车标绘制
-
-问题：
-1.贴图丢失
-2.转角问题
-3.大地曲线
-4.图片贴图显示问题
-
-
-https://www.cnblogs.com/csu-lmw/category/1555941.html
-
-
-未实现接口
-
-图标问题
-分段纹理
-
-室内地图
-点平滑移动
-绘制海量点
-获取地址
-
-
-1.内存问题，map对象不消失，一致占用较大内存
-2.室内地图缩放等级不对
-3.室内地图绘制poi
-4.室内地图事件回调
-5.
-
-重用机制
-：就是删除数据时候不将数据放到备用池中
-室内地图配色
-室内地图poi绘制
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/01/M_Swift161iOS%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/01/M_Swift161iOS%E5%B8%B8%E7%94%A8%E6%A1%86%E6%9E%B6/" class="post-title-link" itemprop="url">iOS常用框架</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-01 14:11:50" itemprop="dateCreated datePublished" datetime="2020-12-01T14:11:50+08:00">2020-12-01</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-概念"><a href="#1-概念" class="headerlink" title="1.概念"></a>1.概念</h2><p>界面图形框架 – UIKit<br>核心动画框架 – Core Animation<br>苹果封装的图形框架 – Core Graphics &amp; Quartz 2D<br>传统跨平台图形框架 – OpenGL ES<br>苹果最新力推的图形框架 – Metal<br>适合图片的苹果滤镜框架 – Core Image<br>适合视频的第三方滤镜方案 – GPUImage<br>游戏引擎 – Scene Kit (3D) 和 Sprite Kit (2D)<br>计算机视觉在iOS的应用 – OpenCV for iOS<br>UIKit与Core Graphics的关系</p>
-<h2 id="UIKit"><a href="#UIKit" class="headerlink" title="UIKit"></a>UIKit</h2><p>在UIKit中，UIView类本身在绘制时自动创建一个图形环境，即Core Graphics层的CGContext类型，作为当前的图形绘制环境。在绘制时可以调用 UIGraphicsGetCurrentContext 函数获得当前的图形环境，例如：</p>
-<ul>
-<li>(void)drawRect:(CGRect)rect {<br>  // Drawing code<br>  NSLog(@”%s”,<strong>func</strong>);<br>  //1.获取上下文<br>  CGContextRef contextRef = UIGraphicsGetCurrentContext();<br>  //2.描述路径<br>  UIBezierPath * path = [UIBezierPath bezierPath];<br>  //起点<br>  [path moveToPoint:CGPointMake(10, 10)];<br>  //终点<br>  [path addLineToPoint:CGPointMake(100, 100)];<br>  //设置颜色<br>  [[UIColor whiteColor]setStroke];<br>  //3.添加路径<br>  CGContextAddPath(contextRef, path.CGPath);<br>  //显示路径<br>  CGContextStrokePath(contextRef);</li>
-</ul>
-<p>}</p>
-<h2 id="Core-Animation"><a href="#Core-Animation" class="headerlink" title="Core Animation"></a>Core Animation</h2><p>Core Animation 是一套Objective-C API，实现了一个高性能的复合引擎，并提供一个简单易用的编程接口，给用户UI添加平滑运动和动态反馈能力。</p>
-<p>Core Animation 是 UIKit 实现动画和变换的基础，也负责视图的复合功能。使用Core Animation可以实现定制动画和细粒度的动画控制，创建复杂的、支持动画和变换的layered 2D视图。</p>
-<p>Core Animation 不属于绘制系统，但它是以硬件复合和操作显示内容的基础设施。这个基础设施的核心是layer对象，用来管理和操作显示内容。在 iOS 中 每一个视图都对应Core Animation的一个层对象，与视图一样，层之间也组织为层关系树。一个层捕获视图内容为一个被图像硬件容易操作的位图。在多数应用中层作为管理视图的方式使用，但也可以创建独立的层到一个层关系树中来显示视图不够支持的显示内容。</p>
-<p>OpenGL ES的内容也可以与Core Animation内容进行集成。</p>
-<p>为了使用Core Animation实现动画，可以修改 层的属性值 来触发一个action对象的执行，不同的action对象实现不同的动画。</p>
-<h2 id="Core-Graphics"><a href="#Core-Graphics" class="headerlink" title="Core Graphics"></a>Core Graphics</h2><p>Core Graphics是一套C-based API， 支持向量图形，线、形状、图案、路径、剃度、位图图像和pdf 内容的绘制。</p>
-<h2 id="Quartz-2D"><a href="#Quartz-2D" class="headerlink" title="Quartz 2D"></a>Quartz 2D</h2><p>Quartz 2D是Core Graphics中的2D 绘制呈现引擎。Quartz是资源和设备无关的,提供路径绘制，anti-aliased呈现，剃度填充图案，图像，透明绘制和透明层、遮蔽和阴影、颜色管理，坐标转换，字体、offscreen呈现、pdf文档创建、显示和分析等功能。</p>
-<p>Quartz 2D能够与所有的图形和动画技术（如Core Animation, OpenGL ES, 和 UIKit 等）一起使用。</p>
-<p>Quartz 2D采用paint模式进行绘制。<br>Quartz 2D提供的主要类包括：</p>
-<p>CGContext：表示一个图形环境；<br>CGPath：使用向量图形来创建路径，并能够填充和stroke；<br>CGImage：用来表示位图；<br>CGLayer：用来表示一个能够用于重复绘制和offscreen绘制的绘制层；<br>CGPattern：用来表示Pattern，用于重复绘制；<br>CGShading和 CGGradient：用于绘制剃度；<br>CGColor 和 CGColorSpace；用来进行颜色和颜色空间管理；<br>CGFont, 用于绘制文本；<br>CGPDFContentStream、CGPDFScanner、CGPDFPage、CGPDFObject,CGPDFStream, CGPDFString等用来进行pdf文件的创建、解析和显示。</p>
-<p>在调用任何OpenGL ES 功能之前必须首先初始化一个EAGLContext 对象。每一个IOS应用的每一个线程都有一个当前context，在调用OpenGL ES函数时，使用或改变此context中的状态。</p>
-<p>EAGLContext 的类方法setCurrentContext: 用来设置当前线程的当前context。EAGLContext 的类方法currentContext 返回当前线程的当前context。在切换相同线程的两个上下文之前，必须调用glFlush函数来确保先前已提交的命令被提交到图形硬件中。<br>为了创建全屏幕的视图或使OpenGL ES内容与UIKit视图集成，可以使用GLKit。在使用GLKit时，GLKit提供的类GLKView类本身实现呈现目标及创建和维护一个framebuffer。<br>1） GLKView 和GLKViewController类提供一个标准的OpenGL ES视图和相关联的呈现循环。GLKView可以作为OpenGL ES内容的呈现目标，GLKViewController提供内容呈现的控制和动画。视图管理和维护一个framebuffer，应用只需在framebuffer进行绘画即可。</p>
-<p>2）GLKTextureLoader 为应用提供从IOS支持的各种图像格式的源自动加载纹理图像到OpenGL ES 图像环境的方式，并能够进行适当的转换，并支持同步和异步加载方式。</p>
-<p>3）数学运算库，提供向量、矩阵、四元数的实现和矩阵堆栈操作等OpenGL ES 1.1功能。</p>
-<p>4）Effect效果类提供标准的公共着色效果的实现。能够配置效果和相关的顶点数据，然后创建和加载适当的着色器。GLKit 包括三个可配置着色效果类：GLKBaseEffect实现OpenGL ES 1.1规范中的关键的灯光和材料模式, GLKSkyboxEffect提供一个skybox效果的实现, GLKReflectionMapEffect 在GLKBaseEffect基础上包括反射映射支持。</p>
-<p>如果想要一个 iOS 上高性能的并行计算库，答案非常简单。Metal 是唯一的选择。OpenGL 在 iOS 上是私有框架，而 Core Image (使用了 OpenGL) 对这样的任务来说既不够强大又不够灵活。</p>
-<h2 id="Core-Image"><a href="#Core-Image" class="headerlink" title="Core Image"></a>Core Image</h2><p>Core Image 是 iOS5 新加入到 iOS 平台的一个图像处理框架，提供了强大高效的图像处理功能， 用来对基于像素的图像进行操作与分析， 内置了很多强大的滤镜(Filter) (目前数量超过了180种)， 这些Filter 提供了各种各样的效果， 并且还可以通过 滤镜链 将各种效果的 Filter叠加 起来形成强大的自定义效果</p>
-<p>Core Image 的另外一个优势，就是可以根据需求选择 CPU 或者 GPU 来处理。</p>
-<p>// 创建基于 CPU 的 CIContext 对象 (默认是基于 GPU，CPU 需要额外设置参数)<br>context = [CIContext contextWithOptions: [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kCIContextUseSoftwareRenderer]];</p>
-<p>// 创建基于 GPU 的 CIContext 对象<br>context = [CIContext contextWithOptions: nil];</p>
-<p>// 创建基于 GPU 的 CIContext 对象<br>EAGLContext *eaglctx = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];<br>context = [CIContext contextWithEAGLContext:eaglctx];<br>GPUImage 在视频处理上有更好的表现。<br>GPUImage 的代码完成公开，实现透明。<br>可以根据自己的业务需求，定制更加复杂的管线操作。可定制程度高。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1218,7 +1046,7 @@ https://www.cnblogs.com/csu-lmw/category/1555941.html
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-count">269</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

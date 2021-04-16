@@ -148,6 +148,255 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/" class="post-title-link" itemprop="url">枚举,枚举原始值,枚举相关值,switch提取枚举关联值</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 18:11:20" itemprop="dateCreated datePublished" datetime="2016-08-01T18:11:20+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>Swift枚举基本概念</p>
+</blockquote>
+<p>Swift中的枚举比OC中的枚举强大, 因为Swift中的枚举是一等类型,<br>它可以像类和结构体一样增加属性和方法<br>enum Method{<br>case 枚举值<br>}<br>2. 枚举的基本使用<br>我们注意到，swift 的每个枚举项前面，都使用一个 case 关键字来标识。除了每行声明一个枚举项，也可以将这些枚举项放在一行中声明，每项之间用逗号分隔。<br>enum Menthod1 {<br>case Add, Sub, Mul, Div<br>}<br>可以使用枚举类型变量或常量接收枚举值<br>var m: Method = .Add<br>注意: 如果变量或常量没有指定类型, 那么前面必须加上该值属于哪个枚举类型<br>// var m1 =  .Add //直接报错<br>var m1 = Method.Add //正确写法<br>3.原始值<br>OC中枚举的本质就是整数, 所以OC中的枚举是有原始值的,默认是从0开始<br>而Swift中的枚举默认是没有原始值的, 但是可以在定义时告诉系统让枚举有原始值和OC中的枚举一样, 也可以指定原始值, 后面的值默认+1 , 但必须指定枚举的类型, 并且一定是 Int 类型<br>Swift中的枚举除了可以指定整形以外还可以指定其它类型, 但是如果指定其它类型, 必须给所有枚举值赋值, 因为不能自动递增<br>// 指定了枚举原始值类型为 Int , 所以并且给第一个枚举值定义了原始值, 则后面的值默认 +1<br>enum Method3: Int{<br>case Add = 5, Sub, Mul, Div<br>}<br>// 自定的枚举原始值的类型不是 Int , 所以后面的值不会默认 +1,<br>// 后面的也需要手动赋值<br>enum Method4: Double{<br>case Add = 5.0, Sub = 6.0, Mul = 6.1, Div = 8.0<br>}<br>原始值转换为枚举值<br>enum Method5: String{<br>case Add = “add”, Sub = “sub”, Mul = “mul”, Div = “div”<br>}<br>获取枚举原始值<br>rawValue代表将枚举值转换为原始值, 注意老版本中转换为原始值的方法名叫toRaw<br>Method4.Sub.rawValue<br>print(Method4.Sub.rawValue)<br>// 输出结果: 6.0<br>通过原始值创建枚举值<br>原始值区分大小写<br>返回的是一个可选值,因为原始值对应的枚举值不一定存在<br>老版本中为fromRaw(“add”)<br>let m2 = Method5(rawValue: “add”)<br>print(m2)</p>
+<p>func chooseMethod(op:String){<br>// 由于返回是可选类型, 所以有可能为nil, 最好使用可选绑定<br>if let opE = Method5(rawValue: op){<br>switch (opE){<br>case .Add:<br>print(“加法”)<br>case .Sub:<br>print(“减法”)<br>case .Mul:<br>print(“除法”)<br>case .Div:<br>print(“乘法”)<br>}<br>}<br>}<br>4. 枚举相关值<br>在 Swift 中，我们还可以定义这样的枚举类型，它的每一个枚举项都有一个附加信息，来扩充这个枚举项的信息表示，这又叫做关联值。加入我们有一个枚举类型 Shape 来表示形状。<br>enum lineSegmentDescriptor{<br>case StartAndEndPattern(start:Double, end:Double)<br>case StartAndLengthPattern(start: Double, length:Double)<br>}</p>
+<p>var lsd = lineSegmentDescriptor.StartAndLengthPattern(start: 0.0, length: 100.0)<br>lsd = lineSegmentDescriptor.StartAndEndPattern(start: 0.0, end: 50.0)</p>
+<p>print(lsd)<br>// 输出结果: StartAndEndPattern(0.0, 50.0)<br>利用switch提取枚举关联值<br>switch lsd {<br>case let .StartAndEndPattern(s, e):<br>print(“start = (s) end = (e)”)<br>case .StartAndLengthPattern(let s, let l):<br>print(“start = (s) lenght = (l)”)<br>}<br>// 输出结果: start = 0.0 end = 50.0</p>
+<blockquote>
+<p>嵌套枚举(Nesting Enums)</p>
+</blockquote>
+<p>如果你有特定子类型的需求，可以对enum进行嵌套。这样就允许你为实际的enum中包含其他明确信息的enum。以RPG游戏中的每个角色为例，每个角色能够拥有武器，因此所有角色都可以获取同一个武器集合。而游戏中的其他实例则无法获取这些武器(比如食人魔,它们仅使用棍棒)。<br>enum Character {<br>enum Weapon {<br>case Bow<br>case Sword<br>case Lance<br>case Dagger<br>}<br>enum Helmet {<br>case Wooden<br>case Iron<br>case Diamond<br>}<br>case Thief<br>case Warrior<br>case Knight<br>}</p>
+<blockquote>
+<p>属性(Properties)</p>
+</blockquote>
+<p>尽管增加一个存储属性到枚举中不被允许，但你依然能够创建计算属性。当然，计算属性的内容都是建立在枚举值下或者枚举关联值得到的。<br>enum Device {<br>case iPad, iPhone<br>var year: Int {<br>switch self {<br>case iPhone: return 2007<br>case iPad: return 2010<br>}<br>}</p>
+<blockquote>
+<p>静态方法(Static Methods)</p>
+</blockquote>
+<p>你也能够为枚举创建一些静态方法(static methods)。换言之通过一个非枚举类型来创建一个枚举。在这个示例中,我们需要考虑用户有时将苹果设备叫错的情况(比如AppleWatch叫成iWatch)，需要返回一个合适的名称。<br>enum Device {<br>case AppleWatch<br>static func fromSlang(term: String) -&gt; Device? {<br>if term == “iWatch” {<br>return .AppleWatch<br>}<br>return nil<br>}<br>}<br>print (Device.fromSlang(“iWatch”))</p>
+<blockquote>
+<p>可变方法(Mutating Methods)</p>
+</blockquote>
+<p>方法可以声明为mutating。这样就允许改变隐藏参数self的case值了3。<br>enum TriStateSwitch {<br>case Off, Low, High<br>mutating func next() {<br>switch self {<br>case Off:<br>self = Low<br>case Low:<br>self = High<br>case High:<br>self = Off<br>}<br>}<br>}<br>var ovenLight = TriStateSwitch.Low<br>ovenLight.next()<br>// ovenLight 现在等于.On<br>ovenLight.next()<br>// ovenLight 现在等于.Off</p>
+<blockquote>
+<p>小结</p>
+</blockquote>
+<p>枚举声明的类型是囊括可能状态的有限集，且可以具有附加值。通过内嵌(nesting),方法(method),关联值(associated values)和模式匹配(pattern matching),枚举可以分层次地定义任何有组织的数据。<br>现在我们已经对这个定义更加清晰了。确实，如果我们添加关联值和嵌套，enum就看起来就像一个封闭的、简化的struct。相比较struct，前者优势体现在能够为分类与层次结构编码。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/" class="post-title-link" itemprop="url">Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 17:15:40" itemprop="dateCreated datePublished" datetime="2016-08-01T17:15:40+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>存储属性</p>
+</blockquote>
+<p>Swift中的存储属性就是以前学习OC中的普通属性<br>在结构体或者类中定义的属性, 默认就是存储属性<br>struct Person {<br>var name: String<br>var age: Int<br>}<br>var p:Person = Person(name: “cdh”, age: 20)</p>
+<blockquote>
+<p>常量存储属性</p>
+</blockquote>
+<p>常量存储属性只能在定义时或构造时修改<br>构造好一个对象之后不能对常量存储属性进行修改<br>struct Person1 {<br>var name: String<br>var age: Int<br>let card: String // 身份证<br>}<br>var p1: Person1 = Person1(name: “cdh”, age: 20, card: “123456”)<br>p1.name = “CDH”<br>p1.age = 50<br>//构造好对象之后不能修改常量存储属性<br>//以下写法是错误的<br>//p1.card = “56789”</p>
+<p>结构体和枚举是值类型<br>因此不能修改结构体常量中的属性<br>不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>类是引用类型<br>可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>struct Person2 {<br>var name: String<br>var age: Int<br>}<br>let p2: Person2 = Person2(name: “cdh”, age: 20)<br>//因为结构体是值类型, 所以不能修改结构体常量中的属性<br>//不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>//以下写法错误<br>//p2.name = “CDH” //不能修改结构体常量对象的值<br>//以下写法错误<br>//p2 = Person2(name: “CDH”, age: 50)</p>
+<p>class Person3 {<br>var name: String = “cdh”<br>var age: Int = 20<br>}<br>let p3:Person3 = Person3()<br>//可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>p3.name = “CDH”<br>//不可以修改类常量的指向<br>//以下写法是错误的<br>//p3 = Person4()</p>
+<blockquote>
+<p>延迟存储属性</p>
+</blockquote>
+<p>Swift语言中所有的存储属性必须有初始值, 也就是当构造完一个对象后, 对象中所有的存储属性必须有初始值<br>但是也有例外, 其中延迟存储属性可以将属性的初始化推迟到该属性第一次被调用的时候<br>这个延时属性对应于 OC中的懒加载的概念<br>苹果的设计思想:希望所有的对象在使用时才真正加载到内存中<br>和OC不同的是swift有专门的关键字来实现懒加载<br>lazy关键字可以用于定义某一个属性懒加载<br>懒加载应用场景:<br>有可能不会用到<br>依赖于其它值<br>class Line {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    如果不是lazy属性,定义的时候对象还没有初始化,所以不能访问self<br>//    如果加上lazy,代表使用时才会加载,也就是使用到length属性时才会调用self<br>//    而访问一个类的属性必须通过对象方法<br>//    所以访问时对象已经初始化完成了,可以使用self<br>lazy var length: Double = self.getLenght()<br>//    通过闭包懒加载<br>lazy var container: Array<AnyObject> = {<br>print(“懒加载”)<br>var arrM = []<br>return arrM as [AnyObject]<br>}()<br>func getLenght() -&gt;Double<br>{<br>print(“懒加载”)<br>return end - start<br>}<br>}<br>var line = Line()<br>line.end = 150.0<br>print(“创建对象完毕”)<br>print(line.length)<br>var arrM = line.container<br>arrM.append(“1”)<br>arrM.append(5)<br>print(arrM)<br>//输出结果:<br>//创建对象完毕<br>//懒加载<br>//150.0<br>//懒加载<br>//[1, 5]</p>
+<blockquote>
+<p>计算属性</p>
+</blockquote>
+<p>1.Swift中的计算属性不直接存储值<br>跟存储属性不同,没有任何的”后端存储与之对应”<br>2.计算属性用于计算, 可以实现setter和getter这两种计算方法<br>3.枚举不可以有存储属性, 但是允许有计算属性<br>setter 对象.属性 = 值<br>getter var value = 对象.属性<br>struct Rect {<br>var origion: (x: Double, y: Double) = (0, 0)<br>var size: (w: Double, h: Double) = (0, 0)<br>//    由于center的值是通过起点和宽高计算出来的, 所以没有必要提供一个存储属性<br>var center: (x: Double, y: Double) {<br>get{<br>return (origion.x + size.w/2, origion.y + size.h/2)<br>}<br>set{<br>//            注意: 计算属性不具备存储功能, 所以不能给计算属性赋值<br>//            如果赋值会发生运行时错误<br>//            注意: setter可以自己传递一个参数, 也可以使用系统默认的参数newValue<br>//            如果要使用系统自带的参数, 必须删除自定义参数<br>origion.x = newValue.x - size.w / 2<br>origion.y = newValue.y - size.h / 2<br>}<br>}<br>}<br>var r = Rect()<br>r.origion = (0, 0)<br>r.size = (100, 100)<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果: center.x = 50.0 center.y = 50.0<br>r.center = (100, 100)<br>print(“origion.x = (r.origion.x) origion.y = (r.origion.y)”)<br>//输出结果: origion.x = 50.0 origion.y = 50.0<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果:center.x = 100.0 center.y = 100.0</p>
+<blockquote>
+<p>只读计算属性</p>
+</blockquote>
+<p>对应OC中的readonly属性<br>所谓的只读属性就是只提供了getter方法, 没有提供setter方法<br>class Line1 {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    只读属性, 只读属性必须是变量var, 不能是常量let<br>//    例如想获取长度<br>//    只能通过计算获得, 而不需要外界设置, 可以设置为只读计算属性<br>var length: Double{<br>//        只读属性的简写, 可以省略get{}<br>return end - start<br>}<br>}<br>var line1 = Line1()<br>line1.end = 100<br>print(line1.length)<br>//输出结果: 100.0<br>//错误,不可设置只读属性<br>line1.length = 100</p>
+<blockquote>
+<p>属性观察器</p>
+</blockquote>
+<p>类似OC中的KVO<br>可以用于监听属性什么时候被修改, 只有属性被修改才会调用<br>有两种属性观察器:<br>1.willSet, 在设置新值之前调用<br>2.didSet, 在设置新值之后调用<br>可以直接为除计算属性和lazy属性之外的存储属性添加属性观察器<br>但是可以在继承类中为父类的计算属性提供属性观察器<br>因为在计算属性中也可以监听到属性的改变<br>所以给计算属性添加属性观察器没有任何意义<br>class Line2 {<br>var start:Double = 0.0{<br>willSet{<br>print(“willSet newValue = (newValue)”)<br>}<br>didSet{<br>print(“didSet oldValue = (oldValue)”)<br>}<br>}<br>var end: Double = 0.0<br>}<br>var l2 = Line2()<br>l2.start = 10.0<br>//输出结果:<br>//willSet newValue = 10.0<br>//didSet oldValue = 0.0<br>//开发中使用didSet较多</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/H_1Htmlhtml%E3%80%81css%E3%80%81js%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%83%85%E5%86%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/01/H_1Htmlhtml%E3%80%81css%E3%80%81js%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%83%85%E5%86%B5/" class="post-title-link" itemprop="url">html、css、js文件加载顺序及执行情况</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 15:12:15" itemprop="dateCreated datePublished" datetime="2016-08-01T15:12:15+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>HTML页面加载和解析流程 </p>
+<ol>
+<li><p>用户输入网址（假设是个html页面，并且是第一次访问），浏览器向服务器发出请求，服务器返回html文件。 </p>
+</li>
+<li><p>浏览器开始载入html代码，发现<head>标签内有一个<link>标签引用外部CSS文件。 </p>
+</li>
+<li><p>浏览器又发出CSS文件的请求，服务器返回这个CSS文件。 </p>
+</li>
+<li><p>浏览器继续载入html中<body>部分的代码，并且CSS文件已经拿到手了，可以开始渲染页面了。 </p>
+</li>
+<li><p>浏览器在代码中发现一个<img>标签引用了一张图片，向服务器发出请求。此时浏览器不会等到图片下载完，而是继续渲染后面的代码。 </p>
+</li>
+<li><p>服务器返回图片文件，由于图片占用了一定面积，影响了后面段落的排布，因此浏览器需要回过头来重新渲染这部分代码。 </p>
+</li>
+<li><p>浏览器发现了一个包含一行Javascript代码的<script>标签，赶快运行它。 </p>
+</li>
+<li><p>Javascript脚本执行了这条语句，它命令浏览器隐藏掉代码中的某个<style>（style.display=”none”）。杯具啊，突然就少了这么一个元素，浏览器不得不重新渲染这部分代码。 </p>
+</li>
+<li><p>终于等到了</html>的到来，浏览器泪流满面…… </p>
+</li>
+<li><p>等等，还没完，用户点了一下界面中的“换肤”按钮，Javascript让浏览器换了一下＜link＞标签的CSS路径。 </p>
+</li>
+<li><p>浏览器召集了在座的各位<div><span><ul><li>们，“大伙儿收拾收拾行李，咱得重新来过……”，浏览器向服务器请求了新的CSS文件，重新渲染页面。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/D_Net18SQLite/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -662,350 +911,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net11%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%BA%92%E7%9B%B8%E8%B7%B3%E8%BD%AC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net11%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%BA%92%E7%9B%B8%E8%B7%B3%E8%BD%AC/" class="post-title-link" itemprop="url">应用程序互相跳转</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 18:16:14" itemprop="dateCreated datePublished" datetime="2016-07-31T18:16:14+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ol>
-<li>应用场景</li>
-</ol>
-<p>1） 使用第三方用户登录，需要用户授权，还需要”返回到调用的程序，同时返回授权的用户名”</p>
-<p>2） 应用程序推广，网易彩票，设置－推荐应用－有很多应用程序图标<br>－如果本机已经安装过，会直接跳转到另外一个应用程序<br>－软件的广告，推广结果，后续会有一些列的金钱上的结算</p>
-<ol start="3">
-<li>   支付宝，第三方支付，淘宝，电话费充值。。。</li>
-</ol>
-<ol start="2">
-<li>要打开本机上的其他应用程序，需要设置schemes，自定义的协议头，可以打开其他的应用程序</li>
-</ol>
-<p>跳转的代码如下：</p>
-<ul>
-<li>(IBAction)openWangyi:(id)sender<br>{<br>// 跳转到其他应用程序<br>// schemes: 网易的scheme wangyi<br>NSURL *url = [NSURL URLWithString:@”wangyi://view?newsid=201410130001”];</li>
-</ul>
-<p>// 判断本机是否安装了目标程序<br>if ([[UIApplication sharedApplication] canOpenURL:url]) {<br>[[UIApplication sharedApplication] openURL:url];<br>} else {<br>NSLog(@”没有安装，可以再给定下载地址，前往”);<br>}<br>}</p>
-<ol start="3">
-<li>新浪微博的授权界面说明：</li>
-</ol>
-<p>1&gt;    在新浪微博中，本身不能直接跳转到该界面<br>2&gt; 用其他应用程序打开时，如果scheme时weibo://oaauth，直接进入此界面<br>3&gt; 如果直接点击，返回，返回调用放应用程序<br>4&gt; 如果点击表格行中的用户名，直接返回用户信息给调用应用程序</p>
-<ol start="4">
-<li>如果要返回调用的应用程序，需要知道调用我们的应用程序的scheme</li>
-</ol>
-<p>/** 只要是由其他应用程序打开的，就会调用此方法 <em>/<br>/*</em> URL 就是其他应用程序，打开当前程序使用的URL */</p>
-<ul>
-<li>(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url</li>
-</ul>
-<p>/**<br>openURL 是打开当前应用程序的url<br>sourceApplication 是当开当前应用程序的源程序的BundleId</p>
-<p>提示：一旦重写了新方法，旧方法就不再被执行<br>但是：很多第三方框架，都建议两个方法全都写<br>*/</p>
-<ul>
-<li>(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net6CoreLocation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net6CoreLocation/" class="post-title-link" itemprop="url">CoreLocation</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 18:14:03" itemprop="dateCreated datePublished" datetime="2016-07-31T18:14:03+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <hr>
-<p>CLLocationManager 定位管理者<br>CLLocation 代表位置(经度/纬度/高度/速度/路线等)<br>CLHeading  代表移动方向<br>CLRegion   代表一个区域</p>
-<blockquote>
-<p>CLCircularRegion  圆形区域<br>CLBeaconRegion 蓝牙信号区域</p>
-</blockquote>
-<p>返回定位服务是否可用<br>[CLLocationManager locationServicesEnabled];<br>返回延迟定位更新是否可用<br>[CLLocationManager deferredLocationUpdatesAvailable];<br>返回重大位置改变监听是否可用<br>[CLLocationManager significantLocationChangeMonitoringAvailable];<br>返回是否支持磁力计算方向<br>[CLLocationManager headingAvailable];<br>返回蓝牙信号范围服务是否可用<br>[CLLocationManager isRangingAvailable];</p>
-<hr>
-<p>设置是否可以暂停定位来节省电池电量, YES不需要定位数据时自动暂停定位<br>// mgr.pausesLocationUpdatesAutomatically</p>
-<hr>
-<p>每隔多少米定位一次, 只有水平方向超过该值时才会重新定位<br>// mgr.distanceFilter = 100;</p>
-<hr>
-<p>定位精确度<br>// mgr.desiredAccuracy;<br>kCLDistanceFilterNone;<br>kCLLocationAccuracyBestForNavigation 导航级最佳精准<br>kCLLocationAccuracyBest; 最佳精准<br>kCLLocationAccuracyNearestTenMeters; 10米误差<br>kCLLocationAccuracyHundredMeters; 百米胡茬<br>kCLLocationAccuracyKilometer;  千米误差<br>kCLLocationAccuracyThreeKilometers; 3千米误差</p>
-<hr>
-<p>定位数据的用途<br>// mgr.activityType;<br>CLActivityTypeOther 作为普通用途<br>CLActivityTypeAutomotiveNavigation  作为车辆导航<br>CLActivityTypeFitness  作为不行<br>CLActivityTypeOtherNavigation 作为其它导航</p>
-<hr>
-<p>// CLLocation<br>location.coordinate; 坐标, 包含经纬度<br>location.altitude; 设备海拔高度 单位是米<br>location.course; 设置前进方向 0表示北 90东 180南 270西<br>location.horizontalAccuracy; 水平精准度<br>location.verticalAccuracy; 垂直精准度<br>location.timestamp; 定位信息返回的时间<br>location.speed; 设备移动速度 单位是米/秒, 适用于行车速度而不太适用于不行<br>/*<br>可以设置模拟器模拟速度<br>bicycle ride 骑车移动<br>run 跑动<br>freeway drive 高速公路驾车<br>*/</p>
-<hr>
-<p>// CLAuthorizationStatus<br>用户从未选择过权限<br>kCLAuthorizationStatusNotDetermined<br>无法使用定位服务，该状态用户无法改变<br>kCLAuthorizationStatusRestricted<br>用户拒绝该应用使用定位服务，或是定位服务总开关处于关闭状态<br>kCLAuthorizationStatusDenied<br>已经授权（废弃）<br>kCLAuthorizationStatusAuthorized<br>用户允许该程序无论何时都可以使用地理信息<br>kCLAuthorizationStatusAuthorizedAlways<br>用户同意程序在可见时使用地理位置<br>kCLAuthorizationStatusAuthorizedWhenInUse</p>
-<hr>
-<p>// 计算两个位置之间的距离, 单位是米<br>[newLocation distanceFromLocation:self.prevLocation];</p>
-<hr>
-<p>获取方向信息不会提示用户(不需要授权), 因为不会泄露隐私<br>// [self.mgr startUpdatingHeading];</p>
-<p>magneticHeading 设备与磁北的相对角度<br>trueHeading 设置与真北的相对角度, 必须和定位一起使用, iOS需要设置的位置来计算真北<br>真北始终指向地理北极点<br>磁北对应随着时间变化的地球磁场北极<br>@interface ViewController ()<CLLocationManagerDelegate><br>{<br>//创建对象<br>CLLocationManager *_manager;<br>}</p>
-<p>//获取当前经度<br>_manager =[[CLLocationManager alloc]init];<br>//设置代理<br>_manager.delegate=self;</p>
-<p>开始定位<br>[self startLocation];<br>#pragma mark - 开始定位<br>-(void)startLocation<br>{<br>//判断定位服务是否可用<br>if (![CLLocationManager locationServicesEnabled]) {<br>NSLog(@”定位服务不可用”);</p>
-<p>}</p>
-<p>//设置精确度<br>_manager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;<br>//距离变化敏感程度<br>_manager.distanceFilter=1000;<br>//开始定位<br>[_manager startUpdatingLocation];<br>}<br>#pragma mark - 协议提供的代理方法，当位置更新的时候执行<br>-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations<br>{<br>//地址：经纬度</p>
-<p>//获取地址对象(包含经纬度)<br>CLLocation *location=manager.location;<br>//获取当前经纬度<br>CLLocationCoordinate2D coordinate=location.coordinate;<br>//输出经纬度<br>NSLog(@”long=%f lan=%f”,coordinate.longitude,coordinate.latitude);</p>
-<p>}  </p>
-<p>方向服务<br>//    [self testHeading];<br>#pragma mark - 方向服务<br>-(void)testHeading<br>{<br>if (![CLLocationManager headingAvailable]) {<br>NSLog(@”方向服务不可用”);<br>return;<br>}<br>[_manager startUpdatingHeading];<br>}<br>#pragma mark - 代理方法，当方向更新的时候开始执行<br>-(void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading<br>{</p>
-<p>NSLog(@”磁极方向= %f”,newHeading.magneticHeading);<br>NSLog(@”地理方向 = %f”,newHeading.trueHeading);<br>}</p>
-<p>地址编码和地址反编码<br>[self testGeoCoder];<br>#pragma mark - 地址编码和地址反编码<br>-(void)testGeoCoder<br>{<br>//知道地址，获取经纬度===地址编码<br>CLGeocoder *geocoCoder=[[CLGeocoder alloc]init];<br>[geocoCoder geocodeAddressString:@”兴美生活广场” completionHandler:^(NSArray *placemarks, NSError *error) {<br>//返回placemarks<br>for (CLPlacemark *mark in placemarks)<br>{<br>NSLog(@”mark=%@”,mark );<br>}<br>}];<br>//地址反编码，知道经纬度，获取地址，<br>CLLocation *location=[[CLLocation alloc]initWithLatitude:40.03708400 longitude:116.37059500];</p>
-<p>CLGeocoder *reverseGeocoCoder=[[CLGeocoder alloc]init];<br>[reverseGeocoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {<br>for (CLPlacemark *mark in placemarks)<br>{<br>NSLog(@”地址反编码=%@”,mark );</p>
-<p>}<br>}];</p>
-<p>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">事件处理简介</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 18:10:27" itemprop="dateCreated datePublished" datetime="2016-07-31T18:10:27+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1&gt; 事件处理简介</p>
-<ul>
-<li> PPT简介</li>
-<li>3大事件：主要了解触摸事件。</li>
-<li>什么是响应者对象</li>
-<li>为什么继承UIResponder就能处理事件</li>
-<li>想处理触摸事件，应该怎么办</li>
-</ul>
-<p>2&gt;  01-view拖拽演练</p>
-<ul>
-<li>为什么要自定义view：系统自带不能处理事件</li>
-<li>演示触摸事件方法,触摸的完整过程。</li>
-<li>介绍参数(NSSet,UITouch,UIEvent)</li>
-<li>重点UITouch，</li>
-</ul>
-<p>1.触摸事件方法中的UITouch都是同一个对象，因为一根手指对应一个UITouch.当手指移动或者抬起，并不会产生一个新的UITouch对象给你，而是改变UITouch里面的属性，<br>1.默认三个方法里面只能获取到一个手指，为什么。UIView不支持多点触控<br>2.怎么才能有两个手指，两个手指同时按，并且视图支持多点触控<br>3.UITouch的tapCount有什么用？可以判断用户当前是双击还是单击<br>4.UITouch的phase有什么用? 根据这个属性，判断当前需要调用哪个处理事件方法，begin,move,end<br>程序思路：</p>
-<ul>
-<li>在TouchMove里面做事情-为什么?因为用户手指在视图上移动的时候才需要移动视图。</li>
-<li>获取用户当前的位置，获取用户之前的位置，就知道用户从哪移动到哪,这个位置也是视图移动的位置</li>
-<li>当前视图的位置 = 上一次视图的位置 + 手指的偏移量</li>
-</ul>
-<p>3&gt; 02-事件传递</p>
-<ul>
-<li>  PPT简介</li>
-<li>事件，加入到一个由谁管理的事件队列中?UIApplication</li>
-<li>为什么用队列，不用栈。队列先进先出，意味着先产生的事件，先处理。</li>
-<li>  代码验证事件谁处理</li>
-<li>PPT上这么多view，验证哪个view处理事件。这么多view，都需要监重写一个方法，搞个父类。</li>
-<li>一个view能处理事件，意味着事件传递给他了，那怎么传递? 事件是由父控件传递给子控件。</li>
-<li>父控件不处理事件，子控件也不能。蓝色不接收事件，黄色也不会接收事件? 为什么，因为事件是从父控件传递给子控件的。父控件都没有事件，怎么传给子控件。</li>
-<li>  代码验证view不能处理事件</li>
-<li>一个view怎么不能处理事件。userInteractionEnabled = NO，hidden = YES，alpha &lt;= 0.01</li>
-<li>  代码验证UIImageView不允许交互</li>
-<li>UIImageView默认不允许用户交互，因此默认它上面的子控件不能接收事件。</li>
-<li>  怎么找到最合适的View？通过一个递归。</li>
-<li>第一个接收事件的控件是谁?窗口</li>
-<li>当事件传递给窗口的时候，就会让窗口去找最合适的view,1&gt; 判断自己能不能接收事件 2&gt; 点在不在窗口上 3&gt; 去找比自己更合适的view，从后往前遍历子控件，拿到子控件后，把事件传递给这个子控件 4&gt; 子控件拿到事件之后，又会做同样的判断，一直递归去找，直到找到最合适的view.</li>
-<li>  事件传递的目的何在?找到最合适的view,把事件交给他。</li>
-</ul>
-<p>4&gt; 03-hitText方法和pointInside方法(复制:02-事件传递代码)</p>
-<ul>
-<li>（了解hitText）学习一个方法必须了解：什么时候调用和这个方法有什么用</li>
-</ul>
-<ol>
-<li>hitText什么时候调用:当一个事件传递给一个控件的时候，控件就会调用这个方法</li>
-<li>hitText作用: 寻找到最合适的view。</li>
-</ol>
-<ul>
-<li>（回顾下事件传递），UIApplication -&gt; UIWindow</li>
-<li> UIWindow去寻找最合适的view? [UIWindow hitTest:withEvent:]里面做了什么事情？<br>1&gt; 判断窗口能不能处理事件? 如果不能，意味着窗口不是最合适的view，而且也不会去寻找比自己更合适的view,直接返回nil,通知UIApplication，没有最合适的view。<br>2&gt; 判断点在不在窗口<br>3&gt; 遍历自己的子控件，寻找有没有比自己更合适的view<br>4&gt; 如果子控件不接收事件，意味着子控件没有找到最合适的view,然后返回nil,告诉窗口没有找到更合适的view,窗口就知道没有比自己更合适的view,就自己处理事件。</li>
-<li>验证下hitTest方法返回nil，里面的子控件能处理事件吗？ 重写根控制器view的hitTest:withEvent:方法，</li>
-<li>验证这个方法是否真能找到最合适的view？</li>
-<li>如果点击屏幕任何一个地方，都是白色的view，怎么做。直接返回白色的view,就不会继续去找白色view的子控件了。</li>
-<li>介绍pointInside方法</li>
-<li>pointInside作用：判断一个点在不在一个控件上</li>
-<li>point参数:方法调用者坐标系上的点，PPT画图分析原理。</li>
-<li>这节课的重点：学习完了pointInside,就能实现下hitTest方法底层是怎么做的了。</li>
-</ul>
-<p>5&gt; 04-hitText练习</p>
-<ul>
-<li>分析思路：如果一个点，同时在黄色view和按钮上，由按钮处理事件，怎么做?</li>
-<li>分析事件传递: 当黄色按钮要处理事件，首先事件得传递到他身上</li>
-<li>重写hitTest方法：事件传递到某个控件，调用什么方法?hitTest</li>
-<li>返回nil什么意思？如果直接返回nil，意味着黄色的view，没有找到最合适的view,他的父控件，就会遍历下一个控件，也就是按钮，询问按钮是不是最合适的view.</li>
-<li>判断点在不在按钮上，在就交给他处理。</li>
-<li>pointInside实现。</li>
-</ul>
-<p>5&gt; 响应者链条(复制:02-事件传递代码)</p>
-<ul>
-<li>PPT简介</li>
-<li>touch默认做法:自己不处理事件，交给上一个响应者处理touch事件。</li>
-<li>响应者链条，点击绿色的view,如果不处理事件，就会往上传递。</li>
-<li>验证touch的默认做法 先恢复所有view的默认做法</li>
-<li>监听黄色点击，蓝色点击。</li>
-<li>黄色调用默认做法，事件传递给谁处理?蓝色</li>
-<li>得出结论：1&gt; touch的默认做法：自己不处理，交给上一个响应者。 2&gt; 上一个响应者默认是父控件</li>
-<li>两个view怎么同时处理事件?一个view处理方法，在调用父类默认的做法</li>
-<li>把事件传递给白色的view，怎么做?</li>
-<li>总结下事件传递的完整过程.</li>
-<li>把事件传递给控制器，测试白色view的上一个响应者是否是控制器。</li>
-<li>回顾响应者链条</li>
-</ul>
-<p>6&gt; 抽屉效果<br>添加子视图</p>
-<ul>
-<li>  简单的滑动效果</li>
-<li>监听控制器处理事件方法</li>
-<li>获取x轴偏移量</li>
-<li>改变主视图的frame</li>
-<li>  利用KVO做视图切换<br>往左移动，显示右边，隐藏左边<br>往右移动，显示左边，隐藏右边</li>
-<li> 复杂的滑动效果，PPT讲解（根据手指每移动一点，x轴的偏移量算出当前视图的frame）<br>假设x移到320时，y移动到60，算出没移动一点x，移动多少y<br>offsetY = offsetX * 60 / 320  手指每移动一点，x轴偏移量多少，y偏移多少<br>为了好看，x移动到320，距离上下的高度需要保持一致，而且有一定的比例去缩放他的尺寸。<br>怎么根据之前的frame，算出当前的frame,touchMove只能拿到之前的frame.<br>当前的高度 = 之前的高度 * 这个比例<br>缩放比例：当前的高度/之前的高度  (screenH - 2 * offsetY) / screenH<br>当前的宽度也一样求。<br>y值，计算比较特殊，不能直接用之前的y,加上offsetY,往左滑动，主视图应该往下走，但是offsetX是负数，导致主视图会往上走。<br>y = （screenH - 当前的高度）* 0.5<br>getCurrentFrameWithOffsetX</li>
-<li>  定位(滑动松开手指的时候，移动到目标点)<br>移动到左右目标点，根据偏移量 = 当前目标点的x - 之前视图的x，计算移动到目标点的frame<br>还原：当没有移动到目标点，就把主视图还原。</li>
-<li>  复位（当主视图不在原始的位置，点击屏幕，恢复原来位置）<br>判断手指是否移动，移动的时候就自动定位，不需要手动复位。</li>
-</ul>
-<p>7&gt; 手势识别<br>使用UIImageView原因：之前既能看见图片，又能监听点击的只有UIButton,学了手势，我们的UIImageView也可以。</p>
-<ul>
-<li>tap(代理：左边不能点，右边能点)</li>
-<li>longPress(allowableMovement:触发之前，最大的移动范围)<blockquote>
-<p>默认调用两次，开始一次，结束一次。</p>
-</blockquote>
-</li>
-<li>swipe:(一个手势只能识别一个方向)</li>
-<li>旋转：<br>基于上一次旋转</li>
-<li>复位：(手势的取值都是相对最原始的位置，我们应该是需要相对上一次，因此每次调用，就复位一下，每次都是从零开始旋转角度)<br>缩放：复位</li>
-<li>如何同时支持旋转和缩放？默认不支持多个手指，<br>Simultaneously：同时<br>当使用一个手势的时候会调用代理的Simultaneously方法，询问是否支持多个手势</li>
-<li>pan<br>获取平移的位置：translationInView<br>复位：setTranslation:inView: 需要传一个view，因为点的位置跟坐标系有关系，看他是基于哪个坐标系被清空的。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1075,7 +980,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-count">269</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

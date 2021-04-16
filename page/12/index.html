@@ -148,6 +148,451 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/09/M_Swift109OC%E8%AF%AD%E8%A8%80%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/09/M_Swift109OC%E8%AF%AD%E8%A8%80%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">OC语言相关</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-09 15:34:45" itemprop="dateCreated datePublished" datetime="2018-08-09T15:34:45+08:00">2018-08-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="OC为什么说是一门动态语言"><a href="#OC为什么说是一门动态语言" class="headerlink" title="OC为什么说是一门动态语言"></a>OC为什么说是一门动态语言</h2><pre><code>Objective-C 可以通过Runtime 这个运行时机制，在运行时动态的添加变
+量、方法、类等，所以说Objective-C 是一门动态的语言
+Objective-C的动态性，让程序在运行时判断其该有的行为，而不是像c等静
+态语言在编译构建时就确定下来。它的动态性主要体现在3个方面：
+1.动态类型：如id类型。实际上静态类型因为其固定性和可预知性而使用的特
+别广泛。静态类型是强类型，动态类型是弱类型，运行时决定接收者。
+2.动态绑定：让代码在运行时判断需要调用什么方法，而不是在编译时。与其他
+面向对象语言一样，方法调用和代码并没有在编译时连接在一起，而是在消息发
+送时才进行连接。运行时决定调用哪个方法。
+3.动态载入。让程序在运行时添加代码模块以及其他资源。用户可以根据需要执
+行一些可执行代码和资源，而不是在启动时就加载所有组件。可执行代码中可以
+含有和程序运行时整合的新类。
+</code></pre>
+<h2 id="类方法（静态方法）和实例方法（动态方法）区别"><a href="#类方法（静态方法）和实例方法（动态方法）区别" class="headerlink" title="类方法（静态方法）和实例方法（动态方法）区别"></a>类方法（静态方法）和实例方法（动态方法）区别</h2><pre><code>类方法必须使用类调用，存储在元类结构体里面的methodLists里面
+实例方法必须使用实例对象调用，存储在类结构体里面的methodLists里面
+静态方法在程序开始时生成内存,实例方法在程序运行中生成内存，
+所以静态方法可以直接调用,实例方法要先成生实例,通过实例调用方法，静态速
+度很快，但是多了会占内存。
+静态内存是连续的,因为是在程序开始时就生成了,而实例申请的是离散的空间,
+所以当然没有静态方法快，
+</code></pre>
+<h2 id="ios中定义属性了解"><a href="#ios中定义属性了解" class="headerlink" title="ios中定义属性了解"></a>ios中定义属性了解</h2><pre><code>@property = ivar + getter + setter
+实例变量+get方法+set方法 也就是说使用@property系统会自动生成setter和getter方法，
+nonatomic 非原子性操作，不提供线程安全，效率更高
+nonatomic 非原子性操作，不提供线程安全，效率更高
+strong 在赋值的时候调用被只想对象的retuain方法，使其引用计数加1
+weak 不增加对象的引用计数，也不持有对象，对象消失后，指针自动变为nil
+assign 不更改引用计数，修饰基础数据类型
+copy 简历一个引用计数为1的对象，常用于NSString和block
+readonly 只读属性
+readwrite默认属性 可读可写
+@synthesize：编译期间，让编译器自动生成setter方法和getter方法
+@dynamic  不自动生成，自己手动生成
+</code></pre>
+<h2 id="NSString为什么要用copy修饰"><a href="#NSString为什么要用copy修饰" class="headerlink" title="NSString为什么要用copy修饰"></a>NSString为什么要用copy修饰</h2><pre><code>因为父类指针可以指向子类对象，使用copy的目的是为了让本对象的属性不受
+外界影响，使用copy无论给我传入的是一个可变的对象黑市不可变的对象，我
+本身持有个就是一个不可变的副本
+如果我们使用的是strong，那么这个属性就有可能指向一个可变对象，如果这
+个可变对象在外部被修改了，那么会影响该属性
+</code></pre>
+<h2 id="如何让自己的对象具有拷贝功能"><a href="#如何让自己的对象具有拷贝功能" class="headerlink" title="如何让自己的对象具有拷贝功能"></a>如何让自己的对象具有拷贝功能</h2><pre><code>需要遵守NSCopying协议，如果自定义的对象分为可变和不可变版本，那么要
+同事细心啊NSCopying和NSMutableCopying协议
+copy和mutableCopy区别
+针对不可变对象调用copy返回该对象本身，调用mutableCopy返回一个可变对象（新的）
+针对可变对象调用copy返回一个不可变对象（新的），调用mutableCopy返回
+另外一个可变对象（新的）。
+copy:创建的是不可变副本（NSString，NSArray，NSDictionary）
+mutableCopy：创建的是可变副本（NSMutableString，
+NSMutableArray，NSMutableDictionary）
+深拷贝(mutableCopy)就是内容拷贝，即指拷贝对象的具体内容，而内存地址
+是自主分配的，拷贝结束之后，两个对象虽然存的值是相同的，但是内存地址不
+一样，两个对象也互不影响，互不干涉;浅拷贝(copy)就是指针拷贝,即对内存
+地址的复制，让目标对象指针和源对象指向同一片内存空间。
+</code></pre>
+<h2 id="为什么IBOutlet修饰的UIView也适用weak关键字"><a href="#为什么IBOutlet修饰的UIView也适用weak关键字" class="headerlink" title="为什么IBOutlet修饰的UIView也适用weak关键字"></a>为什么IBOutlet修饰的UIView也适用weak关键字</h2><pre><code>因为既然有外链那么试图在xib中可定存在，试图已经对他有一个强引用了，使
+用storeboars创建的vc会有一个私有数组前引用所有的对象
+</code></pre>
+<h2 id="使用descperction注意什么"><a href="#使用descperction注意什么" class="headerlink" title="使用descperction注意什么"></a>使用descperction注意什么</h2><pre><code>千万不要在description方法中同时使用%@和self,同时使用了%@和self,
+代表要调用self的description方法,因此最终会导致程序陷入死循环,循 环
+调用description方法
+当该方法使用NSLog(“%@”,self) 时候, 系统做了相关的优化，循坏调用3
+次后就会自动退出
+</code></pre>
+<h2 id="什么时候会报unrecognized-selector错误"><a href="#什么时候会报unrecognized-selector错误" class="headerlink" title="什么时候会报unrecognized selector错误"></a>什么时候会报unrecognized selector错误</h2><pre><code>出现unrecognized selector类型的crash，一般是向对象发送了无法处理
+的消息导致的。说白一点就是这个对象没有你调的那个方法，为什么运行的时候
+才会出现，这个和OC语言动态绑定的机制有关系。
+对象未实现该方法。
+对象已经被释放。
+</code></pre>
+<h2 id="iOS常见错误"><a href="#iOS常见错误" class="headerlink" title="iOS常见错误"></a>iOS常见错误</h2><pre><code>数组越界
+向容器存入nil
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/07/M_Swift89%E5%88%A4%E6%96%AD%E7%B1%BB%E7%9B%B8%E5%90%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/07/M_Swift89%E5%88%A4%E6%96%AD%E7%B1%BB%E7%9B%B8%E5%90%8C/" class="post-title-link" itemprop="url">判断类相同</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-07 17:21:40" itemprop="dateCreated datePublished" datetime="2018-08-07T17:21:40+08:00">2018-08-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <pre><code>1.判断两个指针是否相等，若相等，则均指向同一对象，所以受测的对象也必定
+相等。NSObject的isEqual:方法默认是比较两个对象指向的地址是否相等，
+直接比较两个对象是否相等，实际上比较的是两个对象的指针是否相等。
+2.判断两对象所属的类，若属于同一类
+3.hash
+比较得时候最好是先计算其哈希码，再进行比较。
+4.isEqualToString
+如果isEqual判断两个对象相等，那么hash方法也必须返回同一个值，
+但是，如果两个对象的hash方法返回同一个值，
+那么isEqual方法未必会认为两个方法相同
+需要实现&lt;NSCopying&gt;
+实现isEqual:方法的同时，要实现hash方法！ 
+- (BOOL)isEqual:(id)object &#123;
+if (self == object) return YES;
+if (![object isKindOfClass:[Person class]]) return NO;
+    return [self.name isEqualToString:[object name]];
+&#125;
+用于判断两个字符串是否相等的方法，当然还有isEqualToArray:   isEqualToDictionary: 
+5.深度等同性判定
+NSArray 的检测方式需要先比较两个数组所包含的个数是否相同，
+若相同，则在每个对应未知的两个对象身上调用其“isEqual:&quot;方法。
+如果对应位置上的对象均相等，那么这两个数组就相等。
+6.NSSet中可变类的等同性比较
+非常复杂，只写结论了：如果把一个对象放入set之后又修改其内容，
+那么后面的行为将很难预料，使用过程中一定以注意，
+以免得到的不是自己想要的结果
+7.两个对象中的各个字段是否相等
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/07/M_Swift96Runtime%E5%B8%B8%E8%A7%81%E4%BD%9C%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/07/M_Swift96Runtime%E5%B8%B8%E8%A7%81%E4%BD%9C%E7%94%A8/" class="post-title-link" itemprop="url">Runtime常见作用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-07 14:24:43" itemprop="dateCreated datePublished" datetime="2018-08-07T14:24:43+08:00">2018-08-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="动态的添加对象的成员变量和方法"><a href="#动态的添加对象的成员变量和方法" class="headerlink" title="动态的添加对象的成员变量和方法"></a>动态的添加对象的成员变量和方法</h2><pre><code>class_addMethod([self.person class], @selector(guess), (IMP)guessAnswer, &quot;v@:&quot;);
+参数说明
+&gt;(IMP)guessAnswer 意思是guessAnswer的地址指针;
+&gt;&quot;v@:&quot; 意思是，v代表无返回值void，如果是i则代表int；@代表 id sel; : 代表 SEL _cmd;
+&gt;“v@:@@” 意思是，两个参数的没有返回值。  
+</code></pre>
+<h2 id="动态交换两个方法的实现"><a href="#动态交换两个方法的实现" class="headerlink" title="动态交换两个方法的实现"></a>动态交换两个方法的实现</h2><pre><code>交换方法之后，以后每次调用这两个方法都会交换方法的实现
+Method m1 = class_getInstanceMethod([self.person class], @selector(sayName));
+Method m2 = class_getInstanceMethod([self.person class], @selector(saySex));
+method_exchangeImplementations(m1, m2);
+</code></pre>
+<h2 id="拦截并替换方法"><a href="#拦截并替换方法" class="headerlink" title="拦截并替换方法"></a>拦截并替换方法</h2><pre><code>我们要改变这个方法的实现，但是又不能去动它的源代码
+(正如一些开源库出现问题的时候)，
+这个时候runtime就派上用场了
+我们先增加一个tool类，然后写一个我们自己实现的方法-change，
+通过runtime把test1替换成change。
+Class PersionClass = object_getClass([Person class]);
+Class toolClass = object_getClass([tool class]);
+////源方法的SEL和Method
+SEL oriSEL = @selector(test1);
+Method oriMethod = class_getInstanceMethod(PersionClass, oriSEL);
+////交换方法的SEL和Method
+SEL cusSEL = @selector(change);
+Method cusMethod = class_getInstanceMethod(toolClass, cusSEL);
+////先尝试給源方法添加实现，这里是为了避免源方法没有实现的情况
+BOOL addSucc = class_addMethod(PersionClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+if (addSucc) &#123;
+    // 添加成功：将源方法的实现替换到交换方法的实现     
+    class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+&#125;else &#123;
+    //添加失败：说明源方法已经有实现，直接将两个方法的实现交换即
+    method_exchangeImplementations(oriMethod, cusMethod);  
+&#125;
+</code></pre>
+<h2 id="在方法上增加额外功能"><a href="#在方法上增加额外功能" class="headerlink" title="在方法上增加额外功能"></a>在方法上增加额外功能</h2><pre><code>有这样一个场景，出于某些需求，我们需要跟踪记录APP
+中按钮的点击次数和频率等数据，怎么解决？当然通过继承按钮
+类或者通过类别实现是一个办法，但是带来其他问题比如别人不
+一定会去实例化你写的子类，或者其他类别也实现了点击方法导
+致不确定会调用哪一个，runtime可以这样解决，
+实现场景二、我们app经常会遇到一些cash，我们可以通过
+runtime拦截替换这些方法，从而保证不会崩溃，例如如下列举
+    NSArray+NSRangeException
+    NSDictionary+NSRangeException
+    NSMutableAttributedString+NSRangeException
+    NSMutableString+NSRangeException
+    NSNull+Exception
+    NSObject+Swizzling
+    NSString+NSRangeException
+    UINavigationController+Consistent
+load方法会在类第一次加载的时候被调用,调用的时间比较靠前，
+适合在这个方法里做方法交换,方法交换应该被保证，
+在程序中只会执行一次。
++ (void)load &#123;
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^&#123;
+        Class selfClass = [self class];
+        SEL oriSEL = @selector(sendAction:to:forEvent:);
+        Method oriMethod = class_getInstanceMethod(selfClass, oriSEL);
+        SEL cusSEL = @selector(mySendAction:to:forEvent:);
+        Method cusMethod = class_getInstanceMethod(selfClass, cusSEL);
+        BOOL addSucc = class_addMethod(selfClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
+        if (addSucc) &#123;
+            class_replaceMethod(selfClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
+        &#125;else &#123;
+            method_exchangeImplementations(oriMethod, cusMethod);
+        &#125;
+    &#125;);
+&#125;
+- (void)mySendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event &#123;
+    [[Tool sharedManager] addCount];
+    [self mySendAction:action to:target forEvent:event];
+&#125;
+</code></pre>
+<h2 id="实现NSCoding的自动归档和解档"><a href="#实现NSCoding的自动归档和解档" class="headerlink" title="实现NSCoding的自动归档和解档"></a>实现NSCoding的自动归档和解档</h2><pre><code>- (void)encodeWithCoder:(NSCoder *)encoder
+&#123;
+    unsigned int count = 0;
+    Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
+    for (int i = 0; i&lt;count; i++) &#123;
+        // 取出i位置对应的成员变量
+        Ivar ivar = ivars[i];
+        // 查看成员变量
+        const char *name = ivar_getName(ivar);
+        // 归档
+        NSString *key = [NSString stringWithUTF8String:name];
+        id value = [self valueForKey:key];
+        [encoder encodeObject:value forKey:key];
+    &#125;
+    free(ivars);
+&#125;
+
+- (id)initWithCoder:(NSCoder *)decoder
+&#123;
+    if (self = [super init]) &#123;
+        unsigned int count = 0;
+        Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
+        for (int i = 0; i&lt;count; i++) &#123;
+            // 取出i位置对应的成员变量
+            Ivar ivar = ivars[i];
+            // 查看成员变量
+            const char *name = ivar_getName(ivar);
+            // 归档
+            NSString *key = [NSString stringWithUTF8String:name];
+            id value = [decoder decodeObjectForKey:key];
+            // 设置到成员变量身上
+            [self setValue:value forKey:key];
+        &#125;
+        free(ivars);
+    &#125;
+    return self;
+&#125;
+</code></pre>
+<h2 id="实现字典转模型的自动转换"><a href="#实现字典转模型的自动转换" class="headerlink" title="实现字典转模型的自动转换"></a>实现字典转模型的自动转换</h2><pre><code>字典转模型的应用可以说是每个app必然会使用的场景,
+虽然实现的方式略有不同，但是原理都是一致的：遍历模型中所有
+属性，根据模型的属性名，去字典中查找key，取出对应的值，
+给模型的属性赋值。
+像几个出名的开源库：JSONModel,MJExtension等都是通过这
+种方式实现的。
+// 创建对应模型对象
+id objc = [[self alloc] init];
+unsigned int count = 0;
+// 1.获取成员属性数组
+Ivar *ivarList = class_copyIvarList(self, &amp;count);
+// 2.遍历所有的成员属性名,一个一个去字典中取出对应的
+value给模型属性赋值
+for (int i = 0; i &lt; count; i++) &#123;
+    // 2.1 获取成员属性
+    Ivar ivar = ivarList[i];
+    // 2.2 获取成员属性名 C -&gt; OC 字符串
+    NSString *ivarName = [NSString stringWithUTF8String:ivar_getName(ivar)];
+    // 2.3 _成员属性名 =&gt; 字典key
+    NSString *key = [ivarName substringFromIndex:1];
+    // 2.4 去字典中取出对应value给模型属性赋值
+    id value = dict[key];
+    // 获取成员属性类型
+    NSString *ivarType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
+&#125;
+如果模型比较简单，只有NSString，NSNumber等，
+这样就可以搞定了。但是如果模型含有NSArray，或者NSDictionary等，那么我们还需要进行第二步转换。
+if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![ivarType containsString:@&quot;NS&quot;]) &#123; 
+    //  是字典对象,并且属性名对应类型是自定义类型
+    // 处理类型字符串 @\&quot;User\&quot; -&gt; User
+    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;@&quot; withString:@&quot;&quot;];
+    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;\&quot;&quot; withString:@&quot;&quot;];
+    // 自定义对象,并且值是字典
+    // value:user字典 -&gt; User模型
+    // 获取模型(user)类对象
+    Class modalClass = NSClassFromString(ivarType);
+    // 字典转模型
+    if (modalClass) &#123;
+        // 字典转模型 user
+        value = [modalClass objectWithDict:value];
+    &#125;
+&#125;
+if ([value isKindOfClass:[NSArray class]]) &#123;
+    // 判断对应类有没有实现字典数组转模型数组的协议
+    if ([self respondsToSelector:@selector(arrayContainModelClass)]) &#123;
+        // 转换成id类型，就能调用任何对象的方法
+        id idSelf = self;
+        // 获取数组中字典对应的模型
+        NSString *type =  [idSelf arrayContainModelClass][key];
+        // 生成模型
+        Class classModel = NSClassFromString(type);
+        NSMutableArray *arrM = [NSMutableArray array];
+        // 遍历字典数组，生成模型数组
+        for (NSDictionary *dict in value) &#123;
+            // 字典转模型
+            id model =  [classModel objectWithDict:dict];
+            [arrM addObject:model];
+        &#125;
+        // 把模型数组赋值给value
+        value = arrM;
+    &#125;
+&#125;
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/03/M_Swift91%E7%AE%97%E6%B3%95%E4%B9%8B%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -730,227 +1175,6 @@ function mergeOrder(arr1,arr2) &#123;
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/N_Android11%E5%BC%80%E5%8F%91%E6%95%B4%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/07/24/N_Android11%E5%BC%80%E5%8F%91%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">Android开发整理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-07-24 20:01:11" itemprop="dateCreated datePublished" datetime="2018-07-24T20:01:11+08:00">2018-07-24</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>做安卓开发也算是有一些时间了，一直都没有想过要整理一些东西，最近不是太忙，想着能整理一些，对自己也是一个提升吧。<br>我没有什么整理的头绪，也没有什么脉络，其实网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>Android项目目录结构<br>Activity：应用被打开时显示的界面<br>src：项目代码<br>R.java：项目所有的资源文件<br>Android.jar：Android的jar包，倒入此包方可使用Android的api<br>libs：导入第三方jar包<br>assets：存放资源文件，比如mp3，视频文件<br>bin：存放编译打包的文件<br>res：存放资源文件<br>drawable：存放图片文件<br>layout：存放布局文件<br>menu：定义菜单的样式<br>String.xml:存放字符串资源</p>
-<p>Android的配置文件<br>指定应用的包名<br>package= “com.item.helloworld”<br>data/data/com.item.helloworld<br>应用生成的文件都在此路径<br>Android的四大组件使用前全部都需要在此清单文件中配置</p>
-<p>常用的adb指令<br>adb start-server ：启动adb进程<br>adb kill-server: 杀死进程<br>adb divices :查看当前开发环境链接的设备<br>adb install xxx.apk 往模拟器安装apk<br>adb uninstall 包名： 删除模拟器中应用<br>adb shell ： 进入linux命令</p>
-<p>常用布局：线性布局<br>LinerLayout<br>指定各个节点排列方向<br>android：orientation = “horizontal”<br>设置右对齐<br>android：layout_gravity=”right”<br>当竖直布局时，只能左右对齐和水平居中，顶部底部对齐竖直剧中无效<br>当水平对齐时，只能顶部底部对齐，和竖直居中<br>线性布局非常重要的一个属性：权重<br>android：layout_weight=’1’<br>权重：按照比例分配屏幕的剩余宽度或者高度</p>
-<p>常见布局：相对布局<br>RelativeLayout<br>组件默认左对齐，顶部对齐<br>设置组件制定组件的右边<br>android:layout_toRightOf=”id/tv1”<br>设置右对齐父控件<br>android：layout_alignParentRight=”true”</p>
-<p>帧布局：FrameLayout<br>默认组件都是左对齐和顶部对齐，每个组件相当于一个div</p>
-<p>文件读写操作<br>Ram内存：运行内存，相当于电脑内存<br>Rom内存：内部存储空间，相当于电脑硬盘<br>sd卡：外部存储空间，相当于电脑移动硬盘<br>//持久化保存数据<br>File file = new File(“data/data/com.itheima.rwinrom/info.txt”);<br>FileOutputStream fos = new FileOutputStream(file);<br>fos.write((name + “##” + pass).getBytes());<br>fos.close();<br>读取数据前先检测文件是否存在<br>if(file.exists())<br>读取保存的数据，也是直接开文件输入流读取<br>File file = new File(“data/data/com.itheima.rwinrom/info.txt”);<br>FileInputStream fis = new FileInputStream(file);<br>//把字节流转换成字符流<br>BufferedReader br = new BufferedReader(new InputStreamReader(fis));<br>String text = br.readLine();<br>String[] s = text.split(“##”);</p>
-<p>SharePreference<br>用于存储账号密码<br>往SharePrefreence写数据<br>拿到一个SharePreference对象<br>SharePrefrence sp = getSharePrefenrences(“config”,MODE_PRIVATE);<br>拿到编辑器<br>Editor ed = sp.edit();<br>写数据<br>ed.putBoolen(“name”,name)<br>ed.commit();<br>从SharedPreference里取数据<br>SharedPreferences sp = getSharedPreferences(“config”, MODE_PRIVATE);<br>//从SharedPreference里取数据<br>String name = sp.getBoolean(“name”, “”);</p>
-<p>ListView<br>MVC结构<br>M：model模型层，要显示的数据集合<br>V：view试图层，用户看到的界面–ListView<br>C：controller控制层，操作数据如何显示—adapter对象</p>
-<p>BaseAdapter</p>
-<p>必须实现的两个方法</p>
-<p>第一个</p>
-<p>//系统调用此方法，用来获知模型层有多少条数据<br>@Override<br>public int getCount() {<br>return people.size();<br>}</p>
-<p>第二个</p>
-<p>//系统调用此方法，获取要显示至ListView的View对象<br>//position:是return的View对象所对应的数据在集合中的位置<br>@Override<br>public View getView(int position, View convertView, ViewGroup parent) {<br>System.out.println(“getView方法调用” + position);<br>TextView tv = new TextView(MainActivity.this);<br>//拿到集合中的元素<br>Person p = people.get(position);<br>tv.setText(p.toString());</p>
-<p>//把TextView的对象返回出去，它会变成ListView的条目<br>return tv;<br>}</p>
-<p>消息队列<br>主线程创建时，系统会同事创建消息队列对象（MessageQueue）和消息轮询器对象（Looper）<br>轮询器的作用，就是不停的检测消息队列中是否有消息（Message）<br>Looper一旦发现Message Queue中有消息，就会把消息取出来，然后把消息扔给Handler对象，Handler会调用自己HandleMessage方法处理这条消息<br>Handler handler = new Handler() {<br>主线程有一个消息轮询器looper，不断检测消息队列是否有新消息，如果发现有新消息，自动调用此方法，注意：此方法是主线程运行的<br>public void handleMessage(android.os.Message msg) {</p>
-<p>}<br>}<br>在子线程中使用Handler对象往消息队列里发消息<br>创建消息对象<br>Message msg = new Message（）；<br>//消息的obj属性可以付给任意对象，通过这个属性可以携带数据<br>msg.obj = bm;<br>//what属性相当于一个标签，用于区分不同的消息，从而运行不同的代码<br>msg.what = 1<br>handler.sendMessage(msg);</p>
-<p>Activity生命周期（掌握）</p>
-<p>void onCreate()</p>
-<p>Activity已经被创建完毕<br>void onStart()</p>
-<p>Activity已经显示在屏幕，但没有得到焦点<br>void onResume()</p>
-<p>Activity得到焦点，可以与用户交互<br>void onPause()</p>
-<p>Activity失去焦点，无法再与用户交互，但依然可见<br>void onStop()</p>
-<p>Activity不可见，进入后台<br>void onDestroy()</p>
-<p>Activity被销毁<br>void onRestart()</p>
-<p>Activity从不可见变成可见时会执行此方法</p>
-<p>横竖屏写死<br>android:screenOrientation=”landscape”<br>android:screenOrientation=”portrait”<br>让系统的环境 不再去敏感横竖屏的切换。</p>
-<p>android:configChanges=”orientation|screenSize|keyboardHidden”</p>
-<p>进程优先级（掌握）</p>
-<p>前台进程：拥有一个正在与用户交互的activity（onResume方法被调用）的进程<br>可见进程：拥有一个非前台，但是对用户可见的activity（onPause方法被调用）的进程<br>服务进程：拥有一个通过startService方法启动的服务的进程<br>后台进程：拥有一个后台activity（onStop方法被调用）的进程<br>空进程：没有拥有任何活动的应用组件的进程，也就是没有任何服务和activity在运行</p>
-<p>样式与主题（熟悉）</p>
-<p>样式与主题定义方式一样<br>样式用于布局文件中的组件<br>主题用于Activity</p>
-<p>Fragment（重要）</p>
-<p>用途：在一个Activity里切换界面，切换界面时只切换Fragment里面的内容<br>生命周期方法跟Activity一致，可以理解把其为就是一个Activity<br>fragment切换时会销毁旧的，再创建新的<br>定义布局文件作为Fragment的显示内容<br>//此方法返回的View就会被显示在Fragment上<br>@Override<br>public View onCreateView(LayoutInflater inflater, ViewGroup container,<br>Bundle savedInstanceState) {<br>// TODO Auto-generated method stub<br>//用布局文件填充成一个View对象，返回出去，那么就显示在Fragment上了<br>View v = inflater.inflate(R.layout.fragment01, null);<br>return v;<br>}<br>把Fragment显示至指定ViewGroup中</p>
-<p>//把fragment显示至界面<br>//new出fragment对象<br>Fragment01 fg = new Fragment01();<br>FragmentManager fm = getFragmentManager();<br>//开启事务<br>FragmentTransaction ft = fm.beginTransaction();<br>//把fragment对象显示到指定资源id的组件里面<br>ft.replace(R.id.fl, fg);<br>ft.commit();<br>生命周期（重要）</p>
-<p>fragment切换时旧fragment对象会销毁，新的fragment对象会被创建<br>在drawable目录下定义xml文件，子节点为animation-list，在这里定义要显示的图片和每张图片的显示时长</p>
-<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
-<item android:drawable="@drawable/g1" android:duration="200" />
-<item android:drawable="@drawable/g2" android:duration="200" />
-<item android:drawable="@drawable/g3" android:duration="200" />
-</animation-list>
-ImageView iv = (ImageView) findViewById(R.id.iv);
-//把动画文件设置为imageView的背景
-iv.setBackgroundResource(R.drawable.animations);
-AnimationDrawable ad = (AnimationDrawable) iv.getBackground();
-//播放动画        
-ad.start();
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/M_Swift52%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/07/24/M_Swift52%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">工作总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-07-24 20:00:01" itemprop="dateCreated datePublished" datetime="2018-07-24T20:00:01+08:00">2018-07-24</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>这个星期本来打算搞点餐的项目的，没想到就这样搁置了，周一的时候想了一下，现在我已经不想了，我想这周末没事的时候可以跟我一个同学一起讨论一下，毕竟闲着也是闲着。<br>周一搞了一下那个东西以后，基站边界划分的问题也就出来了，我也没时间去考虑别的问题，直到今天周四，本来明天写这些东西的，我想了下也就算了，还是今天写吧。明天不知道又会有什么事。<br>但是我想我那个项目的事情是不能停的，我会继续写的，我如果有一天我写出来了，我想我会得到相应的回报的，至少要对自己有信心，是吧。<br>目前看来，我对大数据的能力越来越不足，我将很难担当起大数据的项目。从一开始我就不是一个领导的身份。我想接下来我要好好审视自己了，如何去做这些让人头疼的事情是一个问题。做不好怎么办，我很担心，我一直在弱化我自己的位置，不知道当有一天到来的时候，我能问心无愧的告诉自己，我付出了，我不后悔。<br>关于学习，这事那事的东西缠绕着，我也没有去学习Python，但是很多年轻人都在前赴后继的在这条学习的路上。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/25/M_Swift88%E5%B0%8F%E5%B0%8F%E7%9A%84%E4%B8%80%E5%A4%A9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/06/25/M_Swift88%E5%B0%8F%E5%B0%8F%E7%9A%84%E4%B8%80%E5%A4%A9/" class="post-title-link" itemprop="url">小小一天</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-06-25 17:19:52" itemprop="dateCreated datePublished" datetime="2018-06-25T17:19:52+08:00">2018-06-25</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>从昨天的思考，到今天，我想是时候说一下无聊的东西了，这样一天天的，是的，没事做的心情，继续写一点东西吧，谈谈人生，谈谈理想，说一些胡话，就算是聊以慰藉吧。<br>日子一天一天，很快，不知道这样是好是坏，我们总是打算着很多事情，但是有的时候到头来却是一场空，我不知道这样的日子还能多久，我也不想，但是我想，我需要写点东西，我需要让人生充实，我想有的人可以用很多东西来写东西，有的人就是这样。<br>哈哈，感觉头绪有点乱，真的不知道写什么好。天气热的要死，一出门，就是热浪腾腾。今天倒是还好，有点阴天，雾茫茫的，总算是没有大太阳了。<br>好像在说一堆没用的事情，但是人生就是这样，你不知道你会在哪里遇见什么人，你也不知道下一个路口在什么地方，总之，你就这样走着，这样活着，我们说是行尸走肉，其实我们每个人何尝又不是，每个人在社会上其实都是活着，别说你意义很大，其实你处的位置决定了你的作为，所以，不必惊讶，也不必低沉，其实我们都一样。<br>有钱人过的生活我们是享受不了，但是有钱人也有我们不曾有过的焦虑，其实都一样，他们说他们很忙，也好吧，其实说是有意义，当我们真正到老了，真的不知道是不是还是乐观的说有什么意思。<br>真的我们也许在有的时候会很天真，有的时候又很无聊，生活就是这样。<br>好了，不知道又胡扯了什么，今天看了一个新闻，说有声阅读将成为下一个风口，我想确实有一定的作用，但是我们不可否认，当我们没有事情可以做的时候，新闻称为了我们最大的慰藉，这有着一股神奇的力量，我想这有点可怕，我想现在的新闻变了，变成我们不认识的样子，真的是的，我现在发现，我打字真的是又点查，工作这么多年了，竟然打字一直都这样差，真的是有点说不过去，不过也就这样吧，平时写代码，真的不是太纠结打字速度的，但是当你写文字的时候，对于打字这个问题，还是比较注重的。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1020,7 +1244,7 @@ ad.start();
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">266</span>
+          <span class="site-state-item-count">269</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
