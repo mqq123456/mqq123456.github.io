@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_Swift19%E5%AE%89%E5%8D%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/" class="post-title-link" itemprop="url">枚举,枚举原始值,枚举相关值,switch提取枚举关联值</a>
+            <a href="/2017/03/09/M_Swift19%E5%AE%89%E5%8D%93/" class="post-title-link" itemprop="url">安卓的初步认识</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-08-01 18:11:20" itemprop="dateCreated datePublished" datetime="2016-08-01T18:11:20+08:00">2016-08-01</time>
+              <time title="创建时间：2017-03-09 11:31:47" itemprop="dateCreated datePublished" datetime="2017-03-09T11:31:47+08:00">2017-03-09</time>
             </span>
 
           
@@ -186,33 +186,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>Swift枚举基本概念</p>
-</blockquote>
-<p>Swift中的枚举比OC中的枚举强大, 因为Swift中的枚举是一等类型,<br>它可以像类和结构体一样增加属性和方法<br>enum Method{<br>case 枚举值<br>}<br>2. 枚举的基本使用<br>我们注意到，swift 的每个枚举项前面，都使用一个 case 关键字来标识。除了每行声明一个枚举项，也可以将这些枚举项放在一行中声明，每项之间用逗号分隔。<br>enum Menthod1 {<br>case Add, Sub, Mul, Div<br>}<br>可以使用枚举类型变量或常量接收枚举值<br>var m: Method = .Add<br>注意: 如果变量或常量没有指定类型, 那么前面必须加上该值属于哪个枚举类型<br>// var m1 =  .Add //直接报错<br>var m1 = Method.Add //正确写法<br>3.原始值<br>OC中枚举的本质就是整数, 所以OC中的枚举是有原始值的,默认是从0开始<br>而Swift中的枚举默认是没有原始值的, 但是可以在定义时告诉系统让枚举有原始值和OC中的枚举一样, 也可以指定原始值, 后面的值默认+1 , 但必须指定枚举的类型, 并且一定是 Int 类型<br>Swift中的枚举除了可以指定整形以外还可以指定其它类型, 但是如果指定其它类型, 必须给所有枚举值赋值, 因为不能自动递增<br>// 指定了枚举原始值类型为 Int , 所以并且给第一个枚举值定义了原始值, 则后面的值默认 +1<br>enum Method3: Int{<br>case Add = 5, Sub, Mul, Div<br>}<br>// 自定的枚举原始值的类型不是 Int , 所以后面的值不会默认 +1,<br>// 后面的也需要手动赋值<br>enum Method4: Double{<br>case Add = 5.0, Sub = 6.0, Mul = 6.1, Div = 8.0<br>}<br>原始值转换为枚举值<br>enum Method5: String{<br>case Add = “add”, Sub = “sub”, Mul = “mul”, Div = “div”<br>}<br>获取枚举原始值<br>rawValue代表将枚举值转换为原始值, 注意老版本中转换为原始值的方法名叫toRaw<br>Method4.Sub.rawValue<br>print(Method4.Sub.rawValue)<br>// 输出结果: 6.0<br>通过原始值创建枚举值<br>原始值区分大小写<br>返回的是一个可选值,因为原始值对应的枚举值不一定存在<br>老版本中为fromRaw(“add”)<br>let m2 = Method5(rawValue: “add”)<br>print(m2)</p>
-<p>func chooseMethod(op:String){<br>// 由于返回是可选类型, 所以有可能为nil, 最好使用可选绑定<br>if let opE = Method5(rawValue: op){<br>switch (opE){<br>case .Add:<br>print(“加法”)<br>case .Sub:<br>print(“减法”)<br>case .Mul:<br>print(“除法”)<br>case .Div:<br>print(“乘法”)<br>}<br>}<br>}<br>4. 枚举相关值<br>在 Swift 中，我们还可以定义这样的枚举类型，它的每一个枚举项都有一个附加信息，来扩充这个枚举项的信息表示，这又叫做关联值。加入我们有一个枚举类型 Shape 来表示形状。<br>enum lineSegmentDescriptor{<br>case StartAndEndPattern(start:Double, end:Double)<br>case StartAndLengthPattern(start: Double, length:Double)<br>}</p>
-<p>var lsd = lineSegmentDescriptor.StartAndLengthPattern(start: 0.0, length: 100.0)<br>lsd = lineSegmentDescriptor.StartAndEndPattern(start: 0.0, end: 50.0)</p>
-<p>print(lsd)<br>// 输出结果: StartAndEndPattern(0.0, 50.0)<br>利用switch提取枚举关联值<br>switch lsd {<br>case let .StartAndEndPattern(s, e):<br>print(“start = (s) end = (e)”)<br>case .StartAndLengthPattern(let s, let l):<br>print(“start = (s) lenght = (l)”)<br>}<br>// 输出结果: start = 0.0 end = 50.0</p>
-<blockquote>
-<p>嵌套枚举(Nesting Enums)</p>
-</blockquote>
-<p>如果你有特定子类型的需求，可以对enum进行嵌套。这样就允许你为实际的enum中包含其他明确信息的enum。以RPG游戏中的每个角色为例，每个角色能够拥有武器，因此所有角色都可以获取同一个武器集合。而游戏中的其他实例则无法获取这些武器(比如食人魔,它们仅使用棍棒)。<br>enum Character {<br>enum Weapon {<br>case Bow<br>case Sword<br>case Lance<br>case Dagger<br>}<br>enum Helmet {<br>case Wooden<br>case Iron<br>case Diamond<br>}<br>case Thief<br>case Warrior<br>case Knight<br>}</p>
-<blockquote>
-<p>属性(Properties)</p>
-</blockquote>
-<p>尽管增加一个存储属性到枚举中不被允许，但你依然能够创建计算属性。当然，计算属性的内容都是建立在枚举值下或者枚举关联值得到的。<br>enum Device {<br>case iPad, iPhone<br>var year: Int {<br>switch self {<br>case iPhone: return 2007<br>case iPad: return 2010<br>}<br>}</p>
-<blockquote>
-<p>静态方法(Static Methods)</p>
-</blockquote>
-<p>你也能够为枚举创建一些静态方法(static methods)。换言之通过一个非枚举类型来创建一个枚举。在这个示例中,我们需要考虑用户有时将苹果设备叫错的情况(比如AppleWatch叫成iWatch)，需要返回一个合适的名称。<br>enum Device {<br>case AppleWatch<br>static func fromSlang(term: String) -&gt; Device? {<br>if term == “iWatch” {<br>return .AppleWatch<br>}<br>return nil<br>}<br>}<br>print (Device.fromSlang(“iWatch”))</p>
-<blockquote>
-<p>可变方法(Mutating Methods)</p>
-</blockquote>
-<p>方法可以声明为mutating。这样就允许改变隐藏参数self的case值了3。<br>enum TriStateSwitch {<br>case Off, Low, High<br>mutating func next() {<br>switch self {<br>case Off:<br>self = Low<br>case Low:<br>self = High<br>case High:<br>self = Off<br>}<br>}<br>}<br>var ovenLight = TriStateSwitch.Low<br>ovenLight.next()<br>// ovenLight 现在等于.On<br>ovenLight.next()<br>// ovenLight 现在等于.Off</p>
-<blockquote>
-<p>小结</p>
-</blockquote>
-<p>枚举声明的类型是囊括可能状态的有限集，且可以具有附加值。通过内嵌(nesting),方法(method),关联值(associated values)和模式匹配(pattern matching),枚举可以分层次地定义任何有组织的数据。<br>现在我们已经对这个定义更加清晰了。确实，如果我们添加关联值和嵌套，enum就看起来就像一个封闭的、简化的struct。相比较struct，前者优势体现在能够为分类与层次结构编码。</p>
+          <p>最近看了下安卓开发，想从中学习点知识，一直以来都认为安卓开发和ios开发很像，于是我便下载了一个安卓开发工具，想从中学习点东西，其实安卓开发却是跟ios开发很像，类似xib一样的UI，类似代理一样的接口，等等，类似声明周期，activey。。。其实我觉得安卓开发为什么会比ios开发慢尼？一直都不是很理解，到后来我发现了，最根本的原因在于安卓太注重图形化的工具了，但是很多的UI是没有办法用图形化工具做出来的，那么要是用手去写UI真的很费劲，就也许这就是安卓为什么是安卓的原因了，因为需要大量以来layout的存在，所以没有简单的办法，只能手写布局，因为大量屏幕型号的手机存在，根本没有办法用frame去固定一个控件的大小，这也许是安卓最为麻烦的一点<br>但是我觉得安卓其实真的没有那么麻烦，很多的功能其实已经跟ios一样了，个人觉得安卓开发比ios也不会慢太多，特别是一个有经验的安卓开发者来说，经过很长时间，很多项目的积累，肯定能将开发做到最简化<br>跟java很像，安卓开发者可能都有一样的通病，就是重构，其实我发现市面上很多的ios项目并没有写的太好的代码，也许是ios开发时间短，开发者能力层次不齐导致的，但是，到现在看来，ios的开发还是那样，没有实质性的突破，也许是我作为一个ios开发者自我认识吧，牛逼的肯定是有，但是个人认为，少，安卓开发就不一样了，安卓是用java实现的，对于广大互联网市场来说，java程序猿真的是不少，而且java程序猿的水平也不低，导致转行到安卓之后，写出来的代码，动不动的就想重构，真的，我觉得这事安卓开发者的通病，也许跟安卓的框架结构有关，所以我个人认为市面上的安卓开发者，每个人对于自己的项目都有一个理解，都有不同的实现，ios其实很大一部分受限制于苹果的实现，苹果已经为我们实现了很多，MVC的设计也已经相当成熟，大部分开发者没有办法，只能跟着苹果的鼻子走，不跟着也是没有办法的事。<br>那么做ios开发，如何去做安卓开发尼？我觉得其实只要拥有雄厚的java基础，再加上ios开发中的经验，其实搞安卓开发是没有太大的问题的，只是我们没有经验罢了，我们没有在这个行业中经历过罢了，如果让你去搞安卓，相信给你一定的时间，你会搞出来的，只是你总有一天会发现，我靠，怎么写出这样垃圾的代码来？<br>以上纯属自己的观点，自己的浅薄理解，自娱自乐而已</p>
 
       
     </div>
@@ -232,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_17Swift%E6%9D%A5%E8%A7%81%E9%9D%A2%E5%90%A7%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -246,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/" class="post-title-link" itemprop="url">Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器</a>
+            <a href="/2017/03/09/M_17Swift%E6%9D%A5%E8%A7%81%E9%9D%A2%E5%90%A7%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">Swift 开发之来见吧项目总结</a>
         </h2>
 
         <div class="post-meta">
@@ -256,7 +230,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-08-01 17:15:40" itemprop="dateCreated datePublished" datetime="2016-08-01T17:15:40+08:00">2016-08-01</time>
+              <time title="创建时间：2017-03-09 09:45:48" itemprop="dateCreated datePublished" datetime="2017-03-09T09:45:48+08:00">2017-03-09</time>
             </span>
 
           
@@ -270,32 +244,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>存储属性</p>
-</blockquote>
-<p>Swift中的存储属性就是以前学习OC中的普通属性<br>在结构体或者类中定义的属性, 默认就是存储属性<br>struct Person {<br>var name: String<br>var age: Int<br>}<br>var p:Person = Person(name: “cdh”, age: 20)</p>
-<blockquote>
-<p>常量存储属性</p>
-</blockquote>
-<p>常量存储属性只能在定义时或构造时修改<br>构造好一个对象之后不能对常量存储属性进行修改<br>struct Person1 {<br>var name: String<br>var age: Int<br>let card: String // 身份证<br>}<br>var p1: Person1 = Person1(name: “cdh”, age: 20, card: “123456”)<br>p1.name = “CDH”<br>p1.age = 50<br>//构造好对象之后不能修改常量存储属性<br>//以下写法是错误的<br>//p1.card = “56789”</p>
-<p>结构体和枚举是值类型<br>因此不能修改结构体常量中的属性<br>不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>类是引用类型<br>可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>struct Person2 {<br>var name: String<br>var age: Int<br>}<br>let p2: Person2 = Person2(name: “cdh”, age: 20)<br>//因为结构体是值类型, 所以不能修改结构体常量中的属性<br>//不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>//以下写法错误<br>//p2.name = “CDH” //不能修改结构体常量对象的值<br>//以下写法错误<br>//p2 = Person2(name: “CDH”, age: 50)</p>
-<p>class Person3 {<br>var name: String = “cdh”<br>var age: Int = 20<br>}<br>let p3:Person3 = Person3()<br>//可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>p3.name = “CDH”<br>//不可以修改类常量的指向<br>//以下写法是错误的<br>//p3 = Person4()</p>
-<blockquote>
-<p>延迟存储属性</p>
-</blockquote>
-<p>Swift语言中所有的存储属性必须有初始值, 也就是当构造完一个对象后, 对象中所有的存储属性必须有初始值<br>但是也有例外, 其中延迟存储属性可以将属性的初始化推迟到该属性第一次被调用的时候<br>这个延时属性对应于 OC中的懒加载的概念<br>苹果的设计思想:希望所有的对象在使用时才真正加载到内存中<br>和OC不同的是swift有专门的关键字来实现懒加载<br>lazy关键字可以用于定义某一个属性懒加载<br>懒加载应用场景:<br>有可能不会用到<br>依赖于其它值<br>class Line {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    如果不是lazy属性,定义的时候对象还没有初始化,所以不能访问self<br>//    如果加上lazy,代表使用时才会加载,也就是使用到length属性时才会调用self<br>//    而访问一个类的属性必须通过对象方法<br>//    所以访问时对象已经初始化完成了,可以使用self<br>lazy var length: Double = self.getLenght()<br>//    通过闭包懒加载<br>lazy var container: Array<AnyObject> = {<br>print(“懒加载”)<br>var arrM = []<br>return arrM as [AnyObject]<br>}()<br>func getLenght() -&gt;Double<br>{<br>print(“懒加载”)<br>return end - start<br>}<br>}<br>var line = Line()<br>line.end = 150.0<br>print(“创建对象完毕”)<br>print(line.length)<br>var arrM = line.container<br>arrM.append(“1”)<br>arrM.append(5)<br>print(arrM)<br>//输出结果:<br>//创建对象完毕<br>//懒加载<br>//150.0<br>//懒加载<br>//[1, 5]</p>
-<blockquote>
-<p>计算属性</p>
-</blockquote>
-<p>1.Swift中的计算属性不直接存储值<br>跟存储属性不同,没有任何的”后端存储与之对应”<br>2.计算属性用于计算, 可以实现setter和getter这两种计算方法<br>3.枚举不可以有存储属性, 但是允许有计算属性<br>setter 对象.属性 = 值<br>getter var value = 对象.属性<br>struct Rect {<br>var origion: (x: Double, y: Double) = (0, 0)<br>var size: (w: Double, h: Double) = (0, 0)<br>//    由于center的值是通过起点和宽高计算出来的, 所以没有必要提供一个存储属性<br>var center: (x: Double, y: Double) {<br>get{<br>return (origion.x + size.w/2, origion.y + size.h/2)<br>}<br>set{<br>//            注意: 计算属性不具备存储功能, 所以不能给计算属性赋值<br>//            如果赋值会发生运行时错误<br>//            注意: setter可以自己传递一个参数, 也可以使用系统默认的参数newValue<br>//            如果要使用系统自带的参数, 必须删除自定义参数<br>origion.x = newValue.x - size.w / 2<br>origion.y = newValue.y - size.h / 2<br>}<br>}<br>}<br>var r = Rect()<br>r.origion = (0, 0)<br>r.size = (100, 100)<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果: center.x = 50.0 center.y = 50.0<br>r.center = (100, 100)<br>print(“origion.x = (r.origion.x) origion.y = (r.origion.y)”)<br>//输出结果: origion.x = 50.0 origion.y = 50.0<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果:center.x = 100.0 center.y = 100.0</p>
-<blockquote>
-<p>只读计算属性</p>
-</blockquote>
-<p>对应OC中的readonly属性<br>所谓的只读属性就是只提供了getter方法, 没有提供setter方法<br>class Line1 {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    只读属性, 只读属性必须是变量var, 不能是常量let<br>//    例如想获取长度<br>//    只能通过计算获得, 而不需要外界设置, 可以设置为只读计算属性<br>var length: Double{<br>//        只读属性的简写, 可以省略get{}<br>return end - start<br>}<br>}<br>var line1 = Line1()<br>line1.end = 100<br>print(line1.length)<br>//输出结果: 100.0<br>//错误,不可设置只读属性<br>line1.length = 100</p>
-<blockquote>
-<p>属性观察器</p>
-</blockquote>
-<p>类似OC中的KVO<br>可以用于监听属性什么时候被修改, 只有属性被修改才会调用<br>有两种属性观察器:<br>1.willSet, 在设置新值之前调用<br>2.didSet, 在设置新值之后调用<br>可以直接为除计算属性和lazy属性之外的存储属性添加属性观察器<br>但是可以在继承类中为父类的计算属性提供属性观察器<br>因为在计算属性中也可以监听到属性的改变<br>所以给计算属性添加属性观察器没有任何意义<br>class Line2 {<br>var start:Double = 0.0{<br>willSet{<br>print(“willSet newValue = (newValue)”)<br>}<br>didSet{<br>print(“didSet oldValue = (oldValue)”)<br>}<br>}<br>var end: Double = 0.0<br>}<br>var l2 = Line2()<br>l2.start = 10.0<br>//输出结果:<br>//willSet newValue = 10.0<br>//didSet oldValue = 0.0<br>//开发中使用didSet较多</p>
+          <p>其实开发一个swift项目也并没有那么复杂，只要我们熟练swift的语法，其实我们的开发速度一点都不比oc慢，甚至比oc还要快，只是我们不好把握问题出现，很多swift框架的使用还是会出现问题，还有就是我虽然是开发完了，但是真的没有提交过app store，所以这个真的很难说是不是还是有坑，但是无论如何，随着swift的改进，还是会有大量的问题暴漏给开发者的，这是不可避免的，我们想要使用swift的话，就只能跟swift一起成长了<br>其实一个项目来说，要经过很长一段时间的锤炼才能够出来的，并不是一个简单的思想就能实现的，我们很感激有这次机会，让我在swift的世界里走一遭，虽然只是一些皮毛上的了解，但是我很知足，如果有下一次，我还是会大声的告诉你我会坚持用swift写的，这就是我此刻的想法，仅此纪念那些忙碌的日子，那些一起经历的人生，那些朋友，那些走过的春夏秋冬，注定是永远不会再回来<br>不知道我的下个路口是不是快来了我至少现在的我很悲伤<br>为什么我的眼里常含泪水，因为我对这爱的深沉</p>
 
       
     </div>
@@ -315,7 +264,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/H_1Htmlhtml%E3%80%81css%E3%80%81js%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%83%85%E5%86%B5/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_16Swift%E6%9D%A5%E8%A7%81%E9%9D%A2%E5%90%A7%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -329,7 +278,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/08/01/H_1Htmlhtml%E3%80%81css%E3%80%81js%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%83%85%E5%86%B5/" class="post-title-link" itemprop="url">html、css、js文件加载顺序及执行情况</a>
+            <a href="/2017/03/09/M_16Swift%E6%9D%A5%E8%A7%81%E9%9D%A2%E5%90%A7%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">Swift 开发之来见面吧</a>
         </h2>
 
         <div class="post-meta">
@@ -339,7 +288,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-08-01 15:12:15" itemprop="dateCreated datePublished" datetime="2016-08-01T15:12:15+08:00">2016-08-01</time>
+              <time title="创建时间：2017-03-09 09:45:34" itemprop="dateCreated datePublished" datetime="2017-03-09T09:45:34+08:00">2017-03-09</time>
             </span>
 
           
@@ -353,549 +302,735 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>HTML页面加载和解析流程 </p>
+          <p>来见面吧是我用swift写的第一个项目，因为项目比较小，复杂度较低，我使用了MVC的设计模式<br>整体的文件夹就是Controller，View，Model（model主要在网络请求的框架中）<br>其实跟大多的oc的项目相似，不过再也看不到两个文件了，h。m<br>项目中充斥着三种东西<br>    1.懒加载<br>    2.extension式的代理写法<br>    3.类聚合<br>上面的描述不知道对不对，先看下如下的代码示例吧<br>    1.懒加载</p>
+<blockquote>
+<p>lazy var geoCoder: CLGeocoder = {<br>    return CLGeocoder()<br>}()</p>
+</blockquote>
+<pre><code>2.extension式的代理写法
+</code></pre>
+<blockquote>
+<p>// MARK: - UITableViewDelegate,UITableViewDataSource<br>extension RootTableViewController: UITableViewDelegate,UITableViewDataSource {<br>    //…<br>}</p>
+</blockquote>
+<pre><code>3.类聚合
+</code></pre>
+<blockquote>
+<p>import UIKit<br>// MARK: - SendReleaseCell<br>class SendReleaseCell: UITableViewCell {<br>    //…<br>}<br>// MARK: - SendReleaseFrame<br>class SendReleaseFrame: NSObject {<br>    //…<br>}</p>
+</blockquote>
+<p>上面的只是一些基本的写法，估计写一段时间之后我们应该就能理解这些东西了</p>
+<p>下面介绍一些swift的其它属性之：解包</p>
+<blockquote>
+<p>order.address = data[“addr”] as? String ?? “”</p>
+</blockquote>
+<p>如上这段代码，我们其实可以这样理解,当我们解析data的时候，如果不是一个字符串，如果产生了nil，那么我们就给赋值一个空字符串，非常好理解吧。我们能不能写一个方法，减少这种写法的出现，以后可以尝试一下，但是真的要避免代码的过度关联</p>
+<blockquote>
+<p>if let data = dict.object(forKey: “data”) as? NSDictionary </p>
+</blockquote>
+<p>如上这段代码，很好的避免了数据解析时候出现的问题，当data字段不是字典结构的时候，我们就能很好的在else里面进行拦截，防止出现崩溃。<br>还有很多swift的关键字之限制<br>    open public fileprivate private 。。。<br>其实我们认真发现，oc归根揭底属于前端开发，我们要做的东西归根结底还是要去关注UI上面的东西，做好UI其实也是很重要的一部分</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_15Swift%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/09/M_15Swift%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">Swift 开发总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-09 09:45:13" itemprop="dateCreated datePublished" datetime="2017-03-09T09:45:13+08:00">2017-03-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>很长一段时间没有更新博客了，好像都忘记了自己要做什么似的。<br>前段时间真的很忙，公司也经历了翻天覆地的变化，很多东西，物是人非了，总是不知道自己的方向到底是什么，所以就这样，走着，走着。不知道是不是又回到了起点，又开始了行尸走肉。<br>看电影行尸走肉，我记得当时对我的震撼真的挺大，现在是不看了，总是还记得这个词，然后就自然而然的形容起自己的人生<br>前段时间做了一个项目，遗憾的是最终胎死腹中，让我很沮丧，现在已经释怀了，反正刚开始的时候，我们谁都没有在乎，现在又在乎什么？<br>这是一个什么项目，我就不说了，总之很小，正是因为他小，我想，用swift开发，应该是一个不错的形式吧，对我来说应该是有点挑战的吧，因为我之前一直是学习swift，没事的时候就看看swift的语法，然后去下载一些swfit的开源项目，学习一下人家写swift的方式，想从中学习一些知识，但是，看归看我从来都没有去写过一个完整的项目，我自己一个人，一个小项目，我能不能扛起这个项目，我心里有点犯嘀咕，但是我想swift总是要学，现在不用早晚会有人用，很多国外的公司已经开始用swift了，为什么我们还在等？<br>真的是，你不写不知道，当你写的时候，你不知道会有多少的坑，虽然开发之前我很认真的想过这个问题，但是真正开发的时候我还是深深的感到了害怕，好在这个项目服务端开发的比较慢，客户端一直在等服务端的状态，所以，我并不害怕工期，所以我也就有充足的时间来去用swfit写东西了，我之前都朋友在用swfit写东西，所以我刚开始写这个东西的时候，我很多问题都是从朋友那里入手的，真实是给了我很多的帮助，我真的要很好的感谢他。<br>这个工程叫来见面吧<br>我一开始尝试用源码写，很多framework框架我打算能用swift的就用swift，所有我开始准备用swift写了，其实我范了一个很大的坑，我从来都没有用过pods这个东西，我一开始的时候也没有打算使用，但是到后来我发现，我已经控制不住自己了，很多的东西，不是我能控制的，到后来才发现，其实framework编译之后是直接用是不行的，framework的编译是有模拟器和真机之分，还有就是debug和release模式之分的，要让一个framework支持以上四种模式，是需要做一些处理的，当时我真的不知道，后来发现，在开发过程中没有发现问题，但是到打包的时候就不行了。这是一个很严重的错误，最近我看一个人在文章中说其实最好还是要用源码，因为我们不知道swfit的变化会是什么，所以就会导致，我们很难处理第三方的框架，所以尽量少使用三方的框架，而且尽量使用源码，这样如果出现什么问题，我们也好方便解决。<br>我之前用oc写了一个网络请求的框架，其实很简单，就是把网络请求进行了封装，然后使用，这样方便了调用，后来我就执着的想也在这个swift的项目中实现类似的事情，不知不觉我又进入了一个坑，上面就说过了，swift的框架不稳定然后我什么都不知道的话，就这样贸然写的话，真的很悲哀啊，又出现了一堆的问题，最后实在是没有办法了，我只好用源码了。<br>当我用swift写这个请求的时候我就发现了，真的是swift和oc的语法的不同，特别是字典，一些字符串的处理等等，swift总是那么的简单，以至于我写的这个swfit的框架，到后来我发现其实真的是没有太大的意义，就是这样，你总是走着一个又一个的坑，最后长舒一口气，原来如此。<br>swfit的安全也让我有了重新的认识，真的是，这种安全是我们程序猿都知道的，我们把一个东西声明未private，那么这个变量就是受保护的，那么外部就真的是看都看不到，包括一些方法，我们虽然声明是public的，但是在方法外部，还是看不见方法是如何实现的，这种安全，真的是oc不能代替的<br>一开始的时候我总是在想，我应该怎么学习这么多的互联网知识，当我刚进入这个行业的时候，说实话，我真的什么都不懂，有时候我甚至到现在都在想，在这个行业里呆了这么久了，你究竟学会了多少东西，恐怕是少的可怜吧，但是当我去写swift的时候，我还是感到一丝丝欣慰，UI框架的东西还是没有变化的，以至于我一开始的时候天真的认为，swift？so easy。。。哈哈，当然不是，苹果用了这么长的时间开发的这门语言，肯定有其道理，oc势必会让swift代替的，只是时间的问题，我们等待吗，只是时间的推移，下一个改变不知道是什么<br>一开始的时候，我总是在想，我要多学点东西，什么java了安卓了，h5了，我都要去学习，现在发现，其实真的，当你会一门语言的时候其它的语言也都很相似，归根揭底语言都是由c出来的，所以说，真的要学习那么多的语言吗？可以说对，也可以说不对，相对于中国现状来说，你懂得越多也就相对越厉害，但是相对于很多专业性比较强的人会对这种看法嗤之以鼻，特别是国外的技术牛人，一生只做一件事的坚持还是挺值得我们去学习的，但是对于我来说，我还是觉得学的多一点会好一点，为什么这样说尼？因为我基础能力并不是太强，所以为了能突破自己，懂得越多，然后再综合利用，也许就能突破自我，并不是没有可能的。所以说，还是尽量多学习点东西吧。<br>说了很多，swift的道路上其实，我只是一个小白，真正要走很长很长的路才能写出漂亮的东西，现在的我们只能算是探索，慢慢的探索吧。<br>其实写着写着，我发现其实swfit还是挺好用的，除了不是太稳定以外，甚多的东西也还是比较的全面的，而且你会发现代码量不是太多，这样你搞起来就比较的顺手了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_14Swift%E5%88%9B%E5%BB%BA%E7%A9%BA%E5%B7%A5%E7%A8%8B%E6%AD%A5%E9%AA%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/09/M_14Swift%E5%88%9B%E5%BB%BA%E7%A9%BA%E5%B7%A5%E7%A8%8B%E6%AD%A5%E9%AA%A4/" class="post-title-link" itemprop="url">Swift3 创建空工程步骤</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-09 09:44:08" itemprop="dateCreated datePublished" datetime="2017-03-09T09:44:08+08:00">2017-03-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1.创建工程<br>2.删除没用的文件<br>3.初始化window<br>4.初始化根控制器<br>5.自定义log<br>6.注册消息推送<br>7.创建Header桥接文件<br>8.程序多语言设置</p>
+<p>今天发现微信提供了很多界面跳转的api，只要点击相关的weinxin://dl//profile就能打开个人界面，在项目中如果跳转逻辑复杂的话不妨一试</p>
+<p>今天又发现一个方式，用结构体承载变量</p>
+<p>今天观看了一下afiar，使用了af的Moya，感觉挺厉害的，具体我就不说了，大家可以看代码就懂了<br>感觉swfit给了我们好多可能，我们如果不知道的话，真的很难权衡利弊的<br>这里大多时候都是用了WKWebView，感觉也是有点要转换的意思，以后尽量要用它写了<br>MonkeyKing，分享的类</p>
+<p>还有很多，明天要好好学了</p>
+<p>又发现一种写作方式，当代理方法特别麻烦的时候我们可以写一个代理方法类，那么这样，我们可以将代码在这个代理类里面实现，也能够分担vivewcontroller的一部分分担</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_7Swift_mj/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/09/M_7Swift_mj/" class="post-title-link" itemprop="url">Swift MJ</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-09 09:43:23" itemprop="dateCreated datePublished" datetime="2017-03-09T09:43:23+08:00">2017-03-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1.swift界面编写规范，代理和UI分别放在extension中<br>2.类的属性，可以使用setvauleforkeywithDict：，但是必须重写父类的方法forundifne<br>3.swift闭包写法，block()-&gt;(){<br>}<br>4.swift闭包的声明 ：block(()-&gt;())();<br>5.swift闭包避免循环引用：<br>block(［weak self］)-&gt;(){<br>}<br>5.自定义构造函数<br>6.swift定义log<br>buying seeing 里面找 swift flag，添加标记<br>func FDLog<T>(message: T, file: String = #file, funcName: String = #function,lineNum: Int = #line) {<br>        #if DEBUG<br>            let fileName = (file as NSString).lastPathComponent<br>            print(“(fileName):((lineNum))-(message)”);<br>        #endif<br>}</p>
+<p>7.swift字符串转类<br>命名空间<br> //获取命名空间<br>        guard let name =   NSBundle.mainBundle().infoDictionary![“CFBundleName”] as? String else {<br>                DDLog(“获取BundleName失败”)<br>                return;<br>            }<br>        //拼接命名空间<br>        let clas :AnyClass?  = NSClassFromString(name + “.” + childControllerString)<br>        //将命名空间转化为UITableViewController类型<br>        guard let childControllerClas   = clas as? UITableViewController.Type else {<br>               DDLog(“转换类型失败”)<br>               return<br>            }</p>
+<p>swift异常处理<br>如果在调用系统某个方法时，该方法最后有一个throws，说明该方法会剖出异常，如果一个方法会剖出异常，那么需要对该异常进行处理<br>在swift中提供三种处理异常的方式<br>1.try方式：程序员手动捕捉异常<br>do｛<br>try a<br>｝ cash ｛<br>／／异常对象的处理<br>｝<br>2.try？方式（常用）系统帮助我们处理异常，如果该方法出现异常，则该方法返回nil，若果没有异常，则返回对应的对象<br>guard let a ＝ try？b else｛<br>return<br>｝<br>方式三：try！方法（不建议使用，非常危险），直接告诉系统，该方法没有异常，注意：如果该方法有异常，那么程序会直接报错，奔溃<br>let a ＝ try！b</p>
+<p>swift中类方法就是以class开头的方法<br>扩展系统的类，就是扩展系统init方法，构造函数</p>
+<p>// convenience : 便利,使用convenience修饰的构造函数叫做便利构造函数<br>// 遍历构造函数通常用在对系统的类进行构造函数的扩充时使用<br>/*<br> 遍历构造函数的特点<br> 1.遍历构造函数通常都是写在extension里面<br> 2.遍历构造函数init前面需要加载convenience<br> 3.在遍历构造函数中需要明确的调用self.init()<br> */<br>convenience init (imageName : String, bgImageName : String) {<br>    self.init()</p>
+<pre><code>事件监听
+事件监听的本质发送消息，但是发送消息是OC的特性
+将方法包装成@SEL－－》类中查找方法列表－－》根据@SEL找到imp指针（函数指针）－－》执行函数
+如果swift中将一个函数声明称private，那么该函数不会被添加到方法列表中
+@objc private func loginBtnClick() ｛｝
+我们通常在swfit中添加@objc，标示这是一个OC的方法。
+如果在private前面加上@objc，那么该方法依然后被添加到方法列表中
+
+
+创建动画。设置动画的属性
+// 1.创建动画
+let rotationAnim = CABasicAnimation(keyPath: &quot;transform.rotation.z&quot;)
+
+// 2.设置动画的属性
+rotationAnim.fromValue = 0
+rotationAnim.toValue = M_PI * 2
+rotationAnim.repeatCount = MAXFLOAT
+rotationAnim.duration = 5
+rotationAnim.removedOnCompletion = false
+
+// 3.将动画添加到layer中
+rotationView.layer.addAnimation(rotationAnim, forKey: nil)
+removedOnCompletion：默认为YES，代表动画执行完毕后就从图层上移除，图形会恢复到动画执行前的状态。如果想让图层保持显示动画执行后的状态，那就设置为NO，不过还要设置fillMode为kCAFillModeForwards .
+// MARK:- 重写init函数
+override init(frame: CGRect) &#123;
+    super.init(frame : frame)
+    
+    setImage(UIImage(named: &quot;navigationbar_arrow_down&quot;), forState: .Normal)
+    setImage(UIImage(named: &quot;navigationbar_arrow_up&quot;), forState: .Selected)
+    setTitleColor(UIColor.blackColor(), forState: .Normal)
+    sizeToFit()
+&#125;
+
+// swift中规定:重写控件的init(frame方法)或者init()方法,必须重写init?(coder aDecoder: NSCoder)
+required init?(coder aDecoder: NSCoder) &#123;
+    fatalError(&quot;init(coder:) has not been implemented&quot;)
+&#125;
+
+swift中可以直接修改控件的x，y，with，height值
+
+设置modal样式
+// 1.创建弹出的控制器
+let popoverVc = PopoverViewController()
+
+// 2.设置控制器的modal样式
+popoverVc.modalPresentationStyle = .Custom
+
+// 3.设置转场的代理
+popoverVc.transitioningDelegate = popoverAnimator
+popoverAnimator.presentedFrame = CGRect(x: 100, y: 100, width: 180, height: 250)
+
+
+
+// MARK:- 自定义构造函数
+// 注意:如果自定义了一个构造函数,但是没有对默认构造函数init()进行重写,那么自定义的构造函数会覆盖默认的init()构造函数
+init(callBack : (presented : Bool) -&gt; ()) &#123;
+    self.callBack = callBack
+&#125;
+
+注意：在闭包中如果使用当前对象的属性或者调用方法也需要加self
+／／两个地方的self使用：
+1.如果在一个函数中出现奇异的地方
+2.在闭包中使用当前对象的属性和方法也要添加self，注意循环引用的解决
+private lazy var popoverAnimator : PopoverAnimator = PopoverAnimator &#123;[weak self] (presented) -&gt; () in
+    self?.titleBtn.selected = presented
+&#125;
+
+swift使用pods
+注意：要大开user_frameworks!的注释部分
+
+swift中计算属性的使用
+很多情况下我们可以给一个变量一个计算属性，，当使用这个变量的时候，初始化这个变量的时候就可以获得计算后的值
+
+// ?? : 如果??前面的可选类型有值,那么将前面的可选类型进行解包并且赋值
+// 如果??前面的可选类型为nil,那么直接使用??后面的值
+let url = NSURL(string: profileURLString ?? &quot;&quot;)
+iconView.sd_setImageWithURL(url, placeholderImage: UIImage(named: “avatar_default_big&quot;))
+                                                           
+                                                           textVIew属性hasText()的使用
+                                                           
+                                                           
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_1Swift%E5%92%8COC%E7%9A%84%E5%8C%BA%E5%88%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/09/M_1Swift%E5%92%8COC%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">Swift和OC的区别</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-09 09:38:32" itemprop="dateCreated datePublished" datetime="2017-03-09T09:38:32+08:00">2017-03-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>初始化</p>
+</blockquote>
+<p>let myTableView: UITableView = UITableView(frame: CGRectZero, style: .Grouped)</p>
+<blockquote>
+<p>可失败初始化</p>
+</blockquote>
+<p>if let image = UIImage(contentsOfFile: “MyImage.png”) {<br>// loaded the image successfully<br>} else {<br>// could not load the image<br>}</p>
+<blockquote>
+<p>访问属性方法</p>
+</blockquote>
+<p>在 Swift 中访问和设置 Objective-C 对象的属性时，使用点语法</p>
+<blockquote>
+<p>id 兼容性（id Compatibility）</p>
+</blockquote>
+<p>Swift 包含一个叫做AnyObject的协议类型，表示任意类型的对象，就像 Objective-C 中的id一样。AnyObject协议允许你编写类型安全的 Swift 代码同时维持无类型对象的灵活性。因为AnyObject协议保证了这种安全，Swift 将id对象导入为AnyObject。<br>对于 Swift 中的强制类型转换，从AnyObject类型的对象转换成明确的类型并不会保证成功，所以它会返回一个可选的值。而你需通过检查该值的类型来确认转换是否成功。<br>//Swift<br>let userDefaults = NSUserDefaults.standardUserDefaults()<br>let lastRefreshDate: AnyObject? = userDefaults.objectForKey(“LastRefreshDate”)<br>if let date = lastRefreshDate as? NSDate {<br>println(“(date.timeIntervalSinceReferenceDate)”)<br>}<br>当然，如果你能确定这个对象的类型（并且确定不是nil），你可以添加as操作符强制调用。</p>
+<p>let myDate = lastRefreshDate as NSDate<br>let timeInterval = myDate.timeIntervalSinceReferenceDate</p>
+<blockquote>
+<p>扩展（Extensions）</p>
+</blockquote>
+<p>你也可以使用扩展来增加属性（包括类的属性与静态属性）。然而，这些属性必须是通过计算才能获取的，扩展不会为类，结构体，枚举添加存储属性。下面这个例子为CGRect类增加了一个叫area的属性。<br>//Swift<br>extension CGRect {<br>var area: CGFloat {<br>return width * height<br>}<br>}<br>let rect = CGRect(x: 0.0, y: 0.0, width: 10.0, height: 50.0)<br>let area = rect.area<br>// area: CGFloat = 500.0</p>
+<blockquote>
+<p>比较对象</p>
+</blockquote>
+<p>当比较两个 Swift 中的对象时，可以使用两种方式。第一种，使用（==），判断两个对象内容是否相同。第二种，使用(===)，判断常量或者变量是否为同一个对象的实例。</p>
+<p>Swift 与 Objective-C 一般使用 == 与 === 操作符来做比较。Swift 的 == 操作符为源自 NSObject 的对象提供了默认的实现。在实现 == 操作符时，Swift 调用 NSObject 定义的 isEqual: 方法。<br>Swift 类型兼容性<br>当你在 Swift 中创建了一个继承自 Objective-C 类的子类时，该类以及该类的成员-属性，方法，下标和构造器，便会在 Objective-C 中自动可用。在某些情况下，你需要更细粒度的控制如何将 Swift API 暴漏给 Objective-C。如果你的 Swift 类没有继承自 Objective-C 的类，又或者你想更改暴漏给 Objective-C 代码的接口符号名称，你便可以使用@objc属性。如果你正在使用如键值观察的 API 来动态替换方法的实现，也可以通过使用dynamic修饰符来获得对 Objective-C 运行时被自动派发的成员的访问。</p>
+<p>轻量级泛型<br>使用轻量级泛型参数的 Objective-C 声明类型，如NSArray，NSSet以及NSDictionary，在被导入到 Swift 时会附带上他们内容保存的类型。</p>
+<p>例如，考虑下面的 Objective-C 属性声明：</p>
+<p>@property NSArray&lt;NSDate <em>&gt;</em> dates;<br>@property NSSet&lt;NSString <em>&gt;</em> words;<br>@property NSDictionary&lt;KeyType: NSURL <em>, NSData *&gt;</em> cachedData;<br>下面是 Swift 导入后：</p>
+<p>var dates: [NSDate]<br>var words: Set<String><br>var cachedData: [NSURL: NSData]</p>
+<p>参考资料<br><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note">http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/08/M_18Swift%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/08/M_18Swift%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">微信小程序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-08 18:56:45" itemprop="dateCreated datePublished" datetime="2017-03-08T18:56:45+08:00">2017-03-08</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前几天微信小程序终于发布了，历时一年，风风火火的宣传之后，终于低调的面世了<br>刚接触小程序的时候，我真的觉得这个东西真的是很牛逼，能够做到原生应用的体验，真的为微信开发团队点赞，这是一次很了不起的实践，为什么说是实践尼？真的，他还没有火起来，我们也不知道这个东西会不会火起来<br>为什么这样说尼，作为一个ios开发者，我能深刻认识到苹果在ios中起到的作用，如果苹果不让一个东西出来的话，那么真的也就不会出现，至少现在还没有人能够撼动苹果的地位，微信更是如此<br>但是还是被微信简单的开发模式震撼了，微信固定的声明用户只能在pages里面写页面，然后很清晰的用文件来表明各自作用<br>    js：代表逻辑层<br>    json：代表数据层<br>    wxml：代表html文档<br>    wxss：代表文档样式<br>非常简单的设计，其实我觉得很大程度上能够简化程序猿的工作，思想，框架结构都给我们定义好了，我们只需要改改就好了，这就是小程序，震撼之处却是非常大<br>也许有一天，你不会互联网知识，你真的也可以进行小程序开发，真的不需要懂那么多。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/09/19/M_13Lat_Lng/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/09/19/M_13Lat_Lng/" class="post-title-link" itemprop="url">经纬度十进制（小数）转六十进制（度分秒）的方法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-09-19 09:54:10" itemprop="dateCreated datePublished" datetime="2016-09-19T09:54:10+08:00">2016-09-19</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>#pragma mark - 经纬度单位转换</p>
+<ul>
+<li>(NSString <em>)stringWithCoordinateString:(NSString <em>)coordinateString{<br>  //示例：118.815033<br>  /</em></em> 将经度或纬度整数部分提取出来 */<br>  int latNumber = [coordinateString intValue];//118  /** 取出小数点后面两位(为转化成’分’做准备) <em>/<br>  NSArray <em>array = [coordinateString componentsSeparatedByString:@”.”];<br>  /</em></em> 小数点后面部分 */<br>  NSString *minuteCompnetString = [array lastObject];  /** 拼接字字符串(将字符串转化为0.xxxx形式) */<br>  NSString *str1 = [NSString stringWithFormat:@”0.%@”, minuteCompnetString];  /** 将字符串转换成float类型以便计算 */<br>  float minuteNum = [str1 floatValue];   //0.815033  /** 将小数点后数字转化为’分’(minuteNum * 60) <em>/<br>  float minuteNum1 = minuteNum * 60;    //0.815033</em>60=48.90198  /** 将转化后的float类型转化为字符串类型 */<br>  NSString *latStr = [NSString stringWithFormat:@”%f”, minuteNum1];  /** 取整数部分即为纬度或经度’分’ */<br>  int latMinute = [latStr intValue]; //48  //取秒<br>  /** 取出小数点后面两位(为转化成’秒’做准备) <em>/<br>  NSArray <em>secondArr = [latStr componentsSeparatedByString:@”.”];<br>  /</em></em> 小数点后面部分 */<br>  NSString *lastCompnetString = [secondArr lastObject];  /** 拼接字字符串(将字符串转化为0.xxxx形式) */<br>  NSString *str2 = [NSString stringWithFormat:@”0.%@”, lastCompnetString];  /** 将字符串转换成float类型以便计算 */<br>  float secondNum = [str2 floatValue];   //0.90198  /** 将小数点后数字转化为’分’(minuteNum * 60) <em>/<br>  float secondNum1 = secondNum * 60;    //0.90198</em>60=54.1188  /** 将转化后的float类型转化为字符串类型 */<br>  NSString *latStr2 = [NSString stringWithFormat:@”%f”, secondNum1];  /** 取整数部分即为纬度或经度’分’ */<br>  int latSecond = [latStr2 intValue]; //54  /** 将经度或纬度字符串合并为(xx°xx’)形式 */<br>  NSString *string = [NSString stringWithFormat:@”%d°%d’%d’’”, latNumber, latMinute, latSecond];  return string;<br>}</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/09/07/M_11mou/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/09/07/M_11mou/" class="post-title-link" itemprop="url">mou</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-09-07 18:23:23" itemprop="dateCreated datePublished" datetime="2016-09-07T18:23:23+08:00">2016-09-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Mou"><a href="#Mou" class="headerlink" title="Mou"></a>Mou</h1><p><img src="http://25.io/mou/Mou_128.png" alt="Mou icon"></p>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p><strong>Mou</strong>, the missing Markdown editor for <em>web developers</em>.</p>
+<h3 id="Syntax"><a href="#Syntax" class="headerlink" title="Syntax"></a>Syntax</h3><h4 id="Strong-and-Emphasize"><a href="#Strong-and-Emphasize" class="headerlink" title="Strong and Emphasize"></a>Strong and Emphasize</h4><p><strong>strong</strong> or <strong>strong</strong> ( Cmd + B )</p>
+<p><em>emphasize</em> or <em>emphasize</em> ( Cmd + I )</p>
+<p><strong>Sometimes I want a lot of text to be bold.<br>Like, seriously, a <em>LOT</em> of text</strong></p>
+<h4 id="Blockquotes"><a href="#Blockquotes" class="headerlink" title="Blockquotes"></a>Blockquotes</h4><blockquote>
+<p>Right angle brackets &gt; are used for block quotes.</p>
+</blockquote>
+<h4 id="Links-and-Email"><a href="#Links-and-Email" class="headerlink" title="Links and Email"></a>Links and Email</h4><p>An email <a href="mailto:&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#x40;&#101;&#x78;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#109;">&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#x40;&#101;&#x78;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x63;&#111;&#109;</a> link.</p>
+<p>Simple inline link <a target="_blank" rel="noopener" href="http://chenluois.com/">http://chenluois.com</a>, another inline link <a target="_blank" rel="noopener" href="http://25.io/smaller/">Smaller</a>, one more inline link with title <a target="_blank" rel="noopener" href="http://resizesafari.com/" title="a Safari extension">Resize</a>.</p>
+<p>A <a target="_blank" rel="noopener" href="http://25.io/mou/" title="Markdown editor on Mac OS X">reference style</a> link. Input id, then anywhere in the doc, define the link with corresponding id:</p>
+<p>Titles ( or called tool tips ) in the links are optional.</p>
+<h4 id="Images"><a href="#Images" class="headerlink" title="Images"></a>Images</h4><p>An inline image <img src="http://25.io/smaller/favicon.ico" alt="Smaller icon" title="Title here">, title is optional.</p>
+<p>A <img src="http://resizesafari.com/favicon.ico" alt="Resize icon" title="Title"> reference style image.</p>
+<h4 id="Inline-code-and-Block-code"><a href="#Inline-code-and-Block-code" class="headerlink" title="Inline code and Block code"></a>Inline code and Block code</h4><p>Inline code are surround by <code>backtick</code> key. To create a block code:</p>
+<pre><code>Indent each line by at least 1 tab, or 4 spaces.
+var Mou = exactlyTheAppIwant; 
+</code></pre>
+<h4 id="Ordered-Lists"><a href="#Ordered-Lists" class="headerlink" title="Ordered Lists"></a>Ordered Lists</h4><p>Ordered lists are created using “1.” + Space:</p>
 <ol>
-<li><p>用户输入网址（假设是个html页面，并且是第一次访问），浏览器向服务器发出请求，服务器返回html文件。 </p>
-</li>
-<li><p>浏览器开始载入html代码，发现<head>标签内有一个<link>标签引用外部CSS文件。 </p>
-</li>
-<li><p>浏览器又发出CSS文件的请求，服务器返回这个CSS文件。 </p>
-</li>
-<li><p>浏览器继续载入html中<body>部分的代码，并且CSS文件已经拿到手了，可以开始渲染页面了。 </p>
-</li>
-<li><p>浏览器在代码中发现一个<img>标签引用了一张图片，向服务器发出请求。此时浏览器不会等到图片下载完，而是继续渲染后面的代码。 </p>
-</li>
-<li><p>服务器返回图片文件，由于图片占用了一定面积，影响了后面段落的排布，因此浏览器需要回过头来重新渲染这部分代码。 </p>
-</li>
-<li><p>浏览器发现了一个包含一行Javascript代码的<script>标签，赶快运行它。 </p>
-</li>
-<li><p>Javascript脚本执行了这条语句，它命令浏览器隐藏掉代码中的某个<style>（style.display=”none”）。杯具啊，突然就少了这么一个元素，浏览器不得不重新渲染这部分代码。 </p>
-</li>
-<li><p>终于等到了</html>的到来，浏览器泪流满面…… </p>
-</li>
-<li><p>等等，还没完，用户点了一下界面中的“换肤”按钮，Javascript让浏览器换了一下＜link＞标签的CSS路径。 </p>
-</li>
-<li><p>浏览器召集了在座的各位<div><span><ul><li>们，“大伙儿收拾收拾行李，咱得重新来过……”，浏览器向服务器请求了新的CSS文件，重新渲染页面。</p>
-</li>
+<li>Ordered list item</li>
+<li>Ordered list item</li>
+<li>Ordered list item</li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/D_Net18SQLite/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/08/01/D_Net18SQLite/" class="post-title-link" itemprop="url">SQLite</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-08-01 10:25:40" itemprop="dateCreated datePublished" datetime="2016-08-01T10:25:40+08:00">2016-08-01</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>iOS中的数据存储方式</p>
-</blockquote>
-<p>● Plist(NSArray\NSDictionary)<br>● Preference(偏好设置\NSUserDefaults)<br>● NSCoding(NSKeyedArchiver\NSkeyedUnarchiver)<br>● SQLite3<br>● Core Data</p>
-<blockquote>
-<p>SQLite</p>
-</blockquote>
-<p>● 什么是SQLite<br>● SQLite是一款轻型的嵌入式数据库<br>● 它占用资源非常的低,在嵌入式设备中,可能只需要几百K的内存就够了<br>● 它的处理速度比Mysql、PostgreSQL这两款著名的数据库都还快<br>● 什么是数据库<br>● 数据库(Database)是按照数据结构来组织、存储和管理数据的仓库<br>● 数据库可以分为2大种类 • 关系型数据库(主流)<br>• 对象型数据库<br>● 常用关系型数据库<br>● PC端:Oracle、MySQL、SQL Server、Access、DB2、Sybase<br>● 嵌入式\移动客户端:SQLite</p>
-<blockquote>
-<p>如何存储数据</p>
-</blockquote>
-<p>● 数据库是如何存储数据的<br>● 数据库的存储结构和excel很像,以表(table)为单位<br>● 数据库存储数据的步骤<br>● 新建一张表(table)<br>● 添加多个字段(column,列,属性)<br>● 添加多行记录(row,record,每行存放多个字段对应的值)</p>
-<blockquote>
-<p>SQL语句</p>
-</blockquote>
-<p>● 如何在程序运行过程中操作数据库中的数据<br>● 那得先学会使用SQL语句<br>● 什么是SQL<br>● SQL(structured query language):结构化查询语言<br>● SQL是一种对关系型数据库中的数据进行定义和操作的语言<br>● SQL语言简洁,语法简单,好学好用<br>● 什么是SQL语句<br>● 使用SQL语言编写出来的句子\代码,就是SQL语句<br>● 在程序运行过程中,要想操作(增删改查,CRUD)数据库中的数据,必须使 用SQL语句</p>
-<blockquote>
-<p>SQL语句的特点</p>
-</blockquote>
-<p>● 不区分大小写(比如数据库认为user和UsEr是一样的)<br>● 每条语句都必须以分号 ; 结尾<br>● SQL中的常用关键字有<br>● select、insert、update、delete、from、create、where、desc、order、by、grou<br>p、table、alter、view、index等等</p>
-<blockquote>
-<p>SQL语句的种类</p>
-</blockquote>
-<p>● 数据库中不可以使用关键字来命名表、字段<br>数据定义语句(DDL:Data Definition Language)<br>● 包括create和drop等操作<br>● 在数据库中创建新表或删除表(create table或 drop table)<br>● 数据操作语句(DML:Data Manipulation Language)<br>● 包括insert、update、delete等操作<br>● 上面的3种操作分别用于添加、修改、删除表中的数据<br>● 数据查询语句(DQL:Data Query Language)<br>● 可以用于查询获得表中的数据<br>● 关键字select是DQL(也是所有SQL)用得最多的操作<br>● 其他DQL常用的关键字有where,order by,group by和having</p>
-<blockquote>
-<p>创表</p>
-</blockquote>
-<p>● 格式<br>● create table 表名 (字段名1 字段类型1, 字段名2 字段类型2, …) ;<br>● create table if not exists 表名 (字段名1 字段类型1, 字段名2 字段类型2, …) ;<br>● 示例<br>● create table t_student (id integer, name text, age inetger, score real) ;</p>
-<blockquote>
-<p>字段类型</p>
-</blockquote>
-<p>● SQLite将数据划分为以下几种存储类型:<br>● integer : 整型值<br>● real : 浮点值<br>● text : 文本字符串<br>● blob : 二进制数据(比如文件)<br>● 实际上SQLite是无类型的<br>● 就算声明为integer类型,还是能存储字符串文本(主键除外)<br>● 建表时声明啥类型或者不声明类型都可以,也就意味着创表语句可以这么写:<br>• create table t_student(name, age);<br>● 为了保持良好的编程规范、方便程序员之间的交流,编写建表语句的时候最好 加上每个字段的具体类型</p>
-<blockquote>
-<p>删表</p>
-</blockquote>
-<p>● 格式<br>● drop table 表名 ;<br>● drop table if exists 表名 ;<br>● 示例<br>● drop table t_student ;</p>
-<blockquote>
-<p>插入数据(insert)</p>
-</blockquote>
-<p>● 格式<br>● insert into 表名 (字段1, 字段2, …) values (字段1的值, 字段2的值, …) ;<br>● 示例<br>● insert into t_student (name, age) values (‘mj’, 10) ;<br>● 注意<br>● 数据库中的字符串内容应该用单引号 ’ 括住</p>
-<blockquote>
-<p>更新数据(update)</p>
-</blockquote>
-<p>● 格式<br>● update 表名 set 字段1 = 字段1的值, 字段2 = 字段2的值, … ;<br>● 示例<br>● update t_student set name = ‘jack’, age = 20 ;<br>● 注意<br>● 上面的示例会将t_student表中所有记录的name都改为jack,age都改为20</p>
-<blockquote>
-<p>删除数据(delete)</p>
-</blockquote>
-<p>● 格式<br>● delete from 表名 ;<br>● 示例<br>● delete from t_student ;<br>● 注意<br>● 上面的示例会将t_student表中所有记录都删掉</p>
-<blockquote>
-<p>条件语句</p>
-</blockquote>
-<p>● 如果只想更新或者删除某些固定的记录,那就必须在DML语句后加上一些条件<br>● 条件语句的常见格式<br>● where字段=某个值; //不能用两个=<br>● where字段is某个值; //is相当于=<br>● where 字段 != 某个值 ;<br>● where字段isnot某个值; //isnot相当于!=<br>● where字段&gt;某个值;<br>● where 字段1 = 某个值 and 字段2 &gt; 某个值 ; // and相当于C语言中的 &amp;&amp;<br>● where字段1=某个值or字段2=某个值; // or相当于C语言中的||</p>
-<blockquote>
-<p>排序</p>
-</blockquote>
-<p>● 查询出来的结果可以用order by进行排序<br>● select * from t_student order by 字段 ;<br>• select * from t_student order by age ;<br>● 默认是按照升序排序(由小到大),也可以变为降序(由大到小)<br>● select * from t_student order by age desc ; //降序<br>● select * from t_student order by age asc ; // 升序(默认)<br>● 也可以用多个字段进行排序<br>● select * from t_student order by age asc, height desc ;</p>
-<blockquote>
-<p>limit</p>
-</blockquote>
-<p>● 使用limit可以精确地控制查询结果的数量,比如每次只查询10条数据<br>● 格式<br>● select * from 表名 limit 数值1, 数值2 ;<br>● 示例<br>● select * from t_student limit 4, 8 ;<br>• 可以理解为:跳过最前面4条语句,然后取8条记录<br>• 先按照年龄排序(升序),年龄相等就按照身高排序(降序)</p>
-<blockquote>
-<p>简单约束</p>
-</blockquote>
-<p>● 建表时可以给特定的字段设置一些约束条件,常见的约束有<br>● not null :规定字段的值不能为null<br>● unique :规定字段的值必须唯一<br>● default :指定字段的默认值 (建议:尽量给字段设定严格的约束,以保证数据的规范性)<br>● 示例<br>● create table t_student (id integer, name text not null unique, age integer not null<br>default 1) ;<br>• name字段不能为null,并且唯一<br>• age字段不能为null,并且默认为1</p>
-<blockquote>
-<p>主键约束</p>
-</blockquote>
-<p>● 如果t_student表中就name和age两个字段,而且有些记录的name和age字段的 值都一样时,那么就没法区分这些数据,造成数据库的记录不唯一,这样就不 方便管理数据<br>● 良好的数据库编程规范应该要保证每条记录的唯一性,为此,增加了主键约束<br>● 也就是说,每张表都必须有一个主键,用来标识记录的唯一性<br>● 什么是主键<br>● 主键(Primary Key,简称PK)用来唯一地标识某一条记录<br>● 例如t_student可以增加一个id字段作为主键,相当于人的身份证<br>● 主键可以是一个字段或多个字段<br>主键的设计原则<br>● 主键应当是对用户没有意义的 ● 永远也不要更新主键<br>● 主键不应包含动态变化的数据 ● 主键应当由计算机自动生成<br> 主键的声明<br>● 在创表的时候用primary key声明一个主键<br>● create table t_student (id integer primary key, name text, age integer) ;<br>● integer类型的id作为t_student表的主键<br>● 主键字段<br>● 只要声明为primary key,就说明是一个主键字段<br>● 主键字段默认就包含了not null 和 unique 两个约束<br>● 如果想要让主键自动增长(必须是integer类型),应该增加autoincrement<br>● create table t_student (id integer primary key autoincrement, name text, age integer) ;</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net17%E9%9F%B3%E9%A2%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net17%E9%9F%B3%E9%A2%91/" class="post-title-link" itemprop="url">音频</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 20:59:11" itemprop="dateCreated datePublished" datetime="2016-07-31T20:59:11+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL *url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID <em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘</em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} ;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL *)url error:(NSError **)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError **)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
+<h4 id="Unordered-Lists"><a href="#Unordered-Lists" class="headerlink" title="Unordered Lists"></a>Unordered Lists</h4><p>Unordered list are created using “*” + Space:</p>
 <ul>
-<li>(void)pause; 停止</li>
-<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
+<li>Unordered list item</li>
+<li>Unordered list item</li>
+<li>Unordered list item </li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net16%E8%93%9D%E7%89%99/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net16%E8%93%9D%E7%89%99/" class="post-title-link" itemprop="url">蓝牙</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 20:55:39" itemprop="dateCreated datePublished" datetime="2016-07-31T20:55:39+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>● iOS中提供了4个框架用于实现蓝牙连接<br>● GameKit.framework(用法简单)<br>• 只能用于iOS设备之间的连接,多用于游戏(比如五子棋对战),从iOS7开始过期<br>● MultipeerConnectivity.framework<br>• 只能用于iOS设备之间的连接,从iOS7开始引入,主要用于文件共享(仅限于沙盒的文<br>件)<br>● ExternalAccessory.framework<br>• 可用于第三方蓝牙设备交互,但是蓝牙设备必须经过苹果MFi认证(国内较少)<br>● CoreBluetooth.framework(时下热门)<br>• 可用于第三方蓝牙设备交互,必须要支持蓝牙4.0<br>● 硬件至少是4s,系统至少是iOS6<br>● 蓝牙4.0以低功耗著称,一般也叫BLE(Bluetooth Low Energy) • 目前应用比较多的案例:运动手坏、嵌入式设备、智能家居<br> GameKit的蓝牙开发步骤<br>● 显示可以连接的蓝牙设备列表<br>GKPeerPickerController *ppc = [[GKPeerPickerController alloc] init]; ppc.delegate = self;<br>[ppc show];<br>● 在代理方法中监控蓝牙的连接</p>
+<p>Or using “-“ + Space:</p>
 <ul>
-<li>(void)peerPickerController:(GKPeerPickerController *)picker<br>didConnectPeer:(NSString *)peerID toSession:(GKSession *)session { NSLog(@”连接到设备:%@”, peerID);<br>// 关闭蓝牙设备显示界面<br>[picker dismiss];<br>// 设置接收到蓝牙数据后的监听器<br>[session setDataReceiveHandler:self withContext:nil]; // 保存session<br>self.session = session;<br>}<br>GameKit的蓝牙开发步骤<br>● 处理接收到的蓝牙数据</li>
-<li>(void) receiveData:(NSData *)data fromPeer:(NSString *)peer<br>inSession: (GKSession *)session context:(void *)context {<br>}<br>● 利用GKSession给其他设备发送数据 ● 给指定的连接设备发送数据</li>
-<li>(BOOL)sendData:(NSData *) data toPeers:(NSArray *)peers<br>withDataMode:(GKSendDataMode)mode error:(NSError **)error;<br>● 给所有连接的设备发送数据</li>
-<li>(BOOL)sendDataToAllPeers:(NSData *) data withDataMode:<br>(GKSendDataMode)mode error:(NSError **)error;<br>GameKit的蓝牙开发注意<br>● 只能用于iOS设备之间的连接<br>● 只能用于同一个应用程序之间的连接 ● 最好别利用蓝牙发送比较大的数据<br>Core Bluetooth<br>● Core Bluetooth测试比较麻烦,正常情况下,得至少有2台真实的蓝牙4.0设备<br>● 如何让iOS模拟器也能测试蓝牙4.0程序?<br>● 买一个CSR蓝牙4.0 USB适配器,插在Mac上<br>● 在终端输入sudo nvram bluetoothHostControllerSwitchBehavior=”never”<br>● 重启Mac<br>● 用Xcode 4.6调试代码,将程序跑在iOS 6.1的模拟器上 (苹果把iOS 7.0模拟器对BLE的支持移除掉了)<br>● Core Bluetooth的使用场景<br>● 运动手环、智能家居、嵌入式设备等等(金融刷卡器、心电测量器)<br>Core Bluetooth的核心结构图<br>Core Bluetooth的基本常识<br>● 每个蓝牙4.0设备都是通过服务(Service)和特征(Characteristic)来展示自 己的<br>● 一个设备必然包含一个或多个服务,每个服务下面又包含若干个特征 ● 特征是与外界交互的最小单位<br>• 比如说,一台蓝牙4.0设备,用特征A来描述自己的出厂信息,用特征B来收发 数据<br>● 服务和特征都是用UUID来唯一标识的,通过UUID就能区别不同的服务和特征 ● 设备里面各个服务(service)和特征(characteristic)的功能,均由蓝牙设备硬件厂<br>商提供,比如哪些是用来交互(读写),哪些可获取模块信息(只读)等<br>Core Bluetooth的开发步骤<br>● 建立中心设备<br>● 扫描外设(Discover Peripheral)<br>● 连接外设(Connect Peripheral)<br>● 扫描外设中的服务和特征(Discover Services And Characteristics)<br>● 利用特征与外设做数据交互(Explore And Interact)<br>● 断开连接(Disconnect)<br>蓝牙的现状<br>● 绝大多数智能手机支持蓝牙 4.0(BLE)<br>● 蓝牙芯片发展迅速,在性能和效率方面都有很大提高,且不断变得更小更便宜<br>● iBeacon + 蓝牙,前景一片光明<br>● 应用之一:室内导航<br>● Estimote公司为iBeacon提供基站<br>● 3个iBeacon基站的预购价格为99美元(约合人民币610元)<br>● Estimote公司推出的iBeacon基站的最远传输距离为50m,但是他们推荐在10m 范围内的使用效果最好<br>● 一块纽扣电池就能为一个iBeacon基站提供长达 2 年的使用寿命,而且是在设 备不断对外发射信号的情况下</li>
+<li>Unordered list item</li>
+<li>Unordered list item</li>
+<li>Unordered list item</li>
 </ul>
-<p>GameKit框架简介<br>● 使用GameKit框架,可以在游戏中增加对等连接,又称对端连接或点 对点连接,Peer To Peer。<br>● 使用GameKit框架中的对等网络连接API,可以在游戏玩家之间建立一 个对等网络,并在游戏/应用实例之间交换数据。<br>● GameKit框架可以使用蓝牙在玩家之间创建网络,玩家甚至不需要连 接到互联网,就可以彼此对战。<br>通过蓝牙实现对等网络连接<br>为玩家双方呈现一个GKPeerPickerController,提供了一个标准的 用户界面连接两台设备<br>ViewControoler遵循GKPeerPickerControllerDelegate协议,处理来 自GKPeerPickerController(对端选择器)的信息<br>建立连接后,使用GKSession类可以向对端设备发送数据<br>在receiveData:fromPeer:inSession:context代理方法中编写代码来处 理接收到的数据<br>蓝牙对等网络演练——发送照片(1)<br>● 演练目标:通过蓝牙彼此发送照片 ● 演练步骤:<br>● 1. 基于照片选择项目进行扩展,仅从照片库选择照片<br>● ●<br>2. 添加GameKit框架 3. 创建对等连接<br>● 3.1 实例化对端选择器<br>● 3.2 设置代理,并遵循协议<br>● 3.3 显示对端选择器<br>4. 连接建立代理方法 peerPickerController:didConnectPeer:toSession:<br>4.1记录对端连接会话 4.2 设置数据接收处理 4.3 关闭对端选择器<br>●<br>● ● ●<br>蓝牙对等网络演练——发送照片(2)<br>● 发送数据方法<br>[_peerSession sendDataToAllPeers:data<br>withDataMode:GKSendDataReliable error:&amp;error]; ● 接收数据方法</p>
-<ul>
-<li>(void)receiveData:(NSData *)data fromPeer:<br>(NSString *)peer inSession: (GKSession *)session<br>context:(void *)context;<br>蓝牙对等网络——发送自定义对象<br>● 如果要通过网络发送自定义对象,需要使用NSKeyedArchiver方法归档 自定义对象,然后再发送归档后的NSData<br>● 自定义对象需要遵从NSCoding协议,并实现相应的归档和恢复方法 ● 接收端接收到数据之后,使用NSKeyedUnarchiver方法恢复数据</li>
+<h4 id="Hard-Linebreak"><a href="#Hard-Linebreak" class="headerlink" title="Hard Linebreak"></a>Hard Linebreak</h4><p>End a line with two or more spaces will create a hard linebreak, called <code>&lt;br /&gt;</code> in HTML. ( Control + Return )<br>Above line ended with 2 spaces.</p>
+<h4 id="Horizontal-Rules"><a href="#Horizontal-Rules" class="headerlink" title="Horizontal Rules"></a>Horizontal Rules</h4><p>Three or more asterisks or dashes:</p>
+<hr>
+<hr>
+<hr>
+<h4 id="Headers"><a href="#Headers" class="headerlink" title="Headers"></a>Headers</h4><p>Setext-style:</p>
+<h1 id="This-is-H1"><a href="#This-is-H1" class="headerlink" title="This is H1"></a>This is H1</h1><h2 id="This-is-H2"><a href="#This-is-H2" class="headerlink" title="This is H2"></a>This is H2</h2><p>atx-style:</p>
+<h1 id="This-is-H1-1"><a href="#This-is-H1-1" class="headerlink" title="This is H1"></a>This is H1</h1><h2 id="This-is-H2-1"><a href="#This-is-H2-1" class="headerlink" title="This is H2"></a>This is H2</h2><h3 id="This-is-H3"><a href="#This-is-H3" class="headerlink" title="This is H3"></a>This is H3</h3><h4 id="This-is-H4"><a href="#This-is-H4" class="headerlink" title="This is H4"></a>This is H4</h4><h5 id="This-is-H5"><a href="#This-is-H5" class="headerlink" title="This is H5"></a>This is H5</h5><h6 id="This-is-H6"><a href="#This-is-H6" class="headerlink" title="This is H6"></a>This is H6</h6><h3 id="Extra-Syntax"><a href="#Extra-Syntax" class="headerlink" title="Extra Syntax"></a>Extra Syntax</h3><h4 id="Footnotes"><a href="#Footnotes" class="headerlink" title="Footnotes"></a>Footnotes</h4><p>Footnotes work mostly like reference-style links. A footnote is made of two things: a marker in the text that will become a superscript number; a footnote definition that will be placed in a list of footnotes at the end of the document. A footnote looks like this:</p>
+<p>That’s some text with a footnote.[^1]</p>
+<p>[^1]: And that’s the footnote.</p>
+<h4 id="Strikethrough"><a href="#Strikethrough" class="headerlink" title="Strikethrough"></a>Strikethrough</h4><p>Wrap with 2 tilde characters:</p>
+<p><del>Strikethrough</del></p>
+<h4 id="Fenced-Code-Blocks"><a href="#Fenced-Code-Blocks" class="headerlink" title="Fenced Code Blocks"></a>Fenced Code Blocks</h4><p>Start with a line containing 3 or more backticks, and ends with the first line with the same number of backticks:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Fenced code blocks are like Stardard Markdown’s regular code</span><br><span class="line">blocks, except that they’re not indented and instead rely on</span><br><span class="line">a start and end fence lines to delimit the code block.</span><br></pre></td></tr></table></figure>
+
+<h4 id="Tables"><a href="#Tables" class="headerlink" title="Tables"></a>Tables</h4><p>A simple table looks like this:</p>
+<table>
+<thead>
+<tr>
+<th>First Header</th>
+<th>Second Header</th>
+<th>Third Header</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+</tbody></table>
+<p>If you wish, you can add a leading and tailing pipe to each line of the table:</p>
+<table>
+<thead>
+<tr>
+<th>First Header</th>
+<th>Second Header</th>
+<th>Third Header</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+</tbody></table>
+<p>Specify alignment for each column by adding colons to separator lines:</p>
+<table>
+<thead>
+<tr>
+<th align="left">First Header</th>
+<th align="center">Second Header</th>
+<th align="right">Third Header</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Left</td>
+<td align="center">Center</td>
+<td align="right">Right</td>
+</tr>
+<tr>
+<td align="left">Left</td>
+<td align="center">Center</td>
+<td align="right">Right</td>
+</tr>
+</tbody></table>
+<h3 id="Shortcuts"><a href="#Shortcuts" class="headerlink" title="Shortcuts"></a>Shortcuts</h3><h4 id="View"><a href="#View" class="headerlink" title="View"></a>View</h4><ul>
+<li>Toggle live preview: Shift + Cmd + I</li>
+<li>Toggle Words Counter: Shift + Cmd + W</li>
+<li>Toggle Transparent: Shift + Cmd + T</li>
+<li>Toggle Floating: Shift + Cmd + F</li>
+<li>Left/Right = 1/1: Cmd + 0</li>
+<li>Left/Right = 3/1: Cmd + +</li>
+<li>Left/Right = 1/3: Cmd + -</li>
+<li>Toggle Writing orientation: Cmd + L</li>
+<li>Toggle fullscreen: Control + Cmd + F</li>
 </ul>
-<p>人生就像卫生纸,没事的时候,尽量少扯; 时间就像卫生纸,看着挺多,用着用着就 没了…</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net15%E5%8A%A0%E9%80%9F%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net15%E5%8A%A0%E9%80%9F%E8%AE%A1/" class="post-title-link" itemprop="url">加速计</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 20:52:05" itemprop="dateCreated datePublished" datetime="2016-07-31T20:52:05+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>● 加速计的作用<br>● 用于检测设备的运动(比如摇晃)<br>● 加速计的经典应用场景 ● 摇一摇<br>● 计步器<br>加速计的原理<br>● 检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用,哪个方向运动了) ● 根据加速度数值,就可以判断出在各个方向上的作用力度<br>加速计程序的开发<br>● 加速计程序的开发<br>● 在iOS4以前:使用UIAccelerometer,用法非常简单(到了iOS5就已经过<br>期)<br>● 从iOS4开始:CoreMotion.framework<br>● 虽然UIAccelerometer已经过期,但由于其用法极其简单,很多程序里面都 还有残留<br>UIAccelerometer的使用步骤<br>● 获得单例对象<br>UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];<br>● 设置代理 accelerometer.delegate = self;<br>● 设置采样间隔<br>accelerometer.updateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 实现代理方法</p>
-<ul>
-<li>(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:<br>(UIAcceleration *)acceleration<br>// acceleration中的x、y、z三个属性分别代表每个轴上的加速度<br>Core Motion<br>● 在iOS4之前,加速度计由UIAccelerometer类来负责采集数据<br>● 随着iPhone4的推出<br>● 加速度计全面升级,并引入了陀螺仪<br>● 与Motion(运动)相关的编程成为重头戏<br>● 苹果特地在iOS4中增加了专门处理Motion的框架-CoreMotion.framework<br>● Core Motion不仅能够提供实时的加速度值和旋转速度值,更重要的是,苹果 在其中集成了很多牛逼的算法<br>Core Motion获取数据的两种方式<br>● push<br>● 实时采集所有数据(采集频率高)<br>● pull<br>● 在有需要的时候,再主动去采集数据<br>Core Motion的使用步骤(push)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) {<br>// 加速计可用 }<br>● 设置采样间隔<br>mgr.accelerometerUpdateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 开始采样(采样到数据就会调用handler,handler会在queue中执行)</li>
-<li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue *)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
-<li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /*</em> 检测到摇动 <em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /</em></em> 摇动取消(被中断) <em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /</em></em> 摇动结束 */<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a target="_blank" rel="noopener" href="https://github.com/Shmoopi/iOS-System-Services">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a target="_blank" rel="noopener" href="https://github.com/erica/uidevice-extension">https://github.com/erica/uidevice-extension</a></li>
+<h4 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a>Actions</h4><ul>
+<li>Copy HTML: Option + Cmd + C</li>
+<li>Strong: Select text, Cmd + B</li>
+<li>Emphasize: Select text, Cmd + I</li>
+<li>Inline Code: Select text, Cmd + K</li>
+<li>Strikethrough: Select text, Cmd + U</li>
+<li>Link: Select text, Control + Shift + L</li>
+<li>Image: Select text, Control + Shift + I</li>
+<li>Select Word: Control + Option + W</li>
+<li>Select Line: Shift + Cmd + L</li>
+<li>Select All: Cmd + A</li>
+<li>Deselect All: Cmd + D</li>
+<li>Convert to Uppercase: Select text, Control + U</li>
+<li>Convert to Lowercase: Select text, Control + Shift + U</li>
+<li>Convert to Titlecase: Select text, Control + Option + U</li>
+<li>Convert to List: Select lines, Control + L</li>
+<li>Convert to Blockquote: Select lines, Control + Q</li>
+<li>Convert to H1: Cmd + 1</li>
+<li>Convert to H2: Cmd + 2</li>
+<li>Convert to H3: Cmd + 3</li>
+<li>Convert to H4: Cmd + 4</li>
+<li>Convert to H5: Cmd + 5</li>
+<li>Convert to H6: Cmd + 6</li>
+<li>Convert Spaces to Tabs: Control + [</li>
+<li>Convert Tabs to Spaces: Control + ]</li>
+<li>Insert Current Date: Control + Shift + 1</li>
+<li>Insert Current Time: Control + Shift + 2</li>
+<li>Insert entity &lt;: Control + Shift + ,</li>
+<li>Insert entity &gt;: Control + Shift + .</li>
+<li>Insert entity &amp;: Control + Shift + 7</li>
+<li>Insert entity Space: Control + Shift + Space</li>
+<li>Insert Scriptogr.am Header: Control + Shift + G</li>
+<li>Shift Line Left: Select lines, Cmd + [</li>
+<li>Shift Line Right: Select lines, Cmd + ]</li>
+<li>New Line: Cmd + Return</li>
+<li>Comment: Cmd + /</li>
+<li>Hard Linebreak: Control + Return</li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net14%E4%BC%A0%E6%84%9F%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net14%E4%BC%A0%E6%84%9F%E5%99%A8/" class="post-title-link" itemprop="url">传感器</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 18:23:36" itemprop="dateCreated datePublished" datetime="2016-07-31T18:23:36+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>iPhone5中内置的传感器有<br>● 运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 环境光传感器(Ambient Light Sensor)<br>● 距离传感器(Proximity Sensor)<br>● 磁力计传感器(Magnetometer Sensor)<br>● 内部温度传感器(Internal Temperature Sensor)<br>● 湿度传感器(Moisture Sensor)<br>● 陀螺仪(Gyroscope)<br>● … …<br>环境光传感器(Ambient Light Sensor)<br>● 是iOS、Mac设备中最为古老的传感器成员<br>● 它能够让你在使用 Mac、iPhone、iPad时,眼睛更为舒适<br>● 从一个明亮的室外走入相对黑暗的室内后,iOS设备会自动调低亮度,让屏幕显得不再那 么光亮刺眼<br>● 当你使用iPhone拍照时,闪光灯会在一定条件下自动开启<br>● 几乎所有的Mac 都带有背光键盘,当周围光线弱到一定条件时,会自动开启键盘背光<br> 距离传感器(Proximity Sensor)<br>● 用于检测是否有其他物体靠近设备屏幕<br>● 当你打电话或接电话时将电话屏幕贴近耳边,iPhone会自动关闭屏幕 ,好处是<br>● 节省电量<br>● 防止耳朵或面部不小心触摸屏幕而引发一些不想要的意外操作<br>● 题外话:利用距离传感器,能找出很多电视剧的穿帮镜头<br>磁力计传感器(Magnetometer Sensor)<br>● 可以感应地球磁场, 获得方向信息, 使位置服务数据更精准 ● 可以用于电子罗盘和导航应用<br>● iPad的Smart Cover盒盖睡眠操作就是基于磁力计传感器<br>内部温度传感器(Internal Temperature Sensor)<br>● 从 iPad一代开始,iOS设备都加入了一个内部温度传感器,用于检测内部组件 温度,当温度超过系统设定的阈值时,会出现以下提示<br>● 内部温度传感器,对于提升iOS设备自身安全性与稳定性有很大的帮助<br>湿度传感器(Moisture Sensor)<br>● 湿度传感器跟其他基于微电子的传感器不同,是一个简单的物理传感器 ● 简单来说,湿度传感器就是一张遇水变红的试纸<br>● Apple的维修人员就是通过检测试纸是否变红,来判断设备是否进水 (设备进水不在保修范围之内)<br>陀螺仪(Gyroscope)<br>● 陀螺仪是随着iPhone4的上市首次出现在iOS设备上的传感器 ● 陀螺仪可以用于检测设备的持握方式<br>● 陀螺仪的原理是检测设备在X、Y、Z轴上所旋转的角速度<br>● 陀螺仪在赛车类游戏中有重大作用: ● 模拟汽车驾驶时方向盘旋转的动作<br>● 使得这类游戏的操控体验更为真实<br>运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 最早出现在iOS设备上的传感器之一<br>● 加速计用于检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用)<br>● 加速计可以用于检测设备的摇晃,经典应用场景 ● 摇一摇<br>● 计步器</p>
-<blockquote>
-<p>传感器总结</p>
-</blockquote>
-<p>传感器类型<br>作用<br>环境光传感器<br>感应周边环境光线的强弱(自动调节屏幕亮度)<br>距离传感器<br>感应是否有其他物体靠近设备屏幕(打电话自动锁屏)<br>磁力计传感器<br>感应周边的磁场(合盖锁屏)<br>内部温度传感器<br>感应设备内部的温度(提醒用户降温,防止损伤设备)<br>湿度传感器<br>感应设备是否进水(方便维修人员)<br>陀螺仪<br>感应设备的持握方式(赛车类游戏)<br>加速计<br>感应设备的运动(摇一摇、计步器)</p>
-<blockquote>
-<p>距离传感器的使用</p>
-</blockquote>
-<p>// 开启距离感应功能<br>[UIDevice currentDevice].proximityMonitoringEnabled = YES; // 监听距离感应的通知<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(proximityChange:) name:UIDeviceProximityStateDidChangeNotification object:nil];</p>
-<ul>
-<li>(void)proximityChange:(NSNotificationCenter *)notification { if ([UIDevice currentDevice].proximityState == YES) { NSLog(@”某个物体靠近了设备屏幕”); // 屏幕会自动锁住<br>} else {<br>NSLog(@”某个物体远离了设备屏幕”); // 屏幕会自动解锁<br>} }</li>
+<h4 id="Edit"><a href="#Edit" class="headerlink" title="Edit"></a>Edit</h4><ul>
+<li>Auto complete current word: Esc</li>
+<li>Find: Cmd + F</li>
+<li>Close find bar: Esc</li>
 </ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net13%E5%88%86%E4%BA%AB%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net13%E5%88%86%E4%BA%AB%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99/" class="post-title-link" itemprop="url">分享学习网站</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 18:20:35" itemprop="dateCreated datePublished" datetime="2016-07-31T18:20:35+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>游戏开发相关：</p>
-<p><a target="_blank" rel="noopener" href="http://www.gameres.com/">http://www.gameres.com/</a>    想学游戏的这个网站绝对不能错过，个人感觉挺不错的<br><a target="_blank" rel="noopener" href="http://xyq.baike.163.com/ziliao/">http://xyq.baike.163.com/ziliao/</a>      SLG 游戏系统策划<br><a target="_blank" rel="noopener" href="http://www.gamedev.net/page/index.html">http://www.gamedev.net/page/index.html</a>  国外<br><a target="_blank" rel="noopener" href="http://ns.codingnow.com/">http://ns.codingnow.com/</a>     网易梦幻西游后端主程序  大神</p>
-<p>安全相关：<br><a target="_blank" rel="noopener" href="http://bbs.pediy.com/">http://bbs.pediy.com/</a> 看雪学院  国内重量级</p>
-<p>iOS相关：</p>
-<p><a target="_blank" rel="noopener" href="http://blog.devtang.com/">http://blog.devtang.com/</a>   网易iOS </p>
-<p><a target="_blank" rel="noopener" href="http://beyondvincent.com/blog/archives/">http://beyondvincent.com/blog/archives/</a><br><a target="_blank" rel="noopener" href="http://github.ibireme.com/github/list/ios/">http://github.ibireme.com/github/list/ios/</a>      收集git 上各种优秀项目</p>
-<p>Swift学习:<br><a target="_blank" rel="noopener" href="https://github.com/CocoaChina-editors/Welcome-to-Swift">https://github.com/CocoaChina-editors/Welcome-to-Swift</a><br><a target="_blank" rel="noopener" href="https://github.com/numbbbbb/the-swift-programming-language-in-chinese">https://github.com/numbbbbb/the-swift-programming-language-in-chinese</a>  </p>
-<p>热门IT社区<br><a target="_blank" rel="noopener" href="http://www.csdn.net/">www.csdn.net</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/">www.cnblogs.com</a><br><a target="_blank" rel="noopener" href="http://www.51cto.com/">www.51cto.com</a><br><a target="_blank" rel="noopener" href="http://www.oschina.net/">http://www.oschina.net/</a> </p>
-<p><a target="_blank" rel="noopener" href="http://tool.oschina.net/apidocs/#J">http://tool.oschina.net/apidocs/#J</a>    在线API 各种技术文档 </p>
-<p><a target="_blank" rel="noopener" href="http://www.juming.com/Csdn/#jieguo">http://www.juming.com/Csdn/#jieguo</a>  免CSDN下载器</p>
-<p><a target="_blank" rel="noopener" href="http://www.cnpaf.net/class/rfcall/">http://www.cnpaf.net/class/rfcall/</a>       网络协议详解大全</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net12Autolayout/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net12Autolayout/" class="post-title-link" itemprop="url">Autolayout</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 18:17:54" itemprop="dateCreated datePublished" datetime="2016-07-31T18:17:54+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>如果使用autolayout来约束控件, 那fraem就失效了, 官方也不建议我们再设置frame了</p>
-<p>宽度: 100<br>高度: 100<br>水平居中: X<br>垂直居中: Y<br>注意: 如果利用autolayout约束一个控件, 和我们以前使用frame约束控件一样, 必须设置宽度/高度/X/Y , 如果缺少某一个约束就会报错, 报错有可能会引发一些未知的bug</p>
-<p>如果有红色警告:<br>代表缺少约束<br>如果有黄色警告:<br>代表控件当前的位置大小和约束的位置大小不一样</p>
-<p>距离顶部: 20 相当于设置了Y<br>距离左边:20 相当于设置了X<br>距离右边:20 相当于设置了宽度<br>距离底部:20 相当于设置了高度</p>
-<p>注意:<br>在使用Autolayout时,最好给每个控件起一个名称, 方便阅读</p>
+<h4 id="Post"><a href="#Post" class="headerlink" title="Post"></a>Post</h4><ul>
+<li>Post on Scriptogr.am: Control + Shift + S</li>
+<li>Post on Tumblr: Control + Shift + T</li>
+</ul>
+<h4 id="Export"><a href="#Export" class="headerlink" title="Export"></a>Export</h4><ul>
+<li>Export HTML: Option + Cmd + E</li>
+<li>Export PDF:  Option + Cmd + P</li>
+</ul>
+<h3 id="And-more"><a href="#And-more" class="headerlink" title="And more?"></a>And more?</h3><p>Don’t forget to check Preferences, lots of useful options are there.</p>
+<p>Follow <a target="_blank" rel="noopener" href="https://twitter.com/mou">@Mou</a> on Twitter for the latest news.</p>
+<p>For feedback, use the menu <code>Help</code> - <code>Send Feedback</code></p>
 
       
     </div>
@@ -914,7 +1049,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/22/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><span class="page-number current">23</span><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="extend next" rel="next" href="/page/24/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/22/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><span class="page-number current">23</span><a class="page-number" href="/page/24/">24</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/24/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -980,7 +1115,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">269</span>
+          <span class="site-state-item-count">288</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

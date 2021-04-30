@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="iOS路由实现原理：基于url，基于反射Category+NSInvocation 方案的优点是便捷，因为 Category 的专用接口放在平台库，以后有除了 BKit 以外的其他调用方也可以直接调用，还有更多强大的功能。组件之间的依赖除了显式的依赖，还存在很多隐式依赖，代码层面，除了普通的接口依赖，还有宏依赖、枚举依赖、全局变量依赖以及内联函数等的依赖。单仓 lint 进行编译链接完备性检查并不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Men的博客">
+<meta property="og:url" content="http://example.com/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="iOS路由实现原理：基于url，基于反射Category+NSInvocation 方案的优点是便捷，因为 Category 的专用接口放在平台库，以后有除了 BKit 以外的其他调用方也可以直接调用，还有更多强大的功能。组件之间的依赖除了显式的依赖，还存在很多隐式依赖，代码层面，除了普通的接口依赖，还有宏依赖、枚举依赖、全局变量依赖以及内联函数等的依赖。单仓 lint 进行编译链接完备性检查并不">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-30T06:24:09.711Z">
+<meta property="article:modified_time" content="2021-04-30T08:18:56.462Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:18:56" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>iOS路由实现原理：基于url，基于反射<br>Category+NSInvocation 方案的优点是便捷，因为 Category 的专用接口放在平台库，以后有除了 BKit 以外的其他调用方也可以直接调用，还有更多强大的功能。<br>组件之间的依赖除了显式的依赖，还存在很多隐式依赖，代码层面，除了普通的接口依赖，还有宏依赖、枚举依赖、全局变量依赖以及内联函数等的依赖。单仓 lint 进行编译链接完备性检查并不能解决依赖变动对其他二进制的影响。<br>因此需要借助源码层面的依赖分析，判断当前组件的变更对其他依赖当前组件的二进制是否有影响，在 CI 流程中及时发现并拦截。否则错误的二进制发版，会直接导致整个 CI 研发流程和本地研发都受到影响。<br>大型项目的组件化工作是一个系统性工程。涉及工程架构的改造、CI/CD 研发工具链的支撑、本地研发工具链的支撑，业务架构的设计优化，需要从各个方面综合考虑成本和收益。<br>没有最好的架构，只有更好的架构，在架构演进的过程中，我们需要充分考虑架构的改动对业务的影响以及能给业务带来的收益。好的架构一定是能帮助业务节省时间，保证质量的。与此同时，我们在架构改进的过程中，要保证不能影响业务的正常迭代，所以向前兼容且避免大面积冲突也是很重要的事情。<br>组件化里面处处都有惊喜，比如一个小小的 hmap 优化，可以很大程度的减少编译耗时，比如一个二进制的压缩和解压的优化，可以很大程度减少 pod install 的整体耗时。<br>当然这里面也会有很多很棘手的问题，需要通过一些特殊的方案解决，比如针对分布式开发，由于阻塞式发版必然会导致一些不同分支存在冲突的代码发版后影响主干的稳定性。<br>前端可视化探索总结：基于积木形式的拖拽界面，基于markdown形式的文档编辑界面<br>Venom：iOS工程集成，类似pod<br>Metabase：可以帮助你把数据库中的数据更好的呈现给更多人<br>Lerna js多包存储库管理工具<br>H5长列表渲染：<br>如果只渲染展示可见范围内的 dom ，原来的滚动条就没了，如何重现原有的滚动条？<br>滚动条的问题解决后，如何根据当前滚动位置来知道该渲染列表的哪部分？<br>ThreadPoolExecutor：类似iOS中的GCD<br>线程池运行的状态，并不是用户显式设置的，而是伴随着线程池的运行，由内部来维护。线程池内部使用一个变量维护两个值：运行状态(runState)和线程数量 (workerCount)。在具体实现中，线程池将运行状态(runState)、线程数量 (workerCount)两个关键参数的维护放在了一起<br>主要作用：任务调度、任务缓冲、线程回收<br>LruCache：采用的缓存算法为LRU(Least Recently Used)，即最近最少使用算法。这一算法的核心思想是当缓存数据达到预设上限后，会优先淘汰近期最少使用的缓存对象。LruCache内部维护一个双向链表和一个映射表。链表按照使用顺序存储缓存数据，越早使用的数据越靠近链表尾部，越晚使用的数据越靠近链表头部；映射表通过Key-Value结构，提供高效的查找操作，通过键值可以判断某一数据是否缓存，如果缓存直接获取缓存数据所属的链表节点，进一步获取缓存数据。LruCache结构图如下所示，上半部分是双向链表，下半部分是映射表（不一定有序）。双向链表中value_1所处位置为链表头部，value_N所处位置为链表尾部。<br>HashLruCache：引入某种哈希算法，将缓存数据分散到N个LruCache上。<br>冷启动解决方案：<br>    解决存量问题：优化当前性能瓶颈点，优化启动流程，缩短冷启动时间。<br>    管控增量问题：冷启动流程规范化，通过代码范式和文档指导后续冷启动过程代码的维护，控制时间增量。<br>    完善监控：完善冷启动性能指标监控，收集更详细的数据，及时发现性能问题。<br>iOS静态分析：Static Analyzer、Infer、OCLint<br>Js定时器：1.存放 callback 2.启动一个倒计时 3.倒计时结束，取出存好的 callback，RUN！<br>前端加密：我们也可以借助 webpack-subresource-integrity 轻易实现 integrity 的添加过程，保持对开发者透明。<br>开启 SRI，浏览器会对相关资源进行 CORS 校验，所以被加载的资源要么在同域下，要么得满足 CORS 机制（具体方式可查看 脚本错误量极致优化-监控上报与 Script error 中 跨源资源共享机制 ( CORS ) 章节）。<br>HTTPS 可以有效应对流量劫持的问题，SRI 在资源完整性再上一道屏障，CSP 也进行了其他方面的补充。“三驾马车” 为页面资源安全 “保驾护航”。当然这也绝非银弹，安全之路充满着荆棘与挑战，任重道远。<br>alloy-worker：Worker 的多线程能力有望成为复杂前端项目的标配, 在减少 UI 线程卡顿和压榨计算机性能上有收益. 但目前国内实践较少, 一方面是业务复杂程度未触及; 另一方面是社区缺少科普和实践分享.<br>聊天界面反向渲染，竟然实现了聊天信息始终在底部。。。。<br>html优化：压缩、减包、拆包、动态加载包及图片优化上<br>cdn 分发、dns 解析、http 缓存、数据预请求，数据缓存及首屏优化大杀器——直出等<br>大部分主流的页面会通过服务器进行渲染，吐出 html 文件到前端<br>通过离线包技术能够很好解决 html 文件本身加载需要时间的问题。离线包基本思路都是通过 webview 统一拦截 url，将资源映射到本地离线包，更新的时候对版本资源检测，下载和维护本地缓存目录中的资源。比如腾讯的 webso 和 Alloykit 的离线包方案。<br>前端内存优化：</p>
+<ol>
+<li>避免没有必要全局变量的使用<br>我们可以在 JS 文件的开头通过添加”use strict” 开启严格的解析模式，来避免一些意外创建的全局变量。</li>
+<li>及时解除引用</li>
+<li>减少对象的创建</li>
+<li>内存不是缓存</li>
+<li>避免复杂的递归调用；</li>
+<li>合理使用的 IndexedDB</li>
+</ol>
+<p>我们应该编写有类型系统的 JavaScript，而不是能编译成 JavaScript 的 Java/C#。任何一个 TypeScript 程序，在手动删去类型部分，将后缀改成 .js 后，都应能够正常运行。<br>基本类型<br>基本类型，也可以理解为原子类型。包括 number、boolean、string、null、undefined、function、array、字面量（true，false，1，2，‘a’）等。它们无法再细分。<br>页面可视化组建：html模版、配置字段、业务逻辑、布局样式、Json数据驱动</p>
+<p>AVAudioSession<br>AVAudioSessionMode<br>AVAudioSessionCategoryAmbient // 背景声音，可以与其他音乐混合，用于以非语音为主的应用<br>AVAudioSessionCategory<br>AVAudioSessionCategoryPlayback // 只用于播放<br>AVAudioSessionCategoryPlayAndRecord // 既可以录音也可以播放<br>AVAudioSessionInterruptionNotification // 电话打断等<br>媒体声音被抑制：<br>媒体声音在媒体音量下开启播放，播放途中因为连麦而切换到了通话音量，此时因为系统特性，媒体音量会被通话音量抑制而导致声音变小。<br>针对该问题，我们使用音视频 SDK 提供的混音、混流功能来规避。基本原理是播放媒体资源时，我们拿到资源的 pcm 音频数据，将数据抛给 RTC 的 audioUnit 进行混合，由 RTC 音频播放单元统一播放，如果此时 RTC 使用的是通话音量，则媒体资源也是使用的通话音量播放，反之亦然。以此来保证媒体资源与 RTC 始终保持统一的音量控制机制，而避免声音大小存在差异。<br>安装包优化<br>2.1、使用合适的资源压缩配置<br>    Pod 库和主工程的最低支持版本从 iOS 8.0 提升成 iOS 9.0<br>    开启 Pod 库和主工程 Xcode Build Settings 中的 ASSETCATALOG_COMPILER_OPTIMIZATION space 选项<br>     xcrun assetutil –info Assets.car 命令检查 Assets.car 中每张图片使用的编码压缩算法<br>2.2、使用 RGB with palette 压缩图片<br>Mach-O 文件优化<br>3.1、使用 -Oz 编译参数<br>Oz 的核心原理是对重复的连续机器指令外联成函数进行复用，和“内联函数”的原理正好相反。因此，开启 Oz，能减小二进制的大小，但同时理论上会带来执行效率的额外消耗。<br>3.2、使用链接时优化 LTO<br>Link-Time Optimization 链接时优化，是 Xcode 自带的一个编译/链接参数。根据 WWDC 2016 《What’s New in LLVM》[4]的介绍，LTO 对包大小和运行效率都有正向影响。今日头条在编译和链接中均开启 Incremental LTO 后，包体积减小 6.5MB。<br>如果我们用 @dynamic 修饰一个属性，不生成成员变量、get/set 方法，则一个属性可以由 224B 减少到 36B，即仅包含 property 部分的大小。<br>3.5、__TEXT 段迁移<br>在链接阶段使用 -rename_p 选项将 __TEXT,__text 迁移到 __BD_TEXT,__text，减少苹果对可执行文件的加密范围，提升可执行文件的压缩效率，从而减少 Download Size。<br>WebView 渲染需要经过下面几个步骤：<br>    解析 HTML 文件<br>    加载 JavaScript 和 CSS 文件<br>    解析并执行 JavaScript<br>    构建 DOM 结构<br>    加载图片等资源<br>    页面加载完毕<br>模板拆分<br>    把头条详情页的公共样式 CSS 和 逻辑 JS 都抽离出来，形成一个独立而完备的详情页模板，这样我们就可以把模板直接内置在客户端中。<br>模板优化<br>    WebView 需要在加载完主 HTML 之后再去加载 HTML 中的 JS 和 CSS，需要多次 IO 操作，于是我们将 JS 和 CSS 还有一些图片都内联到一个文件中，这样，加载模板时就只需要一次 IO 操作，也大大减少因为 IO 加载冲突导致模板加载失败问题<br>模板简化<br>    我们将部分非必须的脚本异步化拉取，精简不必要的样式和 JS 代码，将模板大小压缩了 20% 以上<br>    我们并不需要在用户进入页面的时候才去创建 WebView 以及加载模板，我们只需要在合适的时机在后台创建 WebView，并且提前预热加载模板，当用户点击进入页面的时候就能使用已经加载好模板的 WebView，直接将详情页的内容数据通过 JS 注入到页面中，前端收到数据后进行页面渲染即可。<br>    我们每次使用的时候都是同一个模板，所以我们使用完当前 WebView 之后，只需要在用户退出页面的时候把正文数据清空，这样进入下一个页面的时候就能够继续复用这个 WebView 重新注入数据即可。<br>网络优化<br>    CDN 加速<br>    我们将详情页内容数据分为静态和动态两部分，将正文内容、标题、作者栏等用户主要消费的又基本不变的内容托管到了 CDN 上，托管到 CDN 之后，全国各地的用户可以直接从最佳节点就获取到详情页数据，也大大节省了带宽成本。<br>    容灾<br>    为了防止某个 CDN 出现故障，导致服务雪崩，服务端会下发多个 CDN 链接，当用户访问当前 CDN 节点的出异常时，可以快速自动切换到下个 CDN 节点。<br>    2. 快速超时<br>    一般的超时策略，客户端在请求时，会遍历请求 CDN 1、2、3。如果这些 CDN 都请求失败，则整个网络请求算作失败。<br>    假设请求 CDN 的超时时间是 15s。如果 CDN 1 出现故障，则需要等待 15s 才能切换到 CDN 2上，这对于详情页的加载时间来说是不可接受，如果用户网络突然变差，则需要等待 45s 才能返回失败展示错误页。<br>    渲染优化<br>    为了提高用户的首屏效率，我们在服务端就会把所有的详情页正文的 HTML 数据组装好，通过将服务端直出内容注入到页面中时，可以直接给 WebView 进行渲染，对于其他动态下发的内容（比如相关搜索），前端再进行二次异步处理，提升用户效率。<br>    所以在详情页中，我们会将图片和视频等非文字内容通过原生组件的方式放在客户端进行渲染，既可以提高渲染效率，也可以减少不必要的流量消耗。<br>    当 WKWebView 上占用内存过大时，WKWebView 所在的 WebContent Process 会被系统 kill 掉，反映在用户体验上就是发生了白屏。<br>    WKWebView 提供的回调 webViewWebContentProcessDidTerminate 函数中通过 reload 方法重新加载当前页面恢复，但是这种情况只适用于通过 loadRequest 加载的请求，在详情页中，由于使用了模板化的 WebView 中，重新 reload 只能重新 reload 模板，并不能正常恢复整个详情页，需要客户端重新加载模板之后再重新注入数据。</p>
+<p> 遍历方式</p>
+<pre><code>for each或者iterator
+移动端适配mediaquery媒体查询
+@media screen and (max-width: 300px) &#123;
+    body &#123;
+        background-color:lightblue;
+    &#125;
+&#125;
+rem原理
+字体单位，跟px不同的是根据root element动态变化
+1ren=16px 浏览器默认字体大小
+
+
+Java注解
+@Override @Deprecated @Suppvisewarning
+Spring注解
+@Autowirte @Service @Repository
+MyBatis
+@InsertProvider @UpdateProvider @Options
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/30/M_Swift208Vue%E6%8E%A5%E5%8F%A3%E6%A8%A1%E7%89%88%E8%AE%BE%E8%AE%A1/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">288</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
