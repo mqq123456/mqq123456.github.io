@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/07/25/M_Swift121iOS%E4%B8%8D%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift129RunTime/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/07/25/M_Swift121iOS%E4%B8%8D%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">iOS不常用方法</a>
+            <a href="/2020/09/06/M_Swift129RunTime/" class="post-title-link" itemprop="url">NSObject数据结构</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-25 15:47:29" itemprop="dateCreated datePublished" datetime="2019-07-25T15:47:29+08:00">2019-07-25</time>
+              <time title="创建时间：2020-09-06 17:29:02" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:02+08:00">2020-09-06</time>
             </span>
 
           
@@ -186,20 +186,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="UITableView收起键盘"><a href="#UITableView收起键盘" class="headerlink" title="UITableView收起键盘"></a>UITableView收起键盘</h2><p>何必这么麻烦，一个属性搞定，效果好（UIScrollView同样可以使用）以前是不是觉得[self.view endEditing:YES];很屌，这个下面的更屌。yourTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;另外一个枚举为UIScrollViewKeyboardDismissModeInteractive，表示在键盘内部滑动，键盘逐渐下去。</p>
-<h2 id="禁止手机睡眠"><a href="#禁止手机睡眠" class="headerlink" title="禁止手机睡眠"></a>禁止手机睡眠</h2><p>[UIApplication sharedApplication].idleTimerDisabled = YES;</p>
-<h2 id="tableView-beginUpdates-和-endUpdates"><a href="#tableView-beginUpdates-和-endUpdates" class="headerlink" title="tableView  beginUpdates 和 endUpdates"></a>tableView  beginUpdates 和 endUpdates</h2><p>1.beginUpdates 和 endUpdates必须成对使用<br>2、使用beginUpdates和endUpdates可以在改变一些行（row）的高度时自带动画，并且不需要Reload row（不用调用cellForRow，仅仅需要调用heightForRow，这样效率最高）。<br>3、在beginUpdates和endUpdates中执行insert,delete,select,reload row时，动画效果更加同步和顺滑，否则动画卡顿且table的属性（如row count）可能会失效。<br>4、在beginUpdates 和 endUpdates中执行 reloadData 方法和直接reloadData一样，没有相应的中间动画。</p>
-<h2 id="统一收起键盘"><a href="#统一收起键盘" class="headerlink" title="统一收起键盘"></a>统一收起键盘</h2><p>[[[UIApplication sharedApplication] keyWindow] endEditing:YES];</p>
-<h2 id="wkwebview报错"><a href="#wkwebview报错" class="headerlink" title="wkwebview报错"></a>wkwebview报错</h2><p>使用wkwebview时，push后，再pop返回，报错了：<br>Cannot form weak reference to instance (xxxx) of class xxxx. It is possible that this object was over-released, or is in the process of deallocation.<br>原因是给webView.scrollView设置了代理：webView.scrollView.delegate = self ；<br>解决办法：<br>-(void)dealloc<br>{<br>webView.scrollView.delegate = nil;<br>}</p>
-<h2 id="linker-command-failed-with-exit-code-1"><a href="#linker-command-failed-with-exit-code-1" class="headerlink" title="linker command failed with exit code 1"></a>linker command failed with exit code 1</h2><p>原因和解决办法：<br>1、看看是不是有新添加的文件跟之前文件同名<br>2、错误信息中出现了某个类的名字，去原文件中看看#import了哪些第三方库，把这些库挨个注释排除，找到出错的那个库，然后按照官方提供的步骤重新添加一遍。<br>3、SVN或git忽略了某些文件，如.o 等文件没能update下来，查看.o文件可能是红色的，可以重新添加或者修改SVN(git)的忽略设置<br>4、把.a文件删除再重新拖到项目中解决问题<br>5、可能重复添加了文件（也可能没勾选 Copy items if neded 这个选项），建议删除后重新添加<br>6、工程中文件名重复了 也会出现同样的错误<br>7、Build Settings”-&gt;”Enable Bitcode”设置为NO ，因为有些SDK不支持Bitcode<br>8、可能在引用的时候 可能写的是#import “XXXXX.m” ，如果是改为#import “XXXXX.h”<br>9、可能你导入的SDK只能在真机下才能运行，模拟器会报错！<br>10、找到 Build settings-&gt;Linking-&gt;Other Linker Flags将此属性修改成-all_load 或者 -ObjC<br>11、Build settings-&gt;Search Path-&gt;Library Search Paths 添加静态库的相应路径</p>
-<h2 id="CABasicAnimation-按home键后台之后，再切回来动画就停止"><a href="#CABasicAnimation-按home键后台之后，再切回来动画就停止" class="headerlink" title="CABasicAnimation 按home键后台之后，再切回来动画就停止"></a>CABasicAnimation 按home键后台之后，再切回来动画就停止</h2><p>CABasicAnimation有个属性removedOnCompletion，默认值为YES,意思是动画在指定时间段内完成后，就会从层上自动移除。<br>如果CABasicAnimation 按home键后台之后，再切回来动画就停止，只要将removedOnCompletion属性设为no动画就不会停止，直到你移除该动画</p>
-<h2 id="播放一张张连续的图片"><a href="#播放一张张连续的图片" class="headerlink" title="播放一张张连续的图片"></a>播放一张张连续的图片</h2><p>// 方法一<br>imageView.animationImages = @[[UIImage imageNamed:@”animate_1”], [UIImage imageNamed:@”animate_2”], [UIImage imageNamed:@”animate_3”]];<br>imageView.animationDuration = 1.0;<br>// 方法二<br>imageView.image = [UIImage animatedImageNamed:@”animate_” duration:1.0];<br>// 方法二解释下，这个方法会加载animate_为前缀的，后边0-1024，也就是animate_0、animate_1一直到animate_1024</p>
-<h2 id="判断两个rect是否有交叉"><a href="#判断两个rect是否有交叉" class="headerlink" title="判断两个rect是否有交叉"></a>判断两个rect是否有交叉</h2><p>if (CGRectIntersectsRect(rect1, rect2)) {<br>}</p>
-<h2 id="键盘上方增加工具栏"><a href="#键盘上方增加工具栏" class="headerlink" title="键盘上方增加工具栏"></a>键盘上方增加工具栏</h2><p>UIToolbar *keyboardDoneButtonView = [[UIToolbar alloc] init];<br>[keyboardDoneButtonView sizeToFit];<br>UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@”Done”<br>style:UIBarButtonItemStyleBordered target:self<br>action:@selector(doneClicked:)];<br>[keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];<br>txtField.inputAccessoryView = keyboardDoneButtonView;</p>
-<h2 id="判断一个view是否为另一个view的子视图"><a href="#判断一个view是否为另一个view的子视图" class="headerlink" title="判断一个view是否为另一个view的子视图"></a>判断一个view是否为另一个view的子视图</h2><p>// 如果myView是self.view本身，也会返回yes<br>BOOL isSubView = [myView isDescendantOfView:self.view];</p>
-<h2 id="判断某一行的cell是否已经显示"><a href="#判断某一行的cell是否已经显示" class="headerlink" title="判断某一行的cell是否已经显示"></a>判断某一行的cell是否已经显示</h2><p>CGRect cellRect = [tableView rectForRowAtIndexPath:indexPath];<br>BOOL completelyVisible = CGRectContainsRect(tableView.bounds, cellRect);</p>
-<h2 id="隐藏UITextView-UITextField光标"><a href="#隐藏UITextView-UITextField光标" class="headerlink" title="隐藏UITextView/UITextField光标"></a>隐藏UITextView/UITextField光标</h2><p>textField.tintColor = [UIColor clearColor];</p>
-<h2 id="当UITextView-UITextField中没有文字时，禁用回车键"><a href="#当UITextView-UITextField中没有文字时，禁用回车键" class="headerlink" title="当UITextView/UITextField中没有文字时，禁用回车键"></a>当UITextView/UITextField中没有文字时，禁用回车键</h2><p>textField.enablesReturnKeyAutomatically = YES;</p>
+          <h2 id="object-class"><a href="#object-class" class="headerlink" title="object_class"></a>object_class</h2><p>继承:objc_object<br>内部：<br>Class superClass; 父类<br>cache_t cache;  缓存<br>class_data_bits_t bits  数据</p>
+<p>isa指针关系<br>实例对象其指针指向类对象<br>类对象其指针指向元类对象</p>
+<p>cache_t<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/45d409e77806">https://www.jianshu.com/p/45d409e77806</a><br>用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查找速度，底层结构如下：<br>用于快速查找方法执行函数<br>是可增量扩展的哈希表结构<br>是局部性原理的最佳应用<br>cache 本质是一个 Hash表。存储bucket_t<br>bucket_t存储<br>cache_key_t _key;//@selector()<br>IMP _imp;//函数地址<br>哈希查找：发现当发生碰撞的时候，索引会+1，查找下一个。<br>槽位如果不够，_mask 会变换，变为原来的2倍，并且扩展槽位的时候，会清空数组里原有的缓存内容<br>子类没有实现方法会调用父类的方法，会将父类方法加入到子类自己的cache 里。<br>为什么要创建新的新的buckets来替换原有的buckets并抹掉原有的buckets的方案，而不是在在原有buckets的基础上进行扩容？<br>减少对方法快速查找流程的影响：调用objc_msgSend时会触发方法快速查找，如果进行扩容需要做一些读写操作，对快速查找影响比较大。<br>对性能要求比较高：开辟新的buckets空间并抹掉原有buckets的消耗比在原有buckets上进行扩展更加高效<br>当扩容后，会把新mask设置为newCapacity长度减一，然后清空缓存。<br>所有散列表(哈希表)的原理都是一样的，都是通过一个函数，这个函数传入一个key，通过这个key算出一个索引，如果索引冲突了就加一或者减一，直至不冲突为止，不同的就是算法不一样。</p>
+<p>struct class_rw_t {<br>    uint32_t flags;<br>    uint32_t version;</p>
+<pre><code>const class_ro_t *ro;
+
+method_array_t methods;
+property_array_t properties; //属性，和变量的区别，属性是名称，变量是值
+protocol_array_t protocols;
+
+Class firstSubclass;
+Class nextSiblingClass;
+</code></pre>
+<p>};<br>class_rw_t结构体内有一个指向class_ro_t结构体的指针。</p>
+<p>细看两个结构体的成员变量会发现很多相同的地方，他们都存放着当前类的属性、实例变量、方法、协议等等。区别在于：class_ro_t存放的是编译期间就确定的；而class_rw_t是在runtime时才确定，它会先将class_ro_t的内容拷贝过去，然后再将当前类的分类的这些属性、方法等拷贝到其中。所以可以说class_rw_t是class_ro_t的超集，当然实际访问类的方法、属性等也都是访问的class_rw_t中的内容</p>
+<p>哈希碰撞<br>开放地址法<br>链地址法</p>
+<p>struct method_t {<br>    SEL name; //函数名<br>    const char *types; //编码（返回值类型、参数类型）<br>    IMP imp;//指向函数的指针（函数地址）<br>};</p>
+<p>instance对象的isa指向class对象<br>class对象的isa指向meta-class对象<br>meta-class对象的isa指向基类的meta-class对象</p>
+<p>发消息的步骤<br>检查target是不是nil    ObjC的特性允许对一个nil对象发消息而不会崩溃<br>通过isa，<br>对象方法查找类对象（类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找类对象的方法列表中遍历class_rw_t，从后向前的遍历<br>查找父类的类对象—-同上，直至nsobjcect<br>类方法查找元类对象（元类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找元类对象的方法列表中遍历class_rw_t，从后向前的遍历</p>
 
       
     </div>
@@ -219,7 +224,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/07/24/M_Swift120%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift126UI/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -233,7 +238,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/07/24/M_Swift120%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">总结</a>
+            <a href="/2020/09/06/M_Swift126UI/" class="post-title-link" itemprop="url">UI</a>
         </h2>
 
         <div class="post-meta">
@@ -243,7 +248,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-24 15:32:32" itemprop="dateCreated datePublished" datetime="2019-07-24T15:32:32+08:00">2019-07-24</time>
+              <time title="创建时间：2020-09-06 17:26:04" itemprop="dateCreated datePublished" datetime="2020-09-06T17:26:04+08:00">2020-09-06</time>
             </span>
 
           
@@ -257,7 +262,45 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>很久没有写总结的东西了，最近也总是很浮躁，不知道怎么写，以前静下心来的时候，总是会写一点博客，不管是好东西还是坏的东西，总之是写了不少，现在不知道为什么，这种写的欲望都没有了，好像感觉没啥可写的了。<br>这确实让我很头疼，没事总不知道要干点什么，以前总是积极的想弄点这弄点那，现在连这点积极的态度都没有了，不禁想问自己，我到底怎么了，我应该干点什么，我想是时候反思一下自己了。<br>这个公交的项目，到现在一直淅淅沥沥的进行着，看似不紧张，实际上我觉得应该非常的紧张，但是我一个人的能力有限，我也没有办法去主导，所以就这样等着吧。<br>我想我是时候要学习一点新的东西了，这将是我下一步突破的重点。我想过很多，我觉得服务端开发是很重要的，我觉得前段开发，我也需要做很深的了解，如果这次的公交项目能够很好的参与的话，我想对我来说也是一个很大的收获。<br>下一步怎么走，我一直在等，我还在玩游戏，有时候感觉真的，这个游戏让人很头疼，玩了很多的肉类英雄，感觉那种无奈，是你无法做到的，我想我是时候突破一下，用一些比较有挑战点的英雄了。<br>不说这个了，感觉越来越难受，写点有用的吧，最近需要学习点知识了，感觉很多知识自己只是了解，没法记住，很多东西需要去背了。<br>不说了，去背点知识了。</p>
+          <p>程序绘制流程<br>[UIView setNeedsDisplay];<br>[view.layer setNeedsDisplay];<br>[CALayer display];<br>[layer.delegate respondsTo:@selector(displayLayer:)];<br>yes-&gt; 异步绘制入口<br>no-&gt; 系统绘制流程<br>绘制是CPU和GPU共同协作的<br>通过CoreGraphics、CoreImage由CPU预处理，最终通过OpenGL ES将数据传送到屏幕<br>1、CoreAnimation提交会话，包括自己和子树（view hierarchy）的layout状态等；<br>2、RenderServer解析提交的子树状态，生成绘制指令；<br>3、GPU执行绘制指令；<br>4、显示渲染后的数据；<br>调用-setNeedsDisplay的时候，仅会设置图层为dirty。当渲染系统准备就绪，调用视图的-display方法，同时装配像素存储空间，建立一个CoreGraphics上下文（CGContextRef），将上下文push进上下文堆栈，绘图程序进入对应的内存存储空间。<br>渲染时机</p>
+<p>上面已经提到过：Core Animation 在 RunLoop 中注册了一个 Observer 监听 BeforeWaiting(即将进入休眠) 和 Exit (即将退出Loop) 事件 。当在操作 UI 时，比如改变了 Frame、更新了 UIView/CALayer 的层次时，或者手动调用了 UIView/CALayer 的 setNeedsLayout/setNeedsDisplay方法后，这个 UIView/CALayer 就被标记为待处理，并被提交到一个全局的容器去。当Oberver监听的事件到来时，回调执行函数中会遍历所有待处理的UIView/CAlayer 以执行实际的绘制和调整，并更新 UI 界面。<br>打包layers并发送到渲染server；递归提交子树的layers；<br>如果子树太复杂，会消耗很大，对性能造成影响；</p>
+<p>事件响应流程<br>点击屏幕-》UIApplication-〉UIWindow-》hitTest：withEvent：-〉pointInside：withEvent：<br>-》subviews-〉UIView-》倒序遍历-〉hitTest：withEvent：<br>hitTest：withEvent内部实现</p>
+<p>GPU<br>顶点着色<br>图元装配<br>光栅化<br>片着色<br>片段处理</p>
+<p>UI卡顿掉帧原理<br>Display 16.7ms<br>GPU<br>CPU<br>在 VSync 信号到来后，系统图形服务会通过 CADisplayLink 等机制通知 App，App 主线程开始在 CPU 中计算显示内容，比如视图的创建、布局计算、图片解码、文本绘制等。随后 CPU 会将计算好的内容提交到 GPU 去，由 GPU 进行变换、合成、渲染。随后 GPU 会把渲染结果提交到帧缓冲区去，等待下一次 VSync 信号到来时显示到屏幕上。由于垂直同步的机制，如果在一个 VSync 时间内，CPU 或者 GPU 没有完成内容提交，则那一帧就会被丢弃，等待下一次机会再显示，而这时显示屏会保留之前的内容不变。这就是界面卡顿的原因。</p>
+<p>滑动优化方案<br>CPU<br>对象创建，调整，销毁<br>预排版（布局计算、文字计算）<br>预渲染（文字等异步绘制l、图片解码等）<br>GPU<br>纹理渲染<br>试图混合</p>
+<p>离屏渲染<br>GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作<br>何时会触发<br>圆角（当和maskToBounds一起使用时）<br>图层蒙版<br>阴影<br>光栅化</p>
+<p>问题：<br>UI事件的传递机制<br>使tableView滚动流畅的方案和思路<br>什么是离屏渲染<br>UIView和CALayer的关系</p>
+<p>.dSYM文件</p>
+<h2 id="CALayer"><a href="#CALayer" class="headerlink" title="CALayer"></a>CALayer</h2><p>layer给view提供了基础设施，使得绘制内容和呈现更高效动画更容易、更低耗<br>layer不参与view的事件处理、不参与响应链<br>layer的内容生成一个位图(bitmap)<br>,触发动画的时候，是把这个动画和状态信息传递给图形硬件，<br>图形硬件使用这两个数据就可以构造动画了。处理位图对于图形硬件更快。</p>
+<p>阴影是根据layer的alpha值来生成的。模拟一下生成的过程：分配一块同样大小的shadowlayer,在原layer的alpha不为0的地方，shadowlayer填上shadowColor，就跟现实里的影子生成原理一样，不透明的部分才生成阴影。然后把这个shadowlayer做一个偏移(shadowOffset)加到原layer下面。<br>也就是阴影层是根据内容即时计算出来的，而且会触发离屏渲染，所以消耗巨大。</p>
+<p>mask是一个layer层，并且作为背景层和组成层之间的一个遮罩层通道，默认是nil。并且如果要创建新的layer赋给mask，那么新的layer必须没有superlayer，也不支持含有子mask。</p>
+<p>mask作用的也不只是当前layer的内容，而是layer和它所有子layer的合成内容。这个也是可以测试的，设置viewA的layer的mask,然后不管在viewA上加多少个视图都是会被mask作用到。</p>
+<p>我们都知道控件view有一个alpha属性用来设置透明度，默认alpha＝1，只有当alpha不为0是我们才能正常的看到View的样子，alpha其实改变的是mask和background layer的透明度，来实现透明效果。而mask是控件view上的一层layer，mask也有一个alpha，要想看到view，只有当mask的透明度不为0时，我们才能看到mask后面的view的样子，view自带的masklayer是不透明的。新创建的masklayer的是透明的，因此，我们只需要给新创建的masklayer一个颜色，使他不透明就能看见蒙板后的View了，而蒙板外是透明的，这样就能实现蒙板效果了。原理大概是这样了。</p>
+<p>如何高性能给UIImageView加圆角</p>
+<p>如何使用核心动画？</p>
+<p>创建<br>设置相关属性<br>添加到 CALayer 上，会自动执行动画</p>
+<p>修改View的响应范围<br>重写View的</p>
+<ul>
+<li>(BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event;<br>hitTest：withEvent内部实现<br>首先调用当前视图的pointInside:withEvent:方法判断触摸点是否在当前视图内；<br>若返回NO,则hitTest:withEvent:返回nil;<br>若返回YES,则向当前视图的所有子视图(subviews)发送hitTest:withEvent:消息，所有子视图的遍历顺序是从top到bottom，即从subviews数组的末尾向前遍历,直到有子视图返回非空对象或者全部子视图遍历完毕；<br>若第一次有子视图返回非空对象,则hitTest:withEvent:方法返回此对象，处理结束；<br>如所有子视图都返回非，则hitTest:withEvent:方法返回自身(self)。<br>渲染具体步骤</li>
+</ul>
+<p>动画和屏幕上组合的图层实际上被一个单独的进程管理，即所谓的渲染服务。<br>当运行一段动画时，这个过程会被四个分离的阶段打破：</p>
+<p>布局–准备视图的层级关系，设置图层属性<br>显示–图层的寄宿图片被绘制的阶段。涉及到-drawRect和-drawLayer:inContext：等方法<br>准备–准备发送动画数据给渲染服务的阶段。比如图片解码<br>提交–打包所有图层和动画属性，通过IPC发送到渲染服务<br>渲染服务拿到数据后，反序列化成一个叫做渲染树的图层树，使用这个树状结构，渲染服务队动画的每一帧做如下工作：</p>
+<p>对所有的图层属性计算中间值，设置OpenGL几何形状（纹理化三角形）来执行渲染<br>在屏幕上渲染可见的三角形<br>所以一共六个阶段：最后两个阶段在动画过程中不停地重复，前五个阶段都在软件层面处理（通过CPU），只有最后一个被GPU执行。而且，你真正只能控制前两个阶段：布局和显示。剩下的在CoreAnimation内部处理。</p>
+<p>1、帧率一般在多少？</p>
+<p>60帧每秒；（TimeProfiler）<br>2、是否存在CPU和GPU瓶颈？ （查看占有率）</p>
+<p>更少的使用CPU和GPU可以有效的保存电量；<br>3、额外的使用CPU来进行渲染？</p>
+<p>重写了drawRect会导致CPU渲染；在CPU进行渲染时，GPU大多数情况是处于等待状态；<br>4、是否存在过多离屏渲染？</p>
+<p>越少越好；离屏渲染会导致上下文切换，GPU产生idle；<br>5、是否渲染过多视图？</p>
+<p>视图越少越好；透明度为1的视图更受欢迎；<br>6、使用奇怪的图片格式和大小？</p>
+<p>避免格式转换和调整图片大小；一个图片如果不被GPU支持，那么需要CPU来转换。（Xcode有对PNG图片进行特殊的算法优化）<br>7、使用昂贵的特效？</p>
+<p>理解特效的消耗，同时调整合适的大小；例如前面提到的UIBlurEffect；</p>
+<p>8、视图树上不必要的元素？</p>
+<p>理解视图树上所有点的必要性，去掉不必要的元素；忘记remove视图是很常见的事情，特别是当View的类比较大的时候。</p>
+<p>性能优化实例<br>1、阴影<br>2、圆角<br>不要使用不必要的mask，可以预处理图片为圆形；或者添加中间为圆形透明的白色背景视图。即使添加额外的视图，会导致额外的计算；但仍然会快一点，因为相对于切换上下文，GPU更擅长渲染。<br>离屏渲染会导致GPU利用率不到100%，帧率却很低。（切换上下文会产生idle time）</p>
+<p>3、工具</p>
+<p>使用instruments的CoreAnimation工具来检查离屏渲染，黄色是我们不希望看到的颜色。</p>
+<p>layoutSubviews<br>继承于UIView的子类重写，进行布局更新，刷新视图。如果某个视图自身的bounds或者子视图的bounds发生改变，那么这个方法会在当前runloop结束的时候被调用。为什么不是立即调用呢？因为渲染毕竟比较消耗性能，特别是视图层级复杂的时候。这种机制下任何UI控件布局上的变动不会立即生效，而是每次间隔一个周期，所有UI控件在布局上的变动统一生效并且在视图上更新，苹果通过这种高性能的机制保障了视图渲染的流畅性。<br>setNeedsLayout<br>标记为需要重新布局，异步调用layoutIfNeeded刷新布局，不立即刷新，在下一轮runloop结束前刷新，对于这一轮runloop之内的所有布局和UI上的更新只会刷新一次，layoutSubviews一定会被调用。<br>layoutIfNeeded<br>如果有需要刷新的标记，立即调用layoutSubviews进行布局（如果没有标记，不会调用layoutSubviews）</p>
+<p>如果想在当前runloop中立即刷新，调用顺序应该是<br>[self setNeedsLayout];<br>[self layoutIfNeeded];</p>
 
       
     </div>
@@ -277,7 +320,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/07/03/N_Android19%E7%AE%A1%E7%90%86%E7%B1%BB/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/02/M_Swift111%E7%BD%91%E7%BB%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -291,7 +334,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/07/03/N_Android19%E7%AE%A1%E7%90%86%E7%B1%BB/" class="post-title-link" itemprop="url">未命名</a>
+            <a href="/2020/07/02/M_Swift111%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">网络</a>
         </h2>
 
         <div class="post-meta">
@@ -301,7 +344,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-03 17:28:02" itemprop="dateCreated datePublished" datetime="2019-07-03T17:28:02+08:00">2019-07-03</time>
+              <time title="创建时间：2020-07-02 17:41:21" itemprop="dateCreated datePublished" datetime="2020-07-02T17:41:21+08:00">2020-07-02</time>
             </span>
 
           
@@ -315,82 +358,92 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="Android控件类"><a href="#Android控件类" class="headerlink" title="Android控件类"></a>Android控件类</h1><pre><code>窗口管理    WindowManager   
-显示信息    Display、DisplayMetrics 
-标签页面    TabActivity    
-页面组    ActivityGroup   
-碎片页面    FragmentActivity 
-资源管理    Resources    
-资产管理    AssetManager
-打包结构    Parcelable    
-应用    Application    
-共享参数    SharedPreferences  
-SQLite数据库    SQLiteDatabase、SQLiteOpenHelper  
-游标    ContentValues、Cursor    
-环境管理    Environment    
-输入法管理    InputMethodManager   
-列表页面    ListActivity    
-页面    Activity    
-意图、意图过滤器    Intent、IntentFilter 
-包裹    Bundle    
-服务、异步服务    Service、IntentService 
-广播、广播接收器    Broadcast、BroadcastReceiver
-手势事件    MotionEvent    
-手势检测器    GestureDetector 
-滚动器    Scroller   
-定位管理    LocationManager、Criteria
-通话管理    TelephonyManager   
-基站信息    CellLocation、CellInfo 
-处理器    Handler、Looper、Message 
-异步任务    AsyncTask    
-倒计时器    CountDownTimer  
-定时器管理    AlarmManager   
-延迟的意图    PendingIntent    
-信使    Messenger、IBinder    
-通知管理    Notification、NotificationManager  
-远程接口    AIDL    
-内容提供者    ContentProvider   
-内容解决者    ContentResolver  
-内容观察者    ContentObserver 
-版本信息    Build    
-短信管理    SmsManager   
-摄像头    Camera   
-音频管理    AudioManager  
-震动器    Vibrator    
-传感器    Sensor、SensorManager   
-连接管理    ConnectivityManager    
-热点管理    WifiManager    
-下载管理    DownloadManager   
-json数据    JSONObject、JSONArray 
-窗口    Window    
-java原生接口    JNI  
-日志    Log   
-提示    Toast  
-代码混淆    Proguard  
-存储管理    StorageManager   
-流量统计    TrafficStats    
-打包管理    PackageManager、PackageInfo   
-活动管理    ActivityManager    
-屏幕配置    Configuration    
-剪贴板管理    ClipboardManager 
-参数设置页面    PreferenceActivity 
-仪器测试用例    InstrumentationTestCase  
-页面测试用例    ActivityTestCase   
-电源管理    PowerManager    
-电池管理    BatteryManager   
-窗口管理    WindowManager  
-电话管理    TelephonyManager
-媒体投影管理    MediaProjectionManager 
-图像读取    ImageReader    
-媒体编码与转换    MediaCodec、MediaMuxer 
-可缩放矢量图形    SVG    
-PDF文件渲染    PdfRenderer 
-任务调度    JobInfo、JobScheduler、JobService 
-NFC适配器    NfcAdapter    
-NFC传统类型    MifareClassic
-蓝牙适配器    BluetoothAdapter
-蓝牙设备    BluetoothDevice    
-红外遥控管理器    ConsumerIrManager 
+          <h2 id="Http三次握手"><a href="#Http三次握手" class="headerlink" title="Http三次握手"></a>Http三次握手</h2><pre><code>在TCP/IP协议中，TCP协议提供可靠的连接服务，采用三次握手建立一个连接。  
+第一次握手：建立连接时，客户端发送syn包(syn=j)到服务器，并进入
+SYN_SEND状态，等待服务器确认； 
+第二次握手：服务器收到syn包，必须确认客户的SYN（ack=j+1），同时自己
+也发送一个SYN包（syn=k），即SYN+ACK包，此时服务器进入SYN_RECV状态；
+第三次握手：客户端收到服务器的SYN＋ACK包，向服务器发送确认包
+ACK(ack=k+1)，此包发送完毕，客户端和服务器进入ESTABLISHED状态，完
+成三次握手。完成三次握手，客户端与服务器开始传送数据.
+</code></pre>
+<h2 id="HTTPS-SSL"><a href="#HTTPS-SSL" class="headerlink" title="HTTPS SSL"></a>HTTPS SSL</h2><pre><code>客户端请求建立SSL连接，发送支持的加密方式以及一个随机数client 
+random给服务器；
+服务器选择其中的一种加密方式，并且再加上另外一个随机数server 
+random，和数字证书（其中有公钥），发送给客户端；
+客户端确认这个数字证书是有效的，并且再生成一个新的随机数，将这个随机数
+用服务器发送给它的数字证书中的公钥进行加密发送给服务器；
+服务器收到客户端的回复，利用自己的私钥进行解密，获得这个随机数，然后通
+过将前面这三个随机数以及他们协商的加密方式，计算生成一个对称密钥。
+释放连接时，被动方服务器，突然收到主动方客户端释放连接的请求时并不能立即释放连接，
+因为还有必要的数据需要处理，所以服务器先返回ACK确认收到报文，经过CLOSE-WAIT阶段准备好释放连接之后，才能返回FIN释放连接报文。
+所以，客户端要经历时长为2SML的TIME-WAIT阶段；这也是为什么客户端比服务器端晚进入CLOSED阶段的原因
+</code></pre>
+<h2 id="iOS-如何做才安全"><a href="#iOS-如何做才安全" class="headerlink" title="iOS 如何做才安全:"></a>iOS 如何做才安全:</h2><pre><code>1、ipa包加壳
+2、敏感信息存储位置
+3、设备安全(越狱，丢失)
+4、APP反编译(逆向工程)
+5、代码内容加密(对称加密/非对称加密)
+6、安全密钥更新周期
+7、代码混淆
+8、接口安全(双向加密)
+9、通讯安全，第三方库漏洞
+10、敏感信息安全加密
+11、通讯网络安全
+12、代码调试信息安全管理
+</code></pre>
+<h2 id="OSI七层协议中每层分别有哪些协议"><a href="#OSI七层协议中每层分别有哪些协议" class="headerlink" title="OSI七层协议中每层分别有哪些协议"></a>OSI七层协议中每层分别有哪些协议</h2><pre><code>1.物理层：主要定义物理设备标准，如网线的接口类型、光纤的接口类型、各种
+传输介质的传输速率等。它的主要作用是传输比特流（就是由1、0转化为电流强
+弱来进行传输,到达目的地后在转化为1、0，也就是我们常说的数模转换与模数
+转换）。这一层的数据叫做比特。
+2.数据链路层：定义了如何让格式化数据以进行传输，以及如何让控制对物理介
+质的访问。这一层通常还提供错误检测和纠正，以确保数据的可靠传输。
+3.网络层：在位于不同地理位置的网络中的两个主机系统之间提供连接和路径选
+择。Internet的发展使得从世界各站点访问信息的用户数大大增加，而网络层
+正是管理这种连接的层。
+4.传输层：定义了一些传输数据的协议和端口号（WWW端口80等），如：
+TCP（传输控制协议，传输效率低，可靠性强，用于传输可靠性要求高，数据量
+大的数据），UDP（用户数据报协议，与TCP特性恰恰相反，用于传输可靠性要
+求不高，数据量小的数据，如QQ聊天数据就是通过这种方式传输的）。 主要是
+将从下层接收的数据进行分段和传输，到达目的地址后再进行重组。常常把这一
+层数据叫做段。
+5.会话层：通过传输层（端口号：传输端口与接收端口）建立数据传输的通路。
+主要在你的系统之间发起会话或者接受会话请求（设备之间需要互相认识可以是
+IP也可以是MAC或者是主机名）
+6.表示层：可确保一个系统的应用层所发送的信息可以被另一个系统的应用层读
+取。例如，PC程序与另一台计算机进行通信，其中一台计算机使用扩展二一十进
+制交换码（EBCDIC），而另一台则使用美国信息交换标准码（ASCII）来表示
+相同的字符。如有必要，表示层会通过使用一种通格式来实现多种数据格式之间
+的转换。
+7.应用层： 是最靠近用户的OSI层。这一层为用户的应用程序（例如电子邮
+件、文件传输和终端仿真）提供网络服务。
+</code></pre>
+<h2 id="对称加密和非对称加密"><a href="#对称加密和非对称加密" class="headerlink" title="对称加密和非对称加密"></a>对称加密和非对称加密</h2><pre><code>对称加密采用了对称密码编码技术，它的特点是文件加密和解密使用相同的密钥
+加密
+也就是密钥也可以用作解密密钥，这种方法在密码学中叫做对称加密算法，对称
+加密算法使用起来简单快捷，密钥较短，且破译困难，除了数据加密标准
+（DES），另一个对称密钥加密系统是国际数据加密算法（IDEA），它比DES的
+加密性好，而且对计算机功能要求也没有那么高
+常见的对称加密算法有DES、3DES、Blowfish、IDEA、RC4、RC5、RC6和
+AES 
+非对称加密算法需要两个密钥：公开密钥（publickey）和私有密钥
+（privatekey）。
+公开密钥与私有密钥是一对，如果用公开密钥对数据进行加密，只有用对应的私
+有密钥才能解密；如果用私有密钥对数据进行加密，那么只有用对应的公开密钥
+才能解密。因为加密和解密使用的是两个不同的密钥，所以这种算法叫作非对称
+加密算法。
+非对称加密算法实现机密信息交换的基本过程是：甲方生成一对密钥并将其中的
+一把作为公用密钥向其它方公开；得到该公用密钥的乙方使用该密钥对机密信息
+进行加密后再发送给甲方；甲方再用自己保存的另一把专用密钥对加密后的信息
+进行解密。甲方只能用其专用密钥解密由其公用密钥加密后的任何信息。
+非对称加密的典型应用是数字签名。
+常见的非对称加密算法有：RSA、ECC（移动设备用）、Diffie-Hellman、
+El Gamal、DSA（数字签名用）
+Hash算法（摘要算法）
+Hash算法特别的地方在于它是一种单向算法，用户可以通过hash算法对目标信
+息生成一段特定长度的唯一hash值，却不能通过这个hash值重新获得目标信
+息。因此Hash算法常用在不可还原的密码存储、信息完整性校验等。
+常见的Hash算法有MD2、MD4、MD5、HAVAL、SHA
 </code></pre>
 
       
@@ -411,7 +464,7 @@ NFC传统类型    MifareClassic
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/07/03/N_Android18%E6%8E%A7%E4%BB%B6%E7%B1%BB/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/02/M_Swift113OC%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -425,7 +478,7 @@ NFC传统类型    MifareClassic
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/07/03/N_Android18%E6%8E%A7%E4%BB%B6%E7%B1%BB/" class="post-title-link" itemprop="url">未命名</a>
+            <a href="/2020/07/02/M_Swift113OC%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">OC常见问题</a>
         </h2>
 
         <div class="post-meta">
@@ -435,7 +488,7 @@ NFC传统类型    MifareClassic
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-03 17:22:51" itemprop="dateCreated datePublished" datetime="2019-07-03T17:22:51+08:00">2019-07-03</time>
+              <time title="创建时间：2020-07-02 17:29:42" itemprop="dateCreated datePublished" datetime="2020-07-02T17:29:42+08:00">2020-07-02</time>
             </span>
 
           
@@ -449,100 +502,396 @@ NFC传统类型    MifareClassic
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="Android控件类"><a href="#Android控件类" class="headerlink" title="Android控件类"></a>Android控件类</h1><pre><code>名称    类名    出处
-颜色    Color    
-可变字符串    Spannable、SpannableString    
-风格区域、URL区域    StyleSpan、URLSpan    
-状态图形    Drawable、StateListDrawable    
-形状图形    ShapeDrawable    
-点九图形    NinePatchDrawable    
-画布、画笔    Canvas、Paint    
-透明度动画    AlphaAnimation    
-过渡图形    TransitionDrawable    
-旋转动画    RotateAnimation    
-帧动画    AnimationDrawable    
-梯度图形    GradientDrawable    
-标签页    TabHost、TabWidget    
-标题栏    ActionBar    
-溢出菜单    OverflowMenu    
-导航栏    Navigation    
-定制视图    CustomView    
-搜索视图    SearchView    
-翻页视图    ViewPager    
-翻页标题    PagerTabStrip、PagerTitleStrip    
-飞掠视图    ViewFlipper    
-翻页适配器    PagerAdapter、FragmentStatePagerAdapter    
-日期和时间控件    DatePicker、TimePicker    
-对话框碎片    DialogFragment    
-布局视图    LinearLayout、RelativeLayout、FrameLayout    
-滚动视图    ScrollView、HorizontalScrollView    
-基本视图    View、ViewGroup    
-文本框、图像视图    TextView、EditText、ImageView    
-按钮、图像按钮    Button、ImageButton    
-复合按钮    CompoundButton    
-复选框、开关、单选框    CheckBox、Switch、RadioGroup、RadioButton    
-下拉框、列表视图、网格视图    Spinner、ListView、GridView    
-适配器视图    AdapterView、Adapter    
-基本适配器    BaseAdapter、ArrayAdapter、SimpleAdapter    
-自动完成编辑框    AutoCompleteTextView    
-进度条、进度对话框    ProgressBar、ProgressDialog    
-远程视图    RemoteViews    
-表面视图    SurfaceView、SurfaceHolder    
-媒体录制器、媒体播放器    MediaRecorder、MediaPlayer    
-拖动条    SeekBar    
-网页视图    WebView、WebSettings    
-网页视图客户端    WebViewClient、WebChromeClient    
-菜单、选项菜单、上下文菜单    Menu、OptionsMenu、ContextMenu    
-弹窗    PopupWindow    
-对话框    AlertDialog、Dialog    
-碎片    Fragment    
-占位视图    ViewStub    
-风格、主题    Style、Theme    
-汉字转拼音    HanziToPinyin    
-位图    Bitmap、BitmapDrawable    
-集合动画    AnimationSet    
-属性动画    ObjectAnimator、AnimatorSet    
-路径、矩阵    Path、Matrix    
-折叠列表视图    ExpandableListView、ExpandableListAdapter    
-列表碎片    ListFragment    
-文字转语音    TextToSpeech    
-参数设置碎片    PreferenceFragment    
-工具栏、搜索框    Toolbar、SearchView    
-侧滑布局    DrawerLayout、SlidingPaneLayout    
-弹出菜单、列表弹窗    PopupMenu、ListPopupWindow    
-循环器视图    RecyclerView    
-下拉刷新布局    SwipeRefreshLayout    
-画廊    Gallery   
-图像切换器    ImageSwitcher    
-调色板    Palette  
-卡片视图    CardView    
-视频视图    VideoView   
-媒体控制条    MediaController    
-音频录制    AudioRecord    
-音轨播放    AudioTrack    
-声音池    SoundPool    
-提示窗    Toast、Snackbar    
-裁剪图形    ClipDrawable    
-缩放图形    ScaleDrawable  
-旋转图形    RotateDrawable
-水波图形    RippleDrawable
-矢量图形    VectorDrawable
-矢量动画    AnimatedVectorDrawable
-导航视图    NavigationView    
-协调布局    CoordinatorLayout
-悬浮按钮    FloatingActionButton 
-底部弹窗    BottomSheetBehavior
-应用栏布局    AppBarLayout    
-嵌套滚动视图    NestedScrollView 
-可折叠工具栏布局    CollapsingToolbarLayout  
-文本输入布局    TextInputLayout    
-文本输入编辑框    TextInputEditText   
-碎片标签组    FragmentTabHost    
-栈视图    StackView    
-标签布局    TabLayout    
-约束布局    ConstraintLayout   
-OpenGL表面视图    GLSurfaceView 
-OpenGL画笔    GL10
+          <h2 id="函数式编程和响应式编程"><a href="#函数式编程和响应式编程" class="headerlink" title="函数式编程和响应式编程"></a>函数式编程和响应式编程</h2><pre><code>https://blog.csdn.net/johnwcheung/article/details/73136476
+函数式编程是一系列被不公平对待的编程思想的保护伞，它的核心思想是，它是
+一种将程序看成是数学方法的求值、不会改变状态、不会产生副作用（后面我们
+马上会谈到）的编程方式。
+响应式实际上是观察者模式加上事件源的完成通知能力、错误传播能力和监听者
+同事件源通信的能力。
+</code></pre>
+<h2 id="TMCache"><a href="#TMCache" class="headerlink" title="TMCache"></a>TMCache</h2><pre><code>https://www.jianshu.com/p/a8a45c12d2d2
+</code></pre>
+<h2 id="NSProxy"><a href="#NSProxy" class="headerlink" title="NSProxy"></a>NSProxy</h2><pre><code>https://www.jianshu.com/p/32c63dbc1b05
+负责将消息转发到真正的target的代理类
+NSProxy是和NSObject同级的一个类,可以说它是一个虚拟类,它只是实现了
+&lt;NSObject&gt;的协议.它的作用有点类似于一个复制类,有人曾经笑谈它是卡卡
+西的复制忍术,想想其实也挺贴切的,其实原理确实如此.
+用一个继承于NSProxy的子类,在它内部实现一些方法,暴露一个公开方法
+transform,这个方法是使它变身的关键.然后它变身之后可以对那些对象发送
+消息,并且可以在内部拦截消息的内容并修改.
+可以说,几乎可以变身成为任何对象.
+</code></pre>
+<h2 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h2><pre><code>原有的单工程架构就不足以满足架构需求了
+业务模块间划分不清晰，模块之间耦合度很大，非常难维护。
+所有模块代码都编写在一个项目中，测试某个模块或功能，需要编译运行整个项目。
+组件化优点：
+业务划分更佳清晰，新人接手更佳容易，可以按组件分配开发任务。
+项目可维护性更强，提高开发效率。
+更好排查问题，某个组件出现问题，直接对组件进行处理。
+开发测试过程中，可以只编译自己那部分代码，不需要编译整个项目代码。
+实现：
+MGJRouter是一个单例对象，在其内部维护着一个“URL -&gt; block”格式的注
+册表，通过这个注册表来保存服务方注册的block，以及使调用方可以通过URL
+映射出block，并通过MGJRouter对服务方发起调用。
+在服务方组件中都对外提供一个接口类，在接口类内部实现block的注册工作，
+以及block对外提供服务的代码实现。每一个block都对应着一个URL，调用方
+可以通过URL对block发起调用。
+在程序开始运行时，需要将所有服务方的接口类实例化，以完成这个注册工作，
+使MGJRouter中所有服务方的block可以正常提供服务。在这个服务注册完成
+后，就可以被调用方调起并提供服务。
+Protocol方案的中间件
+为了解决MGJRouter方案中URL硬编码，以及字典参数类型不明确等问题，蘑
+菇街在原有组件化方案的基础上推出了Protocol方案。Protocol方案由两部
+分组成，进行组件间通信的ModuleManager类以及
+MGJComponentProtocol协议类。
+通过中间件ModuleManager进行消息的调用转发，在ModuleManager内部维
+护一张映射表，映射表由之前的&quot;URL -&gt; block&quot;变成&quot;Protocol -&gt; 
+Class&quot;。
+在中间件中创建MGJComponentProtocol文件，服务方组件将可以用来调用
+的方法都定义在Protocol中，将所有服务方的Protocol都分别定义到
+MGJComponentProtocol文件中，如果协议比较多也可以分开几个文件定
+义。这样所有调用方依然是只依赖中间件，不需要依赖除中间件之外的其他组
+件。
+Protocol方案中每个组件也需要一个“接口类”，此类负责实现当前组件对应的
+协议方法，也就是对外提供服务的实现。在程序开始运行时将自身的Class注册
+到ModuleManager中，并将Protocol反射出字符串当做key。这个注册过程
+和MGJRouter是类似的，都需要提前注册服务。
+蘑菇街是OpenURL和Protocol混用的方式，两种实现的调用方式不同，但大体
+调用逻辑和实现思路类似，所以下面的调用流程二者差不多。在OpenURL不能
+满足需求或调用不方便时，就可以通过Protocol的方式调用。
+整体调用流程
+在进入程序后，先使用MGJRouter对服务方组件进行注册。每个URL对应一个
+block的实现，block中的代码就是服务方对外提供的服务，调用方可以通过
+URL调用这个服务。
+调用方通过MGJRouter调用openURL:方法，并将被调用代码对应的URL传
+入，MGJRouter会根据URL查找对应的block实现，从而调用服务方组件的代
+码进行通信。
+调用和注册block时，block有一个字典用来传递参数。这样的优势就是参数类
+型和数量理论上是不受限制的，但是需要很多硬编码的key名在项目中。
+内存管理
+蘑菇街组件化方案有两种，Protocol和MGJRouter的方式，但都需要进行
+register操作。Protocol注册的是Class，MGJRouter注册的是Block，
+注册表是一个NSMutableDictionary类型的字典，而字典的拥有者又是一个
+单例对象，这样会造成内存的常驻。
+下面是对两种实现方式内存消耗的分析：
+首先说一下block实现方式可能导致的内存问题，block如果使用不当，很容易
+造成循环引用的问题。
+经过暴力测试，证明并不会导致内存问题。被保存在字典中是一个block对象，
+而block对象本身并不会占用多少内存。在调用block后会对block体中的方法
+进行执行，执行完成后block体中的对象释放。
+而block自身的实现只是一个结构体，也就相当于字典中存放的是很多结构体，
+所以内存的占用并不是很大。
+对于协议这种实现方式，和block内存常驻方式差不多。只是将存储的block对
+象换成Class对象，如果不是已经实例化的对象，内存占用还是比较小的。
+</code></pre>
+<h2 id="RAC"><a href="#RAC" class="headerlink" title="RAC"></a>RAC</h2><pre><code>https://www.jianshu.com/p/addad51569a1
+</code></pre>
+<h2 id="JSPathch"><a href="#JSPathch" class="headerlink" title="JSPathch"></a>JSPathch</h2><pre><code>能做到通过JS调用和改写OC方法最根本的原因是 Objective-C 是动态语
+言，OC上所有方法的调用/类的生成都通过 Objective-C Runtime 在运行
+时进行，我们可以通过类名/方法名反射得到相应的类和方法：
+对于 Objective-C 对象模型和动态消息发送的原理已有很多文章阐述得很详
+细，例如这篇，这里就不详细阐述了。理论上你可以在运行时通过类名/方法名
+调用到任何OC方法，替换任何类的实现以及新增任意类。所以 JSPatch 的原
+理就是：JS传递字符串给OC，OC通过 Runtime 接口调用和替换OC方法。这
+是最基础的原理，实际实现过程还有很多怪要打，接下来看看具体是怎样实现
+的。
+</code></pre>
+<h2 id="NSMutableArray的实现，包括系统提供的常用API的实现"><a href="#NSMutableArray的实现，包括系统提供的常用API的实现" class="headerlink" title="NSMutableArray的实现，包括系统提供的常用API的实现"></a>NSMutableArray的实现，包括系统提供的常用API的实现</h2><pre><code>用链表，每十个放在一段连续的存储空间里
+https://www.jianshu.com/p/3c77756a86ab    
+</code></pre>
+<h2 id="NSUserDefaults存储对象"><a href="#NSUserDefaults存储对象" class="headerlink" title="NSUserDefaults存储对象"></a>NSUserDefaults存储对象</h2><pre><code>NSUserDefaults支持的数据类型有：NSNumber（NSInteger、float、
+double），NSString，NSDate，NSArray，NSDictionary，BOOL.
+NSUserDefaults 存储的对象全是不可变的（这一点非常关键，弄错的话程序
+会出bug），例如，如果我想要存储一个NSMutableArray 对象，我必须先创
+建一个不可变数组（NSArray）再将它存入NSUserDefaults中去
+使用 NSUserDefaults 存储自定义对象
+第一步、将自定义类型转换为NSData类型，利用归档
+NSData*data = 
+[NSKeyedArchiverarchivedDataWithRootObject:student];
+</code></pre>
+<h2 id="纯函数"><a href="#纯函数" class="headerlink" title="纯函数"></a>纯函数</h2><pre><code>纯函数 我们应该还记得初中的一些数学知识，函数f的概念就是，对于输入x产
+生一个输出y=f（x），这就是普通的纯函数。它的定义是 相同的输入，结果总
+会得到相同的输出，而且没有任何可观察的副作用，也不依赖外部环境的状态。
+</code></pre>
+<h2 id="沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪"><a href="#沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪" class="headerlink" title="沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪"></a>沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪</h2><pre><code>沙盒根目录里有三个文件夹：
+Documents，一般应该把应用程序的数据文件存到这个文件夹里，用于存储用
+户数据或其他应该定期备份的信息。因为应用的沙盒机制，应用只能在几个目录
+下读写文件。苹果建议将程序中建立的或在程序中浏览到的文件数据保存在该目
+录下，iTunes备份和恢复的时候会包括此目录。
+Library，存储程序的默认设置或其它状态信息，其下有两个文件夹：Caches
+存储应用程序再次启动所需的信息，存放缓存文件，iTunes不会备份此目录，
+此目录下文件不会在应用退出删除；Preferences包含应用程序偏好设置文
+件，不过不要在这里修改偏好设置。
+tmp，提供一个即时创建临时文件的地方，即应用程序再次启动不需要的文件。
+通常来说，这个 mainbundle 就是 当前的可执行app 的在根目录下的绝对
+路径，
+</code></pre>
+<h2 id="反射方法"><a href="#反射方法" class="headerlink" title="反射方法"></a>反射方法</h2><pre><code>系统Foundation框架为我们提供了一些方法反射的API，我们可以通过这些
+API执行将字符串转为SEL等操作。由于OC语言的动态性，这些操作都是发生在
+运行时的。
+通过这些方法，我们可以在运行时选择创建那个实例，并动态选择调用哪个方
+法。这些操作甚至可以由服务器传回来的参数来控制，我们可以将服务器传回来
+的类名和方法名，实例为我们的对象。
+Class class = NSClassFromString(@&quot;ViewController&quot;);
+ViewController *vc = [[class alloc] init];
+SEL selector = NSSelectorFromString(@&quot;getDataList&quot;);
+[vc performSelector:selector];
+判断方法
+在NSObject类中为我们提供了一些基础方法，用来做一些判断操作，这些方法都是发生在运行时动态判断的
+// 当前对象是否这个类或其子类的实例
+- (BOOL)isKindOfClass:(Class)aClass;
+// 当前对象是否是这个类的实例
+- (BOOL)isMemberOfClass:(Class)aClass;
+// 当前对象是否遵守这个协议
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol;
+// 当前对象是否实现这个方法
+- (BOOL)respondsToSelector:(SEL)aSelector;    
+</code></pre>
+<h2 id="链表与数组的区别"><a href="#链表与数组的区别" class="headerlink" title="链表与数组的区别"></a>链表与数组的区别</h2><pre><code>链表的特性是在中间任意位置添加删除元素的都非常的快，不需要移动其它的元
+素。通常链表每一个元素都要保存一个指向下一个元素的指针（单链表）。双链
+表的话每个元素即要保存到下一个元素的指针，还要保存一个上一个元素的指
+针。循环链表则把最后一个元素中保存下一个元素指针指向第一个元素。   
+数组是一组具有相同类型和名称的变量的集合。这些变量称为数组的元素,每个
+数组元素都有一个编号,这个编号叫做下标,我们可以通过下标来区别这些元素。
+数组元素的个数有时也称之为数组的长度。  
+数组是将元素在内存中连续存放，由于每个元素占用内存相同，所以你可以通过
+下标迅速访问数组中任何元素。但是如果你要在数组中增加一个元素，你需要移
+动大量元素，在内存中空出一个元素的空间，然后将要增加的元素放在其中。同
+样的道理，如果你想删除一个元素，你同样需要移动大量元素去填掉被移动的元
+素。 
+链表恰好相反，链表中的元素在内存中不是顺序存储的，而是通过存在元素中的
+指针联系到一起。比如：上一个元素有个指针指到下一个元素，以此类推，直到
+最后一个元素。如果你要访问链表中一个元素，你需要从第一个元素开始，一直
+找到你需要的元素位置。但是增加和删除一个元素对于链表数据结构就非常简单
+了， 只要修改元素中的指针就可以了。
+</code></pre>
+<h2 id="设置了成员变量—str，属性里面也设置了-synchronized-property（）str，两种写法有什么区别"><a href="#设置了成员变量—str，属性里面也设置了-synchronized-property（）str，两种写法有什么区别" class="headerlink" title="设置了成员变量—str，属性里面也设置了@synchronized @property（）str，两种写法有什么区别"></a>设置了成员变量—str，属性里面也设置了@synchronized @property（）str，两种写法有什么区别</h2><pre><code>1)在.h头文件中:
+@property在头文件中应用于声明:
+@property NSInteger age;
+编译器会自动在.h头文件中声明了2个方法:(setter,getter方法)
+- (NSInteger)age;      - (void)setAge:(NSInteger)age;
+2)在.m实现文件中:
+@sythesize在.m实现文件中应用于实现:
+例如:
+@synthesize age = _age; 
+编译器会自动在.m文件中实现2个方法:(setter,getter方法)
+- (void)setAge:(NSInteger)age
+&#123;
+_age  =  age;
+&#125;
+- (NSInteger)age
+&#123;
+return   _age;
+&#125;
+</code></pre>
+<h2 id="组件化路由的实现方式（有url，meditor，自己的组件路由）"><a href="#组件化路由的实现方式（有url，meditor，自己的组件路由）" class="headerlink" title="组件化路由的实现方式（有url，meditor，自己的组件路由）"></a>组件化路由的实现方式（有url，meditor，自己的组件路由）</h2><h2 id="Masonry-update-remake区别"><a href="#Masonry-update-remake区别" class="headerlink" title="Masonry update remake区别"></a>Masonry update remake区别</h2><pre><code>mas_makeConstraints 只负责新增约束 Autolayout不能同时存在两条针
+对于同一对象的约束 否则会报错
+mas_updateConstraints 针对上面的情况 会更新在block中出现的约
+束 不会导致出现两个相同约束的情况
+mas_remakeConstraints 则会清除之前的所有约束 仅保留最新的约束
+</code></pre>
+<h2 id="常见动画"><a href="#常见动画" class="headerlink" title="常见动画"></a>常见动画</h2><pre><code>https://www.jianshu.com/p/9aead7675221
+</code></pre>
+<h2 id="分类和原来的类都有某个方法，如何保证安全性和规范性"><a href="#分类和原来的类都有某个方法，如何保证安全性和规范性" class="headerlink" title="分类和原来的类都有某个方法，如何保证安全性和规范性"></a>分类和原来的类都有某个方法，如何保证安全性和规范性</h2><pre><code>1.添加警告
+2.分类中方法执行完再执行原类方法
+</code></pre>
+<h2 id="设备唯一码怎么获取"><a href="#设备唯一码怎么获取" class="headerlink" title="设备唯一码怎么获取"></a>设备唯一码怎么获取</h2><pre><code>当我们从真机上卸载这个软件重新安装的时候，UUID变了(模拟器每次都变)，
+对，确实变了
+keychain的使用
+keychain的使用确实帮我们解决了这个问题，我们可以在第一次生成我们需要
+的UUID的时候，保存他，然后就用keychain里保存的值来代替他的UUID，这
+样卸载之后，生成新的UUID，但是keychain里的数据是不会消失的，这样就
+实现了唯一识别码的目的。
+</code></pre>
+<h2 id="GCD在什么场景下会死锁，代码怎么写"><a href="#GCD在什么场景下会死锁，代码怎么写" class="headerlink" title="GCD在什么场景下会死锁，代码怎么写"></a>GCD在什么场景下会死锁，代码怎么写</h2><pre><code>http://ios.jobbole.com/82622/
+</code></pre>
+<h2 id="GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整"><a href="#GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整" class="headerlink" title="GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整"></a>GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整</h2><h2 id="链表的单个节点的删除"><a href="#链表的单个节点的删除" class="headerlink" title="链表的单个节点的删除"></a>链表的单个节点的删除</h2><pre><code>实现一个算法，删除单向链表中间的某个结点，假定你只能访问该结点。 
+给定带删除的节点，请执行删除操作，若该节点为尾节点，返回false，否则返回true 
+算法思路： 
+利用该节点可以访问其下一个节点，可以将下一个节点的值复制给该节点，将下一个节点删除。
+</code></pre>
+<h2 id="如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）"><a href="#如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）" class="headerlink" title="如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）"></a>如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/02/M_Swift108%E9%80%9A%E7%9F%A5%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/02/M_Swift108%E9%80%9A%E7%9F%A5%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">通知原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-02 14:44:07" itemprop="dateCreated datePublished" datetime="2020-07-02T14:44:07+08:00">2020-07-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <pre><code>定义对象间的一种一对多的依赖关系。当一个对象的状态发生改变时，所有依赖
+于它的对象都得到通知并自动更新。
+</code></pre>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><pre><code>1.向通知中心注册观察者
+    addObserver:selector:name:object:
+    （观察者接收到通知后执行任务的代码在发送通知的线程中执行）
+    addObserverForName:object:queue:usingBlock:
+    （观察者接收到通知后执行任务的代码在指定的操作队列中执行）
+2.通知中心向所有注册的观察者发送通知
+    postNotification:
+    postNotificationName:object:
+    postNotificationName:object:userInfo:
+</code></pre>
+<h2 id="通知与线程关系"><a href="#通知与线程关系" class="headerlink" title="通知与线程关系"></a>通知与线程关系</h2><pre><code>同步和异步都是相对于发送通知所在的线程的。
+postNotification:总是会卡住当前线程，待observer执行（如不特殊处
+理selector也会在postNotification:所在线程执行）结束之后才会继续
+往下执行。所以是同步的。
+我们在底层当中的消息的触发其实是依赖与端口的，我们想要在一个线程中发消
+息，在另一个线程中进行处理的话，我们可以用端口来实现
+enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationNoCoalescing forModes:@[NSDefau
+这里并不是让通知回调在异步执行，只是让通知回调等待到runloop空闲的时候再去执行，如果方法中有高耗时操作，主线程中还是会住UI刷新。
+</code></pre>
+<h2 id="为什么要移除通知"><a href="#为什么要移除通知" class="headerlink" title="为什么要移除通知"></a>为什么要移除通知</h2><pre><code>若在iOS8或之前版本系统中，对一个对象
+addObserver:selector:name:object:（假设name为@“111”），但是
+并没有在dealloc的之前或之中，对其进行remove操作。那么，在发送通知、
+（name为@“111”）的时候，会因为bad_access（野指针）而crash。
+若在iOS9及以后，同上操作，不会crash。
+iOS8及以前，NSNotificationCenter持有的是观察者的
+unsafe_unretained指针（可能是为了兼容老版本），这样，在观察者回收
+的时候未removeOberser，而后再进行post操作，则会向一段被回收的区域
+发送消息，所以出现野指针crash。而iOS9以后，unsafe_unretained改成
+了weak指针，即使dealloc的时候未removeOberser，再进行post操作，
+则会向nil发送消息，所以没有任何问题
+</code></pre>
+<h2 id="Notification-Queues和异步通知"><a href="#Notification-Queues和异步通知" class="headerlink" title="Notification Queues和异步通知"></a>Notification Queues和异步通知</h2><pre><code>[[NSNotificationQueue defaultQueue] 
+enqueueNotification:notification 
+postingStyle:NSPostWhenIdle 
+coalesceMask:NSNotificationNoCoalescing 
+forModes:@[NSDefaultRunLoopMode]];
+该参数的三个可选参数：
+1，NSPostWhenIdle：runloop空闲的时候回调通知方法
+2，NSPostASAP：runloop能够调用的时候就回调通知方法
+3，NSPostNow：runloop立即回调通知方法
+根据其type，NSNotificationQueue在合适的时机将其post到
+NSNotificationCenter。这样就完成了异步的需求。
+</code></pre>
+<h2 id="NSNotification与KVO异同点"><a href="#NSNotification与KVO异同点" class="headerlink" title="NSNotification与KVO异同点"></a>NSNotification与KVO异同点</h2><pre><code>kvo： 这些代码都只需在观察者里边进行实现，被观察者不用添加任何代码，所以谁要监听谁注册，然后对响应进行处理即可，使得观察者与被观察者完全解耦，运用很灵活，很简单.
+缺点:
+KVO只能检测类中的属性，并且属性名都是通过NSString来查找，编译器不会帮你去检测与补全，纯手敲可能比较容易出错.
+NSNotification：一对多”，在APP中，很多控制器都需要知道一个事件，应该用通知；
+要被观察者先主动发出通知，然后观察者注册监听后再来进行响应，比KVO 多了发送通知的一步，但是其优点是监听不局限于属性的变化，还可以对多种多样的装填变化进行监听，监听范围广，使用也更灵活
+</code></pre>
+<h2 id="在子现成发送通知"><a href="#在子现成发送通知" class="headerlink" title="在子现成发送通知"></a>在子现成发送通知</h2><pre><code>[NSThread detachNewThreadWithBlock:^&#123;
+    NSLog(@&quot;1&quot;);
+    NSLog(@&quot;%@&quot;, [NSThread currentThread]);
+    NSNotification *notification = [NSNotification notificationWithName:@&quot;JKRNO&quot; object:nil];
+    [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle
+    coalesceMask:NSNotificationNoCoalescing forModes:@[NSDefaultRunLoopMode]];
+    NSLog(@&quot;3&quot;);
+&#125;];
+这样写了之后，发现无论怎么发送这个通知，通知都不会回调到，这个是因为并没有为该子线程添加runloop，
+这个线程触发之后马上就结束了。（没有添加通知队列的时候，是可以回调到的，因为那种情况下，
+通知发送后，通知回调马上就会执行，该线程会等待通知回调执行完毕后才结束）
+这个时候，我们就需要添加为子线程添加一个runloop，让子线程常驻：
+@property (nonatomic, strong) NSThread *thread;
+...
+- (NSThread *)thread &#123;
+    if (!_thread) &#123;
+        _thread = [[NSThread alloc] initWithBlock:^&#123;
+            NSRunLoop *ns_runloop = [NSRunLoop currentRunLoop];
+            [ns_runloop addPort:[NSPort port] forMode:NSRunLoopCommonModes];
+
+            CFRunLoopRef runloop = CFRunLoopGetCurrent();
+            CFRunLoopObserverRef observer = CFRunLoopObserverCreateWithHandler(CFAllocatorGetDefault(), kCFRunLoopAllActivities, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) &#123;
+                switch (activity) &#123;
+                    case kCFRunLoopEntry:
+                        NSLog(@&quot;进入runLoop&quot;);
+                        break;
+                    case kCFRunLoopBeforeTimers:
+                        NSLog(@&quot;处理timer事件&quot;);
+                        break;
+                    case kCFRunLoopBeforeSources:
+                        NSLog(@&quot;处理source事件&quot;);
+                        break;
+                    case kCFRunLoopBeforeWaiting:
+                        NSLog(@&quot;进入睡眠&quot;);
+                        break;
+                    case kCFRunLoopAfterWaiting:
+                        NSLog(@&quot;被唤醒&quot;);
+                        break;
+                    case kCFRunLoopExit:
+                        NSLog(@&quot;退出&quot;);
+                        break;
+                    default:
+                        break;
+                &#125;
+            &#125;);
+            CFRunLoopAddObserver(runloop, observer, kCFRunLoopCommonModes);
+            CFRelease(observer);
+            [ns_runloop run];
+        &#125;];
+        [_thread start];
+    &#125;
+    return _thread;
+&#125;
+
+- (IBAction)postNotification:(UIButton *)sender &#123;
+    [self performSelector:@selector(postNotification) onThread:self.thread withObject:nil waitUntilDone:YES];
+&#125;
+
+- (void)postNotification &#123;
+    NSLog(@&quot;1&quot;);
+    NSLog(@&quot;%@&quot;, [NSThread currentThread]);
+    //NSPostWhenIdle
+    //NSPostASAP
+    //NSPostNow
+    NSNotification *notification = [NSNotification notificationWithName:@&quot;JKRNO&quot; object:nil];
+    [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationNoCoalescing forModes:@[NSDefaultRunLoopMode]];
+    NSLog(@&quot;3&quot;);
+&#125;
+
+- (void)receiceNotification:(NSNotification *)notification &#123;
+    NSLog(@&quot;2&quot;);
+    NSLog(@&quot;%@&quot;, [NSThread currentThread]);
+&#125;
 </code></pre>
 
       
@@ -563,7 +912,7 @@ OpenGL画笔    GL10
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/07/03/N_Android17%E5%B8%B8%E7%94%A8%E7%B1%BB/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/30/M_Swift125%E5%8F%8D%E6%80%9D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -577,7 +926,7 @@ OpenGL画笔    GL10
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/07/03/N_Android17%E5%B8%B8%E7%94%A8%E7%B1%BB/" class="post-title-link" itemprop="url">未命名</a>
+            <a href="/2020/06/30/M_Swift125%E5%8F%8D%E6%80%9D/" class="post-title-link" itemprop="url">未命名</a>
         </h2>
 
         <div class="post-meta">
@@ -587,105 +936,8 @@ OpenGL画笔    GL10
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-03 17:17:08" itemprop="dateCreated datePublished" datetime="2019-07-03T17:17:08+08:00">2019-07-03</time>
+              <time title="创建时间：2020-06-30 10:54:39" itemprop="dateCreated datePublished" datetime="2020-06-30T10:54:39+08:00">2020-06-30</time>
             </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Android常用类"><a href="#Android常用类" class="headerlink" title="Android常用类"></a>Android常用类</h1><pre><code>名称    类名    
-基本数据类型    String、Integer、Double、BigDecimal    
-格式化工具    Formatter、DecimalFormat、NumberFormat    
-样式、匹配器    Pattern、Matcher    
-日期、日历    Date、SimpleDateFormat、Calendar    
-向量、队列、链表    Set/HashSet、ArrayList、LinkedList    
-矢量、栈    Vector、Stack    
-映射、哈希表    Map/HashMap、Hashtable    
-迭代器    Iterator  
-序列化结构    Serializable   
-文件    File    
-文件流    FileOutputStream、FileInputStream    
-缓存流    BufferedOutputStream、BufferedInputStream    
-任务    Runnable    
-线程    Thread    
-定时器    Timer、TimerTask   
-反射    reflect    
-xml解析    XmlPullParser、dom、sax、SAXParser    
-输入输出流    InputStream、OutputStream    
-http连接    HttpURLConnection、HttpClient    
-URL编码和解码    URLEncoder、URLDecoder    
-BASE64编码和解码    BASE64Encoder、BASE64Decoder    
-加密算法    Cipher、KeyGenerator、SecretKey、MessageDigest    
-线程池    Executors、ThreadPoolExecutor    
-定时器线程池    ScheduledExecutorService    
-异常    Exception  
-键值对属性    Properties    
-加锁    ReentrantLock、ReentrantReadWriteLock    
-字符串建造者    StringBuilder    
-数组、容器组    Arrays、Collections    
-数学函数    Math    
-套接字、网络地址    Socket、SocketServer、InetAddress
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/06/07/M_Swift152GLSL-%E5%8F%98%E9%87%8F%E5%92%8C%E7%B1%BB%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/06/07/M_Swift152GLSL-%E5%8F%98%E9%87%8F%E5%92%8C%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-06-07 02:24:40" itemprop="dateCreated datePublished" datetime="2019-06-07T02:24:40+08:00">2019-06-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:08:49" itemprop="dateModified" datetime="2021-04-12T16:08:49+08:00">2021-04-12</time>
-              </span>
 
           
 
@@ -699,16 +951,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
 
       
           <hr>
-<h2 id="title-OpenGL-变量和类型"><a href="#title-OpenGL-变量和类型" class="headerlink" title="title :OpenGL 变量和类型"></a>title :OpenGL 变量和类型</h2><p>1、变量类型<br>变量种类            变量类型                                描述<br>空                       void                                       用于无返回值的函数或者参数为空的函数<br>标量                   float, int, bool                        浮点型，整型，布尔型的标量数据类型<br>浮点型向量        vec2, vec3, vec4                   包含2，3，4个元素的浮点型向量<br>整数型向量        ivec2, ivec3, ivec4                 包含2，3，4个元素的整型向量<br>布尔型向量        bvec2, bvec3, bvec4             包含1，2，3，4个元素的布尔型向量<br>矩阵                   mat2, mat3, mat4                  尺寸为2x2，3x3，4x4的浮点型矩阵<br>纹理句柄            sampler2D, samplerCube     分别表示操作2D和cube的句柄<br>备注：GLSL中没有指针类型，大小写敏感的<br>对于变量类型，GLSL有着非常严格的规则，进行赋值，加减乘除运算必须类型一直，否则会出现语法错误。如果不一致则必须进行强制类型转换<br>float myFloat = 1.0;<br>bool myBool = true;<br>float result = myFloat + myBool(myBool);</p>
-<p>2、Structures 结构体<br>GLSL支持结构体，把一些系统定义的类型聚到一起，组成自定义的类型，也可以包括事先声明的结构体，但是不能定义嵌套结构体。例如：<br>struct myStruct<br>{<br>    float f1;<br>    bool f2;<br>    vec3 v3;<br>}<br>声明结构体变量<br>myStruct lightVar2;<br>struct myStruct2<br>{<br>    float f1;<br>    myStruct st1;   //合法<br>    struct str2{        // 不合法<br>        bool b1;<br>        float f2;<br>    }<br>}<br>3、Arrays 数组<br>GLSL中的数组和C的数组很类似，支持最基本类型，也支持结构体的数组。例如：</p>
-<p>float frequencies[3];<br>uniform vec4 lightPosition[4];<br>const int numLights = 2;<br>light lights[numLights];<br>备注 GLSL的数组无法在声明的时候初始化。</p>
-<p>4、存储限定符<br>const           常量，或者是函数的只读参数<br>attribute       只能在顶点着色器中定义，只读属性，由应用程序赋值初始化<br>uniform        只能定义为全局变量，只读属性，可以由应用程序和opengl 初始化<br>varying         提供顶点着色器和片段着色器的连接点，只能是float, vec2, vec3, vec4, mat2, mat3, and mat4类型的变量<br>5、vector变量操作方式<br>向量的元素有固定的名字去访问，分别有三组{x,y,z,w}、{r,g,b,a}、{s,t,p,q}，访问时下表对应长度不能超过l向量的长度<br>vec2 v = vec2(3.0);<br>v.x //正确<br>v.z // 错误<br>向量的元素可以放在一起<br>vec4 v = vec4(1,2,3,4);<br>v.zy    // 等于 vec2(3,2)<br>vec3 v3 = v.xyz // 等于vec3(1,2,3)<br>v.rgba  // 此种方式不正确，下表同时只能使用一个集合中的名称<br>v.yx = vec2(3,0)    // 将y和x的位置互换并给他们的赋值为新的值，将变成 vec4(3,0,3,4);<br>6、矩阵元素的操作方式<br>用[]访问元素<br>mat4 m;<br>m[1] = vec4(2.0);   // sets the 4th element of the third column to 2.0<br>m[0][0] = 1.0;  // sets the upper left element to 1.0<br>m[2][3] = 2.0;  // sets the second column to all 2.0<br>7、向量和矩阵的操作<br>vec3 v, u; float f;<br>v = u + f;<br>等价于<br>v.x = u.x + f;<br>v.y = u.y + f;<br>v.z = u.z + f;</p>
-<p>vec3 v, u, w;<br>w = v + u;<br>等价于<br>w.x = v.x + u.x;<br>w.y = v.y + u.y;<br>w.z = v.z + u.z;</p>
-<p>vec3 v, u;<br>mat3 m;<br>u = v * m;<br>等价于<br>u.x = dot(v, m[0]);<br>u.y = dot(v, m[1]);<br>u.z = dot(v, m[2]);</p>
-<p>u = m * v;<br>等价于<br>u.x = m[0].x * v.x + m[1].x * v.y + m[2].x * v.z; u.y = m[0].y * v.x + m[1].y * v.y + m[2].y * v.z; u.z = m[0].z * v.x + m[1].z * v.y + m[2].z * v.z;</p>
-<p>mat m, n, r;<br>r = m * n;<br>等价于<br>r[0].x = m[0].x * n[0].x + m[1].x * n[0].y + m[2].x * n[0].z;<br>r[1].x = m[0].x * n[1].x + m[1].x * n[0].y + m[2].y * n[0].z;<br>r[2].x = m[0].x * n[2].x + m[1].x * n[0].y + m[2].z * n[0].z;</p>
-<p>r[0].y = m[0].y * n[0].x + m[1].y * n[1].y + m[2].x * n[1].z;<br>r[1].y = m[0].y * n[1].x + m[1].y * n[1].y + m[2].y * n[1].z;<br>r[2].y = m[0].y * n[2].x + m[1].y * n[1].y + m[2].z * n[1].z;</p>
-<p>r[0].z = m[0].z * n[0].x + m[1].z * n[2].y + m[2].x * n[2].z;<br>r[1].z = m[0].z * n[1].x + m[1].z * n[2].y + m[2].y * n[2].z;<br>r[2].z = m[0].z * n[2].x + m[1].z * n[2].y + m[2].z * n[2].z;</p>
+<h2 id="title-反思"><a href="#title-反思" class="headerlink" title="title :反思"></a>title :反思</h2><p>从毕业到现在已经6年了，工作了这么长时间了，我想是时候得反思一下自己了。<br>这些年你都学会了什么，这些年，有什么成就是值得你骄傲的，我感觉我想不到。<br>看着一个一个的同事面试，走了，我很难过，我很无助，心里翻江倒海。我该何去何从。<br>这些年一直看低自己，一直觉得自己水平低，不能看的太高，一些大的公司，根本就不敢去。<br>回头看看其实无非就是对自己逃避现实找的一个一个的借口，什么学历了，什么专业了都是借口。<br>今年随着疫情的到来，我本来想着是这个时候，还是不要跳槽的好，安稳一些还是比较好的，但是让我万万没有想到的是<br>所有的人都走了，就剩下了我自己，我记得好像是去年，好像是跟去年一摸一样的场景。<br>我真的是再一次经历这样的人生，我记得去年的这个时候，我就是一直在摇摆，经过一次面试失败对我打击还是挺大的<br>后来我努力跟新的团队融合，当我们融合起来的时候，好像一切又都破碎了。<br>现在我想我是时候开始努力了，30岁还不算太晚<br>从现在起，努力积累知识，特别是算法方面的知识，我想通过我的一步步的努力，我能找到一个理想的工作<br>加油吧！少年。放下手机，努力吧</p>
 
       
     </div>
@@ -728,7 +971,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/13/M_Swift119%E5%92%8C%E7%BA%A6%E8%BD%A6%E7%AE%80%E4%BB%8B/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/29/M_Swift124%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -742,7 +985,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/12/13/M_Swift119%E5%92%8C%E7%BA%A6%E8%BD%A6%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">和约车简介</a>
+            <a href="/2020/06/29/M_Swift124%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">数据结构</a>
         </h2>
 
         <div class="post-meta">
@@ -752,7 +995,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-12-13 11:57:07" itemprop="dateCreated datePublished" datetime="2018-12-13T11:57:07+08:00">2018-12-13</time>
+              <time title="创建时间：2020-06-29 13:29:33" itemprop="dateCreated datePublished" datetime="2020-06-29T13:29:33+08:00">2020-06-29</time>
             </span>
 
           
@@ -766,9 +1009,35 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>经过两个多星期的奋战，和约车差不多成型了总感觉缺少点什么，但是无所谓了，服务的事情能解决应该就不要客户端去调整了。<br>这两天写了一下开发申请单，也完善了一下功能模块。<br>在写申请单的时候，也对工程有了一个规划，模块分的也更详细了<br>从工程角度来讲，我觉得是有收获的，以后再开发一个东西的时候，我们会更方便的了解这个东西，也能更全面的去分析项目，也能更全面的把握项目，不至于手忙脚乱，不至于代码写的一团糟。<br>和约车功能模块<br>    工程配置<br>    网络服务<br>    第三方SDK<br>    资源文件<br>    app业务模块<br>和地图APP模块名称<br>    主页<br>        主页面<br>    添加路线<br>        添加路线页面<br>    消息<br>        我的消息页面<br>        聊天页面<br>    我的<br>        个人中心页面<br>        历史订单页面<br>        历史评价页面<br>        个人信息页面<br>        修改昵称页面<br>        设置页面<br>        关于页面<br>        上下班设置页面<br>    车主认证<br>        车主认证页面<br>        车型选择页面<br>    发单<br>        发单页面<br>    订单<br>        等待接单页面<br>        订单详情页面<br>        订单支付页面<br>    登录<br>        验证码登录页面<br>        密码登录页面<br>        密码修改页面<br>        服务协议页面<br>    选点<br>        地图选点搜索页面</p>
-<p>资源文件<br>        统一登录SDK<br>        极光推送SDK<br>        高德搜索SDK<br>        地图SDK<br>Libs<br>        网络请求<br>        列表空试图显示<br>        日志输出<br>        Toast<br>images<br>        图片资源</p>
-<p>工程描述<br>    数据存储<br>        因为项目不是特别的大，所以数据存储这方面我全部使用了NSUserdefult，专门写了一个类，用户所有数据存储，提供接口，外面调用<br>    常量<br>        项目中不免会用到一些配置的东西，我都是写在这里，一些sdk的key，版本号，通用的颜色，通知名称，屏幕宽高等等<br>        此外还包括了一些常用的类，方便头文件中写太多。<br>    单例<br>        在开发中不免使用到单例，我想和约车选择起点和终点用单例是再好不过了，因为我们不用考虑那么多了，在进程生命周期内也会一直存在。<br>    时间处理<br>        这个有点坑，说实话，我到现在也有点晕，很多时候获取的时间老是不准。</p>
+          <p>1、数组<br>数组是可以再内存中连续存储多个元素的结构，在内存中的分配也是连续的，数组中的元素通过数组下标进行访问，数组下标从0开始。例如下面这段代码就是将数组的第一个元素赋值为 1。<br>优点：<br>1、按照索引查询元素速度快<br>2、按照索引遍历数组方便</p>
+<p>缺点：<br>1、数组的大小固定后就无法扩容了<br>2、数组只能存储一种类型的数据<br>3、添加，删除的操作慢，因为要移动其他的元素。<br>适用场景：<br>频繁查询，对存储空间要求不大，很少增加和删除的情况。</p>
+<p>寻找数组中第二小的元素<br>示例代码一：先把数组进行升序排序 排完序后再进行遍历比较<br>遍历数组，定义max和second，找到max，<br>if (v[i] &gt; max) {<br>           second = max;<br>           max = v[i];<br>       } else if (v[i] &gt; second) {<br>           second = v[i];<br>       }<br>找到数组中第一个不重复出现的整数<br>双重for循环，找位置，如果找到最后位置是当前位置，则没有重复<br>合并两个有序数组<br>混合插入有序数组，由于两个数组都是有序的，所以只要按顺序比较大小即可。题目中说了nums1数组有足够大的空间，说明我们不用resize数组，又给了我们m和n，那就知道了混合之后的数组大小，这样我们就从nums1和nums2数组的末尾开始一个一个比较，把较大的数，按顺序从后往前加入混合之后的数组末尾。需要三个变量i，j，k，分别指向nums1,nums2,和混合数组的末尾。进行while循环，如果i和j都大于0，再看如果nums1[i] &gt; nums2[j]，说明要把nums1[i]先加入混合数组的末尾，加入后k和i都要自减1；else，就把nums2[j]加入混合数组的末尾，之后j和k也要自减1。循环结束后，有可能i和j还大于等于0，若j大于等于0，那么需要继续循环，将nums2中的数字继续拷入nums1。若是i大于等于0，那么就不用管，因为混合数组本身就房子nums1中。<br>重新排列数组中的正值和负值</p>
+<p>2、栈</p>
+<p>栈是一种特殊的线性表，仅能在线性表的一端操作，栈顶允许操作，栈底不允许操作。 栈的特点是：先进后出，或者说是后进先出，从栈顶放入元素的操作叫入栈，取出元素叫出栈。<br>栈的结构就像一个集装箱，越先放进去的东西越晚才能拿出来，所以，栈常应用于实现递归功能方面的场景，例如斐波那契数列。<br>java使用栈计算后缀表达式<br>stack = new Stack<Integer>();<br>对栈的元素进行排序<br>判断表达式是否括号平衡<br>3、队列</p>
+<p>队列与栈一样，也是一种线性表，不同的是，队列可以在一端添加元素，在另一端取出元素，也就是：先进先出。从一端放入元素的操作称为入队，取出元素为出队，示例图如下：<br>使用场景：因为队列先进先出的特点，在多线程阻塞队列管理中非常适用。<br>面试题：反转队列前K个元素<br>直接把前k个元素压栈，放入新队列中，追加剩余的队列元素<br>使用队列表示栈<br>对队列的前k个元素倒序<br>使用队列生成从1到n的二进制数<br>4、链表</p>
+<p>链表是物理存储单元上非连续的、非顺序的存储结构，数据元素的逻辑顺序是通过链表的指针地址实现，每个元素包含两个结点，一个是存储元素的数据域 (内存空间)，另一个是指向下一个结点地址的指针域。根据指针的指向，链表能形成不同的结构，例如单链表，双向链表，循环链表等。<br>链表的优点：<br>链表是很常用的一种数据结构，不需要初始化容量，可以任意加减元素；<br>添加或者删除元素时只需要改变前后两个元素结点的指针域指向地址即可，所以添加，删除很快；</p>
+<p>缺点：<br>因为含有大量的指针域，占用空间较大；<br>查找元素需要遍历链表来查找，非常耗时。</p>
+<p>适用场景：<br>数据量较小，需要频繁增加，删除操作的场景<br>反转链表<br>检测链表中的循环<br>返回链表倒数第N个节点<br>删除链表中的重复项</p>
+<p>5、树</p>
+<p>树是一种数据结构，它是由n（n&gt;=1）个有限节点组成一个具有层次关系的集合。把它叫做 “树” 是因为它看起来像一棵倒挂的树，也就是说它是根朝上，而叶朝下的。它具有以下的特点：</p>
+<p>每个节点有零个或多个子节点；<br>没有父节点的节点称为根节点；<br>每一个非根节点有且只有一个父节点；<br>除了根节点外，每个子节点可以分为多个不相交的子树；<br>在日常的应用中，我们讨论和用的更多的是树的其中一种结构，就是二叉树。<br>二叉树是树的特殊一种，具有如下特点：</p>
+<p>1、每个结点最多有两颗子树，结点的度最大为2。<br>2、左子树和右子树是有顺序的，次序不能颠倒。<br>3、即使某结点只有一个子树，也要区分左右子树。</p>
+<p>二叉树是一种比较有用的折中方案，它添加，删除元素都很快，并且在查找方面也有很多的算法优化，所以，二叉树既有链表的好处，也有数组的好处，是两者的优化方案，在处理大批量的动态数据方面非常有用。</p>
+<p>扩展：<br>二叉树有很多扩展的数据结构，包括平衡二叉树、红黑树、B+树等，这些数据结构二叉树的基础上衍生了很多的功能，在实际应用中广泛用到，例如mysql的数据库索引结构用的就是B+树，还有HashMap的底层源码中用到了红黑树。这些二叉树的功能强大，但算法上比较复杂，想学习的话还是需要花时间去深入的。<br>求二叉树的高度<br>在二叉搜索树中查找第k个最大值<br>查找与根节点距离k的节点<br>在二叉树中查找给定节点的祖先节点</p>
+<p>计算字典树中的总单词数<br>打印存储在字典树中的所有单词<br>使用字典树对数组的元素进行排序<br>使用字典树从字典中形成单词<br>构建T9字典（字典树+ DFS ）<br>6、散列表</p>
+<p>散列表，也叫哈希表，是根据关键码和值 (key和value) 直接进行访问的数据结构，通过key和value来映射到集合中的一个位置，这样就可以很快找到集合中的对应元素。</p>
+<p>记录的存储位置=f(key)</p>
+<p>这里的对应关系 f 成为散列函数，又称为哈希 (hash函数)，而散列表就是把Key通过一个固定的算法函数既所谓的哈希函数转换成一个整型数字，然后就将该数字对数组长度进行取余，取余结果就当作数组的下标，将value存储在以该数字为下标的数组空间里，这种存储空间可以充分利用数组的查找优势来查找元素，所以查找的速度很快。</p>
+<p>哈希表在应用中也是比较常见的，就如Java中有些集合类就是借鉴了哈希原理构造的，例如HashMap，HashTable等，利用hash表的优势，对于集合的查找元素时非常方便的，然而，因为哈希表是基于数组衍生的数据结构，在添加删除元素方面是比较慢的，所以很多时候需要用到一种数组链表来做，也就是拉链法。拉链法是数组结合链表的一种结构，较早前的hashMap底层的存储就是采用这种结构，直到jdk1.8之后才换成了数组加红黑树的结构，其示例图如下：<br>7、堆</p>
+<p>堆是一种比较特殊的数据结构，可以被看做一棵树的数组对象，具有以下的性质：</p>
+<p>堆中某个节点的值总是不大于或不小于其父节点的值；</p>
+<p>堆总是一棵完全二叉树。</p>
+<p>将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆。常见的堆有二叉堆、斐波那契堆等。</p>
+<p>堆的定义如下：n个元素的序列{k1,k2,ki,…,kn}当且仅当满足下关系时，称之为堆。<br>(ki &lt;= k2i,ki &lt;= k2i+1)或者(ki &gt;= k2i,ki &gt;= k2i+1), (i = 1,2,3,4…n/2)，满足前者的表达式的成为小顶堆，满足后者表达式的为大顶堆，这两者的结构图可以用完全二叉树排列出来，示例图如下： </p>
+<p>8、图</p>
+<p>图是由结点的有穷集合V和边的集合E组成。其中，为了与树形结构加以区别，在图结构中常常将结点称为顶点，边是顶点的有序偶对，若两个顶点之间存在一条边，就表示这两个顶点具有相邻关系。</p>
+<p>按照顶点指向的方向可分为无向图和有向图：<br>图是一种比较复杂的数据结构，在存储数据上有着比较复杂和高效的算法，分别有邻接矩阵 、邻接表、十字链表、邻接多重表、边集数组等存储结构，这里不做展开，读者有兴趣可以自己学习深入。<br>实现广度和深度优先搜索<br>检查图是否为树<br>计算图的边数<br>找到两个顶点之间的最短路径</p>
+<p>在数组中查找对称键值对<br>追踪遍历的完整路径<br>查找数组是否是另一个数组的子集<br>检查给定的数组是否不相交</p>
 
       
     </div>
@@ -788,7 +1057,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/13/M_Swift118%E6%96%B0%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/29/M_Swift124%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -802,7 +1071,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/12/13/M_Swift118%E6%96%B0%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">新项目总结</a>
+            <a href="/2020/06/29/M_Swift124%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">未命名</a>
         </h2>
 
         <div class="post-meta">
@@ -812,7 +1081,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-12-13 11:56:41" itemprop="dateCreated datePublished" datetime="2018-12-13T11:56:41+08:00">2018-12-13</time>
+              <time title="创建时间：2020-06-29 12:00:39" itemprop="dateCreated datePublished" datetime="2020-06-29T12:00:39+08:00">2020-06-29</time>
             </span>
 
           
@@ -826,7 +1095,98 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>今天可能需要休息一下，并没有那么忙碌了。<br>临时的话，手里的工作没有那么多了，所以想写点东西<br>前段时间写了一个ios的app，感觉重新写iOS的感觉就是爽。<br>很快就写完了，可能并没有那么复杂吧，但是我觉得很爽，虽然加了很多的班，但是感觉是值得的。<br>突然就想说，一个iOS开发者，一个安卓开发者，一个前端的综合开发者，应该具备什么样的能力，也许我能力还浅，但是我很想说一下，很想在说的同时对自己也有提高吧。<br>感觉其实，经常在写东西，但是只是熟悉，真的是收获很少。<br>有的时候，感觉学不到。<br>不过写起来还是挺爽的，我基本上坚持了使用代码去写，很少的使用xib，我知道xib使用多了，就一定会发生卡顿，所以，我想我的坚持是对的，xib那种东西其实没有太多的技术含量，我觉得不能用太多，特别是一个控制器里的多个view，我们如果用多了，真的不好。<br>再说说开发吧，我觉得iOS开发还是要快捷很多，无论是连手机测试，还是打端点编译，都非常的快捷便利，android真的是让人头疼，我每次运行android一段时间以后我一定要关一下电脑，不关的话真的是卡的要命，电脑嗡嗡的响的时候，编译一直过不去的时候，真的是脑袋都炸掉了。<br>再看一下现在互联网行业吧，真的是让人头疼，感觉现在给钱的都是大公司，小公司真的是扣的要命，一分钱都要分好几份话的样子。<br>有的时候一直在想，我应该怎么办，有的时候一直在想，我能有什么样的后路，这真的是让人头疼的问题。<br>回家吧幸福，回家看一看父母。</p>
+          <hr>
+<h2 id="title-字符串操作"><a href="#title-字符串操作" class="headerlink" title="title :字符串操作"></a>title :字符串操作</h2><p>// 字符反转的方法<br>   private void swap(char[] c, int front, int end) {</p>
+<pre><code>   if (front &gt; end || end &gt;= c.length) &#123;
+       return;
+   &#125;
+
+   while (front &lt; end) &#123;
+
+       char tmp = c[front];
+       c[front] = c[end];
+       c[end] = tmp;
+
+       front++;
+       end--;
+   &#125;
+</code></pre>
+<p>}<br>   // 判断字符串是否由相同的字符组成<br>      public boolean compareStr(String str1, String str2) {</p>
+<pre><code>      byte[] bs1 = str1.getBytes();
+      byte[] bs2 = str2.getBytes();
+
+      Arrays.sort(bs1);
+      Arrays.sort(bs2);
+
+      str1 = new String(bs1);
+      str2 = new String(bs2);
+
+      if (str1.equals(str2)) &#123;
+          return true;
+      &#125; else &#123;
+          return false;
+      &#125;
+</code></pre>
+<p>}<br>删除重复字符</p>
+<pre><code>  public String removeDuplicate2(String str) &#123;
+
+      char[] cs = str.toCharArray();
+      int n = cs.length;
+      
+      int count[] = new int[256];
+      for (int i = 0; i &lt; cs.length; i++) &#123;
+          if (count[cs[i]] != 0)
+              cs[i] = &#39;\0&#39;;
+          count[cs[i]]++;
+      &#125;
+
+      int be = 0;
+      for (int i = 0; i &lt; n; i++) &#123;
+          if (cs[i] != &#39;\0&#39;)
+              cs[be++] = cs[i];
+      &#125;
+
+      return new String(cs, 0, be);
+  &#125;
+  public static void printStr(String test,Integer ptr)
+     &#123;
+         if(ptr&lt;=test.length())
+         &#123;
+             char[] chars = test.toCharArray();
+             for(int i=ptr;i&lt;chars.length;i++)
+             &#123;
+  
+                 char temp = chars[i];
+                 chars[i]=chars[ptr];
+                 chars[ptr]=temp;
+                 resultSet.add(new String(chars));
+                 printStr(new String(chars),ptr+1);
+             &#125;
+         &#125;
+    &#125;
+</code></pre>
+<p>最长不含重复字符的子字符串<br>请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。假设字符串中只还有’a’~’z’的字符<br>提到回文串，自然要利用回文串的特点，想到将源字符串逆转后，“回文串”（不一定连续）相当于顺序没变<br>求原字符串和其反串的最大公共子序列（不是子串，因为可以不连续）的长度（使用动态规划很容易求得），然后用原字符串的长度减去这个最大公共子串的长度就得到了最小编辑长度。</p>
+<p>int maxLen(string s1, string s2){<br>    int length1 = s1.size();<br>    int length2 = s2.size();<br>    for (int i = 0; i &lt; length1; ++i)<br>        MaxLen[i][0] = 0;<br>    for (int i = 0; i &lt; length2; ++i)<br>        MaxLen[0][i] = 0;</p>
+<pre><code>for (int i = 1; i &lt;= length1; ++i)
+&#123;
+    for (int j = 1; j &lt;= length2; ++j)
+    &#123;
+        if (s1[i-1] == s2[j-1])&#123;
+            MaxLen[i][j] = MaxLen[i-1][j - 1] + 1;
+        &#125;
+        else
+        &#123;
+            MaxLen[i][j] = max(MaxLen[i - 1][j], MaxLen[i][j - 1]);
+        &#125;
+    &#125;
+&#125;
+
+return MaxLen[length1][length2];
+</code></pre>
+<p>}<br>int main(){<br>string s;<br>while (cin &gt;&gt; s){<br>    int length = s.size();<br>    if (length == 1){<br>        cout &lt;&lt; 1 &lt;&lt; endl;<br>        continue;<br>    }<br>    //利用回文串的特点<br>    string s2 = s;<br>    reverse(s2.begin(),s2.end());<br>    int max_length = maxLen(s, s2);<br>    cout &lt;&lt; length - max_length &lt;&lt; endl;<br>}<br>return 0;<br>}</p>
+<p>实现一个算法，确定一个字符串 s 的所有字符是否全都不同。</p>
+<p>我的解题思路：<br>先将字符串转化成字符数组；<br>对其进行排序，再通过for循环进行判断，排序后的字符数组如果前一位与后一位相同，则输出“false”，否则输出“true”。</p>
+<p>由于题目没有明确说明，根据示例我判断字符串中出现的字符应该在[‘a’,’z’]之间，实践证明确实如此。基于这个前提，使用bool数组的做法是定义一个长度为26的初始值全为0 bool数组，逐个字符遍历astr，如果bool数组中对应的下标（’a’-&gt;0, …, ‘z’-&gt;25）的值为1则重复出现，返回false，否则设置对应下标值为1。</p>
 
       
     </div>
@@ -846,7 +1206,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/10/15/M_Swift115AndroidStdio%E5%BF%AB%E6%8D%B7%E9%94%AE/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/24/M_Swift105KVO/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -860,7 +1220,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/10/15/M_Swift115AndroidStdio%E5%BF%AB%E6%8D%B7%E9%94%AE/" class="post-title-link" itemprop="url">Android Stdio 快捷键</a>
+            <a href="/2020/06/24/M_Swift105KVO/" class="post-title-link" itemprop="url">KVO</a>
         </h2>
 
         <div class="post-meta">
@@ -870,7 +1230,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-10-15 16:45:54" itemprop="dateCreated datePublished" datetime="2018-10-15T16:45:54+08:00">2018-10-15</time>
+              <time title="创建时间：2020-06-24 13:42:02" itemprop="dateCreated datePublished" datetime="2020-06-24T13:42:02+08:00">2020-06-24</time>
             </span>
 
           
@@ -884,8 +1244,108 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>快速定位类名：Cmd + O<br>查看本类中方法：Cmd + Fn + F12<br>查看方法被调用的位置：Option + Fn + F7<br>项目内全局搜索：Cmd + Shift + F<br>格式化代码：Cmd + Option + L<br>快速定位所有类名及其中的方法名：Cmd + Option + O<br>清除无效包引用：Ctrl + Option + O（自动清除无用包，加载有用包，Android Studio基本自动执行了）<br>显示Version Control面板：Cmd + Shift + 9</p>
-<p>复制当前行：Cmd + D<br>查找：Cmd + F<br>构造方法，set get方法等生成的快捷菜单：Cmd + N<br>查找+替换：Cmd + R<br>删除行：Cmd + Delete<br>注释代码(//)：Cmd + /<br>导包（提示错误解决方案）：Option + Enter<br>重命名变量：⇧F6</p>
+          <h2 id="KVO实现原理"><a href="#KVO实现原理" class="headerlink" title="KVO实现原理"></a>KVO实现原理</h2><pre><code>apple使用isa混写（isa-swizzling）来实现KVO。
+当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying 
+A的新类，该类继承自对象A的本类，
+且KVO为NSKVONotifying A重写观察属性的setter方法，
+setter方法会负责在调用原setter方法之前之后，
+通知所有观察对象属性值的更改情况。
+对象注册为观察者时，isa指针指向新子类，那么这个被观察的对象就神奇地
+变成新子类的对象了。） 因而在该对象上对 setter 的调用就会调用已重
+写的 setter，从而激活键值通知机制。
+子类setter方法剖析：KVO的键值观察通知依赖于 NSObject 的两个方法
+:willChangeValueForKey:和 didChangevlueForKey:，
+在存取数值的前后分别调用2个方法：被观察属性发生改变之前，
+willChangeValueForKey:被调用，通知系统该 keyPath 的属性值即将
+变更；当改变发生后， didChangeValueForKey: 被调用，通知系统该
+keyPath 的属性值已经变更；之
+后observeValueForKey:ofObject:change:context:
+也会被调用。且重写观察属性的setter 方法这种继承方式的注入是
+在运行时而不是编译时实现的。
+观察者观察的属性，只有遵循KVO变更属性值的方式才会执行KVO
+的回调方法，例如是否执行setter方法，或着是否使用KVC
+赋值。如果赋值没有通过setter方法或者KVC，而是直接修改属
+性对应的成员变量，例如：仅调用_name = @&quot;newName&quot; ,这
+时时不会触发kvo机制，更加不会调用回调方法的。所以使用
+KVO机制的前提是遵循KVO的属性设置方式来变更属性值。
+</code></pre>
+<h2 id="KVO流程"><a href="#KVO流程" class="headerlink" title="KVO流程"></a>KVO流程</h2><pre><code>1.注册A类的name属性变化监听
+    [a addObserver:self forKeyPath:@&quot;name&quot; options:NSKeyValueObservingOptionNew context:nil];
+2.创建A的子类NSKVONotifyingA
+    Class noA = objc_allocateClassPair([A class], &quot;NSKVONotifyingA&quot;, observer);
+3.isa指针混合
+    将A类的指针指向NSKVONotifyingA，从而到达调用NSKVONotifyingA类的方法的目的
+4.当调用a的setName方法时进入到NSKVONotifyingA类的setName方法
+5.调用willChangeValueForKey回调属性将要变化
+6.调用NSKVONotifyingA类的【self setName】赋值，实际上执行的是A类的setName，达到赋值目的
+7.调用didChangeValueForKey回调属性变化了
+</code></pre>
+<h2 id="为什么要用子类监听setter方法，而不用分类呢？"><a href="#为什么要用子类监听setter方法，而不用分类呢？" class="headerlink" title="为什么要用子类监听setter方法，而不用分类呢？"></a>为什么要用子类监听setter方法，而不用分类呢？</h2><pre><code>原因是当你用分类监听setter方法的时候，原类中setter方法就不会走了，这样不好，所以苹果使用了子类监听setter方法。
+</code></pre>
+<h2 id="isa-swizzling为什么不会出现递归"><a href="#isa-swizzling为什么不会出现递归" class="headerlink" title="isa-swizzling为什么不会出现递归"></a>isa-swizzling为什么不会出现递归</h2><pre><code>你在swizzlingViewDidLoad方法中又调用[self
+swizzlingViewDidLoad];，这难道不会产生递归调用吗？
+其实不会，Method Swizzling ：实现原理理解为方法互换，
+假设我们将A，B两个方法进行互换，向A发消息时执行的是B的方
+法，向B发消息时执行的是A方法，所以再调用[self
+swizzlingViewDidLoad];又回到原类的方法中了。
+</code></pre>
+<h2 id="为什么要保证只执行一次Method-Swizzling"><a href="#为什么要保证只执行一次Method-Swizzling" class="headerlink" title="为什么要保证只执行一次Method Swizzling"></a>为什么要保证只执行一次Method Swizzling</h2><pre><code>我们上面提到过Method Swizzling的实现原理就是对类的Dispatch
+Table进行操作，每进行一次Swizzling就交换一次SEL和IMP(可以理解为
+函数指针)，如果Swizzling被执行了多次，就相当于SEL和IMP被交换了多
+次。这就会导致第一次执行成功交换了、第二次执行又换回去了、第三次执
+行.....这样换来换去的结果，能不能成功就看运气了😄，这也是好多人说
+Method Swizzling不好用的原因之一。
+为了避免这样的原因出现，我们可以通过GCD的dispatch_once函数来解决，
+利用dispatch_once函数内代码只会执行一次的特性。
+</code></pre>
+<h2 id="Method-Swizzling为什么对类簇不起作用"><a href="#Method-Swizzling为什么对类簇不起作用" class="headerlink" title="Method Swizzling为什么对类簇不起作用"></a>Method Swizzling为什么对类簇不起作用</h2><pre><code>对于NSArray NSMutableArray NSDictionary
+NSMutableDictionary 等类进行Method Swizzling ，实现
+方式按照上面例子来做，但是你发现Method Swizzling 根本不
+起作用
+这是因为Method Swizzling 对NSArray这些类簇是不起作
+用的，因为这些类簇，其实是一种抽象工厂的设计模式，抽象工厂内
+部有很多其他继承自身当前类的子类，抽象工厂类会根据不同情况，
+创建不同的抽象对象来进行使用。例如我们调用NSArray的
+objectAtIndex方法，这个类会在方法内部判断，内部创建不同抽
+象类进行操作。
+所以也就是我们对NSArray进行操作其实是对父类进行操作，在
+NSArray内部会创建其子类进行执行操作，真正执行操作的并不是
+NSArray自身，所以我们应该对其真身进行操作。
+如果进行Method Swizzling中的类有继承关系，并且
+swizzling了同一个方法，这样会导致父类的Swizzling失效。必
+须要证Method Swizzling方法只执行一次。
+</code></pre>
+<h2 id="KVC与KVO的不同"><a href="#KVC与KVO的不同" class="headerlink" title="KVC与KVO的不同"></a>KVC与KVO的不同</h2><pre><code>KVC(键值编码)，即Key-Value Coding，一个非正式的Protocol，
+使用字符串(键)访问一个对象实例变量的机制。而不是通过调用Setter
+、Getter方法等显式的存取方式去问。
+KVO(键值监听)，即Key-Value Observing，它提供一种机制,
+当指定的对象的属性被修改后,对象就会接受到通知，前提是执行了
+setter方法、或者使用了KVC赋值。
+</code></pre>
+<h2 id="KVO和notification-通知-的区别"><a href="#KVO和notification-通知-的区别" class="headerlink" title="KVO和notification(通知)的区别"></a>KVO和notification(通知)的区别</h2><pre><code>notification比KVO多了发送通知的一步。两者都是一对多，
+但是对象之间直接的交互，notification明显得多，需要
+notificationCenter来做为中间交互。而KVO如我们介绍的，设置观察者-&gt;
+处理属性变化，至于中间通知这一环，则隐秘多了，只留一句“交由系统通知”，
+具体的可参照以上实现过程的剖析。
+notification的优点是监听不局限于属性的变化，还可以对多种多样的状态
+变化进行监听，监听范围广，例如键盘、前后台等系统通知的使用也更显灵活方
+便。
+</code></pre>
+<h2 id="KVO和delegate-通知-的区别"><a href="#KVO和delegate-通知-的区别" class="headerlink" title="KVO和delegate(通知)的区别"></a>KVO和delegate(通知)的区别</h2><pre><code>和delegate一样，KVO和NSNotification的作用都是类与类之间的通信。
+但是与delegate不同的是：
+这两个都是负责发送接收通知，剩下的事情由系统处理，所以不用返回值；而
+delegate 则需要通信的对象通过变量(代理)联系；
+delegate一般是一对一，而这两个可以一对多。
+</code></pre>
+<h2 id="KVO和线程关系"><a href="#KVO和线程关系" class="headerlink" title="KVO和线程关系"></a>KVO和线程关系</h2><pre><code>总结:接收通知代码 由 发出通知线程决定, KVO也一样
+</code></pre>
+<h2 id="当你创建的一个类的名字和kvo动态生成的子类的名字冲突了-会发生什么"><a href="#当你创建的一个类的名字和kvo动态生成的子类的名字冲突了-会发生什么" class="headerlink" title="当你创建的一个类的名字和kvo动态生成的子类的名字冲突了 会发生什么"></a>当你创建的一个类的名字和kvo动态生成的子类的名字冲突了 会发生什么</h2><pre><code>亲自尝试一下，会在日志台打下如下日志
+KVO failed to allocate class pair for name 
+NSKVONotifying_myKVO, automatic key-value 
+observing will not work for this class
+KVO未能分配类两名NSKVONotifying_myKVO,自动键-值观察不
+会为这个类工作
+</code></pre>
 
       
     </div>
@@ -905,7 +1365,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/10/15/M_Swift116%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E6%95%B4%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/22/M_Swift123%E5%BC%80%E6%A0%B9%E5%8F%B7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -919,7 +1379,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/10/15/M_Swift116%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">小程序</a>
+            <a href="/2020/06/22/M_Swift123%E5%BC%80%E6%A0%B9%E5%8F%B7/" class="post-title-link" itemprop="url">开根号</a>
         </h2>
 
         <div class="post-meta">
@@ -929,7 +1389,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-10-15 16:40:14" itemprop="dateCreated datePublished" datetime="2018-10-15T16:40:14+08:00">2018-10-15</time>
+              <time title="创建时间：2020-06-22 17:28:57" itemprop="dateCreated datePublished" datetime="2020-06-22T17:28:57+08:00">2020-06-22</time>
             </span>
 
           
@@ -943,8 +1403,24 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>api地址：<a target="_blank" rel="noopener" href="https://developers.weixin.qq.com/miniprogram/dev/component/">https://developers.weixin.qq.com/miniprogram/dev/component/</a></p>
-<p>1.小程序配置 app.json<br>    app.json 是当前小程序的全局配置，包括了小程序的所有页面路径、界面表现、网络超时时间、底部 tab 等。<br>    {<br>        “pages”:[<br>            “pages/index/index”,<br>        ],<br>        “window”:{<br>            “backgroundTextStyle”:”light”,<br>            “navigationBarBackgroundColor”: “#fff”,<br>            “navigationBarTitleText”: “WeChat”,<br>            “navigationBarTextStyle”:”black”<br>        }<br>    }<br>2.pages小程序页面<br>    小程序页面包含4个部分<br>    wxml： 是用来描述当前这个页面的结构<br>    wxss：用来描述页面的样子<br>    js：通常是用来处理这个页面和用户的交互<br>    json：页面配置，页面中配置项会覆盖 app.json 的 window 中相同的配置项。<br>3.数据绑定js交互<br>    <view></view><br>    Page({<br>        clickMe: function() {<br>        this.setData({ msg: “Hello World” })<br>        }<br>    })<br>4.小程序的启动<br>    默认第一个配置就是启动页面<br>5.页面 Page<br>    data    Object    页面的初始数据<br>    生命周期函数等等<br>6.页面跳转<br>    打开新页面    调用 API wx.navigateTo<br>    页面重定向    调用 API wx.redirectTo<br>    页面返回    调用 API wx.navigateBack<br>    Tab 切换    调用 API wx.switchTab<br>    重启动    调用 API wx.reLaunch<br>7.组件<br>    view、label、text等等<br>8.微信开放api</p>
+          <p>static double  newSqrt(double n) {<br>    double low, high, mid, tmp;<br>    double ACCURACY = 0.001;<br>    // 获取上下界<br>    if (n &gt; 1) {<br>        low = 1;<br>        high = n;<br>    } else {<br>        low = n;<br>        high = 1;<br>    }</p>
+<pre><code>// 二分法求开方
+while (low &lt;= high) &#123;
+    mid = (low + high) / 2.000;
+
+    tmp = mid * mid;
+
+    if (tmp - n &lt;= ACCURACY &amp;&amp; tmp - n &gt;= ACCURACY * -1) &#123;
+        return mid;
+    &#125; else if (tmp &gt; n) &#123;
+        high = mid;
+    &#125; else &#123;
+        low = mid;
+    &#125;
+&#125;
+return -1.000;
+</code></pre>
+<p>}</p>
 
       
     </div>
@@ -963,7 +1439,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/31/">31</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1029,7 +1505,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">288</span>
+          <span class="site-state-item-count">303</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

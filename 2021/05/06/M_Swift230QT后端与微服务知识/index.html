@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Spring具有控制反转（IoC）和面向切面（AOP）两大核心，通过声明式方式灵活地进行事务的管理，提高开发效率和质量。包含如下模块： Data Access&#x2F;Integration（数据访问／集成）： JDBC、ORM、OXM、JMS 和 Transactions 模块 Web 层包括 Web、Servlet、Struts 和 Portlet 组件 Core Container（核心容器）由 B">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Men的博客">
+<meta property="og:url" content="http://example.com/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="Spring具有控制反转（IoC）和面向切面（AOP）两大核心，通过声明式方式灵活地进行事务的管理，提高开发效率和质量。包含如下模块： Data Access&#x2F;Integration（数据访问／集成）： JDBC、ORM、OXM、JMS 和 Transactions 模块 Web 层包括 Web、Servlet、Struts 和 Portlet 组件 Core Container（核心容器）由 B">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-06T02:12:24.267Z">
+<meta property="article:modified_time" content="2021-06-25T02:20:05.655Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-25 10:20:05" itemprop="dateModified" datetime="2021-06-25T10:20:05+08:00">2021-06-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><p>具有控制反转（IoC）和面向切面（AOP）两大核心，通过声明式方式灵活地进行事务的管理，提高开发效率和质量。包含如下模块：<br> Data Access/Integration（数据访问／集成）： JDBC、ORM、OXM、JMS 和 Transactions 模块<br> Web 层包括 Web、Servlet、Struts 和 Portlet 组件<br> Core Container（核心容器）由 Beans 模块、Core 核心模块、Context 上下文模块和 Expression Language 表达式语言模块组成<br>AOP 模块：提供了面向切面编程实现，允许定义方法拦截器和切入点，将代码按照功能进行分离，以降低耦合性。<br>Aspects 模块：提供与 AspectJ 的集成，是一个功能强大且成熟的面向切面编程（AOP）框架<br>Instrumentation 模块：提供了类工具的支持和类加载器的实现，可以在特定的应用服务器中使用。<br>Test 模块：支持 Spring 组件，使用 JUnit 或 TestNG 框架的测试。</p>
+<h2 id="spring-boot"><a href="#spring-boot" class="headerlink" title="spring boot"></a>spring boot</h2><p>其设计目的是用来简化新Spring应用的初始搭建以及开发过程，开箱即用和约定优于配置。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。内嵌Tomcat或Jetty等Servlet容器，简化Maven配置，尽可能自动配置Spring容器</p>
+<h2 id="Spring-Cloud"><a href="#Spring-Cloud" class="headerlink" title="Spring Cloud"></a>Spring Cloud</h2><p> 就是微服务系统架构的一站式解决方案，在平时我们构建微服务的过程中需要做如 服务发现注册 、配置中心 、消息总线 、负载均衡 、断路器 、数据监控 等操作，而 Spring Cloud 为我们提供了一套简易的编程模型，使我们能在 Spring Boot 的基础上轻松地实现微服务项目的构建。</p>
+<h2 id="Spring-Cloud-Alibaba"><a href="#Spring-Cloud-Alibaba" class="headerlink" title="Spring Cloud Alibaba"></a>Spring Cloud Alibaba</h2><p>是阿里巴巴提供的微服务开发一站式解决方案，是阿里巴巴开源中间件与 Spring Cloud 体系的融合。基于 Nacos 提供 spring-cloud-alibaba-starter-nacos-discovery &amp; spring-cloud-alibaba-starter-nacos-config 实现了服务注册 &amp; 配置管理功能。</p>
+<h2 id="微服务意义"><a href="#微服务意义" class="headerlink" title="微服务意义"></a>微服务意义</h2><p>微服务的核心是服务治理，而服务治理的关键是服务划分。故微服务架构的本质就是对码农的分化和治理</p>
+<h2 id="Nacos"><a href="#Nacos" class="headerlink" title="Nacos"></a>Nacos</h2><p>帮助您更敏捷和容易地构建、交付和管理微服务平台。 Nacos 是构建以“服务”为中心的现代应用架构(例如微服务范式、云原生范式)的服务基础设施。</p>
+<h2 id="Feign"><a href="#Feign" class="headerlink" title="Feign"></a>Feign</h2><p>是声明式的web service客户端，它让微服务之间的调用变得更简单了，类似controller调用service。Spring Cloud集成了Ribbon和Eureka，可在使用Feign时提供负载均衡的http客户端。</p>
+<h2 id="Spring-Cloud-Ribbon"><a href="#Spring-Cloud-Ribbon" class="headerlink" title="Spring Cloud Ribbon"></a>Spring Cloud Ribbon</h2><p>是一个基于HTTP和TCP的客户端负载均衡工具，它基于Netflix Ribbon实现。通过Spring Cloud的封装，可以让我们轻松地将面向服务的REST模版请求自动转换成客户端负载均衡的服务调用</p>
+<h2 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h2><p>是阿里开源的项目，提供了流量控制、熔断降级、系统负载保护等多个维度来保障服务之间的稳定性</p>
+<h2 id="网关GateWay"><a href="#网关GateWay" class="headerlink" title="网关GateWay"></a>网关GateWay</h2><p>网关的角色是作为一个 API 架构，用来保护、增强和控制对于 API 服务的访问。Spring Cloud Gateway旨在为微服务架构提供一种简单而有效的统一的API路由管理方式。</p>
+<h2 id="Spring-Cloud-Euraka"><a href="#Spring-Cloud-Euraka" class="headerlink" title="Spring-Cloud Euraka"></a>Spring-Cloud Euraka</h2><p>是Spring Cloud集合中一个组件，它是对Euraka的集成，用于服务注册和发现。Eureka是Netflix中的一个开源框架。它和 zookeeper、Consul一样，都是用于服务注册管理的，同样，Spring-Cloud 还集成了Zookeeper和Consul。<br>Eureka由多个instance(服务实例)组成，这些服务实例可以分为两种：Eureka Server和Eureka Client。为了便于理解，我们将Eureka client再分为Service Provider和Service Consumer。<br>Eureka Server 提供服务注册和发现<br>Service Provider 服务提供方，将自身服务注册到Eureka，从而使服务消费方能够找到<br>Service Consumer服务消费方，从Eureka获取注册服务列表，从而能够消费服务</p>
+<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><p>是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby一个开源的实现，是Hadoop和Hbase的重要组件。它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
+<h2 id="cap原理"><a href="#cap原理" class="headerlink" title="cap原理"></a>cap原理</h2><p>P:Partition tolerance,网络分区容错。类似多机房部署，保证服务稳定性。<br>A: Availability，可用性。<br>C:Consistency ，一致性。<br>CAP定理：CAP三个属性对于分布式系统不同同时做到。如AP/CP/AC。</p>
+<h2 id="Zookeepr和Eureka区别"><a href="#Zookeepr和Eureka区别" class="headerlink" title="Zookeepr和Eureka区别"></a>Zookeepr和Eureka区别</h2><p>（1）Zookeeper是CP，分布式协同服务，突出一致性。对ZooKeeper的的每次请求都能得到一致的数据结果，但是无法保证每次访问服务可用性。如请求到来时，zookeer正在做leader选举，此时不能提供服务，即不满足A可用性。<br>（2）Euere是AP，高可用与可伸缩的Service发现服务，突出可用性。相对于Zookeeper而言，可能返回数据没有一致性，但是保证能够返回数据，服务是可用的。</p>
+<h2 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h2><p>是一个开源的、提供友好操作界面的持续集成(CI)工具，起源于Hudson（Hudson是商用的），主要用于持续、自动的构建/测试软件项目、监控外部任务的运行（这个比较抽象，暂且写上，不做解释）。Jenkins用Java语言编写，可在Tomcat等流行的servlet容器中运行，也可独立运行。通常与版本管理工具(SCM)、构建工具结合使用。常用的版本控制工具有SVN、GIT，构建工具有Maven、Ant、Gradle。</p>
+<h2 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h2><p>是一个基于Apache Ant和Apache Maven概念的项目自动化构建开源工具。它使用一种基于Groovy的特定领域语言(DSL)来声明项目设置，目前也增加了基于Kotlin语言的kotlin-based DSL，抛弃了基于XML的各种繁琐配置</p>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>是一个开源的应用容器引擎，基于 Go 语言 并遵从 Apache2.0 协议开源。<br>Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。<br>容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低</p>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>是一个开源的使用 ANSI C 语言编写、遵守 BSD 协议、支持网络、可基于内存、分布式、可选持久性的键值对(Key-Value)存储数据库，并提供多种语言的 API。<br>Redis 通常被称为数据结构服务器，因为值（value）可以是字符串(String)、哈希(Hash)、列表(list)、集合(sets)和有序集合(sorted sets)等类型。</p>
+<h2 id="seata"><a href="#seata" class="headerlink" title="seata"></a>seata</h2><p>阿里开源的，是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/" rel="prev" title="QT实战技巧">
+      <i class="fa fa-chevron-left"></i> QT实战技巧
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/06/M_Swift229QT%E5%AE%9E%E6%88%98%E8%A1%A8%E5%8D%95%E5%86%85%E7%BB%98%E5%88%B6%E5%A4%9A%E4%B8%AA%E6%8C%89%E9%92%AE/" rel="next" title="QT实战表单绘制多个按钮">
+      QT实战表单绘制多个按钮 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring"><span class="nav-number">1.</span> <span class="nav-text">Spring</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#spring-boot"><span class="nav-number">2.</span> <span class="nav-text">spring boot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Cloud"><span class="nav-number">3.</span> <span class="nav-text">Spring Cloud</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Cloud-Alibaba"><span class="nav-number">4.</span> <span class="nav-text">Spring Cloud Alibaba</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%84%8F%E4%B9%89"><span class="nav-number">5.</span> <span class="nav-text">微服务意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nacos"><span class="nav-number">6.</span> <span class="nav-text">Nacos</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Feign"><span class="nav-number">7.</span> <span class="nav-text">Feign</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Cloud-Ribbon"><span class="nav-number">8.</span> <span class="nav-text">Spring Cloud Ribbon</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel"><span class="nav-number">9.</span> <span class="nav-text">Sentinel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%85%B3GateWay"><span class="nav-number">10.</span> <span class="nav-text">网关GateWay</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Cloud-Euraka"><span class="nav-number">11.</span> <span class="nav-text">Spring-Cloud Euraka</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZooKeeper"><span class="nav-number">12.</span> <span class="nav-text">ZooKeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cap%E5%8E%9F%E7%90%86"><span class="nav-number">13.</span> <span class="nav-text">cap原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zookeepr%E5%92%8CEureka%E5%8C%BA%E5%88%AB"><span class="nav-number">14.</span> <span class="nav-text">Zookeepr和Eureka区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Jenkins"><span class="nav-number">15.</span> <span class="nav-text">Jenkins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gradle"><span class="nav-number">16.</span> <span class="nav-text">Gradle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker"><span class="nav-number">17.</span> <span class="nav-text">Docker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis"><span class="nav-number">18.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seata"><span class="nav-number">19.</span> <span class="nav-text">seata</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">303</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

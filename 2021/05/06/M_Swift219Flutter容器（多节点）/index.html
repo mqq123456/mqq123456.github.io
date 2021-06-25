@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="ConstrainedLayoutBuilderLayoutBuilder有时我们希望根据组件的大小确认组件的外观，比如竖屏的时候上下展示，横屏的时候左右展示，通过LayoutBuilder组件可以获取父组件的约束尺寸。LayoutBuilder(  builder: (BuildContext context, BoxConstraints constraints) {    var color">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ConstrainedLayoutBuilder（多节点）">
+<meta property="og:url" content="http://example.com/2021/05/06/M_Swift219Flutter%E5%AE%B9%E5%99%A8%EF%BC%88%E5%A4%9A%E8%8A%82%E7%82%B9%EF%BC%89/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="ConstrainedLayoutBuilderLayoutBuilder有时我们希望根据组件的大小确认组件的外观，比如竖屏的时候上下展示，横屏的时候左右展示，通过LayoutBuilder组件可以获取父组件的约束尺寸。LayoutBuilder(  builder: (BuildContext context, BoxConstraints constraints) {    var color">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-06T02:12:24.267Z">
+<meta property="article:modified_time" content="2021-06-25T02:21:45.004Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/05/06/M_Swift219Flutter%E5%AE%B9%E5%99%A8%EF%BC%88%E5%A4%9A%E8%8A%82%E7%82%B9%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ConstrainedLayoutBuilder（多节点） | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift219Flutter%E5%AE%B9%E5%99%A8%EF%BC%88%E5%A4%9A%E8%8A%82%E7%82%B9%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ConstrainedLayoutBuilder（多节点）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-25 10:21:45" itemprop="dateModified" datetime="2021-06-25T10:21:45+08:00">2021-06-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="ConstrainedLayoutBuilder"><a href="#ConstrainedLayoutBuilder" class="headerlink" title="ConstrainedLayoutBuilder"></a>ConstrainedLayoutBuilder</h1><h2 id="LayoutBuilder"><a href="#LayoutBuilder" class="headerlink" title="LayoutBuilder"></a>LayoutBuilder</h2><p>有时我们希望根据组件的大小确认组件的外观，比如竖屏的时候上下展示，横屏的时候左右展示，通过LayoutBuilder组件可以获取父组件的约束尺寸。<br>LayoutBuilder(<br>  builder: (BuildContext context, BoxConstraints constraints) {<br>    var color = Colors.red;<br>    if (constraints.maxHeight &gt; 100) {<br>      color = Colors.blue;<br>    }<br>    return Container(<br>      height: 50,<br>      width: 50,<br>      color: color,<br>    );<br>  },<br>)</p>
+<h2 id="SliverLayoutBuilder"><a href="#SliverLayoutBuilder" class="headerlink" title="SliverLayoutBuilder"></a>SliverLayoutBuilder</h2><p>根据组件的约束条件提供子组件，比如当用户向下划动时，盒子显示红色，向上滑动时显示蓝色：<br>CustomScrollView(<br>  slivers: <Widget>[<br>    SliverLayoutBuilder(<br>      builder: (BuildContext context, SliverConstraints constraints) {<br>        print(‘${constraints.userScrollDirection}’);<br>        var color = Colors.red;<br>        if (constraints.userScrollDirection == ScrollDirection.forward) {<br>          color = Colors.blue;<br>        }<br>        return SliverToBoxAdapter(<br>            child: Container(<br>          height: 100,<br>          color: color,<br>        ));<br>      },<br>    ),<br>  ],<br>)</p>
+<h1 id="ListWheelViewport"><a href="#ListWheelViewport" class="headerlink" title="ListWheelViewport"></a>ListWheelViewport</h1><p>RenderObjectToWidgetAdapter<br>SliverWithKeepAliveWidget – SliverMultiBoxAdaptorWidget</p>
+<h2 id="Table"><a href="#Table" class="headerlink" title="Table"></a>Table</h2><p>Table组件是一个表格组件，适合不滑动的网格控件，尤其是如果拥有不同大小的小控件。嵌套的行和列可能会比较乱，但Table组件组件提供了一致性并为您调整子窗口的大小。<br>Table(<br>  children: [<br>    TableRow(<br>      children: [<br>        TableCell(child: Text(‘姓名’)),<br>        TableCell(child: Text(‘性别’)),<br>        TableCell(child: Text(‘年龄’)),<br>      ]</p>
+<h1 id="MultiChildRenderObjectWidget"><a href="#MultiChildRenderObjectWidget" class="headerlink" title="MultiChildRenderObjectWidget"></a>MultiChildRenderObjectWidget</h1><h2 id="CustomMultiChildLayout"><a href="#CustomMultiChildLayout" class="headerlink" title="CustomMultiChildLayout"></a>CustomMultiChildLayout</h2><p>CustomMultiChildLayout允许我们通过delegate自定义子组件的布局约束、位置以及父组件的大小（父组件大小不依赖于子组件的情况下），和CustomSingleChildLayout基本一样，区别就是CustomSingleChildLayout包裹一个子控件，而CustomMultiChildLayout包裹多个。<br>下面定义一个布局，2个控件分别位于左上角和右下角，delegate定义如下<br>enum FollowTheLeaderId { leader, follower }</p>
+<p>class FollowTheLeader extends MultiChildLayoutDelegate {<br>  @override<br>  void performLayout(Size size) {<br>  }<br>  @override<br>  bool shouldRelayout(MultiChildLayoutDelegate oldDelegate) =&gt; false;<br>}</p>
+<h2 id="Flex"><a href="#Flex" class="headerlink" title="Flex"></a>Flex</h2><h2 id="Column"><a href="#Column" class="headerlink" title="Column"></a>Column</h2><h2 id="Row"><a href="#Row" class="headerlink" title="Row"></a>Row</h2><h2 id="Flow"><a href="#Flow" class="headerlink" title="Flow"></a>Flow</h2><p>Flow的特点是可以调整子组件的位置和大小，结合Matrix4绘制出各种酷炫的效果</p>
+<h2 id="ListBody"><a href="#ListBody" class="headerlink" title="ListBody"></a>ListBody</h2><p>ListBody是一个沿着给定轴顺序排列子组件的组件，此控件不是很常用，通常使用ListView和Column和Row。</p>
+<h2 id="RichText"><a href="#RichText" class="headerlink" title="RichText"></a>RichText</h2><p>富文本，与TextSpan一起使用<br>RichText(<br>  text: TextSpan(<br>      style: DefaultTextStyle.of(context).style,<br>      children: <InlineSpan>[<br>        TextSpan(text: ‘登陆即视为同意’),<br>        TextSpan(<br>          text: ‘《xxx服务协议》’,<br>          style: TextStyle(color: Colors.red),<br>          recognizer: TapGestureRecognizer()..onTap = () {<br>          },<br>        ),<br>      ]),<br>)</p>
+<h2 id="Stack"><a href="#Stack" class="headerlink" title="Stack"></a>Stack</h2><p> Stack组件可以将子组件叠加显示，根据子组件的顺利依次向上叠加</p>
+<h2 id="IndexedStack"><a href="#IndexedStack" class="headerlink" title="IndexedStack"></a>IndexedStack</h2><p> 是Stack的子类，Stack是将所有的子组件叠加显示，而IndexedStack只显示指定的子组件</p>
+<h2 id="Wrap"><a href="#Wrap" class="headerlink" title="Wrap"></a>Wrap</h2><p> Wrap可以为子控件进行水平或者垂直方向布局，且当空间用完时，Wrap会自动换行，也是常说的流式​布局</p>
+<p>LeafRenderObjectWidget<br>ErrorWidget<br>要想Flutter的错误页面显示成自定义的页面，只要设置ErrorWidget的builder就行<br>ErrorWidget.builder = (FlutterErrorDetails flutterErrorDetails){<br>    print(flutterErrorDetails.toString());<br>    return Center(<br>        child: Text(“Flutter 走神了”),<br>    );<br>};</p>
+<h2 id="Others"><a href="#Others" class="headerlink" title="Others"></a>Others</h2><p>Viewport<br>OverflowBar<br>ShrinkWrappingViewport<br>PerformanceOverlay PlatformViewSurface RawImage Texture WidgetToRenderBoxAdapter</p>
+<p>Widget</p>
+<h1 id="StatelessWidget"><a href="#StatelessWidget" class="headerlink" title="StatelessWidget"></a>StatelessWidget</h1><p>AboutDialog 、AboutListTile  应用信息显示 基本用不到</p>
+<h2 id="Chip"><a href="#Chip" class="headerlink" title="Chip"></a>Chip</h2><p>ActionChip<br>Chip<br>ChoiceChip<br>FilterChip<br>InputChip</p>
+<p>AnimatedIcon<br>系统提供的动图<br>Autocomplete </p>
+<h2 id="Button"><a href="#Button" class="headerlink" title="Button"></a>Button</h2><p>BackButton  material风格的返回按钮，本身是一个IconButton<br>CupertinoNavigationBarBackButton  ios风格的按钮<br>CupertinoTextSelectionToolbarButton  ios风格的按钮<br>MaterialButton   material风格”凸起“的按钮<br>IconButton 一个图标按钮<br>FloatingActionButton 在底部导航栏嵌入按钮<br>TextSelectionToolbarTextButton<br>CloseButton是一个material风格的关闭按钮，本身是一个IconButton<br>ButtonBar并不是一个单独的按钮控件，而是末端对齐的容器类控件，当在水平方向上没有足够空间时候，按钮将整体垂直排列，而不是换行<br>BackButtonIcon 看名字你以为这是一个Button，其实是一个Icon，没有点击效果</p>
+<p>ToggleButtons组件将多个组件组合在一起，并让用户从中选择，类似Segment<br>CupertinoButton iOS风格button<br>DropdownButton 下拉菜单<br>DropdownMenuItem<br>PopupMenuButton 弹出菜单功能<br>RawMaterialButton是基于Semantics, Material和InkWell创建的组件，它不使用当前的系统主题和按钮主题，用于自定义按钮或者合并现有的样式</p>
+<h2 id="Dialog"><a href="#Dialog" class="headerlink" title="Dialog"></a>Dialog</h2><p>CupertinoActionSheet ios风格底部弹出的提示框<br>CupertinoActionSheetAction<br>CupertinoAlertDialog<br>CupertinoDialogAction<br>AlertDialog<br>SimpleDialog<br>SimpleDialogOption<br>DatePickerDialog<br>DateRangePickerDialog </p>
+<p> Banner在父组件的角上显示一个对角线的消息的控件，比如debug模式下，显示在App右上角的DEBUG就是此组件实现的 CheckedModeBanner</p>
+<p> Builder<br> 调用闭包以获取其子小部件的小部件<br> Builder(<br>   builder: (BuildContext context){<br>     return Container();<br>   },<br> )<br> 因为没有Builder的context表示当前整个控件的context，其上并没有NotificationListener监听，而加上Builder后，context表示Builder控件，其上有NotificationListener监听<br> Card 是material风格的卡片控件，Card有较小的圆角和阴影。Card通常用于展示一组信息，比如相册、位置信息等</p>
+<p> Checkbox是勾选框控件，本身不包含任何状态，改变状态需要通过改变value的值改变<br> CheckboxListTile  通常情况下，我们不直接使用Checkbox，而是使用CheckboxListTile，因为我们需要Checkbox后面添加说明</p>
+<p>CircleAvatar 代表用户的圆圈的控件，通常与用户的个人资料图片一起使用<br>Container是单容器类控件，即只包含一个子控件。Container可以装饰和定位子控件，例如设置背景颜色、形状等</p>
+<p>CupertinoFormRow<br>CupertinoFormSection<br>CupertinoFullscreenDialogTransition<br>CupertinoPageTransition<br>CupertinoPickerDefaultSelectionOverlay<br>CupertinoPopupSurface<br>CupertinoTabBar<br>CupertinoTextSelectionToolbar<br>CupertinoTheme </p>
+<p>DataTable </p>
+<h2 id="DayPicker"><a href="#DayPicker" class="headerlink" title="DayPicker"></a>DayPicker</h2><p>日期选择器<br>CalendarDatePicker<br>CupertinoDatePicker<br>MonthPicker<br>YearPicker</p>
+<p>Divider分割线控件<br>VerticalDivider</p>
+<p>DraggableScrollableActuator 通知子控件DraggableScrollableSheet重置其位置到初始化状态，调用DraggableScrollableActuator.reset(context)方法即可</p>
+<h2 id="Drawer"><a href="#Drawer" class="headerlink" title="Drawer"></a>Drawer</h2><p>是一个抽屉导航组件<br>DrawerHeader<br> ExcludeFocus<br> FadeInImage<br> 在加载网络图片时通常需要一张展位图，当网络图片没有加载时先显示占位图，FadeInImage可以很好的实现这个功能<br> FadeInImage(<br>   placeholder: AssetImage(‘…’),<br>   image: NetworkImage(‘…’),<br> )<br> FlutterLogo</p>
+<p>GestureDetector<br>是手势识别的组件，可以识别点击、双击、长按事件、拖动、缩放等手势<br>onTapDown：按下时回调。<br>onTapUp：抬起时回调。<br>onTap：点击事件回调。<br>onTapCancel：点击取消事件回调。</p>
+<p>GridPaper 绘制一个像素宽度的直线网格</p>
+<h2 id="GridView"><a href="#GridView" class="headerlink" title="GridView"></a>GridView</h2><p>GridTile GridView的子控件<br>GridTileBar 做为header或者footer </p>
+<p>HeroMode<br>HtmlElementView 此控件只能在Flutter Web中使用，如果想在Android和IOS中嵌入web内容请使用</p>
+<h2 id="Icon"><a href="#Icon" class="headerlink" title="Icon"></a>Icon</h2><p>ImageIcon  根据图片绘制图标，就是图片上的透明通道不绘制，而不透明的地方使用设置的颜色绘制<br>ExpandIcon 是一个旋转展开/折叠按钮的组件</p>
+<p>InkResponse<br>KeyedSubtree提供了一种简便的给子控件添加key的方法<br>ListTile ListView的子控件</p>
+<p>MaterialBanner Material 风格的标语（Banner）控件<br>ModalBarrier是一个静态蒙层控件，ModalRoute控件就是间接使用的此控件，此控件有点击属性<br>NavigationToolbar是一个布局控件，控制3个子组件<br>NotificationListener  事件监听<br>OrientationBuilder PageStorage<br>PlaceholderPlaceholder是一个占位符控件，用于当没有准备好构建组件时，可以使用Placeholder进行占位。<br>PositionedDirectional用于定位Stack子组件，PositionedDirectional必须是Stack的子组件<br>PreferredSize 此控件不对其子控件施加任何约束，并且不以任何方式影响孩子的布局<br>RadioListTile  单选框<br>ReorderableDragStartListener<br>SafeArea SafeArea通过MediaQuery检测屏幕的尺寸使应用程序的大小与屏幕适配。<br>ScrollView<br>SingleChildScrollView 当遇到内容较多时，需要滚动组件进行展示，SingleChildScrollView是一个只能包含单个组件的滚动组件，如果内容较多，建议使用ListView等<br>SliverAppBar控件可以实现页面头部区域展开、折叠的效果<br>SliverFillRemaining SliverFillViewport SliverPersistentHeader SliverSafeArea SliverVisibility</p>
+<h2 id="权重分配"><a href="#权重分配" class="headerlink" title="权重分配"></a>权重分配</h2><p>Expanded、Flexible和Spacer都是具有权重属性的组件，可以控制Row、Column、Flex的子控件如何布局的控件。<br>Spacer<br>Switch SwitchListTile<br>Tab<br>TabPageSelector 分页小圆点<br>TabPageSelectorIndicator Text TextSelectionToolbar<br>Theme<br>Theme是一个将主题应用于子组件的组件<br>Theme(<br>  data: ThemeData(<br>    primaryColor: Colors.red,<br>  ),<br>  child: Scaffold(<br>    appBar: AppBar(<br>      title: Text(‘老孟程序员’),<br>    ),<br>  ),<br>)<br>ThemeData({<br>  Brightness brightness, //深色还是浅色<br>  MaterialColor primarySwatch, //主题颜色样本，见下面介绍<br>  Color primaryColor, //主色，决定导航栏颜色<br>  Color accentColor, //次级色，决定大多数Widget的颜色，如进度条、开关等。<br>  Color cardColor, //卡片颜色<br>  Color dividerColor, //分割线颜色<br>  ButtonThemeData buttonTheme, //按钮主题<br>  Color cursorColor, //输入框光标颜色<br>  Color dialogBackgroundColor,//对话框背景颜色<br>  String fontFamily, //文字字体<br>  TextTheme textTheme,// 字体主题，包括标题、body等文字样式<br>  IconThemeData iconTheme, // Icon的默认样式<br>  TargetPlatform platform, //指定平台，应用特定平台控件风格<br>  …<br>})<br>CupertinoThemeData组件是将主题应用于IOS风格的子组件</p>
+<p>TickerMode Title </p>
+<h2 id="Box"><a href="#Box" class="headerlink" title="Box"></a>Box</h2><p>UnconstrainedBox<br>Flutter中尺寸限制类容器组件包括ConstrainedBox、UnconstrainedBox、SizedBox、AspectRatio、FractionallySizedBox、LimitedBox、Container。这些组件可以约束子组件的尺寸<br>Visibility</p>
+<h1 id="StatefulWidget"><a href="#StatefulWidget" class="headerlink" title="StatefulWidget"></a>StatefulWidget</h1><p>ActionListener Actions<br>AndroidView 与安卓交互<br>AnimatedCrossFade<br>让2个组件在切换时出现交叉渐入的效果，因此AnimatedCrossFade需要设置2个子控件、动画时间和显示第几个子控件<br>AnimatedList<br>提供了一种简单的方式使列表数据发生变化时加入过渡动画<br>AnimatedSwitcher<br>在2个或者多个子组件之间切换时使用动画<br>AnimatedWidget<br>AppBar<br>AutofillGroup AutomaticKeepAlive BackButtonListener<br>BottomAppBar<br>底部导航栏<br>BottomNavigationBar<br>底部导航栏<br>BottomSheet</p>
+<p> CupertinoActivityIndicator 进度指示器<br> CupertinoApp   iOS风格的app<br>CupertinoContextMenu类似以iOS 3D Touch，长按弹出菜单<br>CupertinoContextMenuAction</p>
+<p> CupertinoNavigationBar<br> iOS风格的导航条<br> CupertinoPageScaffold iOS风格<br> CupertinoPicker iOS风格的选择器<br> CupertinoSearchTextField<br> CupertinoSegmentedControl  iOS风格的分段选择期<br> CupertinoSlider<br> CupertinoSlidingSegmentedControl<br> CupertinoSliverNavigationBar CupertinoSliverRefreshControl CupertinoSwitch CupertinoTabScaffold CupertinoTabView CupertinoTextField CupertinoTimerPicker </p>
+<p> DefaultTabController<br> Dismissible组件可通过左滑或者右滑清除列表项<br> Draggable<br> DraggableScrollableSheet组件可以在屏幕上拖动，builder属性需要返回其子控件，可以是任何类型的子控件，一般返回一个ListView<br> DragTarget<br> DrawerController<br> DualTransitionBuilder<br> EditableText<br> ExpansionPanelList 可以展开的list<br> ExpansionTile<br> FlexibleSpaceBar 列表，顶部图片滑动淡出的效果<br> Focus FocusableActionDetector FocusTraversalGroup<br> Form FormField  表单</p>
+<p> FutureBuilder当有一个Future（异步）任务需要展示给用户时，可以使用FutureBuilder控件来完成，比如向服务器发送数据成功时显示成功提示<br> GlowingOverscrollIndicator Android平台ListView列表滑动到底部时在滑动出现的水波纹效果，此控件配合ScrollNotification使用<br> Hero 是我们常用的过渡动画，当用户点击一张图片，切换到另一个页面时，这个页面也有此图，那么使用Hero组件就在合适不过了<br> Image ImplicitlyAnimatedWidget<br> Ink 组件在用户点击时出现“水波纹”效果<br> InputDatePickerFormField InputDecorator<br> InteractiveViewer 支持缩放<br> LicensePage<br> ListWheelScrollView 和ListView同源，但它的渲染效果类似于车轮（或者滚筒），它不是在平面上滑动，而是转动车轮<br> Localizations 国际化<br> Material MaterialApp<br> MergeableMaterial展示一些MergeableMaterialItem组件，当子组件发生变化时，动画打开或者关闭，MergeableMaterial的父控件需要在主轴方向是一个没有限制的控件，比如SingleChildScrollView、Row、Column等<br>  MouseRegion NavigationRail Navigator<br>  NestedScrollView scrollView联动效果，多方向滚动<br>  Overlay弹出一个浮层，典型的应用场景就是toast<br>  PageView 图片轮播”的效果<br>  PaginatedDataTable是一个带分页功能的DataTable，生成一批数据<br>  PlatformViewLink  PopupMenuEntry ProgressIndicator<br>  Radio RangeSlider<br>  RawAutocomplete RawChip RawGestureDetector RawKeyboardListener  RawScrollbar RefreshIndicator ReorderableList ReorderableListView是通过长按拖动某一项到另一个位置来重新排序的列表组件。<br>   RestorationScope RootRestorationScope Router<br>   Scaffold ScaffoldMessenger<br>   Scrollable Scrollbar 滚动条<br>   SelectableText应用程序中的文本可以被选中，并可以复制、剪切<br>   SemanticsDebugger Shortcuts<br>   Slider滑块<br>   SliverAnimatedList SliverAppBar SliverReorderableList<br>   SnackBar 带有可选操作的轻量级消息，在屏幕底部短暂显示，SnackBar一般不单独使用，而是配合Scaffold.of(context).showSnackBar进行弹出展示 SnackBarAction<br>    StatefulBuilder提供了局部更新控件的方法，当StatefulWidget中控件树较大时，更新一个属性导致整个树重建，消耗性能，而使用StatefulBuilder能有效的提高性能<br>    StatusTransitionWidget<br>    Stepper一系列步骤进度的控件<br>    StreamBuilderBase<br>    TabBar是一排水平的标签，可以来回切换 TabBarView<br>    TextField<br>    TextSelectionGestureDetector 是一个文本选择的手势识别控件，和GestureDetector的区别是GestureDetector只能处理单击或者双击事件，而TextSelectionGestureDetector可以同时处理单击和双击事件<br>    Tooltip是一个消息提示组件，当用户点击或者长按时显示提示，在屏幕阅读器能够使它语音化<br>    UiKitView ios的桥接view<br>    UniqueWidget<br>    UserAccountsDrawerHeader用户窗体<br>    ValueListenableBuilder ValueNotifier 贯穿整个应用程序，比如用户信息，我们希望当这些数据发生变化时，应用程序任何页面的数据都更新<br>    WidgetInspector<br>    WidgetsApp 一般情况下，不会直接使用WidgetsApp，而是使用MaterialApp或者CupertinoApp<br>    WillPopScope用于处理是否离开当前页面，在Flutter中有多种方式可以离开当前页面，比如AppBar、CupertinoNavigationBar上面的返回按钮，点击将会回到前一个页面，在Android手机上点击实体（虚拟）返回按钮，也将会回到前一个页面，此功能对于iOS程序员来说可能特别容易忽略</p>
+<p>PreferredSizeWidget<br>AppBar CupertinoTabBar ObstructingPreferredSizeWidget PreferredSize TabBar</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/06/M_Swift221Flutter%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" rel="prev" title="Flutter学习总结">
+      <i class="fa fa-chevron-left"></i> Flutter学习总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/06/M_Swift220Flutter%E5%AD%A6%E4%B9%A0%E7%90%86%E8%A7%A3/" rel="next" title="Flutter理解">
+      Flutter理解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ConstrainedLayoutBuilder"><span class="nav-number">1.</span> <span class="nav-text">ConstrainedLayoutBuilder</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#LayoutBuilder"><span class="nav-number">1.1.</span> <span class="nav-text">LayoutBuilder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SliverLayoutBuilder"><span class="nav-number">1.2.</span> <span class="nav-text">SliverLayoutBuilder</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ListWheelViewport"><span class="nav-number">2.</span> <span class="nav-text">ListWheelViewport</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Table"><span class="nav-number">2.1.</span> <span class="nav-text">Table</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MultiChildRenderObjectWidget"><span class="nav-number">3.</span> <span class="nav-text">MultiChildRenderObjectWidget</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CustomMultiChildLayout"><span class="nav-number">3.1.</span> <span class="nav-text">CustomMultiChildLayout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flex"><span class="nav-number">3.2.</span> <span class="nav-text">Flex</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Column"><span class="nav-number">3.3.</span> <span class="nav-text">Column</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Row"><span class="nav-number">3.4.</span> <span class="nav-text">Row</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flow"><span class="nav-number">3.5.</span> <span class="nav-text">Flow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ListBody"><span class="nav-number">3.6.</span> <span class="nav-text">ListBody</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RichText"><span class="nav-number">3.7.</span> <span class="nav-text">RichText</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stack"><span class="nav-number">3.8.</span> <span class="nav-text">Stack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IndexedStack"><span class="nav-number">3.9.</span> <span class="nav-text">IndexedStack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Wrap"><span class="nav-number">3.10.</span> <span class="nav-text">Wrap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Others"><span class="nav-number">3.11.</span> <span class="nav-text">Others</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#StatelessWidget"><span class="nav-number">4.</span> <span class="nav-text">StatelessWidget</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Chip"><span class="nav-number">4.1.</span> <span class="nav-text">Chip</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Button"><span class="nav-number">4.2.</span> <span class="nav-text">Button</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dialog"><span class="nav-number">4.3.</span> <span class="nav-text">Dialog</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DayPicker"><span class="nav-number">4.4.</span> <span class="nav-text">DayPicker</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Drawer"><span class="nav-number">4.5.</span> <span class="nav-text">Drawer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GridView"><span class="nav-number">4.6.</span> <span class="nav-text">GridView</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Icon"><span class="nav-number">4.7.</span> <span class="nav-text">Icon</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%87%8D%E5%88%86%E9%85%8D"><span class="nav-number">4.8.</span> <span class="nav-text">权重分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Box"><span class="nav-number">4.9.</span> <span class="nav-text">Box</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#StatefulWidget"><span class="nav-number">5.</span> <span class="nav-text">StatefulWidget</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">303</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
