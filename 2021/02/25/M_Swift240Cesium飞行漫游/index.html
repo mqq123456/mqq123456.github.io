@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="window.bxmap &#x3D; window.bxmap || {};window.bxmap.FlyCesium &#x3D; {  cesiumViewer: null,  draw3DObj: null,  drawHelper: null,  isDrawFly: false, &#x2F;&#x2F;设定路线模式  drawPolyline: null, &#x2F;&#x2F;飞行绘制路线  data: [    {      id:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cesium飞行漫游">
+<meta property="og:url" content="http://example.com/2021/02/25/M_Swift240Cesium%E9%A3%9E%E8%A1%8C%E6%BC%AB%E6%B8%B8/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="window.bxmap &#x3D; window.bxmap || {};window.bxmap.FlyCesium &#x3D; {  cesiumViewer: null,  draw3DObj: null,  drawHelper: null,  isDrawFly: false, &#x2F;&#x2F;设定路线模式  drawPolyline: null, &#x2F;&#x2F;飞行绘制路线  data: [    {      id:">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-25T08:39:39.219Z">
+<meta property="article:modified_time" content="2022-03-14T13:42:47.032Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/02/25/M_Swift240Cesium%E9%A3%9E%E8%A1%8C%E6%BC%AB%E6%B8%B8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Cesium飞行漫游 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift240Cesium%E9%A3%9E%E8%A1%8C%E6%BC%AB%E6%B8%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Cesium飞行漫游
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-14 21:42:47" itemprop="dateModified" datetime="2022-03-14T21:42:47+08:00">2022-03-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>window.bxmap = window.bxmap || {};<br>window.bxmap.FlyCesium = {<br>  cesiumViewer: null,<br>  draw3DObj: null,<br>  drawHelper: null,<br>  isDrawFly: false, //设定路线模式<br>  drawPolyline: null, //飞行绘制路线<br>  data: [<br>    {<br>      id: “1”,<br>      name: “阳江闸坡”,<br>      geojson:<br>        ‘{“orientation”:{“heading”:0.07372076173362352,”pitch”:-1.5574628887292024,”roll”:0},”position”:{“x”:-2205629.231433604,”y”:5509184.64306962,”z”:2331219.615547844},”geometry”:{“type”:”LineString”,”coordinates”:[[111.8181532375421,21.57868178213224],[111.81835028960268,21.578460581633188],[111.81832383076255,21.57812489081727],[111.81847943987464,21.577930686377922],[111.81878489838651,21.57765953027421],[111.81916083936886,21.577412646930927],[111.81958489944898,21.57729241143278],[111.82004766614196,21.57718315464893],[111.8206409631356,21.577000552080584],[111.82134398589339,21.576873639989994],[111.8219423400026,21.576726154070943],[111.822467537162,21.576376210912294],[111.82307030263561,21.576058642812292],[111.8237103973151,21.5756704298083],[111.8240924390803,21.575296152837485],[111.82504071801145,21.575766169089448],[111.82603850185104,21.576124273877287],[111.82694738799758,21.576428149353344],[111.82754018969692,21.576728981595224],[111.828099605676,21.57697046673728],[111.82845968318266,21.577307788777407],[111.8287111214647,21.577998110617774],[111.82881328135024,21.578557636789135],[111.82905095574245,21.57877846306897],[111.82918966895863,21.579074053131905],[111.82928422024466,21.579329257594996],[111.82930019172734,21.579630618390876],[111.82966603969574,21.580020790142015],[111.82960868244719,21.580744679418963],[111.82989219533579,21.581251462292837],[111.83013608532544,21.582236343172],[111.83037855800974,21.58254231013029],[111.83032824715998,21.58299431932842],[111.83001717858694,21.583468817164515],[111.8299185766154,21.584290601587544],[111.82948276544901,21.58496623602712],[111.8289749235787,21.58556878427974],[111.82886305199469,21.585776309810406],[111.8287779821505,21.585946333271792],[111.82865496967007,21.586265136888645],[111.82847674720864,21.586438092096014],[111.82845974740698,21.586567373767977],[111.828355170664,21.586736247366822],[111.82830843296874,21.586863152790087],[111.82825365102633,21.58710380271154],[111.82821734971404,21.587138762444976],[111.82817916952548,21.587294814193356],[111.82787759367034,21.587314539280754],[111.82719468513524,21.587237821164194],[111.82672929414602,21.58716013804561],[111.82658494057793,21.587131014021804],[111.82652478882481,21.587094797111455],[111.82647814913857,21.58694770659332],[111.82649812273736,21.58651375697629],[111.82650209141173,21.586517166652694],[111.82650209141173,21.586517166652694]]}}’,<br>    },<br>  ], //漫游路径信息模拟数据<br>  Init: function(cesiumViewer, drawHelper) {<br>    this.cesiumViewer = cesiumViewer; //cesium对象<br>    this.drawHelper = drawHelper; //drawHelper对象<br>    this.InitEvent();<br>    //this.loadData();<br>  },<br>  InitEvent: function() {<br>    //飞行路径顶端部分的切换事件<br>    // $(“.fly3DPaths_tab li”).bind(“click”, function () {<br>    //     $(‘.fly3DPaths_tab_ul&gt;li’).each(function(index){<br>    //         $(‘.fly3DPaths_tab_ul&gt;li’).eq(index).removeClass(‘select’);<br>    //     })<br>    //     //三角形标识切换<br>    //     switch ($(this).index()) {<br>    //         case 0://预设路线<br>    //             $(‘#overFlyClick’).addClass(‘select’);<br>    //             $(“#overFlyPage”).css({ display: “block” });<br>    //             $(“#drawFlyPage”).css({ display: “none” });<br>    //             bxmap.FlyCesium.loadData();<br>    //             break;<br>    //         case 1://手动绘制<br>    //             $(‘#drawFlyCilck’).addClass(‘select’);<br>    //             $(“#overFlyPage”).css({ display: “none” });<br>    //             $(“#drawFlyPage”).css({ display: “block” });<br>    //             break;<br>    //     }<br>    // });<br>    // //开始飞行<br>    // $(“#start_Fly3DPaths”).click(function(){<br>    //     //debugger;<br>    //     if(bxmap.FlyCesium.draw3DObj){<br>    //         bxmap.FlyCesium.showFly3DPaths(bxmap.FlyCesium.draw3DObj);<br>    //     }else{<br>    //         jDialog.dialog({<br>    //             title: “提示信息”,<br>    //             modal: true,// 非模态，即不显示遮罩层<br>    //             autoClose: 1500,<br>    //             content: “漫游路线不存在”<br>    //         });<br>    //     }<br>    // });<br>    // //暂停飞行<br>    // $(“#pause_Fly3DPaths”).click(function(){<br>    //     bxmap.FlyCesium.pauseFly3DPaths();<br>    // });<br>    // //向前飞行<br>    // $(“#playForward_Fly3DPaths”).click(function(){<br>    //     bxmap.FlyCesium.playForwardFly3DPaths();<br>    // });<br>    // //向后飞行<br>    // $(“#playReverse_Fly3DPaths”).click(function(){<br>    //     bxmap.FlyCesium.playReverseFly3DPaths();<br>    // });<br>    // //退出飞行<br>    // $(“#stop_Fly3DPaths”).click(function(){<br>    //     $(“#cesiumFly3DPaths”).click();<br>    //     bxmap.FlyCesium.stopFly3DPaths();<br>    // });<br>    // //清空路线<br>    // $(“#clear_Fly3DPaths”).click(function(){<br>    //     bxmap.FlyCesium.clearFly3DPaths();<br>    // });<br>    //<br>    // //设定路线<br>    // $(“#draw_Fly3DPaths”).click(function(){<br>    //     if(!bxmap.FlyCesium.drawHelper){<br>    //         bxmap.FlyCesium.drawHelper = new this.DrawHelper(bxmap.FlyCesium.cesiumViewer);<br>    //     }<br>    //     bxmap.FlyCesium.draw3DObj = bxmap.FlyCesium.DrawFly3DPaths(bxmap.FlyCesium.drawHelper);<br>    // });<br>    // //保存路线<br>    // $(“#save_Fly3DPaths”).click(function(){<br>    //     if(bxmap.FlyCesium.draw3DObj &amp;&amp; bxmap.FlyCesium.isDrawFly){<br>    //         jDialog.dialog({<br>    //             title: ‘保存路线’,<br>    //             content: ‘<div><span>名称:</span><input type="text" id="FlyAdd_name" value="'+name+'"></div>‘,<br>    //             width: 300,<br>    //             height: 120,<br>    //             modal: true,// 非模态，即不显示遮罩层<br>    //             buttons: [<br>    //                 {<br>    //                     text: ‘确定’,<br>    //                     handler: function (button, dialog) {<br>    //                         var draw3DObj=JSON.stringify(bxmap.FlyCesium.draw3DObj); //将JSON对象转化为JSON字符<br>    //                         var TbFly={id:Math.random().toString(36).substr(2),name:$(“#FlyAdd_name”).val(),geojson:draw3DObj};<br>    //                         bxmap.FlyCesium.data.push(TbFly);<br>    //                         $(“#overFlyClick”).click();<br>    //                         dialog.close();<br>    //                         bxmap.FlyCesium.clearFly3DPaths();<br>    //<br>    //                     }<br>    //                 }, {<br>    //                     text: ‘取消’,<br>    //                     handler: function (button, dialog) {<br>    //                         dialog.close();<br>    //                     }<br>    //                 }<br>    //             ]<br>    //         });<br>    //<br>    //     }else{<br>    //         jDialog.dialog({<br>    //             title: “提示信息”,<br>    //             modal: true,// 非模态，即不显示遮罩层<br>    //             autoClose: 1500,<br>    //             content: “设定的漫游路线不存在，请绘制再保存”<br>    //         });<br>    //     }<br>    //<br>    // });<br>  },<br>  //飞行路径列表表格监听事件<br>  flyTableOnclick: function() {<br>    $(“#overFly_table td”).click(function() {<br>      var trSeq = $(this)<br>        .parent()<br>        .parent()<br>        .find(“tr”)<br>        .index($(this).parent()); //选中的哪行<br>      var geojson = $(<br>        “#overFly_table tr:gt(0):eq(“ + trSeq + “) td:eq(5)”<br>      ).text(); //获取选中行的geojson列值<br>      var name = $(“#overFly_table tr:gt(0):eq(“ + trSeq + “) td:eq(0)”).text(); //获取选中行的name列值<br>      var id = $(“#overFly_table tr:gt(0):eq(“ + trSeq + “) td:eq(4)”).text(); //获取选中行的id列值<br>      geojson = eval(“(“ + geojson + “)”);<br>      var tdSeq = $(this)<br>        .parent()<br>        .find(“td”)<br>        .index($(this)); //选中哪一列<br>      switch (tdSeq) {<br>        case 0: //名称<br>          break;<br>        case 1: //飞行<br>          bxmap.FlyCesium.draw3DObj = geojson;<br>          //bxmap.FlyCesium.cesium.showFly3DPaths(geojson);<br>          bxmap.FlyCesium.showFly3DPaths(geojson);<br>          $(“#drawFlyCilck”).click();<br>          break;<br>        case 2: //修改<br>          jDialog.dialog({<br>            title: “修改路线”,<br>            content:<br>              ‘<div><span>名称:</span><input type="text" id="Fly_name" value="' +
+              name +
+              '"></div>‘,<br>            width: 300,<br>            height: 120,<br>            modal: true, // 非模态，即不显示遮罩层<br>            buttons: [<br>              {<br>                text: “确定”,<br>                handler: function(button, dialog) {<br>                  bxmap.FlyCesium.data = bxmap.FlyCesium.modifyElement(<br>                    bxmap.FlyCesium.data,<br>                    id,<br>                    $(“#Fly_name”).val()<br>                  );<br>                  $(“#overFlyClick”).click();<br>                  dialog.close();<br>                },<br>              },<br>              {<br>                text: “取消”,<br>                handler: function(button, dialog) {<br>                  dialog.close();<br>                },<br>              },<br>            ],<br>          });<br>          break;<br>        case 3: //删除<br>          //删除<br>          jDialog.dialog({<br>            title: “删除路线”,<br>            modal: true, // 非模态，即不显示遮罩层<br>            content: “确定要删除该漫游路线?”,<br>            buttons: [<br>              {<br>                text: “确定”,<br>                handler: function(button, dialog) {<br>                  bxmap.FlyCesium.data = bxmap.FlyCesium.delElement(<br>                    bxmap.FlyCesium.data,<br>                    id<br>                  );<br>                  $(“#overFlyClick”).click();<br>                  dialog.close();<br>                },<br>              },<br>              {<br>                text: “取消”,<br>                handler: function(button, dialog) {<br>                  dialog.close();<br>                },<br>              },<br>            ],<br>          });<br>          break;<br>      }<br>    });<br>  },<br>  /**<br>     * 从数组中移除指定的元素,要是存在的话<br>     @ serviceArray筛选数组<br>     @ id移除元素id<br>     <em>/<br>  delElement: function(serviceArray, id) {<br>    var array = [];<br>    for (var i = 0; i &lt; serviceArray.length; i++) {<br>      if (serviceArray[i].id != id) {<br>        array.push(serviceArray[i]);<br>      }<br>    }<br>    return array;<br>  },<br>  /**<br>     * 从数组中修改指定的元素,要是存在的话<br>     @ serviceArray筛选数组<br>     @ id修改元素id<br>     @ name修改元素名称<br>     */<br>  modifyElement: function(serviceArray, id, name) {<br>    var array = [];<br>    for (var i = 0; i &lt; serviceArray.length; i++) {<br>      if (serviceArray[i].id == id) {<br>        serviceArray[i].name = name;<br>      }<br>      array.push(serviceArray[i]);<br>    }<br>    return array;<br>  },<br>  loadData: function() {<br>    var data = bxmap.FlyCesium.data;<br>    var html = “”;<br>    if (data.length &gt; 0) {<br>      for (var i = 0; i &lt; data.length; i++) {<br>        var flydata = data[i];<br>        html +=<br>          “<tr>“ +<br>          // ‘<td><input type="checkbox" name="FLYNAME" id="'+flydata.id+'" style="cursor: pointer;" onchange=""></td>‘+<br>          ‘<td><a style="color:#fff;text-decoration:none;font-size:12px;">‘ +<br>          flydata.name +<br>          “</a></td>“ +<br>          ‘<td><button class="btn btn-default btn-xs" style="color:#fff;">飞行</button></td>‘ +<br>          ‘<td><button class="btn btn-default btn-xs" style="color:#fff;">修改</button></td>‘ +<br>          ‘<td><button class="btn btn-default btn-xs" style="color:#fff;">删除</button></td>‘ +<br>          “<td><a style='color:black;text-decoration:none;font-size:13px;'>“ +<br>          flydata.id +<br>          “</a></td>“ +<br>          “<td><a style='color:black;text-decoration:none;font-size:13px;'>“ +<br>          flydata.geojson +<br>          “</a></td>“ +<br>          “<td><a style='color:black;text-decoration:none;font-size:13px;'>“ +<br>          flydata.position +<br>          “</a></td>“ +<br>          “<td><a style='color:black;text-decoration:none;font-size:13px;'>“ +<br>          flydata.orientation +<br>          “</a></td>“ +<br>          “</tr>“;<br>      }<br>      $(“#overFly_table tbody”).html(html);<br>      $(“#overFly_table”)<br>        .find(“td:eq(4)”)<br>        .hide(); //隐藏id字段列<br>      $(“#overFly_table”)<br>        .find(“td:eq(5)”)<br>        .hide(); //隐藏geojson字段列<br>      $(“#overFly_table”)<br>        .find(“td:eq(6)”)<br>        .hide(); //隐藏position字段列<br>      $(“#overFly_table”)<br>        .find(“td:eq(7)”)<br>        .hide(); //隐藏orientation字段列<br>      //表格—行点击事件<br>      bxmap.FlyCesium.flyTableOnclick();<br>    }<br>  },<br>  /</em>*</p>
+<ul>
+<li><p>清空漫游路径</p>
+</li>
+<li><p>@method stopFly3DPaths</p>
+</li>
+<li><p>@param</p>
+</li>
+<li><p>@return</p>
+</li>
+<li><p>/<br>clearFly3DPaths: function() {<br>this.cesiumViewer.trackedEntity = undefined;<br>bxmap.FlyCesium.isDrawFly = false;<br>bxmap.FlyCesium.draw3DObj = null;<br>this.cesiumViewer.entities.removeAll(); //清空所有模型<br>//清空绘制飞行路线<br>if (this.drawPolyline) {<br>  this.cesiumViewer.scene.primitives.remove(this.drawPolyline);<br>  this.drawPolyline = null;<br>}<br>},<br>setFlySpeed(multiplier) {<br>this.cesiumViewer.clock.multiplier = multiplier;<br>},<br>getFlySpeed() {<br>return this.cesiumViewer.clock.multiplier;<br>},<br>/**</p>
+</li>
+<li><p>飞行漫游路径</p>
+</li>
+<li><p>@method showFly3DPaths</p>
+</li>
+<li><p>@param  pathsData 飞行路径信息,格式如下:{“orientation”:{“heading”:2.411783930363565,”pitch”:-0.21097267398444197,”roll”:0.0015622392231300353},”position”: {“x”:-2206260.239730831,”y”:5510911.392077349,”z”:2331987.10863007}, “geometry”:{“type”: “LineString”, “coordinates”: [[101.80089882736969, 26.60700234866561], [101.80082205161088, 26.607156056057718]]} }</p>
+</li>
+<li><p>@param  position 飞行路径跳转位置</p>
+</li>
+<li><p>@return</p>
+</li>
+<li><p>/<br>showFly3DPaths: function(pathsData) {<br>var T = this;<br>this.clearFly3DPaths();<br>T.cesiumViewer.camera.setView({<br>  destination: pathsData.position,<br>  orientation: pathsData.orientation,<br>});<br>setTimeout(function() {<br>  executeFly3D();<br>}, 200);<br>function executeFly3D() {<br>  if (pathsData &amp;&amp; pathsData.geometry) {</p>
+<pre><code>var positionA = pathsData.geometry.coordinates;
+var position = [];
+if (positionA.length &gt; 0) &#123;
+  for (var i = 0; i &lt; positionA.length; i++) &#123;
+    var x = positionA[i][0];
+    var y = positionA[i][1];
+    position.push(&#123; x: x, y: y &#125;);
+  &#125;
+&#125; else &#123;
+  return;
+&#125;
+function computeCirclularFlight() &#123;
+  var property = new Cesium.SampledPositionProperty();
+  for (var i = 0; i &lt; position.length; i++) &#123;
+    if (i == 0) &#123;
+      var time = Cesium.JulianDate.addSeconds(
+        start,
+        i,
+        new Cesium.JulianDate()
+      );
+      //var _position = Cesium.Cartesian3.fromDegrees(position[i].x, position[i].y, 1170);
+      var _position = Cesium.Cartesian3.fromDegrees(
+        position[i].x,
+        position[i].y,
+        0
+      );
+      property.addSample(time, _position);
+    &#125;
+    if (i &lt; 10000 &amp;&amp; i &gt; 0) &#123;
+      var position_a = new Cesium.Cartesian3(
+        property._property._values[i * 3 - 3],
+        property._property._values[i * 3 - 2],
+        property._property._values[i * 3 - 1]
+      );
+      if (i &lt; 976) &#123;
+        //var _position = Cesium.Cartesian3.fromDegrees(position[i].x, position[i].y, 1170);
+        var _position = Cesium.Cartesian3.fromDegrees(
+          position[i].x,
+          position[i].y,
+          0
+        );
+      &#125; else if (i &gt; 975 &amp;&amp; i &lt; 986) &#123;
+        //var _position = Cesium.Cartesian3.fromDegrees(position[i].x, position[i].y, 1170 + 20 * (i - 980));
+        var _position = Cesium.Cartesian3.fromDegrees(
+          position[i].x,
+          position[i].y,
+          0
+        );
+      &#125; else if (i &gt; 985) &#123;
+        //var _position = Cesium.Cartesian3.fromDegrees(position[i].x, position[i].y, 1170 + 200);
+        var _position = Cesium.Cartesian3.fromDegrees(
+          position[i].x,
+          position[i].y,
+          0
+        );
+      &#125;
+
+      var positions = [
+        Cesium.Ellipsoid.WGS84.cartesianToCartographic(position_a),
+        Cesium.Ellipsoid.WGS84.cartesianToCartographic(_position),
+      ];
+      var a = new Cesium.EllipsoidGeodesic(positions[0], positions[1]);
+      var long = a.surfaceDistance;
+      var _time = long / 50;
+      var time = Cesium.JulianDate.addSeconds(
+        property._property._times[i - 1],
+        _time,
+        new Cesium.JulianDate()
+      );
+
+      property.addSample(time, _position);
+    &#125;
+  &#125;
+  return property;
+&#125;
+var start = Cesium.JulianDate.fromDate(new Date(2018, 3, 15, 16));
+var stop = Cesium.JulianDate.addSeconds(
+  start,
+  30000,
+  new Cesium.JulianDate()
+);
+
+//Make sure viewer is at the desired time.
+T.cesiumViewer.clock.startTime = start.clone();
+T.cesiumViewer.clock.stopTime = stop.clone();
+T.cesiumViewer.clock.currentTime = start.clone();
+T.cesiumViewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
+//T.cesiumViewer.clock.clockRange = Cesium.ClockRange.UNBOUNDED; //
+//T.cesiumViewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK; //
+//T.cesiumViewer.clock.multiplier = 10;//值越大，飞行越快
+T.cesiumViewer.clock.multiplier = 0.6;
+T.cesiumViewer.clock.canAnimate = false;
+T.cesiumViewer.clock.shouldAnimate = true; //设置时间轴动态效果
+
+var _position = computeCirclularFlight();
+
+T.entityFly = T.cesiumViewer.entities.add(&#123;
+  //Set the entity availability to the same interval as the simulation time.
+  availability: new Cesium.TimeIntervalCollection([
+    new Cesium.TimeInterval(&#123;
+      start: start,
+      stop: stop,
+    &#125;),
+  ]),
+  position: _position,
+  orientation: new Cesium.VelocityOrientationProperty(_position),
+  /*model: &#123;
+            uri:GLOBAL.domainResource+&quot;/systems/common-bx-gis/models/cesium/SampleData/models/CesiumAir/Cesium_Air.gltf&quot;,
+            scale: 6,
+            minimumPixelSize: 64,
+            //heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+        &#125;,*/
+  point: &#123;
+    color: Cesium.Color.RED,
+    outlineColor: Cesium.Color.WHITE,
+    outlineWidth: 2,
+    pixelSize: 15,
+  &#125;,
+  //Show the path as a pink line sampled in 1 second increments.
+  path: &#123;
+    resolution: 1,
+    material: new Cesium.PolylineGlowMaterialProperty(&#123;
+      glowPower: 0.1,
+      color: Cesium.Color.YELLOW,
+    &#125;),
+    //width: 30
+    width: 10,
+  &#125;,
+&#125;);
+T.cesiumViewer.trackedEntity = T.entityFly;
+setTimeout(function() &#123;
+  T.cesiumViewer.camera.zoomOut(500.0); //缩小地图，避免底图没有数据
+&#125;, 100);
+</code></pre>
+<p>  } else {</p>
+<pre><code>return;
+</code></pre>
+<p>  }<br>}<br>},<br>/**</p>
+</li>
+<li><p>暂停飞行漫游路径</p>
+</li>
+<li><p>@method pauseFly3DPaths</p>
+</li>
+<li><p>@return</p>
+</li>
+<li><p>/<br>pauseFly3DPaths: function() {<br>var clockViewModel = this.cesiumViewer.clockViewModel;<br>if (clockViewModel.shouldAnimate) {<br>  clockViewModel.shouldAnimate = false;<br>} else if (this.cesiumViewer.clockViewModel.canAnimate) {<br>  clockViewModel.shouldAnimate = true;<br>}<br>},<br>/**</p>
+</li>
+<li><p>向前飞行漫游路径</p>
+</li>
+<li><p>@method playForwardFly3DPaths</p>
+</li>
+<li><p>@return</p>
+</li>
+<li><p>/<br>playForwardFly3DPaths: function() {<br>var clockViewModel = this.cesiumViewer.clockViewModel;<br>var multiplier = clockViewModel.multiplier;<br>if (multiplier &lt; 0) {<br>  clockViewModel.multiplier = -multiplier;<br>}<br>clockViewModel.shouldAnimate = true;<br>},<br>/**</p>
+</li>
+<li><p>向后飞行漫游路径</p>
+</li>
+<li><p>@method playForwardFly3DPaths</p>
+</li>
+<li><p>@return</p>
+</li>
+<li><p>/<br>playReverseFly3DPaths: function() {<br>var clockViewModel = this.cesiumViewer.clockViewModel;<br>var multiplier = clockViewModel.multiplier;<br>if (multiplier &gt; 0) {<br>  clockViewModel.multiplier = -multiplier;<br>}<br>clockViewModel.shouldAnimate = true;<br>},<br>/**</p>
+</li>
+<li><p>设定飞行漫游路径</p>
+</li>
+<li><p>@method DrawFly3DPaths</p>
+</li>
+<li><p>@return</p>
+</li>
+<li><p>/<br>DrawFly3DPaths: function(drawHelper) {<br>var T = this;<br>this.clearFly3DPaths();<br>drawHelper.startDrawingPolyline({<br>  callback: function(positions) {</p>
+<pre><code>T.drawPolyline = new DrawHelper.PolylinePrimitive(&#123;
+  positions: positions,
+  width: 5,
+  type: &quot;plot&quot;,
+  geodesic: true,
+&#125;);
+T.cesiumViewer.scene.primitives.add(T.drawPolyline);
+T.drawPolyline.setEditable();
+//构造设定路线的返回信息
+var coordinates = [];
+var position = null;
+var heading = null;
+var pitch = null;
+var roll = null;
+for (var i = 0; i &lt; positions.length; i++) &#123;
+  var cartographic = Cesium.Cartographic.fromCartesian(positions[i]); //世界坐标转地理坐标（弧度）
+  var point = [
+    (cartographic.longitude / Math.PI) * 180,
+    (cartographic.latitude / Math.PI) * 180,
+  ]; //地理坐标（弧度）转经纬度坐标
+  //console.log(point);
+  coordinates.push(point);
+&#125;
+//orientation&quot;:&#123;&quot;heading&quot;:2.411783930363565,&quot;pitch&quot;:-0.21097267398444197,&quot;roll&quot;:0.0015622392231300353&#125;,&quot;position&quot;: &#123;&quot;x&quot;:-2206260.239730831,&quot;y&quot;:5510911.392077349,&quot;z&quot;:2331987.10863007&#125;,
+position = drawHelper._cameraPosition;
+heading = drawHelper._cameraHeading;
+pitch = drawHelper._cameraPitch;
+roll = drawHelper._cameraRoll;
+var pathsData = &#123;
+  orientation: &#123; heading: heading, pitch: pitch, roll: roll &#125;,
+  position: position,
+  geometry: &#123; type: &quot;LineString&quot;, coordinates: coordinates &#125;,
+&#125;;
+if (bxmap.FlyCesium) &#123;
+  bxmap.FlyCesium.draw3DObj = T.draw3DObj = pathsData;
+  bxmap.FlyCesium.isDrawFly = true;
+&#125;
+//return T.draw3DObj;
+</code></pre>
+<p>  },<br>});<br>},<br>/**</p>
+</li>
+<li><p>退出飞行漫游路径</p>
+</li>
+<li><p>@method stopFly3DPaths</p>
+</li>
+<li><p>@param</p>
+</li>
+<li><p>@return</p>
+</li>
+<li><p>/<br>stopFly3DPaths: function() {<br>var start = Cesium.JulianDate.fromDate(new Date());<br>this.cesiumViewer.clock.startTime = start.clone();<br>var stop = Cesium.JulianDate.addSeconds(<br>  start,<br>  300000000,<br>  new Cesium.JulianDate()<br>);<br>this.cesiumViewer.clock.stopTime = stop.clone();<br>//this.cesiumViewer.entities.remove(this.entityFly);<br>this.clearFly3DPaths();<br>},<br>};</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/25/M_Swift241Cesium%E5%88%86%E6%9E%90/" rel="prev" title="Cesium分析">
+      <i class="fa fa-chevron-left"></i> Cesium分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/25/M_Swift236%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/" rel="next" title="常见的汇编指令">
+      常见的汇编指令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

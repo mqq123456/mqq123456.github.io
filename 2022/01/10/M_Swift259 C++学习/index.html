@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="virtual只有在子函数中的虚函数与父函数一模一样的时候（包括限定符）才会被认为是真正的虚函数虚函数后面跟 const &#x3D; 0；表示这个函数是纯虚函数，只有接口，由它的继承类具体定义它的行为，一个类里如果包含 ＝0 的纯虚函数，那么这个类就是一个抽象类，它不能具体实例化 finalc++ 11提供了防止继承发生的方法，及在类后面跟一个关键字finnal:const final  也可指定函数，如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="c++">
+<meta property="og:url" content="http://example.com/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="virtual只有在子函数中的虚函数与父函数一模一样的时候（包括限定符）才会被认为是真正的虚函数虚函数后面跟 const &#x3D; 0；表示这个函数是纯虚函数，只有接口，由它的继承类具体定义它的行为，一个类里如果包含 ＝0 的纯虚函数，那么这个类就是一个抽象类，它不能具体实例化 finalc++ 11提供了防止继承发生的方法，及在类后面跟一个关键字finnal:const final  也可指定函数，如">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-10T08:24:01.633Z">
+<meta property="article:modified_time" content="2022-01-11T08:35:21.079Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>c++ | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          c++
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-10 16:24:01" itemprop="dateCreated datePublished" datetime="2022-01-10T16:24:01+08:00">2022-01-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-11 16:35:21" itemprop="dateModified" datetime="2022-01-11T16:35:21+08:00">2022-01-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="virtual"><a href="#virtual" class="headerlink" title="virtual"></a>virtual</h2><p>只有在子函数中的虚函数与父函数一模一样的时候（包括限定符）才会被认为是真正的虚函数<br>虚函数后面跟 const = 0；表示这个函数是纯虚函数，只有接口，由它的继承类具体定义它的行为，一个类里如果包含 ＝0 的纯虚函数，那么这个类就是一个抽象类，它不能具体实例化</p>
+<h2 id="final"><a href="#final" class="headerlink" title="final"></a>final</h2><p>c++ 11提供了防止继承发生的方法，及在类后面跟一个关键字finnal:<br>const final  也可指定函数，如果定义为final了， 则之后任何覆盖该函数的操作都将引起错误<br>override：<br>用来说明派生类中虚函数。</p>
+<h2 id="const"><a href="#const" class="headerlink" title="const"></a>const</h2><p>只有被声明为const的成员函数才能被一个const类对象调用。<br>const 修饰类成员函数，其目的是防止成员函数修改被调用对象的值</p>
+<h2 id="std-optional"><a href="#std-optional" class="headerlink" title="std::optional"></a>std::optional</h2><p>对象只是包含对象的内部内存加上一个布尔标志。因此，大小通常比包含的对象大一个字节。<br>对于某些包含的类型，甚至可能根本没有大小开销，前提是附加信息可以放在包含的对象中。<br>没有分配堆内存。对象使用与所包含类型相同的对齐方式。<br>std::nullopt_t类型的nullopt是一种没有值的对象</p>
+<h2 id="std-move"><a href="#std-move" class="headerlink" title="std::move"></a>std::move</h2><p>std::move函数可以以非常简单的方式将左值引用转换为右值引用<br>std::move是将对象的状态或者所有权从一个对象转移到另一个对象，只是转移，没有内存的搬迁或者内存拷贝所以可以提高利用效率,改善性能.。<br>对指针类型的标准库对象并不需要这么做.</p>
+<h2 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h2><p>以模板类的方式实现的。每个 shared_ptr 对象在内部指向两个内存位置：<br>1、指向对象的指针。<br>2、用于控制引用计数数据的指针。<br>工作原理：<br>1、当新的 shared_ptr 对象与指针关联时，则在其构造函数中，将与此指针关联的引用计数增加1。<br>2、当任何 shared_ptr 对象超出作用域时，则在其析构函数中，它将关联指针的引用计数减1。<br>如果引用计数变为0，则表示没有其他 shared_ptr 对象与此内存关联，在这种情况下，它使用delete函数删除该内存。</p>
+<p>创建 shared_ptr 对象<br>std::shared_ptr<int> p1(new int());<br>检查 shared_ptr 对象的引用计数<br>p1.use_count();<br>创建空的 shared_ptr 对象<br>std::shared_ptr<int> p1 = std::make_shared<int>();<br>std::make_shared 一次性为int对象和用于引用计数的数据都分配了内存，而new操作符只是为int分配了内存。<br>分离关联的原始指针<br>p1.reset();<br>p1.reset(new int(34));在这种情况下，它将在内部指向新指针，因此其引用计数将再次变为1。<br>使用nullptr重置：<br>p1 = nullptr;<br>数组，自定义删除器<br>std::shared_ptr<Sample> p3(new Sample[3], deleter);<br>// Lambda表达式作为删除器<br>std::shared_ptr<Sample> p4(new Sample[3], [](Sample * x){<br>    delete[] x;<br>});<br>shared_ptr 相对于普通指针的优缺点：<br>缺少 ++, – – 和 [] 运算符</p>
+<p>不要使用同一个原始指针构造 shared_ptr<br>int *num = new int(23);<br>std::shared_ptr<int> p1(num);<br>std::shared_ptr<int> p2(p1);  // 正确使用方法<br>std::shared_ptr<int> p3(num); // 不推荐<br>不要用栈中的指针构造 shared_ptr 对象<br>int x = 12;<br>std::shared_ptr<int> ptr(&amp;x);// 不正确<br>std::shared_ptr<int> ptr_1 = make_shared<int>(); // 正确</p>
+<h2 id="weak-ptr"><a href="#weak-ptr" class="headerlink" title="weak_ptr"></a>weak_ptr</h2><p>解决shared_ptr循环引用的问题<br>weak_ptr虽然是一个模板类，但是不能用来直接定义指向原始指针的对象。<br>weak_ptr接受shared_ptr类型的变量赋值，但是反过来是行不通的，需要使用lock函数。<br>weak_ptr设计之初就是为了服务于shared_ptr的，所以不增加引用计数就是它的核心功能。<br>由于不知道什么之后weak_ptr所指向的对象就会被析构掉，所以使用之前请先使用expired函数检测一下</p>
+<h2 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a>unique_ptr</h2><p>独享所有权<br>unique_ptr对象始终是关联的原始指针的唯一所有者。我们无法复制unique_ptr对象，它只能移动。<br>由于每个unique_ptr对象都是原始指针的唯一所有者，因此在其析构函数中它直接删除关联的指针，不需要任何参考计数。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/10/M_Swift261%20vue%E8%BE%93%E5%85%A5%E6%A1%86%E9%97%AE%E9%A2%98/" rel="prev" title="Vue中input被赋值后，无法再修改编辑的问题解决">
+      <i class="fa fa-chevron-left"></i> Vue中input被赋值后，无法再修改编辑的问题解决
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/10/M_Swift261%20%E9%9D%A2%E8%AF%95%E6%8A%80%E5%B7%A7/" rel="next" title="面试技巧">
+      面试技巧 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#virtual"><span class="nav-number">1.</span> <span class="nav-text">virtual</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final"><span class="nav-number">2.</span> <span class="nav-text">final</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#const"><span class="nav-number">3.</span> <span class="nav-text">const</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#std-optional"><span class="nav-number">4.</span> <span class="nav-text">std::optional</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#std-move"><span class="nav-number">5.</span> <span class="nav-text">std::move</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shared-ptr"><span class="nav-number">6.</span> <span class="nav-text">shared_ptr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#weak-ptr"><span class="nav-number">7.</span> <span class="nav-text">weak_ptr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unique-ptr"><span class="nav-number">8.</span> <span class="nav-text">unique_ptr</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="3.加密国密算法由国家密码局发布，包含SM1\ SM2\ SM3\ SM4\ SSF33算法;国际算法由美国的安全局发布，是现今最通用的商用算法。今天就以分组密码算法(SM4)、公钥密码算法(SM2)、摘要算法(SM3)import { sm2,sm3 } from ‘sm-crypto’  const originalData &#x3D; JSON.stringify(config.data)  con">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js国密算法和微信isc授权">
+<meta property="og:url" content="http://example.com/2021/11/21/M_Swift245js%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%BE%AE%E4%BF%A1isc%E6%8E%88%E6%9D%83/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="3.加密国密算法由国家密码局发布，包含SM1\ SM2\ SM3\ SM4\ SSF33算法;国际算法由美国的安全局发布，是现今最通用的商用算法。今天就以分组密码算法(SM4)、公钥密码算法(SM2)、摘要算法(SM3)import { sm2,sm3 } from ‘sm-crypto’  const originalData &#x3D; JSON.stringify(config.data)  con">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-21T07:34:53.807Z">
+<meta property="article:modified_time" content="2021-11-21T08:12:45.351Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/11/21/M_Swift245js%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%BE%AE%E4%BF%A1isc%E6%8E%88%E6%9D%83/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>js国密算法和微信isc授权 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift245js%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%BE%AE%E4%BF%A1isc%E6%8E%88%E6%9D%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          js国密算法和微信isc授权
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-11-21 15:34:53 / 修改时间：16:12:45" itemprop="dateCreated datePublished" datetime="2021-11-21T15:34:53+08:00">2021-11-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>3.加密<br>国密算法由国家密码局发布，包含SM1\ SM2\ SM3\ SM4\ SSF33算法;国际算法由美国的安全局发布，是现今最通用的商用算法。今天就以分组密码算法(SM4)、公钥密码算法(SM2)、摘要算法(SM3)<br>import { sm2,sm3 } from ‘sm-crypto’<br>  const originalData = JSON.stringify(config.data)<br>  const encryptedData = sm2.doEncrypt(originalData, publicKey, 1);<br>  const  sm3data = sm3(originalData);</p>
+<p>4.微信isc授权<br>    //获取微信code<br>   getWxCode(){</p>
+<pre><code>var wx_agentid = &#39;1001358&#39;;
+var sURL =&#39;https:connect/oauth2/authorize?&#39;;
+sURL+=&#39;appid=12345676543&#39;;  
+sURL+=&#39;&amp;redirect_uri=&#39;+encodeURIComponent(&#39;zipapp://local.host/index.html&#39;);
+sURL+=&#39;&amp;response_type=code&#39;;
+sURL+=&#39;&amp;scope=SCOPE&#39;;
+sURL+=&#39;&amp;state=STATE&#39;;
+sURL+=&#39;&amp;agentid=&#39;+wx_agentid;
+sURL+=&#39;#wechat_redirect&#39;;
+window.location.href = sURL; 
+alert(&quot;获取Code请求Url = &quot; + sURL);
+</code></pre>
+<p>  },<br>  getUrlCode() {<br>      var query = window.location.search.substring(1)<br>      if (query) {<br>        var vars = query.split(‘&amp;’)<br>        for (var i = 0; i &lt; vars.length; i++) {<br>          var pair = vars[i].split(‘=’)<br>          if (pair[0] == ‘code’) {<br>            return pair[1]<br>          }<br>        }<br>      }<br>      return null<br>    },<br>    async iscLogin() {<br>      var code = this.getUrlCode()<br>      if (code) {<br>        return new Promise((resolve, reject) =&gt; {<br>          var sURL =<br>            ‘http:/kkkk’<br>          var param = {<br>            CODE: code,<br>            appId: 124543,<br>          }<br>          axios({<br>            method: ‘post’,<br>            url: sURL,<br>            data: param,<br>            headers: {},<br>          })<br>            .then(function (res) {<br>              //alert(‘获取Ticket成功 = ‘ + JSON.stringify(res))<br>              if (res.data.data.ticket) {<br>                getUserInfoByTicket(res.data.data.ticket)<br>                  .then((res1) =&gt; {<br>                    if (res1.account) {<br>                      sessionStorage.setItem(‘username’, res1.account)<br>                      resolve(1)<br>                    } else {<br>                      alert(‘获取用户信息失败 = ‘ + JSON.stringify(res1))<br>                      resolve(-1)<br>                    }<br>                  })<br>                  .catch((err) =&gt; alert(err))<br>              } else {<br>                resolve(-1)<br>              }<br>            })<br>            .catch(function (err) {<br>              alert(‘获取Ticket失败 = ‘ + JSON.stringify(err))<br>              resolve(-1)<br>            })<br>        })<br>      } else {<br>        this.getWxCode()<br>        return 0<br>      }<br>    },</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/19/M_Swift264Flutter%20Dart/" rel="prev" title="Flutter Dart">
+      <i class="fa fa-chevron-left"></i> Flutter Dart
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/11/21/M_Swift244arcgis%E5%AE%9E%E8%B7%B5/" rel="next" title="Arcgis开发">
+      Arcgis开发 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

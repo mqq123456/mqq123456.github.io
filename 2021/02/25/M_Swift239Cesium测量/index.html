@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="import proj4 from “proj4”; if (typeof Cesium !&#x3D;&#x3D; ‘undefined’)    &#x2F;**  * @author zhangti  * @param viewer  &amp;#123;object&amp;#125; 三维对象  * @param options &amp;#123;object&amp;#125; 初始化参数  * @constructor  *&#x2F; Cesium.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cesium测量">
+<meta property="og:url" content="http://example.com/2021/02/25/M_Swift239Cesium%E6%B5%8B%E9%87%8F/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="import proj4 from “proj4”; if (typeof Cesium !&#x3D;&#x3D; ‘undefined’)    &#x2F;**  * @author zhangti  * @param viewer  &amp;#123;object&amp;#125; 三维对象  * @param options &amp;#123;object&amp;#125; 初始化参数  * @constructor  *&#x2F; Cesium.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-25T08:39:39.219Z">
+<meta property="article:modified_time" content="2021-09-28T07:00:43.501Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/02/25/M_Swift239Cesium%E6%B5%8B%E9%87%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Cesium测量 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift239Cesium%E6%B5%8B%E9%87%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Cesium测量
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-28 15:00:43" itemprop="dateModified" datetime="2021-09-28T15:00:43+08:00">2021-09-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>import proj4 from “proj4”;</p>
+<p>if (typeof Cesium !== ‘undefined’)<br>    /**</p>
+<pre><code> * @author zhangti
+ * @param viewer  &#123;object&#125; 三维对象
+ * @param options &#123;object&#125; 初始化参数
+ * @constructor
+ */
+Cesium.Measure = (function (Cesium) &#123;
+
+    /**
+     * 绘制对象
+     * @param viewer
+     * @param options
+     * @constructor
+     */
+    function _(viewer, options = &#123;&#125;) &#123;
+
+        if (viewer &amp;&amp; viewer instanceof Cesium.Viewer) &#123;
+
+            this._drawLayer = new Cesium.CustomDataSource(&#39;measureLayer&#39;);
+
+            viewer &amp;&amp; viewer.dataSources.add(this._drawLayer);
+
+            this._basePath = options.basePath || &#39;&#39;;
+
+            this._viewer = viewer;
+            
+            this.handler = null
+        &#125;
+    &#125;
+
+    _.prototype = &#123;
+        /***
+         * 坐标转换 84转笛卡尔
+         *
+         * @param &#123;Object&#125; &#123;lng,lat,alt&#125; 地理坐标
+         *
+         * @return &#123;Object&#125; Cartesian3 三维位置坐标
+         */
+        transformWGS84ToCartesian: function (position, alt) &#123;
+            if (this._viewer) &#123;
+                return position
+                    ? Cesium.Cartesian3.fromDegrees(
+                        position.lng || position.lon,
+                        position.lat,
+                        position.alt = alt || position.alt,
+                        Cesium.Ellipsoid.WGS84
+                    )
+                    : Cesium.Cartesian3.ZERO
+            &#125;
+        &#125;,
+        /***
+         * 坐标数组转换 笛卡尔转84
+         *
+         * @param &#123;Array&#125; WSG84Arr &#123;lng,lat,alt&#125; 地理坐标数组
+         * @param &#123;Number&#125; alt 拔高
+         * @return &#123;Array&#125; Cartesian3 三维位置坐标数组
+         */
+        transformWGS84ArrayToCartesianArray: function (WSG84Arr, alt) &#123;
+            if (this._viewer &amp;&amp; WSG84Arr) &#123;
+                var $this = this
+                return WSG84Arr
+                    ? WSG84Arr.map(function (item) &#123;
+                        return $this.transformWGS84ToCartesian(item, alt)
+                    &#125;)
+                    : []
+            &#125;
+        &#125;,
+        /***
+         * 坐标转换 笛卡尔转84
+         *
+         * @param &#123;Object&#125; Cartesian3 三维位置坐标
+         *
+         * @return &#123;Object&#125; &#123;lng,lat,alt&#125; 地理坐标
+         */
+        transformCartesianToWGS84: function (cartesian) &#123;
+            if (this._viewer &amp;&amp; cartesian) &#123;
+                var ellipsoid = Cesium.Ellipsoid.WGS84
+                var cartographic = ellipsoid.cartesianToCartographic(cartesian)
+                return &#123;
+                    lng: Cesium.Math.toDegrees(cartographic.longitude),
+                    lat: Cesium.Math.toDegrees(cartographic.latitude),
+                    alt: cartographic.height
+                &#125;
+            &#125;
+        &#125;,
+        /***
+         * 坐标数组转换 笛卡尔转86
+         *
+         * @param &#123;Array&#125; cartesianArr 三维位置坐标数组
+         *
+         * @return &#123;Array&#125; &#123;lng,lat,alt&#125; 地理坐标数组
+         */
+        transformCartesianArrayToWGS84Array: function (cartesianArr) &#123;
+            if (this._viewer) &#123;
+                var $this = this
+                return cartesianArr
+                    ? cartesianArr.map(function (item) &#123;
+                        return $this.transformCartesianToWGS84(item)
+                    &#125;)
+                    : []
+            &#125;
+        &#125;,
+        /**
+         * 84坐标转弧度坐标
+         * @param &#123;Object&#125; position wgs84
+         * @return &#123;Object&#125; Cartographic 弧度坐标
+         *
+         */
+        transformWGS84ToCartographic: function (position) &#123;
+            return position
+                ? Cesium.Cartographic.fromDegrees(
+                    position.lng || position.lon,
+                    position.lat,
+                    position.alt
+                )
+                : Cesium.Cartographic.ZERO
+        &#125;,
+        /**
+         * 拾取位置点
+         *
+         * @param &#123;Object&#125; px 屏幕坐标
+         *
+         * @return &#123;Object&#125; Cartesian3 三维坐标
+         */
+        getCatesian3FromPX: function (px) &#123;
+
+            if (this._viewer &amp;&amp; px) &#123;
+                var picks = this._viewer.scene.drillPick(px)
+                var cartesian = null;
+                var isOn3dtiles = false, isOnTerrain = false;
+                // drillPick
+                for (let i in picks) &#123;
+                    let pick = picks[i]
+
+                    if (pick &amp;&amp;
+                        pick.primitive instanceof Cesium.Cesium3DTileFeature
+                        || pick &amp;&amp; pick.primitive instanceof Cesium.Cesium3DTileset
+                        || pick &amp;&amp; pick.primitive instanceof Cesium.Model) &#123; //模型上拾取
+                        isOn3dtiles = true;
+                    &#125;
+                    // 3dtilset
+                    if (isOn3dtiles) &#123;
+                        this._viewer.scene.pick(px) // pick
+                        cartesian = this._viewer.scene.pickPosition(px);
+                        if (cartesian) &#123;
+                            let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+                            if (cartographic.height &lt; 0) cartographic.height = 0;
+                            let lon = Cesium.Math.toDegrees(cartographic.longitude)
+                                , lat = Cesium.Math.toDegrees(cartographic.latitude)
+                                , height = cartographic.height;
+                            cartesian = this.transformWGS84ToCartesian(&#123;lng: lon, lat: lat, alt: height&#125;)
+
+                        &#125;
+                    &#125;
+                &#125;
+                // 地形
+                let boolTerrain = this._viewer.terrainProvider instanceof Cesium.EllipsoidTerrainProvider;
+                // Terrain
+                if (!isOn3dtiles &amp;&amp; !boolTerrain) &#123;
+                    var ray = this._viewer.scene.camera.getPickRay(px);
+                    if (!ray) return null;
+                    cartesian = this._viewer.scene.globe.pick(ray, this._viewer.scene);
+                    isOnTerrain = true
+                &#125;
+                // 地球
+                if (!isOn3dtiles &amp;&amp; !isOnTerrain &amp;&amp; boolTerrain) &#123;
+
+                    cartesian = this._viewer.scene.camera.pickEllipsoid(px, this._viewer.scene.globe.ellipsoid);
+                &#125;
+                if (cartesian) &#123;
+                    let position = this.transformCartesianToWGS84(cartesian)
+                    if (position.alt &lt; 0) &#123;
+                        cartesian = this.transformWGS84ToCartesian(position, 0.1)
+                    &#125;
+                    return cartesian;
+                &#125;
+                return false;
+            &#125;
+
+        &#125;,
+        /**
+         * 获取84坐标的距离
+         * @param &#123;*&#125; positions
+         */
+        getPositionDistance: function (positions) &#123;
+            let distance = 0
+            for (let i = 0; i &lt; positions.length - 1; i++) &#123;
+                let point1cartographic = this.transformWGS84ToCartographic(positions[i])
+                let point2cartographic = this.transformWGS84ToCartographic(positions[i + 1])
+                let geodesic = new Cesium.EllipsoidGeodesic()
+                geodesic.setEndPoints(point1cartographic, point2cartographic)
+                let s = geodesic.surfaceDistance
+                s = Math.sqrt(
+                    Math.pow(s, 2) +
+                    Math.pow(point2cartographic.height - point1cartographic.height, 2)
+                )
+                distance = distance + s
+            &#125;
+            return distance.toFixed(3)
+        &#125;,
+        /**
+         * 计算一组坐标组成多边形的面积
+         * @param &#123;*&#125; positions
+         */
+        getPositionsArea: function (positions) &#123;
+            let result = 0
+            if (positions) &#123;
+                let h = 0
+                let ellipsoid = Cesium.Ellipsoid.WGS84
+                positions.push(positions[0])
+                for (let i = 1; i &lt; positions.length; i++) &#123;
+                    let oel = ellipsoid.cartographicToCartesian(
+                        this.transformWGS84ToCartographic(positions[i - 1])
+                    )
+                    let el = ellipsoid.cartographicToCartesian(
+                        this.transformWGS84ToCartographic(positions[i])
+                    )
+                    h += oel.x * el.y - el.x * oel.y
+                &#125;
+                result = Math.abs(h).toFixed(2)
+            &#125;
+            return result
+        &#125;,
+        /**
+         * 坐标查看
+         */
+        coordinateCheck: function (options = &#123;&#125;) &#123;
+            if (this._viewer &amp;&amp; options) &#123;
+
+                var positions = [], $this = this;
+                $this.handler = new Cesium.ScreenSpaceEventHandler(this._viewer.scene.canvas);
+                // left
+                $this.handler.setInputAction(function (movement) &#123;
+
+                    var cartesian = $this.getCatesian3FromPX(movement.position);
+                    if (cartesian &amp;&amp; cartesian.x) &#123;
+                        //if (positions.length === 0) &#123;
+                        //    positions = cartesian.clone();
+                        // &#125;
+                        // 添加量测信息点
+                        // console.log(cartesian);
+                        _addInfoPoint(cartesian)
+                        //positions.push(cartesian);
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+                // right
+                $this.handler.setInputAction(function (movement) &#123;
+                    $this.handler.destroy();
+                &#125;, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+
+
+
+                //添加坐标点
+                function _addInfoPoint(position) &#123;
+                    let wgs84Position = $this.transformCartesianToWGS84(position)
+                    var wgs84 = &#39;+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs  &#39;;
+                    var WHCGCE2000 = &#39;+proj=tmerc +lat_0=0 +lon_0=114.3333333333333 +k=1 +x_0=800000 +y_0=-3000000.0 +ellps=GRS80 +units=m +no_defs&#39;;
+                    let newposition = proj4(wgs84, WHCGCE2000, [wgs84Position.lng, wgs84Position.lat,wgs84Position.alt]);
+                    options.cb&amp;&amp;options.cb(newposition)
+                    var _labelEntity = new Cesium.Entity()
+                    _labelEntity.position = position
+                    _labelEntity.point = &#123;
+                        pixelSize: 8,
+                        outlineColor: Cesium.Color.LAWNGREEN,
+                        outlineWidth: 2
+                    &#125;
+                    _labelEntity.label = &#123;
+                        text: `$&#123;newposition[0]&#125;,$&#123;newposition[1]&#125;`,//($this.getPositionDistance($this.transformCartesianArrayToWGS84Array(positions)) / 1000).toFixed(4) + &#39;公里&#39;,
+                        show: true,
+                        showBackground: true,
+                        font: &#39;12px Helvetica&#39;,
+                        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                        pixelOffset: new Cesium.Cartesian2(-20, -30) //left top
+                    &#125;
+                    $this._drawLayer.entities.add(_labelEntity)
+                &#125;
+            &#125;
+        &#125;,
+        /**
+         * 
+         * @param &#123;*&#125; callback 
+         */
+        returnCoordinate:function(callback)&#123;
+            if (this._viewer &amp;&amp; callback) &#123;
+                var $this = this;
+                var heading,pitch;
+                $this.handler = new Cesium.ScreenSpaceEventHandler(this._viewer.scene.canvas);
+                // left
+                $this.handler.setInputAction(function (movement) &#123;
+              
+                    var cartesian = $this.getCatesian3FromPX(movement.position);
+                    let wgs84Position = $this.transformCartesianToWGS84(cartesian);
+                    var camera =  $this._viewer.scene.camera;
+                    var cartesian2 = $this._viewer.scene.pickPosition(movement.position);
+                    if (cartesian2) &#123;
+                        heading = Cesium.Math.toDegrees(camera.heading);
+                        pitch = Cesium.Math.toDegrees(camera.pitch);
+                    &#125;
+                    callback(&#123;...wgs84Position,heading,pitch&#125;);
+                &#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+            &#125;
+        &#125;,
+        /**
+         * 测距
+         * @param &#123;*&#125; options
+         */
+        drawLineMeasureGraphics: function (options = &#123;&#125;) &#123;
+           
+
+            if (this._viewer &amp;&amp; options) &#123;
+
+                console.log(&#39;测距2&#39;,this)
+
+                var positions = [], _lineEntity = new Cesium.Entity(), $this = this, lineObj;
+
+                $this.handler = new Cesium.ScreenSpaceEventHandler($this._viewer.scene.canvas);
+                // left
+                $this.handler.setInputAction(function (movement) &#123;
+
+                    var cartesian = $this.getCatesian3FromPX(movement.position);
+                    if (cartesian &amp;&amp; cartesian.x) &#123;
+                        if (positions.length == 0) &#123;
+                            positions.push(cartesian.clone());
+                        &#125;
+                        // 添加量测信息点
+                        _addInfoPoint(cartesian)
+                        positions.push(cartesian);
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+                $this.handler.setInputAction(function (movement) &#123;
+
+                    var cartesian = $this.getCatesian3FromPX(movement.endPosition);
+                    if (positions.length &gt;= 2) &#123;
+                        if (cartesian &amp;&amp; cartesian.x) &#123;
+                            positions.pop();
+                            positions.push(cartesian);
+                        &#125;
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+                // right
+                $this.handler.setInputAction(function (movement) &#123;
+
+                    $this.handler.destroy()
+                    $this.handler = null
+
+                    let cartesian = $this.getCatesian3FromPX(movement.position);
+                    _addInfoPoint(cartesian)
+
+                    if (typeof options.callback === &#39;function&#39;) &#123;
+                        options.callback($this.transformCartesianArrayToWGS84Array(positions), lineObj);
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+                _lineEntity.polyline = &#123;
+                    width: options.width || 5
+                    , material: options.material || Cesium.Color.BLUE.withAlpha(0.8)
+                    , clampToGround: options.clampToGround || false
+                &#125;
+                _lineEntity.polyline.positions = new Cesium.CallbackProperty(function () &#123;
+                    return positions
+                &#125;, false)
+                lineObj = this._drawLayer.entities.add(_lineEntity)
+
+                //添加坐标点
+                function _addInfoPoint(position) &#123;
+                    var _labelEntity = new Cesium.Entity()
+                    _labelEntity.position = position
+                    _labelEntity.point = &#123;
+                        pixelSize: 10,
+                        outlineColor: Cesium.Color.BLUE,
+                        outlineWidth: 5
+                    &#125;
+                    _labelEntity.label = &#123;
+                        text: ($this.getPositionDistance($this.transformCartesianArrayToWGS84Array(positions)) / 1000).toFixed(4) + &#39;公里&#39;,
+                        show: true,
+                        showBackground: true,
+                        font: &#39;14px monospace&#39;,
+                        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                        pixelOffset: new Cesium.Cartesian2(-20, -80) //left top
+                    &#125;
+                    $this._drawLayer.entities.add(_labelEntity)
+                &#125;
+            &#125;
+
+        &#125;,
+        /**
+         * 测面积
+         * @param &#123;*&#125; options
+         */
+        drawAreaMeasureGraphics: function (options = &#123;&#125;) &#123;
+
+            if (this._viewer &amp;&amp; options) &#123;
+
+                var positions = [], polygon = new Cesium.PolygonHierarchy(), _polygonEntity = new Cesium.Entity(),
+                    $this = this, polyObj = null, _label = &#39;&#39;;
+                $this.handler = new Cesium.ScreenSpaceEventHandler(this._viewer.scene.canvas);
+                // left
+                $this.handler.setInputAction(function (movement) &#123;
+
+                    var cartesian = $this.getCatesian3FromPX(movement.position);
+                    if (cartesian &amp;&amp; cartesian.x) &#123;
+                        if (positions.length == 0) &#123;
+                            polygon.positions.push(cartesian.clone())
+                            positions.push(cartesian.clone());
+                        &#125;
+                        positions.push(cartesian.clone());
+                        polygon.positions.push(cartesian.clone())
+
+                        if (!polyObj) create()
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+                // mouse
+                $this.handler.setInputAction(function (movement) &#123;
+
+                    var cartesian = $this.getCatesian3FromPX(movement.endPosition);
+                    // var cartesian = $this._viewer.scene.camera.pickEllipsoid(movement.endPosition, $this._viewer.scene.globe.ellipsoid);
+                    if (positions.length &gt;= 2) &#123;
+                        if (cartesian &amp;&amp; cartesian.x) &#123;
+                            positions.pop()
+                            positions.push(cartesian);
+                            polygon.positions.pop()
+                            polygon.positions.push(cartesian);
+                        &#125;
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+                // right
+                $this.handler.setInputAction(function (movement) &#123;
+                    let cartesian = $this.getCatesian3FromPX(movement.endPosition);
+
+                    $this.handler.destroy();
+
+                    positions.push(positions[0]);
+
+                    // 添加信息点
+                    _addInfoPoint(positions[0])
+                    if (typeof options.callback === &#39;function&#39;) &#123;
+
+                        options.callback($this.transformCartesianArrayToWGS84Array(positions), polyObj);
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+                function create() &#123;
+                    _polygonEntity.polyline = &#123;
+                        width: 3
+                        , material: Cesium.Color.BLUE.withAlpha(0.8)
+                        , clampToGround: options.clampToGround || false
+                    &#125;
+
+                    _polygonEntity.polyline.positions = new Cesium.CallbackProperty(function () &#123;
+                        return positions
+                    &#125;, false)
+
+                    _polygonEntity.polygon = &#123;
+
+                        hierarchy: new Cesium.CallbackProperty(function () &#123;
+                            return polygon
+                        &#125;, false),
+
+                        material: Cesium.Color.WHITE.withAlpha(0.1)
+                        , clampToGround: options.clampToGround || false
+                    &#125;
+                    polyObj = $this._drawLayer.entities.add(_polygonEntity)
+                &#125;
+
+                function _addInfoPoint(position) &#123;
+                    var _labelEntity = new Cesium.Entity()
+                    _labelEntity.position = position
+                    _labelEntity.point = &#123;
+                        pixelSize: 10,
+                        outlineColor: Cesium.Color.BLUE,
+                        outlineWidth: 5
+                    &#125;
+                    _labelEntity.label = &#123;
+                        text: ($this.getPositionsArea($this.transformCartesianArrayToWGS84Array(positions)) / 1000000.0).toFixed(4) + &#39;平方公里&#39;,
+                        show: true,
+                        showBackground: true,
+                        font: &#39;14px monospace&#39;,
+                        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                        pixelOffset: new Cesium.Cartesian2(-20, -50) //left top
+                    &#125;
+                    $this._drawLayer.entities.add(_labelEntity)
+                &#125;
+            &#125;
+
+        &#125;,
+        /**
+         * 画三角量测
+         * @param &#123;*&#125; options
+         */
+        drawTrianglesMeasureGraphics: function (options = &#123;&#125;) &#123;
+            options.style = options.style ||
+                &#123;
+                    width: 3
+                    , material: Cesium.Color.BLUE.withAlpha(0.5)
+                &#125;
+            if (this._viewer &amp;&amp; options) &#123;
+
+                var _trianglesEntity = new Cesium.Entity(), _tempLineEntity = new Cesium.Entity(),
+                    _tempLineEntity2 = new Cesium.Entity(),
+                    _positions = [], _tempPoints = [], _tempPoints2 = [], $this = this,
+                    _handler = new Cesium.ScreenSpaceEventHandler(this._viewer.scene.canvas);
+
+                // 高度
+                function _getHeading(startPosition, endPosition) &#123;
+                    if (!startPosition &amp;&amp; !endPosition) return 0
+                    if (Cesium.Cartesian3.equals(startPosition, endPosition)) return 0
+                    let cartographic = Cesium.Cartographic.fromCartesian(startPosition);
+                    let cartographic2 = Cesium.Cartographic.fromCartesian(endPosition);
+                    return (cartographic2.height - cartographic.height).toFixed(2)
+                &#125;
+
+                // 偏移点
+                function _computesHorizontalLine(positions) &#123;
+                    let cartographic = Cesium.Cartographic.fromCartesian(positions[0]);
+                    let cartographic2 = Cesium.Cartographic.fromCartesian(positions[1]);
+                    return Cesium.Cartesian3.fromDegrees(
+                        Cesium.Math.toDegrees(cartographic.longitude),
+                        Cesium.Math.toDegrees(cartographic.latitude),
+                        cartographic2.height
+                    )
+                &#125;
+
+                // left
+                _handler.setInputAction(function (movement) &#123;
+
+                    var position = $this.getCatesian3FromPX(movement.position);
+                    if (!position &amp;&amp; !position.z) return false
+                    if (_positions.length == 0) &#123;
+                        _positions.push(position.clone())
+                        _positions.push(position.clone())
+                        _tempPoints.push(position.clone())
+                        _tempPoints.push(position.clone())
+                    &#125; else &#123;
+                        _handler.destroy();
+                        if (typeof options.callback === &#39;function&#39;) &#123;
+
+                            options.callback(&#123;e: _trianglesEntity, e2: _tempLineEntity, e3: _tempLineEntity2&#125;);
+                        &#125;
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+                // mouse
+                _handler.setInputAction(function (movement) &#123;
+
+                    var position = $this.getCatesian3FromPX(movement.endPosition);
+                    if (position &amp;&amp; _positions.length &gt; 0) &#123;
+                        //直线
+                        _positions.pop()
+                        _positions.push(position.clone());
+                        let horizontalPosition = _computesHorizontalLine(_positions)
+                        //高度
+                        _tempPoints.pop()
+                        _tempPoints.push(horizontalPosition.clone())
+                        //水平线
+                        _tempPoints2.pop(), _tempPoints2.pop()
+                        _tempPoints2.push(position.clone())
+                        _tempPoints2.push(horizontalPosition.clone())
+                    &#125;
+                &#125;, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+
+                // create entity
+
+                //直线
+                _trianglesEntity.polyline = &#123;
+                    positions: new Cesium.CallbackProperty(function () &#123;
+                        return _positions
+                    &#125;, false),
+                    ...options.style
+                &#125;
+                _trianglesEntity.position = new Cesium.CallbackProperty(function () &#123;
+                    return _positions[0]
+                &#125;, false)
+                _trianglesEntity.point = &#123;
+                    pixelSize: 5,
+                    outlineColor: Cesium.Color.BLUE,
+                    outlineWidth: 5
+                &#125;
+                _trianglesEntity.label = &#123;
+                    text: new Cesium.CallbackProperty(function () &#123;
+                        return &#39;直线:&#39; + $this.getPositionDistance($this.transformCartesianArrayToWGS84Array(_positions)) + &#39;米&#39;
+                    &#125;, false),
+                    show: true,
+                    showBackground: true,
+                    font: &#39;14px monospace&#39;,
+                    horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    pixelOffset: new Cesium.Cartesian2(50, -100) //left top
+                &#125;
+                //高度
+                _tempLineEntity.polyline = &#123;
+                    positions: new Cesium.CallbackProperty(function () &#123;
+                        return _tempPoints
+                    &#125;, false),
+                    ...options.style
+                &#125;
+                _tempLineEntity.position = new Cesium.CallbackProperty(function () &#123;
+                    return _tempPoints2[1]
+                &#125;, false)
+                _tempLineEntity.point = &#123;
+                    pixelSize: 5,
+                    outlineColor: Cesium.Color.BLUE,
+                    outlineWidth: 5
+                &#125;
+                _tempLineEntity.label = &#123;
+                    text: new Cesium.CallbackProperty(function () &#123;
+                        return &#39;高度:&#39; + _getHeading(_tempPoints[0], _tempPoints[1]) + &#39;米&#39;
+                    &#125;, false),
+                    show: true,
+                    showBackground: true,
+                    font: &#39;14px monospace&#39;,
+                    horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    pixelOffset: new Cesium.Cartesian2(-20, 100) //left top
+                &#125;
+                //水平
+                _tempLineEntity2.polyline = &#123;
+                    positions: new Cesium.CallbackProperty(function () &#123;
+                        return _tempPoints2
+                    &#125;, false),
+                    ...options.style
+                &#125;
+                _tempLineEntity2.position = new Cesium.CallbackProperty(function () &#123;
+                    return _positions[1]
+                &#125;, false)
+                _tempLineEntity2.point = &#123;
+                    pixelSize: 5,
+                    outlineColor: Cesium.Color.BLUE,
+                    outlineWidth: 5
+                &#125;
+                _tempLineEntity2.label = &#123;
+                    text: new Cesium.CallbackProperty(function () &#123;
+                        return &#39;水平距离:&#39; + $this.getPositionDistance($this.transformCartesianArrayToWGS84Array(_tempPoints2)) + &#39;米&#39;
+                    &#125;, false),
+                    show: true,
+                    showBackground: true,
+                    font: &#39;14px monospace&#39;,
+                    horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    pixelOffset: new Cesium.Cartesian2(-150, -20) //left top
+                &#125;
+                this._drawLayer.entities.add(_tempLineEntity2)
+                this._drawLayer.entities.add(_tempLineEntity)
+                this._drawLayer.entities.add(_trianglesEntity)
+            &#125;
+        &#125;,
+
+        /**
+         * 测高度
+         * */
+        //****************************高度测量 第一个点的经纬度，第二个点的高度，两点水平距离为半径************************************************//
+        drawHeightMeasureGraphics: function () &#123;
+            let viewer = this._viewer;
+            let $this = this;
+            var _lineEntity = new Cesium.Entity();
+            // var handler = new Cesium.ScreenSpaceEventHandler(this._viewer.scene.canvas);
+            $this.handler = new Cesium.ScreenSpaceEventHandler(this._viewer.scene.canvas);
+            var positions = [];
+            var poly = null;
+            var tooltip = document.getElementById(&quot;toolTip&quot;);
+            var height = 0;
+            var cartesian = null;
+            tooltip.style.display = &quot;block&quot;;
+
+            $this.handler.setInputAction(function (movement) &#123;
+                tooltip.style.left = movement.endPosition.x + 3 + &quot;px&quot;;
+                tooltip.style.top = movement.endPosition.y - 25 + &quot;px&quot;;
+                tooltip.style.color = &#39;#ffffff&#39;
+                tooltip.innerHTML = &#39;&lt;p&gt;单击左键开始，单击右键结束&lt;/p&gt;&#39;;
+                cartesian = viewer.scene.pickPosition(movement.endPosition);
+                if (positions.length &gt;= 2) &#123;
+                    if (!Cesium.defined(poly)) &#123;
+                        poly = new PolyLinePrimitive(positions);
+                    &#125; else &#123;
+                        positions.pop();
+                        positions.push(cartesian);
+                    &#125;
+                    height = getHeight(positions);
+                &#125;
+            &#125;, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+            $this.handler.setInputAction(function (movement) &#123;
+                tooltip.style.display = &quot;none&quot;;
+                cartesian = viewer.scene.pickPosition(movement.position);
+                if (positions.length === 0) &#123;
+                    positions.push(cartesian.clone());
+                    positions.push(cartesian);
+                    _lineEntity.position = positions[0]
+                    _lineEntity.point = &#123;
+                        pixelSize: 5,
+                        color: Cesium.Color.RED,
+                        outlineColor: Cesium.Color.WHITE,
+                        outlineWidth: 2,
+                        heightReference: Cesium.HeightReference.none
+                    &#125;
+                    _lineEntity.label = &#123;
+                        text: &#39;0米&#39;,
+                        font: &#39;18px sans-serif&#39;,
+                        fillColor: Cesium.Color.GOLD,
+                        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                        outlineWidth: 2,
+                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                        pixelOffset: new Cesium.Cartesian2(20, -20)
+                    &#125;
+                    $this._drawLayer.entities.add(_lineEntity)
+                &#125;
+
+            &#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+            $this.handler.setInputAction(function (movement) &#123;
+                $this.handler.destroy();
+                //positions.pop();//清除移动点
+                tooltip.style.display = &quot;none&quot;;
+                //viewer_g.entities.remove(floatingPoint);
+                // console.log(positions);
+                //在三维场景中添加Label
+
+                var textDisance = height + &quot;米&quot;;
+
+                var point1cartographic = Cesium.Cartographic.fromCartesian(positions[0]);
+                var point2cartographic = Cesium.Cartographic.fromCartesian(positions[1]);
+                var point_temp = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(point1cartographic.longitude), Cesium.Math.toDegrees(point1cartographic.latitude), point2cartographic.height);
+                _lineEntity.position = point_temp//positions[1]
+                _lineEntity.point = &#123;
+                    pixelSize: 5,
+                    color: Cesium.Color.RED,
+                    outlineColor: Cesium.Color.WHITE,
+                    outlineWidth: 2,
+                    heightReference: Cesium.HeightReference.none
+                &#125;
+                _lineEntity.label = &#123;
+                    text: textDisance,
+                    font: &#39;18px sans-serif&#39;,
+                    fillColor: Cesium.Color.GOLD,
+                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    outlineWidth: 2,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    pixelOffset: new Cesium.Cartesian2(20, -20)
+                &#125;
+                $this._drawLayer.entities.add(_lineEntity)
+            &#125;, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+            function getHeight(_positions) &#123;
+                var cartographic = Cesium.Cartographic.fromCartesian(_positions[0]);
+                var cartographic1 = Cesium.Cartographic.fromCartesian(_positions[1]);
+                var height_temp = cartographic1.height - cartographic.height;
+                return height_temp.toFixed(2);
+            &#125;
+
+            var PolyLinePrimitive = (function () &#123;
+                function _(positions) &#123;
+                    this.options = &#123;
+                        name: &#39;直线&#39;,
+                        polyline: &#123;
+                            show: true,
+                            positions: [],
+                            material: Cesium.Color.AQUA,
+                            width: 2
+                        &#125;,
+                        ellipse: &#123;
+                            show: true,
+                            // semiMinorAxis : 30.0,
+                            // semiMajorAxis : 30.0,
+                            // height: 20.0,
+                            material: Cesium.Color.GREEN.withAlpha(0.5),
+                            outline: true // height must be set for outline to display
+                        &#125;
+                    &#125;;
+                    this.positions = positions;
+                    this._init();
+                &#125;
+
+                _.prototype._init = function () &#123;
+                    var _self = this;
+                    var _update = function () &#123;
+                        var temp_position = [];
+                        temp_position.push(_self.positions[0]);
+                        var point1cartographic = Cesium.Cartographic.fromCartesian(_self.positions[0]);
+                        var point2cartographic = Cesium.Cartographic.fromCartesian(_self.positions[1]);
+                        var point_temp = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(point1cartographic.longitude), Cesium.Math.toDegrees(point1cartographic.latitude), point2cartographic.height);
+                        temp_position.push(point_temp);
+                        console.log(temp_position);
+                        return temp_position;
+                    &#125;;
+                    var _update_ellipse = function () &#123;
+                        return _self.positions[0];
+                    &#125;;
+                    var _semiMinorAxis = function () &#123;
+                        var point1cartographic = Cesium.Cartographic.fromCartesian(_self.positions[0]);
+                        var point2cartographic = Cesium.Cartographic.fromCartesian(_self.positions[1]);
+                        /**根据经纬度计算出距离**/
+                        var geodesic = new Cesium.EllipsoidGeodesic();
+                        geodesic.setEndPoints(point1cartographic, point2cartographic);
+                        var s = geodesic.surfaceDistance;
+                        return s;
+                    &#125;;
+                    var _height = function () &#123;
+                        var height_temp = getHeight(_self.positions);
+                        return height_temp;
+                    &#125;;
+                    //实时更新polyline.positions
+                    this.options.polyline.positions = new Cesium.CallbackProperty(_update, false);
+                    this.options.position = new Cesium.CallbackProperty(_update_ellipse, false);
+                    this.options.ellipse.semiMinorAxis = new Cesium.CallbackProperty(_semiMinorAxis, false);
+                    this.options.ellipse.semiMajorAxis = new Cesium.CallbackProperty(_semiMinorAxis, false);
+                    this.options.ellipse.height = new Cesium.CallbackProperty(_height, false);
+                    $this._drawLayer.entities.add(this.options);
+                &#125;;
+
+                return _;
+            &#125;)();
+        &#125;,
+        /**
+         * 清除测量
+         * @param &#123;*&#125;
+         */
+        clear: function () &#123;
+            this._drawLayer.entities.removeAll()
+        &#125;,
+        moveHandle:function()&#123;
+            if(this._handlers)&#123;
+                this._handlers.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+                this._handlers = null
+            &#125;  
+        &#125;
+    &#125;
+    return _
+&#125;)(Cesium);
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/25/M_Swift236%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/" rel="prev" title="常见的汇编指令">
+      <i class="fa fa-chevron-left"></i> 常见的汇编指令
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/25/M_Swift238Cesium%E5%88%9B%E5%BB%BA/" rel="next" title="Cesium创建">
+      Cesium创建 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

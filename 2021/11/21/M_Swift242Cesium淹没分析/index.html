@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="功能描述：    计算绘制多边形的最高点，最低点、平均高度等，    定时器设置多边形extrudedHeight高度，动态实现淹没效果class SubmergeAnalysis {  constructor(option) {    this._viewer &#x3D; option.viewer;    this.eventBus &#x3D; {};    this.setTime &#x3D; null;    t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cesium淹没分析">
+<meta property="og:url" content="http://example.com/2021/11/21/M_Swift242Cesium%E6%B7%B9%E6%B2%A1%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="功能描述：    计算绘制多边形的最高点，最低点、平均高度等，    定时器设置多边形extrudedHeight高度，动态实现淹没效果class SubmergeAnalysis {  constructor(option) {    this._viewer &#x3D; option.viewer;    this.eventBus &#x3D; {};    this.setTime &#x3D; null;    t">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-21T07:34:53.807Z">
+<meta property="article:modified_time" content="2021-11-21T08:17:25.458Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/11/21/M_Swift242Cesium%E6%B7%B9%E6%B2%A1%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Cesium淹没分析 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift242Cesium%E6%B7%B9%E6%B2%A1%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Cesium淹没分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-11-21 15:34:53 / 修改时间：16:17:25" itemprop="dateCreated datePublished" datetime="2021-11-21T15:34:53+08:00">2021-11-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>功能描述：<br>    计算绘制多边形的最高点，最低点、平均高度等，<br>    定时器设置多边形extrudedHeight高度，动态实现淹没效果<br>class SubmergeAnalysis {<br>  constructor(option) {<br>    this._viewer = option.viewer;<br>    this.eventBus = {};<br>    this.setTime = null;<br>    this._extrudedHeight = 1;<br>    this.minHeight = option.minHeight ?option.minHeight : 1;<br>    this.maxHeight = option.maxHeight ? option.maxHeight : 1500;<br>    this.currentMinHeight = 0;<br>    this.currentMaxHeight = 800;<br>    this.speed = option.speed ? option.speed : 1;<br>    this.activeShapePoints = [];<br>    this.activeShape = null;<br>    this.floatingPoint = null;<br>    this.drawingMode = “polygon”; //多边形<br>    this.timer = null;<br>    this.tempPoints = [];<br>    this.area = 0;<br>    this.volue = 0;<br>    this.handler = null<br>    this.boarder = null<br>    this.totalTime = null;<br>    this.heightData = [];<br>  }<br>  getCurrentMaxHeight() {<br>    return this.currentMaxHeight;<br>  }<br>  getCurrentMinHeight() {<br>    return this.currentMinHeight;<br>  }<br>  setMinHeight(minHeight) {<br>    this.minHeight = minHeight;<br>  }<br>  setMaxHeight(maxHeight) {<br>    this.maxHeight = maxHeight;<br>  }<br>  setSpeed(speed) {<br>    this.speed = speed;<br>  }<br>  setTotalTime(time) {<br>    this.totalTime = time;<br>  }<br>  //计算面积<br>  getArea(points) {</p>
+<pre><code>var res = 0;
+var that = this
+
+//拆分三角曲面
+
+for (var i = 0; i &lt; points.length - 2; i++) &#123;
+  var j = (i + 1) % points.length;
+
+  var k = (i + 2) % points.length;
+
+  var totalAngle = that.Angle(points[i], points[j], points[k]);
+
+  var dis_temp1 = that.distance(positions[i], positions[j]);
+
+  var dis_temp2 = that.distance(positions[j], positions[k]);
+
+  res += dis_temp1 * dis_temp2 * Math.abs(Math.sin(totalAngle));
+&#125;
+
+return (res / 1000000.0).toFixed(4);
+</code></pre>
+<p>  }<br>  /<em>角度</em>/<br>  Angle(p1, p2, p3) {</p>
+<pre><code>var that = this
+
+var bearing21 = that.Bearing(p2, p1);
+
+var bearing23 = that.Bearing(p2, p3);
+
+var angle = bearing21 - bearing23;
+
+if (angle &lt; 0) &#123;
+  angle += 360;
+&#125;
+
+return angle;
+</code></pre>
+<p>  }<br>  /<em>方向</em>/<br>  Bearing(from, to) {</p>
+<pre><code>    var radiansPerDegree = Math.PI / 180.0;//角度转化为弧度(rad)
+
+    var degreesPerRadian = 180.0 / Math.PI;//弧度转化为角度
+    
+    var lat1 = from.lat * radiansPerDegree;
+    
+    var lon1 = from.lon * radiansPerDegree;
+    
+    var lat2 = to.lat * radiansPerDegree;
+    
+    var lon2 = to.lon * radiansPerDegree;
+    
+    var angle = -Math.atan2(Math.sin(lon1 - lon2) * Math.cos(lat2), Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));
+    
+    if (angle &lt; 0) &#123;
+        angle += Math.PI * 2.0;
+    &#125;
+
+        angle = angle * degreesPerRadian;//角度
+
+    return angle;
+</code></pre>
+<p>  }</p>
+<p>  distance(point1, point2) {</p>
+<pre><code>var point1cartographic = Cesium.Cartographic.fromCartesian(point1);
+
+var point2cartographic = Cesium.Cartographic.fromCartesian(point2);
+
+/**根据经纬度计算出距离**/
+
+var geodesic = new Cesium.EllipsoidGeodesic();
+
+geodesic.setEndPoints(point1cartographic, point2cartographic);
+
+var s = geodesic.surfaceDistance;
+
+//返回两点之间的距离
+
+s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2));
+
+return s;
+</code></pre>
+<p>  }</p>
+<p>  //计算体积<br>  getVolume() {}</p>
+<p>  //开始分析<br>  start() {<br>    if (this.maxHeight == 1500) {<br>      this.maxHeight == this.currentMaxHeight;<br>    }<br>    var that = this;<br>    if (this.totalTime) {<br>      this.speed = this.totalTime / (this.maxHeight - this.minHeight);<br>    }<br>    this.timer = setInterval(() =&gt; {<br>      that._extrudedHeight += that.speed / 100;<br>      if (that._extrudedHeight &gt; that.maxHeight) {<br>        that._extrudedHeight = that.maxHeight;<br>        clearInterval(that.timer);<br>      }<br>      let len = that.heightData.length;<br>      var submergeArea = 0;<br>      if (len &gt; 0) {<br>        var count = 0;<br>        for (var i = 0; i &lt; len; i++) {<br>          if (that._extrudedHeight &gt; that.heightData[i]) {<br>            count += 1;<br>          }<br>        }<br>        submergeArea = count / len * that.area;<br>      }</p>
+<pre><code>  that.$emit(&quot;observe&quot;, &#123;
+    extrudedHeight: that._extrudedHeight,
+    maxHeight: that.maxHeight,
+    minHeight: that.minHeight,
+    speed: that.speed,
+    submergeArea:submergeArea
+  &#125;);
+&#125;, 10);
+</code></pre>
+<p>  }<br>  //暂停<br>  pause() {<br>    clearInterval(this.timer);<br>  }<br>  //清除<br>  clear() {<br>    this._viewer.entities.remove(this.boarder); //去除动态点图形（当前鼠标点）<br>    this.boarder = undefined;<br>    this._viewer.entities.remove(this.floatingPoint); //去除动态点图形（当前鼠标点）</p>
+<pre><code>this._viewer.entities.remove(this.activeShape); //去除动态图形
+
+this.floatingPoint = undefined;
+
+this.activeShape = undefined;
+
+this.activeShapePoints = [];
+
+clearInterval(this.timer);
+
+this._extrudedHeight = 1;
+
+this.speed = 1;
+
+this._viewer.entities.removeAll();
+
+this.eventBus = &#123;&#125;;
+</code></pre>
+<p>  }<br>  //绑定事件<br>  _bindEvent() {<br>    let that = this;</p>
+<pre><code>that.handler = new Cesium.ScreenSpaceEventHandler(that._viewer.canvas);
+
+//双击鼠标左键清除默认事件
+that._viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
+  Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
+);
+
+that.handler.setInputAction(function(event) &#123;
+  // We use `viewer.scene.pickPosition` here instead of `viewer.camera.pickEllipsoid` so that
+  // we get the correct point when mousing over terrain.
+  // scene.pickPosition只有在开启地形深度检测，且不使用默认地形时是准确的。
+  var earthPosition = that._viewer.scene.pickPosition(event.position);
+
+
+  // `earthPosition` will be undefined if our mouse is not over the globe.
+  if (Cesium.defined(earthPosition)) &#123;
+    if (that.activeShapePoints.length === 0) &#123;
+      that.floatingPoint = that.createPoint(earthPosition);
+      that.activeShapePoints.push(earthPosition);
+      var dynamicPositions = new Cesium.CallbackProperty(function() &#123;
+        if (that.drawingMode === &quot;polygon&quot;) &#123;
+          return new Cesium.PolygonHierarchy(that.activeShapePoints);
+        &#125;
+        return that.activeShapePoints;
+      &#125;, false);
+      that.activeShape = that.drawShape(dynamicPositions); //绘制动态图
+    &#125;
+    that.activeShapePoints.push(earthPosition);
+
+    that.createPoint(earthPosition);
+
+    let len = that.activeShapePoints.length
+
+    var cartographic = Cesium.Cartographic.fromCartesian(that.activeShapePoints[len - 1]);
+
+    var longitudeString = Cesium.Math.toDegrees(cartographic.longitude);
+
+    var latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
+
+    var heightString = cartographic.height;
+
+    that.tempPoints.push(&#123; lon: longitudeString, lat: latitudeString, hei: heightString &#125;);
+    if (len &gt; 1) &#123;
+      if (!that.boarder) &#123;
+        that.boarder = that._viewer.entities.add(&#123;
+          polyline: &#123;
+            positions: that.activeShapePoints,
+            clampToGround: true,
+            width: 2,
+            material :new Cesium.PolylineOutlineMaterialProperty(&#123;
+              color:new Cesium.Color.fromBytes(0, 191, 255, 100),
+              outlineWidth: 2,
+              outlineColor: new Cesium.Color.fromBytes(0, 191, 255, 100),
+            &#125;)
+          &#125;,
+        &#125;);
+      &#125;else&#123;
+        that.boarder.polyline.positions = that.activeShapePoints;
+      &#125;
+    &#125;
+    
+  &#125;
+&#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+//鼠标移动
+that.handler.setInputAction(function(event) &#123;
+  if (Cesium.defined(that.floatingPoint)) &#123;
+    var newPosition = that._viewer.scene.pickPosition(event.endPosition);
+    if (Cesium.defined(newPosition)) &#123;
+      that.floatingPoint.position.setValue(newPosition);
+      that.activeShapePoints.pop();
+      that.activeShapePoints.push(newPosition);
+    &#125;
+  &#125;
+&#125;, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+that.handler.setInputAction(function(event) &#123;
+  let newArr = [];
+  if(that.activeShapePoints.length &gt; 0)&#123;
+    that.activeShapePoints.forEach(item=&gt;&#123;
+      var cartographic=Cesium.Cartographic.fromCartesian(item);
+      newArr.push(cartographic)
+    &#125;)
+  &#125;
+
+
+  //计算淹没面积
+  // that.area = that.getArea(that.tempPoints) || 0;
+
+  var promise = Cesium.sampleTerrainMostDetailed(that._viewer.terrainProvider, newArr);
+  Cesium.when(promise, function(updatedPositions) &#123;
+      // positions[0].height and positions[1].height have been updated.
+      // updatedPositions is just a reference to positions.
+      let heightArr = updatedPositions.map(item=&gt; item.height);
+      // console.log(&#39;heightArr&#39;,heightArr);
+    that.currentMaxHeight = Math.ceil(Math.max(...heightArr) + 20 + Math.ceil(Math.random() * 50));
+    that.currentMinHeight = Math.ceil(Math.min(...heightArr) + 20 + Math.ceil(Math.random() * 50));
+    //console.log(&#39;that.currentMaxHeight&#39;, that.currentMaxHeight);
+  &#125;);
+
+  that.terminateShape();     
+&#125;, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+</code></pre>
+<p>  }<br>  //绘制点<br>  createPoint(worldPosition) {<br>    var point = this._viewer.entities.add({<br>      position: worldPosition,<br>      point: {<br>        color: Cesium.Color.GREENYELLOW,<br>        pixelSize: 9,<br>        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,<br>      },<br>    });<br>    return point;<br>  }<br>  //绘制图形<br>  drawShape(positionData) {<br>    var that = this;<br>    var shape;<br>    if (that.drawingMode === “line”) {<br>      shape = that._viewer.entities.add({<br>        polyline: {<br>          positions: positionData,<br>          clampToGround: true,<br>          width: 3,<br>        },<br>      });<br>    } else if (that.drawingMode === “polygon”) {<br>      shape = that._viewer.entities.add({<br>        polygon: {<br>          hierarchy: positionData,<br>          perPositionHeight: false,<br>          extrudedHeight: new Cesium.CallbackProperty(function() {<br>            return that._extrudedHeight;<br>          }, false),<br>          //new Cesium.Color.fromBytes(0,191,255,100),<br>          //new Cesium.ColorMaterialProperty(Cesium.Color.AQUA.withAlpha(0.3))<br>          material: new Cesium.Color.fromBytes(0, 191, 255, 100),<br>        },<br>      });<br>    } else if (that.drawingMode === “circle”) {<br>      //当positionData为数组时绘制最终图，如果为function则绘制动态图<br>      var value =<br>        typeof positionData.getValue === “function”<br>          ? positionData.getValue(0)<br>          : positionData;<br>      //var start = activeShapePoints[0];<br>      //var end = activeShapePoints[activeShapePoints.length - 1];<br>      //var r = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2));<br>      //r = r ? r : r + 1;<br>      shape = that._viewer.entities.add({<br>        position: that.activeShapePoints[0],<br>        name: “Blue translucent, rotated, and extruded ellipse with outline”,<br>        type: “Selection tool”,<br>        ellipse: {<br>          semiMinorAxis: new Cesium.CallbackProperty(function() {<br>            //半径 两点间距离<br>            var r = Math.sqrt(<br>              Math.pow(value[0].x - value[value.length - 1].x, 2) +<br>                Math.pow(value[0].y - value[value.length - 1].y, 2)<br>            );<br>            return r ? r : r + 1;<br>          }, false),<br>          semiMajorAxis: new Cesium.CallbackProperty(function() {<br>            var r = Math.sqrt(<br>              Math.pow(value[0].x - value[value.length - 1].x, 2) +<br>                Math.pow(value[0].y - value[value.length - 1].y, 2)<br>            );<br>            return r ? r : r + 1;<br>          }, false),<br>          material: Cesium.Color.BLUE.withAlpha(0.5),<br>          outline: true,<br>        },<br>      });<br>    } else if (that.drawingMode === “rectangle”) {<br>      //当positionData为数组时绘制最终图，如果为function则绘制动态图<br>      var arr =<br>        typeof positionData.getValue === “function”<br>          ? positionData.getValue(0)<br>          : positionData;<br>      shape = that._viewer.entities.add({<br>        name: “Blue translucent, rotated, and extruded ellipse with outline”,<br>        rectangle: {<br>          coordinates: new Cesium.CallbackProperty(function() {<br>            var obj = Cesium.Rectangle.fromCartesianArray(arr);<br>            //if(obj.west==obj.east){ obj.east+=0.000001};<br>            //if(obj.south==obj.north){obj.north+=0.000001};<br>            return obj;<br>          }, false),<br>          material: Cesium.Color.RED.withAlpha(0.5),<br>        },<br>      });<br>    }<br>    return shape;<br>  }<br>  terminateShape() {<br>    this.activeShapePoints.pop(); //去除最后一个动态点</p>
+<pre><code>this.computePolygonHeightRange(this.activeShapePoints);
+this.area = this.computeSignedArea(this.activeShapePoints);
+if (this.activeShapePoints.length) &#123;
+  this.drawShape(this.activeShapePoints); //绘制最终图
+
+  var tmp = this.activeShapePoints;
+  tmp.push(this.activeShapePoints[0]);
+  // console.log(tmp);
+  this.boarder.polyline.positions = tmp;
+&#125;
+
+this._viewer.entities.remove(this.floatingPoint); //去除动态点图形（当前鼠标点）
+
+//this._viewer.entities.remove(this.activeShape); //去除动态图形
+
+this.floatingPoint = undefined;
+
+//this.activeShape = undefined;
+
+this.activeShapePoints = [];
+</code></pre>
+<p>  }<br>  computePolygonHeightRange(e) {<br>    var t = []<br>    for (var i = 0; i &lt; e.length; i++) t.push(e[i].clone());<br>    var a, n, r, o, s, u, l, h = 0,<br>        g = 9999,<br>        c = Math.PI / Math.pow(2, 11) / 64,<br>        m = new Cesium.PolygonGeometry.fromPositions({<br>            positions: t,<br>            vertexFormat: Cesium.PerInstanceColorAppearance.FLAT_VERTEX_FORMAT,<br>            granularity: c<br>        }),</p>
+<pre><code>  d = new Cesium.PolygonGeometry.createGeometry(m);
+var sum = [];
+for (i = 0; i &lt; d.indices.length; i += 3) a = d.indices[i],
+    n = d.indices[i + 1],
+    r = d.indices[i + 2],
+    l = new Cesium.Cartesian3(d.attributes.position.values[3 * a], d.attributes.position.values[3 * a + 1], d.attributes.position.values[3 * a + 2]),
+    (o = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = o),
+    h &lt; o &amp;&amp; (h = o),
+    l = new Cesium.Cartesian3(d.attributes.position.values[3 * n], d.attributes.position.values[3 * n + 1], d.attributes.position.values[3 * n + 2]),
+    (s = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = s),
+    h &lt; s &amp;&amp; (h = s),
+    l = new Cesium.Cartesian3(d.attributes.position.values[3 * r], d.attributes.position.values[3 * r + 1], d.attributes.position.values[3 * r + 2]),
+    (u = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = u),
+  h &lt; u &amp;&amp; (h = u),
+  sum.push(Math.max(Math.max(o,s),u));
+this.currentMaxHeight = h;
+this.currentMinHeight = g;
+this.maxHeight = h;
+this.minHeight = g;
+this._extrudedHeight = g;
+this.heightData = sum;
+this.$emit(&quot;height&quot;, &#123;
+  maxHeight: this.maxHeight,
+  minHeight: this.minHeight,
+  speed: this.speed,
+&#125;);
+</code></pre>
+<p>  }<br>  computeSignedArea(tmppath) {<br>    var path = [];<br>    for (var i = 0; i &lt; tmppath.length; i++) {<br>      var cartographic = Cesium.Cartographic.fromCartesian(tmppath[i]);<br>      var longitude = Cesium.Math.toDegrees(cartographic.longitude);<br>      var latitude = Cesium.Math.toDegrees(cartographic.latitude);<br>      path.push({lng:longitude,lat:latitude });<br>    }<br>      let radius= 6371009<br>      let len = path.length;<br>      if (len &lt; 3) return 0;<br>      let total = 0;<br>      let  prev = path[len - 1];<br>      let prevTanLat = Math.tan(((Math.PI / 2 - prev.lat/180*Math.PI) / 2));<br>      let prevLng = (prev.lng)/180*Math.PI;<br>      for (let i in path) {<br>          let tanLat = Math.tan((Math.PI / 2 -<br>              (path[i].lat)/180*Math.PI) / 2);<br>          let lng = (path[i].lng)/180*Math.PI;<br>          total += this.polarTriangleArea(tanLat, lng, prevTanLat, prevLng);<br>          prevTanLat = tanLat;<br>          prevLng = lng;<br>      }<br>      return Math.abs(total * (radius * radius)) / 1000;<br>  }<br>   polarTriangleArea(tan1,lng1,tan2,lng2) {<br>          let deltaLng = lng1 - lng2;<br>          let t = tan1 * tan2;<br>          return 2 * Math.atan2(t * Math.sin(deltaLng), 1 + t * Math.cos(deltaLng));<br>  }<br>  $on(event, cb) {<br>    if (!this.eventBus[event]) {<br>      this.eventBus[event] = new Set();<br>    }<br>    this.eventBus[event].add(cb);<br>  }<br>  $emit(event, …args) {<br>    if (this.eventBus[event]) {<br>      Array.from(this.eventBus[event]).forEach((handle) =&gt; {<br>        handle.call(this, args);<br>      });<br>    }<br>  }<br>  $off(event, cb) {<br>    if (this.eventBus[event]) {<br>      this.eventBus[event].delete(cb);<br>    }<br>  }<br>}</p>
+<p>export default SubmergeAnalysis;</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/11/21/M_Swift243mapbox%E5%AE%9E%E8%B7%B5/" rel="prev" title="mapbox实践">
+      <i class="fa fa-chevron-left"></i> mapbox实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/10/M_Swift263%20C++Impl/" rel="next" title="C++ impl">
+      C++ impl <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift250mapbox-3dtile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/" class="post-title-link" itemprop="url">开发杂谈</a>
+            <a href="/2021/06/28/M_Swift250mapbox-3dtile/" class="post-title-link" itemprop="url">mapbox-3dtile</a>
         </h2>
 
         <div class="post-meta">
@@ -171,10 +171,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:49" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:30:55" itemprop="dateModified" datetime="2021-11-21T16:30:55+08:00">2021-11-21</time>
+              </span>
 
           
 
@@ -187,623 +193,650 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>iOS路由实现原理：基于url，基于反射<br>Category+NSInvocation 方案的优点是便捷，因为 Category 的专用接口放在平台库，以后有除了 BKit 以外的其他调用方也可以直接调用，还有更多强大的功能。<br>组件之间的依赖除了显式的依赖，还存在很多隐式依赖，代码层面，除了普通的接口依赖，还有宏依赖、枚举依赖、全局变量依赖以及内联函数等的依赖。单仓 lint 进行编译链接完备性检查并不能解决依赖变动对其他二进制的影响。<br>因此需要借助源码层面的依赖分析，判断当前组件的变更对其他依赖当前组件的二进制是否有影响，在 CI 流程中及时发现并拦截。否则错误的二进制发版，会直接导致整个 CI 研发流程和本地研发都受到影响。<br>大型项目的组件化工作是一个系统性工程。涉及工程架构的改造、CI/CD 研发工具链的支撑、本地研发工具链的支撑，业务架构的设计优化，需要从各个方面综合考虑成本和收益。<br>没有最好的架构，只有更好的架构，在架构演进的过程中，我们需要充分考虑架构的改动对业务的影响以及能给业务带来的收益。好的架构一定是能帮助业务节省时间，保证质量的。与此同时，我们在架构改进的过程中，要保证不能影响业务的正常迭代，所以向前兼容且避免大面积冲突也是很重要的事情。<br>组件化里面处处都有惊喜，比如一个小小的 hmap 优化，可以很大程度的减少编译耗时，比如一个二进制的压缩和解压的优化，可以很大程度减少 pod install 的整体耗时。<br>当然这里面也会有很多很棘手的问题，需要通过一些特殊的方案解决，比如针对分布式开发，由于阻塞式发版必然会导致一些不同分支存在冲突的代码发版后影响主干的稳定性。<br>前端可视化探索总结：基于积木形式的拖拽界面，基于markdown形式的文档编辑界面<br>Venom：iOS工程集成，类似pod<br>Metabase：可以帮助你把数据库中的数据更好的呈现给更多人<br>Lerna js多包存储库管理工具<br>H5长列表渲染：<br>如果只渲染展示可见范围内的 dom ，原来的滚动条就没了，如何重现原有的滚动条？<br>滚动条的问题解决后，如何根据当前滚动位置来知道该渲染列表的哪部分？<br>ThreadPoolExecutor：类似iOS中的GCD<br>线程池运行的状态，并不是用户显式设置的，而是伴随着线程池的运行，由内部来维护。线程池内部使用一个变量维护两个值：运行状态(runState)和线程数量 (workerCount)。在具体实现中，线程池将运行状态(runState)、线程数量 (workerCount)两个关键参数的维护放在了一起<br>主要作用：任务调度、任务缓冲、线程回收<br>LruCache：采用的缓存算法为LRU(Least Recently Used)，即最近最少使用算法。这一算法的核心思想是当缓存数据达到预设上限后，会优先淘汰近期最少使用的缓存对象。LruCache内部维护一个双向链表和一个映射表。链表按照使用顺序存储缓存数据，越早使用的数据越靠近链表尾部，越晚使用的数据越靠近链表头部；映射表通过Key-Value结构，提供高效的查找操作，通过键值可以判断某一数据是否缓存，如果缓存直接获取缓存数据所属的链表节点，进一步获取缓存数据。LruCache结构图如下所示，上半部分是双向链表，下半部分是映射表（不一定有序）。双向链表中value_1所处位置为链表头部，value_N所处位置为链表尾部。<br>HashLruCache：引入某种哈希算法，将缓存数据分散到N个LruCache上。<br>冷启动解决方案：<br>    解决存量问题：优化当前性能瓶颈点，优化启动流程，缩短冷启动时间。<br>    管控增量问题：冷启动流程规范化，通过代码范式和文档指导后续冷启动过程代码的维护，控制时间增量。<br>    完善监控：完善冷启动性能指标监控，收集更详细的数据，及时发现性能问题。<br>iOS静态分析：Static Analyzer、Infer、OCLint<br>Js定时器：1.存放 callback 2.启动一个倒计时 3.倒计时结束，取出存好的 callback，RUN！<br>前端加密：我们也可以借助 webpack-subresource-integrity 轻易实现 integrity 的添加过程，保持对开发者透明。<br>开启 SRI，浏览器会对相关资源进行 CORS 校验，所以被加载的资源要么在同域下，要么得满足 CORS 机制（具体方式可查看 脚本错误量极致优化-监控上报与 Script error 中 跨源资源共享机制 ( CORS ) 章节）。<br>HTTPS 可以有效应对流量劫持的问题，SRI 在资源完整性再上一道屏障，CSP 也进行了其他方面的补充。“三驾马车” 为页面资源安全 “保驾护航”。当然这也绝非银弹，安全之路充满着荆棘与挑战，任重道远。<br>alloy-worker：Worker 的多线程能力有望成为复杂前端项目的标配, 在减少 UI 线程卡顿和压榨计算机性能上有收益. 但目前国内实践较少, 一方面是业务复杂程度未触及; 另一方面是社区缺少科普和实践分享.<br>聊天界面反向渲染，竟然实现了聊天信息始终在底部。。。。<br>html优化：压缩、减包、拆包、动态加载包及图片优化上<br>cdn 分发、dns 解析、http 缓存、数据预请求，数据缓存及首屏优化大杀器——直出等<br>大部分主流的页面会通过服务器进行渲染，吐出 html 文件到前端<br>通过离线包技术能够很好解决 html 文件本身加载需要时间的问题。离线包基本思路都是通过 webview 统一拦截 url，将资源映射到本地离线包，更新的时候对版本资源检测，下载和维护本地缓存目录中的资源。比如腾讯的 webso 和 Alloykit 的离线包方案。<br>前端内存优化：</p>
-<ol>
-<li>避免没有必要全局变量的使用<br>我们可以在 JS 文件的开头通过添加”use strict” 开启严格的解析模式，来避免一些意外创建的全局变量。</li>
-<li>及时解除引用</li>
-<li>减少对象的创建</li>
-<li>内存不是缓存</li>
-<li>避免复杂的递归调用；</li>
-<li>合理使用的 IndexedDB</li>
-</ol>
-<p>我们应该编写有类型系统的 JavaScript，而不是能编译成 JavaScript 的 Java/C#。任何一个 TypeScript 程序，在手动删去类型部分，将后缀改成 .js 后，都应能够正常运行。<br>基本类型<br>基本类型，也可以理解为原子类型。包括 number、boolean、string、null、undefined、function、array、字面量（true，false，1，2，‘a’）等。它们无法再细分。<br>页面可视化组建：html模版、配置字段、业务逻辑、布局样式、Json数据驱动</p>
-<p>AVAudioSession<br>AVAudioSessionMode<br>AVAudioSessionCategoryAmbient // 背景声音，可以与其他音乐混合，用于以非语音为主的应用<br>AVAudioSessionCategory<br>AVAudioSessionCategoryPlayback // 只用于播放<br>AVAudioSessionCategoryPlayAndRecord // 既可以录音也可以播放<br>AVAudioSessionInterruptionNotification // 电话打断等<br>媒体声音被抑制：<br>媒体声音在媒体音量下开启播放，播放途中因为连麦而切换到了通话音量，此时因为系统特性，媒体音量会被通话音量抑制而导致声音变小。<br>针对该问题，我们使用音视频 SDK 提供的混音、混流功能来规避。基本原理是播放媒体资源时，我们拿到资源的 pcm 音频数据，将数据抛给 RTC 的 audioUnit 进行混合，由 RTC 音频播放单元统一播放，如果此时 RTC 使用的是通话音量，则媒体资源也是使用的通话音量播放，反之亦然。以此来保证媒体资源与 RTC 始终保持统一的音量控制机制，而避免声音大小存在差异。<br>安装包优化<br>2.1、使用合适的资源压缩配置<br>    Pod 库和主工程的最低支持版本从 iOS 8.0 提升成 iOS 9.0<br>    开启 Pod 库和主工程 Xcode Build Settings 中的 ASSETCATALOG_COMPILER_OPTIMIZATION space 选项<br>     xcrun assetutil –info Assets.car 命令检查 Assets.car 中每张图片使用的编码压缩算法<br>2.2、使用 RGB with palette 压缩图片<br>Mach-O 文件优化<br>3.1、使用 -Oz 编译参数<br>Oz 的核心原理是对重复的连续机器指令外联成函数进行复用，和“内联函数”的原理正好相反。因此，开启 Oz，能减小二进制的大小，但同时理论上会带来执行效率的额外消耗。<br>3.2、使用链接时优化 LTO<br>Link-Time Optimization 链接时优化，是 Xcode 自带的一个编译/链接参数。根据 WWDC 2016 《What’s New in LLVM》[4]的介绍，LTO 对包大小和运行效率都有正向影响。今日头条在编译和链接中均开启 Incremental LTO 后，包体积减小 6.5MB。<br>如果我们用 @dynamic 修饰一个属性，不生成成员变量、get/set 方法，则一个属性可以由 224B 减少到 36B，即仅包含 property 部分的大小。<br>3.5、__TEXT 段迁移<br>在链接阶段使用 -rename_p 选项将 __TEXT,__text 迁移到 __BD_TEXT,__text，减少苹果对可执行文件的加密范围，提升可执行文件的压缩效率，从而减少 Download Size。<br>WebView 渲染需要经过下面几个步骤：<br>    解析 HTML 文件<br>    加载 JavaScript 和 CSS 文件<br>    解析并执行 JavaScript<br>    构建 DOM 结构<br>    加载图片等资源<br>    页面加载完毕<br>模板拆分<br>    把头条详情页的公共样式 CSS 和 逻辑 JS 都抽离出来，形成一个独立而完备的详情页模板，这样我们就可以把模板直接内置在客户端中。<br>模板优化<br>    WebView 需要在加载完主 HTML 之后再去加载 HTML 中的 JS 和 CSS，需要多次 IO 操作，于是我们将 JS 和 CSS 还有一些图片都内联到一个文件中，这样，加载模板时就只需要一次 IO 操作，也大大减少因为 IO 加载冲突导致模板加载失败问题<br>模板简化<br>    我们将部分非必须的脚本异步化拉取，精简不必要的样式和 JS 代码，将模板大小压缩了 20% 以上<br>    我们并不需要在用户进入页面的时候才去创建 WebView 以及加载模板，我们只需要在合适的时机在后台创建 WebView，并且提前预热加载模板，当用户点击进入页面的时候就能使用已经加载好模板的 WebView，直接将详情页的内容数据通过 JS 注入到页面中，前端收到数据后进行页面渲染即可。<br>    我们每次使用的时候都是同一个模板，所以我们使用完当前 WebView 之后，只需要在用户退出页面的时候把正文数据清空，这样进入下一个页面的时候就能够继续复用这个 WebView 重新注入数据即可。<br>网络优化<br>    CDN 加速<br>    我们将详情页内容数据分为静态和动态两部分，将正文内容、标题、作者栏等用户主要消费的又基本不变的内容托管到了 CDN 上，托管到 CDN 之后，全国各地的用户可以直接从最佳节点就获取到详情页数据，也大大节省了带宽成本。<br>    容灾<br>    为了防止某个 CDN 出现故障，导致服务雪崩，服务端会下发多个 CDN 链接，当用户访问当前 CDN 节点的出异常时，可以快速自动切换到下个 CDN 节点。<br>    2. 快速超时<br>    一般的超时策略，客户端在请求时，会遍历请求 CDN 1、2、3。如果这些 CDN 都请求失败，则整个网络请求算作失败。<br>    假设请求 CDN 的超时时间是 15s。如果 CDN 1 出现故障，则需要等待 15s 才能切换到 CDN 2上，这对于详情页的加载时间来说是不可接受，如果用户网络突然变差，则需要等待 45s 才能返回失败展示错误页。<br>    渲染优化<br>    为了提高用户的首屏效率，我们在服务端就会把所有的详情页正文的 HTML 数据组装好，通过将服务端直出内容注入到页面中时，可以直接给 WebView 进行渲染，对于其他动态下发的内容（比如相关搜索），前端再进行二次异步处理，提升用户效率。<br>    所以在详情页中，我们会将图片和视频等非文字内容通过原生组件的方式放在客户端进行渲染，既可以提高渲染效率，也可以减少不必要的流量消耗。<br>    当 WKWebView 上占用内存过大时，WKWebView 所在的 WebContent Process 会被系统 kill 掉，反映在用户体验上就是发生了白屏。<br>    WKWebView 提供的回调 webViewWebContentProcessDidTerminate 函数中通过 reload 方法重新加载当前页面恢复，但是这种情况只适用于通过 loadRequest 加载的请求，在详情页中，由于使用了模板化的 WebView 中，重新 reload 只能重新 reload 模板，并不能正常恢复整个详情页，需要客户端重新加载模板之后再重新注入数据。</p>
-<p> 遍历方式</p>
-<pre><code>for each或者iterator
-移动端适配mediaquery媒体查询
-@media screen and (max-width: 300px) &#123;
-    body &#123;
-        background-color:lightblue;
-    &#125;
-&#125;
-rem原理
-字体单位，跟px不同的是根据root element动态变化
-1ren=16px 浏览器默认字体大小
+          <p>mapbox结合3dtile<br><a target="_blank" rel="noopener" href="https://github.com/Geodan/mapbox-3dtiles">https://github.com/Geodan/mapbox-3dtiles</a><br><a target="_blank" rel="noopener" href="https://github.com/liujun3660105/mapbox-3dtiles">https://github.com/liujun3660105/mapbox-3dtiles</a></p>
 
+      
+    </div>
 
-Java注解
-@Override @Deprecated @Suppvisewarning
-Spring注解
-@Autowirte @Service @Repository
-MyBatis
-@InsertProvider @UpdateProvider @Options
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift254mapbox%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift254mapbox%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">mapbox学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:32:39" itemprop="dateModified" datetime="2021-11-21T16:32:39+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>mapbox探索<br>1.bpf格式的mvt数据解析成地理空间几何（完成）<br>2.geojson格式数据解析成地理空间几何 （完成）<br>3.mapbox样式数据解析（50%）<br>4.加载mapbox数据（20%）<br>5.mapbox数据样式匹配（0%）<br>6.mapbox数据格式转换<br>7.mapbox数据坐标转换<br>8.mapbox数据渲染<br>9.mapbox自定义服务调用<br>10.geojson自定义服务调用</p>
+<p>数据处理：<br>三角剖分 （具备）<br>面数据中心点-面数据标签 （具备）<br>碰撞检测<br>坐标转换</p>
+<p>功能支持：<br>1.源数据支持 栅格贴图、mvt、geojson格式<br>2.支持样式配置文件，支持动态修改样式<br>3.支持多种坐标体系<br>4.支持叠加多种图层，图层管理<br>5.支持3d图层</p>
+<p>Map -》 图层 -》矢量瓦片 -〉 样式 - 》空间几何图形<br>Layer -》tile -》 style - 》 geometry</p>
+<p>Mapbox数据与我们数据同步调整<br>1.</p>
+<p>opengl绘制点、线、面</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">geotools学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:29:47" itemprop="dateModified" datetime="2021-11-21T16:29:47+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>安装gdal<br>brew install gdal<br>安装tippecanoe<br>brew install gdal tippecanoe<br>安装mbutil<br>git clone <a target="_blank" rel="noopener" href="https://github.com/mapbox/mbutil.git">https://github.com/mapbox/mbutil.git</a><br>cd mbutil<br>sudo python setup.py install</p>
+<p>shpfile转geojson<br>ogr2ogr -f GeoJSON ne_10m_railroads.geojson ne_10m_railroads.shp</p>
+<p>geojson转mbtile<br>tippecanoe -o file.mbtiles file.json<br>使用tippecanoe 直接生成缓存目录的pbf：<br>tippecanoe us_states.json -e us_stats_tileset -zg<br>如果你不确定所使用数据的最大级别，可以使用 -zg 来根据数据密度自动估算一个级别。<br>tippecanoe -o outfile.mbtiles -Z8  -z20 infile.geojson<br> -Z 是切片的最小zoom, -z 切片的最大zoom<br>tippecanoe us_states.json -e us_stats_tileset -Z8  -z8<br>合并多个图层<br>tippecanoe -e us_stats_tileset -zg us_states.json us_states1.json<br>tippecanoe在制作切片进行了gzip压缩<br>tippecanoe -e lakepbf -pC -Z8 -z14 -f lake.geojson</p>
+<p>mbtile转pbf<br>mb-util –image_format=pbf opgrsp_gb.mbtiles ./opgrsp_gb_tileset<br>转换出来的是gzip格式的，需要解压缩一下<br>gzip -d -r -S .pbf *<br>解压缩后会丢失.pbf的后缀，可以直接在地址上不加后缀，或者调用如下<br>find . -type f -exec mv ‘{}’ ‘{}’.pbf ;</p>
+<p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a></p>
+<p>数据转换：<br>java开发，采用geotools工具集，将mif或shp文件转换成geojson</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift253mapbox%E8%AF%B7%E6%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift253mapbox%E8%AF%B7%E6%B1%82/" class="post-title-link" itemprop="url">mapbox请求</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:31:59" itemprop="dateModified" datetime="2021-11-21T16:31:59+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>// <a target="_blank" rel="noopener" href="https://api.mapbox.com/">https://api.mapbox.com</a></p>
+<p>// 1.请求样式配置<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/styles/v1/mapbox/streets-v8?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">http://192.168.3.86:8080/styles/v1/mapbox/streets-v8?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
+<p>// 2.请求高程配置<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&amp;secure">http://192.168.3.86:8080/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&amp;secure</a></p>
+<p>// 3.请求图片<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">http://192.168.3.86:8080/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a><br>对比：<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">https://api.mapbox.com/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
+<p>// 4.请求字体</p>
+<p>程序默认数据路径<br>normalizeSourceURL = baseURL + “/v4/{domain}.json?access_token=” + accessToken + “&amp;secure”;<br>normalizeStyleURL = baseURL + “/styles/v1{path}?access_token=” + accessToken;<br>normalizeSpriteURL = baseURL + “/styles/v1{directory}{filename}/sprite{extension}?access_token=” + accessToken;<br>normalizeGlyphsURL = baseURL + “/fonts/v1{path}?access_token=” + accessToken;<br>normalizeTileURL = baseURL + “/v4{path}?access_token=” + accessToken;</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift255mapbox%E6%A0%B7%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift255mapbox%E6%A0%B7%E5%BC%8F/" class="post-title-link" itemprop="url">mapbox样式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:32:57" itemprop="dateModified" datetime="2021-11-21T16:32:57+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift252mapbox%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift252mapbox%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" class="post-title-link" itemprop="url">mapbox开源项目</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:31:40" itemprop="dateModified" datetime="2021-11-21T16:31:40+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>mapbox-gl-native<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native">https://hub.fastgit.org/mapbox/mapbox-gl-native</a></p>
+<p>iOS SDK<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git">https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git</a>     ios-v5.9.0</p>
+<p>iOS例子<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/ios-sdk-examples">https://hub.fastgit.org/mapbox/ios-sdk-examples</a></p>
+<p>Android SDK<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-android/tree/android-v9.2.1">https://hub.fastgit.org/mapbox/mapbox-gl-native-android/tree/android-v9.2.1</a><br>Js</p>
+<p>Mvt数据服务等<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/openmaptiles">https://hub.fastgit.org/openmaptiles</a></p>
+<p>mvt数据转换流程<br><a target="_blank" rel="noopener" href="https://geovation.github.io/build-your-own-static-vector-tile-pipeline">https://geovation.github.io/build-your-own-static-vector-tile-pipeline</a><br><a target="_blank" rel="noopener" href="https://www.doc88.com/p-7844750681654.html">https://www.doc88.com/p-7844750681654.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift256mapbox%E5%AD%97%E4%BD%93%E5%9B%BE%E6%A0%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift256mapbox%E5%AD%97%E4%BD%93%E5%9B%BE%E6%A0%87/" class="post-title-link" itemprop="url">mapbox字体图标</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:33:17" itemprop="dateModified" datetime="2021-11-21T16:33:17+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>字体：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/chuhanning9279/article/details/100970179">https://blog.csdn.net/chuhanning9279/article/details/100970179</a></p>
+<h1 id="图标转换"><a href="#图标转换" class="headerlink" title="图标转换"></a>图标转换</h1><p>nvm install 6.17.1<br>nvm use 6.17.1<br>npm install -g @mapbox/spritezero-cli</p>
+<p>spritezero basicv8 ./_svg</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift258mvt%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift258mvt%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2/" class="post-title-link" itemprop="url">mvt数据转换</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-09 14:52:41" itemprop="dateModified" datetime="2021-12-09T14:52:41+08:00">2021-12-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>安装gdal<br>brew install gdal<br>安装tippecanoe<br>brew install gdal tippecanoe<br>安装mbutil<br>git clone <a target="_blank" rel="noopener" href="https://github.com/mapbox/mbutil.git">https://github.com/mapbox/mbutil.git</a><br>cd mbutil<br>sudo python setup.py install</p>
+<p>mapinfo转geojson<br>ogr2ogr -f GeoJSON test.geojson BLchina.mif </p>
+<p>mapinfo转shp<br>ogr2ogr -f “ESRI Shapefile” res.shp BLchina.mif </p>
+<p>shpfile转geojson<br>ogr2ogr -f GeoJSON ne_10m_railroads.geojson ne_10m_railroads.shp</p>
+<p>geojson转mbtile<br>tippecanoe -o file.mbtiles file.json<br>使用tippecanoe 直接生成缓存目录的pbf：<br>tippecanoe us_states.json -e us_stats_tileset -zg<br>如果你不确定所使用数据的最大级别，可以使用 -zg 来根据数据密度自动估算一个级别。<br>tippecanoe -o outfile.mbtiles -Z8  -z20 infile.geojson<br> -Z 是切片的最小zoom, -z 切片的最大zoom<br>tippecanoe us_states.json -e us_stats_tileset -Z8  -z8<br>合并多个图层<br>tippecanoe -e us_stats_tileset -zg us_states.json us_states1.json<br>tippecanoe 在制作切片进行了gzip压缩<br>tippecanoe -e lakepbf -pC -Z8 -z14 -f lake.geojson</p>
+<p>mbtile转pbf<br>mb-util –image_format=pbf opgrsp_gb.mbtiles ./opgrsp_gb_tileset<br>转换出来的是gzip格式的，需要解压缩一下<br>gzip -d -r -S .pbf *<br>解压缩后会丢失.pbf的后缀，可以直接在地址上不加后缀，或者调用如下<br>find . -type f -exec mv ‘{}’ ‘{}’.pbf ;</p>
+<p>find . -type f -exec mv ‘{}’ ‘{}’.vector.pbf ;</p>
+<p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a><br>java开发，采用geotools工具集，将mif或shp文件转换成geojson</p>
+<p>数据转换：<br>1.采用ogr2ogr批量将mapinfo格式数据转geojson （sh脚本）<br>2.根据数据分割原则拆分geojson数据到n个层级    （java程序）<br>3.用tippecanoe将数据转换成mvt              （sh脚本）<br>4.用openlayers或mapbox js将数据展示        （前端）<br>5.调整android或iOS sdk进行数据展示<br>6.室内地图逻辑同上</p>
+<p>116.350908,39.94512</p>
+<p>116.428499,39.903256</p>
+<p>mapbox数据下载<br>./mbgl-offline <br>      –north 39.94512 <br>      –west 116.350908 <br>      –south 39.903256 <br>      –east 116.428499 <br>      –minZoom 12 <br>      –maxZoom 14 <br>      –style mapbox://styles/mapbox/streets-v8 <br>      –token ‘pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ’ <br>      –output mapcache.db</p>
+<p>openstreemap 数据下载<br>1.打开openstreemap，下载shp格式中国数据<br>2.将下载的名字进行调整，比如osm_geo_buildings.shp。修改为building，方便以后样式编写。<br>3.将shp转为geojson<br>    for file in <code>find . -name &quot;*.shp&quot;</code>; do<br>        ogr2ogr -f GeoJSON ${file%.*}.geojson $file<br>    done<br>4.将geojson转mvt<br>     -pC 取消gzip压缩<br>     -Z  最小层级<br>     -z  最大层级<br>    tippecanoe -e output -pC -Z18  -z18 building.geojson landuse.geojson natural_point.geojson natural.geojson place_point.geojson place.geojson pofw_point.geojson poi_point.geojson poi.geojson railway.geojson road.geojson traffic_point.geojson traffic.geojson transport_point.geojson transport.geojson water.geojson waterway.geojson</p>
+<p>5.编写样式</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift257mvt%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift257mvt%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/" class="post-title-link" itemprop="url">mvt开发流程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:33:38" itemprop="dateModified" datetime="2021-11-21T16:33:38+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>数据制作流程：<br>1.整理文件名称分类如：water、road、poi等 （对应mvt样式的图层）<br>2.将shp文件抽稀拆分成n层分文件存放，数据字段转成mvt格式<br>3.将分层后的shp数据转geojson格式<br>4.将geojson转mvt</p>
+<p>SDK开发流程：<br>1.删掉不用的库<br>2.修改key鉴权机制，修改服务地址<br>3.修改接口<br>4.修改类名等</p>
+<p>样式文件设计流程：<br>1.设计图层样式<br>2.字体库打包<br>3.图标库打包</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift216Echarts%E5%B0%81%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/06/M_Swift216Echarts%E5%B0%81%E8%A3%85/" class="post-title-link" itemprop="url">Echarts封装</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-09 11:26:18" itemprop="dateModified" datetime="2021-06-09T11:26:18+08:00">2021-06-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="希望这个echarts组件能设计成什么样"><a href="#希望这个echarts组件能设计成什么样" class="headerlink" title="希望这个echarts组件能设计成什么样"></a>希望这个echarts组件能设计成什么样</h2><p>业务数据和样式配置数据分离，我只需要传入业务数据就行了 data<br>它的大小要完全由使用者决定 hight，width<br>不会因为缩放出现变形问题，而是能很好地自适应 resize<br>能保留自己配置样式的灵活性 option<br>能够实时更行试图  setOption<br>能展示一个空状态  empty</p>
+<p>title<br>subtitle<br>colors<br>fonts<br>unit </p>
+<p>options</p>
+<p>tooltip<br>grid<br>yAxis<br>xAxis<br>series</p>
+<p>title: {<br>    show: true, // 是否显示<br>    text: “”, // 一般自定义<br>    subtext: “”, // 一般自定义<br>    left: “center”, // 位置 top right bottom<br>    textStyle: {<br>        color: ‘#333’,<br>        fontStyle: ‘normal’,<br>        fontWeight: ‘bolder’,<br>        fontSize: 18,</p>
+<pre><code>&#125;,
+subtextStyle: &#123;
+
+&#125;,   
 </code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Dart学习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:55" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Future 异步、延迟等操作，跟js的Premis一致<br>Future 的所有API的返回值仍然是一个Future对象，所以可以很方便的进行链式调用”<br>Dart中的async/await 和JavaScript中的async/await功能和用法是一模一样的<br>async用来表示函数是异步的，定义的函数会返回一个Future对象，可以使用then方法添加回调函数。<br>await 后面是一个Future，表示等待该异步任务完成，异步完成后才会往下走；await必须出现在 async 函数内部。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift215Fultter%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift215Fultter%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Flutter学习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:47:03" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>widget的主要工作是提供一个build()方法来描述如何构建UI界面（通常是通过组合、拼装其它基础widget）<br>MaterialApp 是Material库中提供的Flutter APP框架，通过它可以设置应用的名称、主题、语言、首页及路由列表等。MaterialApp也是一个widget。<br>Stateful widget可以拥有状态，这些状态在widget生命周期中是可以变的，而Stateless widget是不可变的。<br>一个 State类； StatefulWidget类本身是不变的，但是State类中持有的状态在widget生命周期中可能会发生变化。<br>_MyHomePageState类是MyHomePage类对应的状态类<br>Scaffold 是 Material 库中提供的页面脚手架，它提供了默认的导航栏、标题和包含主屏幕widget树（后同“组件树”或“部件树”）的body属性，组件树可以很复杂。本书后面示例中，路由默认都是通过Scaffold创建。<br>body的组件树中包含了一个Center 组件，Center 可以将其子组件树对齐到屏幕中心。此例中， Center 子组件是一个Column 组件，Column的作用是将其所有子组件沿屏幕垂直方向依次排列； 此例中Column子组件是两个 Text，第一个Text 显示固定文本 “You have pushed the button this many times:”，第二个Text 显示_counter状态的数值。<br>为什么build()方法放在State（而不是StatefulWidget）中 ？这主要是为了提高开发的灵活性。如果将build()方法放在StatefulWidget中则会有两个问题：1.状态访问不便<br>//导航到新路由<br>          Navigator.push( context,<br>           MaterialPageRoute(builder: (context) {<br>              return NewRoute();<br>           }));<br>  TipRoute({<br>    Key key,<br>    @required this.text,  // 接收一个text参数<br>  }) : super(key: key);<br> // 打开<code>TipRoute</code>，并等待返回结果<br>          var result = await Navigator.push(<br>            context,<br>            MaterialPageRoute(<br>              builder: (context) {<br>                return TipRoute(<br>                  // 路由参数<br>                  text: “我是提示xxxx”,<br>                );<br>              },<br>            ),<br>          );<br>          //输出<code>TipRoute</code>路由返回结果<br>          print(“路由返回值: $result”);<br>//命名路由<br>要想使用命名路由，我们必须先提供并注册一个路由表（routing table），这样应用程序才知道哪个名字与哪个路由组件相对应。其实注册路由表就是给路由起名字，路由表的定义如下<br>Navigator.of(context).pushNamed(“new_page”, arguments: “hi”);<br>//获取路由参数<br>    var args=ModalRoute.of(context).settings.arguments;<br>图片加载<br>import ‘package:flutter/services.dart’ show rootBundle;<br>Future<String> loadAsset() async {<br>  return await rootBundle.loadString(‘assets/config.json’);<br>}<br>可以使用 AssetImage 类。例如，我们可以从上面的asset声明中加载背景图片<br>decoration: new BoxDecoration(<br>      image: new DecorationImage(<br>        image: new AssetImage(‘graphics/background.png’),<br>      ),<br>    ),<br>return Image.asset(‘graphics/background.png’);<br>依赖包中的资源图片<br>new AssetImage(‘icons/heart.png’, package: ‘my_icons’)</p>
-<p>Widget<br>构建const Widget({ this.key });<br>Widget类继承自DiagnosticableTree，DiagnosticableTree即“诊断树”，主要作用是提供调试信息。<br>Key: 这个key属性类似于React/Vue中的key，主要的作用是决定是否在下一次build时复用旧的widget，决定的条件在canUpdate()方法中。<br>createElement()：正如前文所述“一个Widget可以对应多个Element”；Flutter Framework在构建UI树时，会先调用此方法生成对应节点的Element对象。此方法是Flutter Framework隐式调用的，在我们开发过程中基本不会调用到。<br>canUpdate(…)是一个静态方法，它主要用于在Widget树重新build时复用旧的widget，其实具体来说，应该是：是否用新的Widget对象去更新旧UI树上所对应的Element对象的配置；通过其源码我们可以看到，只要newWidget与oldWidget的runtimeType和key同时相等时就会用newWidget去更新Element对象的配置，否则就会创建新的Element。<br>StatelessWidget<br>命名参数中的必要参数要添加@required标注，这样有利于静态代码分析器进行检查。另外，在继承widget时，第一个参数通常应该是Key，另外，如果Widget需要接收子Widget，那么child或children参数通常应被放在参数列表的最后。同样是按照惯例，Widget的属性应尽可能的被声明为final，防止被意外改变。<br>每一个widget都会对应一个context对象（因为每一个widget都是widget树上的一个节点）。实际上，context是当前widget在widget树中位置中执行”相关操作“的一个句柄，比如它提供了从当前widget开始向上遍历widget树以及按照widget类型查找父级widget的方法。<br>StatefulWidget<br>另外StatefulWidget类中添加了一个新的接口createState()。<br> 用于创建和Stateful widget相关的状态，它在Stateful widget的生命周期中可能会被多次调用。例如，当一个Stateful widget同时插入到widget树的多个位置时，Flutter framework就会调用该方法为每一个位置生成一个独立的State实例，其实，本质上就是一个StatefulElement对应一个State实例。<br>State生命周期</p>
-<p>Text ：该组件可让您创建一个带格式的文本。<br>Row 、 Column ： 这些具有弹性空间的布局类Widget可让您在水平（Row）和垂直（Column）方向上创建灵活的布局。其设计是基于Web开发中的Flexbox布局模型。<br>Stack ： 取代线性布局 (译者语：和Android中的FrameLayout相似)，Stack 允许子 widget 堆叠， 你可以使用 Positioned  来定位他们相对于Stack的上下左右四条边的位置。Stacks是基于Web开发中的绝对定位（absolute positioning )布局模型设计的<br>Container ： Container  可让您创建矩形视觉元素。container 可以装饰一个BoxDecoration , 如 background、一个边框、或者一个阴影。 Container  也可以具有边距（margins）、填充(padding)和应用于其大小的约束(constraints)。另外， Container 可以使用矩阵在三维空间中对其进行变换。<br>//导入material widget库<br>import ‘package:flutter/material.dart’;<br>//导入cupertino widget库<br>import ‘package:flutter/cupertino.dart’;</p>
-<p>如果状态是用户数据，如复选框的选中状态、滑块的位置，则该状态最好由父Widget管理。<br>如果状态是有关界面外观效果的，例如颜色、动画，那么状态最好由Widget本身来管理。<br>如果某一个状态是不同Widget共享的则最好由它们共同的父Widget管理。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift214Fultter%E5%B8%B8%E7%94%A8%E5%BA%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift214Fultter%E5%B8%B8%E7%94%A8%E5%BA%93/" class="post-title-link" itemprop="url">Flutter常用库</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:47:01" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>flutter pub add provider<br>flutter pub add http<br>flutter pub add shared_preferences<br>flutter pub add uuid<br>flutter pub add url_launcher<br>flutter pub add image_picker<br>flutter pub add flutter_bloc // mvvm数据跟ui隔离<br>flutter pub add geolocator // iOS的CLLocationManager<br>flutter pub add get // 非常全面的一个flutter库<br>flutter pub add animations<br>dart pub add dio // http请求库<br>flutter pub add jpush_flutter // 极光推送<br>flutter pub add hive // 键值数据库<br>flutter pub add sqflite // sql数据库<br>flutter pub add carousel_slider // 轮播图<br>flutter pub add flutter_swiper // 轮播图<br>flutter pub add share // 分享<br>flutter pub add permission_handler // 应用权限检查<br>flutter pub add animate_do // animate.css的flutter库<br>flutter pub add animated_text_kit // 文本动画<br>flutter pub add video_player  // 播放器<br>flutter pub add fluttertoast  // toast<br>flutter pub add fl_chart   // 图表<br>flutter pub add connectivity // 网络状态的监听<br>flutter pub add flutter_spinkit // 加载动画<br>flutter pub add flutter_svg // svg<br>flutter pub add webview_flutter<br>flutter pub add logger // 日志输出<br>flutter pub add convex_bottom_bar // 类似iOS TabBar<br>flutter pub add sliding_up_panel // 拖拽面板<br>flutter pub add flutter_staggered_grid_view // 瀑布流<br><a target="_blank" rel="noopener" href="http://lbsyun.baidu.com/index.php?title=flutter/loc">http://lbsyun.baidu.com/index.php?title=flutter/loc</a> // 百度地图flutter插件<br><a target="_blank" rel="noopener" href="https://lbs.amap.com/api/flutter/summary">https://lbs.amap.com/api/flutter/summary</a> // 高德地图flutter插件<br><a target="_blank" rel="noopener" href="https://github.com/peng8350/flutter_pulltorefresh/blob/master/README_CN.md">https://github.com/peng8350/flutter_pulltorefresh/blob/master/README_CN.md</a> // 下拉刷新组建<br>flutter pub add introduction_screen // 启动介绍页<br><a target="_blank" rel="noopener" href="https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md">https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md</a> // 屏幕适配<br>flutter pub add photo_view // 支持图片的缩放<br>flutter pub add flutter_secure_storage // iOS的 Keychain 实现<br>flutter pub add syncfusion_flutter_charts // 图表<br>flutter pub add timeline_tile // 时间轴<br>flutter pub add audioplayers<br>flutter pub add table_calendar // 日历<br>flutter pub add badges // 徽标<br>flutter pub add flutter_form_builder // 输入框库<br>flutter pub add responsive_framework // 屏幕适配<br>flutter pub add pdf<br>flutter pub add image_cropper // 图片裁剪<br>flutter pub add persistent_bottom_nav_bar // tab bar<br>flutter pub add flutter_typeahead // 分段导航栏<br>flutter pub add flutter_staggered_animations // 列表，网格动画<br>flutter pub add local_auth // 授权<br>flutter pub add flutter_rating_bar // 评星<br>flutter pub add extended_image // 图片加载库<br>flutter pub add smart_select // 选择器<br>flutter pub add expandable //折叠效果<br>flutter pub add getwidget // UI组建库<br>flutter pub add material_floating_search_bar // 搜索框<br>flutter pub add rflutter_alert // alert<br>flutter pub add flutter_icons<br>flutter pub add flutter_cache_manager // 缓存<br>flutter pub add flutter_login<br>flutter pub add page_transition // 转场动画<br>flutter pub add wakelock // 防止屏幕休眠<br>flutter pub add bot_toast<br>flutter pub add multi_image_picker<br>flutter pub add uni_links // url链接跳app<br>flutter pub add image<br>flutter pub add qr_code_scanner // 二维码<br>dart pub add sembast // 数据库<br>flutter pub add flutter_downloader // 下载任务<br>flutter pub add flutter_platform_widgets // iOS android 样式分别绘制<br>flutter pub add workmanager // 定期任务<br>flutter pub add background_fetch // 后台任务</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift213Docker%E6%8A%80%E6%9C%AF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift213Docker%E6%8A%80%E6%9C%AF/" class="post-title-link" itemprop="url">Docker了解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:22:01" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1、虚拟机<br>虚拟机理论上是一个真实的计算机操作系统的封装，它运行在物理设备之上，通过 Hypervisor 进行建立和运行虚拟机体系。<br>不同于虚拟机提供在物理硬件级别的操作系统隔离，容器技术提供的是操作系统级别的进程隔离，Docker 本身只是操作系统的一个进程，只是在容器技术下，进程之间网络、空间等等是隔离的，互不知道彼此。<br>二、Docker 的资源隔离：Namespace，Linux Namespace 是 Linux 提供的一种机制，可以实现不同资源的隔离。<br>三、Docker 的资源限制：cgroups<br>四、Docker 存储驱动：Union File Systems。AUFS 想象为一个可以 “栈式叠加” 的文件系统，AUFS 允许在一个基础的文件系统的上，“增量式” 的增加文件。<br>Docker 的镜像分层，正式通过 AUFS 通过分层结构、挂载等方式实现。在用户制作镜像的每一步，Docker 都会生成一个层，也就是增量 rootfs。<br>使用 Linux Namespace 进行网络、进程空间、命名空间等资源的隔离，使用 Cgroups 技术对资源的占用、使用量进行限制，使用 AUFS 等存储驱动来实现分层结构、增量更新等能力。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift198%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/19/M_Swift198%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="post-title-link" itemprop="url">正则表达式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-19 11:35:48" itemprop="dateCreated datePublished" datetime="2021-04-19T11:35:48+08:00">2021-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:06:14" itemprop="dateModified" datetime="2021-04-30T16:06:14+08:00">2021-04-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>界定符： 表示正则表达式开始和结束</p>
-<ul>
-<li>号代表前面的字符必须至少出现一次</li>
-</ul>
-<ul>
-<li>号代表前面的字符可以不出现，也可以出现一次或者多次<br>? 问号代表前面的字符最多只可以出现一次<br>[]匹配 […] 中的所有字符<br>[^]  匹配除了 […] 中字符的所有字符,[^aeiou]匹配字符串 “google runoob taobao” 中除了 e o u a 字母的所有字母。<br>[A-Z] 表示一个区间，匹配所有大写字母，[a-z] 表示所有小写字母。<br>. 匹配除换行符（\n、\r）之外的任何单个字符，相等于 [^\n\r]。<br>[\s\S]匹配所有。\s 是匹配所有空白符，包括换行，\S 非空白符，不包括换行。<br>\w匹配字母、数字、下划线。等价于 [A-Za-z0-9_]<br>$匹配输入字符串的结尾位置。如果设置了 RegExp 对象的 Multiline 属性，则 $ 也匹配 ‘\n’ 或 ‘\r’。要匹配 $ 字符本身，请使用 $。<br>( )    标记一个子表达式的开始和结束位置。子表达式可以获取供以后使用。要匹配这些字符，请使用 ( 和 )。</li>
-<li>   匹配前面的子表达式零次或多次。要匹配 * 字符，请使用 *。<br>\b    匹配一个单词边界，即字与空格间的位置。<br>\d 表示一个数字<br>{} 出现次数<br>浮点数字： const re = /^\d{1,5}(?:.\d{1,2})?$/</li>
-</ul>
-<p>1.1 名词：代表是什么，用[]表示，如：[a]代表a字母，[ab]代表a或b字母，[0-9]代表0到9，还有一些简写形式，如：\w代表[a-zA-Z0-9_]字母数字或者下划线，\d代表[0-9]数字，\D代表[^0-9]非数字，\s代表[ \f\n\r\t\v]可见字符，.代表任意字符。</p>
-<p>1.2 量词：代表个数，{n}代表有n个，{n,m}代表有n到m个，{n,}代表&gt;=n个，{,m}代表&lt;=m个，还有一些简写形式，如：*代表{0,}任意个，+代表{1,}至少有一个，?代表{0,1}代表最多有一个。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift197%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/19/M_Swift197%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">机器学习相关算法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-19 11:35:48" itemprop="dateCreated datePublished" datetime="2021-04-19T11:35:48+08:00">2021-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:21:29" itemprop="dateModified" datetime="2021-04-30T16:21:29+08:00">2021-04-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h2><p>矩阵在计算机图形学中作用非常大，常见的作用有<br>1.矩阵的变换：地图中的平移、缩放、旋转等都是<br>2.矩阵的计算：两个矩阵的乘法，求数据的。<br>3.图像处理：其实图像看作是一个矩阵。每个像素点都需要一个一个值来描述<br>4.数据模型：特征值和特征向量<br>电影用户喜好模型：电影矩阵、用户喜好矩阵等<br>房价矩阵：位置、价格、等等</p>
-<h2 id="概率分析"><a href="#概率分析" class="headerlink" title="概率分析"></a>概率分析</h2><p>K-means算法 聚类算法<br>是一种迭代求解的聚类分析算法，其步骤是，预将数据分为K组，则随机选取K个对象作为初始的聚类中心，然后计算每个对象与各个种子聚类中心之间的距离，把每个对象分配给距离它最近的聚类中心。聚类中心以及分配给它们的对象就代表一个聚类。每分配一个样本，聚类的聚类中心会根据聚类中现有的对象被重新计算。这个过程将不断重复直到满足某个终止条件。终止条件可以是没有（或最小数目）对象被重新分配给不同的聚类，没有（或最小数目）聚类中心再发生变化，误差平方和局部最小。</p>
-<p>朴素贝叶斯和决策树<br>朴素贝叶斯算法在文字识别， 图像识别方向有着较为重要的作用。 可以将未知的一种文字或图像，根据其已有的分类规则来进行分类，最终达到分类的目的。</p>
-<p>梯度下降</p>
-<p>机器学习：<br>统计学<br>概率<br>神经网络</p>
-<p>al五子棋</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift199%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86NLP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/19/M_Swift199%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86NLP/" class="post-title-link" itemprop="url">自然语言处理 NLP</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-19 11:35:48" itemprop="dateCreated datePublished" datetime="2021-04-19T11:35:48+08:00">2021-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:07:17" itemprop="dateModified" datetime="2021-04-30T16:07:17+08:00">2021-04-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>numpy<br>:前面代表行，后面代表列<br>matplotlib<br>knn算法<br>收集数据<br>欧式距离计算<br>欧式距离也称欧几里得距离，是最常见的距离度量，衡量的是多维空间中两个点之间的绝对距离。<br>import numpy as np<br>x=np.random.random(10)<br>y=np.random.random(10)</p>
-<p>#方法一：根据公式求解<br>d1=np.sqrt(np.sum(np.square(x-y)))</p>
-<p>#方法二：根据scipy库求解<br>from scipy.spatial.distance import pdist<br>X=np.vstack([x,y])<br>d2=pdist(X)</p>
-<p>曼哈顿距离(Manhattan Distance<br>从名字就可以猜出这种距离的计算方法了。想象你在曼哈顿要从一个十字路口开车到另外一个十字路口，驾驶距离是两点间的直线距离吗？显然不是，除非你能穿越大楼。实际驾驶距离就是这个“曼哈顿距离”。而这也是曼哈顿距离名称的来源， 曼哈顿距离也称为城市街区距离(City Block distance)。<br>import numpy as np<br>x=np.random.random(10)<br>y=np.random.random(10)</p>
-<p>#方法一：根据公式求解<br>d1=np.sum(np.abs(x-y))</p>
-<p>#方法二：根据scipy库求解<br>from scipy.spatial.distance import pdist<br>X=np.vstack([x,y])<br>d2=pdist(X,’cityblock’)<br>3. 切比雪夫距离 ( Chebyshev Distance )<br>       国际象棋玩过么？国王走一步能够移动到相邻的8个方格中的任意一个。那么国王从格子(x1,y1)走到格子(x2,y2)最少需要多少步？自己走走试试。你会发现最少步数总是max( | x2-x1 | , | y2-y1 | ) 步 。有一种类似的一种距离度量方法叫切比雪夫距离。<br>5. 标准化欧氏距离 (Standardized Euclidean distance )<br>(1)标准欧氏距离的定义<br>　　标准化欧氏距离是针对简单欧氏距离的缺点而作的一种改进方案。标准欧氏距离的思路：既然数据各维分量的分布不一样，好吧！那我先将各个分量都“标准化”到均值、方差相等吧。均值和方差标准化到多少呢？这里先复习点统计学知识吧，假设样本集X的均值(mean)为m，标准差(standard deviation)为s，那么X的“标准化变量”表示为：<br>6. 马氏距离(Mahalanobis Distance)<br>（1）马氏距离定义<br>       有M个样本向量X1~Xm，协方差矩阵记为S，均值记为向量μ，则其中样本向量X到u的马氏距离表示为：</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift200CSS%E5%B8%B8%E7%94%A8%E6%8A%80%E5%B7%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/19/M_Swift200CSS%E5%B8%B8%E7%94%A8%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">CSS常用技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-19 11:35:48" itemprop="dateCreated datePublished" datetime="2021-04-19T11:35:48+08:00">2021-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:08:08" itemprop="dateModified" datetime="2021-04-30T16:08:08+08:00">2021-04-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="水平居中设置-行内元素"><a href="#水平居中设置-行内元素" class="headerlink" title="水平居中设置-行内元素"></a>水平居中设置-行内元素</h2><p>如果被设置元素为文本、图片等行内元素时，水平居中是通过给父元素设置 text-align:center 来实现的。</p>
-<h2 id="水平居中设置-定宽块状元素"><a href="#水平居中设置-定宽块状元素" class="headerlink" title="水平居中设置-定宽块状元素"></a>水平居中设置-定宽块状元素</h2><p>margin:20px auto;/* margin-left 与 margin-right 设置为 auto */</p>
-<h2 id="已知宽高实现盒子水平垂直居中"><a href="#已知宽高实现盒子水平垂直居中" class="headerlink" title="已知宽高实现盒子水平垂直居中"></a>已知宽高实现盒子水平垂直居中</h2><p>1、利用父元素设置相对定位,子元素设置绝对定位,那么子元素就是相对于父元素定位的特性。<br>2、子元素设置上和左偏移的值都为50%，是元素的左上角在父元素中心点的位置。效果：<br>3、然后再用margin给上和左都给负的自身宽高的一半,就能达到垂直水平居中的效果。</p>
-<h2 id="宽高不定实现盒子水平垂直居中"><a href="#宽高不定实现盒子水平垂直居中" class="headerlink" title="宽高不定实现盒子水平垂直居中"></a>宽高不定实现盒子水平垂直居中</h2><p>1、利用父元素设置相对定位,子元素设置绝对定位,那么子元素就是相对于父元素定位的特性。<br>2、子元素设置上和左偏移的值都为50%。<br>3、然后再用css3属性translate位移,给上和左都位移-50%距离，就能达到垂直水平居中的效果。<br>top: 50%;<br>left: 50%;<br>transform: translate(-50%, -50%);</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift201Javascript/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/19/M_Swift201Javascript/" class="post-title-link" itemprop="url">JavaScript</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-19 11:35:48" itemprop="dateCreated datePublished" datetime="2021-04-19T11:35:48+08:00">2021-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:05:57" itemprop="dateModified" datetime="2021-04-30T16:05:57+08:00">2021-04-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>数据类型<br>基本类型：Undefined, Null, Boolean, Number, String<br>引用类型：Object, Array, Date, RegExp （其实就是对象）<br>类型判断 == 、===、<br>类型检测typeof<br>包装对象<br>给基本类型添加属性和方法：<br>String.prototype.long=str.length;</p>
+<p>}<br>legend: {<br>    show: true, // 是否显示<br>    left: “center”, // 位置 top right bottom<br>    orient: ‘horizontal’, // 方向<br>    itemGap: 10, // 间隔<br>    data: [],<br>    itemStyle: {<br>        color: ‘#333’,<br>    },<br>    formatter: function (name) {<br>        return ‘Legend ‘ + name;<br>    },<br>    textStyle: {<br>        color: ‘#333’,<br>        fontStyle: ‘normal’,<br>        fontWeight: ‘bolder’,<br>        fontSize: 18,</p>
+<pre><code>&#125;,
+</code></pre>
+<p>}<br>grid: {<br>    show: true, //是否显示直角坐标系<br>    left: “center”, // 位置 top right bottom</p>
+<p>}<br>xAxis: {<br>    show: true,<br>    position: ‘bottom’,<br>    offset: 0,<br>    name: ‘’, // x 轴名称<br>    nameTextStyle: {<br>        color: ‘#333’,<br>        fontStyle: ‘normal’,<br>        fontWeight: ‘bolder’,<br>        fontSize: 18,</p>
+<pre><code>&#125;,
+nameRotate: 0, // 旋转
+min: &#39;dataMin&#39;, // 最小刻度
+max: &#39;dataMax&#39;, // 最大可读
+splitNumber: 5, // 坐标轴分段
+</code></pre>
+<p>}</p>
 
       
     </div>
@@ -822,7 +855,7 @@ MyBatis
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/31/">31</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -888,7 +921,7 @@ MyBatis
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">303</span>
+          <span class="site-state-item-count">338</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -916,7 +949,7 @@ MyBatis
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

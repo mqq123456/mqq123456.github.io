@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/09/M_Swift94Runtime%E7%90%86%E8%A7%A3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/29/M_Swift124%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/08/09/M_Swift94Runtime%E7%90%86%E8%A7%A3/" class="post-title-link" itemprop="url">理解Runtime</a>
+            <a href="/2020/06/29/M_Swift124%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">数据结构</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-08-09 17:45:14" itemprop="dateCreated datePublished" datetime="2018-08-09T17:45:14+08:00">2018-08-09</time>
+              <time title="创建时间：2020-06-29 13:29:33" itemprop="dateCreated datePublished" datetime="2020-06-29T13:29:33+08:00">2020-06-29</time>
             </span>
 
           
@@ -186,244 +186,35 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="类结构体模型"><a href="#类结构体模型" class="headerlink" title="类结构体模型"></a>类结构体模型</h2><pre><code>// objc_object对象模型
-struct objc_object &#123;
-    private:
-    isa_t isa;
-    public:
-    Class ISA();
-    Class getIsa();
-    // 省略其余方法
-    ...
-&#125;
-// objc_class类模型
-struct objc_class : objc_object &#123;
-    Class isa  //所属类的指针
-    Class super_class//指向父类的指针                                        
-    const char *name //类名                                     
-    long version // 版本                                 
-    long info //供运行期使用的一些位标识。                             
-    long instance_size //实例大小                                 
-    struct objc_ivar_list *ivars//成员变量数组                      
-    struct objc_method_list **methodLists//方法列表                  
-    struct objc_cache *cache//指向最近使用的方法.用于方法调用的优化                            
-    struct objc_protocol_list *protocols//协议的数组                     
-&#125;
-在objc_class结构体中定义了对象的method list，
-protocal，ivar list等，表示对象的行为。
-</code></pre>
-<h3 id="为什么说类也是对象"><a href="#为什么说类也是对象" class="headerlink" title="为什么说类也是对象"></a>为什么说类也是对象</h3><pre><code>类被定义为objc_class结构体，objc_class结构体继承自
-objc_objct,对象是用 objc_object 结构体表示的，所以类也
-是对象。
-oc中的类和元类也是一样，都是结构体构成的，由于类的结构体定义
-继承自objc_object所以其也是一个对象，并且具有对象的isa特
-征。
-在应用程序中，类对象只会被创建一份。
-</code></pre>
-<h3 id="Meta-Class元类"><a href="#Meta-Class元类" class="headerlink" title="Meta Class元类"></a>Meta Class元类</h3><pre><code>isa指针指向Meta Class，因为Objc的类的本身也是一个
-Object，为了处理这个关系，runtime就创造了Meta Class，
-当给类发送[NSObject alloc]这样消息时，实际上是把这个
-消息发给了Class Object
-因为一个类是一个对象，它是元类(metaclass)的对象。
-元类是关于类对象的描述，
-就像类是普通实例对象的描述一样。实际上，元类的方法列表正
-是#类方法#：该类对象响应的选择器。
-</code></pre>
-<h3 id="什么是isa指针"><a href="#什么是isa指针" class="headerlink" title="什么是isa指针"></a>什么是isa指针</h3><pre><code>每个对象都有一个标识对象类的isa实例变量。
-运行时使用此指针来确定对象需要时的实际类。
-1、 id类型是一个objc_object结构体的指针。
-2、objc_object结构体包含一个Class 类型的变量isa。
-3、 Class是objc_class结构体的指针。
-</code></pre>
-<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><pre><code>objc_msgSend第一个参数类型为id，大家对它都不陌生，
-它是一个指向类实例的指针：
-typedef struct objc_object *id;
-那objc_object又是啥呢：
-struct objc_object &#123; Class isa; &#125;;
-objc_object结构体包含一个isa指针，根据isa指针就可以
-顺藤摸瓜找到对象所属的类。
-</code></pre>
-<h3 id="为什么id类型可以指向OC中任意对象"><a href="#为什么id类型可以指向OC中任意对象" class="headerlink" title="为什么id类型可以指向OC中任意对象"></a>为什么id类型可以指向OC中任意对象</h3><pre><code>id类型被定义为指向对象的指针
-NSObject只有一个Class对象isa，而objc_object也是只有一个Class对
-象isa,也就是说id等价于NSObject*。所以id是一个一个比较灵活的对象指
-针，并且是一个指向任何一个继承了Object（或者NSObject）类的对象
-</code></pre>
-<h3 id="为什么不能用isa判断一个类的继承关系"><a href="#为什么不能用isa判断一个类的继承关系" class="headerlink" title="为什么不能用isa判断一个类的继承关系"></a>为什么不能用isa判断一个类的继承关系</h3><pre><code>isa指针不总是指向实例对象所属的类，不能依靠它来确定
-类型，而是应该用class方法来确定实例对象的类。
-因为KVO的实现机理就是将被观察对象的isa指针指向一个中间类
-</code></pre>
-<h2 id="类结构关系"><a href="#类结构关系" class="headerlink" title="类结构关系"></a>类结构关系</h2><pre><code>实例对象在运行时被表示成objc_object类型结构体，结构体内部
-有个isa指针指向objc_class结构体。objc_class内部保存了类
-的变量和方法列表以及其他一些信息，并且还有一个isa指针。这个
-isa指针会指向meteClass(元类)，元类里保存了这个类的类方法
-列表。
-runtime中设计了meta class， 通过meta class来创建类对
-象，所以类对象的isa指向对应的meta class。而meta class也
-是一个对象，所有元类的isa都指向其根元类，根元类的isa指针指
-向自己，通过这种设计，isa的整体结构形成了一个闭环。为了完整
-性，其实元类里也有一个isa指针，这个isa指针，指向的是根元
-类，根元类的isa指针指向自己
-实例对象--(runtime)--&gt;objc_object--(isa)--
-&gt;objc_class--(isa)--&gt;元类--isa--&gt;根元类--isa--&gt;自
-己。
-类和元类都有自己的继承体系，但它们都有共同的根父类
-NSObject，而NSObject的父类指向nil。Root 
-Class（Class）是NSObject类对象，而Root Class（Meta）
-是NSObject的元类对象。对于像NSObject这样的类来说，它其实
-代表的是一个类对象，本质上还是一个普通的实例对象，类对象的、
-self指针应该指向的是这个类对象自身。
-</code></pre>
-<h3 id="继承实现"><a href="#继承实现" class="headerlink" title="继承实现"></a>继承实现</h3><pre><code>当我们调用某个类的方法时，如果这个类的方法列表里没有该方法，
-则会去找这个类的父类的方法列表。这种机制就是通过
-objc_class的第二个变量super_class指针实现的。
-并且这种继承关系会扩展到元类。
-</code></pre>
-<h2 id="内存布局："><a href="#内存布局：" class="headerlink" title="内存布局："></a>内存布局：</h2><pre><code>类的本质时结构体，在结构体中包含一些成员变量，
-如method list，ivar list等，这些都是结构体的一部分，
-method protocol，property的实现这些都可以放到类中，
-所有对象调用同一份即可，但对象的成员变量不可以放在一起，
-因为每个对象的成员变量值都是不同的。
-</code></pre>
-<h3 id="为什么不能添加变量"><a href="#为什么不能添加变量" class="headerlink" title="为什么不能添加变量"></a>为什么不能添加变量</h3><pre><code>创建实例对象时，会根据其对应的Class分配内存，内存构成
-是ivar+isa_t.并且实例变量不只是包含当前class的ivars，
-也会包含其继承链的ivars，ivars的内存布局在编译时就已经
-决定，运行时需要根据ivars内存布局创建对象，所以runtime
-不能动态修改ivars，会破坏已有的内存布局。
-</code></pre>
-<h3 id="不能向编译后得到的类中增加实例变量"><a href="#不能向编译后得到的类中增加实例变量" class="headerlink" title="不能向编译后得到的类中增加实例变量"></a>不能向编译后得到的类中增加实例变量</h3><pre><code>因为编译后的类已经注册在runtime中，类结构体中的
-objc_ivar_list实例变量的链表和instance_size
-实例变量的内存大小已经确定，同时runtime会调用
-class_setIvarLayout或class_WeakIvarLayout
-来处理strong weak引用，所以不能向存在的类中添加实例变量
-运行时创建的类时可以添加实例变量，调用class_addIvar函数
-，但是得在调用objc_allocateClassPari之后，
-objc_registerClassPair之前，原因同上。
-</code></pre>
-<h3 id="系统如何解决新增实例冲突"><a href="#系统如何解决新增实例冲突" class="headerlink" title="系统如何解决新增实例冲突"></a>系统如何解决新增实例冲突</h3><pre><code>类的结构体在编译时都是固定的，如果想修改类的结构需要重新编译
-原来UIViewController的结构体中增加了
-childViewControllers属性，这个时候和子类的内存偏移就
-发生了冲突，只不过，runtime有检测内存地址冲突的机制，
-在类生成实例变量时，会判断实例变量是否有地址冲突，
-如果发生冲突则调整对象的地址偏移。
-</code></pre>
-<h2 id="ivars-methodLists"><a href="#ivars-methodLists" class="headerlink" title="ivars methodLists"></a>ivars methodLists</h2><pre><code>在objc_class结构体中：ivars是objc_ivar_list指针；
-methodLists是指向objc_method_list指针的指针。
-也就是说可以动态修改 *methodLists 的值来添加成员方法，
-这也是Category实现的原理.
-</code></pre>
-<h2 id="IMP："><a href="#IMP：" class="headerlink" title="IMP："></a>IMP：</h2><pre><code>//结构
-typedef void (*IMP)(void /* id, SEL, ... */ );
-在runtime中IMP本质上就是一个函数指针
-在IMP中有两个默认的参数id和SEL，id也就是方法的self
-这和objc_msgSend()函数传递的参数一样；
-Runtime提供很多对于IMP的操作API，我们很多Runtime函数都
-是IMP操作
-</code></pre>
-<h2 id="Method："><a href="#Method：" class="headerlink" title="Method："></a>Method：</h2><pre><code>//结构
-typedef struct method_t *Method;
-struct method_t &#123; 
-    SEL name;
-    const char *types;
-    IMP imp; 
-&#125;;
-用来表示方法，其中包含SEL和IMP
-</code></pre>
-<h2 id="Property："><a href="#Property：" class="headerlink" title="Property："></a>Property：</h2><pre><code>在runtime中定义了属性的结构体，用来表示对象中定义的属性。
-@property修饰符用来修饰属性，修饰后的属性为
-objc_property_t类型，其本质是property_t结构体
-    struct property_t &#123;
-    const char *name; 
-    const char *attributes;
-&#125;;
-</code></pre>
-<h2 id="ivar读写"><a href="#ivar读写" class="headerlink" title="ivar读写"></a>ivar读写</h2><pre><code>实例变量的isa_t指针会指向其所属的类，对象中并不会包含
-method，property，protocol，ivar等信息，这些信息在编
-译时都保存在只读结构体class_ro_t中。在class_ro_t中ivar
-时const只读的，在image load时copy到class_rw_t中时，
-是不会copy ivars的，并且class_rw_t中并没有定义ivars
-的字段。
-在防伪某个成员变量时，直接通过isa_t找到对应的objc_class
-并通过其class_ro_t的ivar list做地址偏移，查找对应的对象
-内存，正是由于这种方式，所以对象的内存地址是固定不可改变的。
-</code></pre>
-<h2 id="方法传参："><a href="#方法传参：" class="headerlink" title="方法传参："></a>方法传参：</h2><pre><code>当调用实例变量的方法时，会通过objc_msgSend（）发起调用。
-调用是会传入self和SEL，函数内部通过isa在类的内部查找方法
-列表对应的IMP，传入对应的参数并发起调用，如果调用的方法涉
-及到当前对象的成员变量的访问，这是就是通过objc_msgSend()
-内部，通过类的ivar list判断地址偏移，取出ivar并传入调
-用的IMP中的。
-调用super的方式时则调用objc_msgSendSuper()函数实现
-</code></pre>
-<h2 id="isa-t"><a href="#isa-t" class="headerlink" title="isa_t:"></a>isa_t:</h2><pre><code>对于对象指针也是一样，在oc1.0时，isa时一个真的指针，
-指向一堆区的地址，而在oc2.0时代，一个指针长度时八个字节
-也就是64位，在64位中直接存储着对象的信息。当查找对象所属
-的类时，直接在isa指针中进行位运算即可，而且由于在栈区进
-行操作，查找速度非常快。
-例如，isa_t本质时一个结构体，如果创建结构体再用指针指向这
-个结构体，内存占用是很大的，但是Tagged Pointer特性中，
-直接把结构体的值都存储到指针中，这样就相当节省内存了。
-苹果不允许直接访问isa指针，和Tagged Pointer也是有关
-系的，因为tagged Pointer的情况下，isa并不是一个指针指
-向另一块内存区，而是直接表示对象的值，所以通过直接访问
-isa获取到的信息是错误的。
-</code></pre>
-<h2 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a>SEL</h2><pre><code>它是selector在Objc中的表示类型（Swift中是
-Selector类）。selector是方法选择器，
-可以理解为区分方法的 ID，而这个 ID 的数据结构是SEL:
-typedef struct objc_selector *SEL;
-从源码中看其实是一个const *的常量字符串，只代表名字而已
-其实它就是个映射到方法的C字符串，你可以用 Objc 
-编译器命令@selector()或者 Runtime 系统的
-sel_registerName函数来获得一个SEL类型的方法选择器。
-常见来两个相同的类，并定规两个相同的方法，通过@selector
-获取SEL并打印，我们发现SEL都是同一个对象，地址都是相同的，
-不同类的相同SEL是同一个对象。
-在runtime中维护一个SEL列表，这个表不按照类存储，
-只要相同SEL就算作一个，并存储到表中。
-</code></pre>
-<h2 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h2><pre><code>协议存储在protocol_t结构体中，而protocol_t继承objc_object，所以也就具备对象特征
-struct protocol_t : objc_object &#123;
-    const char *mangledName;
-    struct protocol_list_t *protocols; 
-    method_list_t *instanceMethods; 
-    method_list_t *classMethods;
-    method_list_t *optionalInstanceMethods;
-    method_list_t *optionalClassMethods;
-    property_list_t *instanceProperties;
-    uint32_t size; // sizeof(protocol_t) 
-    uint32_t flags;
-    const char **_extendedMethodTypes; 
-    const char *_demangledName; 
-    property_list_t *_classProperties;
-&#125;;
-既然具备了对象的特征，那么也有isa指针，在Protocol中所有的isa都指向同一个类Protocol。Protocol类并没有元类
-</code></pre>
-<h2 id="runtime如何实现weak变量的自动置nil"><a href="#runtime如何实现weak变量的自动置nil" class="headerlink" title="runtime如何实现weak变量的自动置nil"></a>runtime如何实现weak变量的自动置nil</h2><pre><code>runtime 对注册的类， 会进行布局，对于 weak 对象会放入一个 hash 表
-中。 用 weak 指向的对象内存地址作为 key，当此对象的引用计数为0的时
-候会 dealloc，假如 weak 指向的对象内存地址是a，那么就会以a为键， 
-在这个 weak 表中搜索，找到所有以a为键的 weak 对象，从而设置为 nil
-</code></pre>
-<h2 id="map-images-函数Runtime-初始化操作"><a href="#map-images-函数Runtime-初始化操作" class="headerlink" title="map_images 函数Runtime 初始化操作"></a>map_images 函数Runtime 初始化操作</h2><pre><code>在runtime中所有类都存在一个哈希表中，在table的buckets中存储
-1. 加载所有类到类的gdb_objc_realized_classes表中
-2. 对所有类做重映射
-3. 将所有SEL都注册到namedSelectors表中
-4. 修复函数指针遗留
-5. 将所有Protocol添加到protocol_map表中
-6. 将所有Protocol重映射
-7. 初始化所有非懒加载的类，进行rw，ro操作 
-8. 便利所有懒加载类，执行初始化
-9. 处理所有Category包括Class和MetaClass
-10. 初始化所有未初始化类
-</code></pre>
-<h2 id="load方法"><a href="#load方法" class="headerlink" title="load方法"></a>load方法</h2><pre><code>Load方法是在类加载的时候调用的，是在类加载到运行时的时候调用的，
-在mian函数之前，由系统调用，所以比较适合在load中调用钩子方法。只调用
-一次，注意load方法是直接调用的，并没有走运行时的objc_msgSend函数
-load方法顺序应该是，父类-&gt;子类-&gt;分类
-</code></pre>
-<h2 id="initialize"><a href="#initialize" class="headerlink" title="initialize"></a>initialize</h2><pre><code>initialize是由Runtime调用的，与load不同的是，initialize方法是第
-一次调用类所属方法时才会调用，如果当前类方法永远不被调用的话
-initialize有可能永远不会执行。
-</code></pre>
+          <p>1、数组<br>数组是可以再内存中连续存储多个元素的结构，在内存中的分配也是连续的，数组中的元素通过数组下标进行访问，数组下标从0开始。例如下面这段代码就是将数组的第一个元素赋值为 1。<br>优点：<br>1、按照索引查询元素速度快<br>2、按照索引遍历数组方便</p>
+<p>缺点：<br>1、数组的大小固定后就无法扩容了<br>2、数组只能存储一种类型的数据<br>3、添加，删除的操作慢，因为要移动其他的元素。<br>适用场景：<br>频繁查询，对存储空间要求不大，很少增加和删除的情况。</p>
+<p>寻找数组中第二小的元素<br>示例代码一：先把数组进行升序排序 排完序后再进行遍历比较<br>遍历数组，定义max和second，找到max，<br>if (v[i] &gt; max) {<br>           second = max;<br>           max = v[i];<br>       } else if (v[i] &gt; second) {<br>           second = v[i];<br>       }<br>找到数组中第一个不重复出现的整数<br>双重for循环，找位置，如果找到最后位置是当前位置，则没有重复<br>合并两个有序数组<br>混合插入有序数组，由于两个数组都是有序的，所以只要按顺序比较大小即可。题目中说了nums1数组有足够大的空间，说明我们不用resize数组，又给了我们m和n，那就知道了混合之后的数组大小，这样我们就从nums1和nums2数组的末尾开始一个一个比较，把较大的数，按顺序从后往前加入混合之后的数组末尾。需要三个变量i，j，k，分别指向nums1,nums2,和混合数组的末尾。进行while循环，如果i和j都大于0，再看如果nums1[i] &gt; nums2[j]，说明要把nums1[i]先加入混合数组的末尾，加入后k和i都要自减1；else，就把nums2[j]加入混合数组的末尾，之后j和k也要自减1。循环结束后，有可能i和j还大于等于0，若j大于等于0，那么需要继续循环，将nums2中的数字继续拷入nums1。若是i大于等于0，那么就不用管，因为混合数组本身就房子nums1中。<br>重新排列数组中的正值和负值</p>
+<p>2、栈</p>
+<p>栈是一种特殊的线性表，仅能在线性表的一端操作，栈顶允许操作，栈底不允许操作。 栈的特点是：先进后出，或者说是后进先出，从栈顶放入元素的操作叫入栈，取出元素叫出栈。<br>栈的结构就像一个集装箱，越先放进去的东西越晚才能拿出来，所以，栈常应用于实现递归功能方面的场景，例如斐波那契数列。<br>java使用栈计算后缀表达式<br>stack = new Stack<Integer>();<br>对栈的元素进行排序<br>判断表达式是否括号平衡<br>3、队列</p>
+<p>队列与栈一样，也是一种线性表，不同的是，队列可以在一端添加元素，在另一端取出元素，也就是：先进先出。从一端放入元素的操作称为入队，取出元素为出队，示例图如下：<br>使用场景：因为队列先进先出的特点，在多线程阻塞队列管理中非常适用。<br>面试题：反转队列前K个元素<br>直接把前k个元素压栈，放入新队列中，追加剩余的队列元素<br>使用队列表示栈<br>对队列的前k个元素倒序<br>使用队列生成从1到n的二进制数<br>4、链表</p>
+<p>链表是物理存储单元上非连续的、非顺序的存储结构，数据元素的逻辑顺序是通过链表的指针地址实现，每个元素包含两个结点，一个是存储元素的数据域 (内存空间)，另一个是指向下一个结点地址的指针域。根据指针的指向，链表能形成不同的结构，例如单链表，双向链表，循环链表等。<br>链表的优点：<br>链表是很常用的一种数据结构，不需要初始化容量，可以任意加减元素；<br>添加或者删除元素时只需要改变前后两个元素结点的指针域指向地址即可，所以添加，删除很快；</p>
+<p>缺点：<br>因为含有大量的指针域，占用空间较大；<br>查找元素需要遍历链表来查找，非常耗时。</p>
+<p>适用场景：<br>数据量较小，需要频繁增加，删除操作的场景<br>反转链表<br>检测链表中的循环<br>返回链表倒数第N个节点<br>删除链表中的重复项</p>
+<p>5、树</p>
+<p>树是一种数据结构，它是由n（n&gt;=1）个有限节点组成一个具有层次关系的集合。把它叫做 “树” 是因为它看起来像一棵倒挂的树，也就是说它是根朝上，而叶朝下的。它具有以下的特点：</p>
+<p>每个节点有零个或多个子节点；<br>没有父节点的节点称为根节点；<br>每一个非根节点有且只有一个父节点；<br>除了根节点外，每个子节点可以分为多个不相交的子树；<br>在日常的应用中，我们讨论和用的更多的是树的其中一种结构，就是二叉树。<br>二叉树是树的特殊一种，具有如下特点：</p>
+<p>1、每个结点最多有两颗子树，结点的度最大为2。<br>2、左子树和右子树是有顺序的，次序不能颠倒。<br>3、即使某结点只有一个子树，也要区分左右子树。</p>
+<p>二叉树是一种比较有用的折中方案，它添加，删除元素都很快，并且在查找方面也有很多的算法优化，所以，二叉树既有链表的好处，也有数组的好处，是两者的优化方案，在处理大批量的动态数据方面非常有用。</p>
+<p>扩展：<br>二叉树有很多扩展的数据结构，包括平衡二叉树、红黑树、B+树等，这些数据结构二叉树的基础上衍生了很多的功能，在实际应用中广泛用到，例如mysql的数据库索引结构用的就是B+树，还有HashMap的底层源码中用到了红黑树。这些二叉树的功能强大，但算法上比较复杂，想学习的话还是需要花时间去深入的。<br>求二叉树的高度<br>在二叉搜索树中查找第k个最大值<br>查找与根节点距离k的节点<br>在二叉树中查找给定节点的祖先节点</p>
+<p>计算字典树中的总单词数<br>打印存储在字典树中的所有单词<br>使用字典树对数组的元素进行排序<br>使用字典树从字典中形成单词<br>构建T9字典（字典树+ DFS ）<br>6、散列表</p>
+<p>散列表，也叫哈希表，是根据关键码和值 (key和value) 直接进行访问的数据结构，通过key和value来映射到集合中的一个位置，这样就可以很快找到集合中的对应元素。</p>
+<p>记录的存储位置=f(key)</p>
+<p>这里的对应关系 f 成为散列函数，又称为哈希 (hash函数)，而散列表就是把Key通过一个固定的算法函数既所谓的哈希函数转换成一个整型数字，然后就将该数字对数组长度进行取余，取余结果就当作数组的下标，将value存储在以该数字为下标的数组空间里，这种存储空间可以充分利用数组的查找优势来查找元素，所以查找的速度很快。</p>
+<p>哈希表在应用中也是比较常见的，就如Java中有些集合类就是借鉴了哈希原理构造的，例如HashMap，HashTable等，利用hash表的优势，对于集合的查找元素时非常方便的，然而，因为哈希表是基于数组衍生的数据结构，在添加删除元素方面是比较慢的，所以很多时候需要用到一种数组链表来做，也就是拉链法。拉链法是数组结合链表的一种结构，较早前的hashMap底层的存储就是采用这种结构，直到jdk1.8之后才换成了数组加红黑树的结构，其示例图如下：<br>7、堆</p>
+<p>堆是一种比较特殊的数据结构，可以被看做一棵树的数组对象，具有以下的性质：</p>
+<p>堆中某个节点的值总是不大于或不小于其父节点的值；</p>
+<p>堆总是一棵完全二叉树。</p>
+<p>将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆。常见的堆有二叉堆、斐波那契堆等。</p>
+<p>堆的定义如下：n个元素的序列{k1,k2,ki,…,kn}当且仅当满足下关系时，称之为堆。<br>(ki &lt;= k2i,ki &lt;= k2i+1)或者(ki &gt;= k2i,ki &gt;= k2i+1), (i = 1,2,3,4…n/2)，满足前者的表达式的成为小顶堆，满足后者表达式的为大顶堆，这两者的结构图可以用完全二叉树排列出来，示例图如下： </p>
+<p>8、图</p>
+<p>图是由结点的有穷集合V和边的集合E组成。其中，为了与树形结构加以区别，在图结构中常常将结点称为顶点，边是顶点的有序偶对，若两个顶点之间存在一条边，就表示这两个顶点具有相邻关系。</p>
+<p>按照顶点指向的方向可分为无向图和有向图：<br>图是一种比较复杂的数据结构，在存储数据上有着比较复杂和高效的算法，分别有邻接矩阵 、邻接表、十字链表、邻接多重表、边集数组等存储结构，这里不做展开，读者有兴趣可以自己学习深入。<br>实现广度和深度优先搜索<br>检查图是否为树<br>计算图的边数<br>找到两个顶点之间的最短路径</p>
+<p>在数组中查找对称键值对<br>追踪遍历的完整路径<br>查找数组是否是另一个数组的子集<br>检查给定的数组是否不相交</p>
 
       
     </div>
@@ -443,7 +234,7 @@ initialize有可能永远不会执行。
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/09/M_Swift101%E5%B8%B8%E8%A7%81UI%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/29/M_Swift124%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -457,7 +248,7 @@ initialize有可能永远不会执行。
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/08/09/M_Swift101%E5%B8%B8%E8%A7%81UI%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">常见UI问题</a>
+            <a href="/2020/06/29/M_Swift124%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">未命名</a>
         </h2>
 
         <div class="post-meta">
@@ -467,7 +258,7 @@ initialize有可能永远不会执行。
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-08-09 16:50:19" itemprop="dateCreated datePublished" datetime="2018-08-09T16:50:19+08:00">2018-08-09</time>
+              <time title="创建时间：2020-06-29 12:00:39" itemprop="dateCreated datePublished" datetime="2020-06-29T12:00:39+08:00">2020-06-29</time>
             </span>
 
           
@@ -481,951 +272,256 @@ initialize有可能永远不会执行。
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="tableView卡顿"><a href="#tableView卡顿" class="headerlink" title="tableView卡顿"></a>tableView卡顿</h2><pre><code>1.最常⽤用的就是cell的重⽤用  
-2.避免cell的重新布局 
-3.提前计算并缓存cell的属性及内容 
-4.减少cell中控件的数量量
-5.不要使⽤用ClearColor，⽆无背景⾊色，透明度也不不要设置为0 
-6.使⽤局部更新
-7.加载⽹络数据，下载图⽚，使用异步加载，并缓存 
-8.少使⽤用addView 给cell动态添加view 
-9.按需加载cell，cell滚动很快时，只加载范围内的cell 
-10.不要实现无用的代理理⽅方法，tableView只遵守两个协议 
-11.缓存⾏⾼
-12.不要做多余的绘制工作。
-13.预渲染图像。
-14.使⽤用正确的数据结构来存储数据。
+          <hr>
+<h2 id="title-字符串操作"><a href="#title-字符串操作" class="headerlink" title="title :字符串操作"></a>title :字符串操作</h2><p>// 字符反转的方法<br>   private void swap(char[] c, int front, int end) {</p>
+<pre><code>   if (front &gt; end || end &gt;= c.length) &#123;
+       return;
+   &#125;
+
+   while (front &lt; end) &#123;
+
+       char tmp = c[front];
+       c[front] = c[end];
+       c[end] = tmp;
+
+       front++;
+       end--;
+   &#125;
 </code></pre>
-<h2 id="应用优化"><a href="#应用优化" class="headerlink" title="应用优化"></a>应用优化</h2><pre><code>一、首页启动速度   
-    启动过程中做的事情越少越好、不在UI线程上作耗时的
-    操作、在合适的时机开始后台任务、尽量减小包的大小
-二、页面浏览速度
-    json的处理、数据压缩、内容缓存、算法的优化
-三、操作流畅度优化：
-    见tableVIew的优化
-四、数据库的优化：
-    数据库设计上面的重构、查询语句的优化、分库分表
-五、服务器端和客户端的交互优化：
-    客户端尽量减少请求、服务端尽量做多的逻辑
-    处理、通信协议的优化
-六、非技术性能优化
-    产品逻辑性、代码规范、界面交互规范等
+<p>}<br>   // 判断字符串是否由相同的字符组成<br>      public boolean compareStr(String str1, String str2) {</p>
+<pre><code>      byte[] bs1 = str1.getBytes();
+      byte[] bs2 = str2.getBytes();
+
+      Arrays.sort(bs1);
+      Arrays.sort(bs2);
+
+      str1 = new String(bs1);
+      str2 = new String(bs2);
+
+      if (str1.equals(str2)) &#123;
+          return true;
+      &#125; else &#123;
+          return false;
+      &#125;
 </code></pre>
-<h2 id="卡顿检测"><a href="#卡顿检测" class="headerlink" title="卡顿检测"></a>卡顿检测</h2><pre><code>1.使用instrument
-2.在程序运行期间能及时获取卡顿信息
-监控卡顿,最直接就是找到主线程都在干些啥玩意儿.我们知道一个线程的消息事
-件处理都是依赖于NSRunLoop来驱动,所以要知道线程正在调用什么方法,
-就需要从NSRunLoop来入手.其中核心方法CFRunLoopRun简化后的主要逻辑
-大概是这样的:
-int32_t __CFRunLoopRun()
+<p>}<br>删除重复字符</p>
+<pre><code>  public String removeDuplicate2(String str) &#123;
+
+      char[] cs = str.toCharArray();
+      int n = cs.length;
+      
+      int count[] = new int[256];
+      for (int i = 0; i &lt; cs.length; i++) &#123;
+          if (count[cs[i]] != 0)
+              cs[i] = &#39;\0&#39;;
+          count[cs[i]]++;
+      &#125;
+
+      int be = 0;
+      for (int i = 0; i &lt; n; i++) &#123;
+          if (cs[i] != &#39;\0&#39;)
+              cs[be++] = cs[i];
+      &#125;
+
+      return new String(cs, 0, be);
+  &#125;
+  public static void printStr(String test,Integer ptr)
+     &#123;
+         if(ptr&lt;=test.length())
+         &#123;
+             char[] chars = test.toCharArray();
+             for(int i=ptr;i&lt;chars.length;i++)
+             &#123;
+  
+                 char temp = chars[i];
+                 chars[i]=chars[ptr];
+                 chars[ptr]=temp;
+                 resultSet.add(new String(chars));
+                 printStr(new String(chars),ptr+1);
+             &#125;
+         &#125;
+    &#125;
+</code></pre>
+<p>最长不含重复字符的子字符串<br>请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。假设字符串中只还有’a’~’z’的字符<br>提到回文串，自然要利用回文串的特点，想到将源字符串逆转后，“回文串”（不一定连续）相当于顺序没变<br>求原字符串和其反串的最大公共子序列（不是子串，因为可以不连续）的长度（使用动态规划很容易求得），然后用原字符串的长度减去这个最大公共子串的长度就得到了最小编辑长度。</p>
+<p>int maxLen(string s1, string s2){<br>    int length1 = s1.size();<br>    int length2 = s2.size();<br>    for (int i = 0; i &lt; length1; ++i)<br>        MaxLen[i][0] = 0;<br>    for (int i = 0; i &lt; length2; ++i)<br>        MaxLen[0][i] = 0;</p>
+<pre><code>for (int i = 1; i &lt;= length1; ++i)
 &#123;
-    //通知即将进入runloop
-    __CFRunLoopDoObservers(KCFRunLoopEntry);
-    do
+    for (int j = 1; j &lt;= length2; ++j)
     &#123;
-    // 通知将要处理timer和source
-    __CFRunLoopDoObservers(kCFRunLoopBeforeTimers);
-    __CFRunLoopDoObservers(kCFRunLoopBeforeSources);
-
-    __CFRunLoopDoBlocks();  //处理非延迟的主线程调用
-    __CFRunLoopDoSource0(); //处理UIEvent事件        
-    //GCD dispatch main queue
-    CheckIfExistMessagesInMainDispatchQueue();
-    // 即将进入休眠
-    __CFRunLoopDoObservers(kCFRunLoopBeforeWaiting);
-    // 等待内核mach_msg事件
-    mach_port_t wakeUpPort = SleepAndWaitForWakingUpPorts();
-    // Zzz...
-    // 从等待中醒来
-    __CFRunLoopDoObservers(kCFRunLoopAfterWaiting);
-    // 处理因timer的唤醒
-    if (wakeUpPort == timerPort)
-    __CFRunLoopDoTimers();
-    // 处理异步方法唤醒,如dispatch_async
-    else if (wakeUpPort == mainDispatchQueuePort)
-    __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__()
-    // UI刷新,动画显示
-    else
-    __CFRunLoopDoSource1();
-    // 再次确保是否有同步的方法需要调用
-    __CFRunLoopDoBlocks();
-    &#125; while (!stop &amp;&amp; !timeout);
-    //通知即将退出runloop
-    __CFRunLoopDoObservers(CFRunLoopExit);
-&#125;
-不难发现NSRunLoop调用方法主要就是在kCFRunLoopBeforeSources和
-kCFRunLoopBeforeWaiting之间,还有kCFRunLoopAfterWaiting之后,
-也就是如果我们发现这两个时间内耗时太长,那么就可以判定出此时主线程卡顿.
-</code></pre>
-<h3 id="量化卡顿的程度"><a href="#量化卡顿的程度" class="headerlink" title="量化卡顿的程度"></a>量化卡顿的程度</h3><pre><code>要监控NSRunLoop的状态,我们需要使用到CFRunLoopObserverRef,通过它
-可以实时获得这些状态值的变化,具体的使用如下:
-static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
-&#123;
-MyClass *object = (__bridge MyClass*)info;
-object-&gt;activity = activity;
-&#125;
-
-- (void)registerObserver
-&#123;
-CFRunLoopObserverContext context = &#123;0,(__bridge void*)self,NULL,NULL&#125;;
-    CFRunLoopObserverRef observer = 
-    CFRunLoopObserverCreate(kCFAllocatorDefault,
-    kCFRunLoopAllActivities,
-    YES,
-    0,
-    &amp;runLoopObserverCallBack,
-    &amp;context);
-    CFRunLoopAddObserver(CFRunLoopGetMain(), 
-    observer, kCFRunLoopCommonModes);
-&#125;
-只需要另外再开启一个线程,实时计算这两个状态区域之间的耗时是否到达某
-个阀值,便能揪出这些性能杀手.
-
-为了让计算更精确,需要让子线程更及时的获知主线程NSRunLoop状态变化,
-所以dispatch_semaphore_t是个不错的选择,另外卡顿需要覆盖到多次连
-续小卡顿和单次长时间卡顿两种情景,所以判定条件也需要做适当优化.将上
-面两个方法添加计算的逻辑如下:
-static void runLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
-&#123;
-MyClass *object = (__bridge MyClass*)info;
-
-// 记录状态值
-object-&gt;activity = activity;
-
-// 发送信号
-dispatch_semaphore_t semaphore = moniotr-&gt;semaphore;
-dispatch_semaphore_signal(semaphore);
-&#125;
-
-- (void)registerObserver
-&#123;
-CFRunLoopObserverContext context = &#123;0,(__bridge void*)self,NULL,NULL&#125;;
-CFRunLoopObserverRef observer = CFRunLoopObserverCreate(kCFAllocatorDefault,
-kCFRunLoopAllActivities,
-YES,
-0,
-&amp;runLoopObserverCallBack,
-&amp;context);
-CFRunLoopAddObserver(CFRunLoopGetMain(), observer, kCFRunLoopCommonModes);
-
-// 创建信号
-semaphore = dispatch_semaphore_create(0);
-
-// 在子线程监控时长
-dispatch_async(dispatch_get_global_queue(0, 0), ^&#123;
-while (YES)
-&#123;
-// 假定连续5次超时50ms认为卡顿(当然也包含了单次超时250ms)
-long st = dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, 50*NSEC_PER_MSEC));
-if (st != 0)
-&#123;
-if (activity==kCFRunLoopBeforeSources || activity==kCFRunLoopAfterWaiting)
-&#123;
-if (++timeoutCount &lt; 5)
-continue;
-
-NSLog(@&quot;好像有点儿卡哦&quot;);
-&#125;
-&#125;
-timeoutCount = 0;
-&#125;
-&#125;);
-&#125;
-</code></pre>
-<h3 id="记录卡顿的函数调用"><a href="#记录卡顿的函数调用" class="headerlink" title="记录卡顿的函数调用"></a>记录卡顿的函数调用</h3><pre><code>监控到了卡顿现场,当然下一步便是记录此时的函数调用信息,此处可以使用一个
-第三方Crash收集组件PLCrashReporter,它不仅可以收集Crash信息也可用
-于实时获取各线程的调用堆栈,使用示例如下:
-PLCrashReporterConfig *config = [[PLCrashReporterConfig
-alloc]initWithSignalHandlerType:
-PLCrashReporterSignalHandlerTypeBSD
-symbolicationStrategy:
-PLCrashReporterSymbolicationStrategyAll];
-PLCrashReporter *crashReporter = 
-[[PLCrashReporter alloc] initWithConfiguration:config];
-
-NSData *data = [crashReporter generateLiveReport];
-PLCrashReport *reporter = [[PLCrashReport alloc]
-initWithData:data error:NULL];
-NSString *report = [PLCrashReportTextFormatter
-stringValueForCrashReport:reporter
-withTextFormat:PLCrashReportTextFormatiOS];
-
-NSLog(@&quot;------------\n%@\n------------&quot;, report);
-当检测到卡顿时,抓取堆栈信息,然后在客户端做一些过滤处理,便可以上报到
-服务器,通过收集一定量的卡顿数据后经过分析便能准确定位需要优化的逻辑,至
-此这个实时卡顿监控就大功告成了!
-</code></pre>
-<h2 id="什么是掉帧"><a href="#什么是掉帧" class="headerlink" title="什么是掉帧"></a>什么是掉帧</h2><pre><code>掉帧一般指由于硬件不足以负荷显示器画面动态显示刷新的频率，从而帧率过低
-所造成的画面出现停滞（或短时间或长时间）现象。掉帧在游戏中就是玩游戏过
-程中，出现卡这种情况，图像未及时刷新造成，画面粘滞。
-帧数就是在1秒钟时间里传输的图片的量，也可以理解为图形处理器每秒钟能够
-刷新几次，通常用fps（Frames Per Second）表示。每一帧都是静止的图
-象，快速连续地显示帧便形成了运动的假象。高的帧率可以得到更流畅、更逼真
-的动画。每秒钟帧数 (fps) 愈多，所显示的动作就会愈流畅。
-</code></pre>
-<h2 id="APP启动流出"><a href="#APP启动流出" class="headerlink" title="APP启动流出"></a>APP启动流出</h2><pre><code>1.打开程序
-2.执行main函数
-3.执行UIApplicationMain函数
-4.初始化UIApplication（创建和设置代理，开启RunLoop事件循环）
-5.监听事件，执行AppDelegate对应函数
-    程序加载完成
-    程序获取焦点
-    程序进入后台
-    程序失去焦点
-    程序从后台进入前台
-    内存警告，可能要终止程序
-    程序即将结束
-6.结束程序
-</code></pre>
-<h2 id="封装SDK需要注意哪些"><a href="#封装SDK需要注意哪些" class="headerlink" title="封装SDK需要注意哪些"></a>封装SDK需要注意哪些</h2><pre><code>1.类名、宏定义、枚举、通知、类别等命名时加静态库统一特殊前缀，以避免命名冲突。
-2.类别中方法名也需要加特殊前缀，以避免方法覆盖导致不必要麻烦。
-3.对于项目中的c、c++中的方法，需要加前缀
-4.对于开发静态库时引入的开源库，若体量过大，可外部引用，提供给接入方时
-加以说明，体量小的可以对类名及类中所用枚举、通知等加前缀使用。
-5.特别需要注意的是在同一个类中多个interface的情况，加前缀时一定要检
-查所有的interface，避免遗漏
-6.由于一些接入方引入静态库时，对app的体积有严格的控制，所以在开发静态
-库时，要尽量精简代码，引入开源库时，可剔除一些不必要的部分，如能用系统
-提供的方法实现的功能，尽量不去引入大型第三方库，不然打包出来的.a库可能体积增加很多。
-    
-</code></pre>
-<h2 id="使用drawRect有什么影响"><a href="#使用drawRect有什么影响" class="headerlink" title="使用drawRect有什么影响"></a>使用drawRect有什么影响</h2><pre><code>drawRect方法依赖Core Graphics框架来进行自定义的绘制，但这种方法主
-要的缺点就是它处理touch事件的方式：每次按钮被点击后，都会用
-setNeddsDisplay进行强制重绘；而且不止一次，每次单点事件触发两次执
-行。这样的话从性能的角度来说，对CPU和内存来说都是欠佳的。
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/09/M_Swift89Runtime%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/09/M_Swift89Runtime%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">Runtime</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-09 15:42:35" itemprop="dateCreated datePublished" datetime="2018-08-09T15:42:35+08:00">2018-08-09</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-基本使用"><a href="#1-基本使用" class="headerlink" title="1.基本使用"></a>1.基本使用</h2><pre><code>Objective-C 从三种不同的层级上与 Runtime 系统进行交互，
-分别是通过 Objective-C 源代码，
-通过 Foundation 框架的NSObject类定义的方法，
-通过对 runtime 函数的直接调用。
-RunTime简称运行时,就是系统在运行的时候的一些机制，
-其中最主要的是消息机制。
-每一个oc的方法，底层必然有一个与之对应的runtime方法。
-</code></pre>
-<h2 id="常见方法"><a href="#常见方法" class="headerlink" title="常见方法"></a>常见方法</h2><h3 id="获取属性列表"><a href="#获取属性列表" class="headerlink" title="获取属性列表"></a>获取属性列表</h3><pre><code>objc_property_t *propertyList = class_copyPropertyList([self class], &amp;count);
-for (unsigned int i=0; i&lt;count; i++) &#123;
-const char *propertyName = property_getName(propertyList[i]);
-NSLog(@&quot;property----&gt;%@&quot;, [NSString stringWithUTF8String:propertyName]);
-&#125;
-</code></pre>
-<h3 id="获取方法列表"><a href="#获取方法列表" class="headerlink" title="获取方法列表"></a>获取方法列表</h3><pre><code>Method *methodList = class_copyMethodList([self class], &amp;count);
-for (unsigned int i; i&lt;count; i++) &#123;
-Method method = methodList[i];
-NSLog(@&quot;method----&gt;%@&quot;, NSStringFromSelector(method_getName(method)));
-&#125;
-</code></pre>
-<h3 id="获取成员变量列表"><a href="#获取成员变量列表" class="headerlink" title="获取成员变量列表"></a>获取成员变量列表</h3><pre><code>Ivar *ivarList = class_copyIvarList([self class], &amp;count);
-for (unsigned int i; i&lt;count; i++) &#123;
-Ivar myIvar = ivarList[i];
-const char *ivarName = ivar_getName(myIvar);
-NSLog(@&quot;Ivar----&gt;%@&quot;, [NSString stringWithUTF8String:ivarName]);
-&#125;
-</code></pre>
-<h3 id="获取协议列表"><a href="#获取协议列表" class="headerlink" title="获取协议列表"></a>获取协议列表</h3><pre><code>__unsafe_unretained Protocol **protocolList = class_copyProtocolList([self class], &amp;count);
-for (unsigned int i; i&lt;count; i++) &#123;
-Protocol *myProtocal = protocolList[i];
-const char *protocolName = protocol_getName(myProtocal);
-NSLog(@&quot;protocol----&gt;%@&quot;, [NSString stringWithUTF8String:protocolName]);
-&#125;
-</code></pre>
-<h3 id="获得类方法"><a href="#获得类方法" class="headerlink" title="获得类方法"></a>获得类方法</h3><pre><code>Class PersonClass = object_getClass([Person class]);
-SEL oriSEL = @selector(test1);
-Method oriMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
-</code></pre>
-<h3 id="获取实例方法"><a href="#获取实例方法" class="headerlink" title="获取实例方法"></a>获取实例方法</h3><pre><code>Class PersonClass = object_getClass([xiaoming class]);
-SEL oriSEL = @selector(test2);
-Method cusMethod = class_getInstanceMethod(xiaomingClass, oriSEL);
-</code></pre>
-<h3 id="添加一个实例变量"><a href="#添加一个实例变量" class="headerlink" title="添加一个实例变量"></a>添加一个实例变量</h3><pre><code>/*
-参数一、类名
-参数二、属性名称
-参数三、开辟字节长度
-参数四、对其方式
-参数五、参数类型 “@” 官方解释 An object (whether statically typed or typed id) （对象 静态类型或者id类型） 具体类型可参照官方文档
-return: BOOL 是否添加成功
-*/
-BOOL isSuccess = class_addIvar(MyClass, &quot;addIvar&quot;, sizeof(NSString *), 0, &quot;@&quot;);
-</code></pre>
-<h3 id="添加方法"><a href="#添加方法" class="headerlink" title="添加方法"></a>添加方法</h3><pre><code>/*
-参数一、类名
-参数二、SEL 添加的方法名字
-参数三、IMP指针 (IMP就是Implementation的缩写，它是指向一个方法实现的指针，每一个方法都有一个对应的IMP)
-参数四、其中types参数为&quot;i@:@“，按顺序分别表示：具体类型可参照官方文档
-i 返回值类型int，若是v则表示void
-@ 参数id(self)
-: SEL(_cmd)
-@ id(str)
-V@:表示返回值是void 带有SEL参数 （An object (whether statically typed or typed id)）
-*/
-BOOL addSucc = class_addMethod(xiaomingClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
-</code></pre>
-<h3 id="替换方法"><a href="#替换方法" class="headerlink" title="替换方法"></a>替换方法</h3><pre><code>class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
-</code></pre>
-<h3 id="交换方法"><a href="#交换方法" class="headerlink" title="交换方法"></a>交换方法</h3><pre><code>method_exchangeImplementations(oriMethod, cusMethod);
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/09/M_Swift104Category/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/09/M_Swift104Category/" class="post-title-link" itemprop="url">Category</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-09 15:34:47" itemprop="dateCreated datePublished" datetime="2018-08-09T15:34:47+08:00">2018-08-09</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Objective-C中category的实现原理和runtime有什么关系？"><a href="#Objective-C中category的实现原理和runtime有什么关系？" class="headerlink" title="Objective-C中category的实现原理和runtime有什么关系？"></a>Objective-C中category的实现原理和runtime有什么关系？</h2><pre><code>Objective-C 中的 Category 就是对装饰模式的一种具
-体实现。它的主要作用是在不改变原有类的前提下，动态地
-给这个类添加一些方法。在 Objective-C 中的具体体现为：
-实例（类）方法、属性和协议。是的，在 Objective-C 
-中可以用 Category 来实现协议
-在runtime层，Category维护一个名为category_map的哈希表，哈希表存
-储category_t对象，Category添加方法，然后调用remethodizeClass
-向对应的class中添加Category的信息
-将 Category 和它的主类（或元类）注册到哈希表中；
-如果主类（或元类）已实现，那么重建它的方法列表。
-Category 中的实例方法和属性被整合到主类中；
-而类方法则被整合到元类中。
-另外，对协议的处理比较特殊，Category 中的协议被同
-时整合到了主类和元类中。
-我们注意到，不管是哪种情况，最终都是通过调用 
-static void remethodizeClass(Class cls) 
-函数来重新整理类的数据的。
-这个函数的主要作用是将 Category 中的方法、属性和协议
-整合到类（主类或元类）中，更新类的数据字段 data() 中
-method_lists（或 method_list）、properties 和
-protocols 的值。进一步，我们通过
-attachCategoryMethods 函数的源码可以找到真正处理
-Category 方法的 attachMethodLists 函数：
-</code></pre>
-<h2 id="category结构体的定义"><a href="#category结构体的定义" class="headerlink" title="category结构体的定义"></a>category结构体的定义</h2><pre><code>struct category_t &#123;
-    const char *name;     //类的名字（name）
-    classref_t cls;       //类（cls）
-    struct method_list_t *instanceMethods; 
-    //category中所有给类添加的实例方法的列表（instanceMethods）
-    struct method_list_t *classMethods; 
-    //category中所有添加的类方法的列表（classMethods）
-    struct protocol_list_t *protocols; 
-    //category实现的所有协议的列表（protocols）
-    struct property_list_t *instanceProperties;
-    //category中添加的所有属性（instanceProperties）
-&#125;
-</code></pre>
-<h2 id="类别（category）主要有三个作用"><a href="#类别（category）主要有三个作用" class="headerlink" title="类别（category）主要有三个作用"></a>类别（category）主要有三个作用</h2><pre><code>1.将类的实现分散到多个不同文件或多个不同框架中
-2.创建对私有方法的向前引用（cocoa没有真正的私有方法）
-3.向对象添加非正式协议（创建一个NSObject的类别称为“创建一个非正式协
-议”）因为，NSObject是顶级父类，在NSObject中添加了该方法，也就是说
-通过继承关系，所有的类中都有该方法。
-</code></pre>
-<h2 id="类别和Extension区别"><a href="#类别和Extension区别" class="headerlink" title="类别和Extension区别"></a>类别和Extension区别</h2><pre><code>和Category相似的还有Extension，二者的区别是Extension
-在编译期就直接和原类编译在一起了，而Category是在
-运行时添加到原类中。
-</code></pre>
-<h2 id="类别为什么不能添加实例变量"><a href="#类别为什么不能添加实例变量" class="headerlink" title="类别为什么不能添加实例变量"></a>类别为什么不能添加实例变量</h2><pre><code>category是无法添加实例变量的（因为在运行期，对象的内存布局已
-经确定，如果添加实例变量就会破坏类的内部布局，这对编译型语言来
-说是灾难性的）。
-</code></pre>
-<h2 id="类别重写类中方法"><a href="#类别重写类中方法" class="headerlink" title="类别重写类中方法"></a>类别重写类中方法</h2><pre><code>1)、category的方法没有“完全替换掉”原来类已经有的方法，也就是说如果
-category和原来类都有methodA，那么category附加完成之后，类的方法列
-表里会有两个methodA
-2)、category的方法被放到了新方法列表的前面，而原来类的方法被放到了新
-方法列表的后面，这也就是我们平常所说的category的方法会“覆盖”掉原来类
-的同名方法，这是因为运行时在查找方法的时候是顺着方法列表的顺序查找的，
-它只要一找到对应名字的方法，就会罢休^_^，殊不知后面可能还有一样名字的
-方法。
-重写其原有方法，会导致Category的方法覆盖原有类的方法，
-但是load方法是例外，category和原有类的load方法都会被执行。
-</code></pre>
-<h2 id="如何在重写后，保证原类方法会调用"><a href="#如何在重写后，保证原类方法会调用" class="headerlink" title="如何在重写后，保证原类方法会调用"></a>如何在重写后，保证原类方法会调用</h2><pre><code>可以在一个Category方法被调用后，便利方法列表，
-并调用其他同名方法，但是需要注意一点是，便利过程不能
-再调用自己的方法，否则会导致递归调用，为了避免这个问题，
-可以在调用前判断被调用的方法IMP是否是当前方法的IMP
-</code></pre>
-<h2 id="如何在重写后，保证只调用原类方法"><a href="#如何在重写后，保证只调用原类方法" class="headerlink" title="如何在重写后，保证只调用原类方法"></a>如何在重写后，保证只调用原类方法</h2><pre><code>根据上面方法调用的分析，Runtime在调用方法时会优先所
-有Category调用，所以可以倒叙便利方法列表，只便利第一
-个方法即可，这个方法就是元类的方法。
-</code></pre>
-<h2 id="如何在Category中添加变量"><a href="#如何在Category中添加变量" class="headerlink" title="如何在Category中添加变量"></a>如何在Category中添加变量</h2><pre><code>关联对象来实现。我们可以看到所有的关联对象都由
-AssociationsManager管理
-AssociationsManager里面是由一个静态AssociationsHashMap来存储
-所有的关联对象的。这相当于把所有对象的关联对象都存在一个全局map里面。
-而map的的key是这个对象的指针地址（任意两个不同对象的指针地址一定是不
-同的），而这个map的value又是另外一个AssociationsHashMap，里面保
-存了关联对象的kv对。
-@interface TestObject (Category)
-@property (nonatomic, strong) NSObject *object; @end
-#import &lt;objc/runtime.h&gt;
-#import &lt;objc/message.h&gt;
-static void *const kAssociatedObjectKey = 
-(void *)&amp;kAssociatedObjectKey;
-@implementation TestObject (Category)
-- (NSObject *)object &#123;
-return objc_getAssociatedObject(
-self, kAssociatedObjectKey);
-&#125;
-- (void)setObject:(NSObject *)object &#123;
-objc_setAssociatedObject(self,
-kAssociatedObjectKey, object,
-OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-&#125;
-从原码中可以看出，所有通过associated添加的属性，
-都是被单独存放在一个哈希表AssociationsHashMap中，
-objc_setAssociatedObject和
-objc_getAssociatedObject本质上就是操作这个哈希表，
-通过对哈希表进行映射来存取对象。
-</code></pre>
-<h2 id="在协议-和-分类-中如何使用-property"><a href="#在协议-和-分类-中如何使用-property" class="headerlink" title="在协议 和 分类 中如何使用 @property"></a>在协议 和 分类 中如何使用 @property</h2><pre><code>1、在 protocol 中使用 property 只会生成 setter 和 getter 方法
-声明,我们使用属性的目的,是希望遵守我协议的对象能实现该属性
-2、category 使用 @property 也是只会生成 setter 和 getter 方法
-的声明,真要添加属性建议使用关联对象来实现
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/09/M_Swift109OC%E8%AF%AD%E8%A8%80%E7%9B%B8%E5%85%B3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/09/M_Swift109OC%E8%AF%AD%E8%A8%80%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">OC语言相关</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-09 15:34:45" itemprop="dateCreated datePublished" datetime="2018-08-09T15:34:45+08:00">2018-08-09</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="OC为什么说是一门动态语言"><a href="#OC为什么说是一门动态语言" class="headerlink" title="OC为什么说是一门动态语言"></a>OC为什么说是一门动态语言</h2><pre><code>Objective-C 可以通过Runtime 这个运行时机制，在运行时动态的添加变
-量、方法、类等，所以说Objective-C 是一门动态的语言
-Objective-C的动态性，让程序在运行时判断其该有的行为，而不是像c等静
-态语言在编译构建时就确定下来。它的动态性主要体现在3个方面：
-1.动态类型：如id类型。实际上静态类型因为其固定性和可预知性而使用的特
-别广泛。静态类型是强类型，动态类型是弱类型，运行时决定接收者。
-2.动态绑定：让代码在运行时判断需要调用什么方法，而不是在编译时。与其他
-面向对象语言一样，方法调用和代码并没有在编译时连接在一起，而是在消息发
-送时才进行连接。运行时决定调用哪个方法。
-3.动态载入。让程序在运行时添加代码模块以及其他资源。用户可以根据需要执
-行一些可执行代码和资源，而不是在启动时就加载所有组件。可执行代码中可以
-含有和程序运行时整合的新类。
-</code></pre>
-<h2 id="类方法（静态方法）和实例方法（动态方法）区别"><a href="#类方法（静态方法）和实例方法（动态方法）区别" class="headerlink" title="类方法（静态方法）和实例方法（动态方法）区别"></a>类方法（静态方法）和实例方法（动态方法）区别</h2><pre><code>类方法必须使用类调用，存储在元类结构体里面的methodLists里面
-实例方法必须使用实例对象调用，存储在类结构体里面的methodLists里面
-静态方法在程序开始时生成内存,实例方法在程序运行中生成内存，
-所以静态方法可以直接调用,实例方法要先成生实例,通过实例调用方法，静态速
-度很快，但是多了会占内存。
-静态内存是连续的,因为是在程序开始时就生成了,而实例申请的是离散的空间,
-所以当然没有静态方法快，
-</code></pre>
-<h2 id="ios中定义属性了解"><a href="#ios中定义属性了解" class="headerlink" title="ios中定义属性了解"></a>ios中定义属性了解</h2><pre><code>@property = ivar + getter + setter
-实例变量+get方法+set方法 也就是说使用@property系统会自动生成setter和getter方法，
-nonatomic 非原子性操作，不提供线程安全，效率更高
-nonatomic 非原子性操作，不提供线程安全，效率更高
-strong 在赋值的时候调用被只想对象的retuain方法，使其引用计数加1
-weak 不增加对象的引用计数，也不持有对象，对象消失后，指针自动变为nil
-assign 不更改引用计数，修饰基础数据类型
-copy 简历一个引用计数为1的对象，常用于NSString和block
-readonly 只读属性
-readwrite默认属性 可读可写
-@synthesize：编译期间，让编译器自动生成setter方法和getter方法
-@dynamic  不自动生成，自己手动生成
-</code></pre>
-<h2 id="NSString为什么要用copy修饰"><a href="#NSString为什么要用copy修饰" class="headerlink" title="NSString为什么要用copy修饰"></a>NSString为什么要用copy修饰</h2><pre><code>因为父类指针可以指向子类对象，使用copy的目的是为了让本对象的属性不受
-外界影响，使用copy无论给我传入的是一个可变的对象黑市不可变的对象，我
-本身持有个就是一个不可变的副本
-如果我们使用的是strong，那么这个属性就有可能指向一个可变对象，如果这
-个可变对象在外部被修改了，那么会影响该属性
-</code></pre>
-<h2 id="如何让自己的对象具有拷贝功能"><a href="#如何让自己的对象具有拷贝功能" class="headerlink" title="如何让自己的对象具有拷贝功能"></a>如何让自己的对象具有拷贝功能</h2><pre><code>需要遵守NSCopying协议，如果自定义的对象分为可变和不可变版本，那么要
-同事细心啊NSCopying和NSMutableCopying协议
-copy和mutableCopy区别
-针对不可变对象调用copy返回该对象本身，调用mutableCopy返回一个可变对象（新的）
-针对可变对象调用copy返回一个不可变对象（新的），调用mutableCopy返回
-另外一个可变对象（新的）。
-copy:创建的是不可变副本（NSString，NSArray，NSDictionary）
-mutableCopy：创建的是可变副本（NSMutableString，
-NSMutableArray，NSMutableDictionary）
-深拷贝(mutableCopy)就是内容拷贝，即指拷贝对象的具体内容，而内存地址
-是自主分配的，拷贝结束之后，两个对象虽然存的值是相同的，但是内存地址不
-一样，两个对象也互不影响，互不干涉;浅拷贝(copy)就是指针拷贝,即对内存
-地址的复制，让目标对象指针和源对象指向同一片内存空间。
-</code></pre>
-<h2 id="为什么IBOutlet修饰的UIView也适用weak关键字"><a href="#为什么IBOutlet修饰的UIView也适用weak关键字" class="headerlink" title="为什么IBOutlet修饰的UIView也适用weak关键字"></a>为什么IBOutlet修饰的UIView也适用weak关键字</h2><pre><code>因为既然有外链那么试图在xib中可定存在，试图已经对他有一个强引用了，使
-用storeboars创建的vc会有一个私有数组前引用所有的对象
-</code></pre>
-<h2 id="使用descperction注意什么"><a href="#使用descperction注意什么" class="headerlink" title="使用descperction注意什么"></a>使用descperction注意什么</h2><pre><code>千万不要在description方法中同时使用%@和self,同时使用了%@和self,
-代表要调用self的description方法,因此最终会导致程序陷入死循环,循 环
-调用description方法
-当该方法使用NSLog(“%@”,self) 时候, 系统做了相关的优化，循坏调用3
-次后就会自动退出
-</code></pre>
-<h2 id="什么时候会报unrecognized-selector错误"><a href="#什么时候会报unrecognized-selector错误" class="headerlink" title="什么时候会报unrecognized selector错误"></a>什么时候会报unrecognized selector错误</h2><pre><code>出现unrecognized selector类型的crash，一般是向对象发送了无法处理
-的消息导致的。说白一点就是这个对象没有你调的那个方法，为什么运行的时候
-才会出现，这个和OC语言动态绑定的机制有关系。
-对象未实现该方法。
-对象已经被释放。
-</code></pre>
-<h2 id="iOS常见错误"><a href="#iOS常见错误" class="headerlink" title="iOS常见错误"></a>iOS常见错误</h2><pre><code>数组越界
-向容器存入nil
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/07/M_Swift89%E5%88%A4%E6%96%AD%E7%B1%BB%E7%9B%B8%E5%90%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/07/M_Swift89%E5%88%A4%E6%96%AD%E7%B1%BB%E7%9B%B8%E5%90%8C/" class="post-title-link" itemprop="url">判断类相同</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-07 17:21:40" itemprop="dateCreated datePublished" datetime="2018-08-07T17:21:40+08:00">2018-08-07</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <pre><code>1.判断两个指针是否相等，若相等，则均指向同一对象，所以受测的对象也必定
-相等。NSObject的isEqual:方法默认是比较两个对象指向的地址是否相等，
-直接比较两个对象是否相等，实际上比较的是两个对象的指针是否相等。
-2.判断两对象所属的类，若属于同一类
-3.hash
-比较得时候最好是先计算其哈希码，再进行比较。
-4.isEqualToString
-如果isEqual判断两个对象相等，那么hash方法也必须返回同一个值，
-但是，如果两个对象的hash方法返回同一个值，
-那么isEqual方法未必会认为两个方法相同
-需要实现&lt;NSCopying&gt;
-实现isEqual:方法的同时，要实现hash方法！ 
-- (BOOL)isEqual:(id)object &#123;
-if (self == object) return YES;
-if (![object isKindOfClass:[Person class]]) return NO;
-    return [self.name isEqualToString:[object name]];
-&#125;
-用于判断两个字符串是否相等的方法，当然还有isEqualToArray:   isEqualToDictionary: 
-5.深度等同性判定
-NSArray 的检测方式需要先比较两个数组所包含的个数是否相同，
-若相同，则在每个对应未知的两个对象身上调用其“isEqual:&quot;方法。
-如果对应位置上的对象均相等，那么这两个数组就相等。
-6.NSSet中可变类的等同性比较
-非常复杂，只写结论了：如果把一个对象放入set之后又修改其内容，
-那么后面的行为将很难预料，使用过程中一定以注意，
-以免得到的不是自己想要的结果
-7.两个对象中的各个字段是否相等
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/07/M_Swift96Runtime%E5%B8%B8%E8%A7%81%E4%BD%9C%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/07/M_Swift96Runtime%E5%B8%B8%E8%A7%81%E4%BD%9C%E7%94%A8/" class="post-title-link" itemprop="url">Runtime常见作用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-07 14:24:43" itemprop="dateCreated datePublished" datetime="2018-08-07T14:24:43+08:00">2018-08-07</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="动态的添加对象的成员变量和方法"><a href="#动态的添加对象的成员变量和方法" class="headerlink" title="动态的添加对象的成员变量和方法"></a>动态的添加对象的成员变量和方法</h2><pre><code>class_addMethod([self.person class], @selector(guess), (IMP)guessAnswer, &quot;v@:&quot;);
-参数说明
-&gt;(IMP)guessAnswer 意思是guessAnswer的地址指针;
-&gt;&quot;v@:&quot; 意思是，v代表无返回值void，如果是i则代表int；@代表 id sel; : 代表 SEL _cmd;
-&gt;“v@:@@” 意思是，两个参数的没有返回值。  
-</code></pre>
-<h2 id="动态交换两个方法的实现"><a href="#动态交换两个方法的实现" class="headerlink" title="动态交换两个方法的实现"></a>动态交换两个方法的实现</h2><pre><code>交换方法之后，以后每次调用这两个方法都会交换方法的实现
-Method m1 = class_getInstanceMethod([self.person class], @selector(sayName));
-Method m2 = class_getInstanceMethod([self.person class], @selector(saySex));
-method_exchangeImplementations(m1, m2);
-</code></pre>
-<h2 id="拦截并替换方法"><a href="#拦截并替换方法" class="headerlink" title="拦截并替换方法"></a>拦截并替换方法</h2><pre><code>我们要改变这个方法的实现，但是又不能去动它的源代码
-(正如一些开源库出现问题的时候)，
-这个时候runtime就派上用场了
-我们先增加一个tool类，然后写一个我们自己实现的方法-change，
-通过runtime把test1替换成change。
-Class PersionClass = object_getClass([Person class]);
-Class toolClass = object_getClass([tool class]);
-////源方法的SEL和Method
-SEL oriSEL = @selector(test1);
-Method oriMethod = class_getInstanceMethod(PersionClass, oriSEL);
-////交换方法的SEL和Method
-SEL cusSEL = @selector(change);
-Method cusMethod = class_getInstanceMethod(toolClass, cusSEL);
-////先尝试給源方法添加实现，这里是为了避免源方法没有实现的情况
-BOOL addSucc = class_addMethod(PersionClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
-if (addSucc) &#123;
-    // 添加成功：将源方法的实现替换到交换方法的实现     
-    class_replaceMethod(toolClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
-&#125;else &#123;
-    //添加失败：说明源方法已经有实现，直接将两个方法的实现交换即
-    method_exchangeImplementations(oriMethod, cusMethod);  
-&#125;
-</code></pre>
-<h2 id="在方法上增加额外功能"><a href="#在方法上增加额外功能" class="headerlink" title="在方法上增加额外功能"></a>在方法上增加额外功能</h2><pre><code>有这样一个场景，出于某些需求，我们需要跟踪记录APP
-中按钮的点击次数和频率等数据，怎么解决？当然通过继承按钮
-类或者通过类别实现是一个办法，但是带来其他问题比如别人不
-一定会去实例化你写的子类，或者其他类别也实现了点击方法导
-致不确定会调用哪一个，runtime可以这样解决，
-实现场景二、我们app经常会遇到一些cash，我们可以通过
-runtime拦截替换这些方法，从而保证不会崩溃，例如如下列举
-    NSArray+NSRangeException
-    NSDictionary+NSRangeException
-    NSMutableAttributedString+NSRangeException
-    NSMutableString+NSRangeException
-    NSNull+Exception
-    NSObject+Swizzling
-    NSString+NSRangeException
-    UINavigationController+Consistent
-load方法会在类第一次加载的时候被调用,调用的时间比较靠前，
-适合在这个方法里做方法交换,方法交换应该被保证，
-在程序中只会执行一次。
-+ (void)load &#123;
-    static dispatch_once_t onceToken;
-    dispatch_once(&amp;onceToken, ^&#123;
-        Class selfClass = [self class];
-        SEL oriSEL = @selector(sendAction:to:forEvent:);
-        Method oriMethod = class_getInstanceMethod(selfClass, oriSEL);
-        SEL cusSEL = @selector(mySendAction:to:forEvent:);
-        Method cusMethod = class_getInstanceMethod(selfClass, cusSEL);
-        BOOL addSucc = class_addMethod(selfClass, oriSEL, method_getImplementation(cusMethod), method_getTypeEncoding(cusMethod));
-        if (addSucc) &#123;
-            class_replaceMethod(selfClass, cusSEL, method_getImplementation(oriMethod), method_getTypeEncoding(oriMethod));
-        &#125;else &#123;
-            method_exchangeImplementations(oriMethod, cusMethod);
+        if (s1[i-1] == s2[j-1])&#123;
+            MaxLen[i][j] = MaxLen[i-1][j - 1] + 1;
         &#125;
-    &#125;);
-&#125;
-- (void)mySendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event &#123;
-    [[Tool sharedManager] addCount];
-    [self mySendAction:action to:target forEvent:event];
-&#125;
-</code></pre>
-<h2 id="实现NSCoding的自动归档和解档"><a href="#实现NSCoding的自动归档和解档" class="headerlink" title="实现NSCoding的自动归档和解档"></a>实现NSCoding的自动归档和解档</h2><pre><code>- (void)encodeWithCoder:(NSCoder *)encoder
-&#123;
-    unsigned int count = 0;
-    Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
-    for (int i = 0; i&lt;count; i++) &#123;
-        // 取出i位置对应的成员变量
-        Ivar ivar = ivars[i];
-        // 查看成员变量
-        const char *name = ivar_getName(ivar);
-        // 归档
-        NSString *key = [NSString stringWithUTF8String:name];
-        id value = [self valueForKey:key];
-        [encoder encodeObject:value forKey:key];
+        else
+        &#123;
+            MaxLen[i][j] = max(MaxLen[i - 1][j], MaxLen[i][j - 1]);
+        &#125;
     &#125;
-    free(ivars);
 &#125;
 
-- (id)initWithCoder:(NSCoder *)decoder
-&#123;
-    if (self = [super init]) &#123;
-        unsigned int count = 0;
-        Ivar *ivars = class_copyIvarList([Movie class], &amp;count);
-        for (int i = 0; i&lt;count; i++) &#123;
-            // 取出i位置对应的成员变量
-            Ivar ivar = ivars[i];
-            // 查看成员变量
-            const char *name = ivar_getName(ivar);
-            // 归档
-            NSString *key = [NSString stringWithUTF8String:name];
-            id value = [decoder decodeObjectForKey:key];
-            // 设置到成员变量身上
-            [self setValue:value forKey:key];
-        &#125;
-        free(ivars);
-    &#125;
-    return self;
-&#125;
+return MaxLen[length1][length2];
 </code></pre>
-<h2 id="实现字典转模型的自动转换"><a href="#实现字典转模型的自动转换" class="headerlink" title="实现字典转模型的自动转换"></a>实现字典转模型的自动转换</h2><pre><code>字典转模型的应用可以说是每个app必然会使用的场景,
-虽然实现的方式略有不同，但是原理都是一致的：遍历模型中所有
-属性，根据模型的属性名，去字典中查找key，取出对应的值，
-给模型的属性赋值。
-像几个出名的开源库：JSONModel,MJExtension等都是通过这
-种方式实现的。
-// 创建对应模型对象
-id objc = [[self alloc] init];
-unsigned int count = 0;
-// 1.获取成员属性数组
-Ivar *ivarList = class_copyIvarList(self, &amp;count);
-// 2.遍历所有的成员属性名,一个一个去字典中取出对应的
-value给模型属性赋值
-for (int i = 0; i &lt; count; i++) &#123;
-    // 2.1 获取成员属性
-    Ivar ivar = ivarList[i];
-    // 2.2 获取成员属性名 C -&gt; OC 字符串
-    NSString *ivarName = [NSString stringWithUTF8String:ivar_getName(ivar)];
-    // 2.3 _成员属性名 =&gt; 字典key
-    NSString *key = [ivarName substringFromIndex:1];
-    // 2.4 去字典中取出对应value给模型属性赋值
-    id value = dict[key];
-    // 获取成员属性类型
-    NSString *ivarType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
-&#125;
-如果模型比较简单，只有NSString，NSNumber等，
-这样就可以搞定了。但是如果模型含有NSArray，或者NSDictionary等，那么我们还需要进行第二步转换。
-if ([value isKindOfClass:[NSDictionary class]] &amp;&amp; ![ivarType containsString:@&quot;NS&quot;]) &#123; 
-    //  是字典对象,并且属性名对应类型是自定义类型
-    // 处理类型字符串 @\&quot;User\&quot; -&gt; User
-    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;@&quot; withString:@&quot;&quot;];
-    ivarType = [ivarType stringByReplacingOccurrencesOfString:@&quot;\&quot;&quot; withString:@&quot;&quot;];
-    // 自定义对象,并且值是字典
-    // value:user字典 -&gt; User模型
-    // 获取模型(user)类对象
-    Class modalClass = NSClassFromString(ivarType);
-    // 字典转模型
-    if (modalClass) &#123;
-        // 字典转模型 user
-        value = [modalClass objectWithDict:value];
-    &#125;
-&#125;
-if ([value isKindOfClass:[NSArray class]]) &#123;
-    // 判断对应类有没有实现字典数组转模型数组的协议
-    if ([self respondsToSelector:@selector(arrayContainModelClass)]) &#123;
-        // 转换成id类型，就能调用任何对象的方法
-        id idSelf = self;
-        // 获取数组中字典对应的模型
-        NSString *type =  [idSelf arrayContainModelClass][key];
-        // 生成模型
-        Class classModel = NSClassFromString(type);
-        NSMutableArray *arrM = [NSMutableArray array];
-        // 遍历字典数组，生成模型数组
-        for (NSDictionary *dict in value) &#123;
-            // 字典转模型
-            id model =  [classModel objectWithDict:dict];
-            [arrM addObject:model];
-        &#125;
-        // 把模型数组赋值给value
-        value = arrM;
-    &#125;
-&#125;
+<p>}<br>int main(){<br>string s;<br>while (cin &gt;&gt; s){<br>    int length = s.size();<br>    if (length == 1){<br>        cout &lt;&lt; 1 &lt;&lt; endl;<br>        continue;<br>    }<br>    //利用回文串的特点<br>    string s2 = s;<br>    reverse(s2.begin(),s2.end());<br>    int max_length = maxLen(s, s2);<br>    cout &lt;&lt; length - max_length &lt;&lt; endl;<br>}<br>return 0;<br>}</p>
+<p>实现一个算法，确定一个字符串 s 的所有字符是否全都不同。</p>
+<p>我的解题思路：<br>先将字符串转化成字符数组；<br>对其进行排序，再通过for循环进行判断，排序后的字符数组如果前一位与后一位相同，则输出“false”，否则输出“true”。</p>
+<p>由于题目没有明确说明，根据示例我判断字符串中出现的字符应该在[‘a’,’z’]之间，实践证明确实如此。基于这个前提，使用bool数组的做法是定义一个长度为26的初始值全为0 bool数组，逐个字符遍历astr，如果bool数组中对应的下标（’a’-&gt;0, …, ‘z’-&gt;25）的值为1则重复出现，返回false，否则设置对应下标值为1。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/24/M_Swift105KVO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/24/M_Swift105KVO/" class="post-title-link" itemprop="url">KVO</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-24 13:42:02" itemprop="dateCreated datePublished" datetime="2020-06-24T13:42:02+08:00">2020-06-24</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="KVO实现原理"><a href="#KVO实现原理" class="headerlink" title="KVO实现原理"></a>KVO实现原理</h2><pre><code>apple使用isa混写（isa-swizzling）来实现KVO。
+当观察对象A时，KVO机制动态创建一个新的名为：NSKVONotifying 
+A的新类，该类继承自对象A的本类，
+且KVO为NSKVONotifying A重写观察属性的setter方法，
+setter方法会负责在调用原setter方法之前之后，
+通知所有观察对象属性值的更改情况。
+对象注册为观察者时，isa指针指向新子类，那么这个被观察的对象就神奇地
+变成新子类的对象了。） 因而在该对象上对 setter 的调用就会调用已重
+写的 setter，从而激活键值通知机制。
+子类setter方法剖析：KVO的键值观察通知依赖于 NSObject 的两个方法
+:willChangeValueForKey:和 didChangevlueForKey:，
+在存取数值的前后分别调用2个方法：被观察属性发生改变之前，
+willChangeValueForKey:被调用，通知系统该 keyPath 的属性值即将
+变更；当改变发生后， didChangeValueForKey: 被调用，通知系统该
+keyPath 的属性值已经变更；之
+后observeValueForKey:ofObject:change:context:
+也会被调用。且重写观察属性的setter 方法这种继承方式的注入是
+在运行时而不是编译时实现的。
+观察者观察的属性，只有遵循KVO变更属性值的方式才会执行KVO
+的回调方法，例如是否执行setter方法，或着是否使用KVC
+赋值。如果赋值没有通过setter方法或者KVC，而是直接修改属
+性对应的成员变量，例如：仅调用_name = @&quot;newName&quot; ,这
+时时不会触发kvo机制，更加不会调用回调方法的。所以使用
+KVO机制的前提是遵循KVO的属性设置方式来变更属性值。
+</code></pre>
+<h2 id="KVO流程"><a href="#KVO流程" class="headerlink" title="KVO流程"></a>KVO流程</h2><pre><code>1.注册A类的name属性变化监听
+    [a addObserver:self forKeyPath:@&quot;name&quot; options:NSKeyValueObservingOptionNew context:nil];
+2.创建A的子类NSKVONotifyingA
+    Class noA = objc_allocateClassPair([A class], &quot;NSKVONotifyingA&quot;, observer);
+3.isa指针混合
+    将A类的指针指向NSKVONotifyingA，从而到达调用NSKVONotifyingA类的方法的目的
+4.当调用a的setName方法时进入到NSKVONotifyingA类的setName方法
+5.调用willChangeValueForKey回调属性将要变化
+6.调用NSKVONotifyingA类的【self setName】赋值，实际上执行的是A类的setName，达到赋值目的
+7.调用didChangeValueForKey回调属性变化了
+</code></pre>
+<h2 id="为什么要用子类监听setter方法，而不用分类呢？"><a href="#为什么要用子类监听setter方法，而不用分类呢？" class="headerlink" title="为什么要用子类监听setter方法，而不用分类呢？"></a>为什么要用子类监听setter方法，而不用分类呢？</h2><pre><code>原因是当你用分类监听setter方法的时候，原类中setter方法就不会走了，这样不好，所以苹果使用了子类监听setter方法。
+</code></pre>
+<h2 id="isa-swizzling为什么不会出现递归"><a href="#isa-swizzling为什么不会出现递归" class="headerlink" title="isa-swizzling为什么不会出现递归"></a>isa-swizzling为什么不会出现递归</h2><pre><code>你在swizzlingViewDidLoad方法中又调用[self
+swizzlingViewDidLoad];，这难道不会产生递归调用吗？
+其实不会，Method Swizzling ：实现原理理解为方法互换，
+假设我们将A，B两个方法进行互换，向A发消息时执行的是B的方
+法，向B发消息时执行的是A方法，所以再调用[self
+swizzlingViewDidLoad];又回到原类的方法中了。
+</code></pre>
+<h2 id="为什么要保证只执行一次Method-Swizzling"><a href="#为什么要保证只执行一次Method-Swizzling" class="headerlink" title="为什么要保证只执行一次Method Swizzling"></a>为什么要保证只执行一次Method Swizzling</h2><pre><code>我们上面提到过Method Swizzling的实现原理就是对类的Dispatch
+Table进行操作，每进行一次Swizzling就交换一次SEL和IMP(可以理解为
+函数指针)，如果Swizzling被执行了多次，就相当于SEL和IMP被交换了多
+次。这就会导致第一次执行成功交换了、第二次执行又换回去了、第三次执
+行.....这样换来换去的结果，能不能成功就看运气了😄，这也是好多人说
+Method Swizzling不好用的原因之一。
+为了避免这样的原因出现，我们可以通过GCD的dispatch_once函数来解决，
+利用dispatch_once函数内代码只会执行一次的特性。
+</code></pre>
+<h2 id="Method-Swizzling为什么对类簇不起作用"><a href="#Method-Swizzling为什么对类簇不起作用" class="headerlink" title="Method Swizzling为什么对类簇不起作用"></a>Method Swizzling为什么对类簇不起作用</h2><pre><code>对于NSArray NSMutableArray NSDictionary
+NSMutableDictionary 等类进行Method Swizzling ，实现
+方式按照上面例子来做，但是你发现Method Swizzling 根本不
+起作用
+这是因为Method Swizzling 对NSArray这些类簇是不起作
+用的，因为这些类簇，其实是一种抽象工厂的设计模式，抽象工厂内
+部有很多其他继承自身当前类的子类，抽象工厂类会根据不同情况，
+创建不同的抽象对象来进行使用。例如我们调用NSArray的
+objectAtIndex方法，这个类会在方法内部判断，内部创建不同抽
+象类进行操作。
+所以也就是我们对NSArray进行操作其实是对父类进行操作，在
+NSArray内部会创建其子类进行执行操作，真正执行操作的并不是
+NSArray自身，所以我们应该对其真身进行操作。
+如果进行Method Swizzling中的类有继承关系，并且
+swizzling了同一个方法，这样会导致父类的Swizzling失效。必
+须要证Method Swizzling方法只执行一次。
+</code></pre>
+<h2 id="KVC与KVO的不同"><a href="#KVC与KVO的不同" class="headerlink" title="KVC与KVO的不同"></a>KVC与KVO的不同</h2><pre><code>KVC(键值编码)，即Key-Value Coding，一个非正式的Protocol，
+使用字符串(键)访问一个对象实例变量的机制。而不是通过调用Setter
+、Getter方法等显式的存取方式去问。
+KVO(键值监听)，即Key-Value Observing，它提供一种机制,
+当指定的对象的属性被修改后,对象就会接受到通知，前提是执行了
+setter方法、或者使用了KVC赋值。
+</code></pre>
+<h2 id="KVO和notification-通知-的区别"><a href="#KVO和notification-通知-的区别" class="headerlink" title="KVO和notification(通知)的区别"></a>KVO和notification(通知)的区别</h2><pre><code>notification比KVO多了发送通知的一步。两者都是一对多，
+但是对象之间直接的交互，notification明显得多，需要
+notificationCenter来做为中间交互。而KVO如我们介绍的，设置观察者-&gt;
+处理属性变化，至于中间通知这一环，则隐秘多了，只留一句“交由系统通知”，
+具体的可参照以上实现过程的剖析。
+notification的优点是监听不局限于属性的变化，还可以对多种多样的状态
+变化进行监听，监听范围广，例如键盘、前后台等系统通知的使用也更显灵活方
+便。
+</code></pre>
+<h2 id="KVO和delegate-通知-的区别"><a href="#KVO和delegate-通知-的区别" class="headerlink" title="KVO和delegate(通知)的区别"></a>KVO和delegate(通知)的区别</h2><pre><code>和delegate一样，KVO和NSNotification的作用都是类与类之间的通信。
+但是与delegate不同的是：
+这两个都是负责发送接收通知，剩下的事情由系统处理，所以不用返回值；而
+delegate 则需要通信的对象通过变量(代理)联系；
+delegate一般是一对一，而这两个可以一对多。
+</code></pre>
+<h2 id="KVO和线程关系"><a href="#KVO和线程关系" class="headerlink" title="KVO和线程关系"></a>KVO和线程关系</h2><pre><code>总结:接收通知代码 由 发出通知线程决定, KVO也一样
+</code></pre>
+<h2 id="当你创建的一个类的名字和kvo动态生成的子类的名字冲突了-会发生什么"><a href="#当你创建的一个类的名字和kvo动态生成的子类的名字冲突了-会发生什么" class="headerlink" title="当你创建的一个类的名字和kvo动态生成的子类的名字冲突了 会发生什么"></a>当你创建的一个类的名字和kvo动态生成的子类的名字冲突了 会发生什么</h2><pre><code>亲自尝试一下，会在日志台打下如下日志
+KVO failed to allocate class pair for name 
+NSKVONotifying_myKVO, automatic key-value 
+observing will not work for this class
+KVO未能分配类两名NSKVONotifying_myKVO,自动键-值观察不
+会为这个类工作
 </code></pre>
 
       
@@ -1446,7 +542,7 @@ if ([value isKindOfClass:[NSArray class]]) &#123;
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/03/M_Swift91%E7%AE%97%E6%B3%95%E4%B9%8B%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/22/M_Swift123%E5%BC%80%E6%A0%B9%E5%8F%B7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1460,7 +556,7 @@ if ([value isKindOfClass:[NSArray class]]) &#123;
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/08/03/M_Swift91%E7%AE%97%E6%B3%95%E4%B9%8B%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">算法之数组操作</a>
+            <a href="/2020/06/22/M_Swift123%E5%BC%80%E6%A0%B9%E5%8F%B7/" class="post-title-link" itemprop="url">开根号</a>
         </h2>
 
         <div class="post-meta">
@@ -1470,7 +566,7 @@ if ([value isKindOfClass:[NSArray class]]) &#123;
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-08-03 10:16:39" itemprop="dateCreated datePublished" datetime="2018-08-03T10:16:39+08:00">2018-08-03</time>
+              <time title="创建时间：2020-06-22 17:28:57" itemprop="dateCreated datePublished" datetime="2020-06-22T17:28:57+08:00">2020-06-22</time>
             </span>
 
           
@@ -1484,92 +580,629 @@ if ([value isKindOfClass:[NSArray class]]) &#123;
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="数组去重"><a href="#数组去重" class="headerlink" title="数组去重"></a>数组去重</h2><pre><code>// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
-function unique(arr) &#123;
-    var res = [arr[0]];
-    for (var i = 0; i &lt; arr.length; i++) &#123;
-        var repeat = false;
-        for (var j = 0; j &lt; res.length; i++) &#123;
-            if (arr[i] == res[j]) &#123;
-                repeat = true;
-                break;
+          <p>static double  newSqrt(double n) {<br>    double low, high, mid, tmp;<br>    double ACCURACY = 0.001;<br>    // 获取上下界<br>    if (n &gt; 1) {<br>        low = 1;<br>        high = n;<br>    } else {<br>        low = n;<br>        high = 1;<br>    }</p>
+<pre><code>// 二分法求开方
+while (low &lt;= high) &#123;
+    mid = (low + high) / 2.000;
+
+    tmp = mid * mid;
+
+    if (tmp - n &lt;= ACCURACY &amp;&amp; tmp - n &gt;= ACCURACY * -1) &#123;
+        return mid;
+    &#125; else if (tmp &gt; n) &#123;
+        high = mid;
+    &#125; else &#123;
+        low = mid;
+    &#125;
+&#125;
+return -1.000;
+</code></pre>
+<p>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/12/M_Swift173webGL%E6%8E%A5%E5%8F%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/12/M_Swift173webGL%E6%8E%A5%E5%8F%A3/" class="post-title-link" itemprop="url">webGL</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-12 10:11:12" itemprop="dateCreated datePublished" datetime="2020-06-12T10:11:12+08:00">2020-06-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 15:58:13" itemprop="dateModified" datetime="2021-04-12T15:58:13+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>内嵌浏览器，从OpenGL衍生<br>canvas标签：允许javascript动态绘制图形<br>使用步骤<br>1.获取canvas元素<br>getElementById<br>2.向该元素请求二维图枞的绘图上下文<br>var cox = convas.getContenxt(‘2d’);<br>3.在绘图上下文上调用相应的绘图函数绘制二维图形<br>cox.fillStyle = ‘rgba(0,0,255,1.0)’;// 设置填充颜色<br>cox.fillRect(120,10,150,150);// 用这个颜色填充矩形<br>用getWebGLContex()来隐藏不同浏览器的差别<br>var gl = getWebGLContex();<br>着色器(用途)<br>顶点着色器：用来描述顶点特征（位置颜色的程序），顶点指二维三维空间的一个点<br>片元着色器：进行逐片元处理过程如光照。片元是一个webgl术语，可以理解为像素<br>绘制：<br>gl.drawArrays();<br>用attribute获取着色器<br>获取attribute变量的存储位置<br>var a_Position = gl.getAttribLocation(gl.program, ‘a_Position’);<br>向attribute变量赋值<br>gl.vertexAttrib3f(a_Position,0.0,0.0,0.0);<br>注册点击事件<br>onmousedown<br>canvas坐标系统和webgl在canvas中的坐标系统是不一样的<br>用uniform变量将颜色传给着色器<br>gl.getUnifromLocation(gl.prigram,’u_FragColor’);<br>gl.unifrom4f(u_FragColor,raba[0],rgba[1],rgba[2],rgba[3]);<br>缓冲区对象<br>gl.createBuffer();<br>将缓冲区对象绑定到目标<br>gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffer);<br>向缓冲区对象写入数据<br>gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.STATIC_DRAW);<br>将缓冲区对象分配给a_Position变量<br>gl.vertexAttribPointer(a_Postion,2,gl.FLOAT,false,0,0);<br>链接a_Position变量与分配给他的缓冲区对象<br>gl.enableVertexAttribArray(a_Position);<br>平移<br>将平移距离传输给定点着色器<br>var u_Translation = gl.getUniformLocation(gl.program,’u_Translation’);<br>gl.uniform4f(u_Translation,Tx,Ty,Tz,0.0);<br>旋转<br>将旋转涂成数据传输给顶点着色器<br>var radian = Math,PI *ANGLE / 180.0 // 转为弧度制<br>var cosB = Math.cos(radian);<br>var sinB = Math.sin(radian);<br>var u_CosB = gl.getUniformLocation(gl.program,’u_CosB’);<br>var u_SinB = gl.getUniformLocation(gl.program,’u_SinB’);<br>gl.uniform1f(u_CosB,cosB);<br>gl.uniform1f(u_SinB,sinB);</p>
+<p>纹理(texture)，<br>activeTexture</p>
+<p>方法列表</p>
+<p>状态信息<br>WebGLRenderingContext.activeTexture()<br>选择要激活的纹理单元。<br>WebGLRenderingContext.blendColor()<br>设置源和目标的混和因子。<br>WebGLRenderingContext.blendEquation()<br>用同一个表达式设置 RGB 混和表达式和 alpha 混和表达式。<br>WebGLRenderingContext.blendEquationSeparate()<br>分开设置 RGB 混和表达式和 alpha 混和表达式。<br>WebGLRenderingContext.blendFunc()<br>定义用于像素混合算法的函数。<br>WebGLRenderingContext.blendFuncSeparate()<br>分别定义混合像素RGB通道和透明通道的函数。<br>WebGLRenderingContext.clearColor()<br>设置用于清空用的颜色。<br>WebGLRenderingContext.clearDepth()<br>设置清除深度缓存时的深度值。<br>WebGLRenderingContext.clearStencil()<br>设置清除模板缓冲区时的模板值。<br>WebGLRenderingContext.colorMask()<br>设置在绘制或渲染WebGLFramebuffer时要开启或关闭的颜色分量。<br>WebGLRenderingContext.cullFace()<br>设置多边形的正面和/或反面是否要被排除。<br>WebGLRenderingContext.depthFunc()<br>设置比较输入像素深度和深度缓存值得函数。<br>WebGLRenderingContext.depthMask()<br>设置是否写入深度缓存。<br>WebGLRenderingContext.depthRange()<br>设置从规范化设备坐标映射到窗口或视口坐标时的深度范围。<br>WebGLRenderingContext.disable()<br>禁用这个上下文的WebGL功能。<br>WebGLRenderingContext.enable()<br>启用这个上下文的WebGL功能。<br>WebGLRenderingContext.frontFace()<br>设置多边形的正面使用顺时针还是逆时针绘制表示。<br>WebGLRenderingContext.getParameter()<br>返回给入参数名的值。<br>WebGLRenderingContext.getError()<br>返回错误信息。<br>WebGLRenderingContext.hint()<br>给某些行为设置建议使用的模式。具体建议需要看执行的情况。<br>WebGLRenderingContext.isEnabled()<br>测试这个上下文的WebGL功能是否开启。<br>WebGLRenderingContext.lineWidth()<br>设置线宽。<br>WebGLRenderingContext.pixelStorei()<br>设置像素存储模式。<br>WebGLRenderingContext.polygonOffset()<br>设置多边形偏移的比例和单位，从而计算深度值。（补充：解决深度冲突）<br>WebGLRenderingContext.sampleCoverage()<br>为抗锯齿效果设置多重取样覆盖参数。<br>WebGLRenderingContext.stencilFunc()<br>同时设置前面和背面的模板测试函数，及其引用值。<br>WebGLRenderingContext.stencilFuncSeparate()<br>可分开设置前面或背面的模板测试函数，及其引用值。<br>WebGLRenderingContext.stencilMask()<br>同时启用或禁用，前面和背面的模板测试掩码。<br>WebGLRenderingContext.stencilMaskSeparate()<br>可分开启用或禁用，前面和背面的模板测试掩码。<br>WebGLRenderingContext.stencilOp()<br>同时设置，在前面和背面的模板缓冲区上执行的操作。<br>WebGLRenderingContext.stencilOpSeparate()<br>可分开设置，在前面和背面的模板缓冲区上执行的操作<br>缓冲区</p>
+<p>WebGLRenderingContext.bindBuffer()<br>把 WebGLBuffer 对象绑定到指定目标上。<br>WebGLRenderingContext.bufferData()<br>更新缓冲数据。<br>WebGLRenderingContext.bufferSubData()<br>更新从给入偏移量开始的缓冲数据。<br>WebGLRenderingContext.createBuffer()<br>创建 WebGLBuffer 对象。<br>WebGLRenderingContext.deleteBuffer()<br>删除 WebGLBuffer 对象。<br>WebGLRenderingContext.getBufferParameter()<br>返回缓冲信息。<br>WebGLRenderingContext.isBuffer()<br>返回给入的缓冲是否有效。<br>帧缓冲区</p>
+<p>WebGLRenderingContext.bindFramebuffer()<br>把 WebGLFrameBuffer 对象绑定到指定对象上。<br>WebGLRenderingContext.checkFramebufferStatus()<br>返回帧缓冲区的状态。<br>WebGLRenderingContext.createFramebuffer()<br>创建 WebGLFrameBuffer 对象。<br>WebGLRenderingContext.deleteFramebuffer()<br>删除 WebGLFrameBuffer 对象。<br>WebGLRenderingContext.framebufferRenderbuffer()<br>把 WebGLRenderingBuffer 对象附加到 WebGLFrameBuffer 对象。<br>WebGLRenderingContext.framebufferTexture2D()<br>把纹理图像附加到 WebGLFrameBuffer object.<br>WebGLRenderingContext.getFramebufferAttachmentParameter()<br>返回帧缓冲区的信息。<br>WebGLRenderingContext.isFramebuffer()<br>返回 Boolean 值，表示给入的 WebGLFrameBuffer 对象是否有效。<br>WebGLRenderingContext.readPixels()<br>读取 WebGLFrameBuffer 的像素。<br>渲染缓冲区</p>
+<p>WebGLRenderingContext.bindRenderbuffer()<br>把 WebGLRenderBuffer 对象绑定到指定的对象上。<br>WebGLRenderingContext.createRenderbuffer()<br>创建 WebGLRenderBuffer 对象。<br>WebGLRenderingContext.deleteRenderbuffer()<br>删除 WebGLRenderBuffer 对象。<br>WebGLRenderingContext.getRenderbufferParameter()<br>返回渲染缓冲区的信息。<br>WebGLRenderingContext.isBuffer()<br>返回 Boolean 值，表示给入的 WebGLRenderingBuffer 是否有效。<br>WebGLRenderingContext.renderbufferStorage()<br>创建渲染缓冲区数据存储。<br>纹理</p>
+<p>WebGLRenderingContext.bindTexture()<br>把 WebGLTexture 对象绑定到指定对象上。<br>WebGLRenderingContext.compressedTexImage2D()<br>指定一个为压缩格式的2D纹理图片。<br>WebGLRenderingContext.compressedTexSubImage2D()<br>指定一个为压缩格式的2D纹理子图片。<br>WebGLRenderingContext.copyTexImage2D()<br>复制2D纹理图片。<br>WebGLRenderingContext.copyTexSubImage2D()<br>复制2D纹理子图片。<br>WebGLRenderingContext.createTexture()<br>创建 WebGLTexture 对象。<br>WebGLRenderingContext.deleteTexture()<br>删除 WebGLTexture 对象。<br>WebGLRenderingContext.generateMipmap()<br>为 WebGLTexture 对象生成一组纹理映射。<br>WebGLRenderingContext.getTexParameter()<br>返回纹理信息。<br>WebGLRenderingContext.isTexture()<br>返回 Boolean 值，表示给入的 WebGLTexture 是否有效。<br>WebGLRenderingContext.texImage2D()<br>指定2D纹理图片。<br>WebGLRenderingContext.texSubImage2D()<br>更新当前 WebGLTexture 的子矩形。<br>WebGLRenderingContext.texParameterf()<br>设置纹理参数。<br>WebGLRenderingContext.texParameteri()<br>设置纹理参数。<br>程序对象和着色器对象</p>
+<p>WebGLRenderingContext.attachShader()<br>把 WebGLShader 添加到 WebGLProgram。<br>WebGLRenderingContext.bindAttribLocation()<br>绑定一个普通顶点索引到一个命名的attribute 变量<br>WebGLRenderingContext.compileShader()<br>编译 WebGLShader。<br>WebGLRenderingContext.createProgram()<br>创建 WebGLProgram。<br>WebGLRenderingContext.createShader()<br>创建 WebGLShader。<br>WebGLRenderingContext.deleteProgram()<br>删除 WebGLProgram。<br>WebGLRenderingContext.deleteShader()<br>删除 WebGLShader。<br>WebGLRenderingContext.detachShader()<br>分离 WebGLShader。<br>WebGLRenderingContext.getAttachedShaders()<br>返回附加在 WebGLProgram 上的 WebGLShader 对象的列表。<br>WebGLRenderingContext.getProgramParameter()<br>返回程序对象的信息。<br>WebGLRenderingContext.getProgramInfoLog()<br>返回 WebGLProgram 对象的信息日志。<br>WebGLRenderingContext.getShaderParameter()<br>返回着色器的信息。<br>WebGLRenderingContext.getShaderPrecisionFormat()<br>返回一个描述着色器数字类型精度的WebGLShaderPrecisionFormat 对象。<br>WebGLRenderingContext.getShaderInfoLog()<br>返回 WebGLShader 对象的信息日志。<br>WebGLRenderingContext.getShaderSource()<br>以字符串形式返回 WebGLShader 的源码。<br>WebGLRenderingContext.isProgram()<br>返回一个 Boolean 值，表示给入的 WebGLProgram 是否有效。<br>WebGLRenderingContext.isShader()<br>返回一个 Boolean 值，表示给入的 WebGLShader 是否有效。<br>WebGLRenderingContext.linkProgram()<br>链接给入的 WebGLProgram 对象。<br>WebGLRenderingContext.shaderSource()<br>设置一个 WebGLShader 的源码。<br>WebGLRenderingContext.useProgram()<br>使用指定的 WebGLProgram 作为当前渲染状态的一部分。<br>WebGLRenderingContext.validateProgram()<br>使 WebGLProgram 生效。<br>Uniform 和 Attribute</p>
+<p>WebGLRenderingContext.disableVertexAttribArray()<br>在给定的位置，禁用顶点attribute数组。<br>WebGLRenderingContext.enableVertexAttribArray()<br>在给定的位置，启用顶点attribute数组。<br>WebGLRenderingContext.getActiveAttrib()<br>返回激活状态的attribute变量信息。<br>WebGLRenderingContext.getActiveUniform()<br>返回激活状态的uniform 变量信息。<br>WebGLRenderingContext.getAttribLocation()<br>返回attribute变量的指针位置。<br>WebGLRenderingContext.getUniform()<br>返回指定位置的uniform 变量。<br>WebGLRenderingContext.getUniformLocation()<br>返回uniform 变量的指针位置。<br>WebGLRenderingContext.getVertexAttrib()<br>返回指定位置的顶点attribute变量。<br>WebGLRenderingContext.getVertexAttribOffset()<br>获取给定索引的顶点attribute位置。<br>WebGLRenderingContext.uniform[1234][fi]<a href="">v</a><br>指定一个uniform变量。<br>WebGLRenderingContext.uniformMatrix[234]fv()<br>指定一个uniform矩阵变量。<br>WebGLRenderingContext.vertexAttrib[1234]f<a href="">v</a><br>指定一个普通顶点attribute的值。<br>WebGLRenderingContext.vertexAttribPointer()<br>指定一个顶点attributes 数组中，顶点attributes 变量的数据格式和位置。<br>绘制缓冲区</p>
+<p>WebGLRenderingContext.clear()<br>把指定的缓冲区清空为预设的值。<br>WebGLRenderingContext.drawArrays()<br>渲染数组中的原始数据。<br>WebGLRenderingContext.drawElements()<br>渲染元素数组中的原始数据。<br>WebGLRenderingContext.finish()<br>阻断执行，直到之前所有的操作都完成。<br>WebGLRenderingContext.flush()<br>清空缓冲的命令，这会导致所有命令尽快执行完。<br>使用扩展插件</p>
+<p>这些方法管理 WebGL 扩展：</p>
+<p>WebGLRenderingContext.getSupportedExtensions()<br>返回一个包含 DOMString 的 Array ，每个元素都为支持的WebGL扩展。<br>WebGLRenderingContext.getExtension()<br>返回一个扩展对象。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/11/M_Swift169%E5%9C%B0%E5%9B%BESDK%E4%B8%80%E4%BA%9B%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/11/M_Swift169%E5%9C%B0%E5%9B%BESDK%E4%B8%80%E4%BA%9B%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E/" class="post-title-link" itemprop="url">地图SDK调用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-11 15:53:26" itemprop="dateCreated datePublished" datetime="2020-06-11T15:53:26+08:00">2020-06-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 16:10:26" itemprop="dateModified" datetime="2021-04-12T16:10:26+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>import \ export</p>
+<p>编译<br>chunk.webpack.config.js<br>control.chunk.webpack.config.js</p>
+<p>地图init方法，创建地图initialize: function (container, options)<br>Conf.init();初始化<br>初始化openGl一些参数<br>创建不同的图层，地图、瓦片图层、label图层、layer图层、热力图层</p>
+<p>地图初始化加载MMMgr.getInstance().init();<br>icon图片。<br>样式（配置）<br>data</p>
+<p>地图事件管理<br>var manager = new Hammer.Manager(this.layerDiv);<br>拖拽、点击、双击、缩放、旋转</p>
+<p>定义layer，存储用户添加的图层<br>this.layers = [];<br>地图图层<br>SkInterLayer<br>initialize函数<br>init<br>创建缓存，存在自动删除逻辑，存储满了按照相应逻辑删除旧的<br>this.cache = new LRUMap(8192);</p>
+<p>当地图发生变化时_viewchange绘制地图（加载地图数据）<br>postInvalidate</p>
+<p>清除数据 每次绘制都清除全部数据 this.Render();<br>gl.clearDepth(1.0);</p>
+<p>地图数据处理绘制<br>this.BaseData();</p>
+<p>准备地图数据<br>prepareData<br>获取屏幕所有瓦片-》请求-〉生成一个个的SKTitle对象。</p>
+<p>获取瓦片范围<br>checkTileKey<br>获取当前图层所有切片号。<br>getTiles<br>从缓存中加载<br>var tile = this.cache.get(key);<br>加载瓦片<br>GetMapDat</p>
+<p>数据解析<br>parseDat</p>
+<p>加载完成，执行绘制，<br>this.map.postInvalidate();<br>有一个总的Render，map里面的Render。每一个图层里的Render值负责绘制，map里的Render负责清空。</p>
+<p>如何加载的opengl以及一些第三方资源的，有哪些资源文件，是如何工作的</p>
+<p>问题<br>1.开发说明，开发环境，注意事项等。如何加载的opengl，有哪些资源文件，项目是如何工作的，需要注意哪些，<br>three.js mailbox webjs<br>2.项目接口文档。<br>3.项目成功物生成说明及成功物。如何打包的<br>图片资源在common.less调整<br>@urls: ‘<a target="_blank" rel="noopener" href="http://61.189.20.113:8000/images/&#39;">http://61.189.20.113:8000/images/&#39;</a>;</p>
+<p>如何绘制地图<br>加载瓦片-》解析数据-〉创建点线面对象-》用opengl绘制 ,如何绘制的整个页面上所有的瓦片，地图缩放是如何重新绘制的逻辑<br>MapMM-&gt;GetMapDat<br>MapDataDeCode<br>SkTile.prototype.Render </p>
+<p>项目中类的特别说明</p>
+<p>坐标转换、像素、经纬度等如何实现<br>经纬度坐标、地图平面坐标，像素</p>
+<p>矩阵 mat4.js<br>var proj = map.GetCurProj();<br>var objProj = mat4.clone(proj);<br>求外接矩形，图形的坐标集合相对于外接矩形的左上角为0点计算新的坐标。<br>外接矩形相对于地图中心点的偏移：<br> var origin = map.axes.toMapAxes(this.env.startLon, this.env.endLat);<br> mat4.translate(objProj, objProj, [origin.x, origin.y, 0]);<br>gl.uniformMatrix4fv(bdProg.uniLocation, false, objProj);     </p>
+<p>事件、动画、扩展功能特别说明<br>手势L：hammer<br>demo功能使用介绍</p>
+<p>瓦片、墨卡托投影、相机、矩阵算法在工程中如何使用的。<br>SkLonLat2Mercator</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/08/M_Swift246%E6%95%B0%E6%8D%AE%E6%8A%BD%E7%A8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/08/M_Swift246%E6%95%B0%E6%8D%AE%E6%8A%BD%E7%A8%80/" class="post-title-link" itemprop="url">地图数据抽稀</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-08 14:21:16" itemprop="dateCreated datePublished" datetime="2020-06-08T14:21:16+08:00">2020-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-14 21:43:36" itemprop="dateModified" datetime="2022-03-14T21:43:36+08:00">2022-03-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>{<br>    “pline”: {<br>        “note”: “字段解释: 级别 / 名字/ 对应kind”,<br>        “dat”: {<br>            “1”: {<br>                “省界”: “132”<br>            },<br>            “2,3,4,5”: {<br>                “省界”: “132”<br>            },<br>            “6,7”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “单线水系”: “125”,<br>                “省界”: “132”<br>            },<br>            “8”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “单线水系”: “125”,<br>                “地市界”: “135”<br>            },<br>            “9”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “区县界”: “137”<br>            },<br>            “10”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “2”,<br>                “县道”: “2”,<br>                “城市二级道路”: “3”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “区县界”: “137”<br>            },<br>            “11”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “乡镇界”: “191”<br>            },<br>            “12”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “内部道路”: “5”,<br>                “小路”: “5”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “乡镇界”: “191”<br>            },<br>            “13,14,15,16,17,18”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “内部道路”: “5”,<br>                “小路”: “5”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “村界”: “192”<br>            }</p>
+<pre><code>    &#125;
+&#125;,
+&quot;linelabel&quot;: &#123;
+    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ 对应kind&quot;,
+    &quot;dat&quot;: &#123;
+        &quot;10&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1
+        &#125;,
+        &quot;11&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2
+        &#125;,
+        &quot;12&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2,
+            &quot;省道&quot;: 3,
+            &quot;县道&quot;: 3,
+            &quot;城市二级道路&quot;: 3
+        &#125;,
+        &quot;13&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2,
+            &quot;省道&quot;: 3,
+            &quot;县道&quot;: 3,
+            &quot;城市二级道路&quot;: 3,
+            &quot;乡道&quot;: 4,
+            &quot;辅路&quot;: 4,
+            &quot;城市三级道路&quot;: 4,
+            &quot;内部道路&quot;: 5,
+            &quot;小路&quot;: 5
+        &#125;,
+        &quot;14&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2,
+            &quot;省道&quot;: 3,
+            &quot;县道&quot;: 3,
+            &quot;城市二级道路&quot;: 3,
+            &quot;乡道&quot;: 4,
+            &quot;辅路&quot;: 4,
+            &quot;城市三级道路&quot;: 4,
+            &quot;内部道路&quot;: 5,
+            &quot;小路&quot;: 5
+        &#125;,
+        &quot;15,16,17,18,19,20,21&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2,
+            &quot;省道&quot;: 3,
+            &quot;县道&quot;: 3,
+            &quot;城市二级道路&quot;: 3,
+            &quot;乡道&quot;: 4,
+            &quot;辅路&quot;: 4,
+            &quot;城市三级道路&quot;: 4,
+            &quot;内部道路&quot;: 5,
+            &quot;小路&quot;: 5
+        &#125;
+    &#125;
+&#125;,
+&quot;region&quot;: &#123;
+    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ subtype:转换的kind&quot;,
+    &quot;dat&quot;: &#123;
+        &quot;7&quot;: &#123;
+            &quot;note&quot;: &quot;200m-7-11-20km&lt;包含&gt;-2km&lt;包含&gt;&quot;,
+            &quot;绿地&quot;: &#123;
+                &quot;152&quot;: &quot;14b&quot;
+            &#125;
+        &#125;,
+        &quot;9&quot;: &#123;
+            &quot;note&quot;: &quot;200m-9-11-5km&lt;包含&gt;-500m&lt;不包含&gt;&quot;,
+            &quot;湖泊、水库&quot;: &#123;
+                &quot;102&quot;: &quot;122&quot;,
+                &quot;103&quot;: &quot;122&quot;
+            &#125;,
+            &quot;面状水系&quot;: &#123;
+                &quot;199&quot;: &quot;123&quot;
+            &#125;
+        &#125;,
+        &quot;10&quot;: &#123;
+            &quot;note&quot;: &quot;200m-10-2km&lt;包含&gt;&quot;,
+            &quot;面状水系&quot;: &#123;
+                &quot;101&quot;: &quot;123&quot;
+            &#125;,
+            &quot;绿地&quot;: &#123;
+                &quot;100&quot;: &quot;141&quot;
+            &#125;
+        &#125;,
+        &quot;12&quot;: &#123;
+            &quot;note&quot;: &quot;200m-11-12-1km&lt;包含&gt;-500m&lt;不包含&gt;&quot;,
+            &quot;场景&quot;: &#123;
+                &quot;101&quot;: &quot;176&quot;,
+                &quot;102&quot;: &quot;163&quot;,
+                &quot;103&quot;: &quot;174&quot;,
+                &quot;104&quot;: &quot;175&quot;,
+                &quot;105&quot;: &quot;172&quot;,
+                &quot;106&quot;: &quot;17d&quot;,
+                &quot;107&quot;: &quot;164&quot;,
+                &quot;108&quot;: &quot;17e&quot;,
+                &quot;109&quot;: &quot;177&quot;,
+                &quot;110&quot;: &quot;178&quot;,
+                &quot;111&quot;: &quot;161&quot;,
+                &quot;194&quot;: &quot;166&quot;
+            &#125;,
+            &quot;居民地&quot;: &#123;
+                &quot;100&quot;: &quot;17f&quot;
+            &#125;,
+            &quot;绿地&quot;: &#123;
+                &quot;152&quot;: &quot;14b&quot;,
+                &quot;100&quot;: &quot;141&quot;
+            &#125;,
+            &quot;面状水系&quot;: &#123;
+                &quot;101&quot;: &quot;123&quot;
+            &#125;
+        &#125;,
+        &quot;13&quot;:&#123;
+            &quot;note&quot;: &quot;200m-12-14-500m&lt;包含&gt;-100m&lt;不包含&gt;&quot;,
+            &quot;湖泊、水库&quot;: &#123;
+                &quot;102&quot;: &quot;122&quot;,
+                &quot;103&quot;: &quot;122&quot;
+            &#125;,
+            &quot;面状水系&quot;: &#123;
+                &quot;199&quot;: &quot;123&quot;,
+                &quot;101&quot;: &quot;123&quot;
+            &#125;,
+            &quot;绿地&quot;: &#123;
+                &quot;152&quot;: &quot;14b&quot;,
+                &quot;100&quot;: &quot;141&quot;,
+                &quot;150&quot;: &quot;141&quot;,
+                &quot;151&quot;: &quot;141&quot;,
+                &quot;130&quot;: &quot;144&quot;
+            &#125;,
+            &quot;场景&quot;: &#123;
+                &quot;101&quot;: &quot;176&quot;,
+                &quot;102&quot;: &quot;163&quot;,
+                &quot;103&quot;: &quot;174&quot;,
+                &quot;104&quot;: &quot;175&quot;,
+                &quot;105&quot;: &quot;172&quot;,
+                &quot;106&quot;: &quot;17d&quot;,
+                &quot;107&quot;: &quot;164&quot;,
+                &quot;108&quot;: &quot;17e&quot;,
+                &quot;109&quot;: &quot;177&quot;,
+                &quot;110&quot;: &quot;178&quot;,
+                &quot;111&quot;: &quot;161&quot;,
+                &quot;194&quot;: &quot;166&quot;
+            &#125;,
+            &quot;居民地&quot;: &#123;
+                &quot;100&quot;: &quot;17f&quot;
+            &#125;
+        &#125;,
+        &quot;16&quot;: &#123;
+            &quot;note&quot;: &quot;200m-14-17-100m&lt;包含&gt;-10m&lt;包含&gt;&quot;,
+            &quot;场景&quot;: &#123;
+                &quot;101&quot;: &quot;176&quot;,
+                &quot;102&quot;: &quot;163&quot;,
+                &quot;103&quot;: &quot;174&quot;,
+                &quot;104&quot;: &quot;175&quot;,
+                &quot;105&quot;: &quot;172&quot;,
+                &quot;106&quot;: &quot;17d&quot;,
+                &quot;107&quot;: &quot;164&quot;,
+                &quot;108&quot;: &quot;17e&quot;,
+                &quot;109&quot;: &quot;177&quot;,
+                &quot;110&quot;: &quot;178&quot;,
+                &quot;111&quot;: &quot;161&quot;,
+                &quot;194&quot;: &quot;166&quot;
+            &#125;,
+            &quot;湖泊、水库&quot;: &#123;
+                &quot;102&quot;: &quot;122&quot;,
+                &quot;103&quot;: &quot;122&quot;
+            &#125;,
+            &quot;面状水系&quot;: &#123;
+                &quot;199&quot;: &quot;123&quot;,
+                &quot;101&quot;: &quot;123&quot;
+            &#125;,
+            &quot;居民地&quot;: &#123;
+                &quot;100&quot;: &quot;17f&quot;
+            &#125;,
+            &quot;绿地&quot;: &#123;
+                &quot;152&quot;: &quot;14b&quot;,
+                &quot;100&quot;: &quot;141&quot;,
+                &quot;150&quot;: &quot;141&quot;,
+                &quot;151&quot;: &quot;141&quot;,
+                &quot;130&quot;: &quot;144&quot;
+            &#125;
+        &#125;,
+        &quot;17&quot;: &#123;
+            &quot;note&quot;: &quot;200m-13-17&quot;,
+            &quot;功能面&quot;: &#123;
+                &quot;104&quot;: &quot;17c&quot;,
+                &quot;105&quot;: &quot;141&quot;,
+                &quot;194&quot;: &quot;165&quot;
             &#125;
         &#125;
-        if (!repeat) &#123;
-            res.push(arr[i]);
-        &#125;
     &#125;
-    return res;
-&#125;
-// 思路：每次取出原数组的元素，然后再对象中访问这个属性，如果存在就说明重复
-function unique(arr) &#123;
-    var res = [];
-    var json = &#123;&#125;;
-    for (var i = 0; i &lt; arr.length; i++) &#123;
-        if (!json[arr[i]]) &#123;
-            res.push(arr[i]);
-            json[arr[i]] = 1;
-        &#125;
-    &#125;
-    return res;
-&#125;
-// 利用下标查询
-function unique(arr) &#123;
-    var newArr = [arr[0]];
-    for (var i = 0; i &lt; arr.length; i++) &#123;
-        if (newArr.indexOf(arr[i]) == -1) &#123;
-            newArr.push(arr[i]);
-        &#125;
-    &#125;
-    return newArr;
-&#125;
-
-// 两个数组中相同的元素和不同的元素
-// 合并两数组，并删除重复元素(代码类似于数组去重，只不过都是比较两个数组)
-</code></pre>
-<h2 id="对数组进行反转"><a href="#对数组进行反转" class="headerlink" title="对数组进行反转"></a>对数组进行反转</h2><pre><code>function reverae(arr) &#123;
-    var j = arr.length - 1;
-    for (var i = 0; i &lt; arr.length; i++) &#123;
-        var temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-        j--;
-    &#125;
-&#125;
-</code></pre>
-<h2 id="获取数组中连续的元素"><a href="#获取数组中连续的元素" class="headerlink" title="获取数组中连续的元素"></a>获取数组中连续的元素</h2><pre><code>function fn(arr)&#123;
-  var result = [],
-      i = 0;
-  result[i] = [arr[0]];
-  arr.reduce(function(prev, cur)&#123;
-    cur-prev === 1 ? result[i].push(cur) : result[++i] = [cur];
-    return cur;
-  &#125;);
-  return result;
-&#125;
-</code></pre>
-<h2 id="数组合并-先排序，再合并"><a href="#数组合并-先排序，再合并" class="headerlink" title="数组合并(先排序，再合并)"></a>数组合并(先排序，再合并)</h2><pre><code>// 合并两个有序数组
-function mergeOrder(arr1,arr2) &#123;
-    var result = arr1 +arr2;
-    var m = 0;
-    var n = 0;
-    for (var i = 0; i &lt; result.length; i++) &#123;
-        if (m == arr1.length) &#123;
-            result[i] = arr2[n++];
-        &#125;else if (n==arr2.length) &#123;
-            result[i] = arr1[m++];
-        &#125;else&#123;
-            if (arr1[m] &lt; arr2[n]) &#123;
-                result[i] = arr1[m++];
-            &#125;else&#123;
-                result[i] = arr2[n++];
+&#125;,
+&quot;bd&quot;: &#123;
+    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ subtype:转换的kind&quot;,
+    &quot;dat&quot;: &#123;
+        &quot;16&quot;: &#123;
+            &quot;建筑物区域00&quot;: &#123;
+            &#125;
+        &#125;,
+        &quot;21&quot;: &#123;
+            &quot;建筑物区域00&quot;: &#123;
             &#125;
         &#125;
-
     &#125;
-    return result;
+&#125;,
+&quot;poi&quot;: &#123;
+    &quot;note&quot;: &quot;字段解释: type / subtype / [types] |级别 / 名字 / 名字num&quot;,
+    &quot;level&quot;: [&quot;7&quot;,&quot;9&quot;,&quot;10&quot;,&quot;11&quot;,&quot;12&quot;,&quot;13&quot;,&quot;14&quot;,&quot;15&quot;,&quot;16&quot;,&quot;17&quot;,&quot;18&quot;,&quot;19&quot;],
+    &quot;config&quot;:&#123;
+        &quot;10&quot;: &#123;
+            &quot;1&quot;: [&quot;100101&quot;,&quot;100102&quot;,&quot;100103&quot;],
+            &quot;2&quot;: [&quot;100201&quot;,&quot;100202&quot;,&quot;100203&quot;,&quot;100204&quot;,&quot;100205&quot;,&quot;100206&quot;,&quot;100207&quot;,&quot;100208&quot;,&quot;100209&quot;,&quot;100210&quot;,&quot;100211&quot;,&quot;100212&quot;],
+            &quot;3&quot;: [&quot;100301&quot;,&quot;100302&quot;,&quot;100303&quot;,&quot;100304&quot;,&quot;100305&quot;,&quot;100306&quot;,&quot;100307&quot;],
+            &quot;4&quot;: [&quot;100400&quot;,&quot;100401&quot;,&quot;100402&quot;,&quot;100403&quot;,&quot;100404&quot;,&quot;100405&quot;,&quot;100406&quot;,&quot;100407&quot;,&quot;100408&quot;,&quot;100409&quot;,&quot;100410&quot;,&quot;100411&quot;,&quot;100412&quot;,&quot;100413&quot;,&quot;100414&quot;,&quot;100415&quot;,&quot;100416&quot;,&quot;100417&quot;,&quot;100418&quot;,&quot;100419&quot;,&quot;100420&quot;,&quot;100421&quot;],
+            &quot;5&quot;: [&quot;100500&quot;,&quot;100501&quot;,&quot;100502&quot;],
+            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;]
+        &#125;,
+        &quot;11&quot;: &#123;
+            &quot;1&quot;: [&quot;110100&quot;,&quot;110101&quot;],
+            &quot;2&quot;: [&quot;110201&quot;,&quot;110202&quot;],
+            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;]
+        &#125;,
+        &quot;12&quot;: &#123;
+            &quot;1&quot;: [&quot;120101&quot;,&quot;120102&quot;,&quot;120103&quot;,&quot;120104&quot;,&quot;120105&quot;,&quot;120106&quot;,&quot;120107&quot;,&quot;120108&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;13&quot;: &#123;
+            &quot;1&quot;: [&quot;130101&quot;,&quot;130102&quot;,&quot;130103&quot;,&quot;130104&quot;,&quot;130105&quot;,&quot;130106&quot;,&quot;130107&quot;],
+            &quot;2&quot;: [&quot;130200&quot;,&quot;130201&quot;,&quot;130202&quot;],
+            &quot;3&quot;: [&quot;130301&quot;,&quot;130302&quot;,&quot;130303&quot;,&quot;130304&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;14&quot;: &#123;
+            &quot;1&quot;: [&quot;140100&quot;],
+            &quot;2&quot;: [&quot;140201&quot;,&quot;140202&quot;,&quot;140203&quot;,&quot;140204&quot;,&quot;140205&quot;,&quot;140206&quot;,&quot;140207&quot;,&quot;140208&quot;,&quot;140209&quot;,&quot;140210&quot;,&quot;140212&quot;,&quot;140213&quot;],
+            &quot;3&quot;: [&quot;140301&quot;,&quot;140302&quot;,&quot;140303&quot;,&quot;140304&quot;,&quot;140305&quot;,&quot;140306&quot;,&quot;140307&quot;,&quot;140308&quot;,&quot;140309&quot;,&quot;140310&quot;,&quot;140311&quot;,&quot;140312&quot;],
+            &quot;4&quot;: [&quot;140400&quot;],
+            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;,&quot;3333:270103&quot;]
+        &#125;,
+        &quot;15&quot;: &#123;
+            &quot;1&quot;: [&quot;150101&quot;,&quot;150102&quot;,&quot;150103&quot;],
+            &quot;2&quot;: [&quot;150200&quot;]
+        &#125;,
+        &quot;16&quot;: &#123;
+            &quot;1&quot;: [&quot;160101&quot;,&quot;160102&quot;,&quot;160103&quot;,&quot;160104&quot;,&quot;160105&quot;,&quot;160106&quot;,&quot;160107&quot;,&quot;160109&quot;],
+            &quot;2&quot;: [&quot;160200&quot;],
+            &quot;3&quot;: [&quot;160301&quot;,&quot;160302&quot;,&quot;160303&quot;,&quot;160304&quot;,&quot;160305&quot;,&quot;160306&quot;,&quot;160307&quot;,&quot;160308&quot;,&quot;160309&quot;],
+            &quot;4&quot;: [&quot;160401&quot;,&quot;160402&quot;,&quot;160403&quot;,&quot;160404&quot;,&quot;160405&quot;,&quot;160406&quot;,&quot;160407&quot;],
+            &quot;5&quot;: [&quot;160500&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;17&quot;: &#123;
+            &quot;1&quot;: [&quot;170101&quot;,&quot;170102&quot;,&quot;170103&quot;,&quot;170104&quot;,&quot;170105&quot;,&quot;170106&quot;,&quot;170107&quot;,&quot;170108&quot;,&quot;170109&quot;],
+            &quot;2&quot;: [&quot;170201&quot;,&quot;170202&quot;],
+            &quot;3&quot;: [&quot;170300&quot;],
+            &quot;999&quot;: [&quot;3333:270103&quot;]
+        &#125;,
+        &quot;18&quot;: &#123;
+            &quot;1&quot;: [&quot;180101&quot;,&quot;180102&quot;,&quot;180103&quot;,&quot;180104&quot;,&quot;180105&quot;,&quot;180106&quot;,&quot;180107&quot;,&quot;180108&quot;,&quot;180109&quot;],
+            &quot;2&quot;: [&quot;180201&quot;,&quot;180202&quot;,&quot;180203&quot;,&quot;180204&quot;,&quot;180205&quot;,&quot;180206&quot;,&quot;180207&quot;],
+            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;,&quot;3333:270103&quot;]
+        &#125;,
+        &quot;19&quot;: &#123;
+            &quot;1&quot;: [&quot;190101&quot;,&quot;190102&quot;,&quot;190103&quot;,&quot;190104&quot;,&quot;190105&quot;,&quot;190106&quot;,&quot;190107&quot;],
+            &quot;2&quot;: [&quot;190201&quot;,&quot;190202&quot;,&quot;190203&quot;,&quot;190204&quot;,&quot;190205&quot;,&quot;190206&quot;],
+            &quot;3&quot;: [&quot;190301&quot;,&quot;190302&quot;,&quot;190303&quot;],
+            &quot;4&quot;: [&quot;190401&quot;,&quot;190402&quot;,&quot;190403&quot;,&quot;190404&quot;,&quot;190405&quot;],
+            &quot;5&quot;: [&quot;190500&quot;],
+            &quot;999&quot;: [&quot;3333:270103&quot;]
+        &#125;,
+        &quot;20&quot;: &#123;
+            &quot;1&quot;: [&quot;200100&quot;,&quot;200101&quot;,&quot;200102&quot;,&quot;200103&quot;,&quot;200104&quot;,&quot;200105&quot;,&quot;200106&quot;,&quot;200107&quot;,&quot;200108&quot;,&quot;200109&quot;,&quot;200110&quot;,&quot;200111&quot;,&quot;200112&quot;,&quot;200113&quot;,&quot;200114&quot;,&quot;200115&quot;,&quot;200116&quot;,&quot;200117&quot;,&quot;200118&quot;],
+            &quot;2&quot;: [&quot;200201&quot;,&quot;200202&quot;,&quot;200203&quot;,&quot;200204&quot;,&quot;200205&quot;,&quot;200206&quot;]
+        &#125;,
+        &quot;21&quot;: &#123;
+            &quot;1&quot;: [&quot;210101&quot;,&quot;210102&quot;,&quot;210103&quot;],
+            &quot;2&quot;: [&quot;210201&quot;,&quot;210202&quot;,&quot;210203&quot;,&quot;210204&quot;,&quot;210205&quot;,&quot;210206&quot;],
+            &quot;3&quot;: [&quot;210300&quot;]
+        &#125;,
+        &quot;22&quot;: &#123;
+            &quot;1&quot;: [&quot;220101&quot;,&quot;220102&quot;,&quot;220103&quot;,&quot;220104&quot;,&quot;220105&quot;,&quot;220106&quot;,&quot;220107&quot;,&quot;220108&quot;],
+            &quot;2&quot;: [&quot;220201&quot;,&quot;220202&quot;]
+        &#125;,
+        &quot;23&quot;: &#123;
+            &quot;1&quot;: [&quot;230101&quot;,&quot;230102&quot;,&quot;230103&quot;,&quot;230104&quot;,&quot;230105&quot;,&quot;230106&quot;,&quot;230107&quot;],
+            &quot;2&quot;: [&quot;230201&quot;,&quot;230202&quot;,&quot;230203&quot;,&quot;230204&quot;,&quot;230205&quot;,&quot;230206&quot;],
+            &quot;3&quot;: [&quot;230301&quot;,&quot;230302&quot;,&quot;230303&quot;,&quot;230304&quot;,&quot;230305&quot;,&quot;230306&quot;,&quot;230307&quot;,&quot;230308&quot;,&quot;230309&quot;,&quot;230310&quot;,&quot;230311&quot;,&quot;230312&quot;],
+            &quot;4&quot;: [&quot;230401&quot;,&quot;230402&quot;,&quot;230403&quot;,&quot;230404&quot;,&quot;230405&quot;,&quot;230406&quot;,&quot;230407&quot;,&quot;230408&quot;],
+            &quot;5&quot;: [&quot;230501&quot;,&quot;230502&quot;,&quot;230503&quot;],
+            &quot;6&quot;: [&quot;230600&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;,&quot;3333:270103&quot;]
+        &#125;,
+        &quot;24&quot;: &#123;
+            &quot;1&quot;: [&quot;240101&quot;,&quot;240102&quot;,&quot;240103&quot;,&quot;240104&quot;],
+            &quot;2&quot;: [&quot;240201&quot;,&quot;240202&quot;,&quot;240203&quot;,&quot;240204&quot;,&quot;240205&quot;],
+            &quot;3&quot;: [&quot;240301&quot;,&quot;240302&quot;],
+            &quot;4&quot;: [&quot;240401&quot;,&quot;240402&quot;,&quot;240403&quot;,&quot;240404&quot;,&quot;240405&quot;],
+            &quot;5&quot;: [&quot;240501&quot;,&quot;240502&quot;,&quot;240503&quot;,&quot;240504&quot;],
+            &quot;6&quot;: [&quot;240600&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;25&quot;: &#123;
+            &quot;1&quot;: [&quot;250101&quot;,&quot;250102&quot;,&quot;250103&quot;,&quot;250104&quot;],
+            &quot;2&quot;: [&quot;250201&quot;,&quot;250202&quot;,&quot;250203&quot;,&quot;250204&quot;,&quot;250205&quot;,&quot;250206&quot;,&quot;250207&quot;],
+            &quot;3&quot;: [&quot;250301&quot;,&quot;250302&quot;,&quot;250303&quot;,&quot;250304&quot;,&quot;250305&quot;],
+            &quot;4&quot;: [&quot;250400&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;26&quot;: &#123;
+            &quot;1&quot;: [&quot;260100&quot;,&quot;260199&quot;],
+            &quot;2&quot;: [&quot;260200&quot;]
+        &#125;,
+        &quot;50&quot;: &#123;
+            &quot;1&quot;: [&quot;3:280101&quot;,&quot;4:280102&quot;]
+        &#125;,
+        &quot;100&quot;: &#123;
+            &quot;1&quot;: [&quot;100:290101&quot;]
+       &#125;
+    &#125;,        
+    &quot;dat&quot;: &#123;
+        &quot;7&quot;: &#123;
+            &quot;县市区&quot;: &quot;&quot;
+        &#125;,
+        &quot;9&quot;: &#123;
+            &quot;乡镇村屯SP合并_&quot;: &quot;1,2,3,4,5&quot;
+        &#125;,
+        &quot;10&quot;: &#123;
+            &quot;KEEP&quot;: &quot;&quot;
+        &#125;,
+        &quot;11&quot;: &#123;
+            &quot;L11&quot;: &quot;&quot;
+        &#125;,
+        &quot;12&quot;: &#123;
+            &quot;L12&quot;: &quot;&quot;            
+        &#125;,
+        &quot;13&quot;: &#123;
+            &quot;L13&quot;: &quot;&quot;,
+            &quot;桥&quot;: &quot;&quot;,
+            &quot;山sp合并&quot;: &quot;&quot;,
+            &quot;L13移动学院&quot;: &quot;&quot;
+        &#125;,
+        &quot;14&quot;: &#123;
+            &quot;L14&quot;: &quot;&quot;
+        &#125;,
+        &quot;15&quot;: &#123;
+            &quot;L15_&quot;: &quot;1,2&quot;
+        &#125;,
+        &quot;16&quot;: &#123;
+            &quot;L16_&quot;: &quot;1,2&quot;,
+            &quot;不抽稀点POI&quot;: &quot;&quot;,
+            &quot;L16中国移动学院其他点&quot;: &quot;&quot;
+        &#125;,
+        &quot;17&quot;: &#123;
+            &quot;L17_&quot;: &quot;1,2,3,4&quot;,
+            &quot;出入口&quot;: &quot;&quot;,
+            &quot;带门类&quot;: &quot;&quot;
+        &#125;,
+        &quot;18&quot;: &#123;
+            &quot;L18_&quot;: &quot;1,2,3,4,5,6,7&quot;
+        &#125;,
+         &quot;19&quot;: &#123;
+            &quot;L19_&quot;: &quot;1,2,3,4,5,6,7,8,9,10&quot;
+        &#125;
+    &#125;
 &#125;
 </code></pre>
+<p>}</p>
 
       
     </div>
@@ -1589,7 +1222,7 @@ function mergeOrder(arr1,arr2) &#123;
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/M_Swift76_2018%E8%A7%84%E5%88%92/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/05/12/M_Swift122%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1603,7 +1236,7 @@ function mergeOrder(arr1,arr2) &#123;
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/07/24/M_Swift76_2018%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">2018规划</a>
+            <a href="/2020/05/12/M_Swift122%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">总结</a>
         </h2>
 
         <div class="post-meta">
@@ -1613,7 +1246,7 @@ function mergeOrder(arr1,arr2) &#123;
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-07-24 20:03:36" itemprop="dateCreated datePublished" datetime="2018-07-24T20:03:36+08:00">2018-07-24</time>
+              <time title="创建时间：2020-05-12 17:02:20" itemprop="dateCreated datePublished" datetime="2020-05-12T17:02:20+08:00">2020-05-12</time>
             </span>
 
           
@@ -1627,7 +1260,7 @@ function mergeOrder(arr1,arr2) &#123;
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>眼看2017年这就要过去了，是时候想一下2018年的自己了，2018年，你有什么打算，有什么思考，想做点什么，然后是想怎么样过完自己的2018年，很重要，是时候规划一下了。<br>貌似，我觉得我2017年初的时候应该也是有规划的，不知道现在还能回想一下是什么不，现在有点忍不住想回头看一下的冲动。<br>翻看了一下，竟然没有。。。。。让我很吃惊，哈哈怎么会是这样的。我2017年的规划去哪里了？？<br>好了，不回望过去了，说说接下来的2018年吧。<br>我计划是能够达到10万元的年收入，除去现在的车，我想，我车已经算是买了，但是我需要2018年，一整年的时间来去偿还，还是比较耗费资本的，这一年我将不光是为了车努力，我还是要多挣钱，准备自己的房子的首付。<br>但是，我这个人还是有点担忧的，我觉得我属于那种忧愁型的人，如果真的要贷款买房的话，我想对于我来说是不小的挑战。<br>说了半天房子，其实我觉得2018年肯定是没有希望的，我想如果有希望，应该是2019年，但是前提是保证房子的价格保持不变，如果房子继续上涨的话，那么我2019年也不一定了。哈哈<br>那2018年的你会做什么啊？真的是一个值得思考的问题，现在天太冷的，总是说浪费时间，整的是，是寒冬冻住了我的行动，让我裹足不前，我应该在什么方向上寻找突破呢？真的是一个让人忧愁的问题。<br>现在看来。2018，我还是比较迷茫的，毕竟公司的前景不明，我也不知道该怎么办，一直以来都是认为应该在北京呆着，可是，怎么呆着确实是一个问题。满满的，人就会变的懒惰，变的暴躁，变的无聊，毕竟分割两地，真的是一件值得伤脑的事情。<br>2018年究竟要做点什么事情才能让自己不遗憾呢？说实话，自己快奔30的人了，真的是不小了。而且也确实该立业了，毕竟家已经有了，能不能有自己一个好的工作，能不能创出自己的一片天，真的需要智慧。</p>
+          <p>很久没有写博客了，有一年多的时间了吧，这中间风风雨雨，我想是不是忘记了自己的初衷了，今天好像一天都没有工作，我想写点东西吧，纪念一下自己的30岁，不知道30岁以后的人生是什么样，我想是时候y需要规划一下了。<br>总之很多问题，我好像随波逐流的在这一年里干了很多事情，也好像什么也没干<br>孩子出生了，我也没回家看过几次。。。<br>房子买了，真的是满纸荒唐言，一把心酸泪，很扯，但愿以后的结果让我们很满意吧。<br>这段时间我觉得最大的成功就是写了公交规划这个项目吧，我觉得对我来说确实挺爽的，这个项目我觉得还是挺有收获的，因为是我一个人独立完成的，而且是用java，总之，还是挺有意义的。效率不能算是非常的好，但是我觉得代码很简洁，还是有一点能力的，自夸一下吧。算是对自己信心上的一个提高<br>现在在说地图数据编译，其实代码都是已经写好的，我只不过是用这编译罢了，没有多少技术含量，但是每次编译的时候都需要熬夜似的编译，让我确实很疲惫，不知道以后会不会好点。<br>总之对地图数据这方面我也算是有了一点点的收获，还是挺高兴的。<br>下面的事情我想我也不知道怎么办了，卖完房子，现金方面就不是太充足了，还借了一些钱，希望也是尽快能还上<br>明天也不知道是什么情况，公司搬到海淀这个地方对我h来说还是挺难受的，我每天早上要6点40左右就要醒来，然后赶将近两个小时的时间的公交和地铁去上班，下班也是，这样一天天的让我身心很疲惫，每到周末想好好的放松一下的时候，我又上了打游戏的瘾，天天打游戏到深夜，也还是疲惫。总之这种状态不是很好<br>这个疫情让我在家里呆了很长很长一段时间，导致我都有点胖了，真的不是个好现象。</p>
 
       
     </div>
@@ -1647,7 +1280,7 @@ function mergeOrder(arr1,arr2) &#123;
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/N_Android16%E8%BF%9B%E9%98%B6/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/09/29/M_Swift174%E5%AF%BC%E8%88%AA%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E7%AE%97%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1661,7 +1294,7 @@ function mergeOrder(arr1,arr2) &#123;
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/07/24/N_Android16%E8%BF%9B%E9%98%B6/" class="post-title-link" itemprop="url">Android进阶</a>
+            <a href="/2019/09/29/M_Swift174%E5%AF%BC%E8%88%AA%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">导航中用到的算法</a>
         </h2>
 
         <div class="post-meta">
@@ -1671,8 +1304,15 @@ function mergeOrder(arr1,arr2) &#123;
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-07-24 20:02:18" itemprop="dateCreated datePublished" datetime="2018-07-24T20:02:18+08:00">2018-07-24</time>
+              <time title="创建时间：2019-09-29 09:56:33" itemprop="dateCreated datePublished" datetime="2019-09-29T09:56:33+08:00">2019-09-29</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 15:59:40" itemprop="dateModified" datetime="2021-04-12T15:59:40+08:00">2021-04-12</time>
+              </span>
 
           
 
@@ -1685,17 +1325,81 @@ function mergeOrder(arr1,arr2) &#123;
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Android开发有一段事件了，是时候整理了，网上有很多好的博客整理的比较好，我顺便就抄写下来，也算是对自己的巩固吧。<br>接口interface</p>
-<p>interface是一些功能的集合，但它只定义了对象必须实现的成员，而不包含成员的实现代码，成员的具体代码由实现接口的类提供。Android对接口的使用场景主要有三类：事件监听器接口、对象序列化结构、线程类相关接口。<br>事件监听器接口</p>
-<p>这类接口名称一般以Listener或者CallBack结尾，监听器定义了事件触发时应该进行的操作方法，具体操作步骤需要自定义实现。常见的监听器接口有：<br>对象序列化接口<br>线程类相关接口<br>抽象类abtract class<br>部分基础控件<br>适配器<br>适配器在实际使用时都要派生重写，所以sdk里的适配器类都是抽象类或接口，包括：<br>1、列表适配器，如ListAdapter、SpinnerAdapter、BaseAdapter等等；<br>2、页面适配器，如PagerAdapter、FragmentPagerAdapter、FragmentStatePagerAdapter等等</p>
-<p>静态static<br>静态方法<br>1、静态方法中只能调用静态方法，不能调用非静态方法；<br>静态变量在运行时一般无需修改，如果在运行时修改了变量值，可能会得到非预期的结果。<br>2、静态方法中只能使用静态的类变量，不能使用非静态的类变量；<br>3、静态方法中不能使用this和super，即使this后面跟的是静态类变量也不行；<br>静态类<br>静态类指的是名称前加了static修饰符的类，一般用于开放给外部使用的类中内部类，这样就可以通过“上级类的类名.内部类的类名”来访问。比如说AlertDialog类的内部类Builder，可通过AlertDialog.Builder来调用；再比如Build类的内部类VERSION，可通过Build.VERSION来调用。<br>终态final</p>
-<p>单例模式有三个特点；<br>1、某个类只能有一个实例；<br>2、它要自行创建这个实例；<br>3、它只有唯一途径向整个系统提供这个实例。<br>public class SingletonInner {</p>
-<p>private static class SingletonHolder {<br>private static SingletonInner instance = new SingletonInner();<br>}</p>
-<p>private SingletonInner() {<br>}</p>
-<p>public static SingletonInner getInstance() {<br>return SingletonHolder.instance;<br>}</p>
-<p>}<br>类工厂</p>
-<p>类工厂的输入参数为类名，这得用模板来表示了。类工厂用的就比较多，比如java的容器类ArrayList、HashMap等等都用到了类工厂</p>
-<p>策略模式<br>装饰模式</p>
+          <h2 id="1-迪杰斯特拉算法总共就干了两件事："><a href="#1-迪杰斯特拉算法总共就干了两件事：" class="headerlink" title="1.迪杰斯特拉算法总共就干了两件事："></a>1.迪杰斯特拉算法总共就干了两件事：</h2><p>【1】不断运行广度优先算法找可见点，计算可见点到源点的距离长度</p>
+<p>【2】从当前已知的路径中选择长度最短的将其顶点加入S作为确定找到的最短路径的顶点。</p>
+<h2 id="2-A-算法"><a href="#2-A-算法" class="headerlink" title="2.A*算法"></a>2.A*算法</h2><p>A<em>算法也维持一个Open表。Open表中节点的优先级是依据 [公式] 的大小排列的， [公式] 值越小，被搜索到的优先级越高。<br>其实导航中路线类型就是A</em>的代价模型</p>
+<h2 id="3-滚动在线RRT算法"><a href="#3-滚动在线RRT算法" class="headerlink" title="3.滚动在线RRT算法"></a>3.滚动在线RRT算法</h2><p>步骤0：对起点、终点、工作环境、机器人的视野半径、步长进行初始化；<br>步骤1：如果终点到达，规划中止；<br>步骤2：对当前滚动窗口内的环境信息进行刷新；<br>步骤3：产生局部子目标；<br>步骤4：根据子目标及已知环境信息，在当前滚动窗口内规划一条优化的局部可行路径；<br>步骤5：依规划的局部路径行进一步，步长小于视野半径；<br>步骤6：返回步骤1。</p>
+<p>其实就是一个动态的代价模型</p>
+<h2 id="4-人工势场算法"><a href="#4-人工势场算法" class="headerlink" title="4. 人工势场算法"></a>4. 人工势场算法</h2><p>用来处理障碍物的逻辑</p>
+<h2 id="5-BUG算法"><a href="#5-BUG算法" class="headerlink" title="5.BUG算法"></a>5.BUG算法</h2><p>主要用来做环线的绕行判断</p>
+<p>比较<br>A<em>、LPA</em>以及D* lite都可以用于静态环境下移动机器人的路径规划，此时三者计算效率都相差不大，都利用了启发式搜索来提高效率，LPA<em>和D</em> Lite的增量式搜索在这时没有任何帮助，但对于动态环境的路径规划，A<em>算法却有心无力，但是对于动态环境下进行二次搜索，LPA</em>和D* Lite效率明显高于A*。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/09/29/M_Swift189Linux%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/29/M_Swift189Linux%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">Linux常用命令</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-29 09:56:33" itemprop="dateCreated datePublished" datetime="2019-09-29T09:56:33+08:00">2019-09-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 16:07:04" itemprop="dateModified" datetime="2021-04-12T16:07:04+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>cd<br>ls<br>mkdir<br>rm<br>mv<br>cp<br>find<br>tar<br>cat<br>less</p>
+<p>sudo su</p>
+<p>scp -P 10022 -r<br>ps -ef|grep java</p>
 
       
     </div>
@@ -1714,7 +1418,7 @@ function mergeOrder(arr1,arr2) &#123;
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/14/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/31/">31</a><a class="extend next" rel="next" href="/page/16/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/14/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/16/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1780,7 +1484,7 @@ function mergeOrder(arr1,arr2) &#123;
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">303</span>
+          <span class="site-state-item-count">338</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1808,7 +1512,7 @@ function mergeOrder(arr1,arr2) &#123;
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

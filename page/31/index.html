@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/A_C3%E6%95%B0%E7%BB%84%E3%80%81%E6%8C%87%E9%92%88%E5%92%8C%E7%BB%93%E6%9E%84%E4%BD%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net6CoreLocation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/A_C3%E6%95%B0%E7%BB%84%E3%80%81%E6%8C%87%E9%92%88%E5%92%8C%E7%BB%93%E6%9E%84%E4%BD%93/" class="post-title-link" itemprop="url">C语言数组、指针和结构体</a>
+            <a href="/2016/07/31/D_Net6CoreLocation/" class="post-title-link" itemprop="url">CoreLocation</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 21:33:41" itemprop="dateCreated datePublished" datetime="2016-07-30T21:33:41+08:00">2016-07-30</time>
+              <time title="创建时间：2016-07-31 18:14:03" itemprop="dateCreated datePublished" datetime="2016-07-31T18:14:03+08:00">2016-07-31</time>
             </span>
 
           
@@ -186,18 +186,41 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>一  数组及其特性</p>
-</blockquote>
-<p>1）数组的3要素<br>类型名  数组名［数组元素个数］<br>（1）类型名：char ,int ,float, double,char * ,int *,float *,double <em>等等<br>（2）数组名：只要符合c语言标识符规范即可。<br>（3）数组元素个数：可以使常量，比如4，5等只要能够有确定值的表达式就可以<br>2）声明一个有10个整型元素的数组<br>int arr[10];      &lt;==&gt;       int arr[2</em>5];<br>声明一个有10个字符元素的数组<br>char str[10];<br>其他类型，如float,double,char *,int *,float *,double *以此类推<br>3）整型数组初始化<br>（1）完全初始化（2）部分初始化<br>除了被初始化的元素是有确定的值，未被初始化的元素被系统设置为数值0<br>例如：int arr[10]={1,2,3,4};<br>这时该数组的10 个元素依次为：1，2，3，4，0，0，0，0，0，0<br>特例，极端的部分初始化，如int arr[10]={};这种用法很常见，数组所有元素<br>被系统设置为0        7<br>指定初始化，如int arr[10]={[1]=4,[2]=5};相当于把下标为1的元素初始化为4<br>把下标为2的元素初始化为5，未被初始化的元素被系统自动设为0<br>（3）其他类型的初始化也都遵循上述原则<br>注意：数组只有在初始化的时候可以整体赋值，单就赋值而言数组是不能被整体赋<br>值的<br>4）整型数组元素的引用<br>数组下标是从0开始的，数组名字［n］,这个相当于数组第n+1个元素<br>如int arr[10]={1,2,3,4,5,6,7,8,9,0};<br>arr[0]=1<br>arr[2]=3<br>arr[9]=0<br>数组下标是有范围的，还用上面的例子，显然数组的下标是0～9<br>int arr[100];       下标是0～99<br>int arr[4];            下标范围是0～3<br>如果引用数组元素时，下标超过了其表达范围，编译器在编译的时候是不会报错的，<br>但是执行结果时不确定，即有可能符合正确结果，或者直接报内存错误，总之结果<br>都是错误的，或者说是程序都是错误的。<br>一般习惯管超过下标所能表达范围时叫做越界，越界的程序结果是不可预测的。保<br>证程序不越界是程序员的责任。<br>5）数组名字：数组的名字是一个常量，即首元素的地址。<br>6）数组存储特性：<br>数组元素的地址在内存存储时是连续的。</p>
+          <hr>
+<p>CLLocationManager 定位管理者<br>CLLocation 代表位置(经度/纬度/高度/速度/路线等)<br>CLHeading  代表移动方向<br>CLRegion   代表一个区域</p>
 <blockquote>
-<p>二  指针（间接访问）</p>
+<p>CLCircularRegion  圆形区域<br>CLBeaconRegion 蓝牙信号区域</p>
 </blockquote>
-<p>指针即内存地址，硬件厂商在做内存的时候，都是按照一定规律来制作内存的内存可以抽象为一排即有门牌号，又满足一个门牌号对应一个大小确定的存储空间。而作为门牌号的地址都是特殊的常量(4G大小内存可以表示的范围是0x0~0xffff ffff ffff ffff），而专门存储这些常量的变量被称为指针变量<br>注意：指针变量与普通变量的区别是指针变量存储的值只能是地址常量<br>1）type ＊  指针变量名（声明了type类型的一个指针）；<br>（1）类型：可以是基本数据类型，例如，char ,int ,float,double<br>也可以是构造类型，例如：struct student ,union mydir等等<br>（2）指针变量名：符合c语言标识符规范<br>（3）指针变量所占内存大小<br>2）声明一个整型指针<br>int *p;<br>int *  是一个类型，即整型指针类型。<br>p是一个变量，对应的有它自己所占用内存。而p既然是一个指针变量，那么<br>该指针变量所存储的值是一个地址，而且只能是一个地址。<br>例如：<br>int n=10;<br>int *p=&n; //<em>与一个数据类型共同构成指针类型，</em>仅仅只是一个标识符号<br><em>p=5;          //<em>在这里是一个间接取值运算符<br>//n=5;<br>通过指针途径修改一个变量的值，效率不如直接通过变量名修改。因为前者还牵涉到一个间接取值的运算。这里仅仅只是为了讲解指针的用法，仅仅修改变量的值显然不是指针的主要用法，指针的主要用法是可以指向内存地址或者说是在允许范围内指针可以自由的操作自己的内存空间。<br>注意：在声明一个指针变量的过程中所用的</em>与通过指针间接取用数值时候的</em>意义是不同的。后者是一个间接取值运算符，而前者充其量仅仅只是一个类型说明符的一部分。</p>
-<blockquote>
-<p>三  结构体</p>
-</blockquote>
-<p>1）结构体声明（结构体模板）<br>#define LENGTH  20<br>struct book<br>{<br>char   name[LENGTH] ;<br>char   author[LENGTH];<br>float   price;<br>int       edition;<br>};<br>注意：程序在运行的时候，结构体模板是不占内存的<br>2）声明结构体变量：结构体关键字＋结构体名字＝结构体类型名字<br>struct   book    是一个结构体类型，那么声明一个结构体变量如下：<br>struct  book    my_book;<br>my_book就是一个结构体变量，他是有对应的内存空间的，其实这个结构体是关于一本书的信息描述，并且有自己的内存空间，可以把这个变量当成一个对象。结构体变量所占内存大小并非是各个成员类型所占内存大小的和，需要通过sizeof运算符来进行测量。<br>struct  book   *book_pointer;<br>book_pointer是一个结构体指针变量，该指针变量只有存储一个内存地址<br>大小的空间<br>3）结构体成员访问<br>结构体成员访问方法与数组引用元素有些类似。数组是通过下标来引用对应的元素，而结构体是通过模板中的成员名字来引用。<br>引用的时候可以如下：<br>结构体变量引用成员和（.）运算符<br>struct  book    my_book;<br>my_book.name<br>my_book.author<br>my_book.price<br>my_book.edition<br>结构体指针引用成员和（-&gt;）运算符<br>struct  book  *book_pointer;<br>book_pointer-&gt;name<br>book_pointer-&gt;author<br>book_pointer-&gt;price<br>book_pointer-&gt;edition<br>数组是同种类型数据的集合，而结构体是各种类型数据的集合</p>
+<p>返回定位服务是否可用<br>[CLLocationManager locationServicesEnabled];<br>返回延迟定位更新是否可用<br>[CLLocationManager deferredLocationUpdatesAvailable];<br>返回重大位置改变监听是否可用<br>[CLLocationManager significantLocationChangeMonitoringAvailable];<br>返回是否支持磁力计算方向<br>[CLLocationManager headingAvailable];<br>返回蓝牙信号范围服务是否可用<br>[CLLocationManager isRangingAvailable];</p>
+<hr>
+<p>设置是否可以暂停定位来节省电池电量, YES不需要定位数据时自动暂停定位<br>// mgr.pausesLocationUpdatesAutomatically</p>
+<hr>
+<p>每隔多少米定位一次, 只有水平方向超过该值时才会重新定位<br>// mgr.distanceFilter = 100;</p>
+<hr>
+<p>定位精确度<br>// mgr.desiredAccuracy;<br>kCLDistanceFilterNone;<br>kCLLocationAccuracyBestForNavigation 导航级最佳精准<br>kCLLocationAccuracyBest; 最佳精准<br>kCLLocationAccuracyNearestTenMeters; 10米误差<br>kCLLocationAccuracyHundredMeters; 百米胡茬<br>kCLLocationAccuracyKilometer;  千米误差<br>kCLLocationAccuracyThreeKilometers; 3千米误差</p>
+<hr>
+<p>定位数据的用途<br>// mgr.activityType;<br>CLActivityTypeOther 作为普通用途<br>CLActivityTypeAutomotiveNavigation  作为车辆导航<br>CLActivityTypeFitness  作为不行<br>CLActivityTypeOtherNavigation 作为其它导航</p>
+<hr>
+<p>// CLLocation<br>location.coordinate; 坐标, 包含经纬度<br>location.altitude; 设备海拔高度 单位是米<br>location.course; 设置前进方向 0表示北 90东 180南 270西<br>location.horizontalAccuracy; 水平精准度<br>location.verticalAccuracy; 垂直精准度<br>location.timestamp; 定位信息返回的时间<br>location.speed; 设备移动速度 单位是米/秒, 适用于行车速度而不太适用于不行<br>/*<br>可以设置模拟器模拟速度<br>bicycle ride 骑车移动<br>run 跑动<br>freeway drive 高速公路驾车<br>*/</p>
+<hr>
+<p>// CLAuthorizationStatus<br>用户从未选择过权限<br>kCLAuthorizationStatusNotDetermined<br>无法使用定位服务，该状态用户无法改变<br>kCLAuthorizationStatusRestricted<br>用户拒绝该应用使用定位服务，或是定位服务总开关处于关闭状态<br>kCLAuthorizationStatusDenied<br>已经授权（废弃）<br>kCLAuthorizationStatusAuthorized<br>用户允许该程序无论何时都可以使用地理信息<br>kCLAuthorizationStatusAuthorizedAlways<br>用户同意程序在可见时使用地理位置<br>kCLAuthorizationStatusAuthorizedWhenInUse</p>
+<hr>
+<p>// 计算两个位置之间的距离, 单位是米<br>[newLocation distanceFromLocation:self.prevLocation];</p>
+<hr>
+<p>获取方向信息不会提示用户(不需要授权), 因为不会泄露隐私<br>// [self.mgr startUpdatingHeading];</p>
+<p>magneticHeading 设备与磁北的相对角度<br>trueHeading 设置与真北的相对角度, 必须和定位一起使用, iOS需要设置的位置来计算真北<br>真北始终指向地理北极点<br>磁北对应随着时间变化的地球磁场北极<br>@interface ViewController ()<CLLocationManagerDelegate><br>{<br>//创建对象<br>CLLocationManager *_manager;<br>}</p>
+<p>//获取当前经度<br>_manager =[[CLLocationManager alloc]init];<br>//设置代理<br>_manager.delegate=self;</p>
+<p>开始定位<br>[self startLocation];<br>#pragma mark - 开始定位<br>-(void)startLocation<br>{<br>//判断定位服务是否可用<br>if (![CLLocationManager locationServicesEnabled]) {<br>NSLog(@”定位服务不可用”);</p>
+<p>}</p>
+<p>//设置精确度<br>_manager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;<br>//距离变化敏感程度<br>_manager.distanceFilter=1000;<br>//开始定位<br>[_manager startUpdatingLocation];<br>}<br>#pragma mark - 协议提供的代理方法，当位置更新的时候执行<br>-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations<br>{<br>//地址：经纬度</p>
+<p>//获取地址对象(包含经纬度)<br>CLLocation *location=manager.location;<br>//获取当前经纬度<br>CLLocationCoordinate2D coordinate=location.coordinate;<br>//输出经纬度<br>NSLog(@”long=%f lan=%f”,coordinate.longitude,coordinate.latitude);</p>
+<p>}  </p>
+<p>方向服务<br>//    [self testHeading];<br>#pragma mark - 方向服务<br>-(void)testHeading<br>{<br>if (![CLLocationManager headingAvailable]) {<br>NSLog(@”方向服务不可用”);<br>return;<br>}<br>[_manager startUpdatingHeading];<br>}<br>#pragma mark - 代理方法，当方向更新的时候开始执行<br>-(void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading<br>{</p>
+<p>NSLog(@”磁极方向= %f”,newHeading.magneticHeading);<br>NSLog(@”地理方向 = %f”,newHeading.trueHeading);<br>}</p>
+<p>地址编码和地址反编码<br>[self testGeoCoder];<br>#pragma mark - 地址编码和地址反编码<br>-(void)testGeoCoder<br>{<br>//知道地址，获取经纬度===地址编码<br>CLGeocoder *geocoCoder=[[CLGeocoder alloc]init];<br>[geocoCoder geocodeAddressString:@”兴美生活广场” completionHandler:^(NSArray *placemarks, NSError *error) {<br>//返回placemarks<br>for (CLPlacemark *mark in placemarks)<br>{<br>NSLog(@”mark=%@”,mark );<br>}<br>}];<br>//地址反编码，知道经纬度，获取地址，<br>CLLocation *location=[[CLLocation alloc]initWithLatitude:40.03708400 longitude:116.37059500];</p>
+<p>CLGeocoder *reverseGeocoCoder=[[CLGeocoder alloc]init];<br>[reverseGeocoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {<br>for (CLPlacemark *mark in placemarks)<br>{<br>NSLog(@”地址反编码=%@”,mark );</p>
+<p>}<br>}];</p>
+<p>}</p>
 
       
     </div>
@@ -217,7 +240,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/A_C4%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E3%80%81%E6%8E%92%E5%BA%8F%E3%80%81%E5%87%BD%E6%95%B0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -231,7 +254,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/A_C4%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E3%80%81%E6%8E%92%E5%BA%8F%E3%80%81%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">C语言类型转换、排序、函数</a>
+            <a href="/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">事件处理简介</a>
         </h2>
 
         <div class="post-meta">
@@ -241,7 +264,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 21:33:04" itemprop="dateCreated datePublished" datetime="2016-07-30T21:33:04+08:00">2016-07-30</time>
+              <time title="创建时间：2016-07-31 18:10:27" itemprop="dateCreated datePublished" datetime="2016-07-31T18:10:27+08:00">2016-07-31</time>
             </span>
 
           
@@ -255,21 +278,112 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>一  隐式类型转换，强制类型转换</p>
+          <p>1&gt; 事件处理简介</p>
+<ul>
+<li> PPT简介</li>
+<li>3大事件：主要了解触摸事件。</li>
+<li>什么是响应者对象</li>
+<li>为什么继承UIResponder就能处理事件</li>
+<li>想处理触摸事件，应该怎么办</li>
+</ul>
+<p>2&gt;  01-view拖拽演练</p>
+<ul>
+<li>为什么要自定义view：系统自带不能处理事件</li>
+<li>演示触摸事件方法,触摸的完整过程。</li>
+<li>介绍参数(NSSet,UITouch,UIEvent)</li>
+<li>重点UITouch，</li>
+</ul>
+<p>1.触摸事件方法中的UITouch都是同一个对象，因为一根手指对应一个UITouch.当手指移动或者抬起，并不会产生一个新的UITouch对象给你，而是改变UITouch里面的属性，<br>1.默认三个方法里面只能获取到一个手指，为什么。UIView不支持多点触控<br>2.怎么才能有两个手指，两个手指同时按，并且视图支持多点触控<br>3.UITouch的tapCount有什么用？可以判断用户当前是双击还是单击<br>4.UITouch的phase有什么用? 根据这个属性，判断当前需要调用哪个处理事件方法，begin,move,end<br>程序思路：</p>
+<ul>
+<li>在TouchMove里面做事情-为什么?因为用户手指在视图上移动的时候才需要移动视图。</li>
+<li>获取用户当前的位置，获取用户之前的位置，就知道用户从哪移动到哪,这个位置也是视图移动的位置</li>
+<li>当前视图的位置 = 上一次视图的位置 + 手指的偏移量</li>
+</ul>
+<p>3&gt; 02-事件传递</p>
+<ul>
+<li>  PPT简介</li>
+<li>事件，加入到一个由谁管理的事件队列中?UIApplication</li>
+<li>为什么用队列，不用栈。队列先进先出，意味着先产生的事件，先处理。</li>
+<li>  代码验证事件谁处理</li>
+<li>PPT上这么多view，验证哪个view处理事件。这么多view，都需要监重写一个方法，搞个父类。</li>
+<li>一个view能处理事件，意味着事件传递给他了，那怎么传递? 事件是由父控件传递给子控件。</li>
+<li>父控件不处理事件，子控件也不能。蓝色不接收事件，黄色也不会接收事件? 为什么，因为事件是从父控件传递给子控件的。父控件都没有事件，怎么传给子控件。</li>
+<li>  代码验证view不能处理事件</li>
+<li>一个view怎么不能处理事件。userInteractionEnabled = NO，hidden = YES，alpha &lt;= 0.01</li>
+<li>  代码验证UIImageView不允许交互</li>
+<li>UIImageView默认不允许用户交互，因此默认它上面的子控件不能接收事件。</li>
+<li>  怎么找到最合适的View？通过一个递归。</li>
+<li>第一个接收事件的控件是谁?窗口</li>
+<li>当事件传递给窗口的时候，就会让窗口去找最合适的view,1&gt; 判断自己能不能接收事件 2&gt; 点在不在窗口上 3&gt; 去找比自己更合适的view，从后往前遍历子控件，拿到子控件后，把事件传递给这个子控件 4&gt; 子控件拿到事件之后，又会做同样的判断，一直递归去找，直到找到最合适的view.</li>
+<li>  事件传递的目的何在?找到最合适的view,把事件交给他。</li>
+</ul>
+<p>4&gt; 03-hitText方法和pointInside方法(复制:02-事件传递代码)</p>
+<ul>
+<li>（了解hitText）学习一个方法必须了解：什么时候调用和这个方法有什么用</li>
+</ul>
+<ol>
+<li>hitText什么时候调用:当一个事件传递给一个控件的时候，控件就会调用这个方法</li>
+<li>hitText作用: 寻找到最合适的view。</li>
+</ol>
+<ul>
+<li>（回顾下事件传递），UIApplication -&gt; UIWindow</li>
+<li> UIWindow去寻找最合适的view? [UIWindow hitTest:withEvent:]里面做了什么事情？<br>1&gt; 判断窗口能不能处理事件? 如果不能，意味着窗口不是最合适的view，而且也不会去寻找比自己更合适的view,直接返回nil,通知UIApplication，没有最合适的view。<br>2&gt; 判断点在不在窗口<br>3&gt; 遍历自己的子控件，寻找有没有比自己更合适的view<br>4&gt; 如果子控件不接收事件，意味着子控件没有找到最合适的view,然后返回nil,告诉窗口没有找到更合适的view,窗口就知道没有比自己更合适的view,就自己处理事件。</li>
+<li>验证下hitTest方法返回nil，里面的子控件能处理事件吗？ 重写根控制器view的hitTest:withEvent:方法，</li>
+<li>验证这个方法是否真能找到最合适的view？</li>
+<li>如果点击屏幕任何一个地方，都是白色的view，怎么做。直接返回白色的view,就不会继续去找白色view的子控件了。</li>
+<li>介绍pointInside方法</li>
+<li>pointInside作用：判断一个点在不在一个控件上</li>
+<li>point参数:方法调用者坐标系上的点，PPT画图分析原理。</li>
+<li>这节课的重点：学习完了pointInside,就能实现下hitTest方法底层是怎么做的了。</li>
+</ul>
+<p>5&gt; 04-hitText练习</p>
+<ul>
+<li>分析思路：如果一个点，同时在黄色view和按钮上，由按钮处理事件，怎么做?</li>
+<li>分析事件传递: 当黄色按钮要处理事件，首先事件得传递到他身上</li>
+<li>重写hitTest方法：事件传递到某个控件，调用什么方法?hitTest</li>
+<li>返回nil什么意思？如果直接返回nil，意味着黄色的view，没有找到最合适的view,他的父控件，就会遍历下一个控件，也就是按钮，询问按钮是不是最合适的view.</li>
+<li>判断点在不在按钮上，在就交给他处理。</li>
+<li>pointInside实现。</li>
+</ul>
+<p>5&gt; 响应者链条(复制:02-事件传递代码)</p>
+<ul>
+<li>PPT简介</li>
+<li>touch默认做法:自己不处理事件，交给上一个响应者处理touch事件。</li>
+<li>响应者链条，点击绿色的view,如果不处理事件，就会往上传递。</li>
+<li>验证touch的默认做法 先恢复所有view的默认做法</li>
+<li>监听黄色点击，蓝色点击。</li>
+<li>黄色调用默认做法，事件传递给谁处理?蓝色</li>
+<li>得出结论：1&gt; touch的默认做法：自己不处理，交给上一个响应者。 2&gt; 上一个响应者默认是父控件</li>
+<li>两个view怎么同时处理事件?一个view处理方法，在调用父类默认的做法</li>
+<li>把事件传递给白色的view，怎么做?</li>
+<li>总结下事件传递的完整过程.</li>
+<li>把事件传递给控制器，测试白色view的上一个响应者是否是控制器。</li>
+<li>回顾响应者链条</li>
+</ul>
+<p>6&gt; 抽屉效果<br>添加子视图</p>
+<ul>
+<li>  简单的滑动效果</li>
+<li>监听控制器处理事件方法</li>
+<li>获取x轴偏移量</li>
+<li>改变主视图的frame</li>
+<li>  利用KVO做视图切换<br>往左移动，显示右边，隐藏左边<br>往右移动，显示左边，隐藏右边</li>
+<li> 复杂的滑动效果，PPT讲解（根据手指每移动一点，x轴的偏移量算出当前视图的frame）<br>假设x移到320时，y移动到60，算出没移动一点x，移动多少y<br>offsetY = offsetX * 60 / 320  手指每移动一点，x轴偏移量多少，y偏移多少<br>为了好看，x移动到320，距离上下的高度需要保持一致，而且有一定的比例去缩放他的尺寸。<br>怎么根据之前的frame，算出当前的frame,touchMove只能拿到之前的frame.<br>当前的高度 = 之前的高度 * 这个比例<br>缩放比例：当前的高度/之前的高度  (screenH - 2 * offsetY) / screenH<br>当前的宽度也一样求。<br>y值，计算比较特殊，不能直接用之前的y,加上offsetY,往左滑动，主视图应该往下走，但是offsetX是负数，导致主视图会往上走。<br>y = （screenH - 当前的高度）* 0.5<br>getCurrentFrameWithOffsetX</li>
+<li>  定位(滑动松开手指的时候，移动到目标点)<br>移动到左右目标点，根据偏移量 = 当前目标点的x - 之前视图的x，计算移动到目标点的frame<br>还原：当没有移动到目标点，就把主视图还原。</li>
+<li>  复位（当主视图不在原始的位置，点击屏幕，恢复原来位置）<br>判断手指是否移动，移动的时候就自动定位，不需要手动复位。</li>
+</ul>
+<p>7&gt; 手势识别<br>使用UIImageView原因：之前既能看见图片，又能监听点击的只有UIButton,学了手势，我们的UIImageView也可以。</p>
+<ul>
+<li>tap(代理：左边不能点，右边能点)</li>
+<li>longPress(allowableMovement:触发之前，最大的移动范围)<blockquote>
+<p>默认调用两次，开始一次，结束一次。</p>
 </blockquote>
-<p>1&gt;根据不同类型在内存中所占内存大小而进行默认的一个转换<br>int  short int   long int    long long int   float  (double)<br>系统默认的把一个所占内存空间小的类型的数据拷贝给了所占内存空间大的类型的数据<br>2&gt;有时需要将所占内存大的类型的数据赋值给所占内存小的类型的变量。这就需要用到强制类型转换。例如:<br>double num=4.5;<br>(int)num;          //这个结果是整数类型，舍掉小数点后的部分。<br>注意：虽然(int)num是一个整型，但是num还是原来的类型和原来的数据<br>即强制类型转换不会改变被强制类型转换的数据。</p>
-<blockquote>
-<p>二  排序算法</p>
-</blockquote>
-<p>1）冒泡排序法：相邻的两个元素进行比较，若前者比后者大则交换这两个数的位置，利用上述比较方法先找到所有数中最大的数放在最后一个元素的位置。然后再从剩余的元素当中选出来最大的数放到倒数第二个元素的位置。以此类推直到把所有元素拍完序。</p>
-<p>2）选择排序法：第一次找出所有数中最大的数并记录下标，如果下标与刚开始的时候不一样则拿这个最大的数与第一个位置的元素交换。然后在剩余的元素中再找出最大的数并记录下标，若下标变动则与第二个位置的元素交换位置。以此类推直至把整个数组所有元素排完序为止。</p>
-<p>3）插入排序法：把一个数插入到一个有序数组的合适位置，刚开始把第一个元素当作一个有序的数组，然后把第二个数插入到这个有序数组中。然后把第三个数插入到前两个数构成的有序数组当中适当的位置。依此类推，直至全部拍完序为止。</p>
-<blockquote>
-<p>三  函数</p>
-</blockquote>
-<p>1）函数的三个要素：<br>返回值     函数名     函数参数列表<br>int              main      (int argc, char <em>argv[])<br>（1）函数名：遵守标识符规范<br>（2）函数参数列表：就是函数从它的调用函数获得该函数所需要的信息<br>（3）函数的返回值：就是该函数把函数执行的结果返回给调用它的函数<br>2）函数在调用之前必须声明，函数声明之前需要定义函数，然后才可以调用该函数<br>＃include&lt;stdio.h&gt;<br>void my_print(void);             //函数的声明<br>int main(void)<br>{<br>my_print();                         //函数的调用<br>return 0;<br>}<br>void my_print(void)               //函数的定义<br>{<br>int i,j;<br>for(i=0; i&lt;5; i++) {<br>for(j=0 ; j&lt;=i; j++) {<br>putchar(‘</em>’);<br>}<br>putchar(‘\n’);<br>}<br>}<br>（1）函数的声明当然跟变量声明有些类似，不过函数的声明一般放在main函数前面,    而不是放在main函数里面调用语句之前。void my_print(void);<br>注意：函数的声明比较特殊，在有参数的情况下，在声明的时候，参数变量名字随便写，因为它既没有分配空间也没有其它用处，也完全可以不写。函数在声明的时候参数列表的作用就是告诉编译器有几个参数，每一个参数都是什么类型。<br>（2）函数的定义：函数肯定会具有一定的功能，而这些功能的实现离不开具体的代码<br>实现，而这个代码的具体实现就是函数实体<br>void  my_print(void)<br>{<br>函数实体（或者叫函数功能的具体代码实现）<br>}<br>这就是一个函数的定义<br>（3）函数的调用：就是上面例子中main函数中那一条语句：<br>my_print();</p>
-<p>注意：如果函数有参数，那么当该函数在调用时才会有函数栈空间，而函数栈空间包含参数变量所占内存空间。所以说只有函数在调用时，参数变量才分配了内存空间。<br>3）一般函数形式    ：<br>（1）最简单的一种函数类型<br>void   my_function(void)<br>（2）有参数，无返回值的函数<br>void   my_function(int n)<br>（3）有参数有返回值的函数<br>int   my_function(int a, int b)<br>4）形式参数：在函数定义的时候，参数列表里的参数变量叫做形参<br>实际参数：在调用函数的时候，在参数列表位置所写的参数表达式叫做实参<br>5）变量的作用域:<br>当一个函数在调用的时候会单独的开辟一块新的内存空间，这个内存空间被叫做这个函数的一个栈。而当函数调用完成后，该栈内存控制权交给操作系统，调用函数已经无权管理这块内存空间了。<br>对于一个自定义函数，其变量仅仅只在被调用的时候在内存中占有空间，被调用前或者被调用后都不占有空间。函数仅仅只在被调用的那一个时间段，是该函数变量的生存周期该函数的作用域是该函数存在的时候整个函数内部。<br>6）返回值关键字return<br>（1）把有用的信息返回给当前函数的调用函数<br>（2）表示当前程序结束，把程序的控制权从当前函数转换到当前函数的调用函数。<br>7）递归函数：自己调用自己的函数</p>
+</li>
+<li>swipe:(一个手势只能识别一个方向)</li>
+<li>旋转：<br>基于上一次旋转</li>
+<li>复位：(手势的取值都是相对最原始的位置，我们应该是需要相对上一次，因此每次调用，就复位一下，每次都是从零开始旋转角度)<br>缩放：复位</li>
+<li>如何同时支持旋转和缩放？默认不支持多个手指，<br>Simultaneously：同时<br>当使用一个手势的时候会调用代理的Simultaneously方法，询问是否支持多个手势</li>
+<li>pan<br>获取平移的位置：translationInView<br>复位：setTranslation:inView: 需要传一个view，因为点的位置跟坐标系有关系，看他是基于哪个坐标系被清空的。</li>
+</ul>
 
       
     </div>
@@ -289,7 +403,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/A_C2%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net9IOS%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -303,7 +417,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/A_C2%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%BF%90%E7%AE%97%E7%AC%A6%E5%92%8C%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="post-title-link" itemprop="url">C 语言常用运算符和表达式</a>
+            <a href="/2016/07/31/D_Net9IOS%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" class="post-title-link" itemprop="url">Info.plist,pch,UIApplication,IOS程序的启动过程</a>
         </h2>
 
         <div class="post-meta">
@@ -313,7 +427,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 21:23:48" itemprop="dateCreated datePublished" datetime="2016-07-30T21:23:48+08:00">2016-07-30</time>
+              <time title="创建时间：2016-07-31 18:07:03" itemprop="dateCreated datePublished" datetime="2016-07-31T18:07:03+08:00">2016-07-31</time>
             </span>
 
           
@@ -328,32 +442,596 @@
 
       
           <blockquote>
-<p>一  表达式和语句，关系运算符和逻辑运算符</p>
+<p>Info.plist</p>
 </blockquote>
-<p>1）表达式是由运算符和操作符组合构成的，简单表达式能够构成复杂表达式 下面列举的都是表达式<br>常量表达式：5                            该表达式值为5<br>加法表达式：5+4                       该表达式值为9<br>赋值表达式：n=4+5                   该表达式值为9<br>关系表达式：9&gt;5                       该表达式值为1<br>逻辑表达式：5&gt;4&amp;&amp;4&lt;3          该表达式值为0<br>注意：每一个表达式肯定有一个确定的值<br>2）语句:表达式后面加一个分号就构成了语句，不是所有语句都合法 一个语句是一条完整的计算机指令<br>注意: 语句有单条语句和复合语句之分，复合语句是多条语句用花括号括起来，功能相当于单条语句。<br>3）关系运算符：<br>关系表达式为真，值为1；关系表达式为假，值为0. 即表达式的值非0即1，非1即0。<br>4）逻辑运算符<br>逻辑运算符的值可以为0或者非0<br>（1） &amp;&amp;<br>有一个表达式为假，整个复合表达式的为假，即值为0。<br>所有表达式都为真，整个复合表达式的为真，即值为非0.<br>（2） ||<br>有一个表达式为真，整个复合表达式就为真，即值为非0<br>所有表达式都为假，整个复合表达式才为假，即值为0<br>（3）  !         逻辑非<br>非假即为真<br>非真即为假</p>
+<p>● 建立一个工程后,会在Supporting files文件夹下看到一个“工程名-Info.plist”的文件,该文 件对工程做一些运行期的配置,非常重要,不能删除<br>● 在旧版本Xcode创建的工程中,这个配置文件的名字就叫“Info.plist”<br>● 项目中其他Plist文件不能带有“Info”这个字眼,不然会被错认为是传说中非常重要<br>的“Info.plist”<br>● 项目中还有一个InfoPlist.strings的文件,跟Info.plist文件的本地化相关<br>● 常见属性(红色部分是用文本编辑器打开时看到的key)<br>● Localiztion native development region(CFBundleDevelopmentRegion)-本地化相关<br>● Bundle display name(CFBundleDisplayName)-程序安装后显示的名称,限制在10-12个字 符,如果超出,将被显示缩写名称<br>● Icon file(CFBundleIconFile)-app图标名称,一般为Icon.png<br>● Bundle version(CFBundleVersion)-应用程序的版本号,每次往App Store上发布一个新版<br>本时,需要增加这个版本号<br>● Main storyboard file base name(NSMainStoryboardFile)-主storyboard文件的名称<br>● Bundle identifier(CFBundleIdentifier)-项目的唯一标识,部署到真机时用到</p>
 <blockquote>
-<p>二  分支结构</p>
+<p>pch文件</p>
 </blockquote>
-<p>程序在执行的过程中所有语句都遵循一个原则：<br>源程序自上而下自动执行每一条语句，这是计算机设计的时候就决定的。顺序结构是程序执行的基础，分支结构与循环结构是建立在顺序执行结构之上的。<br>1）if(表达式)<br>{<br>statements;<br>}<br>表达式为真，则执行statements,执行完statements,即结束判断语句，<br>继续执行下面的语句。<br>若表达式为假，不执行statements而继续执行if判断语句下面的语句<br>2）if(表达式)<br>{<br>statements1;<br>}<br>else<br>{<br>statements2;<br>}<br>表达式为真则执行statements1,否则执行statements2，而且只能执行<br>两者其中之一，绝不可能两条语句都执行。<br>statements1或者statements2执行完其中之一后还要继续执行if判断语<br>句的下一条语句。<br>4）switch(表达式)            表达式是一个可变的<br>{<br>case 常量表达式1：<br>statements1；<br>break;<br>case 常量表达式2:<br>statements2;<br>break;<br>:<br>:<br>:<br>default:<br>statements_default;<br>}<br>扫描与表达式匹配的项，一旦匹配执行后面对应语句，执行完直接退出<br>switch结构，如果没有找到与表达式匹配的项，就执行default那个标<br>签对应的语句，之后退出switch结构。<br>注意：<br>（1）表达式必须是可变的<br>（2）case后面的标签必须是常量<br>（3）每一个常量标签后面都有一个冒号（:）<br>（4）每一个标签后面语句都要有一句break;<br>不用break;有时会很有用，看情况要不要break；<br>一般情况下执行完要退出switch的只能用break来退出。如果没有break，那么switch会先查找与表达式匹配的标签之后不再检 查标签是否与表达式匹配而顺次执行下去，直到执行完整个switch剩下的部分。有时我们也可以利用switch这个特性来实现我们的代码功能。<br>（5）default语句就相当于if…else if…else结构里的最后一个else,对选项的逻辑完整性有一定的作用，一般写上为好。</p>
+<p>● 项目的Supporting files文件夹下面有个“工程名-Prefix.pch”文件,也是一个头文件<br>● pch头文件的内容能被项目中的其他所有源文件共享和访问<br>● 一般在pch文件中定义一些全局的宏<br>● 在pch文件中添加下列预处理指令,然后在项目中使用Log(…)来输出日志信息,就可以 在发布应用的时候,一次性将NSLog语句移除(在调试模式下,才有定义DEBUG)<br>#ifdef DEBUG<br>#define Log(…) NSLog(<strong>VA_ARGS</strong>)<br>#else<br>#define Log(…) /* */<br>#endif</p>
 <blockquote>
-<p>三  循环控制结构：已明确知道执行循环次数和不确定具体执行循环次数</p>
+<p>UIApplication</p>
 </blockquote>
-<p>1）for(表达式1;表达式2；表达式3)<br>{<br>statements;//循环体<br>}<br>for循环的有点：不容易漏掉一些必须的条件。<br>表达式1：仅仅只在进入循环的时候执行一次，给计数器赋一个初值<br>表达式2：每一次进入循环体执行代码的之前，都要判断该表达式是否为真<br>若为真则进循环，否则结束循环<br>表达式3: 每成功执行一次循环体，循环计数器都要递变以趋近于循环结束<br>注意：步长的增加和循环结束判断条件都可以很灵活的使用。</p>
+<p>● UIApplication对象是应用程序的象征<br>● 每一个应用都有自己的UIApplication对象,而且是单例的<br>● 通过[UIApplication sharedApplication]可以获得这个单例对象<br>● 一个iOS程序启动后创建的第一个对象就是UIApplication对象<br>● 利用UIApplication对象,能进行一些应用级别的操作<br> UIApplication的常用属性<br>● 设置应用程序图标右上角的红色提醒数字<br>@property(nonatomic) NSInteger applicationIconBadgeNumber;<br>● 设置联网指示器的可见性 @property(nonatomic,getter=isNetworkActivityIndicatorVisible)<br>BOOL networkActivityIndicatorVisible;<br>iOS7中的状态栏<br>● 从iOS7开始,系统提供了2种管理状态栏的方式<br>➢ 通过UIViewController管理(每一个UIViewController都可以拥有自己不同的状<br>态栏)<br>➢ 通过UIApplication管理(一个应用程序的状态栏都由它统一管理)<br>● 在iOS7中,默认情况下,状态栏都是由UIViewController管理 的,UIViewController实现下列方法就可以轻松管理状态栏的可见性和样式<br>➢ 状态栏的样式</p>
+<ul>
+<li>(UIStatusBarStyle)preferredStatusBarStyle;<br>➢ 状态栏的可见性</li>
+<li>(BOOL)prefersStatusBarHidden;<br>利用UIApplication来管理状态栏<br>● 如果想利用UIApplication来管理状态栏,首先得修改Info.plist的设置<br>● UIApplication有个功能十分强大的openURL:方法 - (BOOL)openURL:(NSURL*)url;<br>● openURL:方法的部分功能有<br>➢ 打电话<br>UIApplication *app = [UIApplication sharedApplication]; [app openURL:[NSURL URLWithString:@”tel://10086”]];<br>➢ 发短信<br>[app openURL:[NSURL URLWithString:@”sms://10086”]];<br>➢ 发邮件<br>[app openURL:[NSURL URLWithString:@”mailto://12345@qq.com”]];<br>➢ 打开一个网页资源<br>[app openURL:[NSURL URLWithString:@”<a href="http://ios.itcast.cn&quot;]]">http://ios.itcast.cn&quot;]]</a>;<br>➢ 打开其他app程序<br>UIApplication和delegate<br>● 所有的移动操作系统都有个致命的缺点:app很容易受到打扰。比如一个来电或者锁屏 会导致app进入后台甚至被终止<br>● 还有很多其它类似的情况会导致app受到干扰,在app受到干扰时,会产生一些系统事 件,这时UIApplication会通知它的delegate对象,让delegate代理来处理这些系统事件<br>● delegate可处理的事件包括:<br>➢ 应用程序的生命周期事件(如程序启动和关闭) ➢ 系统事件(如来电)<br>➢ 内存警告<br>➢……<br>UIApplication和delegate<br>// app接收到内存警告时调用 UIApplicationDelegate协议</li>
+<li>(void)applicationDidReceiveMemoryWarning:(UIApplication *)application; // app进入后台时调用(比如按了home键)</li>
+<li>(void)applicationDidEnterBackground:(UIApplication *)application;<br>// app启动完毕时调用</li>
+<li>(BOOL)application:(UIApplication *)application<br>didFinishLaunchingWithOptions:(NSDictionary *)launchOptions;<br>遵守协议,实现相应的方法<br>某个对象<br>id<UIApplicationDelegate> delegate UIApplication<br>UIApplicationDelegate<br>● 每次新建完项目,都有个带有“AppDelegate”字眼的类,它就是UIApplication的代理<br>● HMAppDelegate默认已经遵守了UIApplicationDelegate协议,已经 是UIApplication的代理<blockquote>
+<p>iOS程序的启动过程</p>
+</blockquote>
+</li>
+</ul>
+<p>程序加载完毕<br>程序获取焦点<br>程序进入后台<br>程序失去焦点<br>程序从后台回到前 台<br>内存警告,可能要<br>终止程序<br>程序即将退出<br>打开程序<br>执行main函数 执行UIApplicationMain函数<br>初始化UIApplication(创建和设置代 理对象,开启事件循环)<br>监听系统事件<br>结束程序<br>UIApplication代理 application:<br>didFinishLaunchingWithOptions:<br>applicationDidBecomeActive:<br>applicationDidEnterBackground:<br>applicationWillResignActive:<br>applicationWillEnter Foreground:<br>applicationDidReceiveMemory Warning:<br>applicationWillTerminate:</p>
+<p>● main函数中执行了一个UIApplicationMain这个函数<br>● intUIApplicationMain(intargc,char*argv[],NSString<br><em>principalClassName, NSString <em>delegateClassName); ➢ argc、argv:直接传递给UIApplicationMain进行相关处理即可<br>➢ principalClassName:指定应用程序类名(app的象征),该类必须是UIApplication(或子 类)。如果为nil,则用UIApplication类作为默认值<br>➢ delegateClassName:指定应用程序的代理类,该类必须遵守UIApplicationDelegate协 议<br>UIApplicationMain<br>● UIApplicationMain函数会根据principalClassName创建UIApplication对象,根 据delegateClassName创建一个delegate对象,并将该delegate对象赋值给UIApplication对象 中的delegate属性<br>● 接着会建立应用程序的Main Runloop(事件循环),进行事件的处理(首先会在程序完毕后调 用delegate对象的application:didFinishLaunchingWithOptions:方法)<br>● 程序正常退出时UIApplicationMain函数才返回<br>UIWindow<br>● UIWindow是一种特殊的UIView,通常在一个app中只会有一个UIWindow<br>● iOS程序启动完毕后,创建的第一个视图控件就是UIWindow,接着创建控制器的view,<br>最后将控制器的view添加到UIWindow上,于是控制器的view就显示在屏幕上了 ● 一个iOS程序之所以能显示到屏幕上,完全是因为它有UIWindow<br>● 也就说,没有UIWindow,就看不见任何UI界面<br>UIView<br>UIWindow<br>UIViewController<br>view<br>UIWindow<br>● 添加UIView到UIWindow中两种常见方式:<br>➢ -(void)addSubview:(UIView</em>)view; 直接将view添加到UIWindow中,但并不会理会view对应的UIViewController<br>➢ @property(nonatomic,retain)UIViewController</em>rootViewController; 自动将rootViewController的view添加到UIWindow中,负责管理rootViewController<br>的生命周期<br>● 常用方法<br>➢ -(void)makeKeyWindow; 让当前UIWindow变成keyWindow(主窗口)<br>➢ -(void)makeKeyAndVisible; 让当前UIWindow变成keyWindow,并显示出来<br> UIWindow的获得<br>● [UIApplicationsharedApplication].windows 在本应用中打开的UIWindow列表,这样就可以接触应用中的任何一个UIView对象 (平时输入文字弹出的键盘,就处在一个新的UIWindow中)<br>● [UIApplicationsharedApplication].keyWindow<br>用来接收键盘以及非触摸类的消息事件的UIWindow,而且程序中每个时刻只能有一 个UIWindow是keyWindow。如果某个UIWindow内部的文本框不能输入文字,可能是因为这 个UIWindow不是keyWindow<br>● view.window 获得某个UIView所在的UIWindow</p>
 <blockquote>
-<p>2）while(表达式)</p>
+<p>四大对象关系图</p>
 </blockquote>
-<p>{<br>statements;//循环体<br>}<br>如果表达式为真，则进入循环执行循环体，否则结束循环<br>注意：<br>（1）循环在开始前，要给循环作个铺垫。例如,确定循环的次数，我还需要知道循环计数器是从那个数值开始的<br>（2）循环体内必须要包含让while循环趋近于结束循环的递变</p>
+<p>UIApplication<br>delegate<br>HMAppDelegate<br>window<br>UIViewController<br>view<br>UIWindow<br>rootViewController<br>xib\storyboard\代码</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net8UIDynamic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net8UIDynamic/" class="post-title-link" itemprop="url">UIDynamic</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:00:49" itemprop="dateCreated datePublished" datetime="2016-07-31T18:00:49+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>简单介绍</p>
+</blockquote>
+<p>1.什么是UIDynamic<br>UIDynamic是从iOS 7开始引入的一种新技术，隶属于UIKit框架<br>可以认为是一种物理引擎，能模拟和仿真现实生活中的物理现象<br>如：重力、弹性碰撞等现象<br> <br>2.物理引擎的价值<br>广泛用于游戏开发，经典成功案例是“愤怒的小鸟”<br>让开发人员可以在远离物理学公式的情况下，实现炫酷的物理仿真效果<br>提高了游戏开发效率，产生更多优秀好玩的物理仿真游戏<br> <br>3.知名的2D物理引擎<br>Box2d<br>Chipmunk
+ </p>
 <blockquote>
-<p>3）do</p>
+<p>使用步骤</p>
 </blockquote>
-<p>{<br>statements;//循环体<br>}while(表达式);<br>do…while()语句与while()循环功能差不多，的不同是：do…while()是一个出口条件判断循环，这就导致do…while结构在第一次执行循环体的时候是没有经过任何条件判断的，即第一次循环肯定执行一次。而while()循环是一个入口条件判断循环，即在每一次执行循环体之前都要做一次判断。<br>注意：do…while()循环后有分号，这点跟while()和for循环都是不一样的。</p>
+<p>要想使用UIDynamic来实现物理仿真效果，大致的步骤如下<br>（1）创建一个物理仿真器（顺便设置仿真范围）<br>（2）创建相应的物理仿真行为（顺便添加物理仿真元素）<br>（3）将物理仿真行为添加到物理仿真器中  开始仿真
+ </p>
 <blockquote>
-<p>4）break和continue</p>
+<p>相关说明</p>
 </blockquote>
-<p>（1）break;可以跳出（结束）switch()或者循环控制结构，下面看一个break退出循环</p>
+<p>1.三个概念<br>（1）谁要进行物理仿真？<br>　　物理仿真元素（Dynamic Item）<br> <br>（2）执行怎样的物理仿真效果？怎样的动画效果？<br>　　物理仿真行为（Dynamic Behavior） <br> <br>（3）让物理仿真元素执行具体的物理仿真行为<br>　　物理仿真器（Dynamic Animator）<br> <br>2.物理仿真元素<br>注意：<br>不是任何对象都能做物理仿真元素<br>不是任何对象都能进行物理仿真<br> <br>物理仿真元素要素：<br>任何遵守了UIDynamicItem协议的对象<br>UIView默认已经遵守了UIDynamicItem协议，因此任何UI控件都能做物理仿真<br>UICollectionViewLayoutAttributes类默认也遵守UIDynamicItem协议<br> <br>3.物理仿真行为<br>（1）UIDynamic提供了以下几种物理仿真行为<br>UIGravityBehavior：重力行为<br>UICollisionBehavior：碰撞行为<br>UISnapBehavior：捕捉行为<br>UIPushBehavior：推动行为<br>UIAttachmentBehavior：附着行为<br>UIDynamicItemBehavior：动力元素行为<br> <br>（2）物理仿真行为须知<br>上述所有物理仿真行为都继承自UIDynamicBehavior<br>所有的UIDynamicBehavior都可以独立进行<br>组合使用多种行为时，可以实现一些比较复杂的效果<br> <br> <br>4.物理仿真器<br>（1）物理仿真器须知<br>它可以让物理仿真元素执行物理仿真行为<br>它是UIDynamicAnimator类型的对象<br> <br>（2）UIDynamicAnimator的初始化</p>
+<ul>
+<li>(instancetype)initWithReferenceView:(UIView *)view;<br>view参数：是一个参照视图，表示物理仿真的范围
+ </li>
+</ul>
+<p>5.物理仿真器的说明<br>（1）UIDynamicAnimator的常见方法<br>　　- (void)addBehavior:(UIDynamicBehavior <em>)behavior;  　　//添加1个物理仿真行为<br>　　- (void)removeBehavior:(UIDynamicBehavior <em>)behavior;　　//移除1个物理仿真行为<br>　　- (void)removeAllBehaviors;  　　//移除之前添加过的所有物理仿真行为<br> <br>（2）UIDynamicAnimator的常见属性<br>　　@property (nonatomic, readonly) UIView</em> referenceView;  //参照视图 <br>　　@property (nonatomic, readonly, copy) NSArray</em> behaviors;//添加到物理仿真器中的所有物理仿真行为<br>　　@property (nonatomic, readonly, getter = isRunning) BOOL running;//是否正在进行物理仿真<br>　　@property (nonatomic, assign) id <UIDynamicAnimatorDelegate> delegate;//代理对象（能监听物理仿真器的仿真过程，比如开始和结束）</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net7SVN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net7SVN/" class="post-title-link" itemprop="url">svn</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 17:57:27" itemprop="dateCreated datePublished" datetime="2016-07-31T17:57:27+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>介绍</p>
+</blockquote>
+<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
 <blockquote>
-<p>经验之谈：要以计算机的思维模式去思考怎么写出符合需求的代码</p>
+<p>svn 服务端和客户端模型</p>
 </blockquote>
+<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a target="_blank" rel="noopener" href="http://192.168.88.8/download/softwares/svn">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a target="_blank" rel="noopener" href="http://192.168.88.10/svn">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi <del>/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 *.a 即可<br>global-ignores = *.o *.lo *.la *.al .libs *.so <em>.so.[0-9]</em> *.pyc *.pyo *</del>.nib *.so *.pbxuser <em>.mode</em> <em>.perspective</em> .DS_Store xcuserdata project.xcworkspace<br>3. svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数<br>4. svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co<br>5. svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)<br>6. svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</p>
+<hr>
+<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser<br>M common_db.php</p>
+<hr>
+<p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题<br>M showcompileinfo.php</p>
+<hr>
+<p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php<br>7. svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中<br>8. svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件<br>9. svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改<br>10. svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit<br>11. svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212/test1234">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212/myproject2">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net5KVC%E5%92%8CKVO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net5KVC%E5%92%8CKVO/" class="post-title-link" itemprop="url">KVC和KVO</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 00:17:42" itemprop="dateCreated datePublished" datetime="2016-07-31T00:17:42+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p> 什么是KVC?<br>//  Key Value Coding的简写, 称为键值编码<br>//  作用: 访问对象中属性的一种方式, 通过字符串为关键字访问属性</p>
+</blockquote>
+<blockquote>
+<p>KVC的基本使用<br>//  问题: setValue:forUndefinedKey:</p>
+</blockquote>
+<blockquote>
+<p>KeyPath的使用</p>
+</blockquote>
+<p>// 4.常用方法<br>//  setValuesForKeysWithDictionary:</p>
+<p>//总结: 开发中常用<br>//1. setValuesForKeysWithDictionary方法<br>//2. 当对象没有对应属性出现错误怎么解决</p>
+<p>//KVC常用用途把网络上字典转化为model<br>NSDictionary *dict = @{@”speed”:@(100),@”temp”:@”test”};<br>for(NSString *key in dict)<br>{<br>[car setValue:dict[key] forKey:key];<br>}</p>
+<p>//设置car中engine对象的power属性<br>[car setValue:@(100) forKeyPath:@”engine.power”];</p>
+<p>//把字典中各个属性的值赋给对象对应的属性或实例变量<br>[car setValuesForKeysWithDictionary:dict2];</p>
+<blockquote>
+<p>什么是KVO</p>
+</blockquote>
+<p>//  Key Value Observing的简写, 键值监听<br>//  作用: 需要监视一个属性的变化, 变化了之后做出处理</p>
+<blockquote>
+<p>KVO的基本使用</p>
+</blockquote>
+<p>// 常用<br>//  项目监听一个属性的变化, 并在界面上显示, 使用KVO<br>//  实例: 监听和显示下载进度<br>//KVO<br>//效果: 当speed有了变化之后执行self中observeValueForKeyPath方法<br>[car addObserver:self forKeyPath:@”speed” options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];<br>监听的实现<br>-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context<br>{<br>double newSpeed = [[object valueForKeyPath:keyPath] doubleValue];</p>
+<p>NSLog(@”newSpeed = %f”,newSpeed);<br>}<br>程序完成的时候要移除监听<br>-(void)dealloc<br>{<br>//移除监听<br>//[car removeObserver:self forKeyPath:@”speed”];<br>}</p>
+<p>KVC 与 KVO 是 Objective C 的关键概念，个人认为必须理解的东西，下面是实例讲解。<br>Key-Value Coding (KVC)<br>KVC，即是指 NSKeyValueCoding，一个非正式的 Protocol，提供一种机制来间接访问对象的属性。KVO 就是基于 KVC 实现的关键技术之一。<br>一个对象拥有某些属性。比如说，一个 Person 对象有一个 name 和一个 address 属性。以 KVC 说法，Person 对象分别有一个 value 对应他的 name 和 address 的 key。 key 只是一个字符串，它对应的值可以是任意类型的对象。从最基础的层次上看，KVC 有两个方法：一个是设置 key 的值，另一个是获取 key 的值。如下面的例子：</p>
+<p>KVO这种编码方式使用起来很简单，很适用与datamodel修改后，引发的UIVIew的变化这种情况，就像上边的例子那样，当更改属性的值后，监听对象会立即得到通知。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net3GCD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net3GCD/" class="post-title-link" itemprop="url">GCD</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 00:14:53" itemprop="dateCreated datePublished" datetime="2016-07-31T00:14:53+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>什么是GCD</p>
+</blockquote>
+<p>Grand Central Dispach–<br>好用：1.简单<br>基于block c函数接口<br>功能强大：支持多核心编程<br>支持高级编程功能</p>
+<blockquote>
+<p>创建和使用</p>
+</blockquote>
+<p>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</p>
+<blockquote>
+<p>创建和使用</p>
+</blockquote>
+<p>//开启一个新的线程<br>//queue<br>//三种：main——queue主线程队列<br>//globle——queue全局队列。异步任务加载这里<br>//自定义的<br>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>}<br>});<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”B=%d”,i);<br>}<br>});</p>
+<blockquote>
+<p>模拟网络数据下载</p>
+</blockquote>
+<p>[self simulaterNetworkDataDownload];</p>
+<blockquote>
+<p>延迟执行，延时5s执行</p>
+</blockquote>
+<p>[self delayRunCode];</p>
+<blockquote>
+<p>有的代码指向执行一次</p>
+</blockquote>
+<p>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];</p>
+<blockquote>
+<p>多个任务同时执行，等待所有任务结束</p>
+</blockquote>
+<p>//    模拟迅雷多路下载后关机<br>[self simulaterThreadDownload];</p>
+<p>}<br>-(void)simulaterThreadDownload<br>{<br>dispatch_group_t group=dispatch_group_create();</p>
+<p>//任务添加<br>dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;30; i++)<br>{<br>NSLog(@” B=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>});<br>//先是所有任务执行完成<br>dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>NSLog(@”所有的任务执行完成”);<br>});<br>}<br>-(void)runOneCode<br>{<br>static dispatch_once_t onceToken;<br>dispatch_once(&amp;onceToken, ^{<br>NSLog(@”这句话我只说一次”);<br>});<br>}<br>-(void)delayRunCode<br>{<br>dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br>NSLog(@”我是一只小小小小鸟,永远永远也飞不高”);<br>});</p>
+<p>}<br>-(void)simulaterNetworkDataDownload<br>{<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];<br>[self.view addSubview:_progressView];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>注意：不要再主线程里更新UI<br>//            _progressView.progress+=0.01;</p>
+<p>dispatch_async(dispatch_get_main_queue(), ^{<br>_progressView.progress+=0.01;<br>});<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>NSLog(@”下载完成”);<br>});</p>
+<p>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net4AVAudioPlayer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net4AVAudioPlayer/" class="post-title-link" itemprop="url">AVAudioPlayer</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 00:14:33" itemprop="dateCreated datePublished" datetime="2016-07-31T00:14:33+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>创建播放器对象</p>
+</blockquote>
+<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”lalala.mp3” ofType:nil];<br>_player =[[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:path] error:nil];<br>//预加准备<br>[_player prepareToPlay];</p>
+<p>//添加一个按钮：开始播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>[_player play];<br>}];</p>
+<p>//添加一个按钮：停止播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 150, 100, 30) title:@”暂停” action:^(UIButton *button) {<br>[_player pause];<br>}];<br>//滑块控件<br>_slider=[[UISlider alloc]initWithFrame:CGRectMake(100, 200, 100, 30)];<br>[self.view addSubview:_slider];<br>[_slider addTarget:self action:@selector(dealSlider:) forControlEvents:UIControlEventValueChanged];<br>_slider.value=1;<br>进度条<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(50, 50, 200, 20)];<br>[self.view addSubview:_progressView];<br>[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dealTimer:) userInfo:nil repeats:YES];</p>
+<p>}</p>
+<p>-(void)dealTimer:(NSTimer *)t<br>{<br>_progressView.progress=_player.currentTime / _player.duration;<br>}<br>-(void)dealSlider:(UISlider *)s<br>{<br>_player.volume=s.value;<br>}</p>
+<blockquote>
+<p>网络音乐的播放</p>
+</blockquote>
+<p>1.使用AudioStreamer.h开源库<br>配置开源库<br>创建对象<br>{<br>AudioStreamer *_streamer;<br>}</p>
+<p>NSString *urlString=@”<a target="_blank" rel="noopener" href="http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061&quot;">http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061&quot;</a>;<br>//    如果是self调用时的警告可以<br>//    __weak UIViewController *vc=self;</p>
+<p>__block typeof (_streamer) t=_streamer;</p>
+<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>t =[[AudioStreamer alloc]initWithURL:[NSURL URLWithString:urlString]];<br>[t start];<br>}];</p>
+<blockquote>
+<p>播放本地视频文件</p>
+</blockquote>
+<p>//1、配置<br>//添加mediaPlayer<br>//如何播放在线视频文件</p>
+<p>#import “ViewController.h”</p>
+<p>#import &lt;MediaPlayer/MediaPlayer.h&gt;</p>
+<p>#import “UIView+ZJQuickControl.h”</p>
+<ul>
+<li>(void)viewDidLoad<br>{<br>[super viewDidLoad];</li>
+</ul>
+<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {</p>
+<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”dzs.mp4” ofType:nil];<br>MPMoviePlayerViewController *mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL fileURLWithPath:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
+<blockquote>
+<p>播放在线视频</p>
+</blockquote>
+<p>//<a target="_blank" rel="noopener" href="http://quiet.local/baoman.mp4">http://quiet.local/baoman.mp4</a></p>
+<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放网络mp4” action:^(UIButton *button) {</p>
+<p>NSString *path=@”<a target="_blank" rel="noopener" href="http://quiet.local/baoman.mp4&quot;">http://quiet.local/baoman.mp4&quot;</a>;<br>MPMoviePlayerViewController *mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL URLWithString:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net2NSOperation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net2NSOperation/" class="post-title-link" itemprop="url">NSOperation</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 00:10:52" itemprop="dateCreated datePublished" datetime="2016-07-31T00:10:52+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>NSOperation、NSOperationQueue</p>
+</blockquote>
+<p>//对于NSThread的封装，提供了更为方便的使用接口<br>//支持block</p>
+<blockquote>
+<p>创建和使用</p>
+</blockquote>
+<p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation *operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation *bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation *bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue *queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
+<p>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net1NSThread/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net1NSThread/" class="post-title-link" itemprop="url">NSThread</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 00:08:41" itemprop="dateCreated datePublished" datetime="2016-07-31T00:08:41+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>什么是NSThread？</p>
+</blockquote>
+<p>NSThread 是ios提供的操作和使用线程的一个类<br>线程：<br>进程：理解，活着的程序，是程序执行的一个操作系统实体</p>
+<blockquote>
+<p>NSThread的创建线程</p>
+</blockquote>
+<p>//每个线程执行对应一个方法<br>NSThread *thread1=[[NSThread alloc]initWithTarget:self selector:@selector(thread1:) object:nil];<br>//启动线程<br>[thread1 start];</p>
+<p>//以类方法创建线程<br>//    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];<br>//可以实现同时执行的效果，以前都是先执行A后执行B，现在有了多线程，可以实现同时执行</p>
+<blockquote>
+<p>为什么要实行线程</p>
+</blockquote>
+<p>//UI界面中如果直接执行耗时任务的，界面会卡死，为了能让界面执行耗时任务的时候继续反应，使用新的线程去执行耗时任务<br>//应用场合：下载网络文件，同时执行多个任务，加载大文件，加载大数据<br>//3.为什么要实行线程<br>UIButton *button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(100, 100, 100, 30);<br>[button setTitle:@”耗时任务” forState:UIControlStateNormal];<br>[self.view addSubview:button];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>-(void)btnClick:(UIButton *)button<br>{<br>    //暂停5秒<br>    //    [NSThread sleepForTimeInterval:5];<br>    //    [self dealThread2:nil];<br>    //    如果直接执行的话UI界面会卡死，没有反应<br>    //开启一个新的线程执行<br>    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];</p>
+<p>}</p>
+<p>//4.监控线程的执行完成<br>//如何知道那个线程执行接收，使用block–以后要学<br>//4.监控线程的执行完成<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealThreadExit:) name:NSThreadWillExitNotification object:nil];<br>-(void)dealThreadExit:(NSNotification *)no<br>{<br>    NSLog(@”线程执行完成”);<br>    NSLog(@”ui=%@”,no.userInfo);<br>}<br>//5.线程的控制，线程同步<br>//遇到情况：多个线程访问同一块数据<br>//如何解决：<br>//a+10   1.先从内存拿出，修改，再放回去<br>//访问数据的时候加锁<br>//5.线程的控制，线程同步<br>_lock=[[NSLock alloc]init];</p>
+<p>[NSThread detachNewThreadSelector:@selector(addFunc:) toTarget:self withObject:nil];<br>[NSThread detachNewThreadSelector:@selector(subFunc) toTarget:self withObject:nil];</p>
+<p>[self setAddBlock:^(NSString *mmm){<br>    NSLog(@”hbbbgeregour====%@”,mmm);<br>}];</p>
+<p>#pragma mark - 线程同步<br>-(void)addFunc:(NSThread *)th<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        [_lock lock];<br>        _num++;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        [_lock unlock];</p>
+<pre><code>&#125;
+NSLog(@&quot;add num=%d&quot;,_num);
+if (self.addBlock)
+&#123;
+    self.addBlock(@&quot;add&quot;);
+&#125;
+</code></pre>
+<p>}<br>-(void)subFunc<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        //        [_lock lock];<br>        _num–;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        //        [_lock unlock];</p>
+<pre><code>&#125;
+NSLog(@&quot;sub num=%d&quot;,_num);
+</code></pre>
+<p>}</p>
+<p>//6.UI主线程如何操作UI？<br>//ui主线程，<br>//    工作子线程<br>//    注意：不要在子线程中直接操作UI，交给主线程UI；<br>[self howToUpDateUIInSubThread];<br>-(void)howToUpDateUIInSubThread<br>{<br>    _progress =[[UIProgressView alloc]initWithFrame:CGRectMake(10, 200, 300, 20)];<br>    [self.view addSubview:_progress];<br>    //添加一个按钮<br>    UIButton *button=[UIButton buttonWithType:UIButtonTypeSystem];<br>    button.frame=CGRectMake(100, 300, 100, 30);<br>    [button setTitle:@”下载文件” forState:UIControlStateNormal];<br>    [self.view addSubview:button];<br>    [button addTarget:self action:@selector(startDownloadClick:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)startDownloadClick:(UIButton *)button<br>{<br>    [NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:nil];<br>}<br>-(void)download:(NSThread <em>)thread<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //更新UI<br>        //        _progress.progress+=0.01;<br>        //在主线程中执行一个方法<br>        [self performSelectorOnMainThread:@selector(upDateUI) withObject:nil waitUntilDone:NO];<br>        [NSThread sleepForTimeInterval:0.001];<br>        NSLog(@”进度为%f%%”,_progress.progress</em>100);<br>    }<br>}<br>-(void)upDateUI<br>{<br>    _progress.progress+=0.001;<br>}</p>
 
       
     </div>
@@ -372,7 +1050,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/30/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/30/">30</a><span class="page-number current">31</span>
+    <a class="extend prev" rel="prev" href="/page/30/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/30/">30</a><span class="page-number current">31</span><a class="page-number" href="/page/32/">32</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/32/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -438,7 +1116,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">303</span>
+          <span class="site-state-item-count">338</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -466,7 +1144,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
