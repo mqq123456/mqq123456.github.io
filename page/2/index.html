@@ -148,6 +148,65 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift243mapbox%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/11/21/M_Swift243mapbox%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">mapbox实践</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-11-21 15:34:53 / 修改时间：16:10:59" itemprop="dateCreated datePublished" datetime="2021-11-21T15:34:53+08:00">2021-11-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>目前采用的是低版本的mapbox，问题非常严重，崩溃，内存溢出，卡顿等现象非常多<br>目前没有比较好的办法，最简单的方法是api接口实现那部分的代码是比较新的<br>我的想法是先用新的api接口，然后用旧的底层mbgl navite c++ 库来实现，希望能有一个比较不错的优化效果<br>添加功能：<br>放大缩放按钮：（真的是有点卡）<br>定位按钮：（功能需要完善）</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift244arcgis%E5%AE%9E%E8%B7%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -213,7 +272,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift242Cesium%E6%B7%B9%E6%B2%A1%E5%88%86%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift245js%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%BE%AE%E4%BF%A1isc%E6%8E%88%E6%9D%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -227,7 +286,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/11/21/M_Swift242Cesium%E6%B7%B9%E6%B2%A1%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">Cesium淹没分析</a>
+            <a href="/2021/11/21/M_Swift245js%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%BE%AE%E4%BF%A1isc%E6%8E%88%E6%9D%83/" class="post-title-link" itemprop="url">js国密算法和微信isc授权</a>
         </h2>
 
         <div class="post-meta">
@@ -238,7 +297,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-11-21 15:34:53 / 修改时间：16:17:25" itemprop="dateCreated datePublished" datetime="2021-11-21T15:34:53+08:00">2021-11-21</time>
+              <time title="创建时间：2021-11-21 15:34:53 / 修改时间：16:12:45" itemprop="dateCreated datePublished" datetime="2021-11-21T15:34:53+08:00">2021-11-21</time>
             </span>
 
           
@@ -252,512 +311,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>功能描述：<br>    计算绘制多边形的最高点，最低点、平均高度等，<br>    定时器设置多边形extrudedHeight高度，动态实现淹没效果<br>class SubmergeAnalysis {<br>  constructor(option) {<br>    this._viewer = option.viewer;<br>    this.eventBus = {};<br>    this.setTime = null;<br>    this._extrudedHeight = 1;<br>    this.minHeight = option.minHeight ?option.minHeight : 1;<br>    this.maxHeight = option.maxHeight ? option.maxHeight : 1500;<br>    this.currentMinHeight = 0;<br>    this.currentMaxHeight = 800;<br>    this.speed = option.speed ? option.speed : 1;<br>    this.activeShapePoints = [];<br>    this.activeShape = null;<br>    this.floatingPoint = null;<br>    this.drawingMode = “polygon”; //多边形<br>    this.timer = null;<br>    this.tempPoints = [];<br>    this.area = 0;<br>    this.volue = 0;<br>    this.handler = null<br>    this.boarder = null<br>    this.totalTime = null;<br>    this.heightData = [];<br>  }<br>  getCurrentMaxHeight() {<br>    return this.currentMaxHeight;<br>  }<br>  getCurrentMinHeight() {<br>    return this.currentMinHeight;<br>  }<br>  setMinHeight(minHeight) {<br>    this.minHeight = minHeight;<br>  }<br>  setMaxHeight(maxHeight) {<br>    this.maxHeight = maxHeight;<br>  }<br>  setSpeed(speed) {<br>    this.speed = speed;<br>  }<br>  setTotalTime(time) {<br>    this.totalTime = time;<br>  }<br>  //计算面积<br>  getArea(points) {</p>
-<pre><code>var res = 0;
-var that = this
-
-//拆分三角曲面
-
-for (var i = 0; i &lt; points.length - 2; i++) &#123;
-  var j = (i + 1) % points.length;
-
-  var k = (i + 2) % points.length;
-
-  var totalAngle = that.Angle(points[i], points[j], points[k]);
-
-  var dis_temp1 = that.distance(positions[i], positions[j]);
-
-  var dis_temp2 = that.distance(positions[j], positions[k]);
-
-  res += dis_temp1 * dis_temp2 * Math.abs(Math.sin(totalAngle));
-&#125;
-
-return (res / 1000000.0).toFixed(4);
+          <p>3.加密<br>国密算法由国家密码局发布，包含SM1\ SM2\ SM3\ SM4\ SSF33算法;国际算法由美国的安全局发布，是现今最通用的商用算法。今天就以分组密码算法(SM4)、公钥密码算法(SM2)、摘要算法(SM3)<br>import { sm2,sm3 } from ‘sm-crypto’<br>  const originalData = JSON.stringify(config.data)<br>  const encryptedData = sm2.doEncrypt(originalData, publicKey, 1);<br>  const  sm3data = sm3(originalData);</p>
+<p>4.微信isc授权<br>    //获取微信code<br>   getWxCode(){</p>
+<pre><code>var wx_agentid = &#39;1001358&#39;;
+var sURL =&#39;https:connect/oauth2/authorize?&#39;;
+sURL+=&#39;appid=12345676543&#39;;  
+sURL+=&#39;&amp;redirect_uri=&#39;+encodeURIComponent(&#39;zipapp://local.host/index.html&#39;);
+sURL+=&#39;&amp;response_type=code&#39;;
+sURL+=&#39;&amp;scope=SCOPE&#39;;
+sURL+=&#39;&amp;state=STATE&#39;;
+sURL+=&#39;&amp;agentid=&#39;+wx_agentid;
+sURL+=&#39;#wechat_redirect&#39;;
+window.location.href = sURL; 
+alert(&quot;获取Code请求Url = &quot; + sURL);
 </code></pre>
-<p>  }<br>  /<em>角度</em>/<br>  Angle(p1, p2, p3) {</p>
-<pre><code>var that = this
-
-var bearing21 = that.Bearing(p2, p1);
-
-var bearing23 = that.Bearing(p2, p3);
-
-var angle = bearing21 - bearing23;
-
-if (angle &lt; 0) &#123;
-  angle += 360;
-&#125;
-
-return angle;
-</code></pre>
-<p>  }<br>  /<em>方向</em>/<br>  Bearing(from, to) {</p>
-<pre><code>    var radiansPerDegree = Math.PI / 180.0;//角度转化为弧度(rad)
-
-    var degreesPerRadian = 180.0 / Math.PI;//弧度转化为角度
-    
-    var lat1 = from.lat * radiansPerDegree;
-    
-    var lon1 = from.lon * radiansPerDegree;
-    
-    var lat2 = to.lat * radiansPerDegree;
-    
-    var lon2 = to.lon * radiansPerDegree;
-    
-    var angle = -Math.atan2(Math.sin(lon1 - lon2) * Math.cos(lat2), Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));
-    
-    if (angle &lt; 0) &#123;
-        angle += Math.PI * 2.0;
-    &#125;
-
-        angle = angle * degreesPerRadian;//角度
-
-    return angle;
-</code></pre>
-<p>  }</p>
-<p>  distance(point1, point2) {</p>
-<pre><code>var point1cartographic = Cesium.Cartographic.fromCartesian(point1);
-
-var point2cartographic = Cesium.Cartographic.fromCartesian(point2);
-
-/**根据经纬度计算出距离**/
-
-var geodesic = new Cesium.EllipsoidGeodesic();
-
-geodesic.setEndPoints(point1cartographic, point2cartographic);
-
-var s = geodesic.surfaceDistance;
-
-//返回两点之间的距离
-
-s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2));
-
-return s;
-</code></pre>
-<p>  }</p>
-<p>  //计算体积<br>  getVolume() {}</p>
-<p>  //开始分析<br>  start() {<br>    if (this.maxHeight == 1500) {<br>      this.maxHeight == this.currentMaxHeight;<br>    }<br>    var that = this;<br>    if (this.totalTime) {<br>      this.speed = this.totalTime / (this.maxHeight - this.minHeight);<br>    }<br>    this.timer = setInterval(() =&gt; {<br>      that._extrudedHeight += that.speed / 100;<br>      if (that._extrudedHeight &gt; that.maxHeight) {<br>        that._extrudedHeight = that.maxHeight;<br>        clearInterval(that.timer);<br>      }<br>      let len = that.heightData.length;<br>      var submergeArea = 0;<br>      if (len &gt; 0) {<br>        var count = 0;<br>        for (var i = 0; i &lt; len; i++) {<br>          if (that._extrudedHeight &gt; that.heightData[i]) {<br>            count += 1;<br>          }<br>        }<br>        submergeArea = count / len * that.area;<br>      }</p>
-<pre><code>  that.$emit(&quot;observe&quot;, &#123;
-    extrudedHeight: that._extrudedHeight,
-    maxHeight: that.maxHeight,
-    minHeight: that.minHeight,
-    speed: that.speed,
-    submergeArea:submergeArea
-  &#125;);
-&#125;, 10);
-</code></pre>
-<p>  }<br>  //暂停<br>  pause() {<br>    clearInterval(this.timer);<br>  }<br>  //清除<br>  clear() {<br>    this._viewer.entities.remove(this.boarder); //去除动态点图形（当前鼠标点）<br>    this.boarder = undefined;<br>    this._viewer.entities.remove(this.floatingPoint); //去除动态点图形（当前鼠标点）</p>
-<pre><code>this._viewer.entities.remove(this.activeShape); //去除动态图形
-
-this.floatingPoint = undefined;
-
-this.activeShape = undefined;
-
-this.activeShapePoints = [];
-
-clearInterval(this.timer);
-
-this._extrudedHeight = 1;
-
-this.speed = 1;
-
-this._viewer.entities.removeAll();
-
-this.eventBus = &#123;&#125;;
-</code></pre>
-<p>  }<br>  //绑定事件<br>  _bindEvent() {<br>    let that = this;</p>
-<pre><code>that.handler = new Cesium.ScreenSpaceEventHandler(that._viewer.canvas);
-
-//双击鼠标左键清除默认事件
-that._viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
-  Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
-);
-
-that.handler.setInputAction(function(event) &#123;
-  // We use `viewer.scene.pickPosition` here instead of `viewer.camera.pickEllipsoid` so that
-  // we get the correct point when mousing over terrain.
-  // scene.pickPosition只有在开启地形深度检测，且不使用默认地形时是准确的。
-  var earthPosition = that._viewer.scene.pickPosition(event.position);
-
-
-  // `earthPosition` will be undefined if our mouse is not over the globe.
-  if (Cesium.defined(earthPosition)) &#123;
-    if (that.activeShapePoints.length === 0) &#123;
-      that.floatingPoint = that.createPoint(earthPosition);
-      that.activeShapePoints.push(earthPosition);
-      var dynamicPositions = new Cesium.CallbackProperty(function() &#123;
-        if (that.drawingMode === &quot;polygon&quot;) &#123;
-          return new Cesium.PolygonHierarchy(that.activeShapePoints);
-        &#125;
-        return that.activeShapePoints;
-      &#125;, false);
-      that.activeShape = that.drawShape(dynamicPositions); //绘制动态图
-    &#125;
-    that.activeShapePoints.push(earthPosition);
-
-    that.createPoint(earthPosition);
-
-    let len = that.activeShapePoints.length
-
-    var cartographic = Cesium.Cartographic.fromCartesian(that.activeShapePoints[len - 1]);
-
-    var longitudeString = Cesium.Math.toDegrees(cartographic.longitude);
-
-    var latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
-
-    var heightString = cartographic.height;
-
-    that.tempPoints.push(&#123; lon: longitudeString, lat: latitudeString, hei: heightString &#125;);
-    if (len &gt; 1) &#123;
-      if (!that.boarder) &#123;
-        that.boarder = that._viewer.entities.add(&#123;
-          polyline: &#123;
-            positions: that.activeShapePoints,
-            clampToGround: true,
-            width: 2,
-            material :new Cesium.PolylineOutlineMaterialProperty(&#123;
-              color:new Cesium.Color.fromBytes(0, 191, 255, 100),
-              outlineWidth: 2,
-              outlineColor: new Cesium.Color.fromBytes(0, 191, 255, 100),
-            &#125;)
-          &#125;,
-        &#125;);
-      &#125;else&#123;
-        that.boarder.polyline.positions = that.activeShapePoints;
-      &#125;
-    &#125;
-    
-  &#125;
-&#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-//鼠标移动
-that.handler.setInputAction(function(event) &#123;
-  if (Cesium.defined(that.floatingPoint)) &#123;
-    var newPosition = that._viewer.scene.pickPosition(event.endPosition);
-    if (Cesium.defined(newPosition)) &#123;
-      that.floatingPoint.position.setValue(newPosition);
-      that.activeShapePoints.pop();
-      that.activeShapePoints.push(newPosition);
-    &#125;
-  &#125;
-&#125;, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-that.handler.setInputAction(function(event) &#123;
-  let newArr = [];
-  if(that.activeShapePoints.length &gt; 0)&#123;
-    that.activeShapePoints.forEach(item=&gt;&#123;
-      var cartographic=Cesium.Cartographic.fromCartesian(item);
-      newArr.push(cartographic)
-    &#125;)
-  &#125;
-
-
-  //计算淹没面积
-  // that.area = that.getArea(that.tempPoints) || 0;
-
-  var promise = Cesium.sampleTerrainMostDetailed(that._viewer.terrainProvider, newArr);
-  Cesium.when(promise, function(updatedPositions) &#123;
-      // positions[0].height and positions[1].height have been updated.
-      // updatedPositions is just a reference to positions.
-      let heightArr = updatedPositions.map(item=&gt; item.height);
-      // console.log(&#39;heightArr&#39;,heightArr);
-    that.currentMaxHeight = Math.ceil(Math.max(...heightArr) + 20 + Math.ceil(Math.random() * 50));
-    that.currentMinHeight = Math.ceil(Math.min(...heightArr) + 20 + Math.ceil(Math.random() * 50));
-    //console.log(&#39;that.currentMaxHeight&#39;, that.currentMaxHeight);
-  &#125;);
-
-  that.terminateShape();     
-&#125;, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-</code></pre>
-<p>  }<br>  //绘制点<br>  createPoint(worldPosition) {<br>    var point = this._viewer.entities.add({<br>      position: worldPosition,<br>      point: {<br>        color: Cesium.Color.GREENYELLOW,<br>        pixelSize: 9,<br>        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,<br>      },<br>    });<br>    return point;<br>  }<br>  //绘制图形<br>  drawShape(positionData) {<br>    var that = this;<br>    var shape;<br>    if (that.drawingMode === “line”) {<br>      shape = that._viewer.entities.add({<br>        polyline: {<br>          positions: positionData,<br>          clampToGround: true,<br>          width: 3,<br>        },<br>      });<br>    } else if (that.drawingMode === “polygon”) {<br>      shape = that._viewer.entities.add({<br>        polygon: {<br>          hierarchy: positionData,<br>          perPositionHeight: false,<br>          extrudedHeight: new Cesium.CallbackProperty(function() {<br>            return that._extrudedHeight;<br>          }, false),<br>          //new Cesium.Color.fromBytes(0,191,255,100),<br>          //new Cesium.ColorMaterialProperty(Cesium.Color.AQUA.withAlpha(0.3))<br>          material: new Cesium.Color.fromBytes(0, 191, 255, 100),<br>        },<br>      });<br>    } else if (that.drawingMode === “circle”) {<br>      //当positionData为数组时绘制最终图，如果为function则绘制动态图<br>      var value =<br>        typeof positionData.getValue === “function”<br>          ? positionData.getValue(0)<br>          : positionData;<br>      //var start = activeShapePoints[0];<br>      //var end = activeShapePoints[activeShapePoints.length - 1];<br>      //var r = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2));<br>      //r = r ? r : r + 1;<br>      shape = that._viewer.entities.add({<br>        position: that.activeShapePoints[0],<br>        name: “Blue translucent, rotated, and extruded ellipse with outline”,<br>        type: “Selection tool”,<br>        ellipse: {<br>          semiMinorAxis: new Cesium.CallbackProperty(function() {<br>            //半径 两点间距离<br>            var r = Math.sqrt(<br>              Math.pow(value[0].x - value[value.length - 1].x, 2) +<br>                Math.pow(value[0].y - value[value.length - 1].y, 2)<br>            );<br>            return r ? r : r + 1;<br>          }, false),<br>          semiMajorAxis: new Cesium.CallbackProperty(function() {<br>            var r = Math.sqrt(<br>              Math.pow(value[0].x - value[value.length - 1].x, 2) +<br>                Math.pow(value[0].y - value[value.length - 1].y, 2)<br>            );<br>            return r ? r : r + 1;<br>          }, false),<br>          material: Cesium.Color.BLUE.withAlpha(0.5),<br>          outline: true,<br>        },<br>      });<br>    } else if (that.drawingMode === “rectangle”) {<br>      //当positionData为数组时绘制最终图，如果为function则绘制动态图<br>      var arr =<br>        typeof positionData.getValue === “function”<br>          ? positionData.getValue(0)<br>          : positionData;<br>      shape = that._viewer.entities.add({<br>        name: “Blue translucent, rotated, and extruded ellipse with outline”,<br>        rectangle: {<br>          coordinates: new Cesium.CallbackProperty(function() {<br>            var obj = Cesium.Rectangle.fromCartesianArray(arr);<br>            //if(obj.west==obj.east){ obj.east+=0.000001};<br>            //if(obj.south==obj.north){obj.north+=0.000001};<br>            return obj;<br>          }, false),<br>          material: Cesium.Color.RED.withAlpha(0.5),<br>        },<br>      });<br>    }<br>    return shape;<br>  }<br>  terminateShape() {<br>    this.activeShapePoints.pop(); //去除最后一个动态点</p>
-<pre><code>this.computePolygonHeightRange(this.activeShapePoints);
-this.area = this.computeSignedArea(this.activeShapePoints);
-if (this.activeShapePoints.length) &#123;
-  this.drawShape(this.activeShapePoints); //绘制最终图
-
-  var tmp = this.activeShapePoints;
-  tmp.push(this.activeShapePoints[0]);
-  // console.log(tmp);
-  this.boarder.polyline.positions = tmp;
-&#125;
-
-this._viewer.entities.remove(this.floatingPoint); //去除动态点图形（当前鼠标点）
-
-//this._viewer.entities.remove(this.activeShape); //去除动态图形
-
-this.floatingPoint = undefined;
-
-//this.activeShape = undefined;
-
-this.activeShapePoints = [];
-</code></pre>
-<p>  }<br>  computePolygonHeightRange(e) {<br>    var t = []<br>    for (var i = 0; i &lt; e.length; i++) t.push(e[i].clone());<br>    var a, n, r, o, s, u, l, h = 0,<br>        g = 9999,<br>        c = Math.PI / Math.pow(2, 11) / 64,<br>        m = new Cesium.PolygonGeometry.fromPositions({<br>            positions: t,<br>            vertexFormat: Cesium.PerInstanceColorAppearance.FLAT_VERTEX_FORMAT,<br>            granularity: c<br>        }),</p>
-<pre><code>  d = new Cesium.PolygonGeometry.createGeometry(m);
-var sum = [];
-for (i = 0; i &lt; d.indices.length; i += 3) a = d.indices[i],
-    n = d.indices[i + 1],
-    r = d.indices[i + 2],
-    l = new Cesium.Cartesian3(d.attributes.position.values[3 * a], d.attributes.position.values[3 * a + 1], d.attributes.position.values[3 * a + 2]),
-    (o = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = o),
-    h &lt; o &amp;&amp; (h = o),
-    l = new Cesium.Cartesian3(d.attributes.position.values[3 * n], d.attributes.position.values[3 * n + 1], d.attributes.position.values[3 * n + 2]),
-    (s = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = s),
-    h &lt; s &amp;&amp; (h = s),
-    l = new Cesium.Cartesian3(d.attributes.position.values[3 * r], d.attributes.position.values[3 * r + 1], d.attributes.position.values[3 * r + 2]),
-    (u = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = u),
-  h &lt; u &amp;&amp; (h = u),
-  sum.push(Math.max(Math.max(o,s),u));
-this.currentMaxHeight = h;
-this.currentMinHeight = g;
-this.maxHeight = h;
-this.minHeight = g;
-this._extrudedHeight = g;
-this.heightData = sum;
-this.$emit(&quot;height&quot;, &#123;
-  maxHeight: this.maxHeight,
-  minHeight: this.minHeight,
-  speed: this.speed,
-&#125;);
-</code></pre>
-<p>  }<br>  computeSignedArea(tmppath) {<br>    var path = [];<br>    for (var i = 0; i &lt; tmppath.length; i++) {<br>      var cartographic = Cesium.Cartographic.fromCartesian(tmppath[i]);<br>      var longitude = Cesium.Math.toDegrees(cartographic.longitude);<br>      var latitude = Cesium.Math.toDegrees(cartographic.latitude);<br>      path.push({lng:longitude,lat:latitude });<br>    }<br>      let radius= 6371009<br>      let len = path.length;<br>      if (len &lt; 3) return 0;<br>      let total = 0;<br>      let  prev = path[len - 1];<br>      let prevTanLat = Math.tan(((Math.PI / 2 - prev.lat/180*Math.PI) / 2));<br>      let prevLng = (prev.lng)/180*Math.PI;<br>      for (let i in path) {<br>          let tanLat = Math.tan((Math.PI / 2 -<br>              (path[i].lat)/180*Math.PI) / 2);<br>          let lng = (path[i].lng)/180*Math.PI;<br>          total += this.polarTriangleArea(tanLat, lng, prevTanLat, prevLng);<br>          prevTanLat = tanLat;<br>          prevLng = lng;<br>      }<br>      return Math.abs(total * (radius * radius)) / 1000;<br>  }<br>   polarTriangleArea(tan1,lng1,tan2,lng2) {<br>          let deltaLng = lng1 - lng2;<br>          let t = tan1 * tan2;<br>          return 2 * Math.atan2(t * Math.sin(deltaLng), 1 + t * Math.cos(deltaLng));<br>  }<br>  $on(event, cb) {<br>    if (!this.eventBus[event]) {<br>      this.eventBus[event] = new Set();<br>    }<br>    this.eventBus[event].add(cb);<br>  }<br>  $emit(event, …args) {<br>    if (this.eventBus[event]) {<br>      Array.from(this.eventBus[event]).forEach((handle) =&gt; {<br>        handle.call(this, args);<br>      });<br>    }<br>  }<br>  $off(event, cb) {<br>    if (this.eventBus[event]) {<br>      this.eventBus[event].delete(cb);<br>    }<br>  }<br>}</p>
-<p>export default SubmergeAnalysis;</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift243mapbox%E5%AE%9E%E8%B7%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/11/21/M_Swift243mapbox%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">mapbox实践</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-11-21 15:34:53 / 修改时间：16:10:59" itemprop="dateCreated datePublished" datetime="2021-11-21T15:34:53+08:00">2021-11-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>目前采用的是低版本的mapbox，问题非常严重，崩溃，内存溢出，卡顿等现象非常多<br>目前没有比较好的办法，最简单的方法是api接口实现那部分的代码是比较新的<br>我的想法是先用新的api接口，然后用旧的底层mbgl navite c++ 库来实现，希望能有一个比较不错的优化效果<br>添加功能：<br>放大缩放按钮：（真的是有点卡）<br>定位按钮：（功能需要完善）</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift265Flutter%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift265Flutter%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">Flutter常用命令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-07 13:11:33" itemprop="dateModified" datetime="2022-05-07T13:11:33+08:00">2022-05-07</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>flutter run -d macos<br>flutter doctor:检查flutter状态<br>flutter emulators:获取模拟器列表<br>flutter devices:获取所有真机设备列表包括iOS模拟器<br>flutter run -d <deviceId>:运行指定模拟器或者真机<br>6.flutter build apk:打包apk<br>flutter config -xx:配置打包等信息。<br>flutter channel:查看flutter sdk的所有分支<br>flutter packages get:安装了相关插件<br>flutter packages upgrade:更新flutter项目所有依赖包，不包括flutter sdk<br>flutter create project_name<br>flutter upgrade<br>flutter analyze    分析项目代码<br>flutter clean 清空build<br>iOS打包framework<br>flutter build ios-framework –output=../flutter_framework<br>flutter build aar    android 打包aar<br>添加插件<br>flutter pub add flutter_markdown<br>// 打开模拟器<br>open -a Simulator<br>// 开发模式下的自动生成<br>flutter pub run build_runner build<br>// 非空安全<br>flutter run –no-sound-null-safety<br>//<br>flutter pub run build_runner build –delete-conflicting-outputs</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift266Flutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift266Flutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">Flutter开发技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-06 17:40:56" itemprop="dateModified" datetime="2022-04-06T17:40:56+08:00">2022-04-06</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Flutter-iOS-开发"><a href="#Flutter-iOS-开发" class="headerlink" title="Flutter iOS 开发"></a>Flutter iOS 开发</h2><pre><code>flutter iOS混合
-flutter 调用iOS
-await methodChannel.invokeMethod(&#39;iOSFlutter&#39;, &#39;参数&#39;);
-iOS调用flutter
-</code></pre>
-<p>FlutterViewController* flutterViewController = [[FlutterViewController alloc] initWithProject:nil nibName:nil bundle:nil];<br>    flutterViewController.navigationItem.title = @”Demo”;<br>    [flutterViewController setInitialRoute:@”home”];<br>    // 要与main.dart中一致<br>    NSString *channelName = @”com.pages.your/native_post”;</p>
-<pre><code>FlutterEventChannel *evenChannal = [FlutterEventChannel eventChannelWithName:channelName binaryMessenger:flutterViewController];
-// 代理FlutterStreamHandler
-[evenChannal setStreamHandler:self];
-
-[self.navigationController pushViewController:flutterViewController animated:YES];
-</code></pre>
-<h2 id="flutter-android-开发"><a href="#flutter-android-开发" class="headerlink" title="flutter android 开发"></a>flutter android 开发</h2><pre><code>1）添加 FlutterActivity 到 AndroidManifest.xml 中：
-</code></pre>
-<p><activity
-  android:name="io.flutter.embedding.android.FlutterActivity"
-  android:theme="@style/LaunchTheme"
-  android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-  android:hardwareAccelerated="true"
-  android:windowSoftInputMode="adjustResize"
-  /><br>myButton.setOnClickListener {<br>  startActivity(<br>    FlutterActivity<br>      .withNewEngine()<br>      .initialRoute(“/my_route”)<br>      .build(this)<br>  )<br>}</p>
-<h2 id="缓存-Flutter-引擎方式跳转："><a href="#缓存-Flutter-引擎方式跳转：" class="headerlink" title="缓存 Flutter 引擎方式跳转："></a>缓存 Flutter 引擎方式跳转：</h2><p>class MyApplication : Application() {<br>  lateinit var flutterEngine : FlutterEngine<br>  override fun onCreate() {<br>    super.onCreate()<br>    // Instantiate a FlutterEngine.<br>    flutterEngine = FlutterEngine(this)<br>    // Configure an initial route.<br>    flutterEngine.navigationChannel.setInitialRoute(“your/route/here”);<br>    // Start executing Dart code to pre-warm the FlutterEngine.<br>    flutterEngine.dartExecutor.executeDartEntrypoint(<br>      DartExecutor.DartEntrypoint.createDefault()<br>    )<br>    // Cache the FlutterEngine to be used by FlutterActivity or FlutterFragment.<br>    FlutterEngineCache<br>      .getInstance()<br>      .put(“my_engine_id”, flutterEngine)<br>  }<br>}</p>
-<p>myButton.setOnClickListener {<br>  startActivity(<br>    FlutterActivity<br>      .withCachedEngine(“my_engine_id”)<br>      .build(this)<br>  )<br>}</p>
-<h2 id="Dart和C，C-混合编程"><a href="#Dart和C，C-混合编程" class="headerlink" title="Dart和C，C++混合编程"></a>Dart和C，C++混合编程</h2><p>C代码<br>#include&lt;windows.h&gt;</p>
-<p>int add(int a, int b){<br>    return a + b;<br>}</p>
-<p>void showBox(){<br>    MessageBox(NULL,”Hello Dart”,”Title”,MB_OK);<br>}</p>
-<p>import  ‘dart:ffi’  as ffi;<br>import  ‘dart:io’  show Platform;</p>
-<p>/// 根据C中的函数来定义方法签名（所谓方法签名，就是对一个方法或函数的描述，包括返回值类型，形参类型）<br>/// 这里需要定义两个方法签名，一个是C语言中的，一个是转换为Dart之后的<br>typedef NativeAddSign = ffi.Int32 Function(ffi.Int32,ffi.Int32);<br>typedef DartAddSign = int Function(int, int);</p>
-<p>/// showBox函数方法签名<br>typedef NativeShowSign = ffi.Void Function();<br>typedef DartShowSign = void Function();</p>
-<p>void main(List<String> args) {<br>  if (Platform.isWindows) {<br>    // 加载dll动态库<br>    ffi.DynamicLibrary dl = ffi.DynamicLibrary.open(“../src/test.dll”);</p>
-<pre><code>// lookupFunction有两个作用，1、去动态库中查找指定的函数；2、将Native类型的C函数转化为Dart的Function类型
-var add = dl.lookupFunction&lt;NativeAddSign, DartAddSign&gt;(&quot;add&quot;);
-var showBox = dl.lookupFunction&lt;NativeShowSign, DartShowSign&gt;(&quot;showBox&quot;);
-
-// 调用add函数
-print(add(8, 9));
-// 调用showBox函数
-showBox();
-</code></pre>
-<p>  }<br>}</p>
-<h2 id="检测手段"><a href="#检测手段" class="headerlink" title="检测手段"></a>检测手段</h2><p> 1、Flutter Inspector<br>帮你找到 App 中频繁重绘导致性能消耗过大的部分。页面的进度条动画刷新时会导致整个布局频繁重绘。</p>
-<p>2、性能图层<br>蓝色垂直的线条表示已执行的正常帧，绿色的线条代表的是当前帧，如果其中有一帧处理时间过长，就会导致界面卡顿，图表中就会展示出一个红色竖条。</p>
-<p>3、Raster 线程问题4、UI 线程问题定位5、检查多视图叠加的视图渲染开关 checkerboardOffscreenLayers6、检查缓存的图像开关 checkerboardRasterCacheImages<br>二、关键优化指标<br> 1、页面异常率2、页面帧率3、页面加载时长<br>三、布局加载优化 1、常规优化2、深入优化<br>四、启动速度优化 1、引擎预加载2、Dart VM 预热<br>五、内存优化 1、const 实例化2、识别出消耗多余内存的图片3、针对 ListView item 中有 image 的情况来优化内存六、包体积优化 1、图片优化2、移除冗余的二三库3、启用代码缩减和资源缩减4、构建单 ABI 架构的包</p>
-<h2 id="flutter自定义组件："><a href="#flutter自定义组件：" class="headerlink" title="flutter自定义组件："></a>flutter自定义组件：</h2><p>1.组合其它组件（最简单，优先考虑）<br>2.自绘 可以通过Flutter中提供的CustomPaint和Canvas来实现UI自绘。<br>3.实现RenderObject。是一个抽象类，它定义了一个抽象方法paint(…)：</p>
-<h2 id="现在地图发展趋势："><a href="#现在地图发展趋势：" class="headerlink" title="现在地图发展趋势："></a>现在地图发展趋势：</h2><p>1.由于移动端跨平台的兴起，地图SDK更偏向于兼容发展<br>目前高德地图SDK兼容了很多平台如：android、iOS、HarmonyOS、小程序、web、js、Flutter、等等<br>另一个地图领域在向3D方向靠拢，高德也支持三维模型gltf加载，比较大地图公司的话，cesium.js、three.js在三维方面有比较大的发展方向。但是三维场景的使用范围和能力还是在探索阶段。</p>
-<h2 id="flutter高质量博客"><a href="#flutter高质量博客" class="headerlink" title="flutter高质量博客"></a>flutter高质量博客</h2><p><a target="_blank" rel="noopener" href="https://github.com/boyan01">https://github.com/boyan01</a><br><a target="_blank" rel="noopener" href="https://github.com/lijy91">https://github.com/lijy91</a></p>
-<h2 id="Flutter是如何实现在桌面端和移动端设备的设计的？"><a href="#Flutter是如何实现在桌面端和移动端设备的设计的？" class="headerlink" title="Flutter是如何实现在桌面端和移动端设备的设计的？"></a>Flutter是如何实现在桌面端和移动端设备的设计的？</h2><p>答案是flutter是通过两套代码实现的，虽然在一个工程里面，但是桌面和移动端的UI是不一致的，一套代码是无法实现设计的<br> final platform = ref.watch(debugNavigatorPlatformProvider);<br>    switch (platform) {<br>      case NavigationPlatform.desktop:<br>        home = const HomeWindow();<br>        break;<br>      case NavigationPlatform.mobile:<br>        home = const MobileWindow();<br>        break;<br>    }<br>目前查看了一个仿网易的app，同时支持桌面端和移动端，目前看结果是这样。</p>
-<h2 id="Flutter存储数据方式"><a href="#Flutter存储数据方式" class="headerlink" title="Flutter存储数据方式"></a>Flutter存储数据方式</h2><p>shared_preferences<br>sqflite<br>Hive是一个快速，轻量级的NoSQL数据库，适用于Flutter和Dart应用程序。 如果您想要一个简单的键值数据库，没有很多关系，并且确实易于使用，那么Hive真的很有用。<br>Bloc 是状态管理方案，状态，意味着 APP 一旦关闭，其状态就会丢失。但应用使用期间，其状态是可以实时更新、跨页面、跨组件同步更新的。</p>
-<h2 id="Flutter-状态管理"><a href="#Flutter-状态管理" class="headerlink" title="Flutter 状态管理"></a>Flutter 状态管理</h2><p>1.setState<br>2.scoped_model源自 Fuchsia 代码，使用 InheritedWidget 实现<br>3.provide<br>4.RxDart<br>5.Fish-Redux</p>
-<h2 id="path-provider方法和说明"><a href="#path-provider方法和说明" class="headerlink" title="path_provider方法和说明"></a>path_provider方法和说明</h2><p>方法    属性    描述<br>getTemporaryDirectory()    Future<Directory>    临时目录<br>getApplicationSupportDirectory()    Future<Directory>    应用程序支持目录<br>getLibraryDirectory()    Future<Directory>    应用程序持久文件目录<br>getApplicationDocumentsDirectory()    Future<Directory>    文档目录<br>getExternalStorageDirectory()    Future<Directory>    外部存储目录<br>getExternalCacheDirectories()    Future&lt;List<Directory>?&gt;    外部存储缓存目录<br>getExternalStorageDirectories()    Future&lt;List<Directory>?&gt;    外部存储目录（单独分区）<br>getDownloadsDirectory()    Future&lt;Directory?&gt;    桌面程序下载目录</p>
-<h2 id="flutter-hooks"><a href="#flutter-hooks" class="headerlink" title="flutter_hooks"></a>flutter_hooks</h2><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3b59763d105d">https://www.jianshu.com/p/3b59763d105d</a></p>
+<p>  },<br>  getUrlCode() {<br>      var query = window.location.search.substring(1)<br>      if (query) {<br>        var vars = query.split(‘&amp;’)<br>        for (var i = 0; i &lt; vars.length; i++) {<br>          var pair = vars[i].split(‘=’)<br>          if (pair[0] == ‘code’) {<br>            return pair[1]<br>          }<br>        }<br>      }<br>      return null<br>    },<br>    async iscLogin() {<br>      var code = this.getUrlCode()<br>      if (code) {<br>        return new Promise((resolve, reject) =&gt; {<br>          var sURL =<br>            ‘http:/kkkk’<br>          var param = {<br>            CODE: code,<br>            appId: 124543,<br>          }<br>          axios({<br>            method: ‘post’,<br>            url: sURL,<br>            data: param,<br>            headers: {},<br>          })<br>            .then(function (res) {<br>              //alert(‘获取Ticket成功 = ‘ + JSON.stringify(res))<br>              if (res.data.data.ticket) {<br>                getUserInfoByTicket(res.data.data.ticket)<br>                  .then((res1) =&gt; {<br>                    if (res1.account) {<br>                      sessionStorage.setItem(‘username’, res1.account)<br>                      resolve(1)<br>                    } else {<br>                      alert(‘获取用户信息失败 = ‘ + JSON.stringify(res1))<br>                      resolve(-1)<br>                    }<br>                  })<br>                  .catch((err) =&gt; alert(err))<br>              } else {<br>                resolve(-1)<br>              }<br>            })<br>            .catch(function (err) {<br>              alert(‘获取Ticket失败 = ‘ + JSON.stringify(err))<br>              resolve(-1)<br>            })<br>        })<br>      } else {<br>        this.getWxCode()<br>        return 0<br>      }<br>    },</p>
 
       
     </div>
@@ -898,6 +466,186 @@ showBox();
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift266Flutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift266Flutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">Flutter开发技巧</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-06 17:40:56" itemprop="dateModified" datetime="2022-04-06T17:40:56+08:00">2022-04-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Flutter-iOS-开发"><a href="#Flutter-iOS-开发" class="headerlink" title="Flutter iOS 开发"></a>Flutter iOS 开发</h2><pre><code>flutter iOS混合
+flutter 调用iOS
+await methodChannel.invokeMethod(&#39;iOSFlutter&#39;, &#39;参数&#39;);
+iOS调用flutter
+</code></pre>
+<p>FlutterViewController* flutterViewController = [[FlutterViewController alloc] initWithProject:nil nibName:nil bundle:nil];<br>    flutterViewController.navigationItem.title = @”Demo”;<br>    [flutterViewController setInitialRoute:@”home”];<br>    // 要与main.dart中一致<br>    NSString *channelName = @”com.pages.your/native_post”;</p>
+<pre><code>FlutterEventChannel *evenChannal = [FlutterEventChannel eventChannelWithName:channelName binaryMessenger:flutterViewController];
+// 代理FlutterStreamHandler
+[evenChannal setStreamHandler:self];
+
+[self.navigationController pushViewController:flutterViewController animated:YES];
+</code></pre>
+<h2 id="flutter-android-开发"><a href="#flutter-android-开发" class="headerlink" title="flutter android 开发"></a>flutter android 开发</h2><pre><code>1）添加 FlutterActivity 到 AndroidManifest.xml 中：
+</code></pre>
+<p><activity
+  android:name="io.flutter.embedding.android.FlutterActivity"
+  android:theme="@style/LaunchTheme"
+  android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+  android:hardwareAccelerated="true"
+  android:windowSoftInputMode="adjustResize"
+  /><br>myButton.setOnClickListener {<br>  startActivity(<br>    FlutterActivity<br>      .withNewEngine()<br>      .initialRoute(“/my_route”)<br>      .build(this)<br>  )<br>}</p>
+<h2 id="缓存-Flutter-引擎方式跳转："><a href="#缓存-Flutter-引擎方式跳转：" class="headerlink" title="缓存 Flutter 引擎方式跳转："></a>缓存 Flutter 引擎方式跳转：</h2><p>class MyApplication : Application() {<br>  lateinit var flutterEngine : FlutterEngine<br>  override fun onCreate() {<br>    super.onCreate()<br>    // Instantiate a FlutterEngine.<br>    flutterEngine = FlutterEngine(this)<br>    // Configure an initial route.<br>    flutterEngine.navigationChannel.setInitialRoute(“your/route/here”);<br>    // Start executing Dart code to pre-warm the FlutterEngine.<br>    flutterEngine.dartExecutor.executeDartEntrypoint(<br>      DartExecutor.DartEntrypoint.createDefault()<br>    )<br>    // Cache the FlutterEngine to be used by FlutterActivity or FlutterFragment.<br>    FlutterEngineCache<br>      .getInstance()<br>      .put(“my_engine_id”, flutterEngine)<br>  }<br>}</p>
+<p>myButton.setOnClickListener {<br>  startActivity(<br>    FlutterActivity<br>      .withCachedEngine(“my_engine_id”)<br>      .build(this)<br>  )<br>}</p>
+<h2 id="Dart和C，C-混合编程"><a href="#Dart和C，C-混合编程" class="headerlink" title="Dart和C，C++混合编程"></a>Dart和C，C++混合编程</h2><p>C代码<br>#include&lt;windows.h&gt;</p>
+<p>int add(int a, int b){<br>    return a + b;<br>}</p>
+<p>void showBox(){<br>    MessageBox(NULL,”Hello Dart”,”Title”,MB_OK);<br>}</p>
+<p>import  ‘dart:ffi’  as ffi;<br>import  ‘dart:io’  show Platform;</p>
+<p>/// 根据C中的函数来定义方法签名（所谓方法签名，就是对一个方法或函数的描述，包括返回值类型，形参类型）<br>/// 这里需要定义两个方法签名，一个是C语言中的，一个是转换为Dart之后的<br>typedef NativeAddSign = ffi.Int32 Function(ffi.Int32,ffi.Int32);<br>typedef DartAddSign = int Function(int, int);</p>
+<p>/// showBox函数方法签名<br>typedef NativeShowSign = ffi.Void Function();<br>typedef DartShowSign = void Function();</p>
+<p>void main(List<String> args) {<br>  if (Platform.isWindows) {<br>    // 加载dll动态库<br>    ffi.DynamicLibrary dl = ffi.DynamicLibrary.open(“../src/test.dll”);</p>
+<pre><code>// lookupFunction有两个作用，1、去动态库中查找指定的函数；2、将Native类型的C函数转化为Dart的Function类型
+var add = dl.lookupFunction&lt;NativeAddSign, DartAddSign&gt;(&quot;add&quot;);
+var showBox = dl.lookupFunction&lt;NativeShowSign, DartShowSign&gt;(&quot;showBox&quot;);
+
+// 调用add函数
+print(add(8, 9));
+// 调用showBox函数
+showBox();
+</code></pre>
+<p>  }<br>}</p>
+<h2 id="检测手段"><a href="#检测手段" class="headerlink" title="检测手段"></a>检测手段</h2><p> 1、Flutter Inspector<br>帮你找到 App 中频繁重绘导致性能消耗过大的部分。页面的进度条动画刷新时会导致整个布局频繁重绘。</p>
+<p>2、性能图层<br>蓝色垂直的线条表示已执行的正常帧，绿色的线条代表的是当前帧，如果其中有一帧处理时间过长，就会导致界面卡顿，图表中就会展示出一个红色竖条。</p>
+<p>3、Raster 线程问题4、UI 线程问题定位5、检查多视图叠加的视图渲染开关 checkerboardOffscreenLayers6、检查缓存的图像开关 checkerboardRasterCacheImages<br>二、关键优化指标<br> 1、页面异常率2、页面帧率3、页面加载时长<br>三、布局加载优化 1、常规优化2、深入优化<br>四、启动速度优化 1、引擎预加载2、Dart VM 预热<br>五、内存优化 1、const 实例化2、识别出消耗多余内存的图片3、针对 ListView item 中有 image 的情况来优化内存六、包体积优化 1、图片优化2、移除冗余的二三库3、启用代码缩减和资源缩减4、构建单 ABI 架构的包</p>
+<h2 id="flutter自定义组件："><a href="#flutter自定义组件：" class="headerlink" title="flutter自定义组件："></a>flutter自定义组件：</h2><p>1.组合其它组件（最简单，优先考虑）<br>2.自绘 可以通过Flutter中提供的CustomPaint和Canvas来实现UI自绘。<br>3.实现RenderObject。是一个抽象类，它定义了一个抽象方法paint(…)：</p>
+<h2 id="现在地图发展趋势："><a href="#现在地图发展趋势：" class="headerlink" title="现在地图发展趋势："></a>现在地图发展趋势：</h2><p>1.由于移动端跨平台的兴起，地图SDK更偏向于兼容发展<br>目前高德地图SDK兼容了很多平台如：android、iOS、HarmonyOS、小程序、web、js、Flutter、等等<br>另一个地图领域在向3D方向靠拢，高德也支持三维模型gltf加载，比较大地图公司的话，cesium.js、three.js在三维方面有比较大的发展方向。但是三维场景的使用范围和能力还是在探索阶段。</p>
+<h2 id="flutter高质量博客"><a href="#flutter高质量博客" class="headerlink" title="flutter高质量博客"></a>flutter高质量博客</h2><p><a target="_blank" rel="noopener" href="https://github.com/boyan01">https://github.com/boyan01</a><br><a target="_blank" rel="noopener" href="https://github.com/lijy91">https://github.com/lijy91</a></p>
+<h2 id="Flutter是如何实现在桌面端和移动端设备的设计的？"><a href="#Flutter是如何实现在桌面端和移动端设备的设计的？" class="headerlink" title="Flutter是如何实现在桌面端和移动端设备的设计的？"></a>Flutter是如何实现在桌面端和移动端设备的设计的？</h2><p>答案是flutter是通过两套代码实现的，虽然在一个工程里面，但是桌面和移动端的UI是不一致的，一套代码是无法实现设计的<br> final platform = ref.watch(debugNavigatorPlatformProvider);<br>    switch (platform) {<br>      case NavigationPlatform.desktop:<br>        home = const HomeWindow();<br>        break;<br>      case NavigationPlatform.mobile:<br>        home = const MobileWindow();<br>        break;<br>    }<br>目前查看了一个仿网易的app，同时支持桌面端和移动端，目前看结果是这样。</p>
+<h2 id="Flutter存储数据方式"><a href="#Flutter存储数据方式" class="headerlink" title="Flutter存储数据方式"></a>Flutter存储数据方式</h2><p>shared_preferences<br>sqflite<br>Hive是一个快速，轻量级的NoSQL数据库，适用于Flutter和Dart应用程序。 如果您想要一个简单的键值数据库，没有很多关系，并且确实易于使用，那么Hive真的很有用。<br>Bloc 是状态管理方案，状态，意味着 APP 一旦关闭，其状态就会丢失。但应用使用期间，其状态是可以实时更新、跨页面、跨组件同步更新的。</p>
+<h2 id="Flutter-状态管理"><a href="#Flutter-状态管理" class="headerlink" title="Flutter 状态管理"></a>Flutter 状态管理</h2><p>1.setState<br>2.scoped_model源自 Fuchsia 代码，使用 InheritedWidget 实现<br>3.provide<br>4.RxDart<br>5.Fish-Redux</p>
+<h2 id="path-provider方法和说明"><a href="#path-provider方法和说明" class="headerlink" title="path_provider方法和说明"></a>path_provider方法和说明</h2><p>方法    属性    描述<br>getTemporaryDirectory()    Future<Directory>    临时目录<br>getApplicationSupportDirectory()    Future<Directory>    应用程序支持目录<br>getLibraryDirectory()    Future<Directory>    应用程序持久文件目录<br>getApplicationDocumentsDirectory()    Future<Directory>    文档目录<br>getExternalStorageDirectory()    Future<Directory>    外部存储目录<br>getExternalCacheDirectories()    Future&lt;List<Directory>?&gt;    外部存储缓存目录<br>getExternalStorageDirectories()    Future&lt;List<Directory>?&gt;    外部存储目录（单独分区）<br>getDownloadsDirectory()    Future&lt;Directory?&gt;    桌面程序下载目录</p>
+<h2 id="flutter-hooks"><a href="#flutter-hooks" class="headerlink" title="flutter_hooks"></a>flutter_hooks</h2><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3b59763d105d">https://www.jianshu.com/p/3b59763d105d</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift265Flutter%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift265Flutter%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">Flutter常用命令</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-07 13:11:33" itemprop="dateModified" datetime="2022-05-07T13:11:33+08:00">2022-05-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>flutter run -d macos<br>flutter doctor:检查flutter状态<br>flutter emulators:获取模拟器列表<br>flutter devices:获取所有真机设备列表包括iOS模拟器<br>flutter run -d <deviceId>:运行指定模拟器或者真机<br>6.flutter build apk:打包apk<br>flutter config -xx:配置打包等信息。<br>flutter channel:查看flutter sdk的所有分支<br>flutter packages get:安装了相关插件<br>flutter packages upgrade:更新flutter项目所有依赖包，不包括flutter sdk<br>flutter create project_name<br>flutter upgrade<br>flutter analyze    分析项目代码<br>flutter clean 清空build<br>iOS打包framework<br>flutter build ios-framework –output=../flutter_framework<br>flutter build aar    android 打包aar<br>添加插件<br>flutter pub add flutter_markdown<br>// 打开模拟器<br>open -a Simulator<br>// 开发模式下的自动生成<br>flutter pub run build_runner build<br>// 非空安全<br>flutter run –no-sound-null-safety<br>//<br>flutter pub run build_runner build –delete-conflicting-outputs</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift270%E4%B8%89%E7%BB%B4BIM%E7%9B%B8%E5%85%B3%E8%B0%83%E7%A0%94/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -957,6 +705,73 @@ showBox();
 <p><a target="_blank" rel="noopener" href="https://github.com/OpenWebCAD/node-occ">https://github.com/OpenWebCAD/node-occ</a><br><a target="_blank" rel="noopener" href="https://github.com/zalo/CascadeStudio">https://github.com/zalo/CascadeStudio</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/google/model-viewer">https://github.com/google/model-viewer</a><br><a target="_blank" rel="noopener" href="https://github.com/f3d-app/f3d">https://github.com/f3d-app/f3d</a><br><a target="_blank" rel="noopener" href="https://github.com/cesiumlab/XbsjEarthUI">https://github.com/cesiumlab/XbsjEarthUI</a><br><a target="_blank" rel="noopener" href="https://github.com/xeokit/xeokit-sdk">https://github.com/xeokit/xeokit-sdk</a><br><a target="_blank" rel="noopener" href="https://github.com/openscad/openscad">https://github.com/openscad/openscad</a></p>
 <p><a target="_blank" rel="noopener" href="http://www.osgchina.org/ueditor/php/upload/file/20201223/1608688488737443.pdf">http://www.osgchina.org/ueditor/php/upload/file/20201223/1608688488737443.pdf</a><br><a target="_blank" rel="noopener" href="http://www.osgchina.org/ueditor/php/upload/file/20201223/1608688498656795.pdf">http://www.osgchina.org/ueditor/php/upload/file/20201223/1608688498656795.pdf</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift271Flutter%20%E6%95%B0%E6%8D%AE%E5%BA%93drift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift271Flutter%20%E6%95%B0%E6%8D%AE%E5%BA%93drift/" class="post-title-link" itemprop="url">Flutter本地数据库管理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-27 17:59:24" itemprop="dateModified" datetime="2022-04-27T17:59:24+08:00">2022-04-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Flutter本地数据库管理<br>我们知道spring是一个非常流行的框架，对于数据管理也是有dao、service等一些概念，这些概念用到flutter中也是同样适用的，所以我们非常高兴的来设计flutter种数据库设计<br>我们采用数据库框架drift 原名moor<br>依赖：<br>dependencies:<br>  drift: ^1.0.1<br>  sqlite3_flutter_libs: ^0.5.0<br>  path_provider: ^2.0.0<br>  path: ^1.8.0</p>
+<p>dev_dependencies:<br>  drift_dev: ^1.0.2<br>  build_runner: ^2.1.4</p>
+<p>1.使用 drift， 可以用简单的 Dart 代码基于表结构创建 Model<br>2.编写sql语句，包括表创建，增删改查接口等<br>3.编写database.dart 文件，关联drift表<br>4.用flutter packages pub run build_runner build 生成全部代码。</p>
 
       
     </div>
@@ -1091,73 +906,6 @@ showBox();
 <h2 id="混入taost"><a href="#混入taost" class="headerlink" title="混入taost"></a>混入taost</h2><p>toast mixin ToastMixin</p>
 <h2 id="封装http"><a href="#封装http" class="headerlink" title="封装http"></a>封装http</h2><p>controller一般都会有网络业务逻辑，所以我们封装了网络请求的接口</p>
 <h2 id="列表刷新疯子"><a href="#列表刷新疯子" class="headerlink" title="列表刷新疯子"></a>列表刷新疯子</h2><p>BaseRefreshController封装带刷新页面控制器<br>1.定义加载状态  0加载中 1加载成功 2加载数据为空 3加载失败<br>2.定义页码<br>3.实现上拉下拉接口</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift271Flutter%20%E6%95%B0%E6%8D%AE%E5%BA%93drift/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift271Flutter%20%E6%95%B0%E6%8D%AE%E5%BA%93drift/" class="post-title-link" itemprop="url">Flutter本地数据库管理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-27 17:59:24" itemprop="dateModified" datetime="2022-04-27T17:59:24+08:00">2022-04-27</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Flutter本地数据库管理<br>我们知道spring是一个非常流行的框架，对于数据管理也是有dao、service等一些概念，这些概念用到flutter中也是同样适用的，所以我们非常高兴的来设计flutter种数据库设计<br>我们采用数据库框架drift 原名moor<br>依赖：<br>dependencies:<br>  drift: ^1.0.1<br>  sqlite3_flutter_libs: ^0.5.0<br>  path_provider: ^2.0.0<br>  path: ^1.8.0</p>
-<p>dev_dependencies:<br>  drift_dev: ^1.0.2<br>  build_runner: ^2.1.4</p>
-<p>1.使用 drift， 可以用简单的 Dart 代码基于表结构创建 Model<br>2.编写sql语句，包括表创建，增删改查接口等<br>3.编写database.dart 文件，关联drift表<br>4.用flutter packages pub run build_runner build 生成全部代码。</p>
 
       
     </div>

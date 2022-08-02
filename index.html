@@ -362,6 +362,80 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">c++</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-10 16:24:01" itemprop="dateCreated datePublished" datetime="2022-01-10T16:24:01+08:00">2022-01-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-11 16:35:21" itemprop="dateModified" datetime="2022-01-11T16:35:21+08:00">2022-01-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="virtual"><a href="#virtual" class="headerlink" title="virtual"></a>virtual</h2><p>只有在子函数中的虚函数与父函数一模一样的时候（包括限定符）才会被认为是真正的虚函数<br>虚函数后面跟 const = 0；表示这个函数是纯虚函数，只有接口，由它的继承类具体定义它的行为，一个类里如果包含 ＝0 的纯虚函数，那么这个类就是一个抽象类，它不能具体实例化</p>
+<h2 id="final"><a href="#final" class="headerlink" title="final"></a>final</h2><p>c++ 11提供了防止继承发生的方法，及在类后面跟一个关键字finnal:<br>const final  也可指定函数，如果定义为final了， 则之后任何覆盖该函数的操作都将引起错误<br>override：<br>用来说明派生类中虚函数。</p>
+<h2 id="const"><a href="#const" class="headerlink" title="const"></a>const</h2><p>只有被声明为const的成员函数才能被一个const类对象调用。<br>const 修饰类成员函数，其目的是防止成员函数修改被调用对象的值</p>
+<h2 id="std-optional"><a href="#std-optional" class="headerlink" title="std::optional"></a>std::optional</h2><p>对象只是包含对象的内部内存加上一个布尔标志。因此，大小通常比包含的对象大一个字节。<br>对于某些包含的类型，甚至可能根本没有大小开销，前提是附加信息可以放在包含的对象中。<br>没有分配堆内存。对象使用与所包含类型相同的对齐方式。<br>std::nullopt_t类型的nullopt是一种没有值的对象</p>
+<h2 id="std-move"><a href="#std-move" class="headerlink" title="std::move"></a>std::move</h2><p>std::move函数可以以非常简单的方式将左值引用转换为右值引用<br>std::move是将对象的状态或者所有权从一个对象转移到另一个对象，只是转移，没有内存的搬迁或者内存拷贝所以可以提高利用效率,改善性能.。<br>对指针类型的标准库对象并不需要这么做.</p>
+<h2 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h2><p>以模板类的方式实现的。每个 shared_ptr 对象在内部指向两个内存位置：<br>1、指向对象的指针。<br>2、用于控制引用计数数据的指针。<br>工作原理：<br>1、当新的 shared_ptr 对象与指针关联时，则在其构造函数中，将与此指针关联的引用计数增加1。<br>2、当任何 shared_ptr 对象超出作用域时，则在其析构函数中，它将关联指针的引用计数减1。<br>如果引用计数变为0，则表示没有其他 shared_ptr 对象与此内存关联，在这种情况下，它使用delete函数删除该内存。</p>
+<p>创建 shared_ptr 对象<br>std::shared_ptr<int> p1(new int());<br>检查 shared_ptr 对象的引用计数<br>p1.use_count();<br>创建空的 shared_ptr 对象<br>std::shared_ptr<int> p1 = std::make_shared<int>();<br>std::make_shared 一次性为int对象和用于引用计数的数据都分配了内存，而new操作符只是为int分配了内存。<br>分离关联的原始指针<br>p1.reset();<br>p1.reset(new int(34));在这种情况下，它将在内部指向新指针，因此其引用计数将再次变为1。<br>使用nullptr重置：<br>p1 = nullptr;<br>数组，自定义删除器<br>std::shared_ptr<Sample> p3(new Sample[3], deleter);<br>// Lambda表达式作为删除器<br>std::shared_ptr<Sample> p4(new Sample[3], [](Sample * x){<br>    delete[] x;<br>});<br>shared_ptr 相对于普通指针的优缺点：<br>缺少 ++, – – 和 [] 运算符</p>
+<p>不要使用同一个原始指针构造 shared_ptr<br>int *num = new int(23);<br>std::shared_ptr<int> p1(num);<br>std::shared_ptr<int> p2(p1);  // 正确使用方法<br>std::shared_ptr<int> p3(num); // 不推荐<br>不要用栈中的指针构造 shared_ptr 对象<br>int x = 12;<br>std::shared_ptr<int> ptr(&amp;x);// 不正确<br>std::shared_ptr<int> ptr_1 = make_shared<int>(); // 正确</p>
+<h2 id="weak-ptr"><a href="#weak-ptr" class="headerlink" title="weak_ptr"></a>weak_ptr</h2><p>解决shared_ptr循环引用的问题<br>weak_ptr虽然是一个模板类，但是不能用来直接定义指向原始指针的对象。<br>weak_ptr接受shared_ptr类型的变量赋值，但是反过来是行不通的，需要使用lock函数。<br>weak_ptr设计之初就是为了服务于shared_ptr的，所以不增加引用计数就是它的核心功能。<br>由于不知道什么之后weak_ptr所指向的对象就会被析构掉，所以使用之前请先使用expired函数检测一下</p>
+<h2 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a>unique_ptr</h2><p>独享所有权<br>unique_ptr对象始终是关联的原始指针的唯一所有者。我们无法复制unique_ptr对象，它只能移动。<br>由于每个unique_ptr对象都是原始指针的唯一所有者，因此在其析构函数中它直接删除关联的指针，不需要任何参考计数。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift260%20C++%E6%8C%87%E9%92%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -431,7 +505,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift261%20vue%E8%BE%93%E5%85%A5%E6%A1%86%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift261%20%E9%9D%A2%E8%AF%95%E6%8A%80%E5%B7%A7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -445,7 +519,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/10/M_Swift261%20vue%E8%BE%93%E5%85%A5%E6%A1%86%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">Vue中input被赋值后，无法再修改编辑的问题解决</a>
+            <a href="/2022/01/10/M_Swift261%20%E9%9D%A2%E8%AF%95%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">面试技巧</a>
         </h2>
 
         <div class="post-meta">
@@ -462,7 +536,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-14 21:44:26" itemprop="dateModified" datetime="2022-03-14T21:44:26+08:00">2022-03-14</time>
+                <time title="修改时间：2022-03-18 11:38:36" itemprop="dateModified" datetime="2022-03-18T11:38:36+08:00">2022-03-18</time>
               </span>
 
           
@@ -476,10 +550,34 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>由此Vue实例创建时，formInline的属性名并未声明，因此Vue就无法对属性执行 getter/setter 转化过程，导致formInline属性不是响应式的，因此无法触发视图更新。解决的方式有两种，第一种就是显示的声明formInline这个对象的属性，如<br>data () {<br>    return {<br>      formInline: {<br>          sid: ‘’,<br>          iccid: ‘’,<br>          start: ‘’,<br>          end: ‘’,<br>          storage: ‘’,<br>          icsim: ‘’,<br>          vid: ‘’<br>        }<br>    }</p>
-<p>方法二<br>使用Vue的全局API: $set()赋值：</p>
-<p>async getSimData(params) {<br>      const res = await simInfoByVid(params)<br>      const { sid, iccid, start, end, storage, icsim, vid } = res.data<br>      this.$set(this.formInline, ‘sid’, sid)<br>      this.$set(this.formInline, ‘iccid’, iccid)<br>      this.$set(this.formInline, ‘start’, start)<br>      this.$set(this.formInline, ‘end’, end)<br>      this.$set(this.formInline, ‘storage’, storage)<br>      this.$set(this.formInline, ‘icsim’, icsim)<br>    }</p>
-<h2 id="Vue实现原理"><a href="#Vue实现原理" class="headerlink" title="Vue实现原理"></a>Vue实现原理</h2><p>vue2: Object.defineProperty<br>vue3:Proxy<br>虚拟DOM</p>
+          <p>1.自信<br>2.准备大纲<br>3.多讲故事<br>4.眼神和微笑<br>5.有停顿<br>6.强大的逻辑表达能力</p>
+<p>1.迅速建立逻辑导图、<br>2.先交代问题背景再说下解决方案和总结<br>3.遇到最大困难<br>4.获得什么困难<br>5.认可公司行业、认可行业，喜欢公司<br>岗位发展路径、有什么不足<br>岗位匹配加真诚、多用递进、多加经验、自信</p>
+<p>1、充分准备，保持心态平和</p>
+<p>2、尊重面试官司，包容心</p>
+<p>3、随机应变</p>
+<p>4、在面试中不断学习总结，为下一次面试做准备</p>
+<p>5、不卑不亢，敢于表达自己</p>
+<p>6、坦承</p>
+<p>职业规划</p>
+<p>1.你做过什么，有哪些特质和亮点</p>
+<p>2.在了解行业的基础上，能有一定的见解</p>
+<p>3.了解分析应聘岗位需求和企业文化、价值观</p>
+<p>再者，可以依次列举出你在前面梳理出的亮点（匹配岗位需求），比如：</p>
+<p>最后，表达如果你进入公司后对未来工作的期望以及你对公司的态度。</p>
+<p>讲话可以稍微低沉一些，语速可以降低，这样显的自信<br>不做害羞的动作，例如不自觉的玩手指，不敢与面试官眼神交流，眼睛四眼无神等<br>抬头挺胸，目光直视hr</p>
+<p>首先，可以先罗列自己的基本信息，比如姓名、学校、专业等</p>
+<p>面试官好，我叫门乾强，来自山东临沂，有7年软件开发经验，非常高兴能参见今天面试。<br>目前就职于北京一所软件开发公司，主要研发的方向是Gis地图相关软件开发，包括移动端iOS、Android 地图SDK、开放地图arcgis、mapbox地图等，工作积累了很多移动端、iOS、Android、前端的开发知识<br>工作业余喜欢学习前端开发知识，热衷于计算机图形学，目标是成为一名资深前端软件开发工程师。希望今天面试能得到贵公司的认可和肯定。</p>
+<p>star法则<br>了解背景（Situation）:当时是什么情况<br>明确任务（Task）:你需要完成什么事情<br>你的行动（Action）:那你当时做了什么<br>关注结果（Result）：得到的结果是什么<br>学习总结（Learning）:你从中学习到了什么，后期如何改善</p>
+<p>mvt地图SDK开发：<br>在我们公司开发的地图SDK的基础上，因为我们公司设计的地图SDK数据是我们自定义的数据结构，与国际上开放的数据结构不一致，希望在我们开发的地图SDK基础上，开发一套基于开源地图mapbox的一套地图SDK。<br>拿到任务后我们首先了解了mapbox的原理和开源代码。<br>我们在mapbox开源代码的基础上，定义了我们地图SDK接口规范。按照接口我们实现了对应功能。<br>遇到困难：使用cmake编译开源地图、SDK版本兼容、覆盖物的识别、地图个性话展示的扩展。<br>从中学到了：开源地图SDK mapbox的架构设计原理、开放的SDK设计规范，Gis相关的算法丰富。</p>
+<p>湖南电网-防冻融冰<br>在南方，特别是一些高海拔地区电压线在冬天是很难扛住结冰的压力的，需要定时检查电线的覆冰信息，在此基础上湖南电网开发了防冻融冰的平台<br>拿到这个平台的开发需求后，我们制订了开发计划，研究了需要使用的一些前端技术，以及当前数据大屏技术架构<br>我们采用了vue的开发框架使用成熟的element-ui框架，进行功能开发<br>遇到困难，我们第一次给电网开发产品，政府机构对于功能要求比较及时，往往一个功能需要第二天就要看到上线，且功能变化比较频繁，且政府部门对于平台产出日报等报表数据要求比较严格。<br>从中学到了：前端开发框架vue的了解，echarts在数据大屏中的应用图表等日报数据在前端的展示导出等。</p>
+<p>arcgis地图开发<br>我们客户是一家规划院的公司，他们制作了大量的arcgis地图服务，希望能够在ipad上展示他们制作的地图，并能实现丰富的交互功能。<br>拿大任务后我们首先评估了工作量，以及开发中需要的资源<br>首先我们先研究了arcgis SDK的功能接口，然后制订了开发计划，包括底图、图层等切换、收藏、排序、查询、地图绘制等功能<br>遇到困难：因为积累了丰富的iOS开发经验，较少的遇到了困难，从中学到了 一个人的开发规划、arcgis的原理等。</p>
+<p>公交规划引擎：<br>当时我们公司希望开发公交规划的算法服务，因为公司积累了很多Gis相关的知识，所以领导将项目安排给我开发。<br>当我拿到任务时我明确了需要做哪些事情，首先是公交数据的分析，然后将公交数据进行编译，提取出有用的信息，组织成数据模型，最后转化成二进制数据包。<br>公交规划服务读取二进制数据包，将数据模型存储到运行内存中，主要目的是为了优化运行速度。<br>公交规划采用深度优先的遍历模式。<br>主要遇到的困难是最优路径的排序。最近公交站点的获取和排序，步行代价模型的优化<br>从中学到了：深度优先的规划算法、排序模型调优策略等。规划剪枝的代价模型等一些知识的深度应用。</p>
+<p>地图导航引擎<br>我们和地图项目是在高德地图SDK基础上进行开发的。中国移动希望开发一套自己的地图、导航SDK。<br>我们拿到任务后，首先确定任务比较重，我们将地图SDK渲染的开发工作外包给武汉光庭进行开发，我们设计SDK接口及导航SDK开发<br>我主要负责的是SDK接口侧的开发实现及往和地图app上嵌入替换高德地图SDK工作<br>遇到困难主要是SDK性能问题，版本兼容问题，导航播报准确性问题，我们经过反复的优化测试最终实现上线替换掉高德SDK。<br>从中学到：SDK架构设计，接口规范等</p>
+<p>和地图的开发：<br>和地图是一个移动的地图项目，可以预装到大量的基于移动定制机上。作为移动的地图软件主要目标是能够达到国内高德地图和百度地图一样丰富的功能<br>我们的任务主要是负责和地图项目的版本迭代，主要是项目管理者制订开发内容，评估工作量，开发测试上线。<br>遇到的困难。地图性能优化、页面卡顿优化、导航功能优化等。<br>从中学到了地图项目的架构设计，项目优化方案，项目版本迭代规范等。</p>
+<p>数据编译：<br>我们需要做数据编译，我们拿到粗糙的数据，然后制作成我们要求的数据<br>拿到任务后我们首先研究数据规范，然后制订数据编译模型。<br>然后读取数据，转换成对应的模型数据，然后将模型数据输出文二进制文件。<br>遇到的困难，数据的切分、数据的查找、数据的缓存。<br>从中学到了数据编译的原理，Gis地图数据切分算法、</p>
+<p>和地图开发<br>和地图是从高德地图分裂出来一个项目，项目代码比较老旧，还不是arc自动内存管理的项目<br>我们拿到项目后，首先对项目的代码进行整理，对项目架构进行优化，去除了mrc，改用自动内存管理<br>遇到困难，主要是项目架构优化，页面显示优化，崩溃问题跟踪等<br>从中学到了地图项目架构设计及思想，项目优化方案</p>
+<p>饭点、来见面吧<br>公司想在互联网方向的尝试，研究解决大型饭店午餐人少问题，也解决上班族午餐吃饭拥堵困难的问题。来见面吧是想尝试饮食社交一种新探索<br>我们主要工作是开发iOS平台下的软件，设计丰富精美的UI展示效果，以及丰富的互联网功能，大多是使用第三方SDK的形式进行开发。<br>遇到困难，主要是上报工作的初期，也是在不断积累学习iOS开发经验，尝试了解一些系统知识。<br>从中学到了iOS开发流程等一些基本知识，如何在积累中成长，优化程序性能，以及在开发中遇到一些问题常见解决办法。</p>
+<p>面试总结：<br>1.尝试解答一些综合性问题<br>2.多了解一些面试知识<br>3.多问一些面试中遇到的问题，让面试官给予一个解答</p>
 
       
     </div>
@@ -585,7 +683,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift261%20vue%E8%BE%93%E5%85%A5%E6%A1%86%E9%97%AE%E9%A2%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -599,7 +697,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">c++</a>
+            <a href="/2022/01/10/M_Swift261%20vue%E8%BE%93%E5%85%A5%E6%A1%86%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">Vue中input被赋值后，无法再修改编辑的问题解决</a>
         </h2>
 
         <div class="post-meta">
@@ -616,7 +714,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-11 16:35:21" itemprop="dateModified" datetime="2022-01-11T16:35:21+08:00">2022-01-11</time>
+                <time title="修改时间：2022-03-14 21:44:26" itemprop="dateModified" datetime="2022-03-14T21:44:26+08:00">2022-03-14</time>
               </span>
 
           
@@ -630,16 +728,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="virtual"><a href="#virtual" class="headerlink" title="virtual"></a>virtual</h2><p>只有在子函数中的虚函数与父函数一模一样的时候（包括限定符）才会被认为是真正的虚函数<br>虚函数后面跟 const = 0；表示这个函数是纯虚函数，只有接口，由它的继承类具体定义它的行为，一个类里如果包含 ＝0 的纯虚函数，那么这个类就是一个抽象类，它不能具体实例化</p>
-<h2 id="final"><a href="#final" class="headerlink" title="final"></a>final</h2><p>c++ 11提供了防止继承发生的方法，及在类后面跟一个关键字finnal:<br>const final  也可指定函数，如果定义为final了， 则之后任何覆盖该函数的操作都将引起错误<br>override：<br>用来说明派生类中虚函数。</p>
-<h2 id="const"><a href="#const" class="headerlink" title="const"></a>const</h2><p>只有被声明为const的成员函数才能被一个const类对象调用。<br>const 修饰类成员函数，其目的是防止成员函数修改被调用对象的值</p>
-<h2 id="std-optional"><a href="#std-optional" class="headerlink" title="std::optional"></a>std::optional</h2><p>对象只是包含对象的内部内存加上一个布尔标志。因此，大小通常比包含的对象大一个字节。<br>对于某些包含的类型，甚至可能根本没有大小开销，前提是附加信息可以放在包含的对象中。<br>没有分配堆内存。对象使用与所包含类型相同的对齐方式。<br>std::nullopt_t类型的nullopt是一种没有值的对象</p>
-<h2 id="std-move"><a href="#std-move" class="headerlink" title="std::move"></a>std::move</h2><p>std::move函数可以以非常简单的方式将左值引用转换为右值引用<br>std::move是将对象的状态或者所有权从一个对象转移到另一个对象，只是转移，没有内存的搬迁或者内存拷贝所以可以提高利用效率,改善性能.。<br>对指针类型的标准库对象并不需要这么做.</p>
-<h2 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h2><p>以模板类的方式实现的。每个 shared_ptr 对象在内部指向两个内存位置：<br>1、指向对象的指针。<br>2、用于控制引用计数数据的指针。<br>工作原理：<br>1、当新的 shared_ptr 对象与指针关联时，则在其构造函数中，将与此指针关联的引用计数增加1。<br>2、当任何 shared_ptr 对象超出作用域时，则在其析构函数中，它将关联指针的引用计数减1。<br>如果引用计数变为0，则表示没有其他 shared_ptr 对象与此内存关联，在这种情况下，它使用delete函数删除该内存。</p>
-<p>创建 shared_ptr 对象<br>std::shared_ptr<int> p1(new int());<br>检查 shared_ptr 对象的引用计数<br>p1.use_count();<br>创建空的 shared_ptr 对象<br>std::shared_ptr<int> p1 = std::make_shared<int>();<br>std::make_shared 一次性为int对象和用于引用计数的数据都分配了内存，而new操作符只是为int分配了内存。<br>分离关联的原始指针<br>p1.reset();<br>p1.reset(new int(34));在这种情况下，它将在内部指向新指针，因此其引用计数将再次变为1。<br>使用nullptr重置：<br>p1 = nullptr;<br>数组，自定义删除器<br>std::shared_ptr<Sample> p3(new Sample[3], deleter);<br>// Lambda表达式作为删除器<br>std::shared_ptr<Sample> p4(new Sample[3], [](Sample * x){<br>    delete[] x;<br>});<br>shared_ptr 相对于普通指针的优缺点：<br>缺少 ++, – – 和 [] 运算符</p>
-<p>不要使用同一个原始指针构造 shared_ptr<br>int *num = new int(23);<br>std::shared_ptr<int> p1(num);<br>std::shared_ptr<int> p2(p1);  // 正确使用方法<br>std::shared_ptr<int> p3(num); // 不推荐<br>不要用栈中的指针构造 shared_ptr 对象<br>int x = 12;<br>std::shared_ptr<int> ptr(&amp;x);// 不正确<br>std::shared_ptr<int> ptr_1 = make_shared<int>(); // 正确</p>
-<h2 id="weak-ptr"><a href="#weak-ptr" class="headerlink" title="weak_ptr"></a>weak_ptr</h2><p>解决shared_ptr循环引用的问题<br>weak_ptr虽然是一个模板类，但是不能用来直接定义指向原始指针的对象。<br>weak_ptr接受shared_ptr类型的变量赋值，但是反过来是行不通的，需要使用lock函数。<br>weak_ptr设计之初就是为了服务于shared_ptr的，所以不增加引用计数就是它的核心功能。<br>由于不知道什么之后weak_ptr所指向的对象就会被析构掉，所以使用之前请先使用expired函数检测一下</p>
-<h2 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a>unique_ptr</h2><p>独享所有权<br>unique_ptr对象始终是关联的原始指针的唯一所有者。我们无法复制unique_ptr对象，它只能移动。<br>由于每个unique_ptr对象都是原始指针的唯一所有者，因此在其析构函数中它直接删除关联的指针，不需要任何参考计数。</p>
+          <p>由此Vue实例创建时，formInline的属性名并未声明，因此Vue就无法对属性执行 getter/setter 转化过程，导致formInline属性不是响应式的，因此无法触发视图更新。解决的方式有两种，第一种就是显示的声明formInline这个对象的属性，如<br>data () {<br>    return {<br>      formInline: {<br>          sid: ‘’,<br>          iccid: ‘’,<br>          start: ‘’,<br>          end: ‘’,<br>          storage: ‘’,<br>          icsim: ‘’,<br>          vid: ‘’<br>        }<br>    }</p>
+<p>方法二<br>使用Vue的全局API: $set()赋值：</p>
+<p>async getSimData(params) {<br>      const res = await simInfoByVid(params)<br>      const { sid, iccid, start, end, storage, icsim, vid } = res.data<br>      this.$set(this.formInline, ‘sid’, sid)<br>      this.$set(this.formInline, ‘iccid’, iccid)<br>      this.$set(this.formInline, ‘start’, start)<br>      this.$set(this.formInline, ‘end’, end)<br>      this.$set(this.formInline, ‘storage’, storage)<br>      this.$set(this.formInline, ‘icsim’, icsim)<br>    }</p>
+<h2 id="Vue实现原理"><a href="#Vue实现原理" class="headerlink" title="Vue实现原理"></a>Vue实现原理</h2><p>vue2: Object.defineProperty<br>vue3:Proxy<br>虚拟DOM</p>
 
       
     </div>
@@ -754,7 +846,7 @@ Immutable&lt;Impl&gt; baseImpl;
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift261%20%E9%9D%A2%E8%AF%95%E6%8A%80%E5%B7%A7/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift242Cesium%E6%B7%B9%E6%B2%A1%E5%88%86%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -768,99 +860,7 @@ Immutable&lt;Impl&gt; baseImpl;
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/10/M_Swift261%20%E9%9D%A2%E8%AF%95%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">面试技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-01-10 16:24:01" itemprop="dateCreated datePublished" datetime="2022-01-10T16:24:01+08:00">2022-01-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-18 11:38:36" itemprop="dateModified" datetime="2022-03-18T11:38:36+08:00">2022-03-18</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.自信<br>2.准备大纲<br>3.多讲故事<br>4.眼神和微笑<br>5.有停顿<br>6.强大的逻辑表达能力</p>
-<p>1.迅速建立逻辑导图、<br>2.先交代问题背景再说下解决方案和总结<br>3.遇到最大困难<br>4.获得什么困难<br>5.认可公司行业、认可行业，喜欢公司<br>岗位发展路径、有什么不足<br>岗位匹配加真诚、多用递进、多加经验、自信</p>
-<p>1、充分准备，保持心态平和</p>
-<p>2、尊重面试官司，包容心</p>
-<p>3、随机应变</p>
-<p>4、在面试中不断学习总结，为下一次面试做准备</p>
-<p>5、不卑不亢，敢于表达自己</p>
-<p>6、坦承</p>
-<p>职业规划</p>
-<p>1.你做过什么，有哪些特质和亮点</p>
-<p>2.在了解行业的基础上，能有一定的见解</p>
-<p>3.了解分析应聘岗位需求和企业文化、价值观</p>
-<p>再者，可以依次列举出你在前面梳理出的亮点（匹配岗位需求），比如：</p>
-<p>最后，表达如果你进入公司后对未来工作的期望以及你对公司的态度。</p>
-<p>讲话可以稍微低沉一些，语速可以降低，这样显的自信<br>不做害羞的动作，例如不自觉的玩手指，不敢与面试官眼神交流，眼睛四眼无神等<br>抬头挺胸，目光直视hr</p>
-<p>首先，可以先罗列自己的基本信息，比如姓名、学校、专业等</p>
-<p>面试官好，我叫门乾强，来自山东临沂，有7年软件开发经验，非常高兴能参见今天面试。<br>目前就职于北京一所软件开发公司，主要研发的方向是Gis地图相关软件开发，包括移动端iOS、Android 地图SDK、开放地图arcgis、mapbox地图等，工作积累了很多移动端、iOS、Android、前端的开发知识<br>工作业余喜欢学习前端开发知识，热衷于计算机图形学，目标是成为一名资深前端软件开发工程师。希望今天面试能得到贵公司的认可和肯定。</p>
-<p>star法则<br>了解背景（Situation）:当时是什么情况<br>明确任务（Task）:你需要完成什么事情<br>你的行动（Action）:那你当时做了什么<br>关注结果（Result）：得到的结果是什么<br>学习总结（Learning）:你从中学习到了什么，后期如何改善</p>
-<p>mvt地图SDK开发：<br>在我们公司开发的地图SDK的基础上，因为我们公司设计的地图SDK数据是我们自定义的数据结构，与国际上开放的数据结构不一致，希望在我们开发的地图SDK基础上，开发一套基于开源地图mapbox的一套地图SDK。<br>拿到任务后我们首先了解了mapbox的原理和开源代码。<br>我们在mapbox开源代码的基础上，定义了我们地图SDK接口规范。按照接口我们实现了对应功能。<br>遇到困难：使用cmake编译开源地图、SDK版本兼容、覆盖物的识别、地图个性话展示的扩展。<br>从中学到了：开源地图SDK mapbox的架构设计原理、开放的SDK设计规范，Gis相关的算法丰富。</p>
-<p>湖南电网-防冻融冰<br>在南方，特别是一些高海拔地区电压线在冬天是很难扛住结冰的压力的，需要定时检查电线的覆冰信息，在此基础上湖南电网开发了防冻融冰的平台<br>拿到这个平台的开发需求后，我们制订了开发计划，研究了需要使用的一些前端技术，以及当前数据大屏技术架构<br>我们采用了vue的开发框架使用成熟的element-ui框架，进行功能开发<br>遇到困难，我们第一次给电网开发产品，政府机构对于功能要求比较及时，往往一个功能需要第二天就要看到上线，且功能变化比较频繁，且政府部门对于平台产出日报等报表数据要求比较严格。<br>从中学到了：前端开发框架vue的了解，echarts在数据大屏中的应用图表等日报数据在前端的展示导出等。</p>
-<p>arcgis地图开发<br>我们客户是一家规划院的公司，他们制作了大量的arcgis地图服务，希望能够在ipad上展示他们制作的地图，并能实现丰富的交互功能。<br>拿大任务后我们首先评估了工作量，以及开发中需要的资源<br>首先我们先研究了arcgis SDK的功能接口，然后制订了开发计划，包括底图、图层等切换、收藏、排序、查询、地图绘制等功能<br>遇到困难：因为积累了丰富的iOS开发经验，较少的遇到了困难，从中学到了 一个人的开发规划、arcgis的原理等。</p>
-<p>公交规划引擎：<br>当时我们公司希望开发公交规划的算法服务，因为公司积累了很多Gis相关的知识，所以领导将项目安排给我开发。<br>当我拿到任务时我明确了需要做哪些事情，首先是公交数据的分析，然后将公交数据进行编译，提取出有用的信息，组织成数据模型，最后转化成二进制数据包。<br>公交规划服务读取二进制数据包，将数据模型存储到运行内存中，主要目的是为了优化运行速度。<br>公交规划采用深度优先的遍历模式。<br>主要遇到的困难是最优路径的排序。最近公交站点的获取和排序，步行代价模型的优化<br>从中学到了：深度优先的规划算法、排序模型调优策略等。规划剪枝的代价模型等一些知识的深度应用。</p>
-<p>地图导航引擎<br>我们和地图项目是在高德地图SDK基础上进行开发的。中国移动希望开发一套自己的地图、导航SDK。<br>我们拿到任务后，首先确定任务比较重，我们将地图SDK渲染的开发工作外包给武汉光庭进行开发，我们设计SDK接口及导航SDK开发<br>我主要负责的是SDK接口侧的开发实现及往和地图app上嵌入替换高德地图SDK工作<br>遇到困难主要是SDK性能问题，版本兼容问题，导航播报准确性问题，我们经过反复的优化测试最终实现上线替换掉高德SDK。<br>从中学到：SDK架构设计，接口规范等</p>
-<p>和地图的开发：<br>和地图是一个移动的地图项目，可以预装到大量的基于移动定制机上。作为移动的地图软件主要目标是能够达到国内高德地图和百度地图一样丰富的功能<br>我们的任务主要是负责和地图项目的版本迭代，主要是项目管理者制订开发内容，评估工作量，开发测试上线。<br>遇到的困难。地图性能优化、页面卡顿优化、导航功能优化等。<br>从中学到了地图项目的架构设计，项目优化方案，项目版本迭代规范等。</p>
-<p>数据编译：<br>我们需要做数据编译，我们拿到粗糙的数据，然后制作成我们要求的数据<br>拿到任务后我们首先研究数据规范，然后制订数据编译模型。<br>然后读取数据，转换成对应的模型数据，然后将模型数据输出文二进制文件。<br>遇到的困难，数据的切分、数据的查找、数据的缓存。<br>从中学到了数据编译的原理，Gis地图数据切分算法、</p>
-<p>和地图开发<br>和地图是从高德地图分裂出来一个项目，项目代码比较老旧，还不是arc自动内存管理的项目<br>我们拿到项目后，首先对项目的代码进行整理，对项目架构进行优化，去除了mrc，改用自动内存管理<br>遇到困难，主要是项目架构优化，页面显示优化，崩溃问题跟踪等<br>从中学到了地图项目架构设计及思想，项目优化方案</p>
-<p>饭点、来见面吧<br>公司想在互联网方向的尝试，研究解决大型饭店午餐人少问题，也解决上班族午餐吃饭拥堵困难的问题。来见面吧是想尝试饮食社交一种新探索<br>我们主要工作是开发iOS平台下的软件，设计丰富精美的UI展示效果，以及丰富的互联网功能，大多是使用第三方SDK的形式进行开发。<br>遇到困难，主要是上报工作的初期，也是在不断积累学习iOS开发经验，尝试了解一些系统知识。<br>从中学到了iOS开发流程等一些基本知识，如何在积累中成长，优化程序性能，以及在开发中遇到一些问题常见解决办法。</p>
-<p>面试总结：<br>1.尝试解答一些综合性问题<br>2.多了解一些面试知识<br>3.多问一些面试中遇到的问题，让面试官给予一个解答</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/21/M_Swift245js%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%BE%AE%E4%BF%A1isc%E6%8E%88%E6%9D%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/11/21/M_Swift245js%E5%9B%BD%E5%AF%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%BE%AE%E4%BF%A1isc%E6%8E%88%E6%9D%83/" class="post-title-link" itemprop="url">js国密算法和微信isc授权</a>
+            <a href="/2021/11/21/M_Swift242Cesium%E6%B7%B9%E6%B2%A1%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">Cesium淹没分析</a>
         </h2>
 
         <div class="post-meta">
@@ -871,7 +871,7 @@ Immutable&lt;Impl&gt; baseImpl;
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-11-21 15:34:53 / 修改时间：16:12:45" itemprop="dateCreated datePublished" datetime="2021-11-21T15:34:53+08:00">2021-11-21</time>
+              <time title="创建时间：2021-11-21 15:34:53 / 修改时间：16:17:25" itemprop="dateCreated datePublished" datetime="2021-11-21T15:34:53+08:00">2021-11-21</time>
             </span>
 
           
@@ -885,21 +885,273 @@ Immutable&lt;Impl&gt; baseImpl;
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>3.加密<br>国密算法由国家密码局发布，包含SM1\ SM2\ SM3\ SM4\ SSF33算法;国际算法由美国的安全局发布，是现今最通用的商用算法。今天就以分组密码算法(SM4)、公钥密码算法(SM2)、摘要算法(SM3)<br>import { sm2,sm3 } from ‘sm-crypto’<br>  const originalData = JSON.stringify(config.data)<br>  const encryptedData = sm2.doEncrypt(originalData, publicKey, 1);<br>  const  sm3data = sm3(originalData);</p>
-<p>4.微信isc授权<br>    //获取微信code<br>   getWxCode(){</p>
-<pre><code>var wx_agentid = &#39;1001358&#39;;
-var sURL =&#39;https:connect/oauth2/authorize?&#39;;
-sURL+=&#39;appid=12345676543&#39;;  
-sURL+=&#39;&amp;redirect_uri=&#39;+encodeURIComponent(&#39;zipapp://local.host/index.html&#39;);
-sURL+=&#39;&amp;response_type=code&#39;;
-sURL+=&#39;&amp;scope=SCOPE&#39;;
-sURL+=&#39;&amp;state=STATE&#39;;
-sURL+=&#39;&amp;agentid=&#39;+wx_agentid;
-sURL+=&#39;#wechat_redirect&#39;;
-window.location.href = sURL; 
-alert(&quot;获取Code请求Url = &quot; + sURL);
+          <p>功能描述：<br>    计算绘制多边形的最高点，最低点、平均高度等，<br>    定时器设置多边形extrudedHeight高度，动态实现淹没效果<br>class SubmergeAnalysis {<br>  constructor(option) {<br>    this._viewer = option.viewer;<br>    this.eventBus = {};<br>    this.setTime = null;<br>    this._extrudedHeight = 1;<br>    this.minHeight = option.minHeight ?option.minHeight : 1;<br>    this.maxHeight = option.maxHeight ? option.maxHeight : 1500;<br>    this.currentMinHeight = 0;<br>    this.currentMaxHeight = 800;<br>    this.speed = option.speed ? option.speed : 1;<br>    this.activeShapePoints = [];<br>    this.activeShape = null;<br>    this.floatingPoint = null;<br>    this.drawingMode = “polygon”; //多边形<br>    this.timer = null;<br>    this.tempPoints = [];<br>    this.area = 0;<br>    this.volue = 0;<br>    this.handler = null<br>    this.boarder = null<br>    this.totalTime = null;<br>    this.heightData = [];<br>  }<br>  getCurrentMaxHeight() {<br>    return this.currentMaxHeight;<br>  }<br>  getCurrentMinHeight() {<br>    return this.currentMinHeight;<br>  }<br>  setMinHeight(minHeight) {<br>    this.minHeight = minHeight;<br>  }<br>  setMaxHeight(maxHeight) {<br>    this.maxHeight = maxHeight;<br>  }<br>  setSpeed(speed) {<br>    this.speed = speed;<br>  }<br>  setTotalTime(time) {<br>    this.totalTime = time;<br>  }<br>  //计算面积<br>  getArea(points) {</p>
+<pre><code>var res = 0;
+var that = this
+
+//拆分三角曲面
+
+for (var i = 0; i &lt; points.length - 2; i++) &#123;
+  var j = (i + 1) % points.length;
+
+  var k = (i + 2) % points.length;
+
+  var totalAngle = that.Angle(points[i], points[j], points[k]);
+
+  var dis_temp1 = that.distance(positions[i], positions[j]);
+
+  var dis_temp2 = that.distance(positions[j], positions[k]);
+
+  res += dis_temp1 * dis_temp2 * Math.abs(Math.sin(totalAngle));
+&#125;
+
+return (res / 1000000.0).toFixed(4);
 </code></pre>
-<p>  },<br>  getUrlCode() {<br>      var query = window.location.search.substring(1)<br>      if (query) {<br>        var vars = query.split(‘&amp;’)<br>        for (var i = 0; i &lt; vars.length; i++) {<br>          var pair = vars[i].split(‘=’)<br>          if (pair[0] == ‘code’) {<br>            return pair[1]<br>          }<br>        }<br>      }<br>      return null<br>    },<br>    async iscLogin() {<br>      var code = this.getUrlCode()<br>      if (code) {<br>        return new Promise((resolve, reject) =&gt; {<br>          var sURL =<br>            ‘http:/kkkk’<br>          var param = {<br>            CODE: code,<br>            appId: 124543,<br>          }<br>          axios({<br>            method: ‘post’,<br>            url: sURL,<br>            data: param,<br>            headers: {},<br>          })<br>            .then(function (res) {<br>              //alert(‘获取Ticket成功 = ‘ + JSON.stringify(res))<br>              if (res.data.data.ticket) {<br>                getUserInfoByTicket(res.data.data.ticket)<br>                  .then((res1) =&gt; {<br>                    if (res1.account) {<br>                      sessionStorage.setItem(‘username’, res1.account)<br>                      resolve(1)<br>                    } else {<br>                      alert(‘获取用户信息失败 = ‘ + JSON.stringify(res1))<br>                      resolve(-1)<br>                    }<br>                  })<br>                  .catch((err) =&gt; alert(err))<br>              } else {<br>                resolve(-1)<br>              }<br>            })<br>            .catch(function (err) {<br>              alert(‘获取Ticket失败 = ‘ + JSON.stringify(err))<br>              resolve(-1)<br>            })<br>        })<br>      } else {<br>        this.getWxCode()<br>        return 0<br>      }<br>    },</p>
+<p>  }<br>  /<em>角度</em>/<br>  Angle(p1, p2, p3) {</p>
+<pre><code>var that = this
+
+var bearing21 = that.Bearing(p2, p1);
+
+var bearing23 = that.Bearing(p2, p3);
+
+var angle = bearing21 - bearing23;
+
+if (angle &lt; 0) &#123;
+  angle += 360;
+&#125;
+
+return angle;
+</code></pre>
+<p>  }<br>  /<em>方向</em>/<br>  Bearing(from, to) {</p>
+<pre><code>    var radiansPerDegree = Math.PI / 180.0;//角度转化为弧度(rad)
+
+    var degreesPerRadian = 180.0 / Math.PI;//弧度转化为角度
+    
+    var lat1 = from.lat * radiansPerDegree;
+    
+    var lon1 = from.lon * radiansPerDegree;
+    
+    var lat2 = to.lat * radiansPerDegree;
+    
+    var lon2 = to.lon * radiansPerDegree;
+    
+    var angle = -Math.atan2(Math.sin(lon1 - lon2) * Math.cos(lat2), Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));
+    
+    if (angle &lt; 0) &#123;
+        angle += Math.PI * 2.0;
+    &#125;
+
+        angle = angle * degreesPerRadian;//角度
+
+    return angle;
+</code></pre>
+<p>  }</p>
+<p>  distance(point1, point2) {</p>
+<pre><code>var point1cartographic = Cesium.Cartographic.fromCartesian(point1);
+
+var point2cartographic = Cesium.Cartographic.fromCartesian(point2);
+
+/**根据经纬度计算出距离**/
+
+var geodesic = new Cesium.EllipsoidGeodesic();
+
+geodesic.setEndPoints(point1cartographic, point2cartographic);
+
+var s = geodesic.surfaceDistance;
+
+//返回两点之间的距离
+
+s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2));
+
+return s;
+</code></pre>
+<p>  }</p>
+<p>  //计算体积<br>  getVolume() {}</p>
+<p>  //开始分析<br>  start() {<br>    if (this.maxHeight == 1500) {<br>      this.maxHeight == this.currentMaxHeight;<br>    }<br>    var that = this;<br>    if (this.totalTime) {<br>      this.speed = this.totalTime / (this.maxHeight - this.minHeight);<br>    }<br>    this.timer = setInterval(() =&gt; {<br>      that._extrudedHeight += that.speed / 100;<br>      if (that._extrudedHeight &gt; that.maxHeight) {<br>        that._extrudedHeight = that.maxHeight;<br>        clearInterval(that.timer);<br>      }<br>      let len = that.heightData.length;<br>      var submergeArea = 0;<br>      if (len &gt; 0) {<br>        var count = 0;<br>        for (var i = 0; i &lt; len; i++) {<br>          if (that._extrudedHeight &gt; that.heightData[i]) {<br>            count += 1;<br>          }<br>        }<br>        submergeArea = count / len * that.area;<br>      }</p>
+<pre><code>  that.$emit(&quot;observe&quot;, &#123;
+    extrudedHeight: that._extrudedHeight,
+    maxHeight: that.maxHeight,
+    minHeight: that.minHeight,
+    speed: that.speed,
+    submergeArea:submergeArea
+  &#125;);
+&#125;, 10);
+</code></pre>
+<p>  }<br>  //暂停<br>  pause() {<br>    clearInterval(this.timer);<br>  }<br>  //清除<br>  clear() {<br>    this._viewer.entities.remove(this.boarder); //去除动态点图形（当前鼠标点）<br>    this.boarder = undefined;<br>    this._viewer.entities.remove(this.floatingPoint); //去除动态点图形（当前鼠标点）</p>
+<pre><code>this._viewer.entities.remove(this.activeShape); //去除动态图形
+
+this.floatingPoint = undefined;
+
+this.activeShape = undefined;
+
+this.activeShapePoints = [];
+
+clearInterval(this.timer);
+
+this._extrudedHeight = 1;
+
+this.speed = 1;
+
+this._viewer.entities.removeAll();
+
+this.eventBus = &#123;&#125;;
+</code></pre>
+<p>  }<br>  //绑定事件<br>  _bindEvent() {<br>    let that = this;</p>
+<pre><code>that.handler = new Cesium.ScreenSpaceEventHandler(that._viewer.canvas);
+
+//双击鼠标左键清除默认事件
+that._viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
+  Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
+);
+
+that.handler.setInputAction(function(event) &#123;
+  // We use `viewer.scene.pickPosition` here instead of `viewer.camera.pickEllipsoid` so that
+  // we get the correct point when mousing over terrain.
+  // scene.pickPosition只有在开启地形深度检测，且不使用默认地形时是准确的。
+  var earthPosition = that._viewer.scene.pickPosition(event.position);
+
+
+  // `earthPosition` will be undefined if our mouse is not over the globe.
+  if (Cesium.defined(earthPosition)) &#123;
+    if (that.activeShapePoints.length === 0) &#123;
+      that.floatingPoint = that.createPoint(earthPosition);
+      that.activeShapePoints.push(earthPosition);
+      var dynamicPositions = new Cesium.CallbackProperty(function() &#123;
+        if (that.drawingMode === &quot;polygon&quot;) &#123;
+          return new Cesium.PolygonHierarchy(that.activeShapePoints);
+        &#125;
+        return that.activeShapePoints;
+      &#125;, false);
+      that.activeShape = that.drawShape(dynamicPositions); //绘制动态图
+    &#125;
+    that.activeShapePoints.push(earthPosition);
+
+    that.createPoint(earthPosition);
+
+    let len = that.activeShapePoints.length
+
+    var cartographic = Cesium.Cartographic.fromCartesian(that.activeShapePoints[len - 1]);
+
+    var longitudeString = Cesium.Math.toDegrees(cartographic.longitude);
+
+    var latitudeString = Cesium.Math.toDegrees(cartographic.latitude);
+
+    var heightString = cartographic.height;
+
+    that.tempPoints.push(&#123; lon: longitudeString, lat: latitudeString, hei: heightString &#125;);
+    if (len &gt; 1) &#123;
+      if (!that.boarder) &#123;
+        that.boarder = that._viewer.entities.add(&#123;
+          polyline: &#123;
+            positions: that.activeShapePoints,
+            clampToGround: true,
+            width: 2,
+            material :new Cesium.PolylineOutlineMaterialProperty(&#123;
+              color:new Cesium.Color.fromBytes(0, 191, 255, 100),
+              outlineWidth: 2,
+              outlineColor: new Cesium.Color.fromBytes(0, 191, 255, 100),
+            &#125;)
+          &#125;,
+        &#125;);
+      &#125;else&#123;
+        that.boarder.polyline.positions = that.activeShapePoints;
+      &#125;
+    &#125;
+    
+  &#125;
+&#125;, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+//鼠标移动
+that.handler.setInputAction(function(event) &#123;
+  if (Cesium.defined(that.floatingPoint)) &#123;
+    var newPosition = that._viewer.scene.pickPosition(event.endPosition);
+    if (Cesium.defined(newPosition)) &#123;
+      that.floatingPoint.position.setValue(newPosition);
+      that.activeShapePoints.pop();
+      that.activeShapePoints.push(newPosition);
+    &#125;
+  &#125;
+&#125;, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+that.handler.setInputAction(function(event) &#123;
+  let newArr = [];
+  if(that.activeShapePoints.length &gt; 0)&#123;
+    that.activeShapePoints.forEach(item=&gt;&#123;
+      var cartographic=Cesium.Cartographic.fromCartesian(item);
+      newArr.push(cartographic)
+    &#125;)
+  &#125;
+
+
+  //计算淹没面积
+  // that.area = that.getArea(that.tempPoints) || 0;
+
+  var promise = Cesium.sampleTerrainMostDetailed(that._viewer.terrainProvider, newArr);
+  Cesium.when(promise, function(updatedPositions) &#123;
+      // positions[0].height and positions[1].height have been updated.
+      // updatedPositions is just a reference to positions.
+      let heightArr = updatedPositions.map(item=&gt; item.height);
+      // console.log(&#39;heightArr&#39;,heightArr);
+    that.currentMaxHeight = Math.ceil(Math.max(...heightArr) + 20 + Math.ceil(Math.random() * 50));
+    that.currentMinHeight = Math.ceil(Math.min(...heightArr) + 20 + Math.ceil(Math.random() * 50));
+    //console.log(&#39;that.currentMaxHeight&#39;, that.currentMaxHeight);
+  &#125;);
+
+  that.terminateShape();     
+&#125;, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+</code></pre>
+<p>  }<br>  //绘制点<br>  createPoint(worldPosition) {<br>    var point = this._viewer.entities.add({<br>      position: worldPosition,<br>      point: {<br>        color: Cesium.Color.GREENYELLOW,<br>        pixelSize: 9,<br>        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,<br>      },<br>    });<br>    return point;<br>  }<br>  //绘制图形<br>  drawShape(positionData) {<br>    var that = this;<br>    var shape;<br>    if (that.drawingMode === “line”) {<br>      shape = that._viewer.entities.add({<br>        polyline: {<br>          positions: positionData,<br>          clampToGround: true,<br>          width: 3,<br>        },<br>      });<br>    } else if (that.drawingMode === “polygon”) {<br>      shape = that._viewer.entities.add({<br>        polygon: {<br>          hierarchy: positionData,<br>          perPositionHeight: false,<br>          extrudedHeight: new Cesium.CallbackProperty(function() {<br>            return that._extrudedHeight;<br>          }, false),<br>          //new Cesium.Color.fromBytes(0,191,255,100),<br>          //new Cesium.ColorMaterialProperty(Cesium.Color.AQUA.withAlpha(0.3))<br>          material: new Cesium.Color.fromBytes(0, 191, 255, 100),<br>        },<br>      });<br>    } else if (that.drawingMode === “circle”) {<br>      //当positionData为数组时绘制最终图，如果为function则绘制动态图<br>      var value =<br>        typeof positionData.getValue === “function”<br>          ? positionData.getValue(0)<br>          : positionData;<br>      //var start = activeShapePoints[0];<br>      //var end = activeShapePoints[activeShapePoints.length - 1];<br>      //var r = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2));<br>      //r = r ? r : r + 1;<br>      shape = that._viewer.entities.add({<br>        position: that.activeShapePoints[0],<br>        name: “Blue translucent, rotated, and extruded ellipse with outline”,<br>        type: “Selection tool”,<br>        ellipse: {<br>          semiMinorAxis: new Cesium.CallbackProperty(function() {<br>            //半径 两点间距离<br>            var r = Math.sqrt(<br>              Math.pow(value[0].x - value[value.length - 1].x, 2) +<br>                Math.pow(value[0].y - value[value.length - 1].y, 2)<br>            );<br>            return r ? r : r + 1;<br>          }, false),<br>          semiMajorAxis: new Cesium.CallbackProperty(function() {<br>            var r = Math.sqrt(<br>              Math.pow(value[0].x - value[value.length - 1].x, 2) +<br>                Math.pow(value[0].y - value[value.length - 1].y, 2)<br>            );<br>            return r ? r : r + 1;<br>          }, false),<br>          material: Cesium.Color.BLUE.withAlpha(0.5),<br>          outline: true,<br>        },<br>      });<br>    } else if (that.drawingMode === “rectangle”) {<br>      //当positionData为数组时绘制最终图，如果为function则绘制动态图<br>      var arr =<br>        typeof positionData.getValue === “function”<br>          ? positionData.getValue(0)<br>          : positionData;<br>      shape = that._viewer.entities.add({<br>        name: “Blue translucent, rotated, and extruded ellipse with outline”,<br>        rectangle: {<br>          coordinates: new Cesium.CallbackProperty(function() {<br>            var obj = Cesium.Rectangle.fromCartesianArray(arr);<br>            //if(obj.west==obj.east){ obj.east+=0.000001};<br>            //if(obj.south==obj.north){obj.north+=0.000001};<br>            return obj;<br>          }, false),<br>          material: Cesium.Color.RED.withAlpha(0.5),<br>        },<br>      });<br>    }<br>    return shape;<br>  }<br>  terminateShape() {<br>    this.activeShapePoints.pop(); //去除最后一个动态点</p>
+<pre><code>this.computePolygonHeightRange(this.activeShapePoints);
+this.area = this.computeSignedArea(this.activeShapePoints);
+if (this.activeShapePoints.length) &#123;
+  this.drawShape(this.activeShapePoints); //绘制最终图
+
+  var tmp = this.activeShapePoints;
+  tmp.push(this.activeShapePoints[0]);
+  // console.log(tmp);
+  this.boarder.polyline.positions = tmp;
+&#125;
+
+this._viewer.entities.remove(this.floatingPoint); //去除动态点图形（当前鼠标点）
+
+//this._viewer.entities.remove(this.activeShape); //去除动态图形
+
+this.floatingPoint = undefined;
+
+//this.activeShape = undefined;
+
+this.activeShapePoints = [];
+</code></pre>
+<p>  }<br>  computePolygonHeightRange(e) {<br>    var t = []<br>    for (var i = 0; i &lt; e.length; i++) t.push(e[i].clone());<br>    var a, n, r, o, s, u, l, h = 0,<br>        g = 9999,<br>        c = Math.PI / Math.pow(2, 11) / 64,<br>        m = new Cesium.PolygonGeometry.fromPositions({<br>            positions: t,<br>            vertexFormat: Cesium.PerInstanceColorAppearance.FLAT_VERTEX_FORMAT,<br>            granularity: c<br>        }),</p>
+<pre><code>  d = new Cesium.PolygonGeometry.createGeometry(m);
+var sum = [];
+for (i = 0; i &lt; d.indices.length; i += 3) a = d.indices[i],
+    n = d.indices[i + 1],
+    r = d.indices[i + 2],
+    l = new Cesium.Cartesian3(d.attributes.position.values[3 * a], d.attributes.position.values[3 * a + 1], d.attributes.position.values[3 * a + 2]),
+    (o = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = o),
+    h &lt; o &amp;&amp; (h = o),
+    l = new Cesium.Cartesian3(d.attributes.position.values[3 * n], d.attributes.position.values[3 * n + 1], d.attributes.position.values[3 * n + 2]),
+    (s = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = s),
+    h &lt; s &amp;&amp; (h = s),
+    l = new Cesium.Cartesian3(d.attributes.position.values[3 * r], d.attributes.position.values[3 * r + 1], d.attributes.position.values[3 * r + 2]),
+    (u = this._viewer.scene.globe.getHeight(Cesium.Cartographic.fromCartesian(l))) &lt; g &amp;&amp; (g = u),
+  h &lt; u &amp;&amp; (h = u),
+  sum.push(Math.max(Math.max(o,s),u));
+this.currentMaxHeight = h;
+this.currentMinHeight = g;
+this.maxHeight = h;
+this.minHeight = g;
+this._extrudedHeight = g;
+this.heightData = sum;
+this.$emit(&quot;height&quot;, &#123;
+  maxHeight: this.maxHeight,
+  minHeight: this.minHeight,
+  speed: this.speed,
+&#125;);
+</code></pre>
+<p>  }<br>  computeSignedArea(tmppath) {<br>    var path = [];<br>    for (var i = 0; i &lt; tmppath.length; i++) {<br>      var cartographic = Cesium.Cartographic.fromCartesian(tmppath[i]);<br>      var longitude = Cesium.Math.toDegrees(cartographic.longitude);<br>      var latitude = Cesium.Math.toDegrees(cartographic.latitude);<br>      path.push({lng:longitude,lat:latitude });<br>    }<br>      let radius= 6371009<br>      let len = path.length;<br>      if (len &lt; 3) return 0;<br>      let total = 0;<br>      let  prev = path[len - 1];<br>      let prevTanLat = Math.tan(((Math.PI / 2 - prev.lat/180*Math.PI) / 2));<br>      let prevLng = (prev.lng)/180*Math.PI;<br>      for (let i in path) {<br>          let tanLat = Math.tan((Math.PI / 2 -<br>              (path[i].lat)/180*Math.PI) / 2);<br>          let lng = (path[i].lng)/180*Math.PI;<br>          total += this.polarTriangleArea(tanLat, lng, prevTanLat, prevLng);<br>          prevTanLat = tanLat;<br>          prevLng = lng;<br>      }<br>      return Math.abs(total * (radius * radius)) / 1000;<br>  }<br>   polarTriangleArea(tan1,lng1,tan2,lng2) {<br>          let deltaLng = lng1 - lng2;<br>          let t = tan1 * tan2;<br>          return 2 * Math.atan2(t * Math.sin(deltaLng), 1 + t * Math.cos(deltaLng));<br>  }<br>  $on(event, cb) {<br>    if (!this.eventBus[event]) {<br>      this.eventBus[event] = new Set();<br>    }<br>    this.eventBus[event].add(cb);<br>  }<br>  $emit(event, …args) {<br>    if (this.eventBus[event]) {<br>      Array.from(this.eventBus[event]).forEach((handle) =&gt; {<br>        handle.call(this, args);<br>      });<br>    }<br>  }<br>  $off(event, cb) {<br>    if (this.eventBus[event]) {<br>      this.eventBus[event].delete(cb);<br>    }<br>  }<br>}</p>
+<p>export default SubmergeAnalysis;</p>
 
       
     </div>
