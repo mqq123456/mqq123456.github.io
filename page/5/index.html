@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift227QT%E5%AE%9E%E6%88%98%E5%AD%97%E6%AE%B5%E9%87%8D%E6%96%B0%E9%80%89%E6%8B%A9/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift232mapbox%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift227QT%E5%AE%9E%E6%88%98%E5%AD%97%E6%AE%B5%E9%87%8D%E6%96%B0%E9%80%89%E6%8B%A9/" class="post-title-link" itemprop="url">QT实战字段重新选择</a>
+            <a href="/2021/08/10/M_Swift232mapbox%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">mapbox 学习</a>
         </h2>
 
         <div class="post-meta">
@@ -172,14 +172,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-08-10 18:49:05" itemprop="dateCreated datePublished" datetime="2021-08-10T18:49:05+08:00">2021-08-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-24 14:22:27" itemprop="dateModified" datetime="2021-06-24T14:22:27+08:00">2021-06-24</time>
+                <time title="修改时间：2021-08-11 11:10:39" itemprop="dateModified" datetime="2021-08-11T11:10:39+08:00">2021-08-11</time>
               </span>
 
           
@@ -193,7 +193,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>今天遇到这样一个问题，解决了很久，最终才能如愿实现，现记录一下实现方案。<br>问题是这样的，我现在有一个指定格式的文档数据，数据中字段采用指定分割符分割，类似scv格式的数据采用，分割一样，我们需要读取这些数据，将数据保存为指定的模型。这个是一个非常正规的操作，现在的需求是，我文档的字段排序是错乱的，需要用户手动去选择某个字段具体在哪个位置。这个问题确实让我头疼了。具体描述是这样的<br>我们有字段 A，B，C，D，E，F<br>文档中有0，1，2，3，4，5，6，7，8，9，10列<br>我们默认：<br>A-&gt;1<br>B-&gt;2<br>C-&gt;3<br>D-&gt;4<br>E-&gt;5<br>F-&gt;6<br>7，8，9，10列忽略<br>然后当用户将A列放置在第2列时我们的数据变化<br>A、A、C、D、E、F、空、空、空、空<br>当我们将A放置在第8列时我们数据变化<br>A、B、C、D、E、F、空、A、空、空<br>我们虽然只有A-F5个字段，但是当用户选择后，数据会发生变大的情况<br>我本来想用一个Map，来分别存储Key和value，但是Map不太好按照顺序查找，这让我很难受<br>于是我选择了用两个List来存储字段和位置<br>调整后的存储结构如下<br>字段数组： A、B、C、D、E、F、A<br>位置数组： 0、1、2、3、4、5、8<br>这样，我知道有字段名，就能对应的找到字段的位置。<br>说起来很简单，但是业务上我要考虑很多，所以还是让我费了一会的功夫，就当记录着玩吧</p>
+          <p>最近在了解mapbox相关的知识，现在也总结一下</p>
+<h2 id="1-mapbox是什么"><a href="#1-mapbox是什么" class="headerlink" title="1.mapbox是什么"></a>1.mapbox是什么</h2><p>mapbox主要是用来做地图定制化的开发的，核心是mapbox studio<br>2.mapbox优势是什么<br>1.支持样式自定义，能快速设计出一套样式地图<br>2.支持mvt格式数据，数据小。<br>3.细化地图样式，点、线、面，可实现批量绘制，快速<br>4.支持mysql存储，方便数据迁移<br>3.mapbox设计思想原理<br>1.能表达整个Map的Style文件<br>2.layer的设计不是根据数据来源分类，根据数据点、线、面进行分类，fill类型的layer只负责填充；<br>line类型的layer只负责线条；symbol类型的layer会处理sprite，文字等；raster类型的layer就只负责图片，<br>circle类型的layer是更高一层的业务处理需要，可以在layer里面设置filter，满足条件的元素才会被呈现出来，<br>并用layer设定的样式渲染<br>缓存数据采用sqllite数据库进行存储，表结构相对简单，表内数据采用压缩格式(zlib)进行存储。<br>mvt<br>region_id-》resource_id-〉tiles-》<br>4.mapbox开源介绍<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/awesome-vector-tiles">https://github.com/mapbox/awesome-vector-tiles</a></p>
+<p>mapbox数据请求<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf</a>?<br>sku=101fNMKdfrxXw&amp;access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p1dHRybDR5MGJuZjQzcGhrZ2doeGgwNyJ9.a-vxW4UaxOoUMWUTGnEArw</p>
+<p>mapbox pbf 解析<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/protozero">https://github.com/mapbox/protozero</a><br><a target="_blank" rel="noopener" href="https://github.com/mapbox/vtzero">https://github.com/mapbox/vtzero</a><br><a target="_blank" rel="noopener" href="https://github.com/tlglovewf/pbfvectortile">https://github.com/tlglovewf/pbfvectortile</a></p>
+<p>Mapbox样式由一组根属性组成，其中一些描述单个全局属性，一些包含嵌套属性。<br>一些根属性(如版本、名称和元数据)对映射的外观或行为没有任何影响，但提供了与映射相关<br>的重要描述性信息。其他的，如层和源，是至关重要的，并决定哪些地图功能将出现在您的地图上，以及它们将是<br>什么样子。一些属性(如中心、缩放、间距和方位)为地图渲染器提供了一组初始显示地图时使用的默认值。</p>
 
       
     </div>
@@ -213,7 +217,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift229QT%E5%AE%9E%E6%88%98%E8%A1%A8%E5%8D%95%E5%86%85%E7%BB%98%E5%88%B6%E5%A4%9A%E4%B8%AA%E6%8C%89%E9%92%AE/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift234OpenGL%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -227,7 +231,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift229QT%E5%AE%9E%E6%88%98%E8%A1%A8%E5%8D%95%E5%86%85%E7%BB%98%E5%88%B6%E5%A4%9A%E4%B8%AA%E6%8C%89%E9%92%AE/" class="post-title-link" itemprop="url">QT实战表单绘制多个按钮</a>
+            <a href="/2021/06/28/M_Swift234OpenGL%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">OpenGL视频学习</a>
         </h2>
 
         <div class="post-meta">
@@ -237,14 +241,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-24 16:16:34" itemprop="dateModified" datetime="2021-06-24T16:16:34+08:00">2021-06-24</time>
+                <time title="修改时间：2022-03-14 21:37:58" itemprop="dateModified" datetime="2022-03-14T21:37:58+08:00">2022-03-14</time>
               </span>
 
           
@@ -258,29 +262,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这个确实难倒我了，我百度了很多地方最终也不甚明白，特别是在绘制的地方，当我调整绘制样式的时候真是的费了九牛二虎之力啊，太难了，下面展示下代码吧</p>
-<p>void PosInfoTableDelegate::paint(QPainter <em>painter, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index) const<br>{<br>    QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;</em> buttons = m_btns.value(index);<br>    if (!buttons) {<br>        QStyleOptionButton* button1 = new QStyleOptionButton();<br>        button1-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4);<br>        button1-&gt;text = QStringLiteral(“查看”);<br>        QPalette pal = button1-&gt;palette; // 这里是为了让文本颜色的修改，这个调色板还有很多接口，但是我操作很多都无法改变背景色，让我很失望<br>        pal.setColor(QPalette::ButtonText, QColor(255, 255, 255));<br>        button1-&gt;palette = pal;<br>        button1-&gt;icon = QIcon(“://largeImage.png”);<br>        button1-&gt;iconSize = QSize(40,40);</p>
-<pre><code>    QStyleOptionButton* button2 = new QStyleOptionButton();
-    button2-&gt;rect = option.rect.adjusted(button1-&gt;rect.width() + 4, 4, -4, -4);
-    button2-&gt;icon =  QIcon(&quot;://closeTab.png&quot;);
-    button2-&gt;iconSize = QSize(40,40);
-    buttons =new  QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;(button1, button2);
-    (const_cast&lt;PosInfoTableDelegate *&gt;(this))-&gt;m_btns.insert(index, buttons);
-&#125;
-buttons-&gt;first-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4); //
-buttons-&gt;second-&gt;rect = option.rect.adjusted(buttons-&gt;first-&gt;rect.width() + 4, 4, -4, -4);
-painter-&gt;save();
-
-if (option.state &amp; QStyle::State_Selected) &#123;
-    painter-&gt;fillRect(option.rect, option.palette.highlight());
-
-&#125;
-painter-&gt;restore();
-// 这个地方CE_PushButtonLabel 是为了防止按钮带背景色，我曾采用n种方式都无法去除背景色，最后只能这样了
-QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;first, painter);
-QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;second, painter);
-</code></pre>
-<p>}<br>// 这个是点击事件，不多说<br>bool PosInfoTableDelegate::editorEvent(QEvent <em>event, QAbstractItemModel <em>model, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index)<br>{<br>    if (event-&gt;type() == QEvent::MouseButtonRelease) {<br>        QMouseEvent</em> e =(QMouseEvent</em>)event;<br>        if (m_btns.contains(index)) {<br>            QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;* btns = m_btns.value(index);<br>            if (btns-&gt;first-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                emit lookRow(index.row());<br>            } else if(btns-&gt;second-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                btns-&gt;second-&gt;state &amp;= (~QStyle::State_Sunken);<br>                emit deleteRow(index.row());<br>            }<br>        }<br>    }<br>    return false;<br>}</p>
+          <p>向量(Vector)： 一个定义了在空间中方向和/或位置的数学实体。<br>矩阵(Matrix)： 一个矩形阵列的数学表达式。<br>在opengl中通常使用4x4的变换矩阵<br>缩放：向量乘相同数<br>位移：向量加另一个向量<br>大多数的旋转函数使用弧度制<br>坐标转换：局部-》观察——〉投影<br>视口变换将位于-1.0到1.0范围的坐标变换到由glViewport函数所定义的坐标范围内<br>投影：墨卡托<br>相机：<br>视口(Viewport)： 我们需要渲染的窗口<br>图形管线(Graphics Pipeline)： 一个顶点在呈现为像素之前经过的全部过程<br>着色器(Shader)： 一个运行在显卡上的小型程序。很多阶段的图形管道都可以使用自定义的着色器来代替原有的功能<br>顶点缓冲对象(Vertex Buffer Object)： 一个调用显存并存储所有顶点数据供显卡使用的缓冲对象<br>顶点数组对象(Vertex Array Object)： 存储缓冲区和顶点属性状态<br>索引缓冲对象(Element Buffer Object)： 一个存储索引供索引化绘制使用的缓冲对象<br>Uniform： 一个特殊类型的GLSL变量。它是全局的（在一个着色器程序中每一个着色器都能够访问uniform变量），并且只需要被设定一次<br>纹理(Texture)： 一种包裹着物体的特殊类型图像，给物体精细的视觉效果<br>纹理缠绕(Texture Wrapping)： 定义了一种当纹理顶点超出范围(0, 1)时指定OpenGL如何采样纹理的模式。<br>局部空间(Local Space)： 一个物体的初始空间。所有的坐标都是相对于物体的原点的。<br>世界空间(World Space)： 所有的坐标都相对于全局原点。<br>观察空间(View Space)： 所有的坐标都是从摄像机的视角观察的。<br>裁剪空间(Clip Space)： 所有的坐标都是从摄像机视角观察的，但是该空间应用了投影。这个空间应该是一个顶点坐标最终的空间，作为顶点着色器的输出。OpenGL负责处理剩下的事情（裁剪/透视除法）。<br>屏幕空间(Screen Space)： 所有的坐标都由屏幕视角来观察。坐标的范围是从0到屏幕的宽/高。<br>LookAt矩阵： 一种特殊类型的观察矩阵，它创建了一个坐标系，其中所有坐标都根据从一个位置正在观察目标的用户旋转或者平移。<br>欧拉角(Euler Angles)： 被定义为偏航角(Yaw)，俯仰角(Pitch)，和滚转角(Roll)从而允许我们通过这三个值构造任何3D方向。</p>
 
       
     </div>
@@ -300,7 +282,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift237CMake/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -314,7 +296,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">后端与微服务知识</a>
+            <a href="/2021/06/28/M_Swift237CMake/" class="post-title-link" itemprop="url">CMake</a>
         </h2>
 
         <div class="post-meta">
@@ -324,14 +306,14 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-25 10:32:34" itemprop="dateModified" datetime="2021-06-25T10:32:34+08:00">2021-06-25</time>
+                <time title="修改时间：2022-03-14 21:42:33" itemprop="dateModified" datetime="2022-03-14T21:42:33+08:00">2022-03-14</time>
               </span>
 
           
@@ -345,25 +327,17 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><p>具有控制反转（IoC）和面向切面（AOP）两大核心，通过声明式方式灵活地进行事务的管理，提高开发效率和质量。包含如下模块：<br> Data Access/Integration（数据访问／集成）： JDBC、ORM、OXM、JMS 和 Transactions 模块<br> Web 层包括 Web、Servlet、Struts 和 Portlet 组件<br> Core Container（核心容器）由 Beans 模块、Core 核心模块、Context 上下文模块和 Expression Language 表达式语言模块组成<br>AOP 模块：提供了面向切面编程实现，允许定义方法拦截器和切入点，将代码按照功能进行分离，以降低耦合性。<br>Aspects 模块：提供与 AspectJ 的集成，是一个功能强大且成熟的面向切面编程（AOP）框架<br>Instrumentation 模块：提供了类工具的支持和类加载器的实现，可以在特定的应用服务器中使用。<br>Test 模块：支持 Spring 组件，使用 JUnit 或 TestNG 框架的测试。</p>
-<h2 id="spring-boot"><a href="#spring-boot" class="headerlink" title="spring boot"></a>spring boot</h2><p>其设计目的是用来简化新Spring应用的初始搭建以及开发过程，开箱即用和约定优于配置。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。内嵌Tomcat或Jetty等Servlet容器，简化Maven配置，尽可能自动配置Spring容器</p>
-<h2 id="Spring-Cloud"><a href="#Spring-Cloud" class="headerlink" title="Spring Cloud"></a>Spring Cloud</h2><p> 就是微服务系统架构的一站式解决方案，在平时我们构建微服务的过程中需要做如 服务发现注册 、配置中心 、消息总线 、负载均衡 、断路器 、数据监控 等操作，而 Spring Cloud 为我们提供了一套简易的编程模型，使我们能在 Spring Boot 的基础上轻松地实现微服务项目的构建。</p>
-<h2 id="Spring-Cloud-Alibaba"><a href="#Spring-Cloud-Alibaba" class="headerlink" title="Spring Cloud Alibaba"></a>Spring Cloud Alibaba</h2><p>是阿里巴巴提供的微服务开发一站式解决方案，是阿里巴巴开源中间件与 Spring Cloud 体系的融合。基于 Nacos 提供 spring-cloud-alibaba-starter-nacos-discovery &amp; spring-cloud-alibaba-starter-nacos-config 实现了服务注册 &amp; 配置管理功能。</p>
-<h2 id="微服务意义"><a href="#微服务意义" class="headerlink" title="微服务意义"></a>微服务意义</h2><p>微服务的核心是服务治理，而服务治理的关键是服务划分。故微服务架构的本质就是对码农的分化和治理</p>
-<h2 id="Nacos"><a href="#Nacos" class="headerlink" title="Nacos"></a>Nacos</h2><p>帮助您更敏捷和容易地构建、交付和管理微服务平台。 Nacos 是构建以“服务”为中心的现代应用架构(例如微服务范式、云原生范式)的服务基础设施。</p>
-<h2 id="Feign"><a href="#Feign" class="headerlink" title="Feign"></a>Feign</h2><p>是声明式的web service客户端，它让微服务之间的调用变得更简单了，类似controller调用service。Spring Cloud集成了Ribbon和Eureka，可在使用Feign时提供负载均衡的http客户端。</p>
-<h2 id="Spring-Cloud-Ribbon"><a href="#Spring-Cloud-Ribbon" class="headerlink" title="Spring Cloud Ribbon"></a>Spring Cloud Ribbon</h2><p>是一个基于HTTP和TCP的客户端负载均衡工具，它基于Netflix Ribbon实现。通过Spring Cloud的封装，可以让我们轻松地将面向服务的REST模版请求自动转换成客户端负载均衡的服务调用</p>
-<h2 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h2><p>是阿里开源的项目，提供了流量控制、熔断降级、系统负载保护等多个维度来保障服务之间的稳定性</p>
-<h2 id="网关GateWay"><a href="#网关GateWay" class="headerlink" title="网关GateWay"></a>网关GateWay</h2><p>网关的角色是作为一个 API 架构，用来保护、增强和控制对于 API 服务的访问。Spring Cloud Gateway旨在为微服务架构提供一种简单而有效的统一的API路由管理方式。</p>
-<h2 id="Spring-Cloud-Euraka"><a href="#Spring-Cloud-Euraka" class="headerlink" title="Spring-Cloud Euraka"></a>Spring-Cloud Euraka</h2><p>是Spring Cloud集合中一个组件，它是对Euraka的集成，用于服务注册和发现。Eureka是Netflix中的一个开源框架。它和 zookeeper、Consul一样，都是用于服务注册管理的，同样，Spring-Cloud 还集成了Zookeeper和Consul。<br>Eureka由多个instance(服务实例)组成，这些服务实例可以分为两种：Eureka Server和Eureka Client。为了便于理解，我们将Eureka client再分为Service Provider和Service Consumer。<br>Eureka Server 提供服务注册和发现<br>Service Provider 服务提供方，将自身服务注册到Eureka，从而使服务消费方能够找到<br>Service Consumer服务消费方，从Eureka获取注册服务列表，从而能够消费服务</p>
-<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><p>是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby一个开源的实现，是Hadoop和Hbase的重要组件。它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
-<h2 id="cap原理"><a href="#cap原理" class="headerlink" title="cap原理"></a>cap原理</h2><p>P:Partition tolerance,网络分区容错。类似多机房部署，保证服务稳定性。<br>A: Availability，可用性。<br>C:Consistency ，一致性。<br>CAP定理：CAP三个属性对于分布式系统不同同时做到。如AP/CP/AC。</p>
-<h2 id="Zookeepr和Eureka区别"><a href="#Zookeepr和Eureka区别" class="headerlink" title="Zookeepr和Eureka区别"></a>Zookeepr和Eureka区别</h2><p>（1）Zookeeper是CP，分布式协同服务，突出一致性。对ZooKeeper的的每次请求都能得到一致的数据结果，但是无法保证每次访问服务可用性。如请求到来时，zookeer正在做leader选举，此时不能提供服务，即不满足A可用性。<br>（2）Euere是AP，高可用与可伸缩的Service发现服务，突出可用性。相对于Zookeeper而言，可能返回数据没有一致性，但是保证能够返回数据，服务是可用的。</p>
-<h2 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h2><p>是一个开源的、提供友好操作界面的持续集成(CI)工具，起源于Hudson（Hudson是商用的），主要用于持续、自动的构建/测试软件项目、监控外部任务的运行（这个比较抽象，暂且写上，不做解释）。Jenkins用Java语言编写，可在Tomcat等流行的servlet容器中运行，也可独立运行。通常与版本管理工具(SCM)、构建工具结合使用。常用的版本控制工具有SVN、GIT，构建工具有Maven、Ant、Gradle。</p>
-<h2 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h2><p>是一个基于Apache Ant和Apache Maven概念的项目自动化构建开源工具。它使用一种基于Groovy的特定领域语言(DSL)来声明项目设置，目前也增加了基于Kotlin语言的kotlin-based DSL，抛弃了基于XML的各种繁琐配置</p>
-<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>是一个开源的应用容器引擎，基于 Go 语言 并遵从 Apache2.0 协议开源。<br>Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。<br>容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低</p>
-<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>是一个开源的使用 ANSI C 语言编写、遵守 BSD 协议、支持网络、可基于内存、分布式、可选持久性的键值对(Key-Value)存储数据库，并提供多种语言的 API。<br>Redis 通常被称为数据结构服务器，因为值（value）可以是字符串(String)、哈希(Hash)、列表(list)、集合(sets)和有序集合(sorted sets)等类型。</p>
-<h2 id="seata"><a href="#seata" class="headerlink" title="seata"></a>seata</h2><p>阿里开源的，是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。</p>
+          <p>CMake工具用于生成Makefile文件。用户通过编写CMakeLists.txt文件，描述构建过程（编译、连接、测试、打包），之后通过解析该文件，生成目标平台的Makefile文件，做到”Write once, run everywhere”。</p>
+<p>如果是构建平台是MinGW，会什么makefile文件，使用mingw32-make构建。<br>如果构建平台是VS系列，会生成vcxproj文件，可以使用msbuild工具构建。<br>如果构造平台是NMake，可以使用nmake构建。</p>
+<p>可以使用以下命令编译：</p>
+<p>cmake –build <CMakeCachePath> –target <ProjectName></p>
+<p>可以使用以下命令清理编译结果：</p>
+<p>cmake –build <CMakeCachePath> –target clean</p>
+<p>可以使用以下命令，查看cmake支持的构建工具：<br>cmake -G</p>
+<p>在生成Makefile时，指定构建工具：<br>cmake -G “<generator>“ <projectPath></p>
+<p> -A <platform-name>           = Specify platform name if supported by</p>
+<p>iOS编译<br>cmake .. -G Xcode -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=OS64</p>
+<p>cmake –build . –config Release</p>
 
       
     </div>
@@ -383,7 +357,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift248mapbox%20api/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -397,7 +371,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">QT实战技巧</a>
+            <a href="/2021/06/28/M_Swift248mapbox%20api/" class="post-title-link" itemprop="url">mapbox api</a>
         </h2>
 
         <div class="post-meta">
@@ -407,14 +381,14 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-24 14:33:58" itemprop="dateModified" datetime="2021-06-24T14:33:58+08:00">2021-06-24</time>
+                <time title="修改时间：2021-11-21 16:30:12" itemprop="dateModified" datetime="2021-11-21T16:30:12+08:00">2021-11-21</time>
               </span>
 
           
@@ -428,7 +402,22 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>首先要绘制垂直方向的布局，然后再在垂直方向的布局里面嵌套水平方向的布局<br>布局也能设置间隔边距<br>mainLayout-&gt;setSpacing(10);<br>mainLayout-&gt;setMargin(1);<br>样式可以直接采用setStyleSheet，同css一摸一样<br>左侧对齐的话可以在末尾添加一个addSpacerItem，将控件压制到左侧<br>QSpacerItem的QSizePolicy是一个万能的东西，我们可以根据他设置大小固定不固定，要不要最大化等等<br>设置Dialog关闭立即删除this-&gt;setAttribute(Qt::WA_DeleteOnClose, true);</p>
+          <p>Example request: Retrieve vector tiles</p>
+<p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<h1 id="Return-a-style-optimized-tile-using-the-style-query-parameter"><a href="#Return-a-style-optimized-tile-using-the-style-query-parameter" class="headerlink" title="Return a style-optimized tile using the style query parameter"></a>Return a style-optimized tile using the style query parameter</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/12/1171/1566.mvt?style=mapbox://styles/mapbox/streets-v11@00&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/12/1171/1566.mvt?style=mapbox://styles/mapbox/streets-v11@00&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<p>Example request: Retrieve raster tiles</p>
+<h1 id="Retrieve-a-2x-tile-this-512x512-tile-is-appropriate-for-high-density-displays"><a href="#Retrieve-a-2x-tile-this-512x512-tile-is-appropriate-for-high-density-displays" class="headerlink" title="Retrieve a 2x tile; this 512x512 tile is appropriate for high-density displays"></a>Retrieve a 2x tile; this 512x512 tile is appropriate for high-density displays</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.satellite/1/0/0@2x.jpg90?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.satellite/1/0/0@2x.jpg90?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<p>Example request: Retrieve a style</p>
+<p><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
+<p>Example request: Retrieve features from vector tiles</p>
+<h1 id="Retrieve-features-within-a-10-meter-radius-of-the-specified-location"><a href="#Retrieve-features-within-a-10-meter-radius-of-the-specified-location" class="headerlink" title="Retrieve features within a 10 meter radius of the specified location"></a>Retrieve features within a 10 meter radius of the specified location</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=10&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=10&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<h1 id="Return-at-most-20-features"><a href="#Return-at-most-20-features" class="headerlink" title="Return at most 20 features"></a>Return at most 20 features</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?limit=20&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?limit=20&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<h1 id="Query-multiple-tilesets"><a href="#Query-multiple-tilesets" class="headerlink" title="Query multiple tilesets"></a>Query multiple tilesets</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/%7Btileset_id_1%7D,%7Btileset_id_2%7D,%7Btileset_id_3%7D/tilequery/-122.42901,37.80633.json&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/{tileset_id_1},{tileset_id_2},{tileset_id_3}/tilequery/-122.42901,37.80633.json&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<h1 id="Return-only-results-from-the-poi-label-and-building-layers-within-a-30-meter-radius-of-the-specified-location"><a href="#Return-only-results-from-the-poi-label-and-building-layers-within-a-30-meter-radius-of-the-specified-location" class="headerlink" title="Return only results from the poi_label and building layers within a 30 meter radius of the specified location"></a>Return only results from the poi_label and building layers within a 30 meter radius of the specified location</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=30&amp;layers=poi_label,building&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=30&amp;layers=poi_label,building&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<p>数据服务：<br>地址 + 版本 + 数据名称 + xyz坐标 + token<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?token=123">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?token=123</a></p>
+<p>样式服务：<br>地址 + 版本 + 样式名称 + token<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?token=123">https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?token=123</a></p>
+<p>图标（sprite）：<br>mapbox://sprites/mapbox/streets-v11<br>首先，对于索引文件和图像文件，它们将在高dpi设备上将@2x附加到URL。<br>其次，它们将附加文件扩展名:索引文件的扩展名是.json，图像文件的扩展名是.png。<br>例如，如果你在你的样式中指定了”sprite”: “<a href="https://example.com/sprite&quot;%EF%BC%8C%E6%B8%B2%E6%9F%93%E5%99%A8%E4%BC%9A%E5%8A%A0%E8%BD%BD">https://example.com/sprite&quot;，渲染器会加载</a>:<br><a href="https://example.com/sprite.json%E5%92%8Chttps://example.com/sprite.png%EF%BC%8C%E6%88%96%E8%80%85">https://example.com/sprite.json和https://example.com/sprite.png，或者</a><br><a href="https://example.com/sprite@2x.json%E5%92%8Chttps://example.com/sprite@2x.png%E3%80%82">https://example.com/sprite@2x.json和https://example.com/sprite@2x.png。</a></p>
+<p>字体（glyphs）：<br>mapbox://fonts/mapbox/{fontstack}/{range}.pbf</p>
 
       
     </div>
@@ -448,7 +437,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift205SVG%E4%BA%86%E8%A7%A3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift251mapbox%E5%88%86%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -462,7 +451,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/30/M_Swift205SVG%E4%BA%86%E8%A7%A3/" class="post-title-link" itemprop="url">SVG了解</a>
+            <a href="/2021/06/28/M_Swift251mapbox%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">mapbox分析</a>
         </h2>
 
         <div class="post-meta">
@@ -471,10 +460,16 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:32" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:31:20" itemprop="dateModified" datetime="2021-11-21T16:31:20+08:00">2021-11-21</time>
+              </span>
 
           
 
@@ -487,8 +482,17 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Svg：是使用 XML 来描述二维图形和绘图程序的语言。可伸缩矢量图形 (Scalable Vector Graphics)，使用 XML 格式定义图形，图像在放大或改变尺寸的情况下其图形质量不会有所损失<br>svg解析：<br>第一行包含了 XML 声明。请注意 standalone 属性！该属性规定此 SVG 文件是否是”独立的”，或含有对外部文件的引用。</p>
-<p>SVG 代码以 <svg> 元素开始<br>SVG有一些预定义的形状元素，可被开发者使用和操作：<br>矩形 <rect><br>圆形 <circle><br>椭圆 <ellipse><br>线 <line><br>折线 <polyline><br>多边形 <polygon><br>路径 <path><br>文本 - <text><br>stroke<br>stroke-width<br>stroke-linecap<br>stroke-dasharray<br>滤镜<br>模糊效果<defs> 和 <filter><br>阴影 feOffset feBlend<br>线性渐变 - <linearGradient><br>放射性渐变 - <radialGradient><br>path说明：<br>M = moveto<br>L = lineto<br>H = horizontal lineto<br>V = vertical lineto<br>C = curveto<br>S = smooth curveto<br>Q = quadratic Bézier curve<br>T = smooth quadratic Bézier curveto<br>A = elliptical Arc<br>Z = closepath</p>
+          <p>数据IO层：负责资源数据的加载、解析、数据缓存等，包括缓存数据和网络数据等；</p>
+<p>资源管理层：负责地图资源的管理调度，资源包括地图样式、图片、文字、地图数据等；</p>
+<p>渲染组织层：负责将地图数据和样式，生成渲染所需数据，渲染状态控制、渲染排序等；</p>
+<p>渲染接口层：负责对渲染API（OpenGL、gles）的封装，实现渲染的跨平台性；</p>
+<p>地图控制层：负责对地图的控制，包括位置、层级、风格等，负责事件的分发处理，负责对外（sdk层）接口的封装；</p>
+<p>SDK封装层：负责地图引擎空间部分的实现，负责根据不同平台实现不同的语言的封装，如iOS的OC封装、Android的JNI封装等。<br><a target="_blank" rel="noopener" href="https://github.com/go-spatial/tegola">https://github.com/go-spatial/tegola</a></p>
+<p>1.完成数据的解析<br>2.完成geojson的解析转mvt<br>3.完成mapbox样式解析<br>4.</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mapbox/mapbox-tile-copy">https://github.com/mapbox/mapbox-tile-copy</a></p>
+<p>1.数据服务<br>2.数据转换工具<br>3.优化sdk调用流程<br>4.opengl渲染</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mapbox/tilelive">https://github.com/mapbox/tilelive</a></p>
+<p>“fill”:<br>带有可选描边边框的填充多边形。<br>“line”:<br>A stroked line.<br>“symbol”:<br>图标或文本标签<br>“circle”:<br>一个圆<br>“heatmap”:<br>一个热图<br>“fill-extrusion”:<br>一个挤压的(3D)多边形<br>“raster”:<br>栅格地图纹理，如卫星图像<br>“hillshade”:<br>基于DEM数据的客户端山体阴影可视化。<br>“background”:<br>地图的底色或图案<br>“sky”:<br>一个围绕着地图的球形圆顶，总是在所有其他层的后面渲染。</p>
 
       
     </div>
@@ -508,7 +512,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift208Vue%E6%8E%A5%E5%8F%A3%E6%A8%A1%E7%89%88%E8%AE%BE%E8%AE%A1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift249mapbox%20sdk%E7%BC%96%E8%AF%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -522,7 +526,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/30/M_Swift208Vue%E6%8E%A5%E5%8F%A3%E6%A8%A1%E7%89%88%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">vue接口模版设计</a>
+            <a href="/2021/06/28/M_Swift249mapbox%20sdk%E7%BC%96%E8%AF%91/" class="post-title-link" itemprop="url">mapbox sdk编译</a>
         </h2>
 
         <div class="post-meta">
@@ -531,10 +535,16 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:41" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:30:32" itemprop="dateModified" datetime="2021-11-21T16:30:32+08:00">2021-11-21</time>
+              </span>
 
           
 
@@ -547,7 +557,8 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>因为最近后端在做微服务的改造，我们根据后端的代码也进行了一下前端api接口的整合，也按照后端微服务的形式<br>设计成了一个个的模块，每个模块代表一个微服务。<br>整理完之后，我突然发现，其实前端关于接口方面的代码非常的统一，比较适合做成模版，然后直接拷贝就可以了<br>比较像Xcode，idea等里面的快捷键设计，就像iOS写UITableVuew一样，代理方法非常多，一个一个的敲代理方法<br>会比较耗时，我们通常会将这段代码设计成一个代码块，然后设置一个快捷输入，就能够非常快速的把这段代码敲出来<br>当然我现在写前端比较少，不知道vs code里面是不是也有这种设计，但是今天闲来没事，想设计一个这样的页面，<br>实现代码的模版导出，首先，我们先整理出接口的前端页面有哪些：<br>    // 接口封装<br>    export function getIceLineCount(data){ // 接口名称<br>      return request({<br>        url:<code>/indexWeb/lineCount</code>, // 接口地址<br>        method:’post’, // method<br>        data,// 请求参数<br>      })<br>    }<br>    // 接口参数<br>    iceLineCountQuery: {<br>        pageNum: 1,<br>        pageSize: 20,<br>        deviceName :’’,<br>        cityCompany: “”,<br>        districtCompany: “”,<br>        sfjnsy:1,<br>        voltageLevel: [],<br>    },<br>    // 接口调用<br>    getIceLineCount() {<br>       getIceLineCount(this.iceLineCountQuery).then((res) =&gt; {<br>          console.log(‘getIceLineCount’, res)<br>       })<br>    },<br>其实主要就是这三部分，接口封装、接口参数、接口调用，我们设计一个UI界面<br>    <el-input v-model="methodName" placeholder="请输入接口名称"></el-input><br>    <el-input v-model="url" placeholder="请输入接口地址"></el-input><br>    <el-input v-model="parmas" type="textarea" autosize placeholder="请输入参数"></el-input><br>    <el-input v-model="result" type="textarea" autosize placeholder="请输入参数"></el-input><br>UI界面比较简单，输入接口名称，接口地址，请求参数，输出：接口封装、接口参数、接口调用，的相应代码<br>我们定义模版字符串如下：<br>    get result() : string {<br>        return “// 接口封装\nexport function get” + this.methodName +  “(data){\n<br>      return request({\n<br>        url:<code>&quot; + this.url + &quot;</code>,\n<br>        method:’post’,\n<br>        data \n<br>      })\n<br>    } \n<br>    // 请求参数\n”+ this.methodName.charAt(0).toLowerCase() + this.methodName.slice(1) + “Query: {\n<br>    “ + this.parmas + “\n<br>    },\n<br>    // 接口调用\nget”+ this.methodName +”() {\n<br>      get”+ this.methodName +”(this.”+ this.methodName.charAt(0).toLowerCase() + this.methodName.slice(1) + “Query).then((res) =&gt; {\n<br>        console.log(‘get”+ this.methodName +”‘, res)\n<br>      })\n<br>    },”<br>然后利用input model的双向绑定特性，只要我们输入方法名，接口地址和参数我们就能动态的变更模版字符串，<br>然后输出接口模版，这样我们就实现了api模版的导出了，非常简单。</p>
+          <p>mapbox编译流程<br>git clone –depth 1 –branch ios-v5.9.0 <a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git">https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git</a><br>克隆项目后，默认子模块目录下无任何内容。需要在项目根目录执行如下命令完成子模块的下载：<br>git submodule init<br>git submodule update<br>因为国内网络，github访问比较容易出现443的情况，建议直接修改git的submodule的链接地址<br>首先显示隐藏文件 将链接为 <a target="_blank" rel="noopener" href="https://github.com/">https://github.com</a> 改为 <a target="_blank" rel="noopener" href="https://hub.fastgit.org/">https://hub.fastgit.org</a><br>cd vendor/mapbox-gl-native<br>cmake . -B build<br>cmake –build build<br>cd ../..<br>make iproj</p>
+<p>Android 编译<br>git clone –depth 1 –branch android-v9.2.1 <a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-android.git">https://hub.fastgit.org/mapbox/mapbox-gl-native-android.git</a><br>git submodule init<br>git submodule update<br>make aproj （我这里提示文件没找到，然后我用android studio 打开了工程，然后就开始了各种依赖的下载，大约一个小时，如果android studio 卡死的话，可以尝试重启再加载）<br>当所有依赖加载完成后，编译项目会提示模块找不到，这里需要进入mapbox-gl-native，进行依赖的加载，注意git地址更换，方便加载速度。<br>cd vendor/mapbox-gl-native<br>git submodule init<br>git submodule update</p>
 
       
     </div>
@@ -567,7 +578,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift250mapbox-3dtile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -581,7 +592,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/" class="post-title-link" itemprop="url">vue构建前端权限管理页面</a>
+            <a href="/2021/06/28/M_Swift250mapbox-3dtile/" class="post-title-link" itemprop="url">mapbox-3dtile</a>
         </h2>
 
         <div class="post-meta">
@@ -590,10 +601,16 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:38" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:30:55" itemprop="dateModified" datetime="2021-11-21T16:30:55+08:00">2021-11-21</time>
+              </span>
 
           
 
@@ -606,7 +623,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>前端开发完后需要实现权限管理，需要不同的地方有不同的权限，本来这个应该是后端的一个接口来控制的，但是，思来想去页面是前端的，<br>也得前端告诉后端有哪些地方需要权限啊，接下来就是权限设计的计划了<br>因为最终还是要后端来给前端的，交互方式普遍都是采用json，那么就思考怎么生成json吧，具体json设计如下<br>     array:[<br>      {<br>        key:”dashbord”,<br>        name:”总览权限控制”,<br>        value:[<br>          {<br>            key:”show”,<br>            name:’是否显示’,<br>            value: true<br>          },{<br>            key:”show_daily”,<br>            name:’是否显示工作日报’,<br>            value: true<br>          }<br>        ]<br>    }];<br>其实非常直接，就是哪些对方需要权限，然后按模块划分出来，这样就是一个数组的结构，然后每个数组就是一个模块<br>每个模块都有一个key来表示模块的唯一性，有name来描述模块，模块下面有很多权限，我们又设计成一个数组<br>每个权限都是key、name、value形式，分别表示唯一性，权限描述、是否具备权限。<br>json设计完了，那么我想我们如果有一个非常漂亮的展示页面就更直观了，我们使用elementui，开源的框架能够非常方便的构建ui<br>具体设计如下：<br> &lt;el-tabs tab-position=”left” @tab-click=”handleClick”&gt;<br>    <el-tab-pane :label="item.name" v-for="(item,index) of array" :key="index"><br>      <el-row :gutter="20" v-for="(subitem,subindex) of item.value" :key="subindex" style="padding:10px;"><br>        <el-col :span="8"><el-input v-model="subitem.name" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8"><el-input v-model="subitem.key" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8" style="line-height:40px;"><el-switch v-model="subitem.value"></el-switch></el-col><br>      </el-row><br>      <el-row><br>        <el-col :span="20">&lt;el-button @click=”addChildClick”&gt;新增</el-button></el-col><br>      </el-row><br>    </el-tab-pane><br>  </el-tabs><br>代码非常简单，就是遍历json，把模块做成一个左侧的tab栏<br>然后再每个模块栏里面遍历value，用输入框和switch表示权限信息，我的想法是利用input的双向绑定，我们能够非常简单的修改编辑权限<br>当然，编辑的也就是我们的json数据了，我们再设计一个下载按钮就可以非常方便的下载数据了：<br>     var json = JSON.stringify(this.array,null,’\t’);<br>    const link = document.createElement(‘a’)<br>    link.style.display = ‘none’<br>    link.href = window.URL.createObjectURL(new Blob([json]))<br>    link.setAttribute(‘download’, ‘permissions.json’)<br>    document.body.appendChild(link)<br>    link.click()<br>    document.body.removeChild(link)<br>后面我们又设计了一个新增的按钮，然后也可以新增权限了，这里就不再赘述了，<br>最大的问题是我们修改完数据，我们不能动态的修改vue中json的代码，我想我们是不是应该把这个下载和json设计在一个位置，这样就可以实现数据修改了</p>
+          <p>mapbox结合3dtile<br><a target="_blank" rel="noopener" href="https://github.com/Geodan/mapbox-3dtiles">https://github.com/Geodan/mapbox-3dtiles</a><br><a target="_blank" rel="noopener" href="https://github.com/liujun3660105/mapbox-3dtiles">https://github.com/liujun3660105/mapbox-3dtiles</a></p>
 
       
     </div>
@@ -626,7 +643,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift209Vue%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift254mapbox%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -640,7 +657,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/30/M_Swift209Vue%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">vue2数据驱动原理</a>
+            <a href="/2021/06/28/M_Swift254mapbox%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">mapbox学习</a>
         </h2>
 
         <div class="post-meta">
@@ -649,10 +666,16 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:45" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:32:39" itemprop="dateModified" datetime="2021-11-21T16:32:39+08:00">2021-11-21</time>
+              </span>
 
           
 
@@ -665,17 +688,12 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>首先通过 Object.defineProperty 遍历数据 data 劫持每个属性的 getter 和 setter 生成 Observer，通过一个 Depend 收集依赖，然后在数据发生变化时通知消息给 Watcher，触发相应监听回调，然后达到数据驱动视图的目的<br>// 第 1 步: 定义数据和视图<br>var model = {<br>  isShow: false<br>}<br>var view = document.querySelector(‘div’)</p>
-<p>// 第 2 步: 定义视图刷新方法<br>var updateView = function(value) {<br>  view.style.display = value ? ‘’ : ‘none’<br>}</p>
-<p>// 第 3 步: 设置初始视图表现<br>var directiveKey = view.getAttribute(‘v-show’)<br>updateView(model[directiveKey])</p>
-<p>// 第 4 步: 监听数据变化，然后刷新视图，达到数据驱动的目的<br>Object.defineProperty(model, ‘isShow’, {<br>  set: function(val) {<br>    updateView(val)<br>  }<br>})<br>vue3是采用数据劫持结合发布者-订阅者模式的方式，通过new Proxy()来劫持各个属性的setter，getter，在数据变动时发布消息给订阅者，触发相应的监听回调。<br>3.proxy比Object.defineProperty好在哪里？</p>
-<p>proxy优势：</p>
-<p>A.可以直接监听对象而非属性</p>
-<p>B.可以直接监听数组的变化</p>
-<p>C.Proxy有多达13种拦截方式，不限于apply、ownKeys、deleteProperty、has等等是Object.defineProperty不具备的</p>
-<p>D.Proxy返回的是一个新对象，可以只操作新的对象达到目的，而Object.defineProperty只能遍历对象属性直接修改</p>
-<p>Object.defineProperty的优势：</p>
-<p>A.兼容性好，支持IE9，而Proxy的存在浏览器兼容性问题，而且无法用polyfill磨平。</p>
+          <p>mapbox探索<br>1.bpf格式的mvt数据解析成地理空间几何（完成）<br>2.geojson格式数据解析成地理空间几何 （完成）<br>3.mapbox样式数据解析（50%）<br>4.加载mapbox数据（20%）<br>5.mapbox数据样式匹配（0%）<br>6.mapbox数据格式转换<br>7.mapbox数据坐标转换<br>8.mapbox数据渲染<br>9.mapbox自定义服务调用<br>10.geojson自定义服务调用</p>
+<p>数据处理：<br>三角剖分 （具备）<br>面数据中心点-面数据标签 （具备）<br>碰撞检测<br>坐标转换</p>
+<p>功能支持：<br>1.源数据支持 栅格贴图、mvt、geojson格式<br>2.支持样式配置文件，支持动态修改样式<br>3.支持多种坐标体系<br>4.支持叠加多种图层，图层管理<br>5.支持3d图层</p>
+<p>Map -》 图层 -》矢量瓦片 -〉 样式 - 》空间几何图形<br>Layer -》tile -》 style - 》 geometry</p>
+<p>Mapbox数据与我们数据同步调整<br>1.</p>
+<p>opengl绘制点、线、面</p>
 
       
     </div>
@@ -695,7 +713,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift211%E5%89%8D%E7%AB%AFIndexDB/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -709,7 +727,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/30/M_Swift211%E5%89%8D%E7%AB%AFIndexDB/" class="post-title-link" itemprop="url">IndexDB了解</a>
+            <a href="/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">geotools学习</a>
         </h2>
 
         <div class="post-meta">
@@ -718,10 +736,16 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:52" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:29:47" itemprop="dateModified" datetime="2021-11-21T16:29:47+08:00">2021-11-21</time>
+              </span>
 
           
 
@@ -734,7 +758,12 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>IndexedDB 是一种底层 API，用于在客户端存储大量的结构化数据（也包括文件/二进制大型对象（blobs））。该 API 使用索引实现对数据的高性能搜索。虽然 Web Storage 在存储较少量的数据很有用，但对于存储更大量的结构化数据来说力不从心。而 IndexedDB 提供了这种场景的解决方案。本页面 MDN IndexedDB 的主要引导页 - 这里，我们提供了完整的 API 参考和使用指南，浏览器支持细节，以及关键概念的一些解释的链接<br>IndexedDB 是一个基于 JavaScript 的面向对象数据库。IndexedDB 允许您存储和检索用键索引的对象；可以存储结构化克隆算法支持的任何对象。您只需要指定数据库模式，打开与数据库的连接，然后检索和更新一系列事务。<br>// 初始化数据库<br>window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;<br>if(!window.indexedDB)<br>{<br>    console.log(“你的浏览器不支持IndexedDB”);<br>}<br>var request = window.indexedDB.open(“testDB”, 2); // 打开数据库，parmas：数据库名称及版本号<br>往ObjectStore里新增对象<br>var transaction = db.transaction([“students”],”readwrite”);<br>transaction.oncomplete = function(event) {<br>    console.log(“Success”);<br>};<br>transaction.onerror = function(event) {<br>    console.log(“Error”);<br>};<br>var objectStore = transaction.objectStore(“students”);<br>objectStore.add({rollNo: rollNo, name: name});<br>删除对象<br>db.transaction([“students”],”readwrite”).objectStore(“students”).delete(rollNo);<br>通过key取出对象<br>var request = db.transaction([“students”],”readwrite”).objectStore(“students”).get(rollNo);<br>request.onsuccess = function(event){<br>    console.log(“Name : “+request.result.name);<br>};<br>更行对象<br>var transaction = db.transaction([“students”],”readwrite”);<br>var objectStore = transaction.objectStore(“students”);<br>var request = objectStore.get(rollNo);<br>request.onsuccess = function(event){<br>    console.log(“Updating : “+request.result.name + “ to “ + name);<br>    request.result.name = name;<br>    objectStore.put(request.result);<br>};</p>
+          <p>安装gdal<br>brew install gdal<br>安装tippecanoe<br>brew install gdal tippecanoe<br>安装mbutil<br>git clone <a target="_blank" rel="noopener" href="https://github.com/mapbox/mbutil.git">https://github.com/mapbox/mbutil.git</a><br>cd mbutil<br>sudo python setup.py install</p>
+<p>shpfile转geojson<br>ogr2ogr -f GeoJSON ne_10m_railroads.geojson ne_10m_railroads.shp</p>
+<p>geojson转mbtile<br>tippecanoe -o file.mbtiles file.json<br>使用tippecanoe 直接生成缓存目录的pbf：<br>tippecanoe us_states.json -e us_stats_tileset -zg<br>如果你不确定所使用数据的最大级别，可以使用 -zg 来根据数据密度自动估算一个级别。<br>tippecanoe -o outfile.mbtiles -Z8  -z20 infile.geojson<br> -Z 是切片的最小zoom, -z 切片的最大zoom<br>tippecanoe us_states.json -e us_stats_tileset -Z8  -z8<br>合并多个图层<br>tippecanoe -e us_stats_tileset -zg us_states.json us_states1.json<br>tippecanoe在制作切片进行了gzip压缩<br>tippecanoe -e lakepbf -pC -Z8 -z14 -f lake.geojson</p>
+<p>mbtile转pbf<br>mb-util –image_format=pbf opgrsp_gb.mbtiles ./opgrsp_gb_tileset<br>转换出来的是gzip格式的，需要解压缩一下<br>gzip -d -r -S .pbf *<br>解压缩后会丢失.pbf的后缀，可以直接在地址上不加后缀，或者调用如下<br>find . -type f -exec mv ‘{}’ ‘{}’.pbf ;</p>
+<p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a></p>
+<p>数据转换：<br>java开发，采用geotools工具集，将mif或shp文件转换成geojson</p>
 
       
     </div>
@@ -754,7 +783,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift253mapbox%E8%AF%B7%E6%B1%82/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -768,7 +797,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/" class="post-title-link" itemprop="url">开发杂谈</a>
+            <a href="/2021/06/28/M_Swift253mapbox%E8%AF%B7%E6%B1%82/" class="post-title-link" itemprop="url">mapbox请求</a>
         </h2>
 
         <div class="post-meta">
@@ -777,10 +806,16 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:49" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:31:59" itemprop="dateModified" datetime="2021-11-21T16:31:59+08:00">2021-11-21</time>
+              </span>
 
           
 
@@ -793,37 +828,12 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>iOS路由实现原理：基于url，基于反射<br>Category+NSInvocation 方案的优点是便捷，因为 Category 的专用接口放在平台库，以后有除了 BKit 以外的其他调用方也可以直接调用，还有更多强大的功能。<br>组件之间的依赖除了显式的依赖，还存在很多隐式依赖，代码层面，除了普通的接口依赖，还有宏依赖、枚举依赖、全局变量依赖以及内联函数等的依赖。单仓 lint 进行编译链接完备性检查并不能解决依赖变动对其他二进制的影响。<br>因此需要借助源码层面的依赖分析，判断当前组件的变更对其他依赖当前组件的二进制是否有影响，在 CI 流程中及时发现并拦截。否则错误的二进制发版，会直接导致整个 CI 研发流程和本地研发都受到影响。<br>大型项目的组件化工作是一个系统性工程。涉及工程架构的改造、CI/CD 研发工具链的支撑、本地研发工具链的支撑，业务架构的设计优化，需要从各个方面综合考虑成本和收益。<br>没有最好的架构，只有更好的架构，在架构演进的过程中，我们需要充分考虑架构的改动对业务的影响以及能给业务带来的收益。好的架构一定是能帮助业务节省时间，保证质量的。与此同时，我们在架构改进的过程中，要保证不能影响业务的正常迭代，所以向前兼容且避免大面积冲突也是很重要的事情。<br>组件化里面处处都有惊喜，比如一个小小的 hmap 优化，可以很大程度的减少编译耗时，比如一个二进制的压缩和解压的优化，可以很大程度减少 pod install 的整体耗时。<br>当然这里面也会有很多很棘手的问题，需要通过一些特殊的方案解决，比如针对分布式开发，由于阻塞式发版必然会导致一些不同分支存在冲突的代码发版后影响主干的稳定性。<br>前端可视化探索总结：基于积木形式的拖拽界面，基于markdown形式的文档编辑界面<br>Venom：iOS工程集成，类似pod<br>Metabase：可以帮助你把数据库中的数据更好的呈现给更多人<br>Lerna js多包存储库管理工具<br>H5长列表渲染：<br>如果只渲染展示可见范围内的 dom ，原来的滚动条就没了，如何重现原有的滚动条？<br>滚动条的问题解决后，如何根据当前滚动位置来知道该渲染列表的哪部分？<br>ThreadPoolExecutor：类似iOS中的GCD<br>线程池运行的状态，并不是用户显式设置的，而是伴随着线程池的运行，由内部来维护。线程池内部使用一个变量维护两个值：运行状态(runState)和线程数量 (workerCount)。在具体实现中，线程池将运行状态(runState)、线程数量 (workerCount)两个关键参数的维护放在了一起<br>主要作用：任务调度、任务缓冲、线程回收<br>LruCache：采用的缓存算法为LRU(Least Recently Used)，即最近最少使用算法。这一算法的核心思想是当缓存数据达到预设上限后，会优先淘汰近期最少使用的缓存对象。LruCache内部维护一个双向链表和一个映射表。链表按照使用顺序存储缓存数据，越早使用的数据越靠近链表尾部，越晚使用的数据越靠近链表头部；映射表通过Key-Value结构，提供高效的查找操作，通过键值可以判断某一数据是否缓存，如果缓存直接获取缓存数据所属的链表节点，进一步获取缓存数据。LruCache结构图如下所示，上半部分是双向链表，下半部分是映射表（不一定有序）。双向链表中value_1所处位置为链表头部，value_N所处位置为链表尾部。<br>HashLruCache：引入某种哈希算法，将缓存数据分散到N个LruCache上。<br>冷启动解决方案：<br>    解决存量问题：优化当前性能瓶颈点，优化启动流程，缩短冷启动时间。<br>    管控增量问题：冷启动流程规范化，通过代码范式和文档指导后续冷启动过程代码的维护，控制时间增量。<br>    完善监控：完善冷启动性能指标监控，收集更详细的数据，及时发现性能问题。<br>iOS静态分析：Static Analyzer、Infer、OCLint<br>Js定时器：1.存放 callback 2.启动一个倒计时 3.倒计时结束，取出存好的 callback，RUN！<br>前端加密：我们也可以借助 webpack-subresource-integrity 轻易实现 integrity 的添加过程，保持对开发者透明。<br>开启 SRI，浏览器会对相关资源进行 CORS 校验，所以被加载的资源要么在同域下，要么得满足 CORS 机制（具体方式可查看 脚本错误量极致优化-监控上报与 Script error 中 跨源资源共享机制 ( CORS ) 章节）。<br>HTTPS 可以有效应对流量劫持的问题，SRI 在资源完整性再上一道屏障，CSP 也进行了其他方面的补充。“三驾马车” 为页面资源安全 “保驾护航”。当然这也绝非银弹，安全之路充满着荆棘与挑战，任重道远。<br>alloy-worker：Worker 的多线程能力有望成为复杂前端项目的标配, 在减少 UI 线程卡顿和压榨计算机性能上有收益. 但目前国内实践较少, 一方面是业务复杂程度未触及; 另一方面是社区缺少科普和实践分享.<br>聊天界面反向渲染，竟然实现了聊天信息始终在底部。。。。<br>html优化：压缩、减包、拆包、动态加载包及图片优化上<br>cdn 分发、dns 解析、http 缓存、数据预请求，数据缓存及首屏优化大杀器——直出等<br>大部分主流的页面会通过服务器进行渲染，吐出 html 文件到前端<br>通过离线包技术能够很好解决 html 文件本身加载需要时间的问题。离线包基本思路都是通过 webview 统一拦截 url，将资源映射到本地离线包，更新的时候对版本资源检测，下载和维护本地缓存目录中的资源。比如腾讯的 webso 和 Alloykit 的离线包方案。<br>前端内存优化：</p>
-<ol>
-<li>避免没有必要全局变量的使用<br>我们可以在 JS 文件的开头通过添加”use strict” 开启严格的解析模式，来避免一些意外创建的全局变量。</li>
-<li>及时解除引用</li>
-<li>减少对象的创建</li>
-<li>内存不是缓存</li>
-<li>避免复杂的递归调用；</li>
-<li>合理使用的 IndexedDB</li>
-</ol>
-<p>我们应该编写有类型系统的 JavaScript，而不是能编译成 JavaScript 的 Java/C#。任何一个 TypeScript 程序，在手动删去类型部分，将后缀改成 .js 后，都应能够正常运行。<br>基本类型<br>基本类型，也可以理解为原子类型。包括 number、boolean、string、null、undefined、function、array、字面量（true，false，1，2，‘a’）等。它们无法再细分。<br>页面可视化组建：html模版、配置字段、业务逻辑、布局样式、Json数据驱动</p>
-<p>AVAudioSession<br>AVAudioSessionMode<br>AVAudioSessionCategoryAmbient // 背景声音，可以与其他音乐混合，用于以非语音为主的应用<br>AVAudioSessionCategory<br>AVAudioSessionCategoryPlayback // 只用于播放<br>AVAudioSessionCategoryPlayAndRecord // 既可以录音也可以播放<br>AVAudioSessionInterruptionNotification // 电话打断等<br>媒体声音被抑制：<br>媒体声音在媒体音量下开启播放，播放途中因为连麦而切换到了通话音量，此时因为系统特性，媒体音量会被通话音量抑制而导致声音变小。<br>针对该问题，我们使用音视频 SDK 提供的混音、混流功能来规避。基本原理是播放媒体资源时，我们拿到资源的 pcm 音频数据，将数据抛给 RTC 的 audioUnit 进行混合，由 RTC 音频播放单元统一播放，如果此时 RTC 使用的是通话音量，则媒体资源也是使用的通话音量播放，反之亦然。以此来保证媒体资源与 RTC 始终保持统一的音量控制机制，而避免声音大小存在差异。<br>安装包优化<br>2.1、使用合适的资源压缩配置<br>    Pod 库和主工程的最低支持版本从 iOS 8.0 提升成 iOS 9.0<br>    开启 Pod 库和主工程 Xcode Build Settings 中的 ASSETCATALOG_COMPILER_OPTIMIZATION space 选项<br>     xcrun assetutil –info Assets.car 命令检查 Assets.car 中每张图片使用的编码压缩算法<br>2.2、使用 RGB with palette 压缩图片<br>Mach-O 文件优化<br>3.1、使用 -Oz 编译参数<br>Oz 的核心原理是对重复的连续机器指令外联成函数进行复用，和“内联函数”的原理正好相反。因此，开启 Oz，能减小二进制的大小，但同时理论上会带来执行效率的额外消耗。<br>3.2、使用链接时优化 LTO<br>Link-Time Optimization 链接时优化，是 Xcode 自带的一个编译/链接参数。根据 WWDC 2016 《What’s New in LLVM》[4]的介绍，LTO 对包大小和运行效率都有正向影响。今日头条在编译和链接中均开启 Incremental LTO 后，包体积减小 6.5MB。<br>如果我们用 @dynamic 修饰一个属性，不生成成员变量、get/set 方法，则一个属性可以由 224B 减少到 36B，即仅包含 property 部分的大小。<br>3.5、__TEXT 段迁移<br>在链接阶段使用 -rename_p 选项将 __TEXT,__text 迁移到 __BD_TEXT,__text，减少苹果对可执行文件的加密范围，提升可执行文件的压缩效率，从而减少 Download Size。<br>WebView 渲染需要经过下面几个步骤：<br>    解析 HTML 文件<br>    加载 JavaScript 和 CSS 文件<br>    解析并执行 JavaScript<br>    构建 DOM 结构<br>    加载图片等资源<br>    页面加载完毕<br>模板拆分<br>    把头条详情页的公共样式 CSS 和 逻辑 JS 都抽离出来，形成一个独立而完备的详情页模板，这样我们就可以把模板直接内置在客户端中。<br>模板优化<br>    WebView 需要在加载完主 HTML 之后再去加载 HTML 中的 JS 和 CSS，需要多次 IO 操作，于是我们将 JS 和 CSS 还有一些图片都内联到一个文件中，这样，加载模板时就只需要一次 IO 操作，也大大减少因为 IO 加载冲突导致模板加载失败问题<br>模板简化<br>    我们将部分非必须的脚本异步化拉取，精简不必要的样式和 JS 代码，将模板大小压缩了 20% 以上<br>    我们并不需要在用户进入页面的时候才去创建 WebView 以及加载模板，我们只需要在合适的时机在后台创建 WebView，并且提前预热加载模板，当用户点击进入页面的时候就能使用已经加载好模板的 WebView，直接将详情页的内容数据通过 JS 注入到页面中，前端收到数据后进行页面渲染即可。<br>    我们每次使用的时候都是同一个模板，所以我们使用完当前 WebView 之后，只需要在用户退出页面的时候把正文数据清空，这样进入下一个页面的时候就能够继续复用这个 WebView 重新注入数据即可。<br>网络优化<br>    CDN 加速<br>    我们将详情页内容数据分为静态和动态两部分，将正文内容、标题、作者栏等用户主要消费的又基本不变的内容托管到了 CDN 上，托管到 CDN 之后，全国各地的用户可以直接从最佳节点就获取到详情页数据，也大大节省了带宽成本。<br>    容灾<br>    为了防止某个 CDN 出现故障，导致服务雪崩，服务端会下发多个 CDN 链接，当用户访问当前 CDN 节点的出异常时，可以快速自动切换到下个 CDN 节点。<br>    2. 快速超时<br>    一般的超时策略，客户端在请求时，会遍历请求 CDN 1、2、3。如果这些 CDN 都请求失败，则整个网络请求算作失败。<br>    假设请求 CDN 的超时时间是 15s。如果 CDN 1 出现故障，则需要等待 15s 才能切换到 CDN 2上，这对于详情页的加载时间来说是不可接受，如果用户网络突然变差，则需要等待 45s 才能返回失败展示错误页。<br>    渲染优化<br>    为了提高用户的首屏效率，我们在服务端就会把所有的详情页正文的 HTML 数据组装好，通过将服务端直出内容注入到页面中时，可以直接给 WebView 进行渲染，对于其他动态下发的内容（比如相关搜索），前端再进行二次异步处理，提升用户效率。<br>    所以在详情页中，我们会将图片和视频等非文字内容通过原生组件的方式放在客户端进行渲染，既可以提高渲染效率，也可以减少不必要的流量消耗。<br>    当 WKWebView 上占用内存过大时，WKWebView 所在的 WebContent Process 会被系统 kill 掉，反映在用户体验上就是发生了白屏。<br>    WKWebView 提供的回调 webViewWebContentProcessDidTerminate 函数中通过 reload 方法重新加载当前页面恢复，但是这种情况只适用于通过 loadRequest 加载的请求，在详情页中，由于使用了模板化的 WebView 中，重新 reload 只能重新 reload 模板，并不能正常恢复整个详情页，需要客户端重新加载模板之后再重新注入数据。</p>
-<p> 遍历方式</p>
-<pre><code>for each或者iterator
-移动端适配mediaquery媒体查询
-@media screen and (max-width: 300px) &#123;
-    body &#123;
-        background-color:lightblue;
-    &#125;
-&#125;
-rem原理
-字体单位，跟px不同的是根据root element动态变化
-1ren=16px 浏览器默认字体大小
-
-
-Java注解
-@Override @Deprecated @Suppvisewarning
-Spring注解
-@Autowirte @Service @Repository
-MyBatis
-@InsertProvider @UpdateProvider @Options
-</code></pre>
+          <p>// <a target="_blank" rel="noopener" href="https://api.mapbox.com/">https://api.mapbox.com</a></p>
+<p>// 1.请求样式配置<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/styles/v1/mapbox/streets-v8?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">http://192.168.3.86:8080/styles/v1/mapbox/streets-v8?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
+<p>// 2.请求高程配置<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&amp;secure">http://192.168.3.86:8080/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&amp;secure</a></p>
+<p>// 3.请求图片<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">http://192.168.3.86:8080/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a><br>对比：<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">https://api.mapbox.com/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
+<p>// 4.请求字体</p>
+<p>程序默认数据路径<br>normalizeSourceURL = baseURL + “/v4/{domain}.json?access_token=” + accessToken + “&amp;secure”;<br>normalizeStyleURL = baseURL + “/styles/v1{path}?access_token=” + accessToken;<br>normalizeSpriteURL = baseURL + “/styles/v1{directory}{filename}/sprite{extension}?access_token=” + accessToken;<br>normalizeGlyphsURL = baseURL + “/fonts/v1{path}?access_token=” + accessToken;<br>normalizeTileURL = baseURL + “/v4{path}?access_token=” + accessToken;</p>
 
       
     </div>
@@ -842,7 +852,7 @@ MyBatis
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -908,7 +918,7 @@ MyBatis
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-count">366</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

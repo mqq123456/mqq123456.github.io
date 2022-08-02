@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI3UIImageView/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/D_Net18SQLite/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/C_UI3UIImageView/" class="post-title-link" itemprop="url">UIImageView</a>
+            <a href="/2016/08/01/D_Net18SQLite/" class="post-title-link" itemprop="url">SQLite</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 23:29:58" itemprop="dateCreated datePublished" datetime="2016-07-30T23:29:58+08:00">2016-07-30</time>
+              <time title="创建时间：2016-08-01 10:25:40" itemprop="dateCreated datePublished" datetime="2016-08-01T10:25:40+08:00">2016-08-01</time>
             </span>
 
           
@@ -187,25 +187,73 @@
 
       
           <blockquote>
-<p>声明</p>
+<p>iOS中的数据存储方式</p>
 </blockquote>
-<p>UIImageView *imageView = [[UIImageView alloc] init];<br>iphone5s 320x568<br>细节: 显示图片根据frame缩放</p>
+<p>● Plist(NSArray\NSDictionary)<br>● Preference(偏好设置\NSUserDefaults)<br>● NSCoding(NSKeyedArchiver\NSkeyedUnarchiver)<br>● SQLite3<br>● Core Data</p>
 <blockquote>
-<p>设置位置</p>
+<p>SQLite</p>
 </blockquote>
-<p>imageView.frame = CGRectMake(0, 0, 320, 568);</p>
+<p>● 什么是SQLite<br>● SQLite是一款轻型的嵌入式数据库<br>● 它占用资源非常的低,在嵌入式设备中,可能只需要几百K的内存就够了<br>● 它的处理速度比Mysql、PostgreSQL这两款著名的数据库都还快<br>● 什么是数据库<br>● 数据库(Database)是按照数据结构来组织、存储和管理数据的仓库<br>● 数据库可以分为2大种类 • 关系型数据库(主流)<br>• 对象型数据库<br>● 常用关系型数据库<br>● PC端:Oracle、MySQL、SQL Server、Access、DB2、Sybase<br>● 嵌入式\移动客户端:SQLite</p>
 <blockquote>
-<p>添加图片</p>
+<p>如何存储数据</p>
 </blockquote>
-<p>（注意：image是UIImageView的必备属性 ）<br>imageView.image = [UIImage imageNamed:@”back2.jpg”];</p>
+<p>● 数据库是如何存储数据的<br>● 数据库的存储结构和excel很像,以表(table)为单位<br>● 数据库存储数据的步骤<br>● 新建一张表(table)<br>● 添加多个字段(column,列,属性)<br>● 添加多行记录(row,record,每行存放多个字段对应的值)</p>
 <blockquote>
-<p>显示到桌面</p>
+<p>SQL语句</p>
 </blockquote>
-<p>[self.window addSubview:imageView];</p>
+<p>● 如何在程序运行过程中操作数据库中的数据<br>● 那得先学会使用SQL语句<br>● 什么是SQL<br>● SQL(structured query language):结构化查询语言<br>● SQL是一种对关系型数据库中的数据进行定义和操作的语言<br>● SQL语言简洁,语法简单,好学好用<br>● 什么是SQL语句<br>● 使用SQL语言编写出来的句子\代码,就是SQL语句<br>● 在程序运行过程中,要想操作(增删改查,CRUD)数据库中的数据,必须使 用SQL语句</p>
 <blockquote>
-<p>在设置背景图片时的拉伸问题</p>
+<p>SQL语句的特点</p>
 </blockquote>
-<p>图片拉伸中的问题。图片是向左向上拉伸的。<br>拉伸的距离相当于图片最顶端和最左边向里多少距离的位置向上向左拉伸<br>UIImageView *im=[[UIImageView alloc]initWithFrame:CGRectMake(100, 200, 100, 100)];<br>im.image=[[UIImage imageNamed:@”logo_title”]stretchableImageWithLeftCapWidth:4 topCapHeight:4];</p>
+<p>● 不区分大小写(比如数据库认为user和UsEr是一样的)<br>● 每条语句都必须以分号 ; 结尾<br>● SQL中的常用关键字有<br>● select、insert、update、delete、from、create、where、desc、order、by、grou<br>p、table、alter、view、index等等</p>
+<blockquote>
+<p>SQL语句的种类</p>
+</blockquote>
+<p>● 数据库中不可以使用关键字来命名表、字段<br>数据定义语句(DDL:Data Definition Language)<br>● 包括create和drop等操作<br>● 在数据库中创建新表或删除表(create table或 drop table)<br>● 数据操作语句(DML:Data Manipulation Language)<br>● 包括insert、update、delete等操作<br>● 上面的3种操作分别用于添加、修改、删除表中的数据<br>● 数据查询语句(DQL:Data Query Language)<br>● 可以用于查询获得表中的数据<br>● 关键字select是DQL(也是所有SQL)用得最多的操作<br>● 其他DQL常用的关键字有where,order by,group by和having</p>
+<blockquote>
+<p>创表</p>
+</blockquote>
+<p>● 格式<br>● create table 表名 (字段名1 字段类型1, 字段名2 字段类型2, …) ;<br>● create table if not exists 表名 (字段名1 字段类型1, 字段名2 字段类型2, …) ;<br>● 示例<br>● create table t_student (id integer, name text, age inetger, score real) ;</p>
+<blockquote>
+<p>字段类型</p>
+</blockquote>
+<p>● SQLite将数据划分为以下几种存储类型:<br>● integer : 整型值<br>● real : 浮点值<br>● text : 文本字符串<br>● blob : 二进制数据(比如文件)<br>● 实际上SQLite是无类型的<br>● 就算声明为integer类型,还是能存储字符串文本(主键除外)<br>● 建表时声明啥类型或者不声明类型都可以,也就意味着创表语句可以这么写:<br>• create table t_student(name, age);<br>● 为了保持良好的编程规范、方便程序员之间的交流,编写建表语句的时候最好 加上每个字段的具体类型</p>
+<blockquote>
+<p>删表</p>
+</blockquote>
+<p>● 格式<br>● drop table 表名 ;<br>● drop table if exists 表名 ;<br>● 示例<br>● drop table t_student ;</p>
+<blockquote>
+<p>插入数据(insert)</p>
+</blockquote>
+<p>● 格式<br>● insert into 表名 (字段1, 字段2, …) values (字段1的值, 字段2的值, …) ;<br>● 示例<br>● insert into t_student (name, age) values (‘mj’, 10) ;<br>● 注意<br>● 数据库中的字符串内容应该用单引号 ’ 括住</p>
+<blockquote>
+<p>更新数据(update)</p>
+</blockquote>
+<p>● 格式<br>● update 表名 set 字段1 = 字段1的值, 字段2 = 字段2的值, … ;<br>● 示例<br>● update t_student set name = ‘jack’, age = 20 ;<br>● 注意<br>● 上面的示例会将t_student表中所有记录的name都改为jack,age都改为20</p>
+<blockquote>
+<p>删除数据(delete)</p>
+</blockquote>
+<p>● 格式<br>● delete from 表名 ;<br>● 示例<br>● delete from t_student ;<br>● 注意<br>● 上面的示例会将t_student表中所有记录都删掉</p>
+<blockquote>
+<p>条件语句</p>
+</blockquote>
+<p>● 如果只想更新或者删除某些固定的记录,那就必须在DML语句后加上一些条件<br>● 条件语句的常见格式<br>● where字段=某个值; //不能用两个=<br>● where字段is某个值; //is相当于=<br>● where 字段 != 某个值 ;<br>● where字段isnot某个值; //isnot相当于!=<br>● where字段&gt;某个值;<br>● where 字段1 = 某个值 and 字段2 &gt; 某个值 ; // and相当于C语言中的 &amp;&amp;<br>● where字段1=某个值or字段2=某个值; // or相当于C语言中的||</p>
+<blockquote>
+<p>排序</p>
+</blockquote>
+<p>● 查询出来的结果可以用order by进行排序<br>● select * from t_student order by 字段 ;<br>• select * from t_student order by age ;<br>● 默认是按照升序排序(由小到大),也可以变为降序(由大到小)<br>● select * from t_student order by age desc ; //降序<br>● select * from t_student order by age asc ; // 升序(默认)<br>● 也可以用多个字段进行排序<br>● select * from t_student order by age asc, height desc ;</p>
+<blockquote>
+<p>limit</p>
+</blockquote>
+<p>● 使用limit可以精确地控制查询结果的数量,比如每次只查询10条数据<br>● 格式<br>● select * from 表名 limit 数值1, 数值2 ;<br>● 示例<br>● select * from t_student limit 4, 8 ;<br>• 可以理解为:跳过最前面4条语句,然后取8条记录<br>• 先按照年龄排序(升序),年龄相等就按照身高排序(降序)</p>
+<blockquote>
+<p>简单约束</p>
+</blockquote>
+<p>● 建表时可以给特定的字段设置一些约束条件,常见的约束有<br>● not null :规定字段的值不能为null<br>● unique :规定字段的值必须唯一<br>● default :指定字段的默认值 (建议:尽量给字段设定严格的约束,以保证数据的规范性)<br>● 示例<br>● create table t_student (id integer, name text not null unique, age integer not null<br>default 1) ;<br>• name字段不能为null,并且唯一<br>• age字段不能为null,并且默认为1</p>
+<blockquote>
+<p>主键约束</p>
+</blockquote>
+<p>● 如果t_student表中就name和age两个字段,而且有些记录的name和age字段的 值都一样时,那么就没法区分这些数据,造成数据库的记录不唯一,这样就不 方便管理数据<br>● 良好的数据库编程规范应该要保证每条记录的唯一性,为此,增加了主键约束<br>● 也就是说,每张表都必须有一个主键,用来标识记录的唯一性<br>● 什么是主键<br>● 主键(Primary Key,简称PK)用来唯一地标识某一条记录<br>● 例如t_student可以增加一个id字段作为主键,相当于人的身份证<br>● 主键可以是一个字段或多个字段<br>主键的设计原则<br>● 主键应当是对用户没有意义的 ● 永远也不要更新主键<br>● 主键不应包含动态变化的数据 ● 主键应当由计算机自动生成<br> 主键的声明<br>● 在创表的时候用primary key声明一个主键<br>● create table t_student (id integer primary key, name text, age integer) ;<br>● integer类型的id作为t_student表的主键<br>● 主键字段<br>● 只要声明为primary key,就说明是一个主键字段<br>● 主键字段默认就包含了not null 和 unique 两个约束<br>● 如果想要让主键自动增长(必须是integer类型),应该增加autoincrement<br>● create table t_student (id integer primary key autoincrement, name text, age integer) ;</p>
 
       
     </div>
@@ -225,7 +273,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI2Button/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net17%E9%9F%B3%E9%A2%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -239,7 +287,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/C_UI2Button/" class="post-title-link" itemprop="url">UIButton</a>
+            <a href="/2016/07/31/D_Net17%E9%9F%B3%E9%A2%91/" class="post-title-link" itemprop="url">音频</a>
         </h2>
 
         <div class="post-meta">
@@ -249,7 +297,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 23:27:57" itemprop="dateCreated datePublished" datetime="2016-07-30T23:27:57+08:00">2016-07-30</time>
+              <time title="创建时间：2016-07-31 20:59:11" itemprop="dateCreated datePublished" datetime="2016-07-31T20:59:11+08:00">2016-07-31</time>
             </span>
 
           
@@ -263,743 +311,686 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>按钮的创建</p>
-</blockquote>
-<p>以后经常使用类方法创建按钮buttonWithType<br>UIButton *button = [[UIButton alloc]init];<br>系统样式的按钮          UIButtonTypeSystem<br>自定义的按钮              UIButtonTypeCustom<br>详情按钮         UIButtonTypeDetailDisclosure,<br>灰色按钮         UIButtonTypeInfoLight,<br>白色信息按钮      UIButtonTypeInfoDark,<br>加号按钮         UIButtonTypeContactAdd,<br>圆角按钮         UIButtonTypeRoundedRect<br>ios6系统按钮是圆角矩形<br>ios7取消了边框</p>
-<blockquote>
-<p>坐标</p>
-</blockquote>
-<p>button.frame= CGRectMake(100, 100, 100, 30);</p>
-<blockquote>
-<p>设置文本</p>
-</blockquote>
-<p>注意：按钮有多种状态，（正常，高亮，禁止）<br>UIControlStateNormal表示正常状态<br>UIControlStateHighlighted表示高亮状态<br>[button setTitle:@”按我啊” forState:UIControlStateNormal];<br>3.1文本颜色<br>设置文本颜色为红色。<br>[button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];<br>3.2设置文本字体<br>button.titleLabel.font=[UIFont systemFontOfSize:17];</p>
-<blockquote>
-<p>按钮的tag值</p>
-</blockquote>
-<p>button.tag=100; </p>
-<blockquote>
-<p>点击时效果</p>
-</blockquote>
-<p>点击时高亮button.showsTouchWhenHighlighted=YES;<br>禁用状态下按钮是否变暗adjustsImageWhenDisabled<br>高亮状态下按钮是否变暗adjustsImageWhenHighlighted</p>
-<blockquote>
-<p>按钮的点击事件处理</p>
-</blockquote>
-<p>告诉按谬你被执行我定义方法<br>UIControlEventTouchUpInside按钮被点击后弹起，<br>参数1，参数2，哪个对象哪个方法，<br>当按钮被点击弹起瞬间执行方法UIControlEventTouchUpInside<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];</p>
-<blockquote>
-<p>启用禁用按钮</p>
-</blockquote>
-<p>button.enabled=YES;</p>
-<blockquote>
-<p>设置圆角矩形</p>
-</blockquote>
-<p>button.layer.cornerRadius=5;<br>允许剪切，不加可能没有效果。<br>button.clipsToBounds=YES;</p>
-<blockquote>
-<p>图片按钮</p>
-</blockquote>
-<p>1.图片按钮要设置为自定义类型的按钮。<br>UIImage *image=[UIImage imageNamed:@”屏幕快照 2015-01-21 下午2.54.00.png”];<br>添加图片<br>[imageButton setBackgroundImage:image forState:UIControlStateNormal];<br>2.设置图片文字的位置（可以实现     图片文字在按钮上上下左右移动）<br>imageButton.imageEdgeInsets=UIEdgeInsetsMake(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right);<br>imageButton.titleEdgeInsets = UIEdgeInsetsMake(0, -100, 0, 0)<br>注意 ：setImage 和setBackgroundImage区别<br>setImage是设置图片，不可以改变图片的大小，可以通过imageEdgeInsetsMake设置图片的位置，<br>setBackgroundImage是将图片设置为按钮的背景，相当于平铺效果。</p>
-<blockquote>
-<p>在按钮上添加UIImageView</p>
-</blockquote>
-<p>1.声明<br>UIImageView *imageView = [[UIImageView alloc] init];<br>2.设置位置（注意以父视图为准）<br>imageView.frame = CGRectMake(0, 0, 150, 30);<br>3.添加图片<br>imageView.image = [UIImage imageNamed:@”back2.jpg”];<br>4.添加到按钮上<br>[imagebutton addSubview:imageView];</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI1Label/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI1Label/" class="post-title-link" itemprop="url">UILabel</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:27:48" itemprop="dateCreated datePublished" datetime="2016-07-30T23:27:48+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>创建UIlabel</p>
-</blockquote>
-<p>UILabel *label=[[UILabel alloc]init];</p>
-<blockquote>
-<p>坐标</p>
-</blockquote>
-<p>label.frame=CGRectMake(100, 100, 200, 30);</p>
-<blockquote>
-<p>文本</p>
-</blockquote>
-<p>label.text=@”我是标签～”;</p>
-<blockquote>
-<p>颜色</p>
-</blockquote>
-<p>1.文字颜色<br>label.textColor=[UIColor orangeColor];<br>2.三原色设置颜色。<br>label.textColor = [UIColor colorWithRed:0.6 green:0.3 blue:0.5 alpha:1];<br>3.设置高亮文字颜色<br>highlightedTextColor<br>4.标签背景颜色<br>label.backgroundColor=[UIColor orangeColor];</p>
-<blockquote>
-<p>字体lable.font</p>
-</blockquote>
-<p>label.font = [UIFont systemFontOfSize:17];<br>粗体加设置大小。<br>label.font = [UIFont boldSystemFontOfSize:20];<br>自定义字体<br>label.font = [UIFont fontWithName:@”Arial” size:17];<br>根据label宽度设置字体大小<br>adjustFontSizeToFitWidth<br>显示所有字体<br>NSLog(@”所有字体%@”,[UIFont familyNames]);</p>
-<blockquote>
-<p>对其方式</p>
-</blockquote>
-<p>设置标签的背景颜色backgroundColor<br>label.backgroundColor=[UIColor grayColor];<br>靠右对其，默认靠左对其textAlignment<br>label.textAlignment = NSTextAlignmentRight;<br>如何显示多行文本<br>0表示任意多行。labe.numberOfLines<br>label.numberOfLines = 0;</p>
-<blockquote>
-<p>设置阴影</p>
-</blockquote>
-<p>设置阴影颜色shadowColor<br>label.shadowColor = [UIColor redColor];<br>设置阴影偏移shadowOffset<br>label.shadowOffset = CGSizeMake(3, 3);</p>
-<blockquote>
-<p>设置窗口显示的文本sizeToFit</p>
-</blockquote>
-<p>自动适应文本作用：文本有多大，标签就有多大<br>[label sizeToFit];<br>最大显示行数<br>numberOflines<br>当内容超出宽度模式<br>lineBreakMode</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC10%E7%BB%A7%E6%89%BF%E5%92%8C%E7%B1%BB%E5%88%AB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/B_OC10%E7%BB%A7%E6%89%BF%E5%92%8C%E7%B1%BB%E5%88%AB/" class="post-title-link" itemprop="url">继承和类别</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:21:50" itemprop="dateCreated datePublished" datetime="2016-07-30T23:21:50+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>继承</p>
-</blockquote>
-<blockquote>
-<p>什么是继承,继承如何实现?</p>
-</blockquote>
-<p>总结: 继承的语法 @interface Student : Person<br>作用- 子类拥有父类的属性和方法<br>语法: 定义了Student, 继承与Person<br>Student子类, Person父类<br>学生信息管理系统<br>人       Person人       属性: 名字,性别,年龄<br>学生    Student学生    属性: 名字,性别,年龄, 学号, OC成绩</p>
-<blockquote>
-<p>继承后的重写</p>
-</blockquote>
-<p>子类拥有父类所有的方法<br>如果子类中重写了从父类继承下来的方法<br>优先执行重写后的方法</p>
-<blockquote>
-<p>继承后的权限</p>
-</blockquote>
-<p>总结:    子类能访问父类公有和受保护的属性和方法<br>不能访问私有的, 想要访问, 使用父类<br>getter和setter间接访问<br>只写@property,没有写对应的实例变量<br>权限是私有的private</p>
-<blockquote>
-<p>父类指针和子类指针如何相互指向?</p>
-</blockquote>
-<p>(赋值兼容原则)<br>总结: 父类指针可以指向父类对象, 还有子类对象<br>子类指针只能指向它自己的对象, 不能指向父类对象<br>NSString —-&gt; NSMutableString<br>NSArray —–&gt; NSMutableArray</p>
-<blockquote>
-<p>init方法 super和self, NSObject</p>
-</blockquote>
-<p>NSObject是oc中所有类的根类<br>提供了重要的方法alloc init<br>self 在方法中表示当前对象,类方法中表示当前类<br>super 一般用super执行父类的方法</p>
-<blockquote>
-<p>isKindClassOf和isMemberClassOf</p>
-</blockquote>
-<p>判断一个对象是不是某个类的实例?<br>总结:<br>isKindOfClass 判断一个对象是否是这个类及其子类的实例<br>isMemberOfClass 判断一个对象是不是某个类的实例</p>
-<blockquote>
-<p>类别Category</p>
-</blockquote>
-<blockquote>
-<p>什么是类别?, 类别的作用</p>
-</blockquote>
-<p>需求: 有些类, 缺少我们需要一些方法<br>但是我没有类的源代码, 添加一个方法<br>实例: NSMutableString 添加一个reverse方法<br>类别是OC语法, 能给系统或自定义的类添加一个方法</p>
-<blockquote>
-<p>类别基本使用(语法)</p>
-</blockquote>
-<p>使用类别, 需要包含类别头文件<br>#import “NSMutableString+Extension.h”<br>@interface NSMutableString (Extension)<br>需要添加的方法的声明<br>-(void)reverseString<br>{<br>//逆序当前字符串 self<br>NSMutableString *mstr = [[NSMutableString alloc] init];<br>for (long i=self.length-1; i&gt;=0; i–) {<br>[mstr appendFormat:@”%C”,[self characterAtIndex:i]];<br>}<br>self.string = mstr;<br>}<br>[self setString mstr]<br>self.string=mstr;<br>//    NSLog(@”%p”,self);<br>//    当前对象指针。</p>
-<blockquote>
-<p>类别的限制(使用注意事项)</p>
-</blockquote>
-<p>(1) 系统中已经有function方法, 添加类别,类别中也有function方法<br>总结: 类别中得方法如果在类中已经存在<br>优先使用类别中得方法<br>(2) 类别能给一个类添加方法? 能不能添加实例变量?<br>总结: 类别中不能添加实例变量</p>
-<blockquote>
-<p>类别和继承有什么区别? 在什么情况下使用类别,或继承</p>
-</blockquote>
-<p>总结: 一般情况下<br>有一个类, 缺少一些方法, 扩展这个类, 使用类别添加方法<br>@intereface Dog (Ext)<br>有一个类, 缺少方法, 缺少属性, 使用继承, 在子类中添加方法和属性<br>@intereface Dog : NSObject</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC8%E5%8D%8F%E8%AE%AE%E3%80%81%E4%BB%A3%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/B_OC8%E5%8D%8F%E8%AE%AE%E3%80%81%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">协议、代理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:15:00" itemprop="dateCreated datePublished" datetime="2016-07-30T23:15:00+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC9%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/B_OC9%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">内存管理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:14:52" itemprop="dateCreated datePublished" datetime="2016-07-30T23:14:52+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>OC中的内存管理</p>
-</blockquote>
-<p>alloc+init 方式创建对象, 一般情况下在堆上上,使用完一定要释放<br>手动内存管理<br>自动内存管理(自动引用计数-ARC)<br>如何内存管理方式切换到手动内存管理?<br>工程配置–&gt;TARGETS-&gt;Build Setting-&gt; 搜索 counting,  设置为NO</p>
-<blockquote>
-<p>内存管理中常用的方法</p>
-</blockquote>
-<p>alloc+init<br>//1.alloc+init<br>//alloc: 为对象申请空间,把这块空间全部初始化为0<br>//alloc申请的对象一般情况下都在堆空间,必须考虑释放的问题<br>//init 初始化这个对象<br>Dog *princess = [[Dog alloc] init];<br>dealloc+release<br>retain+retainCount</p>
-<blockquote>
-<p>引用计数这种内存管理方式</p>
-</blockquote>
-<p>//获取对象被使用的次数<br>NSLog(@”count=%lu”,princess.retainCount);<br>//以后内存管理中有问题的<br>//retain: 让对象引用次数+1<br>//retain的对象也要release<br>[p release];<br>NSLog(@”count=%lu”,princess.retainCount);<br>//释放放在最后<br>//release作用:<br>//  如果retainCount&gt;1 说明有多个人在使用这个对象,不会释放,对象引用次数-1<br>//  如果retianCount==1<br>//  最后使用的”人”释放这个对象<br>//      调用dealloc真正释放对象<br>[princess release];<br>NSMutableString *str = [[NSMutableString alloc] initWithString:@”的麻烦了看什么地方了开始免费立刻马上离开父母萨洛克没放到里面是打发来看马萨拉蒂方面撒地方可拉伸的佛罗伦萨地方了”];<br>//特别值得注意的问题<br>//  最好千万不要在对象release之后使用对象<br>//什么是释放:<br>//  释放是失去了这块内存的使用权(内存还在)<br>//      一旦释放, 别人有可能使用这块内存<br>//      咱们在使用的就会出现问题<br>//[princess show];<br>copy+mutableCopy<br>//问题:<br>//  retain两个指针, 只有一个对象<br>//  copy复制这个对象<br>//  效果:  两个指针指向不同的对象<br>//  copy 返回不可变对象<br>//  mutableCopy返回可变对象<br>NSMutableString *pname = [name mutableCopy];</p>
-<blockquote>
-<p>内存管理原则:黄金法则<br>如果你对一个对象使用了 alloc,retain,copy/mutableCopy, 使用完这个对象之后需要调用对应的realese或autorelease<br>代码中alloc和release成对出现的retain和release也是成对出现的</p>
-</blockquote>
-<blockquote>
-<blockquote>
-<p>代码中出现的各种内存管理情况</p>
-</blockquote>
-</blockquote>
-<p>(0)如果在方法内部定义了一个对象指针,指向了alloc申请的对象<br>需要在方法结束前释放这个对象</p>
-<blockquote>
-<p>init中为对象指针(类的实例变量)的申请对象</p>
-</blockquote>
-<p>需要在dealloc方法中释放 (重点)<br>//需求: 创建车的同时添加引擎<br>-(id)init<br>{<br>if(self = [super init])<br>{<br>//考虑到释放问题<br>//类中对象指针一般在init中申请对象<br>//  在dealloc中释放对象<br>_engine = [[Engine alloc] init];<br>//NSString *str = [[NSString alloc] init];<br>//[str release];<br>}<br>return self;<br>}<br>-(void)dealloc<br>{<br>NSLog(@”Car dealloc”);<br>[_engine release];<br>//这句放在最后<br>[super dealloc];<br>}</p>
-<blockquote>
-<p>对象指针的setter方法</p>
-</blockquote>
-<p>//_engine实现设置方法<br>-(void)setEngine:(Engine *)engine<br>{<br>//以前的写法<br>//_engine = engine;<br>//传入的指针和保存指针相同,返回即可<br>if(_engine == engine)<br>{<br>return;<br>}<br>//旧的对象不用了, 立即释放<br>[_engine release];<br>//多一个指针指向engine对象<br>//引用次数+1,调用retian方法<br>_engine = [engine retain];<br>}</p>
-<blockquote>
-<p>对象指针的getter方法</p>
-</blockquote>
-<p>//_engine实现获取方法<br>-(Engine *)engine<br>{<br>//以前的实现<br>//return _engine;<br>//retain: 返回的对象类外的指针指向, 多了一个使用, 引用+1<br>//  autorelease谁使用,谁释放<br>//      不能用release, 立即使用<br>return [[_engine retain] autorelease];<br>}</p>
-<blockquote>
-<p>各种实例变量的property (重点)</p>
-</blockquote>
-<p>//使用property实例变量添加getter和setter<br>// 一般情况, NSString 使用copy作为属性修饰符<br>//copy, 把传入的字符串拷贝一个份新的<br>//字符串,字典,数组用copy最好<br>@property (copy) NSString *type;<br>//assign表示直接赋值, 不retain也不copy<br>//  默认是assign, assgin可以不写<br>//@property (assign) float price;<br>@property float price;<br>//retain表示实现的setter中添加retain,getter也会添加retain<br>@property (retain) Engine *engine;</p>
-<p>//代理设计模式中<br>//  代理的属性修饰符必须是assgin,不能是retain,否则会引起无法释放的问题<br>@property (assign) id delegate;</p>
-<blockquote>
-<p>取消线程保护 nonautomic</p>
-</blockquote>
-<p>//nonatomic取消多线程保护<br>//1.什么是多线程(多任务)<br>// 迅雷下载(界面响应用户点击,下载数据)<br>//2.为啥要加这一句啊<br>//  多线程保护比较耗时, 取消提供代码速度<br>@property (nonatomic) float speed;</p>
-<blockquote>
-<p>类方法创建对象如何写?</p>
-</blockquote>
-<p>//类方法创建的对象无需释放, 也不能释放<br>创建对象的方法,类方法<br>+(id)car<br>{<br>//干两件事情<br>Car *car = [[Car alloc] init];<br>//if(car)<br>//{<br>//设置car的属性<br>//}<br>//alloc和autorelease对应起来<br>return [car autorelease];<br>}</p>
-<blockquote>
-<p>数组中的添加对象内存管理  NSArray</p>
-</blockquote>
-<p>//数组被释放的时候会给数组中每个对象发送release<br>[array release];</p>
-<blockquote>
-<p>字符串的内存管理</p>
-</blockquote>
-<p>//  特点: 特立独行,有性格<br>//字符串常量的引用数是极大值,不需要释放<br>//总结:<br>以alloc创建的字符串最后使用release释放<br>字符串常量和以类方法创建的字符串不需要释放</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC7plist,%E5%BD%92%E6%A1%A3%E5%92%8CJson/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/B_OC7plist,%E5%BD%92%E6%A1%A3%E5%92%8CJson/" class="post-title-link" itemprop="url">plist,归档和Json</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 22:54:39" itemprop="dateCreated datePublished" datetime="2016-07-30T22:54:39+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>数据持久化简介</p>
-</blockquote>
-<p>文件:    最常用的最基础的存储数据的方式<br>plist,xml,json    表示数据的某种格式<br>数据库:        海量的数据(省上所有人的电话信息)存储到数据库中<br>SQL Server 2000, mysql, Oracle<br>云端存储:        数据都存储的网络上, 安全性好, 跨设备,跨平台</p>
-<blockquote>
-<p>plist文件</p>
-</blockquote>
-<p>用途比较多<br>本质上来说是 Property List file, 属性列表文件<br>存储格式:  数据都是由字典,数组,字符串构成的<br>2.2 如何创建plist文件<br>File-&gt;OS X-Resource–&gt; Proerty List<br>2.3 plist文件的读取和写入<br>//如何读取这个plist文件???<br>NSString *path = @”/Users/mac/Desktop/oc7-持久化存储/PlistUseDemo/PlistUseDemo/student.plist”;<br>//plist根结点只有两种类型, 数组和字典<br>//  分别使用NSArray和NSDictionary读取plist<br>NSDictionary *dict = [[NSDictionary alloc] initWithContentsOfFile:path];<br>//输出所有的班级的信息<br>//NSArray *classList = [dict valueForKey:@”classes”];<br>NSArray *classList = dict[@”classes”];<br>for (NSDictionary *classDict in classList) {<br>}<br>//  可以把一个数组或者字典写入到plist中<br>//参数1: 传入一个路径<br>//参数2: 表示是否安全的写入<br>[classList writeToFile:@”/Users/mac/Desktop/classList.plist” atomically:YES];</p>
-<blockquote>
-<p>归档</p>
-</blockquote>
-<p>使用归档, 可以直接把一个对象保存到文件中</p>
-<p>//归档的使用<br>//作用: 对象保存到文件中<br>//相比plist: plist使用简单, 不能存储自定义对象<br>//  归档可以存储任意类型对象<br>NSArray *array = [[NSArray alloc] initWithObjects:@”小二”,@”三少”,@”四娘”,@”跳舞大神”, nil];<br>//通过归档的形式存储到文件中<br>//设置文件名<br>NSString *path = @”/Users/mac/Desktop/people.data”;<br>//NSKeyedArchiver专门用于归档的类<br>//参数1: 传入需要保存的对象<br>//参数2: 传入文件路径<br>BOOL b = [NSKeyedArchiver archiveRootObject:array toFile:path];<br>//把对象从文件中恢复出来===解档<br>//参数1: 传入保存了对象文件<br>//返回值: 返回保存的对象<br>//  类型原来存储的是什么类型, 用什么类型接收<br>NSArray *readArray = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>for(NSString *str in readArray)<br>{<br>}</p>
-<blockquote>
-<p>自定义对象的归档和解档</p>
-</blockquote>
-<p>//归档<br>NSString <em>path = @”/Users/mac/Desktop/dog.data”;<br>//****</em>  自定义的对象不能直接归档, 会出现崩溃<br>//*****  需要告诉系统我们对象应该如何归档<br>//          自己类中添加一些指定的方法</p>
-<p>[NSKeyedArchiver archiveRootObject:huaer toFile:path];</p>
-<p>//解档刚才存入的对象<br>Dog *newDog = [NSKeyedUnarchiver unarchiveObjectWithFile:path];<br>NSLog(@”–&gt; %@ %@ %f %@”,<br>      newDog.nickname,<br>      newDog.gender,<br>      newDog.weight,<br>      newDog.type);</p>
-<p>//告诉系统, 这个对象应该如何编码<br>//  如果没有加这个方法,自定义对象归档的时候会奔溃</p>
+          <p>● 播放音频需要用到2个框架<br>● AVFoundation.framework<br>● AudioToolbox.framework<br> 音效的播放<br>// 1.获得音效文件的路径<br>NSURL *url = [[NSBundle mainBundle] URLForResource:@”m_03.wav”<br>withExtension:nil];<br>// 2.加载音效文件,得到对应的音效ID SystemSoundID soundID = 0;<br>AudioServicesCreateSystemSoundID((__bridge CFURLRef)(url),<br>&amp;soundID);<br>// 3.播放音效 AudioServicesPlaySystemSound(soundID);<br>● 音效文件只需要加载1次<br> 音效的播放<br>● 音效播放常见函数总结 ● 加载音效文件<br>AudioServicesCreateSystemSoundID(CFURLRef inFileURL,<br>SystemSoundID <em>outSystemSoundID)<br>● 释放音效资源<br>AudioServicesDisposeSystemSoundID(SystemSoundID inSystemSoundID)<br>● 播放音效<br>AudioServicesPlaySystemSound(SystemSoundID inSystemSoundID)<br>● 播放音效带点震动<br>AudioServicesPlayAlertSound(SystemSoundID inSystemSoundID)<br>注意:硬件解码器一次只能对一个音频文件解码。在实际应用中通常使用非压 缩的音频格式(AIFF)或者CAF音频格式,从而减低系统在音频解码上的消 耗,达到省电的目的<br>声音和音效小结——音频转换工具<br>● 转换aiff格式<br>● afconvert -f AIFF -d I8 filename<br>● 转换caf格式<br>● afconvert -f caff -d aac -b 32000 filename<br>● 批量转换<br>● find . -name ‘</em>.mp3’ -exec afconvert -f caff -d aac -b 32000 {} ;<br> 音乐的播放<br>● 音乐播放用到一个叫做AVAudioPlayer的类<br>● AVAudioPlayer常用方法<br>● 加载音乐文件<br>• - (id)initWithContentsOfURL:(NSURL *)url error:(NSError **)outError;<br>• - (id)initWithData:(NSData *)data error:(NSError **)outError; ● 准备播放(缓冲,提高播放的流畅性)<br>• - (BOOL)prepareToPlay;<br>● 播放(异步播放) • - (BOOL)play;<br>音乐的播放<br>暂停</p>
 <ul>
-<li>(void)encodeWithCoder:(NSCoder *)aCoder<br>{<br>  //把类中的对象指定一个key, 编码到文件中<br>  [aCoder encodeObject:self.nickname forKey:@”nickname”];<br>  [aCoder encodeObject:self.gender forKey:@”gender”];<br>  [aCoder encodeObject:[NSNumber numberWithFloat:self.weight] forKey:@”weight”];<br>  [aCoder encodeObject:self.type forKey:@”type”];</li>
+<li>(void)pause; 停止</li>
+<li>(void)stop; 是否正在播放<br>@property(readonly, getter=isPlaying) BOOL playing; 时长<br>@property(readonly) NSTimeInterval duration; 当前的播放位置<br>@property NSTimeInterval currentTime;<br>播放次数(-1代表无限循环播放,其他代表播放numberOfLoops+1次) @property NSInteger numberOfLoops;<br>音量<br>@property float volume; 是否允许更改速率<br>@property BOOL enableRate; 播放速率(1是正常速率,0.5是一般速率,2是双倍速率)<br>@property float rate; 有多少个声道<br>@property(readonly) NSUInteger numberOfChannels;<br>● 声道(-1是左声道,1是右声道,0是中间) • @property float pan;<br>● 是否允许测量音量<br>• @property(getter=isMeteringEnabled) BOOL meteringEnabled;<br>● 更新测量值<br>• - (void)updateMeters;<br>● 获得当前的平均音量<br>• - (float)averagePowerForChannel:(NSUInteger)channelNumber;</li>
 </ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net16%E8%93%9D%E7%89%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net16%E8%93%9D%E7%89%99/" class="post-title-link" itemprop="url">蓝牙</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 20:55:39" itemprop="dateCreated datePublished" datetime="2016-07-31T20:55:39+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>● iOS中提供了4个框架用于实现蓝牙连接<br>● GameKit.framework(用法简单)<br>• 只能用于iOS设备之间的连接,多用于游戏(比如五子棋对战),从iOS7开始过期<br>● MultipeerConnectivity.framework<br>• 只能用于iOS设备之间的连接,从iOS7开始引入,主要用于文件共享(仅限于沙盒的文<br>件)<br>● ExternalAccessory.framework<br>• 可用于第三方蓝牙设备交互,但是蓝牙设备必须经过苹果MFi认证(国内较少)<br>● CoreBluetooth.framework(时下热门)<br>• 可用于第三方蓝牙设备交互,必须要支持蓝牙4.0<br>● 硬件至少是4s,系统至少是iOS6<br>● 蓝牙4.0以低功耗著称,一般也叫BLE(Bluetooth Low Energy) • 目前应用比较多的案例:运动手坏、嵌入式设备、智能家居<br> GameKit的蓝牙开发步骤<br>● 显示可以连接的蓝牙设备列表<br>GKPeerPickerController *ppc = [[GKPeerPickerController alloc] init]; ppc.delegate = self;<br>[ppc show];<br>● 在代理方法中监控蓝牙的连接</p>
+<ul>
+<li>(void)peerPickerController:(GKPeerPickerController *)picker<br>didConnectPeer:(NSString *)peerID toSession:(GKSession *)session { NSLog(@”连接到设备:%@”, peerID);<br>// 关闭蓝牙设备显示界面<br>[picker dismiss];<br>// 设置接收到蓝牙数据后的监听器<br>[session setDataReceiveHandler:self withContext:nil]; // 保存session<br>self.session = session;<br>}<br>GameKit的蓝牙开发步骤<br>● 处理接收到的蓝牙数据</li>
+<li>(void) receiveData:(NSData *)data fromPeer:(NSString *)peer<br>inSession: (GKSession *)session context:(void *)context {<br>}<br>● 利用GKSession给其他设备发送数据 ● 给指定的连接设备发送数据</li>
+<li>(BOOL)sendData:(NSData *) data toPeers:(NSArray *)peers<br>withDataMode:(GKSendDataMode)mode error:(NSError **)error;<br>● 给所有连接的设备发送数据</li>
+<li>(BOOL)sendDataToAllPeers:(NSData *) data withDataMode:<br>(GKSendDataMode)mode error:(NSError **)error;<br>GameKit的蓝牙开发注意<br>● 只能用于iOS设备之间的连接<br>● 只能用于同一个应用程序之间的连接 ● 最好别利用蓝牙发送比较大的数据<br>Core Bluetooth<br>● Core Bluetooth测试比较麻烦,正常情况下,得至少有2台真实的蓝牙4.0设备<br>● 如何让iOS模拟器也能测试蓝牙4.0程序?<br>● 买一个CSR蓝牙4.0 USB适配器,插在Mac上<br>● 在终端输入sudo nvram bluetoothHostControllerSwitchBehavior=”never”<br>● 重启Mac<br>● 用Xcode 4.6调试代码,将程序跑在iOS 6.1的模拟器上 (苹果把iOS 7.0模拟器对BLE的支持移除掉了)<br>● Core Bluetooth的使用场景<br>● 运动手环、智能家居、嵌入式设备等等(金融刷卡器、心电测量器)<br>Core Bluetooth的核心结构图<br>Core Bluetooth的基本常识<br>● 每个蓝牙4.0设备都是通过服务(Service)和特征(Characteristic)来展示自 己的<br>● 一个设备必然包含一个或多个服务,每个服务下面又包含若干个特征 ● 特征是与外界交互的最小单位<br>• 比如说,一台蓝牙4.0设备,用特征A来描述自己的出厂信息,用特征B来收发 数据<br>● 服务和特征都是用UUID来唯一标识的,通过UUID就能区别不同的服务和特征 ● 设备里面各个服务(service)和特征(characteristic)的功能,均由蓝牙设备硬件厂<br>商提供,比如哪些是用来交互(读写),哪些可获取模块信息(只读)等<br>Core Bluetooth的开发步骤<br>● 建立中心设备<br>● 扫描外设(Discover Peripheral)<br>● 连接外设(Connect Peripheral)<br>● 扫描外设中的服务和特征(Discover Services And Characteristics)<br>● 利用特征与外设做数据交互(Explore And Interact)<br>● 断开连接(Disconnect)<br>蓝牙的现状<br>● 绝大多数智能手机支持蓝牙 4.0(BLE)<br>● 蓝牙芯片发展迅速,在性能和效率方面都有很大提高,且不断变得更小更便宜<br>● iBeacon + 蓝牙,前景一片光明<br>● 应用之一:室内导航<br>● Estimote公司为iBeacon提供基站<br>● 3个iBeacon基站的预购价格为99美元(约合人民币610元)<br>● Estimote公司推出的iBeacon基站的最远传输距离为50m,但是他们推荐在10m 范围内的使用效果最好<br>● 一块纽扣电池就能为一个iBeacon基站提供长达 2 年的使用寿命,而且是在设 备不断对外发射信号的情况下</li>
+</ul>
+<p>GameKit框架简介<br>● 使用GameKit框架,可以在游戏中增加对等连接,又称对端连接或点 对点连接,Peer To Peer。<br>● 使用GameKit框架中的对等网络连接API,可以在游戏玩家之间建立一 个对等网络,并在游戏/应用实例之间交换数据。<br>● GameKit框架可以使用蓝牙在玩家之间创建网络,玩家甚至不需要连 接到互联网,就可以彼此对战。<br>通过蓝牙实现对等网络连接<br>为玩家双方呈现一个GKPeerPickerController,提供了一个标准的 用户界面连接两台设备<br>ViewControoler遵循GKPeerPickerControllerDelegate协议,处理来 自GKPeerPickerController(对端选择器)的信息<br>建立连接后,使用GKSession类可以向对端设备发送数据<br>在receiveData:fromPeer:inSession:context代理方法中编写代码来处 理接收到的数据<br>蓝牙对等网络演练——发送照片(1)<br>● 演练目标:通过蓝牙彼此发送照片 ● 演练步骤:<br>● 1. 基于照片选择项目进行扩展,仅从照片库选择照片<br>● ●<br>2. 添加GameKit框架 3. 创建对等连接<br>● 3.1 实例化对端选择器<br>● 3.2 设置代理,并遵循协议<br>● 3.3 显示对端选择器<br>4. 连接建立代理方法 peerPickerController:didConnectPeer:toSession:<br>4.1记录对端连接会话 4.2 设置数据接收处理 4.3 关闭对端选择器<br>●<br>● ● ●<br>蓝牙对等网络演练——发送照片(2)<br>● 发送数据方法<br>[_peerSession sendDataToAllPeers:data<br>withDataMode:GKSendDataReliable error:&amp;error]; ● 接收数据方法</p>
+<ul>
+<li>(void)receiveData:(NSData *)data fromPeer:<br>(NSString *)peer inSession: (GKSession *)session<br>context:(void *)context;<br>蓝牙对等网络——发送自定义对象<br>● 如果要通过网络发送自定义对象,需要使用NSKeyedArchiver方法归档 自定义对象,然后再发送归档后的NSData<br>● 自定义对象需要遵从NSCoding协议,并实现相应的归档和恢复方法 ● 接收端接收到数据之后,使用NSKeyedUnarchiver方法恢复数据</li>
+</ul>
+<p>人生就像卫生纸,没事的时候,尽量少扯; 时间就像卫生纸,看着挺多,用着用着就 没了…</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net15%E5%8A%A0%E9%80%9F%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net15%E5%8A%A0%E9%80%9F%E8%AE%A1/" class="post-title-link" itemprop="url">加速计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 20:52:05" itemprop="dateCreated datePublished" datetime="2016-07-31T20:52:05+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>● 加速计的作用<br>● 用于检测设备的运动(比如摇晃)<br>● 加速计的经典应用场景 ● 摇一摇<br>● 计步器<br>加速计的原理<br>● 检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用,哪个方向运动了) ● 根据加速度数值,就可以判断出在各个方向上的作用力度<br>加速计程序的开发<br>● 加速计程序的开发<br>● 在iOS4以前:使用UIAccelerometer,用法非常简单(到了iOS5就已经过<br>期)<br>● 从iOS4开始:CoreMotion.framework<br>● 虽然UIAccelerometer已经过期,但由于其用法极其简单,很多程序里面都 还有残留<br>UIAccelerometer的使用步骤<br>● 获得单例对象<br>UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];<br>● 设置代理 accelerometer.delegate = self;<br>● 设置采样间隔<br>accelerometer.updateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 实现代理方法</p>
+<ul>
+<li>(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:<br>(UIAcceleration *)acceleration<br>// acceleration中的x、y、z三个属性分别代表每个轴上的加速度<br>Core Motion<br>● 在iOS4之前,加速度计由UIAccelerometer类来负责采集数据<br>● 随着iPhone4的推出<br>● 加速度计全面升级,并引入了陀螺仪<br>● 与Motion(运动)相关的编程成为重头戏<br>● 苹果特地在iOS4中增加了专门处理Motion的框架-CoreMotion.framework<br>● Core Motion不仅能够提供实时的加速度值和旋转速度值,更重要的是,苹果 在其中集成了很多牛逼的算法<br>Core Motion获取数据的两种方式<br>● push<br>● 实时采集所有数据(采集频率高)<br>● pull<br>● 在有需要的时候,再主动去采集数据<br>Core Motion的使用步骤(push)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) {<br>// 加速计可用 }<br>● 设置采样间隔<br>mgr.accelerometerUpdateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 开始采样(采样到数据就会调用handler,handler会在queue中执行)</li>
+<li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue *)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
+<li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /*</em> 检测到摇动 <em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /</em></em> 摇动取消(被中断) <em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /</em></em> 摇动结束 */<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a target="_blank" rel="noopener" href="https://github.com/Shmoopi/iOS-System-Services">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a target="_blank" rel="noopener" href="https://github.com/erica/uidevice-extension">https://github.com/erica/uidevice-extension</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net14%E4%BC%A0%E6%84%9F%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net14%E4%BC%A0%E6%84%9F%E5%99%A8/" class="post-title-link" itemprop="url">传感器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:23:36" itemprop="dateCreated datePublished" datetime="2016-07-31T18:23:36+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>iPhone5中内置的传感器有<br>● 运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 环境光传感器(Ambient Light Sensor)<br>● 距离传感器(Proximity Sensor)<br>● 磁力计传感器(Magnetometer Sensor)<br>● 内部温度传感器(Internal Temperature Sensor)<br>● 湿度传感器(Moisture Sensor)<br>● 陀螺仪(Gyroscope)<br>● … …<br>环境光传感器(Ambient Light Sensor)<br>● 是iOS、Mac设备中最为古老的传感器成员<br>● 它能够让你在使用 Mac、iPhone、iPad时,眼睛更为舒适<br>● 从一个明亮的室外走入相对黑暗的室内后,iOS设备会自动调低亮度,让屏幕显得不再那 么光亮刺眼<br>● 当你使用iPhone拍照时,闪光灯会在一定条件下自动开启<br>● 几乎所有的Mac 都带有背光键盘,当周围光线弱到一定条件时,会自动开启键盘背光<br> 距离传感器(Proximity Sensor)<br>● 用于检测是否有其他物体靠近设备屏幕<br>● 当你打电话或接电话时将电话屏幕贴近耳边,iPhone会自动关闭屏幕 ,好处是<br>● 节省电量<br>● 防止耳朵或面部不小心触摸屏幕而引发一些不想要的意外操作<br>● 题外话:利用距离传感器,能找出很多电视剧的穿帮镜头<br>磁力计传感器(Magnetometer Sensor)<br>● 可以感应地球磁场, 获得方向信息, 使位置服务数据更精准 ● 可以用于电子罗盘和导航应用<br>● iPad的Smart Cover盒盖睡眠操作就是基于磁力计传感器<br>内部温度传感器(Internal Temperature Sensor)<br>● 从 iPad一代开始,iOS设备都加入了一个内部温度传感器,用于检测内部组件 温度,当温度超过系统设定的阈值时,会出现以下提示<br>● 内部温度传感器,对于提升iOS设备自身安全性与稳定性有很大的帮助<br>湿度传感器(Moisture Sensor)<br>● 湿度传感器跟其他基于微电子的传感器不同,是一个简单的物理传感器 ● 简单来说,湿度传感器就是一张遇水变红的试纸<br>● Apple的维修人员就是通过检测试纸是否变红,来判断设备是否进水 (设备进水不在保修范围之内)<br>陀螺仪(Gyroscope)<br>● 陀螺仪是随着iPhone4的上市首次出现在iOS设备上的传感器 ● 陀螺仪可以用于检测设备的持握方式<br>● 陀螺仪的原理是检测设备在X、Y、Z轴上所旋转的角速度<br>● 陀螺仪在赛车类游戏中有重大作用: ● 模拟汽车驾驶时方向盘旋转的动作<br>● 使得这类游戏的操控体验更为真实<br>运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 最早出现在iOS设备上的传感器之一<br>● 加速计用于检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用)<br>● 加速计可以用于检测设备的摇晃,经典应用场景 ● 摇一摇<br>● 计步器</p>
+<blockquote>
+<p>传感器总结</p>
+</blockquote>
+<p>传感器类型<br>作用<br>环境光传感器<br>感应周边环境光线的强弱(自动调节屏幕亮度)<br>距离传感器<br>感应是否有其他物体靠近设备屏幕(打电话自动锁屏)<br>磁力计传感器<br>感应周边的磁场(合盖锁屏)<br>内部温度传感器<br>感应设备内部的温度(提醒用户降温,防止损伤设备)<br>湿度传感器<br>感应设备是否进水(方便维修人员)<br>陀螺仪<br>感应设备的持握方式(赛车类游戏)<br>加速计<br>感应设备的运动(摇一摇、计步器)</p>
+<blockquote>
+<p>距离传感器的使用</p>
+</blockquote>
+<p>// 开启距离感应功能<br>[UIDevice currentDevice].proximityMonitoringEnabled = YES; // 监听距离感应的通知<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(proximityChange:) name:UIDeviceProximityStateDidChangeNotification object:nil];</p>
+<ul>
+<li>(void)proximityChange:(NSNotificationCenter *)notification { if ([UIDevice currentDevice].proximityState == YES) { NSLog(@”某个物体靠近了设备屏幕”); // 屏幕会自动锁住<br>} else {<br>NSLog(@”某个物体远离了设备屏幕”); // 屏幕会自动解锁<br>} }</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net13%E5%88%86%E4%BA%AB%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net13%E5%88%86%E4%BA%AB%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99/" class="post-title-link" itemprop="url">分享学习网站</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:20:35" itemprop="dateCreated datePublished" datetime="2016-07-31T18:20:35+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>游戏开发相关：</p>
+<p><a target="_blank" rel="noopener" href="http://www.gameres.com/">http://www.gameres.com/</a>    想学游戏的这个网站绝对不能错过，个人感觉挺不错的<br><a target="_blank" rel="noopener" href="http://xyq.baike.163.com/ziliao/">http://xyq.baike.163.com/ziliao/</a>      SLG 游戏系统策划<br><a target="_blank" rel="noopener" href="http://www.gamedev.net/page/index.html">http://www.gamedev.net/page/index.html</a>  国外<br><a target="_blank" rel="noopener" href="http://ns.codingnow.com/">http://ns.codingnow.com/</a>     网易梦幻西游后端主程序  大神</p>
+<p>安全相关：<br><a target="_blank" rel="noopener" href="http://bbs.pediy.com/">http://bbs.pediy.com/</a> 看雪学院  国内重量级</p>
+<p>iOS相关：</p>
+<p><a target="_blank" rel="noopener" href="http://blog.devtang.com/">http://blog.devtang.com/</a>   网易iOS </p>
+<p><a target="_blank" rel="noopener" href="http://beyondvincent.com/blog/archives/">http://beyondvincent.com/blog/archives/</a><br><a target="_blank" rel="noopener" href="http://github.ibireme.com/github/list/ios/">http://github.ibireme.com/github/list/ios/</a>      收集git 上各种优秀项目</p>
+<p>Swift学习:<br><a target="_blank" rel="noopener" href="https://github.com/CocoaChina-editors/Welcome-to-Swift">https://github.com/CocoaChina-editors/Welcome-to-Swift</a><br><a target="_blank" rel="noopener" href="https://github.com/numbbbbb/the-swift-programming-language-in-chinese">https://github.com/numbbbbb/the-swift-programming-language-in-chinese</a>  </p>
+<p>热门IT社区<br><a target="_blank" rel="noopener" href="http://www.csdn.net/">www.csdn.net</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/">www.cnblogs.com</a><br><a target="_blank" rel="noopener" href="http://www.51cto.com/">www.51cto.com</a><br><a target="_blank" rel="noopener" href="http://www.oschina.net/">http://www.oschina.net/</a> </p>
+<p><a target="_blank" rel="noopener" href="http://tool.oschina.net/apidocs/#J">http://tool.oschina.net/apidocs/#J</a>    在线API 各种技术文档 </p>
+<p><a target="_blank" rel="noopener" href="http://www.juming.com/Csdn/#jieguo">http://www.juming.com/Csdn/#jieguo</a>  免CSDN下载器</p>
+<p><a target="_blank" rel="noopener" href="http://www.cnpaf.net/class/rfcall/">http://www.cnpaf.net/class/rfcall/</a>       网络协议详解大全</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net12Autolayout/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net12Autolayout/" class="post-title-link" itemprop="url">Autolayout</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:17:54" itemprop="dateCreated datePublished" datetime="2016-07-31T18:17:54+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>如果使用autolayout来约束控件, 那fraem就失效了, 官方也不建议我们再设置frame了</p>
+<p>宽度: 100<br>高度: 100<br>水平居中: X<br>垂直居中: Y<br>注意: 如果利用autolayout约束一个控件, 和我们以前使用frame约束控件一样, 必须设置宽度/高度/X/Y , 如果缺少某一个约束就会报错, 报错有可能会引发一些未知的bug</p>
+<p>如果有红色警告:<br>代表缺少约束<br>如果有黄色警告:<br>代表控件当前的位置大小和约束的位置大小不一样</p>
+<p>距离顶部: 20 相当于设置了Y<br>距离左边:20 相当于设置了X<br>距离右边:20 相当于设置了宽度<br>距离底部:20 相当于设置了高度</p>
+<p>注意:<br>在使用Autolayout时,最好给每个控件起一个名称, 方便阅读</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net11%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%BA%92%E7%9B%B8%E8%B7%B3%E8%BD%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net11%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%BA%92%E7%9B%B8%E8%B7%B3%E8%BD%AC/" class="post-title-link" itemprop="url">应用程序互相跳转</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:16:14" itemprop="dateCreated datePublished" datetime="2016-07-31T18:16:14+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li>应用场景</li>
+</ol>
+<p>1） 使用第三方用户登录，需要用户授权，还需要”返回到调用的程序，同时返回授权的用户名”</p>
+<p>2） 应用程序推广，网易彩票，设置－推荐应用－有很多应用程序图标<br>－如果本机已经安装过，会直接跳转到另外一个应用程序<br>－软件的广告，推广结果，后续会有一些列的金钱上的结算</p>
+<ol start="3">
+<li>   支付宝，第三方支付，淘宝，电话费充值。。。</li>
+</ol>
+<ol start="2">
+<li>要打开本机上的其他应用程序，需要设置schemes，自定义的协议头，可以打开其他的应用程序</li>
+</ol>
+<p>跳转的代码如下：</p>
+<ul>
+<li>(IBAction)openWangyi:(id)sender<br>{<br>// 跳转到其他应用程序<br>// schemes: 网易的scheme wangyi<br>NSURL *url = [NSURL URLWithString:@”wangyi://view?newsid=201410130001”];</li>
+</ul>
+<p>// 判断本机是否安装了目标程序<br>if ([[UIApplication sharedApplication] canOpenURL:url]) {<br>[[UIApplication sharedApplication] openURL:url];<br>} else {<br>NSLog(@”没有安装，可以再给定下载地址，前往”);<br>}<br>}</p>
+<ol start="3">
+<li>新浪微博的授权界面说明：</li>
+</ol>
+<p>1&gt;    在新浪微博中，本身不能直接跳转到该界面<br>2&gt; 用其他应用程序打开时，如果scheme时weibo://oaauth，直接进入此界面<br>3&gt; 如果直接点击，返回，返回调用放应用程序<br>4&gt; 如果点击表格行中的用户名，直接返回用户信息给调用应用程序</p>
+<ol start="4">
+<li>如果要返回调用的应用程序，需要知道调用我们的应用程序的scheme</li>
+</ol>
+<p>/** 只要是由其他应用程序打开的，就会调用此方法 <em>/<br>/*</em> URL 就是其他应用程序，打开当前程序使用的URL */</p>
+<ul>
+<li>(BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url</li>
+</ul>
+<p>/**<br>openURL 是打开当前应用程序的url<br>sourceApplication 是当开当前应用程序的源程序的BundleId</p>
+<p>提示：一旦重写了新方法，旧方法就不再被执行<br>但是：很多第三方框架，都建议两个方法全都写<br>*/</p>
+<ul>
+<li>(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net6CoreLocation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net6CoreLocation/" class="post-title-link" itemprop="url">CoreLocation</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:14:03" itemprop="dateCreated datePublished" datetime="2016-07-31T18:14:03+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <hr>
+<p>CLLocationManager 定位管理者<br>CLLocation 代表位置(经度/纬度/高度/速度/路线等)<br>CLHeading  代表移动方向<br>CLRegion   代表一个区域</p>
+<blockquote>
+<p>CLCircularRegion  圆形区域<br>CLBeaconRegion 蓝牙信号区域</p>
+</blockquote>
+<p>返回定位服务是否可用<br>[CLLocationManager locationServicesEnabled];<br>返回延迟定位更新是否可用<br>[CLLocationManager deferredLocationUpdatesAvailable];<br>返回重大位置改变监听是否可用<br>[CLLocationManager significantLocationChangeMonitoringAvailable];<br>返回是否支持磁力计算方向<br>[CLLocationManager headingAvailable];<br>返回蓝牙信号范围服务是否可用<br>[CLLocationManager isRangingAvailable];</p>
+<hr>
+<p>设置是否可以暂停定位来节省电池电量, YES不需要定位数据时自动暂停定位<br>// mgr.pausesLocationUpdatesAutomatically</p>
+<hr>
+<p>每隔多少米定位一次, 只有水平方向超过该值时才会重新定位<br>// mgr.distanceFilter = 100;</p>
+<hr>
+<p>定位精确度<br>// mgr.desiredAccuracy;<br>kCLDistanceFilterNone;<br>kCLLocationAccuracyBestForNavigation 导航级最佳精准<br>kCLLocationAccuracyBest; 最佳精准<br>kCLLocationAccuracyNearestTenMeters; 10米误差<br>kCLLocationAccuracyHundredMeters; 百米胡茬<br>kCLLocationAccuracyKilometer;  千米误差<br>kCLLocationAccuracyThreeKilometers; 3千米误差</p>
+<hr>
+<p>定位数据的用途<br>// mgr.activityType;<br>CLActivityTypeOther 作为普通用途<br>CLActivityTypeAutomotiveNavigation  作为车辆导航<br>CLActivityTypeFitness  作为不行<br>CLActivityTypeOtherNavigation 作为其它导航</p>
+<hr>
+<p>// CLLocation<br>location.coordinate; 坐标, 包含经纬度<br>location.altitude; 设备海拔高度 单位是米<br>location.course; 设置前进方向 0表示北 90东 180南 270西<br>location.horizontalAccuracy; 水平精准度<br>location.verticalAccuracy; 垂直精准度<br>location.timestamp; 定位信息返回的时间<br>location.speed; 设备移动速度 单位是米/秒, 适用于行车速度而不太适用于不行<br>/*<br>可以设置模拟器模拟速度<br>bicycle ride 骑车移动<br>run 跑动<br>freeway drive 高速公路驾车<br>*/</p>
+<hr>
+<p>// CLAuthorizationStatus<br>用户从未选择过权限<br>kCLAuthorizationStatusNotDetermined<br>无法使用定位服务，该状态用户无法改变<br>kCLAuthorizationStatusRestricted<br>用户拒绝该应用使用定位服务，或是定位服务总开关处于关闭状态<br>kCLAuthorizationStatusDenied<br>已经授权（废弃）<br>kCLAuthorizationStatusAuthorized<br>用户允许该程序无论何时都可以使用地理信息<br>kCLAuthorizationStatusAuthorizedAlways<br>用户同意程序在可见时使用地理位置<br>kCLAuthorizationStatusAuthorizedWhenInUse</p>
+<hr>
+<p>// 计算两个位置之间的距离, 单位是米<br>[newLocation distanceFromLocation:self.prevLocation];</p>
+<hr>
+<p>获取方向信息不会提示用户(不需要授权), 因为不会泄露隐私<br>// [self.mgr startUpdatingHeading];</p>
+<p>magneticHeading 设备与磁北的相对角度<br>trueHeading 设置与真北的相对角度, 必须和定位一起使用, iOS需要设置的位置来计算真北<br>真北始终指向地理北极点<br>磁北对应随着时间变化的地球磁场北极<br>@interface ViewController ()<CLLocationManagerDelegate><br>{<br>//创建对象<br>CLLocationManager *_manager;<br>}</p>
+<p>//获取当前经度<br>_manager =[[CLLocationManager alloc]init];<br>//设置代理<br>_manager.delegate=self;</p>
+<p>开始定位<br>[self startLocation];<br>#pragma mark - 开始定位<br>-(void)startLocation<br>{<br>//判断定位服务是否可用<br>if (![CLLocationManager locationServicesEnabled]) {<br>NSLog(@”定位服务不可用”);</p>
 <p>}</p>
-<p>//告诉系统, 这个对象应该如何解码<br>//  如果没有加这个方法,自定义对象解档的时候会奔溃</p>
+<p>//设置精确度<br>_manager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;<br>//距离变化敏感程度<br>_manager.distanceFilter=1000;<br>//开始定位<br>[_manager startUpdatingLocation];<br>}<br>#pragma mark - 协议提供的代理方法，当位置更新的时候执行<br>-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations<br>{<br>//地址：经纬度</p>
+<p>//获取地址对象(包含经纬度)<br>CLLocation *location=manager.location;<br>//获取当前经纬度<br>CLLocationCoordinate2D coordinate=location.coordinate;<br>//输出经纬度<br>NSLog(@”long=%f lan=%f”,coordinate.longitude,coordinate.latitude);</p>
+<p>}  </p>
+<p>方向服务<br>//    [self testHeading];<br>#pragma mark - 方向服务<br>-(void)testHeading<br>{<br>if (![CLLocationManager headingAvailable]) {<br>NSLog(@”方向服务不可用”);<br>return;<br>}<br>[_manager startUpdatingHeading];<br>}<br>#pragma mark - 代理方法，当方向更新的时候开始执行<br>-(void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading<br>{</p>
+<p>NSLog(@”磁极方向= %f”,newHeading.magneticHeading);<br>NSLog(@”地理方向 = %f”,newHeading.trueHeading);<br>}</p>
+<p>地址编码和地址反编码<br>[self testGeoCoder];<br>#pragma mark - 地址编码和地址反编码<br>-(void)testGeoCoder<br>{<br>//知道地址，获取经纬度===地址编码<br>CLGeocoder *geocoCoder=[[CLGeocoder alloc]init];<br>[geocoCoder geocodeAddressString:@”兴美生活广场” completionHandler:^(NSArray *placemarks, NSError *error) {<br>//返回placemarks<br>for (CLPlacemark *mark in placemarks)<br>{<br>NSLog(@”mark=%@”,mark );<br>}<br>}];<br>//地址反编码，知道经纬度，获取地址，<br>CLLocation *location=[[CLLocation alloc]initWithLatitude:40.03708400 longitude:116.37059500];</p>
+<p>CLGeocoder *reverseGeocoCoder=[[CLGeocoder alloc]init];<br>[reverseGeocoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {<br>for (CLPlacemark *mark in placemarks)<br>{<br>NSLog(@”地址反编码=%@”,mark );</p>
+<p>}<br>}];</p>
+<p>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net10%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">事件处理简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:10:27" itemprop="dateCreated datePublished" datetime="2016-07-31T18:10:27+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1&gt; 事件处理简介</p>
 <ul>
-<li>(id)initWithCoder:(NSCoder *)aDecoder<br>{<br>  if (self = [super init]) {<pre><code>  //对数据进行解码操作
-  self.nickname = [aDecoder decodeObjectForKey:@&quot;nickname&quot;];
-  self.gender = [aDecoder decodeObjectForKey:@&quot;gender&quot;];
-  self.weight = [[aDecoder decodeObjectForKey:@&quot;weight&quot;] floatValue];
-  self.type = [aDecoder decodeObjectForKey:@&quot;type&quot;];
-  
-</code></pre>
-  }<br>  return self;<br>}</li>
+<li> PPT简介</li>
+<li>3大事件：主要了解触摸事件。</li>
+<li>什么是响应者对象</li>
+<li>为什么继承UIResponder就能处理事件</li>
+<li>想处理触摸事件，应该怎么办</li>
 </ul>
-<blockquote>
-<p>Json解析</p>
+<p>2&gt;  01-view拖拽演练</p>
+<ul>
+<li>为什么要自定义view：系统自带不能处理事件</li>
+<li>演示触摸事件方法,触摸的完整过程。</li>
+<li>介绍参数(NSSet,UITouch,UIEvent)</li>
+<li>重点UITouch，</li>
+</ul>
+<p>1.触摸事件方法中的UITouch都是同一个对象，因为一根手指对应一个UITouch.当手指移动或者抬起，并不会产生一个新的UITouch对象给你，而是改变UITouch里面的属性，<br>1.默认三个方法里面只能获取到一个手指，为什么。UIView不支持多点触控<br>2.怎么才能有两个手指，两个手指同时按，并且视图支持多点触控<br>3.UITouch的tapCount有什么用？可以判断用户当前是双击还是单击<br>4.UITouch的phase有什么用? 根据这个属性，判断当前需要调用哪个处理事件方法，begin,move,end<br>程序思路：</p>
+<ul>
+<li>在TouchMove里面做事情-为什么?因为用户手指在视图上移动的时候才需要移动视图。</li>
+<li>获取用户当前的位置，获取用户之前的位置，就知道用户从哪移动到哪,这个位置也是视图移动的位置</li>
+<li>当前视图的位置 = 上一次视图的位置 + 手指的偏移量</li>
+</ul>
+<p>3&gt; 02-事件传递</p>
+<ul>
+<li>  PPT简介</li>
+<li>事件，加入到一个由谁管理的事件队列中?UIApplication</li>
+<li>为什么用队列，不用栈。队列先进先出，意味着先产生的事件，先处理。</li>
+<li>  代码验证事件谁处理</li>
+<li>PPT上这么多view，验证哪个view处理事件。这么多view，都需要监重写一个方法，搞个父类。</li>
+<li>一个view能处理事件，意味着事件传递给他了，那怎么传递? 事件是由父控件传递给子控件。</li>
+<li>父控件不处理事件，子控件也不能。蓝色不接收事件，黄色也不会接收事件? 为什么，因为事件是从父控件传递给子控件的。父控件都没有事件，怎么传给子控件。</li>
+<li>  代码验证view不能处理事件</li>
+<li>一个view怎么不能处理事件。userInteractionEnabled = NO，hidden = YES，alpha &lt;= 0.01</li>
+<li>  代码验证UIImageView不允许交互</li>
+<li>UIImageView默认不允许用户交互，因此默认它上面的子控件不能接收事件。</li>
+<li>  怎么找到最合适的View？通过一个递归。</li>
+<li>第一个接收事件的控件是谁?窗口</li>
+<li>当事件传递给窗口的时候，就会让窗口去找最合适的view,1&gt; 判断自己能不能接收事件 2&gt; 点在不在窗口上 3&gt; 去找比自己更合适的view，从后往前遍历子控件，拿到子控件后，把事件传递给这个子控件 4&gt; 子控件拿到事件之后，又会做同样的判断，一直递归去找，直到找到最合适的view.</li>
+<li>  事件传递的目的何在?找到最合适的view,把事件交给他。</li>
+</ul>
+<p>4&gt; 03-hitText方法和pointInside方法(复制:02-事件传递代码)</p>
+<ul>
+<li>（了解hitText）学习一个方法必须了解：什么时候调用和这个方法有什么用</li>
+</ul>
+<ol>
+<li>hitText什么时候调用:当一个事件传递给一个控件的时候，控件就会调用这个方法</li>
+<li>hitText作用: 寻找到最合适的view。</li>
+</ol>
+<ul>
+<li>（回顾下事件传递），UIApplication -&gt; UIWindow</li>
+<li> UIWindow去寻找最合适的view? [UIWindow hitTest:withEvent:]里面做了什么事情？<br>1&gt; 判断窗口能不能处理事件? 如果不能，意味着窗口不是最合适的view，而且也不会去寻找比自己更合适的view,直接返回nil,通知UIApplication，没有最合适的view。<br>2&gt; 判断点在不在窗口<br>3&gt; 遍历自己的子控件，寻找有没有比自己更合适的view<br>4&gt; 如果子控件不接收事件，意味着子控件没有找到最合适的view,然后返回nil,告诉窗口没有找到更合适的view,窗口就知道没有比自己更合适的view,就自己处理事件。</li>
+<li>验证下hitTest方法返回nil，里面的子控件能处理事件吗？ 重写根控制器view的hitTest:withEvent:方法，</li>
+<li>验证这个方法是否真能找到最合适的view？</li>
+<li>如果点击屏幕任何一个地方，都是白色的view，怎么做。直接返回白色的view,就不会继续去找白色view的子控件了。</li>
+<li>介绍pointInside方法</li>
+<li>pointInside作用：判断一个点在不在一个控件上</li>
+<li>point参数:方法调用者坐标系上的点，PPT画图分析原理。</li>
+<li>这节课的重点：学习完了pointInside,就能实现下hitTest方法底层是怎么做的了。</li>
+</ul>
+<p>5&gt; 04-hitText练习</p>
+<ul>
+<li>分析思路：如果一个点，同时在黄色view和按钮上，由按钮处理事件，怎么做?</li>
+<li>分析事件传递: 当黄色按钮要处理事件，首先事件得传递到他身上</li>
+<li>重写hitTest方法：事件传递到某个控件，调用什么方法?hitTest</li>
+<li>返回nil什么意思？如果直接返回nil，意味着黄色的view，没有找到最合适的view,他的父控件，就会遍历下一个控件，也就是按钮，询问按钮是不是最合适的view.</li>
+<li>判断点在不在按钮上，在就交给他处理。</li>
+<li>pointInside实现。</li>
+</ul>
+<p>5&gt; 响应者链条(复制:02-事件传递代码)</p>
+<ul>
+<li>PPT简介</li>
+<li>touch默认做法:自己不处理事件，交给上一个响应者处理touch事件。</li>
+<li>响应者链条，点击绿色的view,如果不处理事件，就会往上传递。</li>
+<li>验证touch的默认做法 先恢复所有view的默认做法</li>
+<li>监听黄色点击，蓝色点击。</li>
+<li>黄色调用默认做法，事件传递给谁处理?蓝色</li>
+<li>得出结论：1&gt; touch的默认做法：自己不处理，交给上一个响应者。 2&gt; 上一个响应者默认是父控件</li>
+<li>两个view怎么同时处理事件?一个view处理方法，在调用父类默认的做法</li>
+<li>把事件传递给白色的view，怎么做?</li>
+<li>总结下事件传递的完整过程.</li>
+<li>把事件传递给控制器，测试白色view的上一个响应者是否是控制器。</li>
+<li>回顾响应者链条</li>
+</ul>
+<p>6&gt; 抽屉效果<br>添加子视图</p>
+<ul>
+<li>  简单的滑动效果</li>
+<li>监听控制器处理事件方法</li>
+<li>获取x轴偏移量</li>
+<li>改变主视图的frame</li>
+<li>  利用KVO做视图切换<br>往左移动，显示右边，隐藏左边<br>往右移动，显示左边，隐藏右边</li>
+<li> 复杂的滑动效果，PPT讲解（根据手指每移动一点，x轴的偏移量算出当前视图的frame）<br>假设x移到320时，y移动到60，算出没移动一点x，移动多少y<br>offsetY = offsetX * 60 / 320  手指每移动一点，x轴偏移量多少，y偏移多少<br>为了好看，x移动到320，距离上下的高度需要保持一致，而且有一定的比例去缩放他的尺寸。<br>怎么根据之前的frame，算出当前的frame,touchMove只能拿到之前的frame.<br>当前的高度 = 之前的高度 * 这个比例<br>缩放比例：当前的高度/之前的高度  (screenH - 2 * offsetY) / screenH<br>当前的宽度也一样求。<br>y值，计算比较特殊，不能直接用之前的y,加上offsetY,往左滑动，主视图应该往下走，但是offsetX是负数，导致主视图会往上走。<br>y = （screenH - 当前的高度）* 0.5<br>getCurrentFrameWithOffsetX</li>
+<li>  定位(滑动松开手指的时候，移动到目标点)<br>移动到左右目标点，根据偏移量 = 当前目标点的x - 之前视图的x，计算移动到目标点的frame<br>还原：当没有移动到目标点，就把主视图还原。</li>
+<li>  复位（当主视图不在原始的位置，点击屏幕，恢复原来位置）<br>判断手指是否移动，移动的时候就自动定位，不需要手动复位。</li>
+</ul>
+<p>7&gt; 手势识别<br>使用UIImageView原因：之前既能看见图片，又能监听点击的只有UIButton,学了手势，我们的UIImageView也可以。</p>
+<ul>
+<li>tap(代理：左边不能点，右边能点)</li>
+<li>longPress(allowableMovement:触发之前，最大的移动范围)<blockquote>
+<p>默认调用两次，开始一次，结束一次。</p>
 </blockquote>
-<p>Javascript Object Notation 简写<br>网络常用一种表示数据或交换数据的格式<br>4.2 Json数据格式<br>[]表示一个数组, 对应NSArray<br>{}表示一个字典, 对应NSDictionary<br>key:value  表示一个键值对<br>“str”    表示一个字符串   NSString<br>90        表示一个数字       NSNumber<br>,  表示并列的数据<br>4.3 Json格式的读取和使用<br>//如何解析JSON, 解析后如何获取其中数据<br>NSString *path = @”/Users/mac/Desktop/1422带课/oc7-持久化存储/topic.txt”;<br>//JSON先读取到程序中(NSString,NSData)<br>NSData *data = [[NSData alloc] initWithContentsOfFile:path];<br>//OC提供专门用于JSON解析的类<br>//NSJSONSerialization<br>//功能: 把NSData类型JSON数据转化为字典或者数组<br>//参数1: 需要解析的JSON数据<br>//参数2: 传入一个选项<br>//参数3: 错误<br>//返回值: 如果JSON顶层结点是[],用NSArray接收<br>//       如果顶层结点是{}, 用NSDictionary接收<br>NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC6%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%86%E7%B1%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/B_OC6%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%86%E7%B1%BB/" class="post-title-link" itemprop="url">OC文件和目录管理类</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 22:44:56" itemprop="dateCreated datePublished" datetime="2016-07-30T22:44:56+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>NSFileManager 文件或目录管理类(重点)</p>
-</blockquote>
-<p>1.1 创建NSFileManager的对象<br>//创建对象<br>//默认用于创建对象方法<br>//defaultManager创建出对象都是同一个对象<br>//单例模式: 有时候想让让一个类只能创建一个对象<br>NSFileManager *fm = [NSFileManager defaultManager];<br>1.2 获取目录下的所有文件和目录<br>//(2)知道某个目录下都有哪些文件和目录<br>//细节: 不会显示子目录<br>NSArray *array = [fm contentsOfDirectoryAtPath:@”/Users/mac/Desktop/dir” error:nil];<br>//显示所有文件包括子目录<br>array = [fm subpathsOfDirectoryAtPath:@”/Users/mac/Desktop/dir” error:nil];<br>1.3 创建目录, 创建文件<br>实例: 创建 /Users/mac/Desktop/dir/hello<br>//参数2: 表示是否创建中间目录<br>BOOL b;<br>b = [fm createDirectoryAtPath:@”/Users/mac/Desktop/dir/hello” withIntermediateDirectories:YES attributes:nil error:nil];<br>NSLog(@”b = %d”,b);<br>b = [fm createFileAtPath:@”/Users/mac/Desktop/dir/saozi.txt” contents:nil attributes:nil];<br>NSLog(@”b = %d”,b);<br>1.4 复制文件, 移动文件, 删除文件<br>//参数1: 源文件<br>//参数2: 目标文件<br>b = [fm copyItemAtPath:@”/Users/mac/Desktop/dir/saozi.txt” toPath:@”/Users/mac/Desktop/dir/hanzi.txt” error:nil];<br>//移动文件<br>BOOL b = [fm moveItemAtPath:@”/Users/mac/Desktop/dir/saozi.txt” toPath:@”/Users/mac/Desktop/dir/hello/saozi.txt” error:nil];<br>BOOL b = [fm removeItemAtPath:@”/Users/mac/Desktop/dir/hanzi.txt” error:nil];<br>1.5 判断文件是否存在<br>//(5)判断文件是否存在<br>BOOL b =[fm fileExistsAtPath:@”/Users/mac/Desktop/dir/dict.txt”];</p>
-<blockquote>
-<p>文件读写操作 NSFileHandle</p>
-</blockquote>
-<p>2.1 打开文件<br> 细节：打开应选择的模式；<br> 1.为了写文件fileHandleForWritingAtPath<br> 2.为了读文件fileHandleForReadingAtPath<br>(1)创建对象打开文件<br>NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath:@”/Users/mac/Desktop/dir/123.txt”];<br>if(fh == nil)<br>{<br>    NSLog(@”文件打开失败”);<br>    return 1;<br>}<br>2.2 读取文件数据<br>//(2)读取文件数据<br>//读取指定长度的数据<br>//一直读取直到文件末尾<br>//  NSData 表示二进制的数据<br>NSData *data = [fh readDataOfLength:100];<br>//读取出得二进制数据转化为字符串<br>NSString *info  =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];<br>2.3 写文件<br>//写入数据<br>NSString *str = @”好吃不过饺子,hao wan bu guo sao zi”;<br>//转化<br>NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];<br>//清空文件内容<br>//[fh truncateFileAtOffset:0];<br>//文件读写位置设置到文件的末尾<br>[fh seekToEndOfFile];<br>[fh writeData:data];</p>
-<p>2.4 移动文件读写位置<br>//文件读写位置设置到文件的末尾<br>[fh seekToEndOfFile];</p>
-<blockquote>
-<p>NSValue和NSNumber的使用</p>
-</blockquote>
-<p>int a=10;<br>int b=20;<br>//完成了基本数据类型到对象转化<br>NSNumber *num1 = [NSNumber numberWithInt:a];<br>NSNumber *num2 = [NSNumber numberWithInt:b];<br>NSArray *array = [[NSArray alloc] initWithObjects:num1,num2,nil];<br>//需求: 把一个结构体变量存储到NSArray中?<br>//思考:   把一个结构体变量转化为对象 NSValue<br>typedef struct Person{<br>    int age;<br>    float height;<br>}Person;<br>Person zhangsan = {18,1.77};</p>
-<p>//作用: 把C的类型的数据转化为NSValue类型<br>//参数1:  数据的地址<br>//参数2:  数据的类型<br>//@encode作用把类型转化为字符串<br>NSValue *value = [[NSValue alloc] initWithBytes:&amp;zhangsan objCType:@encode(Person)];<br>NSMutableArray *marr = [[NSMutableArray alloc] init];<br>[marr addObject:value];</p>
-<p>Person newPerson;<br>//从NSValue中解析出存储的数据<br>[value getValue:&amp;newPerson];</p>
-<blockquote>
-<p>NSDate的使用</p>
-</blockquote>
-<p>(1)获取当前时间<br>NSDate *date = [NSDate date];<br>//时区概念 +8区<br>(2)时间格式化输出<br>NSDateFormatter *df = [[NSDateFormatter alloc] init];<br>//设置时间的格式<br>[df setDateFormat:@”yyyy/MM/dd HH:mm:ss S”];<br>NSString *dateString = [df stringFromDate:date];<br>(3)获取年,月,日<br> 设置需要的格式<br>(4)计算某个操作所消耗的时间–计算时间差<br>NSDate *beginDate = [NSDate date];<br>long sum=0;<br>for (long i=0; i&lt;1000000000; i++) {<br>    sum = sum+i;<br>}<br>NSDate *endDate = [NSDate date];<br>double interval = [endDate timeIntervalSinceDate:beginDate];</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC5setter%E5%92%8Cgetter%E6%96%B9%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/B_OC5setter%E5%92%8Cgetter%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">OC @property</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 22:36:08" itemprop="dateCreated datePublished" datetime="2016-07-30T22:36:08+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>OC是一门面向对象的语言<br>面向对象: 封装, 继承,    多态</p>
-</blockquote>
-<blockquote>
-<p>能不能让编译器自动生成getter和setter方法的原型?</p>
-</blockquote>
-<p>使用 @property帮我们生成getter和setter方法的声明<br>(1)形式1<br>//以名字name为例<br>-(void)setName:(NSString *)n;<br>-(NSString *)name;<br>(2)形式2<br>@property NSString * name;</p>
-<blockquote>
-<p>能不能让编译器自动生成getter和setter方法的实现(早期版本)</p>
-</blockquote>
-<p>使用 @synthesize 帮我们生成getter和setter方法的实现<br>(1)形式1<br>//以名字name为例<br>//name的设置方法<br>-(void)setName:(NSString *)n<br>{<br>    NSLog(@”setName”);<br>    name = n;<br>}<br>//name的获取方法<br>-(NSString *)name<br>{<br>    //返回name是实例变量name<br>    return name;<br>}<br>(2)形式2<br>@synthesize name;</p>
-<blockquote>
-<p>实例变量设置为只读的</p>
-</blockquote>
-<p>@property (readonly) NSString *sex;</p>
-<blockquote>
-<p>指定getter方法和setter方法的方法名?</p>
-</blockquote>
-<p>@property (getter = isShow,<br>           setter = changeShow:) BOOL show;</p>
-<blockquote>
-<p>不同类型的实例变量的property如何写</p>
-</blockquote>
-<p>对于字符串和对象有特殊的处理<br>添加property<br>nonatomic 作用取消线程保护,提高代码执行速度<br>@property (nonatomic) int age;<br>copy 表示拷贝对象<br>@property (nonatomic,copy) NSString *name;<br>retin 表示持有对象<br>@property (nonatomic,retain) Eye *eye;</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC4%E5%AD%97%E5%85%B8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/B_OC4%E5%AD%97%E5%85%B8/" class="post-title-link" itemprop="url">OC字典</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 22:29:28" itemprop="dateCreated datePublished" datetime="2016-07-30T22:29:28+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p> 创建初始化</p>
-</blockquote>
-<p>//参数格式: value1,key1,  value2,key2, …..<br>NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:<br>@”zhangsan,B,13611112222”, @”zhangsan”,<br>@”lisi,G,1101101101110”, @”lisi”,<br>nil];</p>
-<blockquote>
-<p>使用其中对象</p>
-</blockquote>
-<p>NSString *str = [dict objectForKey:@”lisi”];</p>
-<blockquote>
-<p>快速遍历</p>
-</blockquote>
-<p>//细节1: 使用forin获取到的都是key,不是值<br>//细节2: 使用字典, 存进去是某个顺序, 取出来不一定是这个顺序<br>for (NSString *key in dict) {<br>NSString *value = [dict objectForKey:key];<br>NSLog(@”key = %@, value = %@”,key,value);<br>}</p>
-<blockquote>
-<p>==NSMutableDictionary==</p>
-</blockquote>
-<p>NSMutableDictionary类继承与NSDictionary</p>
-<blockquote>
-<p>创建对象</p>
-</blockquote>
-<p>NSMutableDictionary *mdict = [[NSMutableDictionary alloc] init];</p>
-<blockquote>
-<p>添加或替换</p>
-</blockquote>
-<p>//细节: 如果这个key不存在, 相当于字典中添加一个对象<br>//如果key存在, 则会覆盖这个key对应的值<br>[mdict setValue:@”zhangsan,27” forKey:@”zs”];<br>[mdict setValue:@”lisi,30” forKey:@”ls”];</p>
-<blockquote>
-<p>移除对象</p>
-</blockquote>
-<p>[mdict removeObjectForKey:@”ww”];<br>[mdict removeAllObjects];</p>
+</li>
+<li>swipe:(一个手势只能识别一个方向)</li>
+<li>旋转：<br>基于上一次旋转</li>
+<li>复位：(手势的取值都是相对最原始的位置，我们应该是需要相对上一次，因此每次调用，就复位一下，每次都是从零开始旋转角度)<br>缩放：复位</li>
+<li>如何同时支持旋转和缩放？默认不支持多个手指，<br>Simultaneously：同时<br>当使用一个手势的时候会调用代理的Simultaneously方法，询问是否支持多个手势</li>
+<li>pan<br>获取平移的位置：translationInView<br>复位：setTranslation:inView: 需要传一个view，因为点的位置跟坐标系有关系，看他是基于哪个坐标系被清空的。</li>
+</ul>
 
       
     </div>
@@ -1018,7 +1009,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/32/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/32/">32</a><span class="page-number current">33</span><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/34/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/32/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/32/">32</a><span class="page-number current">33</span><a class="page-number" href="/page/34/">34</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="extend next" rel="next" href="/page/34/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1084,7 +1075,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-count">366</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

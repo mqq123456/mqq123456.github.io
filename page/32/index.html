@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/C_UI13UITableView/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/23/M_10OC%E6%B3%A8%E9%87%8A/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/31/C_UI13UITableView/" class="post-title-link" itemprop="url">UITableView</a>
+            <a href="/2016/08/23/M_10OC%E6%B3%A8%E9%87%8A/" class="post-title-link" itemprop="url">OC 开发注释，规范</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-31 00:00:01" itemprop="dateCreated datePublished" datetime="2016-07-31T00:00:01+08:00">2016-07-31</time>
+              <time title="创建时间：2016-08-23 16:14:29" itemprop="dateCreated datePublished" datetime="2016-08-23T16:14:29+08:00">2016-08-23</time>
             </span>
 
           
@@ -186,303 +186,73 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>我们为什么要实现单元格的复用机制</p>
-</blockquote>
-<p>单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存<br>单元格的复用机制原理<br>一开始的时候我们创建了桌面最多能显示的单元格数，cell<br>当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格<br>因此我们就做到了只生成了屏幕范围可显示的单元格个数，就实现滑动表格试图时，以后不会再init alloc单元格cell了，从而实现了节省内存的原理<br>单元格的复用机制<br>-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath<br>{</p>
-<p>定义一个cell标示符，用以区分不同的cell<br>以后有不同风格的cell就可以使用了<br>static NSString *cellID=@”cell”;<br>从cell复用池中拿到可用的cell<br>UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:cellID];<br>检测，拿到一个可用的cell<br>if(cell ==nil)<br>{<br>创建新的cell<br>cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];<br>}</p>
-<p>&lt;3&gt;显示分组数据<br>显示每段       多少section数据<br>-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView<br>{<br>return _dataArray.count;<br>}<br>告诉表格每段要显示多少行<br>重要参数：section每次传入制定序号<br>-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section<br>{<br>NSArray *array=_dataArray[section];<br>return array.count;<br>}</p>
-<blockquote>
-<p>单元格行的高度</p>
-</blockquote>
-<p>//通过这个方法可以指定任意行的高度。<br>-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath<br>{<br>    return 44.0f;<br>}</p>
-<p>单元格的背景<br>单元格的内容视图contentView</p>
-<blockquote>
-<p>某行选中的事件处理</p>
-</blockquote>
-<p>-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath<br>{}<br>//某行被取消选中了<br>-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath<br>{<br>NSLog(@”被取消选中了”);<br>}</p>
-<blockquote>
-<p>添加头部视图和尾部视图</p>
-</blockquote>
-<p>//    添加头部试图<br>UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];<br>imageView.image=[UIImage imageNamed:@”fenjing.jpg”];<br>_tableView.tableHeaderView=imageView;<br>//    添加尾部试图<br>UIImageView *footImage=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 150)];<br>footImage.image=[UIImage imageNamed:@”head2.jpg”];<br>_tableView.tableFooterView=footImage;</p>
-<blockquote>
-<p>表格视图的编辑(难点)</p>
-</blockquote>
-<p>&lt;1&gt;单元格的删除操作[重点, 必须掌握]</p>
-<p>&lt;2&gt;单元格的增加操作</p>
-<p>&lt;3&gt;单元格的移动操作</p>
-<p>&lt;4&gt;多行选中和多行删除操作</p>
-<p>2.表格视图的设置</p>
-<p>&lt;1&gt;设置表格的索引</p>
-<p>&lt;2&gt;设置段头和段尾</p>
-<p>&lt;3&gt;表格的分割线</p>
-<p>3.表格视图的搜索</p>
-<p>&lt;1&gt;添加搜索条 UISearchBar–&gt;tableHeaderView</p>
-<p>4.表格视图控制器</p>
-<blockquote>
-<p>cell的定制</p>
-</blockquote>
-<p>1.我们使用MVC模式实现cell的定制。<br>什么是MVC模式<br>V是：VIew视图     作用：展示数据，接收用户交互<br>C是：Controller控制器<br>作用：负责把数据从Model中拿出来放到View上。<br>根据View的操作区修改数据。<br>M是：Model模型    作用：存储和表示数据</p>
-<p>理解：简单理解为每个界面分为三层——Model，VIew，Controller<br>效果：让开发变得更简单，可维护性更强，可扩展性更强，可阅读性更强<br>下面我们就具体看一下MVC模式应该怎么设计，在MVC模式下如何定制cell<br>1.Model的设计<br>这里：你要建立数据模型，存储数据（数据模型：就是oc中的类）<br>现在获取的数据本质上是原始数据，<br>以后原始数据有很多中  plist  JSON  数据库  文本文件<br>注意：不要直接使用原始数据<br>把所有的原始数据存储到数据模型Model<br>将解析数据存储到Model中<br>建立数组接收每个Model对象。</p>
-<p>2.cell的定制<br>就是将cell上所有的空间全部封装成一个类。<br>在这个类里，我们创建这些控件，设置相应的坐标<br>将这些类添加到self.contentView</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI11UIScrollView/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI11UIScrollView/" class="post-title-link" itemprop="url">UIScrollView</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:54:29" itemprop="dateCreated datePublished" datetime="2016-07-30T23:54:29+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>属性</p>
-</blockquote>
-<p>内容区域contentSize<br>@property(nonatomic) CGSize contentSize;<br>偏移量contentOffset<br>@property(nonatomic) CGPoint contentOffset;<br>弹簧效果bounces<br>@property(nonatomic) BOOL bounces;<br>分页效果pagingEnabled<br>@property(nonatomic,getter=isPagingEnabled) BOOL pagingEnabled;<br>允许滑动视图本身，如果设为no只能通过方法滑动，不能直接用手滑动<br>@property(nonatomic,getter=isScrollEnabled) BOOL scrollEnabled;<br>显示水平进度条showsHorizontalScrollIndicator<br>@property(nonatomic) BOOL showsHorizontalScrollIndicator;<br>显示垂直进度条showsVerticalScrollIndicator<br>@property(nonatomic) BOOL showsVerticalScrollIndicator;<br>放大和缩小的倍数<br>@property(nonatomic) CGFloat minimumZoomScale;<br>@property(nonatomic) CGFloat maximumZoomScale;</p>
-<p>1缩放到某个区域，（具体出现的区域受缩放倍数的影响）</p>
+          <p>/********************** View Cycle ***********************/</p>
+<p>/**</p>
 <ul>
-<li>(void)zoomToRect:(CGRect)rect animated:(BOOL)animated;</li>
+<li><p> Description</p>
+</li>
+<li><p> 1.第一区块 viewDidLoad,viewDidAppear等方法</p>
+</li>
 </ul>
-<p>2种通过代码滑动视图的方法，一个是设置偏移量，一个是滑动到某个区域（常用第一个）</p>
+<p>*</p>
+<p>*/</p>
+<p>/********************** UITableViewDataSource ********************/</p>
+<p>/**</p>
 <ul>
-<li>(void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;</li>
-<li>(void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated;</li>
+<li><p> Description</p>
+</li>
+<li><p> 2.如果有用tableview/collectview 则放置 datasource模块</p>
+</li>
+<li><p> 要点:保持protocol名 和mark名字一样 点击可以直接跳转</p>
+</li>
 </ul>
-<blockquote>
-<p>滚动视图的基本使用</p>
-</blockquote>
-<p>演示UIScrollView滚动试图基本使用<br>UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 11000, 5600)];<br>imageView.image=[UIImage imageNamed:@”1001.jpg”];<br>[self.view addSubview:imageView];<br>使用滚动试图<br>声明一个滚动试图<br>UIScrollView *scrollView=[[UIScrollView alloc]initWithFrame:self.view.bounds];<br>[self.view addSubview:scrollView];<br>imageView放到了滚动试图中<br>[scrollView addSubview:imageView];<br>滚动试图比较特殊，有两个大小。本身大小，其中内容大小<br>scrollView.contentSize=CGSizeMake(11000, 5600);<br>滚动试图常用属性<br>是否显示水平或竖直滚动条。<br>水平，横向<br>scrollView.showsHorizontalScrollIndicator=NO;<br>竖直，纵向<br>scrollView.showsVerticalScrollIndicator=NO;<br>设置分页滚动<br>scrollView.pagingEnabled=YES;<br>设置是否可以拉出空白区域，bounces蹦跳  scrollView.bounces=YES;</p>
-<blockquote>
-<p>滚动视图的基本原理 + 滚动视图的事件处理</p>
-</blockquote>
-<p>滚动试图缩放和基本原理UIScrollViewDelegate<br>scrollView.delegate=self;<br>开始拖拽<br>滚动。。。。。<br>结束拖拽<br>开始减速<br>滚动。。。。。<br>减速结束（滚动停止）；<br>【UIScrollViewDelegate】<br>代理方法<br>滑动过程中</p>
+<p>*/</p>
+<p>/********************** CustomeDelegate ***********************/</p>
+<p>/**</p>
 <ul>
-<li>(void)scrollViewDidScroll:(UIScrollView *)scrollView;<br>开始拖动</li>
-<li>(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;<br>停止拖动</li>
-<li>(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;<br>开始滑动</li>
-<li>(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;<br>停止滑动</li>
-<li>(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView; </li>
+<li><p> Description</p>
+</li>
+<li><p> 4.放置自定义的的一些protocol方法</p>
+</li>
+<li><p> 要点:保持protocol名 和mark名字一样 点击可以直接跳转</p>
+</li>
 </ul>
-<blockquote>
-<p>滚动视图的缩放</p>
-</blockquote>
-<p>设置最大最小缩放比例<br>通过代理方法，告诉滚动试图，哪个试图应该缩放<br>scrollView.maximumZoomScale=10;<br>scrollView.minimumZoomScale=0.1;<br>代理方法，告诉scrollView哪个试图应该缩放<br>当试图滚动的时候执行<br>试图缩放。<br>允许缩放的视图(一个scrollview中只能有一个可以缩放且必须设置可以缩放的范围)<br>-(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView<br>{<br>返回被缩放的试图<br>return imageView;<br>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI12%E6%89%8B%E5%8A%BF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI12%E6%89%8B%E5%8A%BF/" class="post-title-link" itemprop="url">手势</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:54:09" itemprop="dateCreated datePublished" datetime="2016-07-30T23:54:09+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>轻击手势Tap</p>
-</blockquote>
-<p>UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealTap:)];<br>[_imageView addGestureRecognizer:tap];</p>
-<p>}<br>-(void)dealTap:(UITapGestureRecognizer *)tap<br>{<br>NSLog(@”被点击了”);<br>}</p>
-<blockquote>
-<p>缩放手势Pinch</p>
-</blockquote>
-<p>UIPinchGestureRecognizer *pain=[[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(dealPinch:)];<br>[_imageView addGestureRecognizer:pain];<br>}<br>-(void)dealPinch:(UIPinchGestureRecognizer *)pinch<br>{<br>有一个非常重要的控件 ，缩放系数。pinch.scale<br>NSLog(@”缩放”);<br>仿射变换（改变view的位置大小）<br>_imageView.transform=CGAffineTransformMakeScale(pinch.scale, pinch.scale);<br>}</p>
-<blockquote>
-<p>旋转手势Rotation</p>
-</blockquote>
-<p>UIRotationGestureRecognizer *rotation=[[UIRotationGestureRecognizer alloc]initWithTarget:self action:@selector(dealrotation:)];<br>[_imageView addGestureRecognizer:rotation];</p>
-<p>}<br>-(void)dealrotation:(UIRotationGestureRecognizer *)ro<br>{<br>重要属性。。rotation.rotation表示旋转角度<br>_imageView.transform=CGAffineTransformMakeRotation(ro.rotation);<br>}</p>
-<blockquote>
-<p>滑动手势Swipe</p>
-</blockquote>
-<p>UISwipeGestureRecognizer *swipe=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(dealSwipe:)];<br>[_imageView addGestureRecognizer:swipe];<br>}<br>-(void)dealSwipe:(UISwipeGestureRecognizer *)swipe<br>{<br>NSLog(@”滑动”);<br>注意：滑动默认的方向是向右<br>swipe.direction=UISwipeGestureRecognizerDirectionRight;<br>static int index=0;<br>NSArray *array=@[@”1173.jpg”,@”1092.jpg”];<br>index++;<br>if(index&gt;array.count-1)<br>{<br>index=0;<br>}<br>_imageView.image=[UIImage imageNamed:array[index]];<br>//    if(index ==0)<br>//    {<br>//        _imageView.image=[UIImage imageNamed:@”1173.jpg”];<br>//        index=1;<br>//    }<br>//    else<br>//    {<br>//        _imageView.image=[UIImage imageNamed:@”1092.jpg”];<br>//        index=0;<br>//    }<br>}</p>
-<blockquote>
-<p>拖移手势Pan</p>
-</blockquote>
-<p>UIPanGestureRecognizer *pan=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(dealPan:)];<br>[_imageView addGestureRecognizer:pan];<br>}<br>-(void)dealPan:(UIPanGestureRecognizer *)pan<br>{<br>重要的属性locationInView<br>CGPoint point=[pan locationInView:self.view];<br>_imageView.center=point;<br>}<br>长按手势LongPress<br>UILongPressGestureRecognizer *longPress=[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(dealLongPress:)];<br>[_imageView addGestureRecognizer:longPress];</p>
-<p>}<br>-(void)dealLongPress:(UILongPressGestureRecognizer *)longPress<br>{<br>NSLog(@”长按”);<br>重要的属性 longPress.state<br>if(longPress.state==UIGestureRecognizerStateBegan)<br>{<br>UIAlertView *al=[[UIAlertView alloc]init];<br>al.message=@”是否保存图片”;<br>[al addButtonWithTitle:@”取消”];<br>[al show];<br>}</p>
-<p>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI10%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI10%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6/" class="post-title-link" itemprop="url">iOS常用控件</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:50:10" itemprop="dateCreated datePublished" datetime="2016-07-30T23:50:10+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.UISwitch        开关控件<br>2.UIActivityIndicatorView 活动提示视图<br>3.UISlider            滑块控件<br>4.UISegmentedControl        分段选择<br>5.UIStepper        计数器/步进器<br>6.UIProgrecessView        进度条<br>7.UITextView        文本视图<br>8.UIActionSheet 动作列表<br>9.UIAlertView    警告视图<br>10. 扩展知识</p>
-<blockquote>
-<p>UISwitch        开关控件<br>￼<br>创建显示<br>UISwitch *mySwich=[[UISwitch  alloc]initWithFrame:CGRectMake(100, 100, 100, 30)];<br>[self.view addSubview:mySwich];<br>注意：宽度和高度对控件没有影响。<br>控件的大小是固定的    width是51；higth是31；<br>属性;<br>状态是真还是假   一开始启动时的状态。<br>mySwich.on=YES;<br>设置关状态下的颜色<br>mySwich.tintColor=[UIColor redColor];<br>设置开状态下的颜色<br>mySwich.onTintColor=[UIColor blueColor];<br>设置圆点的颜色<br>mySwich.thumbTintColor=[UIColor yellowColor];<br>事件处理<br>细节：事件类型—ValueChanged<br>[mySwich addTarget:self action:@selector(dealSwith:) forControlEvents:UIControlEventValueChanged];<br>UIActivityIndicatorView 活动提示视图<br>￼<br>需求：在网路下载中，提示用户正在下载中 ，那么我们就可以使用活动指示器。<br>self.view.backgroundColor=[UIColor colorWithRed:1 green:1 blue:1 alpha:0.5];<br>创建添加<br>UIActivityIndicatorView *aiv=[[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];<br>UIActivityIndicatorViewStyleWhiteLarge,白的大号的<br>UIActivityIndicatorViewStyleWhite,白的正常号的<br>UIActivityIndicatorViewStyleGray,灰的。<br>[self.view addSubview:aiv];<br>只有中心，没有大小<br>aiv.center=CGPointMake(160, 200);<br>注意：要有开始动画<br>[aiv startAnimating];<br>设置颜色<br>aiv.color=[UIColor purpleColor];<br>模拟5s之后下载完成<br>5s后执行方法dealTimerout:<br>[NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(dealTimerout:) userInfo:aiv repeats:NO];<br>}<br>-(void)dealTimerout:(NSTimer *)timer<br>{<br>UIActivityIndicatorView *aiv=timer.userInfo;<br>[aiv stopAnimating];<br>}<br>UISlider            滑块控件<br>￼<br>创建<br>UISlider *slider=[[UISlider alloc]initWithFrame:CGRectMake(100, 100, 200, 30)];<br>[self.view addSubview:slider];<br>注意：控件的高度是不变的higth=30；<br>属性<br>设置最大值<br>slider.maximumValue=100;<br>最小值<br>slider.minimumValue=1;<br>当前值<br>slider.value =10;<br>事件处理<br>[slider addTarget:self action:@selector(dealSlider:) forControlEvents:UIControlEventValueChanged];<br>}<br>-(void)dealSlider:(UISlider *)s<br>{<br>NSLog(@”value=%f”,s.value);<br>}</p>
-</blockquote>
-<blockquote>
-<p>UISegmentedControl        分段选择<br>￼<br>需求：游戏中选择种族<br>UISegmentedControl *sc=[[UISegmentedControl alloc]initWithItems:@[@”人族”,@”精灵族”,@”矮人”,@”兽人”,@”迈雅”]];<br>sc.frame=CGRectMake(10, 100, 300, 30);<br>[self.view addSubview:sc];<br>属性<br>当前选择项<br>sc.selectedSegmentIndex=2;<br>设置色调<br>sc.tintColor=[UIColor redColor];<br>插入一个段<br>[sc insertSegmentWithTitle:@”亡灵族” atIndex:5 animated:YES];<br>事件处理<br>[sc addTarget:self action:@selector(dealSc:) forControlEvents:UIControlEventValueChanged];<br>}<br>-(void)dealSc:(UISegmentedControl *)sc<br>{<br>NSLog(@”sc=%d”,sc.selectedSegmentIndex);<br>}<br>UIStepper        计数器/步进器<br>￼<br>需求：购买界面上添加控件，选择构面数量<br>UIStepper *stepper=[[UIStepper alloc]init];<br>stepper.center=CGPointMake(250, 100);<br>[self.view addSubview:stepper];<br>[stepper addTarget:self action:@selector(dealSteeper:) forControlEvents:UIControlEventValueChanged];<br>stepper.minimumValue=1;<br>stepper.maximumValue=100;<br>stepper.value=1;</p>
-</blockquote>
-<p>textField=[[UITextField alloc]initWithFrame:CGRectMake(10, 85, 190, 30)];<br>textField.borderStyle=UITextBorderStyleRoundedRect;<br>textField.text=@”1”;<br>textField.delegate=self;<br>[self.view addSubview:textField];</p>
-<p>}<br>-(void)dealSteeper:(UIStepper *)steeper<br>{<br>NSLog(@”%f”,steeper.value);<br>textField.text=[NSString stringWithFormat:@”%d”,(int)steeper.value];<br>}</p>
-<blockquote>
-<p>UIProcessView        进度条<br>￼<br>常用显示耗时任务，的完成进度<br>数据下载，载入文件，游戏加载<br>UIProgressView *progressView=[[UIProgressView alloc]initWithProgressViewStyle:UIProgressViewStyleDefault];<br>progressView.frame=CGRectMake(20, 100, 280, 30);<br>[self.view addSubview:progressView];</p>
-</blockquote>
-<p>模拟网路下载<br>[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dealProgress:) userInfo:progressView repeats:YES];</p>
-<p>}<br>-(void)dealProgress:(NSTimer *)timer<br>{<br>UIProgressView *pv=timer.userInfo;<br>进度条当前进度0.0~1.0;<br>pv.progress+=0.02;</p>
-<p>}</p>
-<blockquote>
-<p>UITextView        文本视图<br>textView=[[UITextView alloc]initWithFrame:CGRectMake(10, 40, 300, 430)];<br>[self.view addSubview:textView];<br>textView.text=@”致虚级,守静笃,万物并作，无以归复。致虚级,守静笃,万物并作，无以归复。”;<br>textView.font=[UIFont systemFontOfSize:24];<br>如何回收键盘<br>输入框按return时候不是结束，而是换行<br>UIView *view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];<br>textView.inputAccessoryView=view;<br>UIButton *button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(260, 7, 60, 30);<br>[button setTitle:@”返回” forState:UIControlStateNormal];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>[view addSubview:button];</p>
-</blockquote>
-<p>}<br>-(void)btnClick:(UIButton *)button<br>{<br>[textView resignFirstResponder];<br>}</p>
-<blockquote>
-<p>UIActionSheet 动作列表<br>￼<br>UIButton *shareButton=[UIButton buttonWithType:UIButtonTypeSystem];<br>[self.view addSubview:shareButton];<br>[shareButton setTitle:@”分享” forState:UIControlStateNormal];<br>shareButton.frame=CGRectMake(100, 100, 100, 30);<br>[shareButton addTarget:self action:@selector(dealShare:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)dealShare:(UIButton *)button<br>{<br>UIActionSheet *actionSheet=[[UIActionSheet alloc]initWithTitle:@”分享” delegate:self cancelButtonTitle:@”取消” destructiveButtonTitle:nil otherButtonTitles:@”新浪微博”,@”微信圈子”,@”微信好友”,@”邮件”,@”短信”, nil];<br>显示出来。<br>[actionSheet showInView:self.view];</p>
-</blockquote>
-<p>}<br>-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex<br>{<br>可以知道点击了第几项。<br>NSLog(@”点击了第%d个按钮”,buttonIndex);</p>
-<p>}</p>
-<blockquote>
-<p>UIAlertView    警告视图<br>可以输入用户名和密码的输入<br>UIAlertView *alertView = [[UIAlertView alloc] init];<br>alertView.title = @”输入用户名和密码”;<br>alertView.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;<br>[alertView addButtonWithTitle:@”取消”];<br>[alertView addButtonWithTitle:@”完成”];<br>[alertView show];<br>alertView.delegate = self;<br>}</p>
-</blockquote>
+<p>*/</p>
+<p>/********************** Event Action ***********************/</p>
+<p>/**</p>
 <ul>
-<li>(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex;<br>{<br>UITextField *nameText = [alertView textFieldAtIndex:0];<br>UITextField *passwordText = [alertView textFieldAtIndex:1];</li>
+<li><p> Description</p>
+</li>
+<li><p> 5.按钮，手势等控件的一些事件方法</p>
+</li>
 </ul>
-<p>NSLog(@”name:%@ pass:%@”,nameText.text,passwordText.text);<br>}</p>
+<p>*</p>
+<p>*/</p>
+<p>/********************** Private Methods ***********************/</p>
+<p>/**</p>
+<ul>
+<li><p> Description</p>
+</li>
+<li><p> 6.放置私有方法 只有这个viewcontroller使用</p>
+</li>
+<li></li>
+</ul>
+<p>*/</p>
+<p>/********************** Getters And Setters ***********************/</p>
+<p>/**</p>
+<ul>
+<li><p> Description</p>
+</li>
+<li><p> 7.放置熟悉初始化操作</p>
+</li>
+<li><p> 要点:主要逻辑区块靠前，设置初始化放置后方</p>
+</li>
+</ul>
+<p>*/</p>
+<blockquote>
+<p>全部注释如下</p>
+</blockquote>
+<p>#pragma mark - Life cycle<br>#pragma mark - Init data<br>#pragma mark - Loading data<br>#pragma mark - Create view<br>#pragma mark - UITableViewDelegate<br>#pragma mark - SystemDelegate<br>#pragma mark - CustomDelegate<br>#pragma mark - Observer<br>#pragma mark - Enent response<br>#pragma mark - Private methods<br>#pragma mark - Setter and getter</p>
 
       
     </div>
@@ -502,7 +272,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI9UITabBarController/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/14/M_8Hexo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -516,7 +286,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/C_UI9UITabBarController/" class="post-title-link" itemprop="url">UITabBarController</a>
+            <a href="/2016/08/14/M_8Hexo/" class="post-title-link" itemprop="url">Hexo Docs中文用法</a>
         </h2>
 
         <div class="post-meta">
@@ -526,8 +296,15 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 23:46:24" itemprop="dateCreated datePublished" datetime="2016-07-30T23:46:24+08:00">2016-07-30</time>
+              <time title="创建时间：2016-08-14 15:46:25" itemprop="dateCreated datePublished" datetime="2016-08-14T15:46:25+08:00">2016-08-14</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2017-03-08 19:16:40" itemprop="dateModified" datetime="2017-03-08T19:16:40+08:00">2017-03-08</time>
+              </span>
 
           
 
@@ -540,38 +317,97 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>如何使用标签栏控制器实现多界面的切换</p>
-</blockquote>
-<p>创建多个试图控制器<br>创建一个标签栏控制器<br>UITabBarController *tbc=[[UITabBarController alloc]init];<br>把前面创建的试图控制器放入标签栏控制器中管理<br>tbc.viewControllers=@[frist,second,thir,fou,fiv,six];<br>标签栏一般同时最多显示5个界面，如果大于5个，最后一个标签项变成more中，</p>
+          <p>1.常用命令<br>    hexo server<br>    hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</p>
+<p><img src="http://b34.photo.store.qq.com/psb?/V10sskC23HFwmi/qozQRt9WZGcdM8pHc6H55CSXvasXR5hDsG8FKI4mSCY!/b/dCIAAAAAAAAA&bo=VQOAAgAAAAAFAPc!&rf=viewer_4" alt="清纯美女1"><br><img src="http://wiki.jikexueyuan.com/project/hexo-document/helpers.html" alt="hahah"></p>
+<p>categories: </p>
+<ul>
+<li>Sports</li>
+<li>Baseball<br>tags:</li>
+<li>Injury</li>
+<li>Fight</li>
+<li>Shocking</li>
+</ul>
+<p>标签插件</p>
+<p>这里说的标签插件不同于文章中的标签，它可以帮助你在文章中快速嵌入一些特殊的内容。</p>
 <blockquote>
-<p>标签栏上标签项的设置</p>
+<p>（1）Block Quote-块引用</p>
 </blockquote>
-<p>可以在标签栏上设置文本和图片<br>注意：标签栏显示该界面的时候从tabBarItem中取出需要的title和Image<br>fvc.tabBarItem.title=@”Limt”;<br>fvc.tabBarItem.image=[UIImage imageNamed:@”tabbar_limitfree”];<br>自己创建标签项。<br>UITabBarItem *item=[[UITabBarItem alloc]initWithTabBarSystemItem:UITabBarSystemItemBookmarks tag:100];<br>fvc.tabBarItem=item;<br>可以控制图片拉伸和上下移动<br>fvc.tabBarItem.imageInsets=UIEdgeInsetsMake(10, 0, 0, 0);<br>设置徽标。<br>fvc.tabBarItem.badgeValue=@”10”;</p>
+<p>插入带有作者信息的应用，体现在Html上就是在 blockquote 标签下加入了 footer 标签。但是会给文章带来不一样的显示效果，书写格式非常简单。</p>
+<blockquote><p>content</p>
+<footer><strong>[author[</strong><cite>source]] [link] [source_link_title]</cite></footer></blockquote>
+
 <blockquote>
-<p>标签栏的设置</p>
+<p>（2）Code Block代码块</p>
 </blockquote>
-<p>设置色调<br>tab.tabBar.barTintColor=[UIColor yellowColor];<br>设置背景图<br>tab.tabBar.backgroundImage=[UIImage imageNamed:@”tabbar_bg”];<br>设置标签被选中状态颜色<br>tab.tabBar.selectedImageTintColor=[UIColor purpleColor];</p>
+<p>在文章中插入代码块可以使用下面方式书写</p>
+<figure class="highlight plain"><figcaption><span>[title] [lang:language] [url] [link text]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code snippet</span><br></pre></td></tr></table></figure>
+
 <blockquote>
-<p>标签栏控制器的 时间处理</p>
+<p>（3）Pull Quote</p>
 </blockquote>
-<p>想要禁止选择某个标签项<br>当某个试图被选择的时候执行，返回yes执行，返回no不执行<br>-(BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController<br>选择了某个标签项进行处理<br>当某个试图被选中的时候执行<br>-(void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController</p>
+<p>这个插件可以帮助您在文章中插入重要引述。</p>
+<blockquote class="pullquote [class]"><p>content</p>
+</blockquote>
 <blockquote>
-<p>标签栏定制</p>
+<p>（4）jsFiddle</p>
 </blockquote>
-<p>核心：隐藏系统原来的标签栏，添加上自己定义的View；<br>创建一个标签栏控制器（TabBarContorller类）<br>把系统的替换成自己创建的tabBarContorller<br>1.先隐藏标签栏<br>self.tabBar.hidden=YES;<br>2.创建自己的标签栏。tabBar<br>获得屏幕的大小尺寸<br>CGSize size=[UIScreen mainScreen].bounds.size;<br>UIView *tabBar=[[UIView alloc]initWithFrame:CGRectMake(0, size.height-49, size.width, 49)];<br>tabBar.backgroundColor=[UIColor colorWithRed:1 green:1 blue:1 alpha:0.5];<br>[self.view addSubview:tabBar];<br>点击事件中实现切换界面的功能。<br>int index=button.tag-100;<br>index表示按钮的序号<br>selectedIndex表示被选中的序号。<br>self.selectedIndex=index;<br>获取被选择界面的序号<br>NSUserDefaults *ud=[NSUserDefaults standardUserDefaults];<br>int index=[ud integerForKey:@”selectedIndex”];<br>tab.selectedIndex=index;</p>
+<p>在文章中嵌入jsFiddle片段。</p>
+<iframe scrolling="no" width="[width]" height="[height]" src="https://jsfiddle.net/shorttag/embedded/[tabs]/[skin]" frameborder="0" loading="lazy" allowfullscreen></iframe>
 <blockquote>
-<p>保存被选择界面的序号</p>
+<p>（5）Gist</p>
 </blockquote>
-<p>NSUserDefaults  系统提供保存数据一种机制（单例）<br>NSUserDefaults *ud=[NSUserDefaults standardUserDefaults];<br>[ud setInteger:self.selectedIndex forKey:@”selectedIndex”];<br>tbc.selectedIndex = index;</p>
+<p>嵌入Gist片段</p>
+<script src="//gist.github.com/gist_id.js?file=[filename]"></script>
 <blockquote>
-<p>隐藏状态栏</p>
+<p>（6）iFrame</p>
 </blockquote>
-<p>先设置plist文件中的<br>View controller-based=NO；<br>[UIApplication sharedApplication].statusBarHidden=NO;</p>
+<p>插入网页框架</p>
+<iframe src="url" width="[width]" height="[height]" frameborder="0" loading="lazy" allowfullscreen></iframe>
 <blockquote>
-<p>设置状态栏文字为白色</p>
+<p>（7）Image</p>
 </blockquote>
-<p>只有两种颜色<br>default是黑色<br>LightContent为白色。<br>[UIApplication sharedApplication].statusBarStyle=UIStatusBarStyleLightContent;<br>[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@”header_bg”] forBarMetrics:UIBarMetricsDefault];</p>
+<p>插入图片，可以自定义大小</p>
+<img src="/path/to/image" class="[class names]" title="[width] [height] [title text [alt text]]">
+<blockquote>
+<p>（8）Link</p>
+</blockquote>
+<p>插入带有target=”_blank”属性值的链接。</p>
+<a href="" title="" target="">text url [external] [title]</a>
+<blockquote>
+<p>（9）Include Code</p>
+</blockquote>
+<p>从资源目录中插入代码片段。</p>
+
+<blockquote>
+<p>（10）Youtube</p>
+</blockquote>
+<p>在文章中插入Youtube视频。天朝的孩子就不用试了</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/video_id" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<blockquote>
+<p>（11）Vimeo</p>
+</blockquote>
+<p>在文章中插入Vimeo视频。</p>
+<div class="video-container"><iframe src="https://player.vimeo.com/video/video_id" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<blockquote>
+<p>（12）Include Posts</p>
+</blockquote>
+<p>包含其他文章的链接。</p>
+
+<a href="#">Post not found: slug [title]</a>
+<blockquote>
+<p>（13）Include Assets</p>
+</blockquote>
+<p>包含文章资源。 (具体怎么使用，还不太明白，后续再补充)</p>
+
+
+
+<blockquote>
+<p>（14）Raw</p>
+</blockquote>
+<p>一些内容不想被主题渲染，可以使用该插件呈现原始状态。</p>
+
+content
+
 
       
     </div>
@@ -591,7 +427,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI8UINavigationController/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/14/M_9Markdown/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -605,7 +441,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/C_UI8UINavigationController/" class="post-title-link" itemprop="url">UINavigationController</a>
+            <a href="/2016/08/14/M_9Markdown/" class="post-title-link" itemprop="url">Markdown</a>
         </h2>
 
         <div class="post-meta">
@@ -615,8 +451,15 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 23:44:00" itemprop="dateCreated datePublished" datetime="2016-07-30T23:44:00+08:00">2016-07-30</time>
+              <time title="创建时间：2016-08-14 15:46:25" itemprop="dateCreated datePublished" datetime="2016-08-14T15:46:25+08:00">2016-08-14</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2016-08-16 14:03:42" itemprop="dateModified" datetime="2016-08-16T14:03:42+08:00">2016-08-16</time>
+              </span>
 
           
 
@@ -629,134 +472,58 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>如何是用导航控制器显示第一个界面</p>
-</blockquote>
-<p>创建导航控制器，把试图控制器放入导航控制器进行管理<br>UINavigationController *nc=[[UINavigationController alloc]initWithRootViewController:fvc];<br>试图控制器设置为导航控制器的根试图控制器<br>self.window.rootViewController=nc;</p>
-<blockquote>
-<p>切换到下一个界面</p>
-</blockquote>
-<p>先创建下一个界面<br>使用pushViewController切换过去<br>[self.navigationController pushViewController:svc animated:YES];<br>3.返回上一个界面<br>使用 popToViewController 返回过去<br>[self.navigationController popToViewController:svc Animated:YES];<br>4.从任意界面，返回根试图控制器<br>使用popToRootViewControllerAnimated<br>[self.navigationController popToRootViewControllerAnimated:YES];<br>5.从当前界面返回以前push的任意界面<br>使用popToViewController:array[1]<br>将每个试图放入数组中<br>NSArray *array=self.navigationController.viewControllers;<br>[self.navigationController popToViewController:array[1] animated:YES];</p>
-<blockquote>
-<p>设置导航控制器的标题</p>
-</blockquote>
-<p>fvc.title=@”第一界面”;</p>
-<blockquote>
-<p>在导航栏上添加一个按钮(不是添加UIButton)</p>
-</blockquote>
-<p>创建文本按钮initWithTitle<br>UIBarButtonItem *leftItem=[[UIBarButtonItem alloc]initWithTitle:@”分类” style:UIBarButtonItemStylePlain target:self action:@selector(changeCategory:)];<br>创建系统样式按钮initWithBarButtonSystemItem<br>UIBarButtonItem *leftItem=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(changeCategory:)];<br>创建自定义图片按钮initWithCustomView<br>UIButton *button=[UIButton buttonWithType:UIButtonTypeCustom];<br>button.frame=CGRectMake(0, 0, 35, 30);<br>[button setBackgroundImage:[UIImage imageNamed:@”main_left_nav”] forState:UIControlStateNormal];<br>UIBarButtonItem *leftItem=[[UIBarButtonItem alloc]initWithCustomView:button];<br>self.navigationItem.leftBarButtonItem=leftItem;</p>
-<blockquote>
-<p>设置界面左上角返回按钮。</p>
-</blockquote>
-<p>UIBarButtonItem *backItem=[[UIBarButtonItem alloc]initWithTitle:@”返回” style:UIBarButtonItemStylePlain target:self action:nil];<br>self.navigationItem.backBarButtonItem=backItem;</p>
-<blockquote>
-<p>设置导航栏的背景</p>
-</blockquote>
-<p>设置导航条的色调barTintColor<br>self.navigationController.navigationBar.barTintColor=[UIColor grayColor];</p>
-<blockquote>
-<p>设置导航条的背景图片setBackgroundImage</p>
-</blockquote>
-<p>[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@”header_bg”] forBarMetrics:UIBarMetricsDefault];<br>UIBarMetricsDefault,<br>UIBarMetricsLandscapePhone,<br>UIBarMetricsDefaultPrompt = 101,<br>注意：导航条的大小：默认高度44个点。<br>导航条的图片高度要么是44，只会覆盖导航条<br>要么是64，不仅覆盖导航条，还会覆盖状态栏</p>
-<blockquote>
-<p>隐藏导航栏</p>
-</blockquote>
-<p>self.navigationController.navigationBar.hidden=YES;</p>
-<blockquote>
-<p>工具栏的使用</p>
-</blockquote>
-<p>添加工具栏（不是添加，是显示）<br>[self.navigationController setToolbarHidden:NO];<br>self.navigationController.toolbarHidden=NO;<br>工具栏上添加的控件只能是UIBarButtonItem<br>UIBarButtonItem *item=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(dealTooBarClick:)];<br>UIBarButtonItem *item1=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(dealTooBarClick:)];<br>UIBarButtonItem *item2=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dealTooBarClick:)];<br>self.toolbarItems=@[item,item1,item2];<br>为了分割三个Item，创建特殊item<br>相当于弹簧，弹开每个控件。UIBarButtonSystemItemFlexibleSpace<br>UIBarButtonItem *spse=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];<br>可以自己设置宽度的间隔。UIBarButtonSystemItemFixedSpace<br>UIBarButtonItem *flex=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];<br>flex.width=50;<br>self.toolbarItems=@[item,flex,item1,flex,item2];</p>
-<p>注意：自动布局。self.view就是导航条以下的范围 。<br>self.automaticallyAdjustsScrollViewInsets=YES;<br>导航控制器：UINavigationController<br>导航条：navigationBar<br>导航条上的按钮控件：UIBarButtonItem<br>工具栏：Toolbar<br>注意：工具栏上的控件只能使用UIBarButtonItem设置</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI7%E7%95%8C%E9%9D%A2%E4%BC%A0%E5%80%BC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI7%E7%95%8C%E9%9D%A2%E4%BC%A0%E5%80%BC/" class="post-title-link" itemprop="url">界面传值</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:40:36" itemprop="dateCreated datePublished" datetime="2016-07-30T23:40:36+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>正向传值</p>
-</blockquote>
-<p>1.什么是正向传值？<br>总结：A界面创建B界面<br>A界面的值传递到B界面<br>以后很多是有用到正向传值，只要在下一个界面的@proprty中添加一个属性。<br>实例：<br>登陆界面login     主界面main<br>把登陆界面上的用户名传到主界面<br>1.main上添加@proprty username<br>为什么定义@property属性<br>为了接受从登陆界面传过来的用户名。<br>@property (nonatomic ,copy)NSString *username;<br>2.传值。<br>MainViewController *mvc=[[MainViewController alloc]init];<br>把当前界面输入框中用户名传递给主界面。<br>注意：切换界面之前传值，千万不要放在present的后面。<br>mvc.username=_textField.text;<br>[self presentViewController:mvc animated:YES completion:nil];<br>3.第二个界面使用 self.object 使用值<br>nameLabel.text = [NSString stringWithFormat:@”用户名是: %@”,self.username];</p>
-<blockquote>
-<p>反向传值</p>
-</blockquote>
-<p>简单分解为四部分<br>1.制定协议<br>2.给主界面发送消息<br>3.主界面执行消息<br>4.配置界面的<br>1。先制定协议<br>为什么要制定协议<br>制定协议，协议中规定了配置界面应该给主界面发送什么消息<br>问题：谁制定协议呢？谁遵守协议呢？<br>配置界面制定协议，主界面遵守协议，实现协议中的方法<br>2.如何在配置界面添加主界面的指针<br>因为配置界面没有主界面的指针，所以，要把主界面的指针传到配置界面<br>给配置界面添加属性——传递主界面的指针<br>但是这个传入的对象必须要遵守协议，<br>代理一般使用assgin<br>3.如何传值<br>发送消息给配置界面让主界面去做事情<br>self，delegate代表主界面，self是配置界面。、</p>
-<p>总结:<br>A界面创建B界面,<br>B把值(字体大小)传回给A界面<br>注意：使用到  协议，代理，比较复杂。<br>搞清楚问题。<br>主界面创建配置界面。<br>配置界面要修改主界面<br>但是配置界面没有主界面的指针。<br>MainViewController<br>ConfigViewController</p>
-<p>(1)制定协议<br>因为是ConfigViewController其他界面发送消息</p>
+          <h1 id="写在开始之前"><a href="#写在开始之前" class="headerlink" title="写在开始之前"></a>写在开始之前</h1><p>什么是Markdown<br>Markdown 是一种轻量级的「标记语言」，它的优点很多，目前也被越来越多的写作爱好者，撰稿者广泛使用。看到这里请不要被「标记」、「语言」所迷惑，Markdown 的语法十分简单。常用的标记符号也不超过十个，这种相对于更为复杂的HTML 标记语言来说，Markdown 可谓是十分轻量的，学习成本也不需要太多，且一旦熟悉这种语法规则，会有一劳永逸的效果<br>它用简洁的语法代替排版，而不像一般我们用的字处理软件 Word 有大量的排版、字体设置。它使我们专心于码字，用「标记」语法，来代替常见的排版格式。<br>由于hexo这种博客中的md文件要使用markdown，本人特意看了下markdown的书写格式</p>
+<p>标题： </p>
+<h1 id="一级标题"><a href="#一级标题" class="headerlink" title="一级标题"></a>一级标题</h1><h2 id="二级标题"><a href="#二级标题" class="headerlink" title="二级标题"></a>二级标题</h2><h2 id="二级标题-1"><a href="#二级标题-1" class="headerlink" title="二级标题"></a>二级标题</h2><h3 id="三级标题"><a href="#三级标题" class="headerlink" title="三级标题"></a>三级标题</h3><h4 id="四级标题"><a href="#四级标题" class="headerlink" title="四级标题"></a>四级标题</h4><h5 id="五级标题"><a href="#五级标题" class="headerlink" title="五级标题"></a>五级标题</h5><p><em>注：#和「一级标题」之间建议保留一个字符的空格，这是最标准的 Markdown 写法。</em></p>
+<p>列表</p>
+<ul>
+<li>无序列表0</li>
+<li>无序列表1</li>
+<li>无序列表2</li>
+</ul>
+<p>有序列表</p>
 <ol>
-<li>告诉其他界面我要给你发送什么消息</li>
-<li>确保其他实现了消息对应的方法</li>
+<li>文本0</li>
+<li>文本1</li>
+<li>aaa</li>
+<li>aaa</li>
 </ol>
-<p>@protocol ConfigViewControllerDelegate <NSObject><br>//遵守协议的其他类必须实现的方法<br>-(void)changeFontSize:(int)size;<br>@end</p>
-<p>@interface ConfigViewController : UIViewController</p>
-<p>//作用: 保存主界面的指针<br>//为什么保存, 最后给主界面发送消息修改字体<br>//细节1: assgin 确保不会循环引用<br>//细节2: id 如果是id, 能传入任意界面了<br>//细节3: 遵守协议意味着可以任意对象, 但是这个对象必须遵守协议<br>@property (assign,nonatomic) id<ConfigViewControllerDelegate> delegate;</p>
-<p>@end</p>
-<p>//int size = fontTextField.text.intValue<br>[self.delegate changeFontSize:fontTextField.text.intValue];<br>//切换到配置界面<br>ConfigViewController *cvc = [[ConfigViewController alloc] init];</p>
-<p>//作用: 把当前界面的指针传到cvc中<br>//为啥: 希望配置界面中字体改变通知主界面<br>cvc.delegate = self;</p>
-<p>[self presentViewController:cvc animated:YES completion:nil];</p>
-<p>@interface MainViewController () <ConfigViewControllerDelegate></p>
-<p>//改变字体的方法<br>-(void)changeFontSize:(int)size<br>{<br>novelLabel.font = [UIFont systemFontOfSize:size];<br>}</p>
+<p>链接和图片<br>链接<br>格式：</p>
+<h3 id="显示文本"><a href="#显示文本" class="headerlink" title="显示文本"></a><a href="%E9%93%BE%E6%8E%A5%E5%9C%B0%E5%9D%80">显示文本</a></h3><p>例如：<a target="_blank" rel="noopener" href="http://jianshu.io/">简书</a></p>
+<p>图片<br><img src="%E9%93%BE%E6%8E%A5" alt="图注"></p>
+<p>带有括号的链接：<br>![图1][1]<br>[1]: <a target="_blank" rel="noopener" href="http://latex.codecogs.com/gif.latex?%5Cprod%20%5C(n_%7Bi%7D%5C)+1">http://latex.codecogs.com/gif.latex?\prod%20\(n_{i}\)+1</a></p>
+<p>引用</p>
 <blockquote>
-<p>单例传值</p>
+<p>怕鬼的无神论者</p>
 </blockquote>
-<p>需求:  A–&gt;B–&gt;C–&gt;D–&gt;E–&gt;F<br>需要A中得数据在F界面上显示出来<br>解决:  使用单例传值解决<br>如何实现一个单例类?<br>实例: 在AppDelegate中存储作者和版本<br>在配置界面上显示出来<br>@interface DataCenter : NSObject<br>//表示获取一个共享的实例<br>+(id)sharedInstance;<br>@property (copy,nonatomic) NSString <em>appInfo;<br>@end<br>@implementation DataCenter<br>表示获取一个共享的实例<br>+(id)sharedInstance<br>{<br>//关键<br>//第一次执行: dc为空, 会申请一个对象<br>//以后执行: dc不为空, 直接返回以前创建的对象<br>static DataCenter</em> dc= nil;<br>if(dc == nil)<br>{<br>//dc = [[DataCenter alloc] init];<br>dc = [[[self class] alloc] init];<br>}<br>return dc;<br>}<br>设置单利对象<br>DataCenter *dc=[DataCenter sharedInstance];<br>dc.author=@”quiet”;<br>先获取单利对象<br>DataCenter *dc=[DataCenter sharedInstance];<br>UILabel *authorLibel=[[UILabel alloc]initWithFrame:CGRectMake(100, 50, 100, 30)];<br>authorLibel.text=dc.author;<br>要求非常高单例类往往重写<br>alloc,dealloc,retain,release,<br>autorelease,copyWithZone</p>
-<blockquote>
-<p>通知传值</p>
-</blockquote>
-<p>需求:  1对n通信,  配置要换肤, 其他所有界面响应<br>发出换肤的通知<br>获取系统通知类的单例对象<br>NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];<br>发出一个通知<br>参数Name: 通知的名字<br>参数object: 要发给那个对象, nil表示不限制对象<br>参数userInfo: 通知附加的信息, 皮肤颜色穿过去<br>[nc postNotificationName:@”changeSkin” object:nil userInfo:@{@”skinColor”:@”yellow”}];<br>为了获取换肤的通知<br>NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];<br>[nc addObserver:self selector:@selector(dealChangeSkin:) name:@”changeSkin” object:nil];<br>}<br>注意: 参数类型不是NSNotificationCenter<br>-(void)dealChangeSkin:(NSNotification *)notification<br>{<br>获取通知中附加的信息<br>NSString *skinColor = notification.userInfo[@”skinColor”];<br>NSLog(@”c = %@”,skinColor);<br>if([skinColor isEqualToString:@”yellow”])<br>{<br>self.view.backgroundColor = [UIColor yellowColor];<br>}<br>}</p>
-<blockquote>
-<p>block传值</p>
-</blockquote>
+<p>04粗体&amp;斜体<br>用两个 *包含一段文本就是粗体的语法，用一个 *包含一段文本就是斜体的语法。<br>正常 <strong>粗体</strong> <em>斜体</em></p>
+<p>05表格<br>表格1<br>| Tables  | Are | Cool |<br>| —– |:—-:| —-:|<br>| col 3 is | right-aligned | $1600 |<br>| col 2 is | centered | $12 |<br>| zebra stripes | are neat | $1 |</p>
+<table>
+<thead>
+<tr>
+<th>dog</th>
+<th>bird</th>
+<th>cat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>foo</td>
+<td>foo</td>
+<td>foo</td>
+</tr>
+<tr>
+<td>bar</td>
+<td>bar</td>
+<td>bar</td>
+</tr>
+<tr>
+<td>baz</td>
+<td>baz</td>
+<td>baz</td>
+</tr>
+</tbody></table>
+<p>分割线</p>
+<hr>
 
       
     </div>
@@ -776,7 +543,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI6UITextField/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_5Swift%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E7%9A%84%E8%BD%AC%E6%8D%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -790,7 +557,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/C_UI6UITextField/" class="post-title-link" itemprop="url">UITextField</a>
+            <a href="/2016/08/03/M_5Swift%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E7%9A%84%E8%BD%AC%E6%8D%A2/" class="post-title-link" itemprop="url">Swfit编程思想的转换</a>
         </h2>
 
         <div class="post-meta">
@@ -800,7 +567,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 23:37:34" itemprop="dateCreated datePublished" datetime="2016-07-30T23:37:34+08:00">2016-07-30</time>
+              <time title="创建时间：2016-08-03 19:18:50" itemprop="dateCreated datePublished" datetime="2016-08-03T19:18:50+08:00">2016-08-03</time>
             </span>
 
           
@@ -814,90 +581,40 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>实例化一个文本输入框</p>
-</blockquote>
-<p>UITextField *file=[[UITextField alloc]init];</p>
-<blockquote>
-<p>设置坐标</p>
-</blockquote>
-<p>file.frame=CGRectMake(10, 30, 300, 30);</p>
-<blockquote>
-<p>设置外观样式borderStyle</p>
-</blockquote>
-<p>细节：输入框默认是没有边框的一定要设置边框<br>file.borderStyle=UITextBorderStyleBezel;<br>注意：文本框默认的颜色就是windiw的颜色，会跟着底色改变而改变<br>UITextBorderStyleNone,       没有样式<br>UITextBorderStyleLine,       一条黑色线框内部透明<br>UITextBorderStyleBezel,      一条棕色线框内部透明<br>UITextBorderStyleRoundedRect 圆角矩形：注意，内部默认为白色 </p>
-<blockquote>
-<p>设置背景颜色</p>
-</blockquote>
-<p>file.backgroundColor=[UIColor blueColor];</p>
-<blockquote>
-<p>设置提示文字placeholder:等待的地方</p>
-</blockquote>
-<p>file.placeholder=@”请输入密码”;</p>
-<blockquote>
-<p>设置密文输入secure牢固的  entry  进入输入</p>
-</blockquote>
-<p>file.secureTextEntry=YES;</p>
-<blockquote>
-<p>设置键盘样式</p>
-</blockquote>
-<p>file.keyboardType=UIKeyboardTypeNumberPad;</p>
-<blockquote>
-<p>设置键盘风格keyboardAppearance   appearance:出现</p>
-</blockquote>
-<p>file.keyboardAppearance=UIKeyboardAppearanceDefault;<br>UIKeyboardAppearanceAlert<br>UIKeyboardAppearanceDefault  系统默认<br>UIKeyboardAppearanceDark    黑色的<br>UIKeyboardAppearanceLight   亮色的  </p>
-<blockquote>
-<p>设置自定义弹出试图</p>
-</blockquote>
-<p>UIImageView *imageView=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@”2_1.jpg”]];<br>这里100的设置是无效的<br>imageView.frame=CGRectMake(0, 100, 320, 100);<br>弹出图片<br>file.inputView=imageView;</p>
-<blockquote>
-<p>设置左，右视图(添加View或者ImageView)</p>
-</blockquote>
-<p>在输入框左侧设置头像<br>UIImageView *hadeimage=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 25, 30)];<br>hadeimage.image=[UIImage imageNamed:@”zhaoren”];<br>textField.leftView=hadeimage;<br>细节设置模式<br>textField.leftViewMode=UITextFieldViewModeAlways;</p>
-<blockquote>
-<p>设置清除按钮模式clearButtonMode</p>
-</blockquote>
-<p>file.clearButtonMode=UITextFieldViewModeAlways;<br>UITextFieldViewModeNever,        从不<br>UITextFieldViewModeWhileEditing, 当编辑的时候<br>UITextFieldViewModeUnlessEditing,当不编辑的时候<br>UITextFieldViewModeAlways        总是</p>
-<blockquote>
-<p>再次编辑时是否清空clearsOnBeginEditing</p>
-</blockquote>
-<p>file.clearsOnBeginEditing=YES;<br>这里为了区分，我们又设置了一个文本输入框textField<br>UITextField *textFlie=[[UITextField alloc]initWithFrame:CGRectMake(10, 100, 300, 100)];<br>textFlie.borderStyle=UITextBorderStyleRoundedRect;<br>[self.window addSubview:textFlie];<br>textFlie.font=[UIFont systemFontOfSize:24];</p>
-<blockquote>
-<p>内容横向对其编辑方式contentHorizontalAlignment       Horizontal水平的横向的</p>
-</blockquote>
-<p>textFlie.contentHorizontalAlignment=<br>UIControlContentHorizontalAlignmentCenter;</p>
-<blockquote>
-<p>内容纵向对其编辑模式    contentVerticalAlignment          Vertical纵向的</p>
-</blockquote>
-<p>textFlie.contentVerticalAlignment=UIControlContentHorizontalAlignmentCenter;<br>UIControlContentHorizontalAlignmentCenter = 0,中间<br>UIControlContentHorizontalAlignmentLeft   = 1,左对齐<br>UIControlContentHorizontalAlignmentRight  = 2,右对齐<br>UIControlContentHorizontalAlignmentFill   = 3,充满的</p>
-<blockquote>
-<p>文字内容对其方式textAlignment（注意：这里是NS）</p>
-</blockquote>
-<p>textFlie.textAlignment=NSTextAlignmentCenter;<br>NSTextAlignmentCenter中间对齐<br>NSTextAlignmentRight靠右对齐<br>NSTextAlignmentLeft靠左对齐</p>
-<blockquote>
-<p>设置滚动adjustsFontSizeToFitWidth</p>
-</blockquote>
-<p>一开始开始缩小（注意：当文字小到一定地步的时候会不再缩小）<br>textFlie.adjustsFontSizeToFitWidth=YES;</p>
-<blockquote>
-<p>设置最小字号（跟设置滚动有关）minimumFontSize</p>
-</blockquote>
-<p>当滚动字号缩小到18的是候不在发生缩小<br>textFlie.minimumFontSize=18;</p>
-<blockquote>
-<p>设置首字母是否大小写autocapitalizationType</p>
-</blockquote>
-<p>textFlie.autocapitalizationType=UITextAutocapitalizationTypeSentences;<br>UITextAutocapitalizationTypeNone,         从不大写<br>UITextAutocapitalizationTypeWords,        单词首字母大写（以空格为区分）<br>UITextAutocapitalizationTypeSentences,    回车时第一个字符大写<br>UITextAutocapitalizationTypeAllCharacters,回车时当前的<br>关闭自动大写<br>textField.autocapitalizationType=UITextAutocapitalizationTypeNone;</p>
-<blockquote>
-<p>关闭错误纠正(会记录之前输入的内容)autocorrectionType</p>
-</blockquote>
-<p>textField.autocorrectionType=UITextAutocorrectionTypeNo;</p>
-<blockquote>
-<p>设置return键样式returnKeyType</p>
-</blockquote>
-<p>textFlie.returnKeyType=UIReturnKeyGo;<br>UIReturnKeyDefault,<br>UIReturnKeyGo,<br>UIReturnKeyGoogle,<br>UIReturnKeyJoin,<br>UIReturnKeyNext,<br>UIReturnKeyRoute,<br>UIReturnKeySearch,<br>UIReturnKeySend,<br>UIReturnKeyYahoo,<br>UIReturnKeyDone,<br>UIReturnKeyEmergencyCall,<br>()圆括号代表类扩展（匿名类别）<br>相当于.h中的@interface<br>只不过这里声明的方法供内部使用</p>
-<blockquote>
-<p>设置输入框的背景图background</p>
-</blockquote>
-<p>细节：添加背景图要吧边框类型设置为无边框<br>textField.borderStyle=UITextBorderStyleNone;<br>textField.background=[[UIImage imageNamed:@”table-cell-bg-highlighted”]stretchableImageWithLeftCapWidth:8 topCapHeight:0];<br>图片拉伸中的问题。图片是向左向上拉伸的。<br>拉伸的距离相当于图片最顶端和最左边向里多少距离的位置向上向左拉伸</p>
+          <p>原来的代码+原来的思想+Swift. 哪里出错了呢?<br>最理想的情况当然就是从一个100%的Swift项目开始.如果你能做到,很好.但是多数情况下,我们有着已存在的代码,却很想开始使用Swift语言,那我们应该从哪里开始呢?</p>
+<p>为什么?<br>回过来说一下:你为什么想用Swift写程序呢?原因有很多:Swift语言是编程语言的新星;有着更棒的语法;Swift是苹果向我们推荐的iOS开发语言.<br>在将来,Swift的关注度会继续增加,并且Swift将成为开发OSX和iOS程序最适合,最受支持,最简便的编程语言.</p>
+<p>SwiftAwesomeness</p>
+<p>正如上图,这就是未来Swfit的趋势,那你又能做什么来从Swift方式开始呢?</p>
+<p>Swift方式<br>有许多方面需要考虑,但我们先讨论下两大内容: 安全性和值语义.</p>
+<p>安全性<br>Nil是Objective-C中很棒的存在:你可以发消息给nil,系统运行时会不会Crash,继续保持响应.</p>
+<p>然而Swift中的nil是很不一样的,通常其类型机制会阻止你试图使用nil调用方法或者访问一个内容为nil的属性.虽然你可以避开这个类型机制,但这样做就如同在C语言中使用指向null的指针一样糟糕:你将容易在运行时掉入陷阱,使你的应用Crash.</p>
+<p>在Swift中,所有都是类型安全的.一个String类型的字符串就是字符串,且不会为nil.理解上类似于C++的引用而不是C中的指针,因为它们永远不会为nil.</p>
+<p>可选变量<br>在可选变量中,nil是可以使用的.一个可选类型的字符串变量可以是一个字符串,也可以为nil.你每次都要检查是什么.不然你可以强制解包这个可选变量,或者改变它成一个隐式解包的可选变量,这意味着成为一个可选类型但表现跟一个真正的值一样,一旦它是nil,这个app就会Crash</p>
+<p>unwarp<br>Cocoa里充满了可选类型的变量,这代表着每次你所持有的数据,都不得不检查内部真正的内容</p>
+<p>这在想法上是一个巨大的提升,你要明白不应该有机会向nil发送消息.在一个强类型语言机制里,要么它是nil,要么就是某个值.如果它在程序运行时未知的,就需要检查,不要试着强制解包它</p>
+<p>将可选变量想做一个箱子:箱子里可以什么都没有(为nill),也可以有个值.但你在解包或者拆箱这个可选变量之前总是需要检查它,就像你会问在这个可选变量内部到底是什么?</p>
+<p>box<br>在Swift已经有大量的其他例子显示了Swift语言的安全性:初始化方法,更少未定义的行为,内存安全.Nil安全是Swift语言面世以来相当常见的对语言安全性的体现.</p>
+<p>值类型<br>值类型在Swift随处可见.显而易见,Obejctvie-C有着像NSInteger的基本数据类型,和像CGRect结构体.但是许多像NSString,NSArray等等都是类,为引用类型.</p>
+<p>在Swfit中,一个完全不同的地方就在于它的标准库都有超过80个结构体,只有4个类,可以通过浏览头文件看到.</p>
+<p>字符串,数字,集合这些类型在Swift都是值类型.这就意味着如果你有一个可变的Swfit字符串,把它传入一个函数,你将得到的是字符串的拷贝.再次说明下,这可不是一件糟糕的事:我们在一直使用Objective-C中,有copy和mutableCopy.这对于多数普遍类型的新默认行为是一个巨大的提升.</p>
+<p>桥接<br>Swift被设计出来当然要能与Objective-C很好协同工作,由于Cocoa是为Objective-C建立的,所以这是很有必要的.所有这些Cocoa APIs 几乎都能被Swfit调用,这意味着你自定义的Objective-C类也能很好桥接到Swift类</p>
+<p>这里就有问题出现了:以Swift开始,添加Objective-C,如何正像期望一样调用从Objective-C桥接到Swfit方法</p>
+<p>Swift 到 Objective-C<br>Swiftz中有许多特性比如原生的结构体,加强的枚举等等,不能完全地桥接到Objective-C,这就意味着你使用Swift最新特性来写最新和最好的Swift框架,许多框架你就不能在Objective-C上使用.</p>
+<p>即使你限制自己只用Swift一些能兼容的特性写程序,你也不能让Swift的类继承自Objective-C的类.你可以借鉴table views或collection views的模式,使用代理和布局对象来解决这个问题,但你要始终记得如果你Swfit的API需要继承,默认在Objective-C不可见的.</p>
+<p>如果你用@objc<br>标记了你的类和协议,那么他们在Obejctive-C在就是可用的.dynamic<br>修饰符也显示使用了@objc<br>使得在Objective-C语言上可用,但它也使得你所限定的属性或者方法使用了Objective-C动态分发.</p>
+<p>Swift 到 Objective-C</p>
+<p>如果你想要使用swizzle或者其他动态特性,你将需要使用dynamic<br>标识符,仅仅@objc<br>不能保证它是使用objc_msgSend()<br>方法使得可能方法仍是编译过的或者内联的.<br>再一次强调:只有具有兼容性的特性才能工作.如果你在Swfit枚举对象中实现一个方法,它不会桥接过去,如果你的枚举存储不是int而是其他类型,它也不会桥接过去.</p>
+<p>Objective-C 到 Swift: Nullability<br>Objective-C转向Swift有许多好的方面来优化.你给在Objective-C中属性,参数,和返回值的类型添加标注.<br>_Null_unspecified(default)</p>
+<p>桥接为一个在Swift显示解包的可选值<br>_Nonnull</p>
+<p>变量值不会为nil;桥接为一个常规的引用<br>_Nullable</p>
+<p>变量值可以为nil;桥接为一个可选变量<br>如果你标注了你Obejctive-C代码, 在Swift中将会有很好的类型转变.即使你没有接触过Swfit,当你写Objective-C时这些标注会在你代码完成后出现.并且如果你声明一个方法参数为_Nonnull<br>而你传入了nil,你就会得到一个编译警告.<br>这是很好的练习来开始添加这些标注.在你使用已存在的API时会有所有帮助,让你更容易地开始使用Swfit.</p>
+<p>Objective-C 到 Swift: Lightweight Generics<br>轻量泛型是Swfit2新出来的特性.那些NSArray,NSDictionary,NSSet能存储任何原来的NSObject对象的集合类型需要大量的转换.在Objective-C中不会出现这样的问题,但记得在Swfit的所有都安全相关,正确的转换需要大量的类型检查.你应该先检测类型,而不是强制转换.<br>现在有了泛型,这意味着你写的Objective-C代码会是这样的:<br>NSArray&lt;NSString *&gt; * _Nonnull<br>这是一个将存储NSString对象的NSArray.有着Nullability标注,你会明白这数组本身不能为nil;你将总能得到一个数组.如果你之前写过Java或C++你应该会熟悉这样的泛型写法.</p>
+<p>而这个桥接到Swfit后会是这个样子的:[String]<br>一个简洁的Swfit的存储String的数组.</p>
+<p>小小的提醒: 轻量泛型只对基础集合的array, dictionary, sets 起作用</p>
+<p>需要跨的坑<br>我简易完全用Swfit开始新项目,如果你需要第三方库,这不会影响你用Swfit还是Obejctive-C,你都能调用.如果你已经有了存在的项目代码,想开始引入Swfit代码,尝试Obejctive-C向Swfit方法的保证桥接.例如已经实例化的视图控制器,视图在Swfit工作正常;它们都起源于NSObject,所以需要的话你能访问它们通过Objective-C.</p>
+<p>Bridge</p>
+<p>还有其他方面:Swfit泛型,枚举的存储不仅仅是整型,内嵌类型,结构体等等,这些需要等到你完全入门100%Swift,不要灰心,那天会比你所想的提前到来.</p>
+<p>在那之前,继续友好地使用Obejctive-C,做好使用Swfit的准备.下面资源可以帮助你完成这一转变.</p>
 
       
     </div>
@@ -917,7 +634,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI5UIViewController/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_6Swift%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%B1%BB%EF%BC%9F%20%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -931,7 +648,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/C_UI5UIViewController/" class="post-title-link" itemprop="url">UIViewController</a>
+            <a href="/2016/08/03/M_6Swift%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%B1%BB%EF%BC%9F%20%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%9F/" class="post-title-link" itemprop="url">Swift什么时候使用类？ 什么时候使用结构体？</a>
         </h2>
 
         <div class="post-meta">
@@ -941,7 +658,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 23:34:26" itemprop="dateCreated datePublished" datetime="2016-07-30T23:34:26+08:00">2016-07-30</time>
+              <time title="创建时间：2016-08-03 19:13:32" itemprop="dateCreated datePublished" datetime="2016-08-03T19:13:32+08:00">2016-08-03</time>
             </span>
 
           
@@ -955,13 +672,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>简单的理解一个界面就是一个UIViewContorller</p>
-</blockquote>
-<blockquote>
-<p>如何使用UIViewContorller实现多界面的切换</p>
-</blockquote>
-<p>1.登陆界面：<br>先创建LoginViewController对象<br>将对象设置为window的rootViewController视图控制器 (主视图控制器)<br>2.跳转到下一个界面（设置按钮触发点击事件）<br>先创建下一个界面 MainViewController.的对象———mvc<br>使用presentViewController切换到下一个界面<br>参数1:跳转到界面mcv<br>参数2:是否实现动画效果。<br>参数3:block<br>[self presentViewController:mvc animated:YES completion:nil];<br>3.返回上一个界面<br>同样是设置按钮，点击按钮触发事件。<br>释放掉原来的界面，显示出上一个界面。dismissViewControllerAnimated<br>[self dismissViewControllerAnimated:YES completion:nil];<br>===================================================================<br>4.设置打开动画<br>mvc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;<br>翻转  UIModalTransitionStyleFlipHorizontal<br>交错  UIModalTransitionStyleCrossDissolve<br>翻页  UIModalTransitionStylePartialCurl</p>
+          <p>在Swfit中,什么时候用结构体，什么时候用类？</p>
+<p>到底是用类的做法优于用结构体，还是用结构体的做法优于类。函数式编程倾向于值类型，面向对象编程更喜欢类。<br>在Swift 中，类和结构体有许多不同的特性。下面是两者不同的总结：</p>
+<p>类支持继承，结构体不支持。<br>类是引用类型，结构体是值类型<br>并没有通用的规则决定结构体和类哪一个更好用。一般的建议是使用最小的工具来完成你的目标，但是有一个好的经验是多使用结构体，除非你用了继承和引用语义。想要了解更多，点击这里。</p>
+<p>注意：在运行时，结构体的在性能方面更优于类，原因是结构体的方法调用是静态绑定，而类的方法调用是动态实现的。这就是尽可能得使用结构体代替类的又一个好的原因。</p>
+<p>class 与 struct 的主要区别：类是引用类型，而结构体是值类型。</p>
+<p>class 引用类型<br>//类 - 引用类型</p>
+<p>class 未成型人类 {<br>var 身高 = 168<br>init() { }</p>
+<p>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
+<p>let 小华 = 未成型人类()</p>
+<p>let 大明 = 未成型人类(身高: 200)<br>let 黑仔 = 大明<br>let 高佬 = 大明<br>高佬.身高 += 10<br>print(大明.身高) // = 210</p>
+<p>let 小高 = 高佬<br>小高.身高 += 10<br>print(大明.身高) // = 220</p>
+<p>struct 值类型<br>//结构体 - 值类型</p>
+<p>struct 克隆人 {<br>var 身高 = 180<br>init() { }<br>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
+<p>var 小A = 克隆人()<br>小A.身高 = 122<br>let cokeA = 小A<br>print(cokeA.身高) // = 122<br>print(小A.身高) // = 122</p>
+<p>let 小B = 克隆人()<br>print(小A.身高) // = 180<br>什么时候使用类？ 什么时候使用结构体？<br>注意：虽说赋值时候值类型表面上经常要执行拷贝现象，但 Swift 在管理所有的值拷贝会确保性能最优化，所以我们没有必要去回避赋值来确保性能最优化。<br>/* 什么时候使用类？ 什么时候使用结构体？<br>一般情况下，可以：<br>1⃣ 把类看成是物体<br>如： 人、车、动物、商店等..一般跟生物沾边多<br>比如一个人有少属性，虽有不同人种，但是他们很多属性都是一样的，使用类的继承关系，很好描述人这一类东东…</p>
+<p>2⃣ 把结构体看作值<br>如：位置（经纬度）、坐标、温度等..一般跟物理沾边多<br>结构体比类更加 “轻量级”，因为结构体的内存空间是开在系统的栈中，而类则开在系统的堆中。当然对于小程序来说，可以忽略不计。</p>
+<p>还有什么时候使用也不是绝对的，因为他们都有很多类似的地方，也看个人习惯思维爱好之类。何况现在 Swift</p>
 
       
     </div>
@@ -981,7 +708,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI4UIView/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_5Swift_initializer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -995,7 +722,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/30/C_UI4UIView/" class="post-title-link" itemprop="url">UIView</a>
+            <a href="/2016/08/03/M_5Swift_initializer/" class="post-title-link" itemprop="url">initializer</a>
         </h2>
 
         <div class="post-meta">
@@ -1005,7 +732,111 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-30 23:32:51" itemprop="dateCreated datePublished" datetime="2016-07-30T23:32:51+08:00">2016-07-30</time>
+              <time title="创建时间：2016-08-03 15:17:31" itemprop="dateCreated datePublished" datetime="2016-08-03T15:17:31+08:00">2016-08-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>designated initializer<br>convenience initializer<br>required 关键字<br>protocol中的initializer<br>Designated Initializer</p>
+<blockquote>
+<p>当我们创建一个class的时候，如果这个class拥有未初始化的非Optional属性，则必须提供一个构造器(称为designated initializer)。这句话有两个重点：<br>1.未初始化；2.非Optional属性。<br>比较一下下面几种写法：</p>
+</blockquote>
+<p>//A<br>class Person {<br>let name : String = “”<br>}<br>//B<br>class Person {<br>let name : String<br>}<br>//C<br>class Person {<br>var name : String?<br>}<br>//D<br>class Person {<br>let name : String?<br>}<br>A,C都可以正常编译，B,D会报错(error: class ‘Person’ has no initializers)。因为Swift不允许非Optional变量在没有初始化的情况下使用或者访问，这样会造成潜在的风险，于是Swift编译器对构造器做了严格的限制:类必须提供一个designated initializer，并且初始化所有未初始化的非Optional属性</p>
+<p>A,B两种写法中，let换成var结果是一样的。但是D比较特殊，在Swift中，常量在访问和使用之前必须初始化(哪怕是Optional)</p>
+<p>var p : String?<br>print(p)<br>//正常编译<br>let p : String?<br>print(p)<br>//报错：error: constant ‘p’ used before being initialized<br>由此可见我们上面的描述并不准确，应当是未初始化的非Optional属性或Optinal常量。不过一般我们不会声明一个Optional常量，另外这么说也是在太过拗口，所以就简单称之为未初始化的非Optional属性吧(下文也会这样表述)。</p>
+<p>同样，在子类初始化过程中，Swift也做了严格的限制</p>
+<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}<br>首先，Engineer必须调用super.init，如果你这样写：</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>self.name = name<br>}<br>不好意思，self.name是常量，不可修改。即便我们将let name : String改为var name : String，仍会报错，而且是两个：</p>
+<p>error: super.init isn’t called on all paths before returning from initializer<br>error: use of ‘self’ in property access ‘name’ before super.init initializes self<br>从这两个错误信息可以看出，在子类的构造器中，父类的成员变量必须通过父类的designated initializer进行初始化。也就是说，我们必须调用super.init（第一个error），而且在调用super.init之前不能使用和访问任何父类的成员变量（第二个error）。</p>
+<p>其次,super.init必须在子类所有未初始化的非Optional属性初始化之后调用。</p>
+<p>这跟我们以前所了解的不同，例如在JAVA的构造器中我们会先调用super.init。Swift之所以这样做，同样是为了安全性。<br>假设我们要求在初始化一个Person之后，立刻输出一些信息用来debug：</p>
+<p>class Person {<br>var name : String<br>init(name : String){<br>self.name = name<br>printDescription()<br>}</p>
+<p>func printDescription() -&gt; () {<br>print(“name=(name)”)<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
+<p>override func printDescription() -&gt; () {<br>print(“name=(name), title=(title)”)<br>}<br>}<br>如果在Engineer的init中，我们首先调用super.init，那么我们就会在初始化title之前执行子类的printDescription方法，这是Swift所不允许的。</p>
+<p>Convenience Initializer<br>一个类可以提供多个designated initializer，但是designated initializer不可以调用designated initializer。<br>如果需要提供一个依赖designated initializer的构造器，需要添加关键字convenience，称为convenience initializer。<br>在上面的例子中，假设我们从文件中读取人的信息，读取到的是“名字;职位;联系方式”格式的字符串。我们需要写一个构造器方法从这串文字中解析出相应的信息。</p>
+<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}</p>
+<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}<br>因为新的构造器调用了self.init，因此需要添加关键字convenience，否则会报错：error: designated initializer for ‘Person’ cannot delegate (with ‘self.init’); did you mean this to be a convenience initializer?</p>
+<p>一个类可以拥有多个convenience initializer，而且convenience initializer可以调用其他convenience initializer。<br>convenience initializer有以下约束：</p>
+<p>必须调用当前类的designated initializer，调用父类的designated initializer是不行的。<br>只有当前类可以使用（子类也可以使用，不过需要特殊处理。见下文）。<br>Required 关键字<br>如果父类中的构造器需要在子类中重写，可以使用required关键字。子类必须重写父类中标记为required的构造器方法(不管是designated initializer还是convenience initializer)。<br>上面的例子中，init(convertFromLiteral value : String)并不适合子类，所以我们加上required关键字，编译器会提示我们Engineer没有实现required initializer。</p>
+<p>class Engineer: Person {<br>var title : String</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
+<p>required convenience init(convertFromLiteral value : String){<br>var name = “”<br>var title = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>}else if(title.characters.count == 0){<br>title = component<br>break<br>}<br>}<br>self.init(name: name, title: title)<br>}<br>}<br>上文提到了convenience initializer只有当前类才能使用，Swift不允许子类通过父类构造器进行初始化是显而易见的。convenience initializer实际上更像一个方法，如果我们将某个convenience initializer所依赖的designated initializer标记为required，就相当于告诉了编译器我们的子类一定重写了这个designated initializer。也就是说，如果我们的子类通过这个convenience initializer进行初始化，最终会执行子类中重写的designated initializer。</p>
+<p>说这么一大堆，用代码看的更清楚：</p>
+<p>class Person {<br>let name : String<br>required init(name : String){<br>self.name = name<br>}</p>
+<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}</p>
+<p>class Engineer: Person {<br>var title : String</p>
+<p>required init(name: String) {<br>self.title = “unknow”<br>super.init(name: name)<br>}</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}</p>
+<p>let peter = Person.init(convertFromLiteral: “peter;”)<br>print(peter.name)<br>let tom = Engineer.init(convertFromLiteral: “tom;”)<br>print(tom.name + “, “ + tom.title)<br>将父类中convenience initializer所依赖的designated initializer标记为required，我们就可以通过该convenience initializer初始化子类了。</p>
+<p>Protocol中的Initializer<br>Swift提供了很多包涵构造器的protocol，如StringLiteralConvertible，DictionaryLiteralConvertible，ArrayLiteralConvertible等。</p>
+<p>如果我们想通过如下方式初始化，我们就需要用到StringLiteralConvertible</p>
+<p>let peter : Person = “Peter”<br>代码如下：</p>
+<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
+<p>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
+<p>let peter : Person = “Peter”<br>是不是很cool？</p>
+<p>需要注意的是，Swfit很好的控制了构造器的作用域（默认情况下，convenience initializer是子类不可见的），但是protocol中的方法是子类可见的。所以protocol中的构造器方法都必须声明为required。<br>如果实现protocol的是一个final类，那么则没必要再是required，因为它不会有子类。<br>等一下，如果Person是第三方库中的类呢？<br>你可能会说没问题啊，我们可以通过extension实现StringLiteralConvertible</p>
+<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
+<p>}</p>
+<p>extension Person: StringLiteralConvertible{<br>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
+<p>let peter : Person = “Peter”<br>真是这样吗？Sorry!!!</p>
+<p>首先，required initializer必须在类中声明。所以上面的required关键字要不得<br>其次，protocol中的构造器方法必须声明为required，除非Person是final的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_3Swift%E6%9E%9A%E4%B8%BE%E8%BF%9B%E9%98%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/01/M_3Swift%E6%9E%9A%E4%B8%BE%E8%BF%9B%E9%98%B6/" class="post-title-link" itemprop="url">枚举进阶</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 18:25:37" itemprop="dateCreated datePublished" datetime="2016-08-01T18:25:37+08:00">2016-08-01</time>
             </span>
 
           
@@ -1020,42 +851,333 @@
 
       
           <blockquote>
-<p>创建</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000004023852">https://segmentfault.com/a/1190000004023852</a></p>
 </blockquote>
-<p>UIView *view=[[UIView alloc]init];</p>
+<p> 协议(Protocols)<br>我已经提及了structs和enums之间的相似性。除了附加方法的能力之外，Swift也允许你在枚举中使用协议(Protocols)和协议扩展(Protocol Extension)。<br>Swift协议定义一个接口或类型以供其他数据结构来遵循。enum当然也不例外。我们先从Swift标准库中的一个例子开始.<br>CustomStringConvertible是一个以打印为目的的自定义格式化输出的类型。<br>protocol CustomStringConvertible {<br>var description: String { get }<br>}<br>该协议只有一个要求，即一个只读(getter)类型的字符串(String类型)。我们可以很容易为enum实现这个协议。<br>enum Trade: CustomStringConvertible {<br>case Buy, Sell<br>var description: String {<br>switch self {<br>case Buy: return “We’re buying something”<br>case Sell: return “We’re selling something”<br>}<br>}<br>}<br>let action = Trade.Buy<br>print(“this action is (action)”)<br>// prints: this action is We’re buying something<br>一些协议的实现可能需要根据内部状态来相应处理要求。例如定义一个管理银行账号的协议。<br>protocol AccountCompatible {<br>var remainingFunds: Int { get }<br>mutating func addFunds(amount: Int) throws<br>mutating func removeFunds(amount: Int) throws<br>}<br>你也许会简单地拿struct实现这个协议，但是考虑应用的上下文，enum是一个更明智的处理方法。不过你无法添加一个存储属性到enum中，就像var remainingFuns:Int。那么你会如何构造呢？答案灰常简单，你可以使用关联值完美解决:<br>enum Account {<br>case Empty<br>case Funds(remaining: Int)<br>enum Error: ErrorType {<br>case Overdraft(amount: Int)<br>}<br>var remainingFunds: Int {<br>switch self {<br>case Empty: return 0<br>case Funds(let remaining): return remaining<br>}<br>}<br>}<br>为了保持代码清爽，我们可以在enum的协议扩展(protocl extension)中定义必须的协议函数:<br>extension Account: AccountCompatible {</p>
+<p>mutating func addFunds(amount: Int) throws {<br>var newAmount = amount<br>if case let .Funds(remaining) = self {<br>newAmount += remaining<br>}<br>if newAmount &lt; 0 {<br>throw Error.Overdraft(amount: -newAmount)<br>} else if newAmount == 0 {<br>self = .Empty<br>} else {<br>self = .Funds(remaining: newAmount)<br>}<br>}</p>
+<p>mutating func removeFunds(amount: Int) throws {<br>try self.addFunds(amount * -1)<br>}</p>
+<p>}<br>var account = Account.Funds(remaining: 20)<br>print(“add: “, try? account.addFunds(10))<br>print (“remove 1: “, try? account.removeFunds(15))<br>print (“remove 2: “, try? account.removeFunds(55))<br>// prints:<br>// : add:  Optional(())<br>// : remove 1:  Optional(())<br>// : remove 2:  nil<br>正如你所看见的，我们通过将值存储到enum cases中实现了协议所有要求项。如此做法还有一个妙不可言的地方:现在整个代码基础上你只需要一个模式匹配就能测试空账号输入的情况。你不需要关心剩余资金是否等于零。</p>
+<p>同时，我们也在账号(Accout)中内嵌了一个遵循ErrorType协议的枚举，这样我们就可以使用Swift2.0语法来进行错误处理了。这里给出更详细的使用案例教程。</p>
+<p>扩展(Extensions)<br>正如刚才所见，枚举也可以进行扩展。最明显的用例就是将枚举的case和method分离，这样阅读你的代码能够简单快速地消化掉enum内容，紧接着转移到方法定义:<br>enum Entities {<br>case Soldier(x: Int, y: Int)<br>case Tank(x: Int, y: Int)<br>case Player(x: Int, y: Int)<br>}<br>现在，我们为enum扩展方法:<br>extension Entities {<br>mutating func move(dist: CGVector) {}<br>mutating func attack() {}<br>}<br>你同样可以通过写一个扩展来遵循一个特定的协议:<br>extension Entities: CustomStringConvertible {<br>var description: String {<br>switch self {<br>case let .Soldier(x, y): return “(x), (y)”<br>case let .Tank(x, y): return “(x), (y)”<br>case let .Player(x, y): return “(x), (y)”<br>}<br>}<br>}<br>枚举泛型(Generic Enums)<br>枚举也支持泛型参数定义。你可以使用它们以适应枚举中的关联值。就拿直接来自Swift标准库中的简单例子来说，即Optional类型。你主要可能通过以下几种方式使用它:可选链(optional chaining(?))、if-let可选绑定、guard let、或switch，但是从语法角度来说你也可以这么使用Optional:<br>let aValue = Optional<Int>.Some(5)<br>let noValue = Optional<Int>.None<br>if noValue == Optional.None { print(“No value”) }<br>这是Optional最直接的用例，并未使用任何语法糖，但是不可否认Swift中语法糖的加入使得你的工作更简单。如果你观察上面的实例代码，你恐怕已经猜到Optional内部实现是这样的5:<br>// Simplified implementation of Swift’s Optional<br>enum MyOptional<T> {<br>case Some(T)<br>case None<br>}<br>这里有啥特别呢？注意枚举的关联值采用泛型参数T作为自身类型，这样可选类型构造任何你想要的返回值。<br>枚举可以拥有多个泛型参数。就拿熟知的Either类为例，它并非是Swift标准库中的一部分，而是实现于众多开源库以及<br>其他函数式编程语言，比如Haskell或F#。设计想法是这样的:相比较仅仅返回一个值或没有值(née Optional)，你更期望返回一个成功值或者一些反馈信息(比如错误值)。<br>// The well-known either type is, of course, an enum that allows you to return either<br>// value one (say, a successful value) or value two (say an error) from a function<br>enum Either&lt;T1, T2&gt; {<br>case Left(T1)<br>case Right(T2)<br>}<br>最后，Swift中所有在class和struct中奏效的类型约束，在enum中同样适用。<br>// Totally nonsensical example. A bag that is either full (has an array with contents)<br>// or empty.<br>enum Bag&lt;T: SequenceType where T.Generator.Element==Equatable&gt; {<br>case Empty<br>case Full(contents: T)<br>}<br>递归 / 间接(Indirect)类型<br>间接类型是 Swift 2.0 新增的一个类型。 它们允许将枚举中一个 case 的关联值再次定义为枚举。举个例子，假设我们想定义一个文件系统，用来表示文件以及包含文件的目录。如果将文件和目录定义为枚举的 case，则目录 case 的关联值应该再包含一个文件的数组作为它的关联值。因为这是一个递归的操作，编译器需要对此进行一个特殊的准备。Swift 文档中是这么写的：</p>
+<p>枚举和 case 可以被标记为间接的(indrect)，这意味它们的关联值是被间接保存的，这允许我们定义递归的数据结构。<br>所以，如果我们要定义 FileNode 的枚举，它应该会是这样的：</p>
+<p>enum FileNode {<br>case File(name: String)<br>indirect case Folder(name: String, files: [FileNode])<br>}<br>此处的 indrect 关键字告诉编译器间接地处理这个枚举的 case。也可以对整个枚举类型使用这个关键字。作为例子，我们来定义一个二叉树:</p>
+<p>indirect enum Tree&lt;Element: Comparable&gt; {<br>case Empty<br>case Node(Tree<Element>,Element,Tree<Element>)<br>}<br>这是一个很强大的特性，可以让我们用非常简洁的方式来定义一个有着复杂关联的数据结构。</p>
+<p>使用自定义类型作为枚举的值<br>如果我们忽略关联值，则枚举的值就只能是整型，浮点型，字符串和布尔类型。如果想要支持别的类型，则可以通过实现 StringLiteralConvertible 协议来完成，这可以让我们通过对字符串的序列化和反序列化来使枚举支持自定义类型。</p>
+<p>作为一个例子，假设我们要定义一个枚举来保存不同的 iOS 设备的屏幕尺寸：</p>
+<p>enum Devices: CGSize {<br>case iPhone3GS = CGSize(width: 320, height: 480)<br>case iPhone5 = CGSize(width: 320, height: 568)<br>case iPhone6 = CGSize(width: 375, height: 667)<br>case iPhone6Plus = CGSize(width: 414, height: 736)<br>}<br>然而，这段代码不能通过编译。因为 CGPoint 并不是一个常量，不能用来定义枚举的值。我们需要为想要支持的自定义类型增加一个扩展，让其实现 StringLiteralConvertible 协议。这个协议要求我们实现三个构造方法，这三个方法都需要使用一个String类型的参数，并且我们需要将这个字符串转换成我们需要的类型(此处是CGSize)。</p>
+<p>extension CGSize: StringLiteralConvertible {<br>public init(stringLiteral value: String) {<br>let size = CGSizeFromString(value)<br>self.init(width: size.width, height: size.height)<br>}</p>
+<p>public init(extendedGraphemeClusterLiteral value: String) {<br>let size = CGSizeFromString(value)<br>self.init(width: size.width, height: size.height)<br>}</p>
+<p>public init(unicodeScalarLiteral value: String) {<br>let size = CGSizeFromString(value)<br>self.init(width: size.width, height: size.height)<br>}<br>}<br>现在就可以来实现我们需要的枚举了，不过这里有一个缺点：初始化的值必须写成字符串形式，因为这就是我们定义的枚举需要接受的类型(记住，我们实现了 StringLiteralConvertible，因此String可以转化成CGSize类型)</p>
+<p>enum Devices: CGSize {<br>case iPhone3GS = “{320, 480}”<br>case iPhone5 = “{320, 568}”<br>case iPhone6 = “{375, 667}”<br>case iPhone6Plus = “{414, 736}”<br>}<br>终于，我们可以使用 CGPoint 类型的枚举了。需要注意的是，当要获取真实的 CGPoint 的值的时候，我们需要访问枚举的是 rawValue 属性。</p>
+<p>let a = Devices.iPhone5<br>let b = a.rawValue<br>print(“the phone size string is (a), width is (b.width), height is (b.height)”)<br>// prints : the phone size string is iPhone5, width is 320.0, height is 568.0<br>使用字符串序列化的形式，会让使用自定义类型的枚举比较困难，然而在某些特定的情况下，这也会给我们增加不少便利(比较使用NSColor / UIColor的时候)。不仅如此，我们完全可以对自己定义的类型使用这个方法。</p>
+<p>对枚举的关联值进行比较<br>在通常情况下，枚举是很容易进行相等性判断的。一个简单的 enum T { case a, b } 实现默认支持相等性判断 T.a == T.b, T.b != T.a</p>
+<p>然而，一旦我们为枚举增加了关联值，Swift 就没有办法正确地为两个枚举进行相等性判断，需要我们自己实现 == 运行符。这并不是很困难：</p>
+<p>enum Trade {<br>case Buy(stock: String, amount: Int)<br>case Sell(stock: String, amount: Int)<br>}<br>func ==(lhs: Trade, rhs: Trade) -&gt; Bool {<br>switch (lhs, rhs) {<br>case let (.Buy(stock1, amount1), .Buy(stock2, amount2))<br>where stock1 == stock2 &amp;&amp; amount1 == amount2:<br>return true<br>case let (.Sell(stock1, amount1), .Sell(stock2, amount2))<br>where stock1 == stock2 &amp;&amp; amount1 == amount2:<br>return true<br>default: return false<br>}<br>}<br>正如我们所见，我们通过 switch 语句对两个枚举的 case 进行判断，并且只有当它们的 case 是匹配的时候(比如 Buy 和 Buy)才对它们的真实关联值进行判断。</p>
+<p>自定义构造方法<br>在 静态方法 一节当中我们已经提到它们可以作为从不同数据构造枚举的方便形式。在之前的例子里也展示过，对出版社经常误用的苹果设备名返回正确的名字：</p>
+<p>enum Device {<br>case AppleWatch<br>static func fromSlang(term: String) -&gt; Device? {<br>if term == “iWatch” {<br>return .AppleWatch<br>}<br>return nil<br>}<br>}<br>我们也可以使用自定义构造方法来替换静态方法。枚举与结构体和类的构造方法最大的不同在于，枚举的构造方法需要将隐式的 self 属性设置为正确的 case。</p>
+<p>enum Device {<br>case AppleWatch<br>init?(term: String) {<br>if term == “iWatch” {<br>self = .AppleWatch<br>}<br>return nil<br>}<br>}<br>在这个例子中，我们使用了可失败(failable)的构造方法。但是，普通的构造方法也可以工作得很好：</p>
+<p>enum NumberCategory {<br>case Small<br>case Medium<br>case Big<br>case Huge<br>init(number n: Int) {<br>if n &lt; 10000 { self = .Small }<br>else if n &lt; 1000000 { self = .Medium }<br>else if n &lt; 100000000 { self = .Big }<br>else { self = .Huge }<br>}<br>}<br>let aNumber = NumberCategory(number: 100)<br>print(aNumber)<br>// prints: “Small”<br>对枚举的 case 进行迭代<br>一个特别经常被问到的问题就是如何对枚举中的 case 进行迭代。可惜的是，枚举并没有遵守SequenceType协议，因此没有一个官方的做法来对其进行迭代。取决于枚举的类型，对其进行迭代可能也简单，也有可能很困难。在StackOverflow上有一个很好的讨论贴。贴子里面讨论到的不同情况太多了，如果只在这里摘取一些会有片面性，而如果将全部情况都列出来，则会太多。</p>
+<p>对 Objective-C 的支持<br>基于整型的枚举，如 enum Bit: Int { case Zero = 0; case One = 1 } 可以通过 @objc 标识来将其桥接到 Objective-C 当中。然而，一旦使用整型之外的类型(如 String)或者开始使用关联值，我们就无法在 Objective-C 当中使用这些枚举了。</p>
+<p>有一个名为_ObjectiveCBridgeable的隐藏协议，可以让规范我们以定义合适的方法，如此一来，Swift 便可以正确地将枚举转成 Objective-C 类型，但我猜这个协议被隐藏起来一定是有原因的。然而，从理论上来讲，这个协议还是允许我们将枚举(包括其实枚举值)正确地桥接到 Objective-C 当中。</p>
+<p>但是，我们并不一定非要使用上面提到的这个方法。为枚举添加两个方法，使用 @objc 定义一个替代类型，如此一来我们便可以自由地将枚举进行转换了，并且这种方式不需要遵守私有协议：</p>
+<p>enum Trade {<br>case Buy(stock: String, amount: Int)<br>case Sell(stock: String, amount: Int)<br>}</p>
+<p>// 这个类型也可以定义在 Objective-C 的代码中<br>@objc class OTrade: NSObject {<br>var type: Int<br>var stock: String<br>var amount: Int<br>init(type: Int, stock: String, amount: Int) {<br>self.type = type<br>self.stock = stock<br>self.amount = amount<br>}<br>}</p>
+<p>extension Trade  {</p>
+<p>func toObjc() -&gt; OTrade {<br>switch self {<br>case let .Buy(stock, amount):<br>return OTrade(type: 0, stock: stock, amount: amount)<br>case let .Sell(stock, amount):<br>return OTrade(type: 1, stock: stock, amount: amount)<br>}<br>}</p>
+<p>static func fromObjc(source: OTrade) -&gt; Trade? {<br>switch (source.type) {<br>case 0: return Trade.Buy(stock: source.stock, amount: source.amount)<br>case 1: return Trade.Sell(stock: source.stock, amount: source.amount)<br>default: return nil<br>}<br>}<br>}<br>这个方法有一个的缺点，我们需要将枚举映射为 Objective-C 中的 NSObject 基础类型(我们也可以直接使用 NSDictionary)，但是，当我们碰到一些确实需要在 Objective-C 当中获取有关联值的枚举时，这是一个可以使用的方法。</p>
+<p>枚举底层<br>Erica Sadun 写过一篇很流弊的关于枚举底层的博客，涉及到枚举底层的方方面面。在生产代码中绝不应该使用到这些东西，但是学习一下还是相当有趣的。在这里，我准备只提到那篇博客中一条，如果想了解更多，请移步到原文：</p>
+<p>枚举通常都是一个字节长度。[…]如果你真的很傻很天真，你当然可以定义一个有成百上千个 case 的枚举，在这种情况下，取决于最少所需要的比特数，枚举可能占据两个字节或者更多。<br>Swift 标准库中的枚举<br>在我们准备继续探索枚举在项目中的不同用例之前，先看一下在 Swift 标准库当中是如何使用枚举可能会更诱人，所以现在让我们先来看看。</p>
+<p>Bit 这个枚举有两个值，One 和 Zero。它被作为 CollectionOfOne<T> 中的 Index 类型。<br>FloatingPointClassification 这个枚举定义了一系列 IEEE 754 可能的类别，比如 NegativeInfinity, PositiveZero 或 SignalingNaN。<br>Mirror.AncestorRepresentation 和 Mirror.DisplayStyle 这两个枚举被用在 Swift 反射 API 的上下文当中。<br>Optional 这个就不用多说了<br>Process 这个枚举包含了当前进程的命令行参数(Process.argc, Process.arguments)。这是一个相当有趣的枚举类型，因为在 Swift 1.0 当中，它是被作为一个结构体来实现的。<br>实践用例<br>我们已经在前面几个小节当中看过了许多有用的枚举类型。包括 Optional，Either, FileNode 还有二叉树。然而，还存在很多场合，使用枚举要胜过使用结构体和类。一般来讲，如果问题可以被分解为有限的不同类别，则使用枚举应该就是正确的选择。即使只有两种 case，这也是一个使用枚举的完美场景，正如 Optional 和 Either 类型所展示的。</p>
+<p>以下列举了一些枚举类型在实战中的使用示例，可以用来点燃你的创造力。</p>
+<p>错误处理<br>说到枚举的实践使用，当然少不了在 Swift 2.0 当中新推出的错误处理。标记为可抛出的函数可以抛出任何遵守了 ErrorType 空协议的类型。正如 Swift 官方文档中所写的：</p>
+<p>Swift 的枚举特别适用于构建一组相关的错误状态，可以通过关联值来为其增加额外的附加信息。<br>作为一个示例，我们来看下流行的JSON解析框架 Argo。当 JSON 解析失败的时候，它有可能是以下两种主要原因：</p>
+<p>JSON 数据缺少某些最终模型所需要的键(比如你的模型有一个 username 的属性，但是 JSON 中缺少了)<br>存在类型不匹配，比如说 username 需要的是 String 类型，而 JSON 中包含的是 NSNull6。<br>除此之外，Argo 还为不包含在上述两个类别中的错误提供了自定义错误。它们的 ErrorType 枚举是类似这样的：</p>
+<p>enum DecodeError: ErrorType {<br>case TypeMismatch(expected: String, actual: String)<br>case MissingKey(String)<br>case Custom(String)<br>}<br>所有的 case 都有一个关联值用来包含关于错误的附加信息。</p>
+<p>一个更加通用的用于完整 HTTP / REST API 错误处理的ErrorType应该是类似这样的：</p>
+<p>enum APIError : ErrorType {<br>// Can’t connect to the server (maybe offline?)<br>case ConnectionError(error: NSError)<br>// The server responded with a non 200 status code<br>case ServerError(statusCode: Int, error: NSError)<br>// We got no data (0 bytes) back from the server<br>case NoDataError<br>// The server response can’t be converted from JSON to a Dictionary<br>case JSONSerializationError(error: ErrorType)<br>// The Argo decoding Failed<br>case JSONMappingError(converstionError: DecodeError)<br>}<br>这个 ErrorType 实现了完整的 REST 程序栈解析有可能出现的错误，包含了所有在解析结构体与类时会出现的错误。</p>
+<p>如果你看得够仔细，会发现在JSONMappingError中，我们将Argo中的DecodeError封装到了我们的APIError类型当中，因为我们会用 Argo 来作实际的 JSON 解析。</p>
+<p>更多关于ErrorType以及此种枚举类型的示例可以参看官方文档。</p>
+<p>观察者模式<br>在 Swift 当中，有许多方法来构建观察模式。如果使用 @objc 兼容标记，则我们可以使用 NSNotificationCenter 或者 KVO。即使不用这个标记，didSet语法也可以很容易地实现简单的观察模式。在这里可以使用枚举，它可以使被观察者的变化更加清晰明了。设想我们要对一个集合进行观察。如果我们稍微思考一下就会发现这只有几种可能的情况：一个或多个项被插入，一个或多个项被删除，一个或多个项被更新。这听起来就是枚举可以完成的工作：</p>
+<p>enum Change {<br>case Insertion(items: [Item])<br>case Deletion(items: [Item])<br>case Update(items: [Item])<br>}<br>之后，观察对象就可以使用一个很简洁的方式来获取已经发生的事情的详细信息。这也可以通过为其增加 oldValue 和 newValue 的简单方法来扩展它的功能。</p>
+<p>状态码<br>如果我们正在使用一个外部系统，而这个系统使用了状态码(或者错误码)来传递错误信息，类似 HTTP 状态码，这种情况下枚举就是一种很明显并且很好的方式来对信息进行封装7 。</p>
+<p>enum HttpError: String {<br>case Code400 = “Bad Request”<br>case Code401 = “Unauthorized”<br>case Code402 = “Payment Required”<br>case Code403 = “Forbidden”<br>case Code404 = “Not Found”<br>}<br>结果类型映射(Map Result Types)<br>枚举也经常被用于将 JSON 解析后的结果映射成 Swift 的原生类型。这里有一个简短的例子：</p>
+<p>enum JSON {<br>case JSONString(Swift.String)<br>case JSONNumber(Double)<br>case JSONObject([String : JSONValue])<br>case JSONArray([JSONValue])<br>case JSONBool(Bool)<br>case JSONNull<br>}<br>类似地，如果我们解析了其它的东西，也可以使用这种方式将解析结果转化我们 Swift 的类型。</p>
+<p>UIKit 标识<br>枚举可以用来将字符串类型的重用标识或者 storyboard 标识映射为类型系统可以进行检查的类型。假设我们有一个拥有很多原型 Cell 的 UITableView：</p>
+<p>enum CellType: String {<br>case ButtonValueCell = “ButtonValueCell”<br>case UnitEditCell = “UnitEditCell”<br>case LabelCell = “LabelCell”<br>case ResultLabelCell = “ResultLabelCell”<br>}<br>单位<br>单位以及单位转换是另一个使用枚举的绝佳场合。可以将单位及其对应的转换率映射起来，然后添加方法来对单位进行自动的转换。以下是一个相当简单的示例：</p>
+<p>enum Liquid: Float {<br>case ml = 1.0<br>case l = 1000.0<br>func convert(amount amount: Float, to: Liquid) -&gt; Float {<br>if self.rawValue &lt; to.rawValue {<br>return (self.rawValue / to.rawValue) * amount<br>} else {<br>return (self.rawValue * to.rawValue) * amount<br>}<br>}<br>}<br>// Convert liters to milliliters<br>print (Liquid.l.convert(amount: 5, to: Liquid.ml))<br>另一个示例是货币的转换。以及数学符号(比如角度与弧度)也可以从中受益。</p>
+<p>游戏<br>游戏也是枚举中的另一个相当好的用例，屏幕上的大多数实体都属于一个特定种族的类型(敌人，障碍，纹理，…)。相对于本地的 iOS 或者 Mac 应用，游戏更像是一个白板。即开发游戏我们可以使用全新的对象以及全新的关联创造一个全新的世界，而 iOS 或者 OSX 需要使用预定义的 UIButtons，UITableViews，UITableViewCells 或者 NSStackView.</p>
+<p>不仅如此，由于枚举可以遵守协议，我们可以利用协议扩展和基于协议的编程为不同为游戏定义的枚举增加功能。这里是一个用来展示这种层级的的简短示例：</p>
+<p>enum FlyingBeast { case Dragon, Hippogriff, Gargoyle }<br>enum Horde { case Ork, Troll }<br>enum Player { case Mage, Warrior, Barbarian }<br>enum NPC { case Vendor, Blacksmith }<br>enum Element { case Tree, Fence, Stone }</p>
+<p>protocol Hurtable {}<br>protocol Killable {}<br>protocol Flying {}<br>protocol Attacking {}<br>protocol Obstacle {}</p>
+<p>extension FlyingBeast: Hurtable, Killable, Flying, Attacking {}<br>extension Horde: Hurtable, Killable, Attacking {}<br>extension Player: Hurtable, Obstacle {}<br>extension NPC: Hurtable {}<br>extension Element: Obstacle {}<br>字符串类型化<br>在一个稍微大一点的 Xcode 项目中，我们很快就会有一大堆通过字符串来访问的资源。在前面的小节中，我们已经提过重用标识和 storyboard 的标识，但是除了这两样，还存在很多资源：图像，Segues，Nibs，字体以及其它资源。通常情况下，这些资源都可以分成不同的集合。如果是这样的话，一个类型化的字符串会是一个让编译器帮我们进行类型检查的好方法。</p>
+<p>enum DetailViewImages: String {<br>case Background = “bg1.png”<br>case Sidebar = “sbg.png”<br>case ActionButton1 = “btn1_1.png”<br>case ActionButton2 = “btn2_1.png”<br>}<br>对于 iOS 开发者，R.swift这个第三方库可以为以上提到的情况自动生成结构体。但是有些时候你可能需要有更多的控制(或者你可能是一个Mac开发者8)。</p>
+<p>API 端点<br>Rest API 是枚举的绝佳用例。它们都是分组的，它们都是有限的 API 集合，并且它们也可能会有附加的查询或者命名的参数，而这可以使用关联值来实现。</p>
+<p>这里有个 Instagram API 的简化版：</p>
+<p>enum Instagram {<br>enum Media {<br>case Popular<br>case Shortcode(id: String)<br>case Search(lat: Float, min_timestamp: Int, lng: Float, max_timestamp: Int, distance: Int)<br>}<br>enum Users {<br>case User(id: String)<br>case Feed<br>case Recent(id: String)<br>}<br>}<br>Ash Furrow的Moya框架就是基本这个思想，使用枚举对 rest 端点进行映射。</p>
+<p>链表<br>Airspeed Velocity有一篇极好的文章说明了如何使用枚举来实现一个链表。那篇文章中的大多数代码都超出了枚举的知识，并涉及到了大量其它有趣的主题9，但是，链表最基本的定义是类似这样的(我对其进行了一些简化)：</p>
+<p>enum List {<br>case End<br>indirect case Node(Int, next: List)<br>}<br>每一个节点(Node) case 都指向了下一个 case， 通过使用枚举而非其它类型，我们可以避免使用一个可选的 next 类型以用来表示链表的结束。</p>
+<p>Airspeed Velocity 还写过一篇超赞的博客，关于如何使用 Swift 的间接枚举类型来实现红黑树，所以如果你已经阅读过关于链表的博客，你可能想继续阅读这篇关于红黑树的博客。</p>
+<p>设置字典(Setting Dictionaries)<br>这是 Erica Sadun 提出的非常非常机智的解决方案。简单来讲，就是任何我们需要用一个属性的字典来对一个项进行设置的时候，都应该使用一系列有关联值的枚举来替代。使用这方法，类型检查系统可以确保配置的值都是正确的类型。</p>
+<p>关于更多的细节，以及合适的例子，可以阅读下她的文章。</p>
+<p>局限<br>与之前类似，我将会用一系列枚举的局限性来结束本篇文章。</p>
+<p>提取关联值<br>David Owens写过一篇文章，他觉得当前的关联值提取方式是很笨重的。我墙裂推荐你去看一下他的原文，在这里我对它的要旨进行下说明：为了从一个枚举中获取关联值，我们必须使用模式匹配。然而，关联值就是关联在特定枚举 case 的高效元组。而元组是可以使用更简单的方式来获取它内部值，即 .keyword 或者 .0。</p>
+<p>// Enums<br>enum Ex { case Mode(ab: Int, cd: Int) }<br>if case Ex.Mode(let ab, let cd) = Ex.Mode(ab: 4, cd: 5) {<br>print(ab)<br>}<br>// vs tuples:<br>let tp = (ab: 4, cd: 5)<br>print(tp.ab)<br>如果你也同样觉得我们应该使用相同的方法来对枚举进行解构(deconstruct)，这里有个 rdar: rdar://22704262 (译者注：一开始我不明白 rdar 是啥意思，后来我 google 了下，如果你也有兴趣，也可以自己去搜索一下)</p>
+<p>相等性<br>拥有关联值的枚举没有遵守 equatable 协议。这是一个遗憾，因为它为很多事情增加了不必要的复杂和麻烦。深层的原因可能是因为关联值的底层使用是使用了元组，而元组并没有遵守 equatable 协议。然而，对于限定的 case 子集，如果这些关联值的类型都遵守了 equatable 类型，我认为编译器应该默认为其生成 equatable 扩展。</p>
+<p>// Int 和 String 是可判等的, 所以 Mode 应该也是可判等的<br>enum Ex { case Mode(ab: Int, cd: String) }</p>
+<p>// Swift 应该能够自动生成这个函数<br>func == (lhs: Ex.Mode, rhs: Ex.Mode) -&gt; Bool {<br>switch (lhs, rhs) {<br>case (.Mode(let a, let b), .Mode(let c, let d)):<br>return a == c &amp;&amp; b == d<br>default:<br>return false<br>}<br>}<br>元组(Tuples)<br>最大的问题就是对元组的支持。我喜欢使用元组，它们可以使很多事情变得更简单，但是他们目前还处于无文档状态并且在很多场合都无法使用。在枚举当中，我们无法使用元组作为枚举的值：</p>
+<p>enum Devices: (intro: Int, name: String) {<br>case iPhone = (intro: 2007, name: “iPhone”)<br>case AppleTV = (intro: 2006, name: “Apple TV”)<br>case AppleWatch = (intro: 2014, name: “Apple Watch”)<br>}<br>这似乎看起来并不是一个最好的示例，但是我们一旦开始使用枚举，就会经常陷入到需要用到类似上面这个示例的情形中。</p>
+<p>迭代枚举的所有case<br>这个我们已经在前面讨论过了。目前还没有一个很好的方法来获得枚举中的所有 case 的集合以使我们可以对其进行迭代。</p>
+<p>默认关联值<br>另一个会碰到的事是枚举的关联值总是类型，但是我们却无法为这些类型指定默认值。假设有这样一种情况:</p>
+<p>enum Characters {<br>case Mage(health: Int = 70, magic: Int = 100, strength: Int = 30)<br>case Warrior(health: Int = 100, magic: Int = 0, strength: Int = 100)<br>case Neophyte(health: Int = 50, magic: Int = 20, strength: Int = 80)<br>}<br>我们依然可以使用不同的值创建新的 case，但是角色的默认设置依然会被映射。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/01/M_2Swift%E6%9E%9A%E4%B8%BE/" class="post-title-link" itemprop="url">枚举,枚举原始值,枚举相关值,switch提取枚举关联值</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 18:11:20" itemprop="dateCreated datePublished" datetime="2016-08-01T18:11:20+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>Swift枚举基本概念</p>
+</blockquote>
+<p>Swift中的枚举比OC中的枚举强大, 因为Swift中的枚举是一等类型,<br>它可以像类和结构体一样增加属性和方法<br>enum Method{<br>case 枚举值<br>}<br>2. 枚举的基本使用<br>我们注意到，swift 的每个枚举项前面，都使用一个 case 关键字来标识。除了每行声明一个枚举项，也可以将这些枚举项放在一行中声明，每项之间用逗号分隔。<br>enum Menthod1 {<br>case Add, Sub, Mul, Div<br>}<br>可以使用枚举类型变量或常量接收枚举值<br>var m: Method = .Add<br>注意: 如果变量或常量没有指定类型, 那么前面必须加上该值属于哪个枚举类型<br>// var m1 =  .Add //直接报错<br>var m1 = Method.Add //正确写法<br>3.原始值<br>OC中枚举的本质就是整数, 所以OC中的枚举是有原始值的,默认是从0开始<br>而Swift中的枚举默认是没有原始值的, 但是可以在定义时告诉系统让枚举有原始值和OC中的枚举一样, 也可以指定原始值, 后面的值默认+1 , 但必须指定枚举的类型, 并且一定是 Int 类型<br>Swift中的枚举除了可以指定整形以外还可以指定其它类型, 但是如果指定其它类型, 必须给所有枚举值赋值, 因为不能自动递增<br>// 指定了枚举原始值类型为 Int , 所以并且给第一个枚举值定义了原始值, 则后面的值默认 +1<br>enum Method3: Int{<br>case Add = 5, Sub, Mul, Div<br>}<br>// 自定的枚举原始值的类型不是 Int , 所以后面的值不会默认 +1,<br>// 后面的也需要手动赋值<br>enum Method4: Double{<br>case Add = 5.0, Sub = 6.0, Mul = 6.1, Div = 8.0<br>}<br>原始值转换为枚举值<br>enum Method5: String{<br>case Add = “add”, Sub = “sub”, Mul = “mul”, Div = “div”<br>}<br>获取枚举原始值<br>rawValue代表将枚举值转换为原始值, 注意老版本中转换为原始值的方法名叫toRaw<br>Method4.Sub.rawValue<br>print(Method4.Sub.rawValue)<br>// 输出结果: 6.0<br>通过原始值创建枚举值<br>原始值区分大小写<br>返回的是一个可选值,因为原始值对应的枚举值不一定存在<br>老版本中为fromRaw(“add”)<br>let m2 = Method5(rawValue: “add”)<br>print(m2)</p>
+<p>func chooseMethod(op:String){<br>// 由于返回是可选类型, 所以有可能为nil, 最好使用可选绑定<br>if let opE = Method5(rawValue: op){<br>switch (opE){<br>case .Add:<br>print(“加法”)<br>case .Sub:<br>print(“减法”)<br>case .Mul:<br>print(“除法”)<br>case .Div:<br>print(“乘法”)<br>}<br>}<br>}<br>4. 枚举相关值<br>在 Swift 中，我们还可以定义这样的枚举类型，它的每一个枚举项都有一个附加信息，来扩充这个枚举项的信息表示，这又叫做关联值。加入我们有一个枚举类型 Shape 来表示形状。<br>enum lineSegmentDescriptor{<br>case StartAndEndPattern(start:Double, end:Double)<br>case StartAndLengthPattern(start: Double, length:Double)<br>}</p>
+<p>var lsd = lineSegmentDescriptor.StartAndLengthPattern(start: 0.0, length: 100.0)<br>lsd = lineSegmentDescriptor.StartAndEndPattern(start: 0.0, end: 50.0)</p>
+<p>print(lsd)<br>// 输出结果: StartAndEndPattern(0.0, 50.0)<br>利用switch提取枚举关联值<br>switch lsd {<br>case let .StartAndEndPattern(s, e):<br>print(“start = (s) end = (e)”)<br>case .StartAndLengthPattern(let s, let l):<br>print(“start = (s) lenght = (l)”)<br>}<br>// 输出结果: start = 0.0 end = 50.0</p>
 <blockquote>
-<p>坐标</p>
+<p>嵌套枚举(Nesting Enums)</p>
 </blockquote>
-<p>view.frame=CGRectMake(100, 100, 100, 100);</p>
+<p>如果你有特定子类型的需求，可以对enum进行嵌套。这样就允许你为实际的enum中包含其他明确信息的enum。以RPG游戏中的每个角色为例，每个角色能够拥有武器，因此所有角色都可以获取同一个武器集合。而游戏中的其他实例则无法获取这些武器(比如食人魔,它们仅使用棍棒)。<br>enum Character {<br>enum Weapon {<br>case Bow<br>case Sword<br>case Lance<br>case Dagger<br>}<br>enum Helmet {<br>case Wooden<br>case Iron<br>case Diamond<br>}<br>case Thief<br>case Warrior<br>case Knight<br>}</p>
 <blockquote>
-<p>中心位置</p>
+<p>属性(Properties)</p>
 </blockquote>
-<p>view.center=CGPointMake(200, 200);</p>
+<p>尽管增加一个存储属性到枚举中不被允许，但你依然能够创建计算属性。当然，计算属性的内容都是建立在枚举值下或者枚举关联值得到的。<br>enum Device {<br>case iPad, iPhone<br>var year: Int {<br>switch self {<br>case iPhone: return 2007<br>case iPad: return 2010<br>}<br>}</p>
 <blockquote>
-<p>大小   不想改变位置，想改变大小(设置bounds)</p>
+<p>静态方法(Static Methods)</p>
 </blockquote>
-<p>view.bounds=CGRectMake(0, 0, 50, 50);</p>
+<p>你也能够为枚举创建一些静态方法(static methods)。换言之通过一个非枚举类型来创建一个枚举。在这个示例中,我们需要考虑用户有时将苹果设备叫错的情况(比如AppleWatch叫成iWatch)，需要返回一个合适的名称。<br>enum Device {<br>case AppleWatch<br>static func fromSlang(term: String) -&gt; Device? {<br>if term == “iWatch” {<br>return .AppleWatch<br>}<br>return nil<br>}<br>}<br>print (Device.fromSlang(“iWatch”))</p>
 <blockquote>
-<p>tag值  区分不同控件（区分多个按钮）</p>
+<p>可变方法(Mutating Methods)</p>
 </blockquote>
-<p>view.tag=100;</p>
+<p>方法可以声明为mutating。这样就允许改变隐藏参数self的case值了3。<br>enum TriStateSwitch {<br>case Off, Low, High<br>mutating func next() {<br>switch self {<br>case Off:<br>self = Low<br>case Low:<br>self = High<br>case High:<br>self = Off<br>}<br>}<br>}<br>var ovenLight = TriStateSwitch.Low<br>ovenLight.next()<br>// ovenLight 现在等于.On<br>ovenLight.next()<br>// ovenLight 现在等于.Off</p>
 <blockquote>
-<p>是否打开用户交互</p>
+<p>小结</p>
 </blockquote>
-<p>有的控件UIImageView默认不支持<br>后果：按钮直接加到UIImageView无法点击<br>view.userInteractionEnabled=YES;    </p>
+<p>枚举声明的类型是囊括可能状态的有限集，且可以具有附加值。通过内嵌(nesting),方法(method),关联值(associated values)和模式匹配(pattern matching),枚举可以分层次地定义任何有组织的数据。<br>现在我们已经对这个定义更加清晰了。确实，如果我们添加关联值和嵌套，enum就看起来就像一个封闭的、简化的struct。相比较struct，前者优势体现在能够为分类与层次结构编码。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/01/M_4Swift%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95-%E5%B1%9E%E6%80%A7,%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E5%BB%B6%E8%BF%9F%E5%AD%98%E5%82%A8%E5%B1%9E%E6%80%A7,%E8%AE%A1%E7%AE%97%E5%B1%9E%E6%80%A7,%E5%B1%9E%E6%80%A7%E8%A7%82%E5%AF%9F%E5%99%A8/" class="post-title-link" itemprop="url">Swift基础语法-属性,存储属性,延迟存储属性,计算属性,属性观察器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 17:15:40" itemprop="dateCreated datePublished" datetime="2016-08-01T17:15:40+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>存储属性</p>
+</blockquote>
+<p>Swift中的存储属性就是以前学习OC中的普通属性<br>在结构体或者类中定义的属性, 默认就是存储属性<br>struct Person {<br>var name: String<br>var age: Int<br>}<br>var p:Person = Person(name: “cdh”, age: 20)</p>
 <blockquote>
-<p>视图之间的相互组合嵌套</p>
+<p>常量存储属性</p>
 </blockquote>
-<pre><code>[view addSubview:view1]
-</code></pre>
+<p>常量存储属性只能在定义时或构造时修改<br>构造好一个对象之后不能对常量存储属性进行修改<br>struct Person1 {<br>var name: String<br>var age: Int<br>let card: String // 身份证<br>}<br>var p1: Person1 = Person1(name: “cdh”, age: 20, card: “123456”)<br>p1.name = “CDH”<br>p1.age = 50<br>//构造好对象之后不能修改常量存储属性<br>//以下写法是错误的<br>//p1.card = “56789”</p>
+<p>结构体和枚举是值类型<br>因此不能修改结构体常量中的属性<br>不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>类是引用类型<br>可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>struct Person2 {<br>var name: String<br>var age: Int<br>}<br>let p2: Person2 = Person2(name: “cdh”, age: 20)<br>//因为结构体是值类型, 所以不能修改结构体常量中的属性<br>//不能修改结构体/枚举常量对象中的值, 因为他指向的对象是一个常量<br>//以下写法错误<br>//p2.name = “CDH” //不能修改结构体常量对象的值<br>//以下写法错误<br>//p2 = Person2(name: “CDH”, age: 50)</p>
+<p>class Person3 {<br>var name: String = “cdh”<br>var age: Int = 20<br>}<br>let p3:Person3 = Person3()<br>//可以修改类常量中属性的值, 因为他指向的对象不是一个常量<br>p3.name = “CDH”<br>//不可以修改类常量的指向<br>//以下写法是错误的<br>//p3 = Person4()</p>
 <blockquote>
-<p>视图的层次感（层级关系）</p>
+<p>延迟存储属性</p>
 </blockquote>
-<p>视图层次感规律：先加入的在下面，后加入的在上面。</p>
+<p>Swift语言中所有的存储属性必须有初始值, 也就是当构造完一个对象后, 对象中所有的存储属性必须有初始值<br>但是也有例外, 其中延迟存储属性可以将属性的初始化推迟到该属性第一次被调用的时候<br>这个延时属性对应于 OC中的懒加载的概念<br>苹果的设计思想:希望所有的对象在使用时才真正加载到内存中<br>和OC不同的是swift有专门的关键字来实现懒加载<br>lazy关键字可以用于定义某一个属性懒加载<br>懒加载应用场景:<br>有可能不会用到<br>依赖于其它值<br>class Line {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    如果不是lazy属性,定义的时候对象还没有初始化,所以不能访问self<br>//    如果加上lazy,代表使用时才会加载,也就是使用到length属性时才会调用self<br>//    而访问一个类的属性必须通过对象方法<br>//    所以访问时对象已经初始化完成了,可以使用self<br>lazy var length: Double = self.getLenght()<br>//    通过闭包懒加载<br>lazy var container: Array<AnyObject> = {<br>print(“懒加载”)<br>var arrM = []<br>return arrM as [AnyObject]<br>}()<br>func getLenght() -&gt;Double<br>{<br>print(“懒加载”)<br>return end - start<br>}<br>}<br>var line = Line()<br>line.end = 150.0<br>print(“创建对象完毕”)<br>print(line.length)<br>var arrM = line.container<br>arrM.append(“1”)<br>arrM.append(5)<br>print(arrM)<br>//输出结果:<br>//创建对象完毕<br>//懒加载<br>//150.0<br>//懒加载<br>//[1, 5]</p>
+<blockquote>
+<p>计算属性</p>
+</blockquote>
+<p>1.Swift中的计算属性不直接存储值<br>跟存储属性不同,没有任何的”后端存储与之对应”<br>2.计算属性用于计算, 可以实现setter和getter这两种计算方法<br>3.枚举不可以有存储属性, 但是允许有计算属性<br>setter 对象.属性 = 值<br>getter var value = 对象.属性<br>struct Rect {<br>var origion: (x: Double, y: Double) = (0, 0)<br>var size: (w: Double, h: Double) = (0, 0)<br>//    由于center的值是通过起点和宽高计算出来的, 所以没有必要提供一个存储属性<br>var center: (x: Double, y: Double) {<br>get{<br>return (origion.x + size.w/2, origion.y + size.h/2)<br>}<br>set{<br>//            注意: 计算属性不具备存储功能, 所以不能给计算属性赋值<br>//            如果赋值会发生运行时错误<br>//            注意: setter可以自己传递一个参数, 也可以使用系统默认的参数newValue<br>//            如果要使用系统自带的参数, 必须删除自定义参数<br>origion.x = newValue.x - size.w / 2<br>origion.y = newValue.y - size.h / 2<br>}<br>}<br>}<br>var r = Rect()<br>r.origion = (0, 0)<br>r.size = (100, 100)<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果: center.x = 50.0 center.y = 50.0<br>r.center = (100, 100)<br>print(“origion.x = (r.origion.x) origion.y = (r.origion.y)”)<br>//输出结果: origion.x = 50.0 origion.y = 50.0<br>print(“center.x = (r.center.x) center.y = (r.center.y)”)<br>//输出结果:center.x = 100.0 center.y = 100.0</p>
+<blockquote>
+<p>只读计算属性</p>
+</blockquote>
+<p>对应OC中的readonly属性<br>所谓的只读属性就是只提供了getter方法, 没有提供setter方法<br>class Line1 {<br>var start:Double = 0.0<br>var end: Double = 0.0<br>//    只读属性, 只读属性必须是变量var, 不能是常量let<br>//    例如想获取长度<br>//    只能通过计算获得, 而不需要外界设置, 可以设置为只读计算属性<br>var length: Double{<br>//        只读属性的简写, 可以省略get{}<br>return end - start<br>}<br>}<br>var line1 = Line1()<br>line1.end = 100<br>print(line1.length)<br>//输出结果: 100.0<br>//错误,不可设置只读属性<br>line1.length = 100</p>
+<blockquote>
+<p>属性观察器</p>
+</blockquote>
+<p>类似OC中的KVO<br>可以用于监听属性什么时候被修改, 只有属性被修改才会调用<br>有两种属性观察器:<br>1.willSet, 在设置新值之前调用<br>2.didSet, 在设置新值之后调用<br>可以直接为除计算属性和lazy属性之外的存储属性添加属性观察器<br>但是可以在继承类中为父类的计算属性提供属性观察器<br>因为在计算属性中也可以监听到属性的改变<br>所以给计算属性添加属性观察器没有任何意义<br>class Line2 {<br>var start:Double = 0.0{<br>willSet{<br>print(“willSet newValue = (newValue)”)<br>}<br>didSet{<br>print(“didSet oldValue = (oldValue)”)<br>}<br>}<br>var end: Double = 0.0<br>}<br>var l2 = Line2()<br>l2.start = 10.0<br>//输出结果:<br>//willSet newValue = 10.0<br>//didSet oldValue = 0.0<br>//开发中使用didSet较多</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/01/H_1Htmlhtml%E3%80%81css%E3%80%81js%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%83%85%E5%86%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/01/H_1Htmlhtml%E3%80%81css%E3%80%81js%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E9%A1%BA%E5%BA%8F%E5%8F%8A%E6%89%A7%E8%A1%8C%E6%83%85%E5%86%B5/" class="post-title-link" itemprop="url">html、css、js文件加载顺序及执行情况</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-01 15:12:15" itemprop="dateCreated datePublished" datetime="2016-08-01T15:12:15+08:00">2016-08-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>HTML页面加载和解析流程 </p>
 <ol>
-<li>获取window的所有子视图<br>NSLog(@”%@”,self.window.subviews);</li>
+<li><p>用户输入网址（假设是个html页面，并且是第一次访问），浏览器向服务器发出请求，服务器返回html文件。 </p>
+</li>
+<li><p>浏览器开始载入html代码，发现<head>标签内有一个<link>标签引用外部CSS文件。 </p>
+</li>
+<li><p>浏览器又发出CSS文件的请求，服务器返回这个CSS文件。 </p>
+</li>
+<li><p>浏览器继续载入html中<body>部分的代码，并且CSS文件已经拿到手了，可以开始渲染页面了。 </p>
+</li>
+<li><p>浏览器在代码中发现一个<img>标签引用了一张图片，向服务器发出请求。此时浏览器不会等到图片下载完，而是继续渲染后面的代码。 </p>
+</li>
+<li><p>服务器返回图片文件，由于图片占用了一定面积，影响了后面段落的排布，因此浏览器需要回过头来重新渲染这部分代码。 </p>
+</li>
+<li><p>浏览器发现了一个包含一行Javascript代码的<script>标签，赶快运行它。 </p>
+</li>
+<li><p>Javascript脚本执行了这条语句，它命令浏览器隐藏掉代码中的某个<style>（style.display=”none”）。杯具啊，突然就少了这么一个元素，浏览器不得不重新渲染这部分代码。 </p>
+</li>
+<li><p>终于等到了</html>的到来，浏览器泪流满面…… </p>
+</li>
+<li><p>等等，还没完，用户点了一下界面中的“换肤”按钮，Javascript让浏览器换了一下＜link＞标签的CSS路径。 </p>
+</li>
+<li><p>浏览器召集了在座的各位<div><span><ul><li>们，“大伙儿收拾收拾行李，咱得重新来过……”，浏览器向服务器请求了新的CSS文件，重新渲染页面。</p>
+</li>
 </ol>
-<p>UIView *view1=[[UIView alloc]initWithFrame:CGRectMake(100, 240, 100, 100)];<br>view1.backgroundColor=[UIColor redColor];<br>[self.window addSubview:view1];<br>UIView *view2=[[UIView alloc]initWithFrame:CGRectMake(150, 310, 100, 100)];<br>view2.backgroundColor=[UIColor greenColor];<br>[self.window addSubview:view2];<br>UIView *view3=[[UIView alloc]initWithFrame:CGRectMake(200, 360, 100, 100)];<br>view3.backgroundColor=[UIColor blueColor];<br>[self.window addSubview:view3];<br>2.把view2放到最上面<br>[self.window bringSubviewToFront:view2];<br>3.把view2放到最下面<br>[self.window sendSubviewToBack:view2];<br>4.把某个视图插入到某个视图上面<br>UIView *view4=[[UIView alloc]initWithFrame:CGRectMake(120, 260, 100, 100)];<br>view4.backgroundColor=[UIColor purpleColor];<br>把视图插入到某个视图上面<br>[self.window insertSubview:view4 belowSubview:view1];<br>5.交换两个层<br>[self.window exchangeSubviewAtIndex:1 withSubviewAtIndex:2];<br>6.图层是可以放进数组里面<br>NSArray *subViews=self.window.subviews;<br>注意：当你交换了两个图层位置时，数组中相应的位置也会发生改变。<br>7.隐藏一个视图<br>view4.hidden=YES;<br>8.删除一个视图。<br>[view4 removeFromSuperview];</p>
 
       
     </div>
@@ -1074,7 +1196,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/31/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/31/">31</a><span class="page-number current">32</span><a class="page-number" href="/page/33/">33</a><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/33/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/31/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/31/">31</a><span class="page-number current">32</span><a class="page-number" href="/page/33/">33</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="extend next" rel="next" href="/page/33/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1140,7 +1262,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-count">366</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

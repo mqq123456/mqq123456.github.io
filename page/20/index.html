@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/07/24/M_Swift52%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/16/M_Swift114UI%E7%9B%B8%E5%85%B3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/07/24/M_Swift52%E5%B7%A5%E4%BD%9C%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">工作总结</a>
+            <a href="/2018/08/16/M_Swift114UI%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">UI相关</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-07-24 20:00:01" itemprop="dateCreated datePublished" datetime="2018-07-24T20:00:01+08:00">2018-07-24</time>
+              <time title="创建时间：2018-08-16 19:39:30" itemprop="dateCreated datePublished" datetime="2018-08-16T19:39:30+08:00">2018-08-16</time>
             </span>
 
           
@@ -186,7 +186,166 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这个星期本来打算搞点餐的项目的，没想到就这样搁置了，周一的时候想了一下，现在我已经不想了，我想这周末没事的时候可以跟我一个同学一起讨论一下，毕竟闲着也是闲着。<br>周一搞了一下那个东西以后，基站边界划分的问题也就出来了，我也没时间去考虑别的问题，直到今天周四，本来明天写这些东西的，我想了下也就算了，还是今天写吧。明天不知道又会有什么事。<br>但是我想我那个项目的事情是不能停的，我会继续写的，我如果有一天我写出来了，我想我会得到相应的回报的，至少要对自己有信心，是吧。<br>目前看来，我对大数据的能力越来越不足，我将很难担当起大数据的项目。从一开始我就不是一个领导的身份。我想接下来我要好好审视自己了，如何去做这些让人头疼的事情是一个问题。做不好怎么办，我很担心，我一直在弱化我自己的位置，不知道当有一天到来的时候，我能问心无愧的告诉自己，我付出了，我不后悔。<br>关于学习，这事那事的东西缠绕着，我也没有去学习Python，但是很多年轻人都在前赴后继的在这条学习的路上。</p>
+          <h2 id="UIView绘制原理"><a href="#UIView绘制原理" class="headerlink" title="UIView绘制原理"></a>UIView绘制原理</h2><pre><code>当UIView调用setNeedDisplay之后,系统会调用view对应layer的 
+setNeedsDisplay方法,相当于在当前layer上打上了一个脏标记,然后会在
+当前runloop即将结束的时候调用CALayer的display方法,才会真正的进入
+当前视图的绘制流程当中,所以视图的绘制时机,是在当前runloop即将结束的
+时候才会开始.
+CALayer的display方法的内部实现,首先会判断layer的delegete是否响
+应display方法,如果代理不响应就会进入到系统的绘制流程当中,如果响应,实
+际上就为我们提供了异步绘制的接口,这样就构成了UIView的绘制原理
+进行异步绘制,其实就是基于系统给我们开的口子layer.delegate,如果遵从
+或者实现了displayLayer方法,我们就可以进入到异步绘制流程当中,在异步
+绘制的过程当中
+1.就由delegete去负责生成bitmap位图
+2.设置改bitmap作为layer.content属性的值
+</code></pre>
+<h2 id="Masonry"><a href="#Masonry" class="headerlink" title="Masonry"></a>Masonry</h2><pre><code>https://www.cnblogs.com/ludashi/archive/2016/07/11/5591572.html
+是一个对系统NSLayoutConstraint进行封装的第三方自动布局框架，采用链
+式编程的方式提供给开发者API
+UIView的对象可以直接调用mas_makeConstraints方法来为相应的View对
+象添加约束。因为mas_makeConstraints方法位于UIView的
+View+MASAdditions类目中，所以UIView的对象可以直接调用。同样在
+View+MASAdditions类目还有其他方法供UIView的对象使用
+MASViewAttribute这个类名中我们就能看出，这个类是对UIView和
+NSLayoutAttribute的封装。使用等式来表示就是MASViewAttribute = 
+UIView + NSLayoutAttribute + item。在MASViewAttribute类中
+的view属性表示所约束的对象，而item就是该对象上可以被约束的部分。
+MASViewConstraint做的最核心的一件事情就是初始化
+NSLayoutConstriant对象，并将该对象添加在相应的视图上
+MASConstraintMaker类。该类就是一个工厂类，负责创建MASConstraint
+类型的对象（依赖于MASConstraint接口，而不依赖于具体实现）
+</code></pre>
+<h2 id="圆角性能问题"><a href="#圆角性能问题" class="headerlink" title="圆角性能问题"></a>圆角性能问题</h2><pre><code>OpenGL中，GPU屏幕渲染有以下两种方式：
+On-Screen Rendering
+意为当前屏幕渲染，指的是GPU的渲染操作是在当前用于显示的屏幕缓冲区中进行。
+Off-Screen Rendering
+意为离屏渲染，指的是GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作。
+相比于当前屏幕渲染，离屏渲染的代价是很高的，主要体现在两个方面：
+创建新缓冲区
+要想进行离屏渲染，首先要创建一个新的缓冲区。
+上下文切换
+离屏渲染触发方式
+设置了以下属性时，都会触发离屏绘制：
+shouldRasterize（光栅化）
+masks（遮罩）
+shadows（阴影）
+edge antialiasing（抗锯齿）
+group opacity（不透明）
+实现圆角cornerRadius要比mask高效很多。
+方案：
+直接使用setCornerRadius
+这种就是最常用的，也是最耗性能的。
+setCornerRadius设置圆角之后，shouldRasterize=YES光栅化
+avatarImageView.clipsToBounds = YES;
+[avatarImageView.layer setCornerRadius:50];
+avatarImageView.layer.shouldRasterize = YES;
+avatarImageViewUrl.layer.rasterizationScale=[UIScreen mainScreen].scale;
+直接覆盖一张中间为圆形透明的图片（推荐使用）
+这种方法就是多加了一张透明的图片，GPU计算多层的混合渲染blending也是会消耗一点性能的，但比第一种方法还是好上很多的。
+Core Graphics绘制圆角
+这种方式GPU损耗最低，但是UIButton上不知道怎么绘制，可以用UIimageView添加个点击手势当做UIButton使用。
+可以用Instruments的 GPU Driver进行测试：
+</code></pre>
+<h2 id="Target-Action-设计模式"><a href="#Target-Action-设计模式" class="headerlink" title="Target-Action 设计模式"></a>Target-Action 设计模式</h2><pre><code>Target-Action，意为 目标-行为，行为即要调用的方法，目标即消息的接收
+对象（Objective-C 语言使用消息机制，类似但不同于方法调用，该两种概
+念可能未来会进行探讨）。整个过程为：用户点击按钮，触发某事件发生，该消
+息由按钮传到另外的接收对象，接收对象再做相应处理。接收对象可以为任何对
+象，但通常为控制器
+[self.btnCooking addTarget:self    
+action:@selector(pressCooking:) 
+forControlEvents:UIControlEventTouchUpInside];
+1、self 指目标对象为当前对象，及WViewController； 
+2、action 即 在目标对象上的点击方法； 
+3、何时调用该方法，UIControlEventTouchUpInside即单击时。 
+</code></pre>
+<h2 id="layer与view的区别"><a href="#layer与view的区别" class="headerlink" title="layer与view的区别"></a>layer与view的区别</h2><pre><code>UIView相比CALayer最大区别是UIView可以响应用户事件，
+而CALayer不可以。UIView侧重于对显示内容的管理，CALayer侧重于对内
+容的绘制。
+UIView的继承结构为: UIResponder : NSObject。 
+UIResponder是用来响应事件的，也就是UIView可以响应用户事件。
+CALayer的继承结构为： NSObject。 
+直接从 NSObject继承，因为缺少了UIResponder类，所以CALayer悲催的
+不能响应任何用户事件。 
+CALayer定义了position、size、transform、animations 等基本属
+性。
+View和CALayer的Frame映射及View如何创建CALayer.
+一个 Layer 的 frame 是由它的 anchorPoint,position,bounds,和 
+transform 共同决定的，而一个 View 的 frame 只是简单的返回 Layer
+的 frame，同样 View 的 center和 bounds 也是返回 Layer 的一些属
+性。
+</code></pre>
+<h2 id="viewController-push生命周期"><a href="#viewController-push生命周期" class="headerlink" title="viewController push生命周期"></a>viewController push生命周期</h2><pre><code>------------------------PUSH---------------------------
+A-willDisappear --&gt; B-willAppear --&gt; A-didDisappear --&gt; B-didAppear
+---------------------NormalPresent---------------------
+A-willDisappear --&gt; B-willAppear --&gt; B-didAppear --&gt; A-didDisappear
+-----------------------TabBar切换------------------------
+B-willAppear --&gt; A-willDisappear --&gt; A-didDisappear --&gt; B-didAppear
+</code></pre>
+<h2 id="轮播图实现原理"><a href="#轮播图实现原理" class="headerlink" title="轮播图实现原理"></a>轮播图实现原理</h2><pre><code>第一种：基于collectionView进行的封装（推荐）
+这种方式应该是实现起来最简单的一种方式了，也是个人最喜欢的一种封装方
+式。它的原理就是几个collectionView，至于无限轮播，很简单，只需要你
+的轮播数组给collectionView赋值的时候乘以一个较大的数字即可（例如
+100），collectionView本身处理了重用等一系列问题。
+第二种：基于scrollView的无限轮播（首尾各多创建一个展示图片的
+ImageView）
+这种实现方式个人感觉是最麻烦，而且还需要考虑重用等性能问题的一种。基本
+的原理就是在根据你轮播数组的个数在首尾各多创建一个ImageView，当然首
+位之前多创建一个展示轮播数组最后一个的ImageView，而尾部多创建一个展
+示轮播数组第一个的ImageView。
+第三种：同样是基于scrollView的无限轮播（总共就创建三个ImageView）
+这种实现方式比第二种的好处就是不需要考虑重用问题，不论数组是多少个轮播
+图，我只创建三个ImageView。它与第二种的不同之处是其实用户每次看到的
+一直都是中间那张的ImageView,只是上边的内容改变了。其内部实现其实是在
+不断的改变那个轮播数组。    
+</code></pre>
+<h2 id="xib的约束，拖出线后系统默认为什么是weak"><a href="#xib的约束，拖出线后系统默认为什么是weak" class="headerlink" title="xib的约束，拖出线后系统默认为什么是weak"></a>xib的约束，拖出线后系统默认为什么是weak</h2><pre><code>IBOutlet的属性一般可以设为weak是因为它已经被view引用了，除非view
+被释放，否则IBOutlet的属性也不会被释放，另外IBOutlet属性的生命周期
+和view应该是一致的，所以IBOutlet属性一般设为weak。
+从storyboard或者xib上创建控件，在控件放在view上的时候，已经形成了
+如下的引用关系,以UIButton为例：
+UIViewController-&gt;UIView-&gt;subView-&gt;UIButton
+然后你为这个UIButton声明一个weak属性
+@property(nonatomic,weak) IBOOutlet UIButton *btn;
+相当于xib/sb对这个Button是强引用，你声明的属性对它是弱引用。
+</code></pre>
+<h2 id="label只设置上和左的约束正常，UIview这样设置为什么会有约束警告"><a href="#label只设置上和左的约束正常，UIview这样设置为什么会有约束警告" class="headerlink" title="label只设置上和左的约束正常，UIview这样设置为什么会有约束警告"></a>label只设置上和左的约束正常，UIview这样设置为什么会有约束警告</h2><pre><code>大概意思是并不是所有的View都有Intrinsic Content Size,而拥有
+Intrinsic Content Size的view有这样的特征：它们可以根据view中的
+内容来确定view的size。例如Button，我们可以不用指定它们已经计算好的
+size，只需要指定position即可。在Masonry中，UIButton的布局我们可
+以这样子写：
+Content Compression Resistance即为抗压缩阻力，而Content 
+Hugging即为抗拉伸阻力
+View    Intrinsic content size
+UIView and NSView    No intrinsic content size.
+Sliders    Defines only the width (iOS).
+Labels, buttons, switches, and text fields    Defines both the height and the width.
+Text views and image views    Intrinsic content size can vary.
+</code></pre>
+<h2 id="position与anchorPoint"><a href="#position与anchorPoint" class="headerlink" title="position与anchorPoint"></a>position与anchorPoint</h2><pre><code>每一个UIView内部都默认关联着一个CALayer, UIView有frame、bounds
+和center三个属性，CALayer也有类似的属性，分别为frame、bounds、
+position、anchorPoint。frame和bounds比较好理解，bounds可以视为
+x坐标和y坐标都为0的frame，那position、anchorPoint是什么呢？先看
+看两者的原型，可知都是CGPoint点。
+position是layer中的anchorPoint点在superLayer中的位置坐标。因此
+可以说, position点是相对suerLayer的，anchorPoint点是相对layer
+的，两者是相对不同的坐标空间的一个重合点。
+总结
+1、position是layer中的anchorPoint在superLayer中的位置坐标。 
+2、互不影响原则：单独修改position与anchorPoint中任何一个属性都不
+影响另一个属性。
+anchorPoint 是相对于自身的位置，而 position 是相对于父图层的，改
+变 anchorPoint 只是更改了图层自身旋转地位置，但始终还是要通过改变 
+frame 使 anchorPoint 和 position 重合
+</code></pre>
+<h2 id="显示动画和隐式动画区别"><a href="#显示动画和隐式动画区别" class="headerlink" title="显示动画和隐式动画区别"></a>显示动画和隐式动画区别</h2><pre><code>显式动画是指用户自己通过beginAnimations:context:和
+commitAnimations创建的动画。    
+隐式动画是指通过UIView的animateWithDuration:animations:方法创
+建的动画。
+区别就是使用隐式动画后，View会暂时不能接收用户的触摸、滑动等手势。这
+就造成了当一个列表滚动时，如果对其中的view使用了隐式动画，就会感觉滚
+动无法主动停止下来，必须等动画结束了才能停止。
+</code></pre>
 
       
     </div>
@@ -206,7 +365,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/25/M_Swift88%E5%B0%8F%E5%B0%8F%E7%9A%84%E4%B8%80%E5%A4%A9/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/16/M_Swift112Xcode%E7%9B%B8%E5%85%B3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -220,7 +379,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/06/25/M_Swift88%E5%B0%8F%E5%B0%8F%E7%9A%84%E4%B8%80%E5%A4%A9/" class="post-title-link" itemprop="url">小小一天</a>
+            <a href="/2018/08/16/M_Swift112Xcode%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">Xcode相关</a>
         </h2>
 
         <div class="post-meta">
@@ -230,7 +389,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-06-25 17:19:52" itemprop="dateCreated datePublished" datetime="2018-06-25T17:19:52+08:00">2018-06-25</time>
+              <time title="创建时间：2018-08-16 19:38:54" itemprop="dateCreated datePublished" datetime="2018-08-16T19:38:54+08:00">2018-08-16</time>
             </span>
 
           
@@ -244,7 +403,97 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>从昨天的思考，到今天，我想是时候说一下无聊的东西了，这样一天天的，是的，没事做的心情，继续写一点东西吧，谈谈人生，谈谈理想，说一些胡话，就算是聊以慰藉吧。<br>日子一天一天，很快，不知道这样是好是坏，我们总是打算着很多事情，但是有的时候到头来却是一场空，我不知道这样的日子还能多久，我也不想，但是我想，我需要写点东西，我需要让人生充实，我想有的人可以用很多东西来写东西，有的人就是这样。<br>哈哈，感觉头绪有点乱，真的不知道写什么好。天气热的要死，一出门，就是热浪腾腾。今天倒是还好，有点阴天，雾茫茫的，总算是没有大太阳了。<br>好像在说一堆没用的事情，但是人生就是这样，你不知道你会在哪里遇见什么人，你也不知道下一个路口在什么地方，总之，你就这样走着，这样活着，我们说是行尸走肉，其实我们每个人何尝又不是，每个人在社会上其实都是活着，别说你意义很大，其实你处的位置决定了你的作为，所以，不必惊讶，也不必低沉，其实我们都一样。<br>有钱人过的生活我们是享受不了，但是有钱人也有我们不曾有过的焦虑，其实都一样，他们说他们很忙，也好吧，其实说是有意义，当我们真正到老了，真的不知道是不是还是乐观的说有什么意思。<br>真的我们也许在有的时候会很天真，有的时候又很无聊，生活就是这样。<br>好了，不知道又胡扯了什么，今天看了一个新闻，说有声阅读将成为下一个风口，我想确实有一定的作用，但是我们不可否认，当我们没有事情可以做的时候，新闻称为了我们最大的慰藉，这有着一股神奇的力量，我想这有点可怕，我想现在的新闻变了，变成我们不认识的样子，真的是的，我现在发现，我打字真的是又点查，工作这么多年了，竟然打字一直都这样差，真的是有点说不过去，不过也就这样吧，平时写代码，真的不是太纠结打字速度的，但是当你写文字的时候，对于打字这个问题，还是比较注重的。</p>
+          <h2 id="pod-install与pod-update的区别"><a href="#pod-install与pod-update的区别" class="headerlink" title="pod install与pod update的区别"></a>pod install与pod update的区别</h2><pre><code>pod install一般是你第一次想要为项目添加pod的时候使用的，它同样也使
+用在你为Podfile文件添加或移除pod库的时候。
+每次pod install命令运行的时候，pod install会为每一个它安装的pod
+库在Podfile.lock文件中写入其版本号。Podfile.lock文件追踪每一个安
+装的pod库的版本号，并锁定这些版本号。
+当你运行pod install是，它将只解决不在Podfile.lock中的pod库依赖关
+系 
+对于在Podfile.lock文件中的pod库，pod install会只下载
+Podfile.lock文件中指定的版本，而不会去检查这个库是否有更新的版本。
+对于不在Podfile.lock文件中的pod库，pod install会搜索这个pod库在
+Podfile文件中指定的版本
+pod update
+当你运行了pod update PODNAME命令，CocoaPods会在不考虑
+Podfile.lock中版本的情况下试着去查找PODNAME的最新版本。pod 
+update PODNAME命令会将相应的pod更新到最新的版本（新版本仍然遵守你
+在Podfile中做的限制）
+用法
+通过pod update PODNAME,你可以只更新某个特定的pod库（检查是否存在
+新版本并更新相应的pod库）。相反，pod install则不会去更新已安装的
+pod库。
+当你向Podfile中添加了pod，你应该使用pod install而不是pod update
+去在不更新已安装的pod库的版本基础上安装新添加的pod库。
+当你想过更新某个特定pod库（或所有的库）的版本时你只需要使用pod 
+update
+</code></pre>
+<h2 id="pod-lock产生冲突的原因"><a href="#pod-lock产生冲突的原因" class="headerlink" title="pod.lock产生冲突的原因"></a>pod.lock产生冲突的原因</h2><pre><code>Podfile.lock 不一致的原因：
+Podfile.lock和Manifest.lock：
+项目中集成 cocoapods 的时候，运行 pod install 后，项目根目录中会
+生成Podfile.lock，而Pods目录中会有Manifest.lock。
+Xcode 编译项目的时候，会执行 Build Phases 中的[CP] Check Pods 
+Manifest.lock 脚本，这个脚本会比对Podfile.lock和
+Manifest.lock，如果两个文件不相同就会报错。
+Podfile.lock是什么：
+Podfile.lock 文件主要包含三个块：PODS、DEPENDENCIES、SPEC 
+CHECKSUMS，用来记录每个pod的版本号、依赖的其他库和每个库对应的
+podspec.json文件的 checksum(SHA-1算法)。通过这些信息可以确保多
+人协作的时候，大家使用的是相同版本的第三方库。
+删掉Pod.lock文件，然后重新执行pod install --verbose --no-
+repo-update
+</code></pre>
+<h2 id="CocoaPods原理和说明"><a href="#CocoaPods原理和说明" class="headerlink" title="CocoaPods原理和说明"></a>CocoaPods原理和说明</h2><pre><code>1、第三方库会被编译成.a静态库供我们真正的工程使用。    
+CocoaPods会将所有的第三方库以target的方式组成一个名为Pods的工程，
+该工程就放在刚才新生成的Pods目录下。整个第三方库工程会生成一个名称为
+libPods.a的静态库提供给我们自己的CocoaPodsTest工程使用。
+对于资源文件，CocoaPods提供了一个名为Pods-resources.sh的bash脚
+本，该脚本在每次项目编译的时候都会执行，将第三方库的各种资源文件复制到
+目标目录中。
+2、我们的工程和第三方库所在的工程会由一个新生成的workspace管理
+为了方便我们直观的管理工程和第三方库，CocoaPodsTest工程和Pods工程
+会被以workspace的形式组织和管理，也就是我们刚才看到的
+CocoaPodsTest.xcworkspace文件。
+3、原来的工程设置已经被更改了，这时候我们直接打开原来的工程文件去编译
+就会报错，只能使用新生成的workspace来进行项目管理。
+4、CocoaPods通过一个名为Pods.xcconfig的文件来在编译时设置所有的依
+赖和参数。
+</code></pre>
+<h2 id="dSYM-文件"><a href="#dSYM-文件" class="headerlink" title="dSYM 文件"></a>dSYM 文件</h2><pre><code>什么是 dSYM 文件    
+Xcode编译项目后，我们会看到一个同名的 dSYM 文件，dSYM 是保存 16 
+进制函数地址映射信息的中转文件，我们调试的 symbols 都会包含在这个文
+件中，并且每次编译项目的时候都会生成一个新的 dSYM 文件，位于 /
+Users/&lt;用户名&gt;/Library/Developer/Xcode/Archives 目录下，对于
+每一个发布版本我们都很有必要保存对应的 Archives 文件 
+( AUTOMATICALLY SAVE THE DSYM FILES 这篇文章介绍了通过脚本每次
+编译后都自动保存 dSYM 文件)。
+dSYM 文件有什么作用
+当我们软件 release 模式打包或上线后，不会像我们在 Xcode 中那样直观
+的看到用崩溃的错误，这个时候我们就需要分析 crash report 文件了，
+iOS 设备中会有日志文件保存我们每个应用出错的函数内存地址，通过 Xcode 
+的 Organizer 可以将 iOS 设备中的 DeviceLog 导出成 crash 文件，
+这个时候我们就可以通过出错的函数地址去查询 dSYM 文件中程序对应的函数
+名和文件名。大前提是我们需要有软件版本对应的 dSYM 文件，这也是为什么
+我们很有必要保存每个发布版本的 Archives 文件了。
+如何将文件一一对应
+每一个 xx.app 和 xx.app.dSYM 文件都有对应的 UUID，crash 文件也
+有自己的 UUID，只要这三个文件的 UUID 一致，我们就可以通过他们解析出
+正确的错误函数信息了。
+</code></pre>
+<h2 id="Git和SVN"><a href="#Git和SVN" class="headerlink" title="Git和SVN"></a>Git和SVN</h2><pre><code>1. Git是分布式的，SVN是集中式的，好处是跟其他同事不会有太多的冲突，
+自己写的代码放在自己电脑上，一段时间后再提交、合并，也可以不用联网在本
+地提交；
+2. Git下载下来后，在本地不必联网就可以看到所有的log，很方便学习，
+SVN却需要联网；
+3. Git鼓励分Branch，而SVN，说实话，我用Branch的次数还挺少的，SVN
+自带的Branch merge我还真没用过，有merge时用的是Beyond Compare工
+具合并后再Commit的；
+4. Tortoise也有出Git版本，真是好东西；
+5. SVN在Commit前，我们都建议是先Update一下，跟本地的代码编译没问
+题，并确保开发的功能正常后再提交，这样其实挺麻烦的，有好几次同事没有先
+Updata，就
+Commit了，发生了一些错误，耽误了大家时间，Git可能这种情况会少些。
+</code></pre>
 
       
     </div>
@@ -264,7 +513,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/25/M_Swift87%E5%B0%8F%E6%80%9D%E8%80%83/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/16/M_Swift90%E7%AE%97%E6%B3%95%E4%B9%8B%E6%95%B0%E5%AD%A6%E8%AE%A1%E7%AE%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -278,7 +527,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/06/25/M_Swift87%E5%B0%8F%E6%80%9D%E8%80%83/" class="post-title-link" itemprop="url">小思考</a>
+            <a href="/2018/08/16/M_Swift90%E7%AE%97%E6%B3%95%E4%B9%8B%E6%95%B0%E5%AD%A6%E8%AE%A1%E7%AE%97/" class="post-title-link" itemprop="url">算法之数学计算</a>
         </h2>
 
         <div class="post-meta">
@@ -288,7 +537,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-06-25 17:19:37" itemprop="dateCreated datePublished" datetime="2018-06-25T17:19:37+08:00">2018-06-25</time>
+              <time title="创建时间：2018-08-16 19:34:20" itemprop="dateCreated datePublished" datetime="2018-08-16T19:34:20+08:00">2018-08-16</time>
             </span>
 
           
@@ -302,7 +551,60 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>今天也是没有什么重要的事情，昨天晚上的苹果开发者大会，发布了很多操作系统的优化，没有一件硬件产品，所以，我想，这个世界可能真的就是在变慢，这样感觉也挺好，起码，我们一时半会还没有被淘汰，但是，当我们没有事情的时候，我们应该干点什么呢，我想，是不是应该写一个app去实现一些东西，这个真的是一个我一直以来都想要去尝试的东西，因为搞这个开发。真的是你闲下来的时候就会手痒痒，这真的是一个让人头疼的问题，但是，其实创新是一件最让人头疼的问题，这就是一个麻烦了，我想我是否能够做一个东西，能够清楚的了解很多东西，就像是一些游戏，我能清楚的知道这个东西应该是什么，应该怎么做，应该怎么样去做，我想做一个工具类的东西，比如说现在高考就要结束了，那么大学是哪个好，专业选哪个好，真的是一个让人头疼的问题，那么我们能不能用一个攻略的东西，让这个事情变的好一点，我想是不是应该有个东西叫做百事通，这个真的是一个让人头疼的问题。<br>我突然想到一个很有意思的问题，既然现在游戏这么火爆，微信又凭借一个朋友圈火爆四射，那么我们能不能就是来模仿一个微信和王者荣耀，就模仿一把腾讯如何。<br>现在简单的想法是这样的，我们做一个类似微信发现页面的功能，内容是王者荣耀，这样就能够很好的通用性，然后再加上很多直播等内容的丰富，能不能做到比王者荣耀助手好很多的功能，我现在看王者荣耀助手，感觉很无聊，感觉一点都没有用，还有就是你的很多功能不能得到很好的发展。<br>现在我定义一下，这么一个app，他首先的定位是工具类。然后能够直播，然后能够慢动作分析。<br>我想现在像nba一样，一场比赛都会有很多慢动作分析，那么我们能不能分析局势啊，我们能不能把王者荣耀做在沙盘上进行演示？？<br>还有一个最重要的问题就是，腾讯肯定不会为我们提供这么多的权限，我们也不可能得到王者荣耀用户数据，比如账号名称，等等<br>但是，我们有英雄，就像我们是一个NBA球迷一样，你肯定有支持的球队，或者你肯定有喜欢的球员，那么这就是一个入手点。<br>我们是一个荣耀爱好者，那么你肯定就会有你喜欢玩的位置，喜欢玩的英雄。那么这就是入手点。<br>好了，应用有了，那么你能为英雄做什么呢？这就是我们的功能，说白了，每个爱好者都是想玩好游戏，但是全部的游戏攻略都普遍存在一个问题，就是对游戏认知太浅，感觉就不是一个会玩的玩家写出来的东西，这真的是一个让人头疼的问题。我也不是一个会玩的玩家，我怎么写这些东西呢？？<br>还有就是我们怎么样才能写好一本书，我曾经多次强调过，一个好的app就应该是一本书，一本很有诱惑的书，你打开之后就爱不释手的感觉，这真的很重要。但是我这个认知比较浅的人，真的能做到吗？<br>好了，也许大千网友能做到，就好了，认知很重要。我可以向所有人发起这个认知活动，应该是有好心人能够给到一个最好的答案。应该有钱就有人出来贡献吧。<br>好了，人物已经出来了，但是，就像书一样，我看完了，那么我下次再看的时候又能给我带来什么呢？更可怕的是，有的时候有些人根本不喜欢看第二遍。<br>这是一个问题，我想我们可以通过很多友好的东西来去做这些东西，我们可以添加一些东西，比如说书签，可以让用户自己编写一些东西，让用户能够更清楚的认识到自己的不足。<br>就像打篮球一样，我们每次都想找几个人打，每次打完，都没有发现自己有什么进步，这真的让人头疼。</p>
+          <h2 id="二分法查找"><a href="#二分法查找" class="headerlink" title="二分法查找"></a>二分法查找</h2><pre><code>function binarySeach( arr,val,leftIndex,rightIndex )&#123;
+    //找到中间的值
+    var midIndex = Math.floor((leftIndex+rightIndex)/2);
+    var midval=arr[midIndex];
+    //console.log(midval );
+    if( leftIndex &gt; rightIndex )&#123;
+        console.log(&quot;前一位是&quot;,midval );
+        console.log(&quot;下标：&quot;,midIndex);
+        return ;
+    &#125;
+    if( midval &gt; val )&#123;
+        binarySeach(arr,val,leftIndex,midIndex-1);
+    &#125;else if(midval &lt; val)&#123;
+        binarySeach(arr,val,midIndex+1,rightIndex);
+    &#125;else&#123;
+        console.log(&quot;找到了,下标为:&quot;+midIndex);
+        return;
+    &#125;
+&#125;
+var arr=[1,3,12,21,24,44,54,67];
+binarySeach(arr,25,0,arr.length-1);
+</code></pre>
+<h2 id="求两个数的最大公约数，递归"><a href="#求两个数的最大公约数，递归" class="headerlink" title="求两个数的最大公约数，递归"></a>求两个数的最大公约数，递归</h2><pre><code>function Gcd(var a, var b)
+ &#123;
+      if(a&lt;=0||b&lt;=0)
+          return -1;
+     else if(a&gt;b)
+         return Gcd(a-b, b);
+     else if(a&lt;b)
+         return Gcd(a, b-a);
+     else
+         return a;
+ &#125;
+// 最小公倍数 两个整数的乘积 / 最大公约数
+// a* b/gcd(a,b)
+</code></pre>
+<h2 id="斐波那契数列"><a href="#斐波那契数列" class="headerlink" title="斐波那契数列"></a>斐波那契数列</h2><pre><code>function Fibonacci(int n) &#123;
+    if(n &lt; 0)&#123;
+        return 0;
+    &#125;
+    if(n == 0)&#123;
+        return 0;
+    &#125;else if(n == 1)&#123;
+        return 1;
+    &#125;else return Fibonacci(n-1)+ Fibonacci(n-2);
+&#125;
+</code></pre>
+<h2 id="累加求和"><a href="#累加求和" class="headerlink" title="累加求和"></a>累加求和</h2><pre><code>int sum = 0;//定义初始化总和
+for(int i=1;i&lt;=100;i++)&#123;//从1开始循环到100
+sum=sum+i;//加上当前序号
+&#125;
+System.out.println(sum);//在控制台中打印出来
+&#125;
+</code></pre>
 
       
     </div>
@@ -322,7 +624,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/06/25/M_Swift86%E5%82%B2%E6%85%A2%E4%B8%8E%E5%81%8F%E8%A7%81%E8%AF%BB%E5%90%8E%E6%84%9F/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/15/M_Swift98%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -336,7 +638,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/06/25/M_Swift86%E5%82%B2%E6%85%A2%E4%B8%8E%E5%81%8F%E8%A7%81%E8%AF%BB%E5%90%8E%E6%84%9F/" class="post-title-link" itemprop="url">傲慢与偏见读后感</a>
+            <a href="/2018/08/15/M_Swift98%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">内存管理</a>
         </h2>
 
         <div class="post-meta">
@@ -346,7 +648,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-06-25 17:19:28" itemprop="dateCreated datePublished" datetime="2018-06-25T17:19:28+08:00">2018-06-25</time>
+              <time title="创建时间：2018-08-15 10:50:36" itemprop="dateCreated datePublished" datetime="2018-08-15T10:50:36+08:00">2018-08-15</time>
             </span>
 
           
@@ -360,7 +662,160 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>今天好好读了一下这本书，傲慢与偏见。我很少读国外文学，今天算是真正的读了一下国外的文学,昨天又搁浅了，没有读完，很遗憾，只知道玩游戏了，这个游戏是真的很坑，你怎么打都不赢的时候，你真的是没有办法，现在最好的办法就是练习，如果就这样气馁了，真的是不是太好，所以我打算好好游戏，好好学习，这也是为自己做准备吧，打算趁着现在没有事情，好好练习一下这个英雄，能够让自己不致于太尴尬，所以，我想我时候做一点让自己都不遗憾的事情了，这真的很重要。<br>哈哈，说了半天，其实我是要写这本书的，感觉没有写，很无奈啊，这样吧，我再写写，争取能写好。<br>哈哈，我感觉我这个人怎么越来越没有恒心，越来越没有毅力了，真的是这样，这样让我很失望，我想我不能摆脱的话就不要去摆脱，没有必要，只要自己足够努力，我想一定会成功，不要着急，耐心点，再好好的耐心的等一等，相信自己，一定会有一个好的收获，就像去年学车一样，从一开始就保持一个耐心的姿态，不也很快就拿到驾照了嘛，所以，还是要好好的努力为主。<br>不要相信那些没有用的，只有自己是对的。<br>说了半天没有用的，我现在想好好说说这个外国文学了，外国的东西还是让我感觉有点不一样的，我们很多时候写文章都会要描述一下环境，用一些词藻，但是这个外国文学不是这样，他很不耐烦的讲述事情，讲的很细，每个人说的每句话好像都说了，就像是你在看一部电影一样，一句一句话的跟你说，我感觉这更像是一个编剧写出来的东西，真的是的。<br>还有就是在人物性格方面，我感觉这个傲慢和偏见很直接，就是单纯的从一个人的说话和弹出中去描述，不添加任何修饰，感觉很直接，让我们一下子就能感觉到人物性格。<br>今天早上玩个游戏气死我了，我很努力的在玩，但是连个人头和助攻都混不到，然后我想再玩一把把，把刚才的失败赎回来，没想到，这次越玩越差，尼玛，跟人家吵架的心都有了。真的是很生气，不知道为什么，很郁闷，这真的很难。怎么这么乱。<br>我</p>
+          <h2 id="简述一下OC的内存管理方式"><a href="#简述一下OC的内存管理方式" class="headerlink" title="简述一下OC的内存管理方式"></a>简述一下OC的内存管理方式</h2><pre><code>包括alloc，retain，copy，release，autorelease，
+delalloc这些方法理解
+OC中每个对象都有一个与之对应的整数，叫“引用计数器”，
+当一个对象在创建之后它的引用计数器值加1，当调用这个对象的
+alloc、retain、new、copy方法之后引用计数器值自动在原
+来的基础上加1，当调用这个对象的release方法之后它的引用计
+数器值减1，如果一个对象的引用计数器值为0，则系统会自动
+调用这个对象的dealloc方法来销毁这个对象。
+在alloc的时候调用了allocWithZone分配了内存
+alloc、retain、new、copy方法之后引用计数器值自
+动在原来的基础上加1
+</code></pre>
+<h2 id="用MRC写一个setter方法"><a href="#用MRC写一个setter方法" class="headerlink" title="用MRC写一个setter方法"></a>用MRC写一个setter方法</h2><pre><code>- (void)setName:(NSString *)name &#123;
+    if(_name != name) &#123;
+        [name retain];
+        [_name relrase];
+        _name = name;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="描述autorelease对象释放时机，"><a href="#描述autorelease对象释放时机，" class="headerlink" title="描述autorelease对象释放时机，"></a>描述autorelease对象释放时机，</h2><pre><code>在没有手加Autorelease Pool的情况下，Autorelease对象
+是在当前的runloop迭代结束时释放的，而它能够释放的原因是
+系统在每个runloop迭代中都加入了自动释放池Push和Pop
+</code></pre>
+<h2 id="简述autorelrasePool的工作机制"><a href="#简述autorelrasePool的工作机制" class="headerlink" title="简述autorelrasePool的工作机制"></a>简述autorelrasePool的工作机制</h2><pre><code>每一个线程创建的时候就会有一个autorelease pool的创建，
+并且在线程退出的时候，清空整个autorelease pool。
+（ps:如果在子线程中设置一个循环，autorelease对象确实无
+法释放）所以子线程的autorelease对象，
+要么在子线程中设置runloop清楚
+RutoreleasePoolPage
+&#123;
+    magic_t const magic;
+    id *next;
+    pthread_t const thread;
+    AutoreleasePoolPage *const parent;
+    AutoreleasePoolPage *child;
+    uint32_t const depth;
+    uint32_t hiwat;
+&#125;
+AutoreleasePool并没有单独的结构，而是由若干个
+AutoreleasePoolPage以双向链表的形式组合而成（
+分别对应结构中的parent指针和child指针）
+AutoreleasePool是按线程一一对应的
+（结构中的thread指针指向当前线程）
+AutoreleasePoolPage每个对象会开辟4096字节内存
+（也就是虚拟内存一页的大小），除了上面的实例变量所占空间，
+剩下的空间全部用来储存autorelease对象的地址
+上面的id *next指针作为游标指向栈顶最新add进来
+的autorelease对象的下一个位置
+一个AutoreleasePoolPage的空间被占满时，
+会新建一个AutoreleasePoolPage对象，连接链表，
+后来的autorelease对象在新的page加入
+runtime 黑魔法之Thread Local Storage
+Thread Local Storage（TLS）线程局部存储，
+目的很简单，将一块内存作为某个线程专有的存储，
+以key-value的形式进行读写，比如在非arm架构下，
+使用pthread提供的方法实现：
+在返回值身上调用objc_autoreleaseReturnValue方法时，
+runtime将这个返回值object储存在TLS中，然后直接返回这
+个object（不调用autorelease）；同时，在外部接收这个返
+回值的objc_retainAutoreleasedReturnValue里，发
+现TLS中正好存了这个对象，那么直接返回这个object
+（不调用retain）。
+于是乎，调用方和被调方利用TLS做中转，
+很有默契的免去了对返回值的内存管理。
+于是问题又来了，假如被调方和主调方只有一边是ARC
+环境编译的该咋办？（比如我们在ARC环境下用了非
+ARC编译的第三方库，或者反之）
+只能动用更高级的黑魔法。
+黑魔法之__builtin_return_address
+这个内建函数原型是char *__builtin_return_address
+(int level)，作用是得到函数的返回地址，参数表示层数，
+如__builtin_return_address(0)表示当前函数体返回地址
+，传1是调用这个函数的外层函数的返回值地址，以此类推。
+如果一个函数返回前知道调用方是ARC还是非ARC，就有机会对
+于不同情况做不同的处理
+</code></pre>
+<h2 id="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"><a href="#在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因" class="headerlink" title="在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因"></a>在一个类中retaion一个NSTimer类型的成员变量会有什么问题吗？请简述问题产生的根本原因</h2><pre><code>类有一个成员变量_timer，给_timer设置的target为这个类本、
+身。这样类保留_timer，_timer又保留了这个类，就会出现循环
+引用的问题，最后导致类无法正确释放。
+
+解决这个问题的方式也很简单，当类的使用者能够确定不需要使用这
+个计时器时，就调用
+[_timer invalidate];
+_timer = nil;
+</code></pre>
+<h2 id="assgin和weak区别"><a href="#assgin和weak区别" class="headerlink" title="assgin和weak区别"></a>assgin和weak区别</h2><h3 id="修饰变量类型的区别"><a href="#修饰变量类型的区别" class="headerlink" title="修饰变量类型的区别"></a>修饰变量类型的区别</h3><pre><code>weak 只可以修饰对象。如果修饰基本数据类型，编译器会报
+错-“Property with ‘weak’ attribute must be of 
+object type”。
+assign 可修饰对象，和基本数据类型。当需要修饰对象类型时，
+MRC时代使用unsafe_unretained。当然，
+unsafe_unretained也可能产生野指针，所以它名字
+是&quot;unsafe_”。
+</code></pre>
+<h3 id="是否产生野指针的区别"><a href="#是否产生野指针的区别" class="headerlink" title="是否产生野指针的区别"></a>是否产生野指针的区别</h3><pre><code>weak 不会产生野指针问题。因为weak修饰的对象释放后（引用计
+数器值为0），指针会自动被置nil，之后再向该对象发消息也不会
+崩溃。 weak是安全的。
+assign 如果修饰对象，会产生野指针问题；如果修饰基本数据类
+型则是安全的。修饰的对象释放后，指针不会自动被置空，此时向对
+象发消息会崩溃。
+</code></pre>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>assign 适用于基本数据类型如int,float,struct等值类型，不
+适用于引用类型。因为值类型会被放入栈中，遵循先进后出原则，由
+系统负责管理栈内存。而引用类型会被放入堆中，需要我们自己手动
+管理内存或通过ARC管理。
+weak 适用于delegate和block等引用类型，不会导致野指针问
+题，也不会循环引用，非常安全。
+</code></pre>
+<h2 id="weak实现原理"><a href="#weak实现原理" class="headerlink" title="weak实现原理"></a>weak实现原理</h2><pre><code>Runtime维护了一个weak表，用于存储指向某个对象的所有weak指针。weak
+表其实是一个hash（哈希）表，Key是所指对象的地址，Value是weak指针的
+地址（这个地址的值是所指对象的地址）数组。
+1、初始化时：runtime会调用objc_initWeak函数，初始化一个新的weak
+指针指向对象的地址。
+2、添加引用时：objc_initWeak函数会调用 objc_storeWeak() 函数， 
+objc_storeWeak() 的作用是更新指针指向，创建对应的弱引用表。
+3、释放时，调用clearDeallocating函数。clearDeallocating函数首
+先根据对象地址获取所有weak指针地址的数组，然后遍历这个数组把其中的数
+据设为nil，最后把这个entry从weak表中删除，最后清理对象的记录。        
+</code></pre>
+<h3 id="当weak引用指向的对象被释放时，又是如何去处理weak指针的呢？"><a href="#当weak引用指向的对象被释放时，又是如何去处理weak指针的呢？" class="headerlink" title="当weak引用指向的对象被释放时，又是如何去处理weak指针的呢？"></a>当weak引用指向的对象被释放时，又是如何去处理weak指针的呢？</h3><pre><code>1、调用objc_release
+2、因为对象的引用计数为0，所以执行dealloc
+3、在dealloc中，调用了_objc_rootDealloc函数
+4、在_objc_rootDealloc中，调用了object_dispose函数
+5、调用objc_destructInstance
+6、最后调用objc_clear_deallocating,详细过程如下：
+    a. 从weak表中获取废弃对象的地址为键值的记录
+    b. 将包含在记录中的所有附有 weak修饰符变量的地址，赋值为 nil
+    c. 将weak表中该记录删除
+    d. 从引用计数表中删除废弃对象的地址为键值的记录
+</code></pre>
+<h2 id="为什么NSMutableArray必须用strong，而NSArray必须用copy？"><a href="#为什么NSMutableArray必须用strong，而NSArray必须用copy？" class="headerlink" title="为什么NSMutableArray必须用strong，而NSArray必须用copy？"></a>为什么NSMutableArray必须用strong，而NSArray必须用copy？</h2><pre><code>NSArray：被strong修饰之后，由于只是强引用，所以副本对象数
+组和源对象数组只是指向同一个内存区域，这样就会造成副本对象数
+组会随着源对象数组的改变而改变,即便有时候你并不想让副本对象
+跟着改变。测试打印结果显示，array的长度发生了变化，具有调用
+mutableArray方法的能力。
+NSMutableArray只能用strong修饰，不存在有copy修饰的情
+况，写了就成NSArray了。
+</code></pre>
+<h2 id="循环引用如何定位"><a href="#循环引用如何定位" class="headerlink" title="循环引用如何定位"></a>循环引用如何定位</h2><pre><code>FBRetainCycleDetector
+其原理完全是基于 DFS 算法（深度优先搜索）：把整个对象的之间
+的引用情况当做图进行处理，查找其中的环，就找到了循环引用。
+</code></pre>
+<h2 id="masnory的block会循环引用吗"><a href="#masnory的block会循环引用吗" class="headerlink" title="masnory的block会循环引用吗"></a>masnory的block会循环引用吗</h2><pre><code>masonry中设置布局的方法中的block对象并没有被View所引用，
+而是直接在方法内部同步执行，执行完以后block将释放，其中捕捉
+的外部变量的引用计数也将还原到之前。
+</code></pre>
+<h2 id="对象a1，a2，a3没有dosomething方法，想让a1调的时候不崩溃"><a href="#对象a1，a2，a3没有dosomething方法，想让a1调的时候不崩溃" class="headerlink" title="对象a1，a2，a3没有dosomething方法，想让a1调的时候不崩溃"></a>对象a1，a2，a3没有dosomething方法，想让a1调的时候不崩溃</h2><pre><code>1.runtime动态添加方法
+2.写category，使方法向前引用，在通过动态方法解析，不让丢出错误
+3.用方法混淆
+4.用kvo
+</code></pre>
+<h2 id="数组addobject如何不强引用"><a href="#数组addobject如何不强引用" class="headerlink" title="数组addobject如何不强引用"></a>数组addobject如何不强引用</h2><pre><code>1.使用NSPointerArray
+2.使用代理中间类来代替
+</code></pre>
 
       
     </div>
@@ -380,7 +835,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/Q_3%E5%AD%A9%E5%AD%90%E4%B8%80%E5%B2%81/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift93%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -394,7 +849,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/05/10/Q_3%E5%AD%A9%E5%AD%90%E4%B8%80%E5%B2%81/" class="post-title-link" itemprop="url">孩子一岁生日</a>
+            <a href="/2018/08/14/M_Swift93%E5%A4%9A%E7%BA%BF%E7%A8%8B/" class="post-title-link" itemprop="url">多线程</a>
         </h2>
 
         <div class="post-meta">
@@ -404,7 +859,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-05-10 11:06:32" itemprop="dateCreated datePublished" datetime="2018-05-10T11:06:32+08:00">2018-05-10</time>
+              <time title="创建时间：2018-08-14 19:55:26" itemprop="dateCreated datePublished" datetime="2018-08-14T19:55:26+08:00">2018-08-14</time>
             </span>
 
           
@@ -418,7 +873,406 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>一转眼，孩子已经一岁了，感觉时间很快，说实话我真的没有怎么陪伴孩子，五一的时候我请了三天假，跟着五一一起，相当于在家呆了一个星期，差不多跟过年也差不多了，在家呆了那么久，孩子始终都没有学会叫爸爸，这确实很难，也说明了我陪伴孩子的真的是少。<br>以前我想着孩子大一点，我带着孩子来北京，我们一家人能在一起，从我上次在家里呆了一个星期之后，我这种想法彻底破灭了，孩子正在成长的时候，孩子喜欢玩了，这个时候每天都希望出去转转，真的是不能在家里窝着的，但是如果在北京的话，真的是只能在家里窝着，因为我要去上班，这真的是一个头疼的问题，一方面想要陪伴，一方面想让孩子自由。<br>好了，不说那么头疼的问题了，现在孩子真的是越来越淘气了，有时候感觉这孩子特别的娇气，动不动的就会哭，这真的让我很失望，我不希望小小年纪就有多坚强，但是也不能动不动就哭，这真的是太娇气了，更可气的是不吃饭，真的是，我看那么多孩子，都胖嘟嘟的，这孩子真的是一点都不胖，虽说不是多瘦吧，肉也挺结实的，但是，我真的是觉得应该要好好吃饭的，对于饮食上的问题，我觉得真的是要好好的注意，不能小小年纪就惯成不好的饮食习惯，这真的不应该是一个农村孩子应该有的体制。淘气其实我觉得还是可以理解的，毕竟是孩子嘛，但是真的不希望坏的习惯早早的出现在孩子身上，我不能在家里陪伴孩子，说实话，孩子的成长，我至今都没有做任何工作，但是我真的希望孩子能养成好的习惯，这对将来真的很重要，我真的不知道该怎么做了，如果让孩子来北京的话，确实是太痛苦了，但是在家里的话，我真的是没有时间去教育孩子的，这是一个很大的问题。<br>我结下来讲的问题是独立的问题，我想孩子你已经一岁了，至少也需要慢慢的减少母亲的陪伴了，有的时候要学会自己玩乐，学会跟孩子玩乐了，也要学会母亲不在的时候，不要哭哭啼啼了。我其实很像给孩子买个婴儿床，这个问题我觉得很重要，孩子慢慢的长大了，要学会独立了，不致于早早的独立生活，但至少要有一些独立生活的行为，自己睡觉我觉得应该是一个常识，我问题我同事，他家的孩子很早的时候就自己睡，我觉得这样很好。<br>说到睡觉，这孩子真的是不省心，睡觉的姿势真的是千奇百怪，我真的很无语，睡着的时候需要翻来覆去的半天，最后轰然趴倒在被窝里，就这样跟趴着睡着了，我们再把她弄到被窝里，但是不一会她就会把被子蹬到一边去，然后睡着睡着，竟然会横过来，头一个劲的往上顶，顶到枕头里，顶到整个头都仰着，歪着，那姿势，我觉得需要一定的柔韧，反正我是做不到。<br>家里床是很大，让孩子自己睡一个床，有时候觉得确实有点占地方，这真的是一个头疼的问题。我想这个床真的是应该买的。<br>我没有照顾孩子，但是从目前来看，孩子的身上确实有一些小的毛病，我知道媳妇一直很疼爱孩子，其实照顾孩子真的不容易，在这里说一句，孩子她妈妈辛苦了。<br>话说回来，有些问题，我们看到了，但是我们不知道怎么解决。也许只有孩子的妈妈能解决吧，我只能是一个旁观者，有的时候话多了，反而是显得的不干活，还净是一些事。</p>
+          <h2 id="并发和并行的区别"><a href="#并发和并行的区别" class="headerlink" title="并发和并行的区别"></a>并发和并行的区别</h2><pre><code>1.并发，当有多个线程在操作时，如果系统只有一个CPU，
+则它根本不可能真正同时进行一个以上的线程，它只能把CPU运
+行时间划分为若干了时间段，再将时间段分配给各个线程执行，
+在一个时间段的线程代码运行时，其他线程处于挂起状。这
+种方式我们称之为并发。
+2.并行，系统有一个以上CPU时，则线程的操作有可能非并发，
+当一个cpu执行一个线程时，另一个cpu可以执行另一个线程，
+两个线程互相不抢占cpu资源，可以同时进行，这种方式称为并行。
+区别：并发和并行是既相似又有区别的两个概念，并行是指两个活
+着多个时间在同一时刻发生；而并发是指两个或多个事件同一
+时间间隔内发生。
+</code></pre>
+<h2 id="你理解的多线程"><a href="#你理解的多线程" class="headerlink" title="你理解的多线程"></a>你理解的多线程</h2><h3 id="第一种：pthread"><a href="#第一种：pthread" class="headerlink" title="第一种：pthread"></a>第一种：pthread</h3><pre><code>a.特点：
+    1）一套通用的多线程API
+    2）适用于Unix\Linux\Windows等系统
+    3）跨平台\可移植
+    4）使用难度大
+b.使用语言：c语言
+c.使用频率：几乎不用
+d.线程生命周期：由程序员进行管理
+</code></pre>
+<h3 id="第二种：NSThread"><a href="#第二种：NSThread" class="headerlink" title="第二种：NSThread"></a>第二种：NSThread</h3><pre><code>a.特点：
+    1）使用更加面向对象
+    2）简单易用，可直接操作线程对象
+    b.使用语言：OC语言
+    c.使用频率：偶尔使用
+    d.线程生命周期：由程序员进行管理
+</code></pre>
+<h3 id="第三种：GCD"><a href="#第三种：GCD" class="headerlink" title="第三种：GCD"></a>第三种：GCD</h3><pre><code>a.特点：
+    1）旨在替代NSThread等线程技术
+    2）充分利用设备的多核（自动）
+b.使用语言：C语言
+c.使用频率：经常使用
+d.线程生命周期：自动管理
+</code></pre>
+<h3 id="第四种：NSOperation"><a href="#第四种：NSOperation" class="headerlink" title="第四种：NSOperation"></a>第四种：NSOperation</h3><pre><code>a.特点：
+    1）基于GCD（底层是GCD）
+    2）比GCD多了一些更简单实用的功能
+    3）使用更加面向对象
+b.使用语言：OC语言
+c.使用频率：经常使用
+d.线程生命周期：自动管理
+</code></pre>
+<h2 id="多线程的原理"><a href="#多线程的原理" class="headerlink" title="多线程的原理"></a>多线程的原理</h2><pre><code>同一时间，CPU只能处理1条线程，只有1条线程在工作（执行）
+多线程并发（同时）执行，其实是CPU快速地在多条线程之间
+调度（切换）
+如果CPU调度线程的时间足够快，就造成了多线程并发执行的假象
+思考：如果线程非常非常多，会发生什么情况？
+CPU会在N多线程之间调度，CPU会累死，消耗大量的CPU资源
+每条线程被调度执行的频次会降低（线程的执行效率降低）
+</code></pre>
+<h2 id="多线程的优点"><a href="#多线程的优点" class="headerlink" title="多线程的优点"></a>多线程的优点</h2><pre><code>能适当提高程序的执行效率    
+能适当提高资源利用率（CPU、内存利用率）
+</code></pre>
+<h2 id="多线程的缺点"><a href="#多线程的缺点" class="headerlink" title="多线程的缺点"></a>多线程的缺点</h2><pre><code>开启线程需要占用一定的内存空间（默认情况下，主线程占用1M，
+子线程占用512KB），如果开启大量的线程，会占用大量的内存
+空间，降低程序的性能
+线程越多，CPU在调度线程上的开销就越大
+程序设计更加复杂：比如线程之间的通信、多线程的数据共享
+</code></pre>
+<h2 id="GCD和NSOperation区别，你更倾向于哪一种？"><a href="#GCD和NSOperation区别，你更倾向于哪一种？" class="headerlink" title="GCD和NSOperation区别，你更倾向于哪一种？"></a>GCD和NSOperation区别，你更倾向于哪一种？</h2><h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><pre><code>1.GCD是底层的C语言构成的API，而NSOperationQueue及
+相关对象是Objc的对象。在GCD中，在队列中执行的是由block
+构成的任务，这是一个轻量级的数据结构；而Operation作为一
+个对象，为我们提供了更多的选择；
+2.在NSOperationQueue中，我们可以随时取消已经设定要准备
+执行的任务(当然，已经开始的任务就无法阻止了)，而GCD没法停
+止已经加入queue的block(其实是有的，但需要许多复杂的代码)；
+3.NSOperation能够方便地设置依赖关系，我们可以让一个
+Operation依赖于另一个Operation，这样的话尽管两个
+Operation处于同一个并行队列中，但前者会直到后者执行完毕后
+再执行；
+4.我们能将KVO应用在NSOperation中，可以监听一
+个Operation是否完成或取消，这样子能比GCD更加有效地掌控
+我们执行的后台任务；
+5.在NSOperation中，我们能够设置NSOperation的
+priority优先级，能够使同一个并行队列中的任务区分先后地执
+行，而在GCD中，我们只能区分不同任务队列的优先级，如果要区分
+block任务的优先级，也需要大量的复杂代码；
+6.我们能够对NSOperation进行继承，在这之上添加成员变量与成
+员方法，提高整个代码的复用度，这比简单地将block任务排入执行
+队列更有自由度，能够在其之上添加更多自定制的功能。
+总的来说，Operationqueue提供了更多你在编写多线程程序时需
+要的功能，并隐藏了许多线程调度，线程取消与线程优先级的复杂代
+码，为我们提供简单的API入口。从编程原则来说，一般我们需要尽
+可能的使用高等级、封装完美的API，在必须时才使用底层API。但
+是我认为当我们的需求能够以更简单的底层代码完成的时候，简洁的
+GCD或许是个更好的选择，而Operationqueue 为我们提供能更多
+的选择。
+</code></pre>
+<h3 id="倾向于GCD："><a href="#倾向于GCD：" class="headerlink" title="倾向于GCD："></a>倾向于GCD：</h3><pre><code>1.GCD是纯C语言的API，轻量级 。
+2.GCD的执行速度比NSOperationQueue快。
+3.代码更底层简洁
+</code></pre>
+<h3 id="倾向于：NSOperation"><a href="#倾向于：NSOperation" class="headerlink" title="倾向于：NSOperation"></a>倾向于：NSOperation</h3><pre><code>NSOperation拥有更多的函数可用
+NSOperationQueue可以方便的设置operation之间的依
+赖关系，GCD则需要很多代码。
+NSOperationQueue支持KVO，可以检测operation是
+否正在执行（isExecuted）,是否结束（isFinished）,
+是否取消（isCanceled）
+GCD 只支持FIFO 的队列，NSOperationQueue可以调
+整队列的执行顺序（通过调整权重）。NSOperationQueue可
+以方便的管理并发、NSOperation之间的优先级。
+</code></pre>
+<h3 id="使用场合："><a href="#使用场合：" class="headerlink" title="使用场合："></a>使用场合：</h3><pre><code>任务之间不太相互依赖，一般的需求很简单的多线程操作，
+用GCD都可以了，简单高效。
+任务之间有依赖或要监听任务的执行情况用 NSOperationQueue
+</code></pre>
+<h2 id="ios-几种线程锁"><a href="#ios-几种线程锁" class="headerlink" title="ios 几种线程锁"></a>ios 几种线程锁</h2><pre><code>锁是最常用的同步工具。一段代码段在同一个时间只能允许被一个线程访问
+，比如一个线程A进入加锁代码之后由于已经加锁，另一个线程B就无法访问，
+只有等待前一个线程A执行完加锁代码后解锁，B线程才能访问加锁代码。
+@synchronized 一个对象层面的锁，锁住了整个对象，底层使用了互斥递归锁来实现
+pathread_mutex 互斥锁（c语言）和信号量的实现原理类似，也是阻塞线程并进入睡眠，需要进行上下文切换。
+NSLock 对象锁-简单的互斥锁（内部封装了一个 pthread_mutex）
+NSCondition （封装了一个互斥锁和条件变量。互斥锁保证线程安全，条件
+变量保证执行顺序）同样实现了NSLocking协议，
+所以它和NSLock一样，也有NSLocking协议的lock和unlock方法，
+可以当做NSLock来使用解决线程同步问题，用法完全一样。NSCondition
+提供更高级的用法。wait和signal
+NSCondition和NSLock、@synchronized等是不同的是，
+NSCondition可以给每个线程分别加锁，加锁后不影响其他线程进入临界区。
+这是非常强大。
+NSConditionLock （借助 NSCondition 来实现，本质是生产者-消费者模型）
+也可以像NSCondition一样做多线程之间的任务等待调用，而且是线程安全的。
+NSRecursiveLock 递归锁有时候“加锁代码”中存在递归调用，递归开始前加
+锁，递归调用开始后会重复执行此方法以至于反复执行加锁代码最终造成死锁，
+这个时候可以使用递归锁来解决。使用递归锁可以在一个线程中反复获取锁而不
+造成死锁，这个过程中会记录获取锁和释放锁的次数，只有最后两者平衡锁才被
+最终释放。
+dispatch_semaphore GCD中信号量，也可以解决资源抢占问题,
+支持信号通知和信号等待。每当发送一个信号通知，则信号量+1；
+每当发送一个等待信号时信号量-1,；如果信号量为0则信号会处于等待状态，
+直到信号量大于0开始执行
+OSSpinLock 自旋锁(不建议使用)
+自旋锁的实现原理比较简单，就是死循环。当a线程获得锁以后，b线程想要获取
+锁就需要等待a线程释放锁。在没有获得锁的期间，b线程会一直处于忙等的状
+态。如果a线程在临界区的执行时间过长，则b线程会消耗大量的cpu时间，不太
+划算。所以，自旋锁用在临界区执行时间比较短的环境性能会很高。
+</code></pre>
+<h2 id="自旋和互斥对比"><a href="#自旋和互斥对比" class="headerlink" title="自旋和互斥对比"></a>自旋和互斥对比</h2><pre><code>相同点：都能保证同一时间只有一个线程访问共享资源。
+都能保证线程安全。
+不同点：
+互斥锁：如果共享数据已经有其他线程加锁了，线程会进入
+休眠状态等待锁。一旦被访问的资源被解锁，则等待资源的
+线程会被唤醒。
+自旋锁：如果共享数据已经有其他线程加锁了，线程会以死循环
+的方式等待锁，一旦被访问的资源被解锁，则等待资源的线程会
+立即执行。
+自旋锁的效率高于互斥锁。
+由于自旋时不释放CPU，因而持有自旋锁的线程应该尽快释放
+自旋锁，否则等待该自旋锁的线程会一直在哪里自旋，这就会浪
+费CPU时间。
+持有自旋锁的线程在sleep之前应该释放自旋锁以便其他可以获得
+该自旋锁。内核编程中，如果持有自旋锁的代码sleep了就可能
+导致整个系统挂起。
+</code></pre>
+<h2 id="GCD的一些常用的函数？（group，-barrier，信号量-线程同步）"><a href="#GCD的一些常用的函数？（group，-barrier，信号量-线程同步）" class="headerlink" title="GCD的一些常用的函数？（group， barrier，信号量 线程同步）"></a>GCD的一些常用的函数？（group， barrier，信号量 线程同步）</h2><pre><code>延迟函数dispatch_after
+一次性 dispatch_once
+创建串行队列 dispatch_queue_create 
+获取并发队列 dispatch_get_global_queue
+获取主队列 dispatch_get_main_queue
+异步执行任务 dispatch_async
+同步执行任务 dispatch_sync
+提交一个调度队列 dispatch_group_async
+新建的queue设置优先级 dispatch_set_target_queue
+任务执行完成通知回调 dispatch_group_notify 
+让当前任务等待queue其他任务完成再执行 dispatch_barrier_async
+</code></pre>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><pre><code>-(void)clickButton &#123;
+    dispatch_sync(dispath_get_main_queue(), ^(void)&#123;
+        NSLog(&quot;test&quot;);
+    &#125;);
+&#125;
+以上代码座位一个UIButton的响应方法有什么问题，能看到log吗？
+原因如下：
+在ios使用 dispatch_sync(dispatch_get_main_queue()^()&#123;block体&#125;)；
+dispath向主队列加一个同步的block；
+此时主队列在等待    dispatch_sync(dispatch_get_main_queue()，^()&#123;block体&#125;)；执行
+dispatch_sync在等待主队列执行完毕。
+造成死锁。
+</code></pre>
+<h2 id="同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"><a href="#同时存在A-B-C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件" class="headerlink" title="同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件"></a>同时存在A,B,C三个网络请求，要求同时发起三个网络请求，当三个网络请求都返回数据以后再处理事件</h2><pre><code>首先创建并行队列，创建队列组，将队列和需要处理的网络请求分别
+添加到组中，当组中所有队列处理完事件后调用
+dispatch_group_notify，我们需要在里边处理事件。由于队列
+在处理网络请求时将”发送完一个请求”作为事件完成的标记（此时还
+未获得网络请求返回数据），所以在这里需要用信号量进行控制，在
+执行dispatch_group_notify前发起信号等待（三次信号等待，
+分别对应每个队列的信号通知），在每个队列获取到网络请求返回数
+据时发出信号通知。这样就能完成需求中的要求。
+如果需求中改为：同时存在A,B,C三个任务，要求ABC依次进行处
+理，当上一个完成时再进行下一个任务，当三个任务都完成时再处理
+事件。这时只需要将队列改为串行队列即可（不在需要信号量控
+制）。
+</code></pre>
+<h2 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h2><pre><code>信号量是一个计数器，常用于处理进程或线程的同步问题，特别是对临界资源的同步访问。
+临界资源可以简单的理解为在某一时刻只能由一个进程或线程进行操作的资源，这里的资源
+可以是一段代码、一个变量或某种硬件资源。信号量的值大于或等于0时表示可供并发进程使用的
+资源实体数；小于0时代表正在等待使用临界资源的进程数。
+注意：这里的信号量跟信号是没有关系的。
+3、信号量的操作
+信号量的值与相应资源的使用情况有关，当它的值大于0时，表示当前可用资源的数量，当他的值小于0时，其绝对值表示等待
+使用这个资源的进程个数。信号量的值仅能由PV操作来改变。
+</code></pre>
+<h2 id="某些线程执行完之后去执行其他线程"><a href="#某些线程执行完之后去执行其他线程" class="headerlink" title="某些线程执行完之后去执行其他线程"></a>某些线程执行完之后去执行其他线程</h2><pre><code>1.利用GCD中的barrier
+dispatch_async — A
+dispatch_async — B
+dispatch_barrier_async — middle
+dispatch_async — C
+2.利用GCD中的group
+创建一个dispatch_group_t
+dispatch_group_async — 依次添加并发操作
+dispatch_group_notify
+</code></pre>
+<h2 id="两个线程的notification怎么实现，除GCD"><a href="#两个线程的notification怎么实现，除GCD" class="headerlink" title="两个线程的notification怎么实现，除GCD"></a>两个线程的notification怎么实现，除GCD</h2><pre><code>这里讲到了“重定向”，就是我们在Notification所在的默认线程
+中捕获这些分发的通知，然后将其重定向到指定的线程中。
+一种重定向的实现思路是自定义一个通知队列(注意，不是
+NSNotificationQueue对象，而是一个数组)，让这个队列去维
+护那些我们需要重定向的Notification。我们仍然是像平常一样
+去注册一个通知的观察者，当Notification来了时，先看看post
+这个Notification的线程是不是我们所期望的线程，如果不是，
+则将这个Notification存储到我们的队列中，并发送一个信号
+(signal)到期望的线程中，来告诉这个线程需要处理一个
+Notification。指定的线程在收到信号后，将Notification从
+队列中移除，并进行处理。
+</code></pre>
+<h2 id="如何保证NSNotificationCenter线程安全"><a href="#如何保证NSNotificationCenter线程安全" class="headerlink" title="如何保证NSNotificationCenter线程安全"></a>如何保证NSNotificationCenter线程安全</h2><pre><code>当我们注册一个观察者是，通知中心会持有观察者的一个弱引用，来
+确保观察者是可用的。
+主线程调用dealloc操作会让Observer对象的引用计数减为0，这
+时对象会被释放掉。
+后台线程发送一个通知，如果此时Observer还未被释放，则会用其
+转出消息，并执行回调方法。而如果在回调执行的过程中对象被释放
+了，就会出现上面的问题。
+那我们该怎么做呢？这里有一些好的建议：
+尽量在一个线程中处理通知相关的操作，大部分情况下，这样做都能
+确保通知的正常工作。不过，我们无法确定到底会在哪个线程中调用
+dealloc方法，所以这一点还是比较困难。
+注册监听都时，使用基于block的API。这样我们在block还要继续
+调用self的属性或方法，就可以通过weak-strong的方式来处理。
+具体大家可以改造下上面的代码试试是什么效果。
+使用带有安全生命周期的对象，这一点对象单例对象来说再合适不过
+了，在应用的整个生命周期都不会被释放。
+使用代理。
+</code></pre>
+<h2 id="GCD-信号量控制并发"><a href="#GCD-信号量控制并发" class="headerlink" title="GCD 信号量控制并发"></a>GCD 信号量控制并发</h2><pre><code>信号量是一个整形值并且具有一个初始计数值，并且支持两个操作：
+信号通知和等待。当一个信号量被信号通知，其计数会被增加。当一
+个线程在一个信号量上等待时，线程会被阻塞（如果有必要的话），
+直至计数器大于零，然后线程会减少这个计数。
+dispatch_semaphore_signal是发送一个信号，自然会让信号
+总量加1，dispatch_semaphore_wait等待信号，当信号总量少
+于0的时候就会一直等待，否则就可以正常的执行，并让信号总、
+量-1，根据这样的原理，我们便可以快速的创建一个并发控制来同步
+任务和有限资源访问控制。
+</code></pre>
+<h2 id="iOS线程间的通信"><a href="#iOS线程间的通信" class="headerlink" title="iOS线程间的通信"></a>iOS线程间的通信</h2><pre><code>iOS中，两个线程之间要想互相通信，可以使用：NSMachPort 
+首先NSMarchPort是一个task内线程之间异步通信用的 
+你需要在你的两个object内重写handlePortMessage:方法来截
+取接收到的消息，使用NSPortMessage来发送消息 
+消息一般都是有唯一id和数据组成的 
+数据需要经过序列化通过NSPortMessage的components来传递 
+接收到数据之后需要进行反序列化 
+</code></pre>
+<h2 id="get和set的属性如何保证线程的安全"><a href="#get和set的属性如何保证线程的安全" class="headerlink" title="get和set的属性如何保证线程的安全"></a>get和set的属性如何保证线程的安全</h2><pre><code>property 的 atomic 是采用 spinlock_t 也就是俗称的自旋
+锁实现的。
+atomic通过这种方法，在运行时保证 set,get方法的原子性。 
+仅仅是保证了set,get方法的原子性。 
+这种线程是不安全的。
+self.intA 是原子操作，但是self.intA = self.intA + 1
+这个表达式并不是原子操作。 
+所以线程是不安全的。 
+threadA 在执行表达式 self.intA之后 self.intA = 
+self.intA + 1;并没有执行完毕 
+此时threadB 执行self.intA = self.intA + 1; 
+再回到threadA时，self.intA的数值就被更新了
+所以仅仅使用atomic并不能保证线程安全。
+</code></pre>
+<h2 id="GCD-的珊栏方法"><a href="#GCD-的珊栏方法" class="headerlink" title="GCD 的珊栏方法"></a>GCD 的珊栏方法</h2><pre><code>我们有时需要异步执行两组操作，而且第一组操作执行完之后，才能
+开始执行第二组操作。这样我们就需要一个相当于栅栏一样的一个方
+法将两组异步执行的操作组给分割起来，当然这里的操作组里可以包
+含一个或多个任务。这就需要用到dispatch_barrier_async方
+法在两个操作组间形成栅栏
+</code></pre>
+<h2 id="延时操作主要有4种方式"><a href="#延时操作主要有4种方式" class="headerlink" title="延时操作主要有4种方式"></a>延时操作主要有4种方式</h2><pre><code>1.sleep方式
+[NSThread sleepForTimeInterval:1.0f];
+[self delayMethod];
+使用sleep方式在主线程和子线程中均可执行,但是这是中阻塞线程
+的方式,所以建议放到子线程中使用,以免卡住主线程使界面卡住.
+没有发现取消执行的方法.
+2.NSTimer定时器方式
+[NSTimer scheduledTimerWithTimeInterval:1.0f 
+target:self selector:@selector(delayMethod) 
+userInfo:nil repeats:NO];
+使用定时器方式必须放到主线程中使用,否则无效. 是一种非阻塞的
+方式.
+可以通过- (void)invalidate;方法取消执行。
+3.GCD方式
+dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;
+//write code here
+&#125;);
+该方式可选择线程去执行,是一种非阻塞的方式.
+没有发现取消执行的方法.
+4.performSelector方式
+[self performSelector:@selector(delayMethod) 
+withObject:nil afterDelay:1.0f];
+使用该方式必须放到主线程中使用,否则无效. 是一种非阻塞的方式.
+取消执行方法如下:
+[[self class] 
+cancelPreviousPerformRequestsWithTarget:self 
+selector:@selector(delayMethod) object:nil];
+</code></pre>
+<h2 id="NSLock死锁"><a href="#NSLock死锁" class="headerlink" title="NSLock死锁"></a>NSLock死锁</h2><pre><code>使用锁最容易犯的一个错误就是在递归或循环中造成死锁
+如下代码中，因为在线程1中的递归block中，锁会被多次的lock，
+所以自己也被阻塞了。
+此处将NSLock换成NSRecursiveLock，便可解决问题。
+NSRecursiveLock类定义的锁可以在同一线程多次lock，而不会
+造成死锁。
+递归锁会跟踪它被多少次lock。每次成功的lock都必须平衡调用
+unlock操作。
+只有所有的锁住和解锁操作都平衡的时候，锁才真正被释放给其他线
+程获得。
+</code></pre>
+<h2 id="NSNotificationCenter的同步和异步"><a href="#NSNotificationCenter的同步和异步" class="headerlink" title="NSNotificationCenter的同步和异步"></a>NSNotificationCenter的同步和异步</h2><pre><code>默认的NSNotificationCenter是同步的
+您可以通过NSNotificationQueue的
+enqueueNotification:postingStyle:和enqueueNotification:postingStyle:coalesceMask:f
+orModes:方法将通告放入队列，实现异步发送，在把通告放入队列
+之后，这些方法会立即将控制权返回给调用对象。
+通过这里的时间间隔可以看出， 通过通知队列来管理通知，不会再
+造成阻塞。
+</code></pre>
+<h2 id="NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"><a href="#NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作" class="headerlink" title="NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作"></a>NSTimer在子线程可以执行吗，如果想执行的话runloop里要怎么操作</h2><pre><code>开辟子线程：（使用子线程的runloop）
+NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(newThread) object:nil];
+[thread start];
+- (void)newThread
+&#123;     @autoreleasepool
+        &#123;
+            [NSTimer scheduledTimerWithTimeInterval:2.0 
+            target:self selector:@selector(addTime) 
+            userInfo:nil repeats:YES];
+            [[NSRunLoop currentRunLoop] run];
+        &#125;
+&#125;
+</code></pre>
+<h2 id="原子属性"><a href="#原子属性" class="headerlink" title="原子属性"></a>原子属性</h2><pre><code>原子属性（线程安全），是针对多线程设计的，是默认属性
+多个线程在写入原子属性时（调用 setter 方法），能够保证同一
+时间只有一个线程执行写入操作
+原子属性是一种单(线程)写多(线程)读的多线程技术
+原子属性的效率比互斥锁高，不过可能会出现脏数据
+在定义属性时，必须显示地指定 nonatomic，否则默认为atomic
+多线程——atomic nonatomic的区别
+原子性atomic ,默认属性，编译器会在property上自动添加原子锁
+非原子性nonatomic，不考虑多线程情况时使用，提高效率
+原子属性内部的锁是自旋锁，自旋锁的执行效率比互斥锁高
+atomic本质上就是给get/set方法加锁，即原子锁，以避免线程A
+还没执行完setter，线程B又开始执行的，导致读取数据错误的问
+题。
+</code></pre>
+<h3 id="atomic一定是线程安全的么？"><a href="#atomic一定是线程安全的么？" class="headerlink" title="atomic一定是线程安全的么？"></a>atomic一定是线程安全的么？</h3><pre><code>不一定，首先atomic的释义是原子性，并不是线程安全。原子性这
+个概念表示一个操作序列就像一个操作一样不被打断，而不像一个操
+作序列一样中间容许被打断。所以nonatomic一定是线程不安全
+的，但是atomic却不一定是线程安全的。
+假设线程A执行在对某属性get之前线程B release了该属性，会导
+致程序崩溃。
+原子属性内部的锁是自旋锁，自旋锁的执行效率比互斥锁高
+</code></pre>
+<h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2><pre><code>一般说来，确保线程安全的方法有这几个：竞争与原子操作、同步与
+锁、可重入、过度优化。
+竞争与原子操作 
+多个线程同时访问和修改一个数据，可能造成很严重的后果。出现严
+重后果的原因是很多操作被操作系统编译为汇编代码之后不止一条指
+令，因此在执行的时候可能执行了一半就被调度系统打断了而去执行
+别的代码了。一般将单指令的操作称为原子的(Atomic)，因为不管
+怎样，单条指令的执行是不会被打断的。
+因此，为了避免出现多线程操作数据的出现异常，Linux系统提供了
+一些常用操作的原子指令，确保了线程的安全。但是，它们只适用于
+比较简单的场合，在复杂的情况下就要选用其他的方法了。
+同步与锁 
+为了避免多个线程同时读写一个数据而产生不可预料的后果，开发人
+员要将各个线程对同一个数据的访问同步，也就是说，在一个线程访
+问数据未结束的时候，其他线程不得对同一个数据进行访问。
+同步的最常用的方法是使用锁(Lock)，它是一种非强制机制，每个
+线程在访问数据或资源之前首先试图获取锁，并在访问结束之后释放
+锁；在锁已经被占用的时候试图获取锁时，线程会等待，直到锁重新
+可用。
+二元信号量是最简单的一种锁，它只有两种状态：占用与非占用，它
+适合只能被唯一一个线程独占访问的资源。对于允许多个线程并发访
+问的资源，要使用多元信号量(简称信号量)。
+可重入 
+一个函数被重入，表示这个函数没有执行完成，但由于外部因素或内
+部因素，又一次进入该函数执行。一个函数称为可重入的，表明该函
+数被重入之后不会产生任何不良后果。可重入是并发安全的强力保
+障，一个可重入的函数可以在多线程环境下放心使用。
+过度优化 
+在很多情况下，即使我们合理地使用了锁，也不一定能够保证线程安
+全，因此，我们可能对代码进行过度的优化以确保线程安全。
+我们可以使用volatile关键字试图阻止过度优化，它可以做两件
+事：第一，阻止编译器为了提高速度将一个变量缓存到寄存器而不写
+回；第二，阻止编译器调整操作volatile变量的指令顺序。
+在另一种情况下，CPU的乱序执行让多线程安全保障的努力变得很困
+难，通常的解决办法是调用CPU提供的一条常被称作barrier的指
+令，它会阻止CPU将该指令之前的指令交换到barrier之后，反之亦
+然。
+</code></pre>
 
       
     </div>
@@ -438,7 +1292,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/M_Swift80%E5%9B%9E%E5%AE%B6%E8%BF%87%E5%B9%B4/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift95OC%E5%8F%91%E6%B6%88%E6%81%AF%E6%AD%A5%E9%AA%A4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -452,7 +1306,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/05/10/M_Swift80%E5%9B%9E%E5%AE%B6%E8%BF%87%E5%B9%B4/" class="post-title-link" itemprop="url">回家过年</a>
+            <a href="/2018/08/14/M_Swift95OC%E5%8F%91%E6%B6%88%E6%81%AF%E6%AD%A5%E9%AA%A4/" class="post-title-link" itemprop="url">OC发消息</a>
         </h2>
 
         <div class="post-meta">
@@ -462,7 +1316,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-05-10 11:02:39" itemprop="dateCreated datePublished" datetime="2018-05-10T11:02:39+08:00">2018-05-10</time>
+              <time title="创建时间：2018-08-14 19:55:18" itemprop="dateCreated datePublished" datetime="2018-08-14T19:55:18+08:00">2018-08-14</time>
             </span>
 
           
@@ -476,7 +1330,109 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>再有不到一个星期就可以回家过年了，很激动，也在盘算，回家过年怎么过，怎么过好年，也不能天天碌碌无为，真的是，这个年需要过的有滋味才行，我想也就随便收拾一下就回家过年了，拿两身换洗的衣服，就够了，啥也没有，此外，真的是需要带点钱回家啊，没有钱怎么发红包啊。</p>
+          <h2 id="发消息步骤"><a href="#发消息步骤" class="headerlink" title="发消息步骤"></a>发消息步骤</h2><pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
+有垃圾回收，就不考虑 retain，release这些函数
+2.检测这个target是不是nil对象，
+ObjC的特性允许对一个nil对象发消息而不会崩溃
+3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
+先从缓存中找，完了跳到对应函数执行
+4.如果缓存列表找不到，就找一下方法分发表
+5.如果方法列表找不到，就到超类的方法分发列表找，
+一直找到NSObject
+6.如果还找不到，就开始进行动态方法解析，调用
++(Bool)resolveInstanceMethod(SEL)selector；（实例方法）
++(Bool)resolveClassMethod(SEL)selector；（类方法）
+该方法的参数就是那个位置的选择子（方法），其返回值为bool，
+表示这个类能否新增一个实例方法用于处理该未知的方法
+一般用这个方法可以动态的添加方法
+7.如果还是找不到，那么运行系统就会问，
+能不能把这条消息转发给其他的接受者处理。调用
++(id)forwardingTargetForSelector(SEL)selector；
+当前接收者如果能找到备选对象，那么将其返回，
+如果找不到，返回nil
+8.如果还是找不到，那么会创建一个NSInvocation对象，
+把这个尚未处理的那条消息有关的全部细节都封装其中，
+此对象包含选择子，目标对象及参数，
+并调用下面的方法进行消息转发
+-（void）forwardInvocation：(NSInvocation *)invocation；
+9.如果最后都没有出来的话，那么就抛出异常
+</code></pre>
+<h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>当前对象无论调用任何方法返回的都是当前对象
+无论何时，要调用objc_msgSend函数，必须要将函数强制转
+换成合适的函数指针类型才能调用。
+其实编译器会根据情况在objc_msgSend,
+objc_msgSend_stret, objc_msgSendSuper, 或
+objc_msgSendSuper_stret四个方法中选择一个来调用。
+</code></pre>
+<h2 id="消息转发："><a href="#消息转发：" class="headerlink" title="消息转发："></a>消息转发：</h2><h3 id="消息转发机流程"><a href="#消息转发机流程" class="headerlink" title="消息转发机流程"></a>消息转发机流程</h3><pre><code>1、动态方法解析resolveInstanceMethod
+2、备用接受者forwardingTargetForSelector
+3、完整转发forwardInvocation
+你可以实现forwardInvocation方法，将消息转发给另一个
+对象，forwardInvocation方法是一个动态方法，在响应者无法
+响应方法时，会调用forwardInvocation方法，可以重写这个方
+法，实现消息转发。
+</code></pre>
+<h2 id="Objc中向一个nill对象发消息，会发生什么？"><a href="#Objc中向一个nill对象发消息，会发生什么？" class="headerlink" title="Objc中向一个nill对象发消息，会发生什么？"></a>Objc中向一个nill对象发消息，会发生什么？</h2><pre><code>如果self为nil，那么selector也会为空，直接返回，不会出现问题。
+（返回值时对象，是标量，结构体）
+如果向一个nil对象发送消息，首先在寻找对象的isa指针时就是0
+地址返回，所以不会出现任何错误
+如果返回值类型是对象，那么返还nil
+如果回值类型是标量，那么是0，
+如果回值类型是结构体为0，
+其他为返回值是未定义的。
+但对于[NSNull null]对象发送消息时，是会crash的，因为
+NSNull类只有一个null方法。
+</code></pre>
+<h3 id="unrecognized-selector-sent-to-instance的错误是怎么回事？"><a href="#unrecognized-selector-sent-to-instance的错误是怎么回事？" class="headerlink" title="unrecognized selector sent to instance的错误是怎么回事？"></a>unrecognized selector sent to instance的错误是怎么回事？</h3><pre><code>这是因为这个对象已经被释放了（引用计数为0了），那么这个时候再去调用方
+法肯定是会Crash的，因为这个时候这个对象就是一个野指针（指向僵尸对象
+（对象的引用计数为0，指针指向的内存已经不可用）的指针）了，安全的做法
+是释放后将对象重新置为nil，使它成为一个空指针，大家可以在关闭ARC后手
+动release对象验证一下。
+</code></pre>
+<h3 id="空指针和野指针的区别"><a href="#空指针和野指针的区别" class="headerlink" title="空指针和野指针的区别"></a>空指针和野指针的区别</h3><pre><code>没有存储任何内存地址的指针就称为空指针(NULL指针)
+空指针就是被赋值为0的指针，在没有被具体初始化之前，其值为0。
+&quot;野指针&quot;不是NULL指针，是指向&quot;垃圾&quot;内存（不可用内存）的指针。
+野指针是非常危险的。
+</code></pre>
+<h2 id="函数调用和OC的消息传递机制区别"><a href="#函数调用和OC的消息传递机制区别" class="headerlink" title="函数调用和OC的消息传递机制区别"></a>函数调用和OC的消息传递机制区别</h2><pre><code>对于C语言，函数的调用在编译器的时候决定调用那个函数。编译完之后直接
+顺序执行。
+OC的函数调用成为消息发送。属于动态调用过程。在编译的时候决不能决定
+真正调用那个函数（实时证明，在编译阶段，oc可以调用任何函数，及时这个
+函数并未实现，只要申明过就不会报错，而c语言在编译阶段或报错）。
+</code></pre>
+<h2 id="消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？"><a href="#消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？" class="headerlink" title="消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？"></a>消息转发中的resolveInstanceMethod返回值是Bool的话，那不去动态增加方法，直接返回yes行不行？</h2><pre><code>返回值文档中说是表示动态决议成功与否。但在上面的例子中（不涉
+及消息转发的情况下），如果在该函数内为指定的 selector 提供
+实现，无论返回 YES 还是 NO，编译运行都是正确的；但如果在该
+函数内并不真正为 selector 提供实现，无论返回 YES 还是 
+NO，运行都会 crash，道理很简单，selector 并没有对应的实
+现，而又没有实现消息转发。
+resolveInstanceMethod 是为对象方法进行决议，
+而 resolveClassMethod 是为类方法进行决议。
+</code></pre>
+<h2 id="NSInvocation"><a href="#NSInvocation" class="headerlink" title="NSInvocation"></a>NSInvocation</h2><pre><code>NSInvocation是一个消息调用类，它包含了所有OC消息的成分：
+target、selector、参数以及返回值。NSInvocation可以将消
+息转换成一个对象，消息的每一个参数能够直接设定，而且当一个
+NSInvocation对象调度时返回值是可以自己设定的。一个
+NSInvocation对象能够重复的调度不同的目标(target)，而且
+它的selector也能够设置为另外一个方法签名。NSInvocation
+遵守NSCoding协议，但是仅支持NSPortCoder编码，不支持归档
+型操作。
+// 通过NSMethodSignature对象创建NSInvocation对象，NSMethodSignature为方法签名类
++ (NSInvocation *)invocationWithMethodSignature:(NSMethodSignature *)sig;
+// 获取NSMethodSignature对象
+@property (readonly, retain) NSMethodSignature *methodSignature;
+// 保留参数，它会将传入的所有参数以及target都retain一遍
+- (void)retainArguments;
+// 判断参数是否还存在
+// 调用retainArguments之前，值为NO，调用之后值为YES
+@property (readonly) BOOL argumentsRetained;
+// 设置消息调用者，注意：target最好不要是局部变量
+@property (nullable, assign) id target;
+// 设置要调用的消息
+@property SEL selector;
+// 获取消息返回值
+- (void)getReturnValue:(void *)retLoc;
+</code></pre>
 
       
     </div>
@@ -496,7 +1452,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/M_Swift81%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift102AFN_SDWebImage/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -510,7 +1466,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/05/10/M_Swift81%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">年终总结</a>
+            <a href="/2018/08/14/M_Swift102AFN_SDWebImage/" class="post-title-link" itemprop="url">AFN SD做了哪些优化</a>
         </h2>
 
         <div class="post-meta">
@@ -520,7 +1476,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-05-10 11:02:23" itemprop="dateCreated datePublished" datetime="2018-05-10T11:02:23+08:00">2018-05-10</time>
+              <time title="创建时间：2018-08-14 19:54:20" itemprop="dateCreated datePublished" datetime="2018-08-14T19:54:20+08:00">2018-08-14</time>
             </span>
 
           
@@ -534,7 +1490,130 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>很快，又要过年了，你是不是很激动，现在在上班的我来说，确实有点激动。可能从小养成的习惯吧，现在好了，现在没有那么的热闹了，但是，新春到来的时候还是有点紧张。<br>有一个多月没有回家了，这次可能是时间比较久的一次了，好了，谈一谈我的2017吧。<br>这一年，我觉得最高兴的事情就是迎来了孩子的出生，梨花带雨，真的是挺不容易，不过都过来了，还是挺高兴，孩子现在也健康成长，感觉挺幸福。<br>但是除了这些，好像真的就没有什么了，更可怕的是，我感觉我整个人都要废掉了，感觉很无奈。<br>还有就是这一年学了一个驾照，真的是很不容易，早上4点多就起床，一个多月，终于把驾照拿到手，真的是很激动，所有的辛苦真的是都值得了。<br>在年底的时候，终于是买了辆车，这是用2018年的收入买的，说实话，真的不能算是2017年的事情。但是也算作是提一下吧。为这个2017画上一个句号，不管是不是完美。<br>2018年，感觉就是在为了车而活着，我总是想给自己一个压力，总是想多攒点钱，我真的是感觉，钱不够花的，我想，趁着我年轻，在北京多打两年工，多挣点钱，到时候回家，也有点资本。<br>可是说实话，资本永远都不够，真的是这样的，我想我永远都不够的。<br>2017总结，好像这个2017年也没有干什么，就这样荒废掉了，真的是很无聊，我总是在想工作的事情，我想人就是这样，在一个岗位，久了就会有惰性，怎么样克服这种事情，真的是一件值得思考的问题，<br>还有就是，算了，你说2018年的事情，留给2018年去说。<br>这一年，没有经过什么风浪，但是，总感觉北京的日子越来越不好过了，真的是，总感觉生活条件在变得越来越差，总是停电，特别是这个冬天没有暖气，特别是北京发生了很多事件后，政府对这种城中村的关注，也让我们有种不知道去哪里住的感觉。<br>会头想想，今年好像也是了解了很多东西，真的只能用了解来形容，像PHP，Android，Swift，JavaScript，Python，包括现在的机器学习，真的是好多，但是好像都是了解，也许有一天这些语言能成为我工作中的一部分，不过目前对我来说，都只能算作是了解，还有一个是Echart，这个我可以说是比较精通了，真的是，天天让我写一些没有意义的图表，现在来看也是锻炼了一下这部分的功底，还有就是Html，我真的是写不好，但是也不能说我不懂。哈哈。</p>
+          <h2 id="AFN包括如下模块"><a href="#AFN包括如下模块" class="headerlink" title="AFN包括如下模块"></a>AFN包括如下模块</h2><pre><code>网络通信模块(AFURLSessionManager、AFHTTPSessionManger)
+网络状态监听模块(Reachability)
+网络通信安全策略模块(Security)
+网络通信信息序列化/反序列化模块(Serialization)
+对于iOS UIKit库的扩展(UIKit)
+</code></pre>
+<h2 id="AFN优点"><a href="#AFN优点" class="headerlink" title="AFN优点"></a>AFN优点</h2><pre><code>AFNetworking内置支持JSON,plist文件和XML文件的解析,使用比
+较方便我们能够有效的控制并观察一个网络请求的创建、进行、取消、
+完成、暂停恢复、异常等问题及状态
+可以帮助我们轻松友好的完成请求的创建、响应的系列化,网络状态的监控以
+及安全策略以及每一个请求operation的管理(operation的相互依赖或
+状态改变)。 
+</code></pre>
+<h2 id="SDWebImage-概论"><a href="#SDWebImage-概论" class="headerlink" title="SDWebImage 概论"></a>SDWebImage 概论</h2><pre><code>1.提供了一个UIImageView的category用来加载网
+络图片并且对网络图片的缓存进行管理
+2.采用异步方式来下载网络图片
+3.采用异步方式，使用memory＋disk来缓存网
+络图片，自动管理缓存。
+4.支持GIF动画
+5.支持WebP格式
+6.同一个URL的网络图片不会被重复下载
+7.失效的URL不会被无限重试
+8.耗时操作都在子线程，确保不会阻塞主线程
+9.使用GCD和ARC
+10.支持Arm64
+13.图片解码处理在一个 NSOperationQueue 完成，
+不会拖慢主线程 UI。如果有需要对下载的图片进行二次处理，
+最好也在这里完成，效率会好很多。
+</code></pre>
+<h1 id="AFN、SD缺点"><a href="#AFN、SD缺点" class="headerlink" title="AFN、SD缺点"></a>AFN、SD缺点</h1><pre><code>最近版早早已经支持NSURLSession了，但是不支持iOS7以下系统。
+且AFNetworking必须使用ARC
+SDWebImage 对gif的处理主要是在UIImage+GIF
+这个文件里面，利用ImageIO函数创建二进制数据，如下：
+由于SDWebImage通过动图数组来实现动态，
+会造成内存不能及时释放
+SDWebimage -静态图片加载会产生拉伸
+</code></pre>
+<h2 id="SD下载完图片为什么要解码"><a href="#SD下载完图片为什么要解码" class="headerlink" title="SD下载完图片为什么要解码"></a>SD下载完图片为什么要解码</h2><pre><code>在我们使用 UIImage 的时候，创建的图片通常不会直接加载到内存，而是在
+渲染的时候再进行解压并加载到内存。这就会导致 UIImage 在渲染的时候效
+率上不是那么高效。为了提高效率通过 decodedImageWithImage方法把图
+片提前解压加载到内存，这样这张新图片就不再需要重复解压了，提高了渲染效
+率。这是一种空间换时间的做法。
+</code></pre>
+<h2 id="旧版本AFN为什么加Runloop"><a href="#旧版本AFN为什么加Runloop" class="headerlink" title="旧版本AFN为什么加Runloop"></a>旧版本AFN为什么加Runloop</h2><pre><code>首先我们知道在旧版本的AFN中使用了 NSURLConnection 来发起并处理网
+络连接。AFN 的做法是把网络请求的发起和解析都放在同一个子线程中进行，
+但由于子线程默认不开启 runloop，它会向一个 C语言程序那样在运行完所有
+代码后退出线程。而网络请求是异步的，这会导致获取到请求数据时，线程已经
+退出，代理方法没有机会执行。因此，AFN 的做法是使用一个 runloop 来保
+证线程不死，也就是下面这段被讲烂了的代码:
+</code></pre>
+<h2 id="AFN多重代理如何实现"><a href="#AFN多重代理如何实现" class="headerlink" title="AFN多重代理如何实现"></a>AFN多重代理如何实现</h2><pre><code>https://www.jianshu.com/p/961cfc9a446b
+又有小伙伴问了，我们设置的这个代理不是NSURLSessionDelegate吗？怎
+么能响应NSUrlSession这么多代理呢？我们点到类的声明文件中去看看：
+我们可以看到这些代理都是继承关系，而在NSURLSession实现中，只要设置
+了这个代理，它会去判断这些所有的代理，是否respondsToSelector这些代
+理中的方法，如果响应了就会去调用。
+</code></pre>
+<h2 id="SDWebImage的缓存策略"><a href="#SDWebImage的缓存策略" class="headerlink" title="SDWebImage的缓存策略"></a>SDWebImage的缓存策略</h2><pre><code>Memory 和 Disk 双缓存    
+</code></pre>
+<h2 id="SDWebImage加载图片的流程"><a href="#SDWebImage加载图片的流程" class="headerlink" title="SDWebImage加载图片的流程"></a>SDWebImage加载图片的流程</h2><pre><code>1.入口 setImageWithURL:placeholderImage:options:会
+先把 placeholderImage显示，然后 SDWebImageManager根
+据 URL 开始处理图片。
+2.进入SDWebImageManager 类中
+downloadWithURL:delegate:options:userInfo:，交给
+SDImageCache从缓存查找图片是否已经下载
+queryDiskCacheForKey:delegate:userInfo:.
+3.先从内存图片缓存查找是否有图片，如果内存中已经有图片缓存，
+SDImageCacheDelegate回调 
+imageCache:didFindImage:forKey:userInfo:到
+SDWebImageManager。
+4.SDWebImageManagerDelegate 回调
+webImageManager:didFinishWithImage: 到 
+UIImageView+WebCache,等前端展示图片。
+5.如果内存缓存中没有，生成 ｀NSOperation ｀
+添加到队列，开始从硬盘查找图片是否已经缓存。
+6.根据 URL的MD5值Key在硬盘缓存目录下尝试读取图片文件。这
+一步是在 NSOperation 进行的操作，所以回主线程进行结果回
+调 notifyDelegate:。
+7.如果上一操作从硬盘读取到了图片，将图片添加到内存缓存中（如
+果空闲内存过小， 会先清空内存缓存）。
+SDImageCacheDelegate&#39;回调 
+imageCache:didFindImage:forKey:userInfo:`。进而
+回调展示图片。
+8.如果从硬盘缓存目录读取不到图片，说明所有缓存都不存在该图
+片，需要下载图片， 回调 
+imageCache:didNotFindImageForKey:userInfo:。
+9.共享或重新生成一个下载器 SDWebImageDownloader开始下载图片。
+10.图片下载由 NSURLConnection来做，实现相关 delegate
+来判断图片下载中、下载完成和下载失败。
+11.connection:didReceiveData: 中利用 ImageIO做了按
+图片下载进度加载效果。
+12.connectionDidFinishLoading: 数据下载完成后交给 
+SDWebImageDecoder做图片解码处理。
+13.图片解码处理在一个 NSOperationQueue完成，不会拖慢主
+线程 UI.如果有需要 对下载的图片进行二次处理，最好也在这里
+完成，效率会好很多。
+14.在主线程 notifyDelegateOnMainThreadWithInfo:
+宣告解码完成 
+imageDecoder:didFinishDecodingImage:userInfo: 
+回调给 SDWebImageDownloader`。
+15.imageDownloader:didFinishWithImage:回调给
+SDWebImageManager告知图片 下载完成。
+16. 通知所有的 downloadDelegates下载完成，回调给需要的
+地方展示图片。
+17.将图片保存到 SDImageCache中，内存缓存和硬盘缓存同时保
+存。写文件到硬盘 也在以单独 NSOperation 完成，避免拖慢主
+线程。
+18.SDImageCache 在初始化的时候会注册一些消息通知，
+在内存警告或退到后台的时 候清理内存图片缓存，应用结束的时候
+清理过期图片。
+</code></pre>
+<h2 id="SDWebimage对相同url图片问题"><a href="#SDWebimage对相同url图片问题" class="headerlink" title="SDWebimage对相同url图片问题"></a>SDWebimage对相同url图片问题</h2><pre><code>找出问题所在了，因为修改头像后，图片的url是不变的，而默认情
+况下，SDWebimage对相同url是优先使用缓存的，因此得加
+options属性
+[self.HeaderImage sd_setImageWithURL:[NSURL URLWithString:yhPic] placeholderImage:[UIImage imageNamed:@&quot;ameng_dh&quot;] options:SDWebImageRefreshCached];
+SDWebImageRefreshCached是专门用来处理相同url，图片不同
+的情况的。
+重点是在SDWebImageManager.m文件中，大概176行左右
+在(利用SDWebImageRefreshCached)的基础上，修改SD库
+添加这一段代码// remove 
+SDWebImageDownloaderUseNSURLCache flag 
+downloaderOptions &amp;= 
+~SDWebImageDownloaderUseNSURLCache;
+</code></pre>
 
       
     </div>
@@ -554,7 +1633,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/M_Swift84tensorflow/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift97RunLoop/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -568,7 +1647,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/05/10/M_Swift84tensorflow/" class="post-title-link" itemprop="url">tensorflow</a>
+            <a href="/2018/08/14/M_Swift97RunLoop/" class="post-title-link" itemprop="url">RunLoop</a>
         </h2>
 
         <div class="post-meta">
@@ -578,7 +1657,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-05-10 11:01:19" itemprop="dateCreated datePublished" datetime="2018-05-10T11:01:19+08:00">2018-05-10</time>
+              <time title="创建时间：2018-08-14 19:51:42" itemprop="dateCreated datePublished" datetime="2018-08-14T19:51:42+08:00">2018-08-14</time>
             </span>
 
           
@@ -592,10 +1671,295 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>最近了解一下机器学习，顺便写一下文章吧，看了一下机器学习的书，真是云里雾里的，希望tensorflow这个机器学习框架能够让我有更新的认识吧。希望能对未来有所帮助。<br>没有事情，我就百度了一下tensorflow的文章，希望能从别人的博客中学到点东西，光看也没有意思，我顺便也抄袭一下吧。<br>什么是tensorflow：谷歌开源的机器学习框架。拥有易用的python接口，可以部署在一台或多台cpu，gpu上。兼容多个平台，拥有tensorboard可视化工具，可以使用checkpoint进行实验管理。<br>tensorflow，基础<br>实际上编写tensorflow可以总结为两步。<br>    1.组装一个graph<br>    2.使用session去执行graph中的operation<br>因此我们从graph与session说起<br>1.计算图<br>tensorflow是基于计算图的框架，因此理解graph与session尤其重要<br>当需要计算e的时候，就需要计算c与d，当计算c就需要计算a与b，计算d需要计算b，这样就形成依赖关系。这种有向环图就叫做计算图。因此对于图中的每个节点其微分都很容易得出，因此应用链式法则要起得一个复杂的表达式的导数久称为可能。<br>2.概念说明<br>下面是graph，session，operation，tensor四个概念简介<br>tensor：类型化的多位数组，图的边。<br>opteration：执行计算的单元，图的节点。<br>graph：一张有边与点的图，其实表示需要计算的任务。<br>session：称之为会话上下文，用于执行图<br>graph仅仅定义为所有opteration与tensor流向。没有进行任何运算。而session根据graph的定义分配资源，计算operation，得出结果。既然是图就会有点与边，在图计算中operation就是点而tensor就是边。operation可以是加减乘除等数学运算，也可以是各种各样的优化算法。每个operation就会有零个或多个输入，零个或多个输出。tensor就是其输入和输出。其实可以表示一维二维多位向量或者常量。而且除了variables指向的tensor外，所有的tensor在流向下一个节点后不再保存。<br>3.举例<br>首先定义一个图，（其实没有必要，tensorflow默认会定义）并做一些计算<br>import tensorflow as tf<br>graph = tf.Graph()<br>with graph.as_default():<br>    foo = tf.Variable(3,name=’foo’)<br>    bar = tf.Variable(2,name=’bar’)<br>    result = foo + bar<br>    initialize = tf.global_variables_initiallizer()<br>print(result)</p>
-<p>这段代码首先会加载tensorflow，定义一个graph类，并在这张图上定义一个foo和bar，最后对这两个值求和，并初始化所有变量，其中，Variable是定义变量并赋予初始值。让我们看下result最后执行，我们可以看到并没有输入结果，由此可见定义图的时候病没有进行运算。<br>下面定义一个session，并进行真正的运算<br>with tf.Session(graph=graph) as sess:<br>    sess.run(initialize)<br>    res = sess.run(result)<br>    print(res) # 5<br>    这段代码中定义一个session，并进行真正的运算。<br>    可以看到在session中产生真正的运算，得出值为5.<br>    下图是该graph在tensorboard中显示，这张图整体是个graph，其中foo，bar，add这些节点是operation，而foo和bar与add链接边的就是tensor。当session运行result那么该节点将不会进行计算，这也是图计算的优势。<br>数据结构<br>tensorflow的数据结构有rank，shape，data，types<br>rank：一般指数据的维度，其与线性代数中的rank不同，举例如下<br>scalar     |  s = 483<br>vector     | v= [1.1,2.2,3.3]<br>matrix     | m = [[1,2,3],[4,5,6]]<br>3-tensor | m = [[[2],[4]]]<br>n-tensor | …</p>
-<p>shape是指tensor每个维度数组的个数<br>0                 | 0-D<br>vector         |1-D        | v= [1.1,2.2,3.3]<br>matrix         |2-D        | m = [[1,2,3],[4,5,6]]<br>3-tensor      |3-D       | m = [[[2],[4]]]<br>n-tensor      |4-D       | …<br>data type:单个数据的类型，常用DT_FLOAT<br>DT_FLOAT                | tf.float32<br>DT_DUBLE               |tf.float64<br>DT_INT8                   |tf.int8<br>DT_INT16                 |tf.int16<br>DT_INT32                 |tf.int32<br>DT_INT64                 |tf.int64<br>DT_UINT8                 |tf.uint8<br>DT_UINT16               |…<br>DT_STRING<br>DT_BOOL<br>DT_COMPLEX64<br>DT_COMPLEX128<br>DT_QINT8<br>DT_QINT32<br>DT_QUINT8</p>
-<p>3.Variables<br>当训练模型时需要variables保存与更新参数。variables会保存在内存中，所有tensor艺丹拥有variables的指向就不会在session中丢失，其必须明确初始化，而且可以通过saver保存在磁盘上，variables可以通过variables初始化。<br>weights = tf.Variable(tf.random([784,200], stddev=0.35), name=”weights”)<br>biases = tf.Variable(tf.zeros([200]), name = “biases”)<br>其中tf.random()是随机生成一个正态分布的tensor，其中shape是第一个参数，stddev是其标准差，tf.zeros是生成全零的tensor，之后是将这个tensor的值赋给Variable。<br>2.初始化<br>实际在其初始化过程中做了很多操作，比如初始化空间，赋初始值，并把Variable添加到graph中等操作。注意在计算之前需要初始化所有的variable，一般会在定义graph时定义grobal_variable_initializer，其会在session运算时初始化所有变量。<br>直接调用global_variables_initiallizer 会初始化所有的Variable，如果仅想初始化部分，可以调用<br>tf.variables_initializer<br>variables 可以通过eval显示其值，也可以通过assign进行赋值。variable支持很多数学运算。<br>3.varable和constant的区别<br>值得注意的是variables与constant的区别，constant一般是常量，可以被赋值给variiables，constant保存在graph中，如果graph重复载入，那么constant也会重复载入，其非常浪费资源，如果非必要尽量不要使用其保存大量数据，而variables在每个session中都是单独保存的，甚至是可以单独存在参数服务器上，可以通过代码观察到constant实际是保存在graph中，具体如下<br>const = tf.condtant(1.0, name=”constant”)<br>print(tf.get_default_graph().as_graph_def())<br>4.命名<br>注意：尽量每个变量都要有明确的命名，这样易于管理命名空间，而且在导入模型的时候不会造成模型之间的命名冲突。<br>4.placeholder与feed_dict<br>当我们定义一张graph时，有时候并不需要计算的值，比如模型的输入数据，其只有在训练与预测中才会有值，这时候就需要placeholder和feed_dict<br>定义一个placeholder<br>foo = tf.placeholder(tf.int32 ,shape[1], name=”foo”)<br>bar = tf.constant(2,name = “bar”)<br>result = foo + bar<br>with tf.Session() as sess:<br>    print(sess.run(result))<br>在上面的代码中会抛出错误。因为result计算需要foo的具体值，而在代码中并没有给出。<br>这时候需要将实际值给foo。最后一行修改如下<br>print(sess.run(result,{foo:[3]}))<br>3.mnist识别实例<br>介绍一些tensorflow基础之后，我们用一个完整的例子串联<br>首先需要下载数据集，mnist<br>from tensorflow.examples.tutorials.mnist import input_data<br>mnist = input_data.read_data_sets(“MNIST_data/“,one_hot=True)</p>
+          <pre><code>Run loops是线程的基础架构部分，每个线程，
+包括程序的主线程main thread都有与之相应的run loop对象。
+程序启动的时候会调用UIApplicationMain()函数，
+重点是UIApplicationMain()函数，
+这个方法会为main thread设置一个NSRunLoop对象
+对其它线程来说，run loop默认是没有启动的，
+如果你需要更多的线程交互则可以手动配置和启动，
+如果线程只是去执行一个长时间的已确定的任务则不需要。
+使用run loop可以使你的线程在有工作的时候工作，
+没有工作的时候休眠，这可以大大节省系统资源。
+</code></pre>
+<h2 id="获取线程"><a href="#获取线程" class="headerlink" title="获取线程"></a>获取线程</h2><pre><code>NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+RunLoop 一个状态循环
+</code></pre>
+<h2 id="NSRunLoop不是线程安全的"><a href="#NSRunLoop不是线程安全的" class="headerlink" title="NSRunLoop不是线程安全的"></a>NSRunLoop不是线程安全的</h2><pre><code>我们不能再一个线程中去操作另外一个线程的run loop对象，
+那很可能会造成意想不到的后果
+不过幸运的是CoreFundation中的不透明类CFRunLoopRef是
+线程安全的，而且两种类型的run loop完全可以混合使用。
+</code></pre>
+<h2 id="NSRunloop数据模型"><a href="#NSRunloop数据模型" class="headerlink" title="NSRunloop数据模型"></a>NSRunloop数据模型</h2><pre><code>NSRunloop，对CFRunLoop的封装
+1.ptherd 对应runloop的内部一个线程
+2.currendMode， 当前mode， CFRunLoopMode数据结构
+    2.1 name 定义别名，比如NSDefaultRunloopMode
+    2.2 source0，soures1，都是无序集合
+    2.2.1 sourece0 需要用户手动唤醒线程，非基于port的。用户主动触发的事件
+    2.2.2 sources1 具备唤醒线程能力 通过内核和其他线程互相发送消息
+    2.3timers 数组
+    2.4Observers 观测事件点
+        KCFRunLoopEntry 准备启动
+        BeforeTimers 通知观察者将要处理timer了
+        BeforeSources 通知观察者将要处理Soures了
+        BeforeWaiting 将要休眠了
+        AfterWiaiting 用户态切换到内核不久
+        Exit runloop 退出
+        AllActivites 观察所有事件
+3.Modes CFRunloopMode 的集合
+4.commonModes
+</code></pre>
+<h2 id="autorelease-pool的创建和释放"><a href="#autorelease-pool的创建和释放" class="headerlink" title="autorelease pool的创建和释放"></a>autorelease pool的创建和释放</h2><pre><code>每当一个运行循环结束的时候，它都会释放一次autorelease pool，
+同时pool中的所有自动释放类型变量都会被释放掉。
+</code></pre>
+<h2 id="输入事件来源"><a href="#输入事件来源" class="headerlink" title="输入事件来源"></a>输入事件来源</h2><pre><code>Run loop接收输入事件来自两种不同的来源：
+输入源（input source）和定时源（timer source）。
+两种源都使用程序的某一特定的处理例程来处理到达的事件。
+在NSRunLoop中每一个消息就被打包在
+input source或者是timer source
+</code></pre>
+<h3 id="输入源（input-source）"><a href="#输入源（input-source）" class="headerlink" title="输入源（input source）"></a>输入源（input source）</h3><pre><code>传递异步事件，通常消息来自于其他线程或程序。
+输入源传递异步消息给相应的处理例程，
+并调用runUntilDate:方法来退出
+(在线程里面相关的NSRunLoop对象调用)。
+基于端口的输入源：
+    基于端口的输入源由内核自动发送。
+    你必须人工创建端口和它的run loop源。
+    我们可以使用端口相关的函数（CFMachPortRef，
+    CFMessagePortRef，CFSocketRef）来创建合适的对象
+自定义输入源
+    自定义的输入源需要人工从其他线程发送
+    必须使用Core Foundation里面的
+    CFRunLoopSourceRef类型相关的函数来创建。
+Cocoa上的Selector源
+    Cocoa定义了自定义输入源，允许你在任何线程执行
+    selector方法。和基于端口的源一样，执行selector
+    请求会在目标线程上序列化，减缓许多在线程上允许多个方
+    法容易引起的同步问题。不像基于端口的源，一个selector
+    执行完后会自动从run loop里面移除。
+    NSObject类提供了类似如下的selector方法：
+    - (void)performSelectorOnMainThread:
+    (SEL)aSelector withObject:
+    (id)argwaitUntilDone:(BOOL)wait
+    modes:(NSArray *)array;
+</code></pre>
+<h3 id="定时源（timer-source）"><a href="#定时源（timer-source）" class="headerlink" title="定时源（timer source）"></a>定时源（timer source）</h3><pre><code>定时源在预设的时间点同步方式传递消息，
+这些消息都会发生在特定时间或者重复的时间间隔。
+定时源则直接传递消息给处理例程，不会立即退出run loop。
+尽管定时器可以产生基于时间的通知，但它并不是实时机制。
+和输入源一样，定时器也和你的run loop的特定模式相关。
+如果定时器所在的模式当前未被run loop监视，
+那么定时器将不会开始直到run loop运行在相应的模式下。
+典型的ScrollView滑动导致定时器不准问题
+NSTimer *timer = [NSTimer 
+scheduledTimerWithTimeInterval:4.0
+target:self
+selector:@selector(backgroundThreadFire:) userInfo:nil
+repeats:YES];
+[[NSRunLoop currentRunLoop]
+addTimer:timerforMode:NSDefaultRunLoopMode];
+</code></pre>
+<h2 id="RunLoop观察者"><a href="#RunLoop观察者" class="headerlink" title="RunLoop观察者"></a>RunLoop观察者</h2><pre><code>源是在合适的同步或异步事件发生时触发，
+而run loop观察者则是在run loop本身运行的特定时候触发。
+你可以使用run loop观察者来为处理某一特定事件
+或是进入休眠的线程做准备。
+1.  Runloop入口
+2.  Runloop何时处理一个定时器
+3.  Runloop何时处理一个输入源
+4.  Runloop何时进入睡眠状态
+5.  Runloop何时被唤醒，但在唤醒之前要处理的事件
+6.  Runloop终止
+- (void)addObserverToCurrentRunloop
+&#123;
+NSRunLoop*mRunLoop = [NSRunLoop currentRunLoop];
+CFRunLoopObserverContext context =
+&#123;0,self, NULL,NULL, NULL&#125;;
+CFRunLoopObserverRefobserver 、
+=CFRunLoopObserverCreate(kCFAllocatorDefault,
+kCFRunLoopBeforeTimers,YES, 0,
+&amp;myRunLoopObserver, &amp;context);
+if (observer)
+&#123;
+    CFRunLoopRef cfLoop = [myRunLoop 
+    getCFRunLoop];
+    CFRunLoopAddObserver(cfLoop,
+    observer, kCFRunLoopDefaultMode);
+&#125;
+&#125;
+</code></pre>
+<h2 id="RunLoop的事件队列"><a href="#RunLoop的事件队列" class="headerlink" title="RunLoop的事件队列"></a>RunLoop的事件队列</h2><pre><code>1.通知观察者run loop已经启动
+2.通知观察者任何即将要开始的定时器
+3.通知观察者任何即将启动的非基于端口的源
+4.启动任何准备好的非基于端口的源
+5.如果基于端口的源准备好并处于等待状态，立即启动；并进入步骤9。
+6.通知观察者线程进入休眠
+7.将线程置于休眠直到任一下面的事件发生：
+    某一事件到达基于端口的源
+    定时器启动
+    Run loop设置的时间已经超时
+    run loop被显式唤醒
+8.通知观察者线程将被唤醒。
+9.处理未处理的事件
+    如果用户定义的定时器启动，处理定时器事件并重启
+    run loop。进入步骤2
+    如果输入源启动，传递相应的消息
+    如果run loop被显式唤醒而且时间还没超时，
+    重启run loop。进入步骤2
+10.通知观察者run loop结束。
+从这个事件队列中可以看出：
+①如果是事件到达，消息会被传递给相应的处理程序来处理，
+runloop处理完当次事件后，run loop会退出，
+而不管之前预定的时间到了没有。你可以重新启动
+run loop来等待下一事件。
+②如果线程中有需要处理的源，但是响应的事件没有到来的时候，
+线程就会休眠等待相应事件的发生。这就是为什么run loop
+可以做到让线程有工作的时候忙于工作，
+而没工作的时候处于休眠状态。
+</code></pre>
+<h2 id="RunLoop使用时机"><a href="#RunLoop使用时机" class="headerlink" title="RunLoop使用时机"></a>RunLoop使用时机</h2><pre><code>Run loop在你要和线程有更多的交互时才需要，比如以下情况：
+使用端口或自定义输入源来和其他线程通信
+使用线程的定时器
+Cocoa中使用任何performSelector…的方法
+使线程周期性工作
+</code></pre>
+<h2 id="RunLoop的五个类"><a href="#RunLoop的五个类" class="headerlink" title="RunLoop的五个类"></a>RunLoop的五个类</h2><pre><code>1    CFRunloopRef    【RunLoop本身】
+2    CFRunloopModeRef    【Runloop的运行模式】
+3    CFRunloopSourceRef    【Runloop要处理的事件源】
+4    CFRunloopTimerRef    【Timer事件】
+5    CFRunloopObserverRef    【Runloop的观察者（监听者）】
+</code></pre>
+<h3 id="CFRunLoop-的结构大致如下："><a href="#CFRunLoop-的结构大致如下：" class="headerlink" title="CFRunLoop 的结构大致如下："></a>CFRunLoop 的结构大致如下：</h3><pre><code>struct __CFRunLoop &#123;
+    CFMutableSetRef _commonModes;     // Set
+    CFMutableSetRef _commonModeItems; // Set
+    CFRunLoopModeRef _currentMode;    // Current Runloop Mode
+    CFMutableSetRef _modes;           // Set
+    ...
+&#125;;
+ 如上，有个概念叫 CommonModes：
+ 一个 Mode 可以将自己标记为&quot;Common&quot;属性：
+ 通过将其 ModeName 添加到 RunLoop 的 commonModes 中。例如：
+ 如上所示，添加 source 的时候，如果 modeName 传入
+ kCFRunLoopCommonModes 或者 NSRunLoopCommonModes，
+ 则该 source 会被保存到 RunLoop 的
+ _commonModeItems 中，而且，会被添加到 
+ commonModes 中的所有mode中去。
+ 其实，每当 RunLoop 的内容发生变化时，
+ RunLoop 都会自动将 _commonModeItems 
+ 里的 Source/Observer/Timer 同步到具有 
+ Common 标记的所有Mode里。
+主线程的 RunLoop 里有两个预置的 Mode
+：kCFRunLoopDefaultMode 和 UITrackingRunLoopMode。
+这两个 Mode 都已经被标记为 Common 属性。
+DefaultMode 是 App 平时所处的状态，
+TrackingRunLoopMode 是追踪 ScrollView 滑动时的状态。
+当你创建一个 Timer 并加到 DefaultMode 时，
+Timer 会得到重复回调，但此时滑动一个TableView时，
+RunLoop 会将 mode 切换为 TrackingRunLoopMode，
+这时 Timer 就不会被回调，并且也不会影响到滑动操作。
+有时你需要一个 Timer，在两个 Mode 中都能得到回调，
+一种办法就是将这个 Timer 分别加入这两个 Mode。
+还有一种方式，就是将 Timer 加入到顶层的 RunLoop 
+的 commonModeItems 中。commonModeItems 被
+RunLoop 自动更新到所有具有 Common 属性的 Mode 里去。
+一个 RunLoop 包含若干个 Mode，每个 Mode 
+又包含若干个Source/Timer/Observer。
+但是，运行的时候，一条线程对应一个 Runloop，
+Runloop 总是运行在某种特定的CFRunLoopModeRef
+（运行模式）下。
+这是因为，在 Runloop 中有多个运行模式，每次调用 
+RunLoop 的主函数__CFRunloopRun() 时，只能指定其中一个
+Mode（称 CurrentMode）运行， 如果需要切换 Mode，只能是
+退出 CurrentMode 切换到指定的 Mode 进入，目的以保证不同
+Mode 下的 Source / Timer / Observer 互不影响。
+每次调用 RunLoop 的主函数时，只能指定其中一个 Mode，
+这个Mode被称作 CurrentMode。如果需要切换 Mode，
+只能退出 Loop，再重新指定一个 Mode 进入。
+这样做主要是为了分隔开不同组的 Source/Timer/Observer
+让其互不影响。
+Runloop 要有效，mode 里面 至少 要有一个 timer 
+(定时器事件) 或者是 source (源);
+</code></pre>
+<h2 id="常用案例"><a href="#常用案例" class="headerlink" title="常用案例"></a>常用案例</h2><h3 id="performSelector"><a href="#performSelector" class="headerlink" title="performSelector"></a>performSelector</h3><pre><code>performSelector同样是触发Source0事件。selector也是特殊的
+基于自定义的源.理论上来说,允许在当前线程向任何线程上执行发送消息,
+和基于端口的源一样,执行selector请求会在目标线程上序列化,
+减缓许多在线程上允许多个方法容易引起的同步问题.不像基于端口的源,
+一个selector执行完后会自动从run loop里面移除.
+当调用上述API，实际上其内部会创建一个 Timer 并添加到当前线程的
+RunLoop 中。所以如果当前线程没有 RunLoop，则这个方法会失效。
+当调用 performSelector:onThread: 时，实际上其会创建一个Timer
+加到对应的线程去，同样的，如果对应线程没有 RunLoop 该方法也会失效.
+当前线程指定mode name并延时执行
+// 只在NSDefaultRunLoopMode下执行(刷新图片)
+[self.myImageView performSelector:@selector
+(setImage:) withObject:[UIImage imageNamed:@&quot;&quot;]
+afterDelay:ti inModes:@[NSDefaultRunLoopMode]];
+</code></pre>
+<h3 id="自定义输入源"><a href="#自定义输入源" class="headerlink" title="自定义输入源"></a>自定义输入源</h3><pre><code>使用CFRunLoopSourceRef 类型相关的函数 (线程) 来创建自定义输入源。
+</code></pre>
+<h3 id="端口输入源"><a href="#端口输入源" class="headerlink" title="端口输入源"></a>端口输入源</h3><h3 id="设置定时源"><a href="#设置定时源" class="headerlink" title="设置定时源"></a>设置定时源</h3><pre><code>使用系统Timer
+使用自定义Timer
+</code></pre>
+<h3 id="设置监听"><a href="#设置监听" class="headerlink" title="设置监听"></a>设置监听</h3><h2 id="other"><a href="#other" class="headerlink" title="other"></a>other</h2><pre><code>对于NSTimer，有一个特别的API，这个API会默认把Timer加到 当前线程 中去。
+[NSTimer scheduledTimerWithTimeInterval:5.1
+target:self selector:@selector(printMessage:)
+userInfo:nil repeats:YES];
+所以说，当且仅当加到当前线程，下面两个添加NSTimer的方案方可等效：
+- (void)defalutTimer &#123;
+[NSTimer scheduledTimerWithTimeInterval:1.0 target:
+self selector:@selector(doTime) userInfo:nil
+repeats:YES];
+&#125;
+- (void)commonTimer &#123;
+NSTimer *timer =[NSTimer timerWithTimeInterval:
+1.0 target:self selector:@selector(doTime) 
+userInfo:nil repeats:YES];
+[[NSRunLoop currentRunLoop] addTimer:
+timer forMode:NSDefaultRunLoopMode];
+&#125;
+</code></pre>
+<h2 id="NSTimer和RunLoop"><a href="#NSTimer和RunLoop" class="headerlink" title="NSTimer和RunLoop"></a>NSTimer和RunLoop</h2><pre><code>timer不是一种实时的机制，会存在延迟，而且延迟的程度跟当前线
+程的执行情况有关。
+NSTimer其实也是一种资源，如果看过多线程变成指引文档的话，
+我们会发现所有的source如果要起作用，就得加到runloop中去。
+同理timer这种资源要想起作用，那肯定也需要加到runloop中才
+会又效喽。如果一个runloop里面不包含任何资源的话，运行该
+runloop时会立马退出。你可能会说那我们APP的主线程的
+runloop我们没有往其中添加任何资源，为什么它还好好的运行。
+RunLoop 是用GCD的 dispatch_source_t 实现的 Timer。 
+当调用 NSObject 的 performSelecter:afterDelay: 后，
+实际上其内部会创建一个 Timer 并添加到当前线程的 RunLoop 
+中。所以如果当前线程没有 RunLoop，则这个方法会失效。当调用 
+performSelector:onThread: 时，实际上其会创建一个 
+Timer 加到对应的线程去，同样的，如果对应线程没有 RunLoop 
+该方法也会失效。
+CADisplayLink 是一个和屏幕刷新率（每秒刷新60次）一致的定
+时器（但实际实现原理更复杂，和 NSTimer 并不一样，其内部实
+际是操作了一个 Source）。如果在两次屏幕刷新之间执行了一个
+长任务，那其中就会有一帧被跳过去，造成界面卡顿的感觉。
+</code></pre>
+<h2 id="动画和RunLoop"><a href="#动画和RunLoop" class="headerlink" title="动画和RunLoop"></a>动画和RunLoop</h2><pre><code>CAAnimation是由RunloopObserver触发回调来重绘
+实际上这些背后关联的Layer图层才是真正用来在屏幕上显示和做动
+画，UIView仅仅是对它的一个封装，提供了一些iOS类似于处理触
+摸的具体功能，以及Core Animation底层方法的高级接口。
+UIView 的 Layer 在系统内部，被维护着三份同样的树形数据结
+构，分别是：
+1.图层树（这里是代码可以操纵的，设置属性的最终值会立刻在这里更新）； 
+2.呈现树（是一个中间层，系统就在这一层上更改属性，进行各种渲
+染操作。比如一个动画是更改alpha值从0到1，那么在逻辑树上此
+属性会被立刻更新为最终属性1，而在动画树上会根据设置的动画时
+间从0逐步变化到1）；
+3.渲染树（其属性值就是当前正被显示在屏幕上的属性值）；
+隐式动画是系统框架自动完成的。Core Animation在每个
+runloop周期中自动开始一次新的事务，即使你不显式的用
+[CATransaction begin]开始一次事务，任何在一次runloop
+循环中属性的改变都会被集中起来，然后做一次0.25秒的动画。
+Core Animation提供的显式动画类型，既可以直接对退曾属性做
+动画，也可以覆盖默认的图层行为。
+我们经常使用的CABasicAnimation，
+CAKeyframeAnimation，CATransitionAnimation，
+CAAnimationGroup等都是显式动画类型，这些CAAnimation类
+型可以直接提交到CALayer上。
+</code></pre>
 
       
     </div>
@@ -615,7 +1979,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/M_Swift83%E5%91%A8%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift99Block/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -629,7 +1993,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/05/10/M_Swift83%E5%91%A8%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">周总结</a>
+            <a href="/2018/08/14/M_Swift99Block/" class="post-title-link" itemprop="url">Block理解</a>
         </h2>
 
         <div class="post-meta">
@@ -639,7 +2003,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-05-10 11:01:18" itemprop="dateCreated datePublished" datetime="2018-05-10T11:01:18+08:00">2018-05-10</time>
+              <time title="创建时间：2018-08-14 19:47:23" itemprop="dateCreated datePublished" datetime="2018-08-14T19:47:23+08:00">2018-08-14</time>
             </span>
 
           
@@ -653,7 +2017,138 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>一转眼，一周又过去了，2018年到目前来讲都是工作在一个闲置的状态，确实有点让人伤心，除了玩会游戏，真的不知道自己还能干啥，哈哈<br>想想这周都干了些什么吧，领导让我们写一下周报，我想了一下，哈哈，还是有很多东西要写了，一下子写了很多，真的担心这样下去，不知道下周会写点什么，担心真的是有的，但是也没有办法，至少目前来讲就是这样了，我也无能为力了，哈哈<br>就当我在这里闲扯吧，真的是这样，没有什么目的，这样的一生真的有意思吗？而且我现在越来越害怕自己的身体了，我觉得现在特别的懒惰，真的是，不愿意运动，自从健身卡停掉之后，我已经很久没有运动过了，真的是快要废掉了，我想我该怎么办？再办一张健身卡？真的是有点纠结，早知道那个时候就应该答应健身房的咨询的，去问问多少钱的，真的是能够好好的活动下是很美好的事情，现在好了，天天在家里闲着，上班，下班就玩游戏，看电视，这样的生活简直是折磨。<br>我想我不能再这样下去了，再这样下去我就会废掉的，我想都可怕，真的是为什么今年这么巧，就把暖气停掉了，现在弄的我天天在被窝里呆着，根本就不敢出门，太冷了，连坐在屋里的时间都很少。<br>现在想的都是下班，真的是太煎熬了，我想我真的是快要废掉了，我真的是很努力，但是我想我还是不够，我远远都不够的，真的是，想的多做的少，现在连想都不愿意想了，好难。<br>北京的生活让人越来越不向往了，真的我反倒是向往那些在家里三线城市工作的人，还能有点清闲，真的是虽然工资少了点，但是想想都觉的心情舒畅，毕竟能够比在北京有更多的思想，在这里，就只能是天天的敲代码，没有一点事情可做。<br>想想都可怕，真的是我想如果继续这样当程序员的话，我可能真的会废掉，不至于谢顶啥的，但是至少应该是会很伤身体，我这真的是可怕了，太可怕了，天天都在想这样的事情，真的是，你知道会是什么情况，真的是有点杞人忧天了，但是真的不是，事实其实就在眼前，我们的身体只有自己能清楚，真的是。<br>说了那么多，真的是在废话，也许只有这样才能让时间过的不那么的平凡，不那么的无聊。哈哈，也许我想我永远都不会成功，也许我将碌碌无为，但是我们终将回归大地，生不带来死不带去，我想只要我创造了，也就值了。<br>对于运动，我想我还是要多准备一下的，我想我需要对自己更负责一些，至少现在我应该学着出去走走。多活动一下总是好的。</p>
+          <pre><code>本质：带有自动变量值的匿名函数
+block的实质是一个oc对象，它有自己的isa指针、invoke变
+量 ，是NSObject的子类，可以接收消息
+1._NSConcreteGlobalBlock,全局的静态block，不会访问外部的变量。
+就是说如果你的block没有调用其他 的外部变量，那你的block类型就是这
+种。例如：你仅仅在你的block里面写一个NSLog(&quot;hello world&quot;);
+2._NSConcreteStackBlock 保存在栈中的 block，当函数返回时会被销
+毁。这个block就是你声明的时候不用copy修饰，并且你的block访问了外部
+变量。
+3._NSConcreteMallocBlock 保存在堆中的 block，当引用计数为 0 时
+会被销毁。
+</code></pre>
+<h2 id="写法："><a href="#写法：" class="headerlink" title="写法："></a>写法：</h2><pre><code>void (^block)(void) = ^&#123;
+    NSLog(@&quot;无参无返回值&quot;);
+&#125;;
+void (^xiaoming1aa)() = ^(NSString *c)&#123;
+    NSLog(@&quot;带参数&quot;);
+&#125;;
+NSString *(^xiaming2)() = ^NSString *(NSString *dd) &#123;
+    return @&quot;带参数与返回&quot;;
+&#125;;
+@property (nonatomic, copy)
+void(^myBlock)();//无参无返回值
+@property (nonatomic, copy)
+void(^myBlock1)(NSString *);//带参数
+@property (nonatomic, copy)
+NSString *(^myBlock2)(NSString *);//带参数与返回
+</code></pre>
+<h2 id="block为什么不能修改外部变量"><a href="#block为什么不能修改外部变量" class="headerlink" title="block为什么不能修改外部变量"></a>block为什么不能修改外部变量</h2><pre><code> 默认情况下，在block中访问的外部变量是复制过去的，
+ 复制过去的是值，即：写操作不对原变量生效。
+</code></pre>
+<h2 id="block都做了什么？"><a href="#block都做了什么？" class="headerlink" title="__block都做了什么？"></a>__block都做了什么？</h2><pre><code>Block不允许修改外部变量的值，这里所说的外部变量的值，
+指的是栈中指针的内存地址。__block 所起到的作用就是
+只要观察到该变量被 block 所持有，就将“外部变量”
+在栈中的内存地址放到了堆中。
+进而在block内部也可以修改外部变量的值
+这也保证了原对象不被销毁，但与此同时，也会导致循环引用问题
+</code></pre>
+<h2 id="block为什么为引起循环引用"><a href="#block为什么为引起循环引用" class="headerlink" title="block为什么为引起循环引用"></a>block为什么为引起循环引用</h2><pre><code>因为block在拷贝到堆上的时候，会retain其引用的外部变量，
+那么如果block中如果引用了他的宿主对象，
+那很有可能引起循环引用
+循环引用发生的条件就是持有这个block的对象，
+被block里边加入的对象持有
+</code></pre>
+<h2 id="如何解决循环引用"><a href="#如何解决循环引用" class="headerlink" title="如何解决循环引用"></a>如何解决循环引用</h2><pre><code>使用__weak修饰self，使其在block中不被持有，打破循环引用。
+__weak typeof(self) weakSelf = self;
+</code></pre>
+<h2 id="Block为什么要用copy修饰"><a href="#Block为什么要用copy修饰" class="headerlink" title="Block为什么要用copy修饰"></a>Block为什么要用copy修饰</h2><pre><code>针对block的三种类型，
+也就是copy修饰的block。他的生命 周期就是随着对象的销毁而结束的。只要
+对象不销毁，我们就可以调用的到在堆中的block。这就是为什么我们要用
+copy来修饰block。因为不用copy修饰的访问外部变量的block，只在他所在
+的函数被调用的那一瞬间可以使用。之后就消失了。
+</code></pre>
+<h2 id="block执行过程中对象被释放"><a href="#block执行过程中对象被释放" class="headerlink" title="block执行过程中对象被释放"></a>block执行过程中对象被释放</h2><pre><code>在block执行开始时self对象还未被释放，而执行过程中，
+self被释放了，此时访问self时，就会发生错误。
+对于这种场景，应该在block中对 对象使用__strong修饰，
+使得在block期间对 对象持有，block执行结束后，解除其持有。
+注：此方法只能保证在block执行期间对象不被释放，
+如果对象在block执行执行之前已经被释放了，该方法也无效。
+</code></pre>
+<h2 id="什么情况下不回发生循环引用"><a href="#什么情况下不回发生循环引用" class="headerlink" title="什么情况下不回发生循环引用"></a>什么情况下不回发生循环引用</h2><pre><code>通用情况:在block本身不被self持有,而被别的对象持有,
+同时不产生循环引用的时候,就不需要使用weakself了
+UIView动画block，AFN的block
+UIView的调用的是类方法，当前控制器不可能强引用一个类 ，
+所以循环无法形成 --&gt; 动画block不会造成循环引用的原因。
+</code></pre>
+<h2 id="函数和block区别"><a href="#函数和block区别" class="headerlink" title="函数和block区别"></a>函数和block区别</h2><pre><code>函数里面只能访问全局变量，而Block代码块不光能访问全局变量，
+还拥有当前栈内存和堆内存变量的可读性
+（当然通过__block访问指示符修饰的局部变量还可以在block代码块里面进行修改）。
+从内存的角度看，函数指针只不过是指向代码区的一段可执行代码，
+而block实际上是程序运行过程中在栈内存动态创建的对象，
+可以向其发送copy消息将block对象拷贝到堆内存，
+以延长其生命周期。
+</code></pre>
+<h2 id="如何区分block位置"><a href="#如何区分block位置" class="headerlink" title="如何区分block位置"></a>如何区分block位置</h2><pre><code>要点一:
+    当block在函数内部，
+    且定义的时候就使用了函数内部的变量，
+    那么这个block是存储在栈上的。 
+要点二:
+    当block定义在函数体外面，
+    或者定义在函数体内部且当时函数执行的时候，
+    block体中并没有需要使用函数内部的局部变量时，
+    也就是block在函数执行的时候只是静静地待在一边定义了一下
+    而不使用函数体的内容，
+    那么block将会被编译器存储为全局block。 
+要点三:
+    全局block存储在堆中，
+    对全局block使用copy操作会返回原函数指针；
+    而对栈中的block使用copy操作，
+    会产生两个不同的block地址，
+    也就是两个匿名函数的入口地址。 
+要点四:
+    ARC机制优化会将stack的block,
+    转为heap的block进行调用。
+</code></pre>
+<h2 id="delegate为什么用weak-它和block区别"><a href="#delegate为什么用weak-它和block区别" class="headerlink" title="delegate为什么用weak 它和block区别"></a>delegate为什么用weak 它和block区别</h2><pre><code>weak是为了解决循环引用的问题
+代理和block的共同特性是回调机制，不同的是，代理的方法比较多，比较分
+散，使用block的代码比较集中统一；代理运行成本比较低，一对一的关系，
+block需要将使用的数据从栈内存拷贝到堆内存中，对象的话就是加计数，代理
+制是保存一个对象指针，直接回调；block写法简单，注重传输，但是需要注意
+循环引用
+总结：公共接口，方法比较多的时候用delegate进行解耦，异步和简单的回调用block
+</code></pre>
+<h2 id="在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别"><a href="#在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别" class="headerlink" title="在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别"></a>在block中对weakSelf再进行—strong的操作，然后以百万级的数量去调用某个方法，与直接用weakSelf去调用有什么区别</h2><pre><code>在block中调用self会引起循环引用，但是在block中需要对
+weakSelf进行strong,保证代码在执行到block中，self不会被
+释放，当block执行完后，会自动释放该strongSelf
+进行大量调用会引起内存问题
+</code></pre>
+<h2 id="block嵌套block还用——strong两遍吗"><a href="#block嵌套block还用——strong两遍吗" class="headerlink" title="block嵌套block还用——strong两遍吗"></a>block嵌套block还用——strong两遍吗</h2><pre><code>只要在最后把外层的block执行一次, 内层的block才会真正地被
+加载进内存, 循环引用问题再次出现. 出现循环引用的原因其实也
+不难理解, 因为strongPerson说白了也是一个强引用, 它与一般
+强引用的区别在于, 它只会在被定义的block中对对象进行强引用, 
+在block过后就会把对象释放掉, 所以在第2层block中继续用
+strongPerson出现循环引用跟一般造成循环引用的原因其实是一
+样的, 解决方法也是如出一辙, 而且可以继续嵌套下去, 此处的警
+告同样是结果没被使用:
+加上修饰符strong时，当别处把变量释放掉，但调用该变量的
+block如果仍然没有执行结束，那么系统就会等待block执行完成后
+再释放，对该变量在block中的使用起到了保护作用。当block执行
+结束后会自动释放掉。
+</code></pre>
+<h2 id="block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在"><a href="#block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在" class="headerlink" title="block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在"></a>block捕获进去静态变量，局部变量，全局变量以后，在block内部以什么形式存在</h2><pre><code>在执行Block语法的时候，Block语法表达式所使用的自动变量的值
+是被保存进了Block的结构体实例中，也就是Block自身中
+Block仅仅捕获了val的值，并没有捕获val的内存地址。
+</code></pre>
+<h2 id="block-和-delegate使用优先级"><a href="#block-和-delegate使用优先级" class="headerlink" title="block 和 delegate使用优先级"></a>block 和 delegate使用优先级</h2><pre><code>block 和 delegate 都可以通知外面。block 更轻型，使用更
+简单，能够直接访问上下文，这样类中不需要存储临时数据，使用 
+block 的代码通常会在同一个地方，这样读代码也连贯。
+delegate 更重一些，需要实现接口，它的方法分离开来，很多时
+候需要存储一些临时数据，另外相关的代码会被分离到各处，没有 
+block 好读。
+</code></pre>
 
       
     </div>
@@ -673,7 +2168,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/05/10/N_Android9%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift103%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94%E9%A1%BA%E5%BA%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -687,7 +2182,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/05/10/N_Android9%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/" class="post-title-link" itemprop="url">Android开发代码规范</a>
+            <a href="/2018/08/14/M_Swift103%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94%E9%A1%BA%E5%BA%8F/" class="post-title-link" itemprop="url">iOS事件响应顺序</a>
         </h2>
 
         <div class="post-meta">
@@ -697,7 +2192,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-05-10 11:00:29" itemprop="dateCreated datePublished" datetime="2018-05-10T11:00:29+08:00">2018-05-10</time>
+              <time title="创建时间：2018-08-14 19:44:31" itemprop="dateCreated datePublished" datetime="2018-08-14T19:44:31+08:00">2018-08-14</time>
             </span>
 
           
@@ -711,7 +2206,111 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>最近公司安卓项目比较紧，所以让我去帮忙写一点安卓，我也有幸能写一下安卓，感觉对我有很大的帮助，这种机会是不能少的，我赶紧学习了一番。现在需求差不多了，感觉写的不是太好，但是也不至于太差，现在是时候总结一下了。<br>1.类中对象以m开头，后面跟对象属性，然后是对象名称。<br>2.类中方法以set，get为主，所有m对象无法直接访问，都是通过set，get方法间接访问。<br>3.selector，这个是在Android中发现的一个比较有意思的东西，真的特别的好，非常实用，可以很好的更改UI，让一个控件显示很多不同的风格。<br>4.安卓中很少写宽高，很少直接写，都是间接写，或者用padding撑起来。<br>5.安卓中的生命周期还是需要了解的，安卓中所有对象都是围绕着activity来的</p>
+          <pre><code>只有继承了UIResponder的类才能响应touch事件，
+响应顺序，优先是最上层的view响应事件，
+如果该view有视图控制器的话会是下一个响应者，否者就是该
+view的父视图，这样至上而下传递事件。直到单例UIWindow
+对象，最后是单例UIApplication对象以终止，UIApplication
+的下一个响应者是nil，已结束整个响应循环。
+事件在传递过程中视图可以决定是否需要对该事件进行响应。
+</code></pre>
+<h2 id="1-事件的产生"><a href="#1-事件的产生" class="headerlink" title="1. 事件的产生"></a>1. 事件的产生</h2><pre><code>发生事件后，系统会将该事件加入到一个由UIApplication
+管理的事件队列中。
+UIApplication会从事件队列中取出最前面的事件，
+并将该事件分发下去处理。通常，先发送事件给应用程序
+的主窗口（keywindow）。
+keywindow会在视图层次结构中找到一个最合适的视图来处理事件。
+</code></pre>
+<h2 id="事件分发（Event-Delivery）"><a href="#事件分发（Event-Delivery）" class="headerlink" title="事件分发（Event Delivery）"></a>事件分发（Event Delivery）</h2><pre><code>第一响应者（First responder）指的是当前接受触摸的响应者
+对象（通常是一个UIView对象），即表示当前该对象正在与用户
+交互，它是响应者链的开端。整个响应者链和事件分发的使命都是
+找出第一响应者。
+
+UIWindow对象以消息的形式将事件发送给第一响应者，
+使其有机会首先处理事件。如果第一响应者没有进行处理，
+系统就将事件（通过消息）传递给响应者链中的下一个响应者
+，看看它是否可以进行处理。
+事件的传递先从父控件传递到子控件（UIApplication
+-&gt;window-&gt;寻找处理事件最合适的view）。
+如果父view不能接受触摸事件，那么子view也不能接收到
+触摸事件。
+</code></pre>
+<h3 id="如何找到最合适的view来处理事件"><a href="#如何找到最合适的view来处理事件" class="headerlink" title="如何找到最合适的view来处理事件"></a>如何找到最合适的view来处理事件</h3><pre><code>iOS系统检测到手指触摸(Touch)操作时会将其打包成一
+个UIEvent对象，并放入当前活动Application的事件队列，
+单例的UIApplication会从事件队列中取出触摸事件并传递给单
+例的UIWindow来处理，UIWindow对象首先会使用
+hitTest:withEvent:方法寻找此次Touch操作初始点所在的视图
+(View)，即需要将触摸事件传递给其处理的视图，这个过程称之为
+hit-test view。
+UIWindow实例对象会首先在它的内容视图上调用
+hitTest:withEvent:，此方法会在其视图层级结构中的每个视图
+上调用pointInside:withEvent:（该方法用来判断点击事件发
+生的位置是否处于当前视图范围内，以确定用户是不是点击了当前视
+图），如果pointInside:withEvent:返回YES，则继续逐级调
+用，直到找到touch操作发生的位置，这个视图也就是要找的hit-
+test view。
+</code></pre>
+<h3 id="hitTest-withEvent-方法的处理流程如下"><a href="#hitTest-withEvent-方法的处理流程如下" class="headerlink" title="hitTest:withEvent:方法的处理流程如下:"></a>hitTest:withEvent:方法的处理流程如下:</h3><pre><code>view会调用hitTest:withEvent:方法，
+hitTest:withEvent:方法底层会调用
+pointInside:withEvent:方法判断触摸点是不是在这个view的
+坐标系上。如果在坐标系上，会分发事件给这个view的子view。然
+后每个字view重复以上步骤，直至最底层的一个合适的view。
+如所有子视图都返回非，则hitTest:withEvent:方法返回自身(self)。
+</code></pre>
+<h2 id="事件的响应"><a href="#事件的响应" class="headerlink" title="事件的响应"></a>事件的响应</h2><pre><code>事件响应会先从底层最合适的view开始，然后随着上一步找到的链
+一层一层响应touch事件。默认touch事件会传递给上一层。如果到
+了viewcontroller的view，就会传递给viewcontroller。如
+果viewcontroller不能处理，就会传递给UIWindow。如果
+UIWindow无法处理，就会传递给UIApplication。如果
+UIApplication无法处理，就会传递给
+UIApplicationDelegate。如果UIApplicationDelegate不
+能处理，则会丢弃该事件。
+</code></pre>
+<h2 id="如果一个button有一部分超出父控件的范围了，这部分无法响应点击"><a href="#如果一个button有一部分超出父控件的范围了，这部分无法响应点击" class="headerlink" title="如果一个button有一部分超出父控件的范围了，这部分无法响应点击"></a>如果一个button有一部分超出父控件的范围了，这部分无法响应点击</h2><pre><code>当我去点击View-C的时候，hit-Testing实际上是这样检测的
+1.首先，视图会先从View-A开始检查，发现触摸点在View-A，
+所以检查View-A的子视图View-B。
+2.发现触摸点在View-B内，好棒！看看View-B内的子
+视图View-C。
+3.发现触摸点在View-C内，但View-C没有子视图了，
+所以View-C是此次触摸事件的hit-TestView了。
+那么UIView中其实提供了两个方法来确定hit-TestView
+1.- (UIView *)hitTest:(CGPoint)point 
+withEvent:(UIEvent *)event;
+2.- (BOOL)pointInside:(CGPoint)point 
+withEvent:(UIEvent *)event;
+//这个就是我们上面重写的方法
+注意其实在每次递归去调用hitTest:(CGPoint)point
+withEvent:(UIEvent *)event之前，都会调用
+pointInside:withEvent:来确定该触摸点是否在该View内。
+所以当我们重写pointInside:(CGPoint)point 
+withEvent:(UIEvent *)event后，其实我们的点击后调
+用hitTest来递归的找hit-TestView的区域从这样：
+</code></pre>
+<h2 id="去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）"><a href="#去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）" class="headerlink" title="去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）"></a>去点手机屏幕，runloop都干了什么，怎么去通知到响应事件的（runloop的唤醒和休眠，调用NSNotification底层的东西）</h2><pre><code>Core Foundation和Foundation为Mach端口提供了高级API。
+在内核基础上封装的CFMachPort / NSMachPort可以用做
+runloop源
+而这个源，正是我们经常在调用栈里看到的source0与source1
+苹果注册了一个 Source1 (基于 mach port 的) 用来接收系统
+事件，其回调函数为 
+__IOHIDEventSystemClientQueueCallback()
+当我们触发了事件（触摸/锁屏/摇晃等）后
+由IOKit.framework生成一个 IOHIDEvent事件
+而IOKit是苹果的硬件驱动框架
+由它进行底层接口的抽象封装与系统进行交互传递硬件感应的事件
+它专门处理用户交互设备，由IOHIDServices和IOHIDDisplays
+两部分组成
+其中IOHIDServices是专门处理用户交互的，它会将事件封装成
+IOHIDEvents对象，详细请看这里
+然后这些事件又由SpringBoard接收，它只接收收按键(锁屏/静音
+等)，触摸，加速，接近传感器等几种 Event
+接着用mach port转发给需要的App进程
+随后苹果注册的那个 Source1 就会触发回调，并调用 
+_UIApplicationHandleEventQueue()进行应用内部的分发
+_UIApplicationHandleEventQueue()把IOHIDEvent处理包
+装成UIEvent进行处理分发，我们平时的UIGesture/处理屏幕旋
+转/发送给 UIWindow/UIButton 点击、touchesBegin/
+Move/End/Cancel这些事件，都是在这个回调中完成
+</code></pre>
 
       
     </div>
@@ -730,7 +2329,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/19/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="extend next" rel="next" href="/page/21/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/19/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="extend next" rel="next" href="/page/21/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -796,7 +2395,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">338</span>
+          <span class="site-state-item-count">366</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
