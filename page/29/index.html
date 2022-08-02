@@ -148,84 +148,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/07/31/M_Swift28php%E6%8E%A5%E5%8F%A3%E5%BC%80%E5%8F%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/07/31/M_Swift28php%E6%8E%A5%E5%8F%A3%E5%BC%80%E5%8F%91/" class="post-title-link" itemprop="url">使用CodeIgniter开发接口</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-07-31 18:18:39" itemprop="dateCreated datePublished" datetime="2017-07-31T18:18:39+08:00">2017-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>今天研究了一下php接口开发，想法是，用LMAP的方式，写服务端，提供客户端使用的接口，今天进行简单的尝试，希望对以后有帮助<br>1.apach启动<br>sudo apachectl start;<br>sudo apachectl restart;</p>
-<p>2.遇到问题：没有权限，修改httpd.conf。<br>百度 添加sudo sudo来临时提供管理员权限，比如使用命令“sudo vi httpd.conf”打开编辑文件。</p>
-<p>3.用php写json，返回json数据，写了半天，<br>看来还是不会写，希望慢慢的能有进步吧。</p>
-<p>4.mysql 启动命令sudo /usr/local/mysql/support-files/mysql.server start (stop)</p>
-<p>由此看来，sudo命令是很有用的，当我们执行某种操作系统提示诸如“operation not permitted”等权限不足信息时，我们很多时候都可以在命令前面加上sudo来解决权限不足问题。比如当我们从Linux服务器上下载某一个文件或上传某一个文件有可能提示这个，也有肯能直接上传不成功但是什么都没提示；这时你就应该想想是不是账号的权限不足，加个sudo试试。</p>
-<p>5.mysql连接数据库出现错误<br>mysqli::real_connect(): (HY000/2002): No such file or directory<br>将’localhost’修改为’127.0.0.1’之后链接正常</p>
-<p>6.php输出数组<br>foreach</p>
-<p>7.至此，LMAP的组合已经成立，下一步，用php操纵数据库，实现增删改查操作。<br>并输出正确的json，应用与移动端。</p>
-<blockquote>
-<p>insert<br>public function insert($name,$password) {<br>$this-&gt;load-&gt;database();<br>// 查找数据<br>$sql = “SELECT name FROM user where name = ?”;<br>$user = $this-&gt;db-&gt;query($sql,$name);<br>$user = $user-&gt;result_array();//再查询一次数据库<br>// 如果数据不存在，插入数据<br>if (count($user) == 0) {       //数量为0，即表示用户不存在<br>$sql1 = ‘INSERT INTO user (name, password) VALUES (?,?)’;<br>$this-&gt;db-&gt;query($sql1,array($name,$password));//插入<br>$id = $this-&gt;db-&gt;insert_id();//获取插入的行号，即id<br>$user = $this-&gt;db-&gt;query($sql,$name);<br>if (count($user) != 0) {//如果有数据，即表明插入成功<br>$viewArray = array(“status” =&gt; “ok”,”data”=&gt; $user-&gt;result_array());<br>exit(json_encode($viewArray));<br>}<br>}else{ // 插入失败，数据库已存在数据<br>$viewArray = array(“status” =&gt; “error”,”errorMsg”=&gt; “user exist”);<br>exit(json_encode($viewArray));<br>}</p>
-</blockquote>
-<blockquote>
-<p>delete<br>public function delete($name) {<br>$this-&gt;load-&gt;database();<br>//查找数据<br>$sql = “SELECT name FROM user where name = ?”;<br>$res = $this-&gt;db-&gt;query($sql,$name);<br>$res = $res-&gt;result_array();<br>if (count($res) != 0 ) {<br>// 删除数据<br>$sql = ‘DELETE FROM user WHERE name = ?’;<br>$this-&gt;db-&gt;query($sql,$name);<br>$viewArray = array(“status” =&gt; “ok”);<br>exit(json_encode($viewArray));<br>}else{<br>// 数据不存在<br>$viewArray = array(“status” =&gt; “error”,”errorMsg”=&gt; “user not exist”);<br>exit(json_encode($viewArray));<br>}</p>
-</blockquote>
-<p>}</p>
-<blockquote>
-<p>update<br>public function update($id,$password) {<br>$this-&gt;load-&gt;database();<br>//查找数据<br>$sql = “SELECT id FROM user where id = ?”;<br>$res = $this-&gt;db-&gt;query($sql,$id);<br>$res = $res-&gt;result_array();<br>if (count($res) != 0 ) {<br>// 更新数据<br>$sql = “UPDATE user SET password = ? WHERE id = ‘$id’”;<br>$res = $this-&gt;db-&gt;query($sql,$password);<br>if ($res) {<br>$viewArray = array(“status” =&gt; “ok”);<br>exit(json_encode($viewArray));<br>}<br>}else{<br>// 数据不存在<br>$viewArray = array(“status” =&gt; “error”,”errorMsg”=&gt; “user not exist”);<br>exit(json_encode($viewArray));<br>}<br>}</p>
-</blockquote>
-<blockquote>
-<p>select<br>public function select()<br>{<br>$this-&gt;load-&gt;database();<br>$query=$this-&gt;db-&gt;query(“select * from user”);<br>$array = $query-&gt;result();<br>return $array;<br>}</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2017/07/25/M_Swift24%E6%90%9C%E7%B4%A2framework/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -516,7 +438,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/N_Android6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E7%B1%BB%E5%8F%8A%E6%96%B9%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/E_Android6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E7%B1%BB%E5%8F%8A%E6%96%B9%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -530,7 +452,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2017/04/14/N_Android6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E7%B1%BB%E5%8F%8A%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">安卓学习中用到的类及方法</a>
+            <a href="/2017/04/14/E_Android6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E7%B1%BB%E5%8F%8A%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">安卓学习中用到的类及方法</a>
         </h2>
 
         <div class="post-meta">
@@ -620,7 +542,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/N_Android5%E5%AD%A6%E4%B9%A0%E9%98%B6%E6%AE%B52/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/E_Android5%E5%AD%A6%E4%B9%A0%E9%98%B6%E6%AE%B52/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -634,7 +556,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2017/04/14/N_Android5%E5%AD%A6%E4%B9%A0%E9%98%B6%E6%AE%B52/" class="post-title-link" itemprop="url">安卓学习项目2</a>
+            <a href="/2017/04/14/E_Android5%E5%AD%A6%E4%B9%A0%E9%98%B6%E6%AE%B52/" class="post-title-link" itemprop="url">安卓学习项目2</a>
         </h2>
 
         <div class="post-meta">
@@ -680,7 +602,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/N_Android4%E5%AD%A6%E4%B9%A0%E8%A7%A3%E7%96%91/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/E_Android4%E5%AD%A6%E4%B9%A0%E8%A7%A3%E7%96%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -694,7 +616,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2017/04/14/N_Android4%E5%AD%A6%E4%B9%A0%E8%A7%A3%E7%96%91/" class="post-title-link" itemprop="url">安卓学习解疑1</a>
+            <a href="/2017/04/14/E_Android4%E5%AD%A6%E4%B9%A0%E8%A7%A3%E7%96%91/" class="post-title-link" itemprop="url">安卓学习解疑1</a>
         </h2>
 
         <div class="post-meta">
@@ -738,7 +660,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/N_Android3%E5%AD%A6%E4%B9%A0%E9%A1%B9%E7%9B%AE1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/E_Android3%E5%AD%A6%E4%B9%A0%E9%A1%B9%E7%9B%AE1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -752,7 +674,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2017/04/14/N_Android3%E5%AD%A6%E4%B9%A0%E9%A1%B9%E7%9B%AE1/" class="post-title-link" itemprop="url">安卓学习项目1</a>
+            <a href="/2017/04/14/E_Android3%E5%AD%A6%E4%B9%A0%E9%A1%B9%E7%9B%AE1/" class="post-title-link" itemprop="url">安卓学习项目1</a>
         </h2>
 
         <div class="post-meta">
@@ -781,6 +703,81 @@
 <p>项目介绍<br>1.<a target="_blank" rel="noopener" href="https://github.com/mqq123456/andioidTest">andioidTest，一个简单的安卓介绍 </a><br>2.<a target="_blank" rel="noopener" href="https://github.com/mqq123456/ActivityTest">ActivityTest，关于安卓活动的介绍 </a><br>3.[ActivityLifeCycleTest，活动的生命周期介绍] (<a target="_blank" rel="noopener" href="https://github.com/mqq123456/ActivityLifeCycleTest">https://github.com/mqq123456/ActivityLifeCycleTest</a>)<br>4.<a target="_blank" rel="noopener" href="https://github.com/mqq123456/UITest">UITest，安卓UI控件和布局的介绍 </a><br>5.[FragmentTest，安卓碎片介绍] (<a target="_blank" rel="noopener" href="https://github.com/mqq123456/FragmentTest">https://github.com/mqq123456/FragmentTest</a>)<br>6.[FragmentBestPractice，安卓碎片适配小应用，（暂时存在问题）] (<a target="_blank" rel="noopener" href="https://github.com/mqq123456/FragmentBestPractice">https://github.com/mqq123456/FragmentBestPractice</a>)</p>
 <hr>
 <p>我会陆续将这些东西上传svn，作为自己学习成果的一部分，虽然没有什么实际价值，但是留个纪念也总是好的，毕竟，那些青春（时光）没有荒废，谢谢。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/04/14/E_Android1%E5%AE%89%E5%8D%93%E7%BA%BF%E6%80%A7%E5%B8%83%E5%B1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/04/14/E_Android1%E5%AE%89%E5%8D%93%E7%BA%BF%E6%80%A7%E5%B8%83%E5%B1%80/" class="post-title-link" itemprop="url">Android线性布局</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-04-14 15:58:44" itemprop="dateCreated datePublished" datetime="2017-04-14T15:58:44+08:00">2017-04-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li>什么是线性布局<br>通俗的说感觉起来和线有关，参照线的特点，有么是横向的，要么是竖向的。<br>LinearLayout是线性布局控件，它包含的子控件将以横向或竖向的方式排列（通过android:orientation属性来控制），按照相对位置来排列所有的widgets或者其他的containers,超过边界时，某些控件将缺失或消失 </li>
+<li>线性布局常用基本属性 </li>
+</ol>
+<ul>
+<li>android:id 这是布局的唯一标识ID </li>
+<li>android:orientation 他表示的是这个线性布局是采用横向还是纵向布局，通常来说只有两个值：vertical，horizontal</li>
+<li>android:layout_height 表示当前线性布局的高度</li>
+<li>android:layout_width  表示当前线性布局的宽度</li>
+<li>android:gravity 表示所有包含在当前布局中的所有控件采用某种方式对齐（默认左对齐）</li>
+<li>android:layout_gravity 表示当前线性布局相对于父元素的对齐方式 </li>
+<li>android:background 表示当前线性布局的背景颜色 </li>
+<li>android:layout_margin: 表示外边距，通常表示本控件与父控件四面之间的距离 </li>
+<li>android:padding 表示内边距，通常表示是本元素所有子元素的与父元素边缘的距离，设置在父元素上，比如文字与文本控件的所有距离 </li>
+<li>android:weightSum 权重的总比例 </li>
+<li>android:layout_weight 子元素对未占用空间水平或垂直分布的权重</li>
+<li>android:baselineAligned 该控件只对能显示text的子控件有效</li>
+</ul>
 
       
     </div>
@@ -865,7 +862,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">366</span>
+          <span class="site-state-item-count">365</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

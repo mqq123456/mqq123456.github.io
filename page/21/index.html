@@ -148,110 +148,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift100KVC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/08/14/M_Swift100KVC/" class="post-title-link" itemprop="url">KVC</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-08-14 19:39:46" itemprop="dateCreated datePublished" datetime="2018-08-14T19:39:46+08:00">2018-08-14</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <pre><code>它提供了一种使用字符串而不是访问器方法去访问一个对象实例变量的机制。
-键值编码必需的方法在非正式协议NSKeyValueCoding中声明，
-默认在NSObject中实现。
-</code></pre>
-<h2 id="相关方法"><a href="#相关方法" class="headerlink" title="相关方法"></a>相关方法</h2><pre><code>-(id)  valueForKey: (NSString *) key
-返回表示属性的键字符串所对应的值。如果不能取得值
-，则将引起接收器调用方法valueForUndefinedKey:。
--(void)setValue: (id) value  forKey: (NSString*) key
-</code></pre>
-<h2 id="访问过程"><a href="#访问过程" class="headerlink" title="访问过程"></a>访问过程</h2><pre><code>1.接收器中如果有key访问器
-（或getKey、isKey、_key、_getKey、setKey）则使用它。
-2.没有访问器时，使用接收器的类方法
-accessInstanceVariablesDirectly来查询。返回YES时，如果存在实例
-变量key（或_key、isKey、_isKey等）则返回或设置其值。使用引用计数管
-理方式时，实例变量如果为对象，则旧值会被自动释放，新值被保存并代入。
-+(BOOL)accessInstanceVariablesDirectly
-通常定义为返回YES，可以在子类中改变。该类方法返回YES时，使用键值编码
-可以访问该类的实例变量。返回NO时不可以访问。只要该方法返回YES，实例变
-量的可视属性即使有@private修饰，也可以访问。
-3.既没有访问器也没有实例变量时，将引起接收器调用方法
-valueForUndefinedKey:或setValue:forUndefinedKey:。
--(id) valueForUndefinedKey: (NSStirng *) key
-不能取得键字符串对应的值时，从方法valueForKey：中调用该方法。默认情
-况下，该方法的执行会触发NSUndefinedKeyException。不过，通过在子类
-中修改定义，就可以返回其他对象。
-- (void) setValue:(id)value forUndefinedKey:(NSString *) key
-不能设置键字符串key对应的属性值时，从方法setValue:forKey中调用该方
-法。默认情况下，该方法的执行会触发异常NSUndefinedKeyException。不
-过，通过在子类中修改定义，可以返回其他对象。
-4.   如果该返回值不是对象，则返回被适当的对象包装的值；设置值时也应先
-包装成相应的对象。
-属性为对象时，该对象还可能持有属性。这时候可以用“.”连接表示键的字符
-串，这种表示方式称为键路径。只要能找到对象，点和键多长都没有关系。
-- (id)valueForKeyPath:(NSString *) keyPath
-以点切分键路径，并使用第一个键向接收器发送valueForKey：方法。然后，
-再使用键路径的下一个键，向得到的对象发送valueForKey：方法，如此反复
-操作，返回最后获得的对象。
-- (void)setValue:(id) value forKeyPath:(NSString *) keyPath
-与valueForKeyPath：方法一样取出对象，这里只对路径中的最后一个键调用
-setValue：forKey：方法，并设定属性值为value。
-</code></pre>
-<h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><h3 id="KVC提供了验证Key对应的Value是否可用的方法："><a href="#KVC提供了验证Key对应的Value是否可用的方法：" class="headerlink" title="KVC提供了验证Key对应的Value是否可用的方法："></a>KVC提供了验证Key对应的Value是否可用的方法：</h3><pre><code>(BOOL)validateValue:(inout id *)ioValue forKey:(NSString *)inKey error:(out NSError **)outError;  
-</code></pre>
-<h3 id="KVC对数值和结构体型属性的支持"><a href="#KVC对数值和结构体型属性的支持" class="headerlink" title="KVC对数值和结构体型属性的支持"></a>KVC对数值和结构体型属性的支持</h3><h2 id="NSMutableDictionary的setObject和setValue的区别，哪一个add-nil对象会crash"><a href="#NSMutableDictionary的setObject和setValue的区别，哪一个add-nil对象会crash" class="headerlink" title="NSMutableDictionary的setObject和setValue的区别，哪一个add nil对象会crash"></a>NSMutableDictionary的setObject和setValue的区别，哪一个add nil对象会crash</h2><pre><code>1, setObject：forkey：中value是不能够为nil的，不然会报错。
-setValue：forKey：中value能够为nil，但是当value为nil的时候，会自动调用removeObject：forKey方法
-2, setValue：forKey：中key的参数只能够是NSString类型，而setObject：forKey：的可以是任何类型
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/14/M_Swift107iOS%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1932,6 +1828,149 @@ if ([value isKindOfClass:[NSArray class]]) &#123;
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/03/M_Swift91%E7%AE%97%E6%B3%95%E4%B9%8B%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/08/03/M_Swift91%E7%AE%97%E6%B3%95%E4%B9%8B%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">算法之数组操作</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-03 10:16:39" itemprop="dateCreated datePublished" datetime="2018-08-03T10:16:39+08:00">2018-08-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="数组去重"><a href="#数组去重" class="headerlink" title="数组去重"></a>数组去重</h2><pre><code>// 定义一个新数组，并存放原数组的第一个元素，然后将元素组一一和新数组的元素对比，若不同则存放在新数组中
+function unique(arr) &#123;
+    var res = [arr[0]];
+    for (var i = 0; i &lt; arr.length; i++) &#123;
+        var repeat = false;
+        for (var j = 0; j &lt; res.length; i++) &#123;
+            if (arr[i] == res[j]) &#123;
+                repeat = true;
+                break;
+            &#125;
+        &#125;
+        if (!repeat) &#123;
+            res.push(arr[i]);
+        &#125;
+    &#125;
+    return res;
+&#125;
+// 思路：每次取出原数组的元素，然后再对象中访问这个属性，如果存在就说明重复
+function unique(arr) &#123;
+    var res = [];
+    var json = &#123;&#125;;
+    for (var i = 0; i &lt; arr.length; i++) &#123;
+        if (!json[arr[i]]) &#123;
+            res.push(arr[i]);
+            json[arr[i]] = 1;
+        &#125;
+    &#125;
+    return res;
+&#125;
+// 利用下标查询
+function unique(arr) &#123;
+    var newArr = [arr[0]];
+    for (var i = 0; i &lt; arr.length; i++) &#123;
+        if (newArr.indexOf(arr[i]) == -1) &#123;
+            newArr.push(arr[i]);
+        &#125;
+    &#125;
+    return newArr;
+&#125;
+
+// 两个数组中相同的元素和不同的元素
+// 合并两数组，并删除重复元素(代码类似于数组去重，只不过都是比较两个数组)
+</code></pre>
+<h2 id="对数组进行反转"><a href="#对数组进行反转" class="headerlink" title="对数组进行反转"></a>对数组进行反转</h2><pre><code>function reverae(arr) &#123;
+    var j = arr.length - 1;
+    for (var i = 0; i &lt; arr.length; i++) &#123;
+        var temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+        j--;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="获取数组中连续的元素"><a href="#获取数组中连续的元素" class="headerlink" title="获取数组中连续的元素"></a>获取数组中连续的元素</h2><pre><code>function fn(arr)&#123;
+  var result = [],
+      i = 0;
+  result[i] = [arr[0]];
+  arr.reduce(function(prev, cur)&#123;
+    cur-prev === 1 ? result[i].push(cur) : result[++i] = [cur];
+    return cur;
+  &#125;);
+  return result;
+&#125;
+</code></pre>
+<h2 id="数组合并-先排序，再合并"><a href="#数组合并-先排序，再合并" class="headerlink" title="数组合并(先排序，再合并)"></a>数组合并(先排序，再合并)</h2><pre><code>// 合并两个有序数组
+function mergeOrder(arr1,arr2) &#123;
+    var result = arr1 +arr2;
+    var m = 0;
+    var n = 0;
+    for (var i = 0; i &lt; result.length; i++) &#123;
+        if (m == arr1.length) &#123;
+            result[i] = arr2[n++];
+        &#125;else if (n==arr2.length) &#123;
+            result[i] = arr1[m++];
+        &#125;else&#123;
+            if (arr1[m] &lt; arr2[n]) &#123;
+                result[i] = arr1[m++];
+            &#125;else&#123;
+                result[i] = arr2[n++];
+            &#125;
+        &#125;
+
+    &#125;
+    return result;
+&#125;
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -2001,7 +2040,7 @@ if ([value isKindOfClass:[NSArray class]]) &#123;
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">366</span>
+          <span class="site-state-item-count">365</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

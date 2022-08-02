@@ -148,64 +148,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/B_OC1%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/B_OC1%E7%B1%BB%E5%92%8C%E5%AF%B9%E8%B1%A1/" class="post-title-link" itemprop="url">OC 类和对象</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 21:59:39" itemprop="dateCreated datePublished" datetime="2016-07-30T21:59:39+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Objective-c是c语言的母集合，它的原意就是在原始的c语言的主体上加入面向对象的特性。<br>1、面向对象和面向过程<br>面向对象和面向过程是编程的两种思考方式。面向对象，简称OOP，它是以事物为中心，参与事件的事物是核心，完成事件只是事物的一个小任务。面向过程，简称OPP，它是以事件为中心，事件是核心，列出了完成事件的每一个步骤，一步一步完成。也就是面向对象侧重于从问题在寻找客体、客体的作用。客体间的关系即“谁”、“做什么”、“怎么做”，面向过程侧重于问题的分解即“事件怎么做”。<br>2、类和对象<br>（1）类是一组具有相同（特征）属性和行为（功能）的事物的集合（抽象）。对象就是类的具体实现。世间万物皆对象。类其实就是一种数据类型，它的变量就是对象。<br>（2）类的定义<br>在OC中，类的定义分两部分：接口部分和实现部分；<br>接口部分（interface）：声明了类与父类的名字、方法是实例变量。接口文件以.h为后缀。<br>例如 Student.h        接口文件<br>@interface Student : NSObject      //NSObject是继承的父类<br>{<br>@public  //访问修饰符<br>    //以下是实例变量的声明<br>    NSString * name;   //姓名<br>    int age;                   //年龄<br>    NSString * address;//地址<br>    NSString * hobby; //爱好<br>}<br>//是方法的声明<br>-(void) sayHi;   //打招呼的方法<br>-(void) eat;       //吃饭的方法<br>-(void) walk;    //走的的方法<br>实现部分（implementation）：包含了方法的实现，真正意义上定义了类的行为。实现文件以.m为后缀。<br>注意：<br>编译器不要求将接口文件和实现文件的代码放在不同的文件中。每一个类用一对接口/实现源文件是一个良好的习惯。一个文件中可以声明和定义多个类。<br>如果类之间没有什么关系，最好不要把不同的类放在同一个文件书写。<br>例如 //Student.m   实现文件<br>#import<br>@implementation Student<br>//以下是方法的实现<br>-(void) sayHi   //打招呼的方法<br>{<br>    NSLog(@”我是来自%@的%@，今年%d岁，喜欢%@”,address,age,name,hobby);<br>}<br>-(void) eat       //吃饭的方法<br>{<br>    NSLog(@“%@也得吃饭。”,name);<br>}<br>（3）对象的创建和使用<br>1&gt;对象的创建<br>内存分配：为对象动态的分配内存地址。<br>初始化：在内存中填上的初始值。<br>例如：Student * stu =[[Student alloc] init];<br>说明：向类发送alloc消息，就是为该类分配一块足够大内存，用于存放实例变量，同时初始化内存，填上的初始值。<br>2&gt;对象的赋值使用<br>例如：//main函数<br>#import “Student.h”<br>int main (int argc, const char * argv[])<br>{<br>    @autoreleasepool {<br>        //创建一个学生对象<br>        Student * student = [[Student alloc] init];<br>        student-&gt;name = @”孙悟空”;//为姓名赋值<br>        student-&gt;age = 500;      //为年龄赋值<br>        student-&gt;address = @”傲来国花果山”;//为地址赋值<br>        student-&gt;hobby =@”游山玩水”;//为爱好赋值<br>        //调用打招呼的方法<br>        [student sayHi];<br>    }<br>    -&gt;赋值必须实例变量的修饰符是@public。实例变量的修饰符还有@protected和@private，系统默认实例变量的类型是@protected，对于这两种类型的实例变量，我们需要调用方法为其赋值或者取值。<br>    广义上讲为实例变量赋值的方法成为设置器，取出实例变量的方法成为访问器。<br>    设置器、访问器说明：<br>    1. 设置器命名: set+首字母大写的实例变量名  如：-(void)setAge:(int)newAge<br>    2. 设置器参数不要与实例变量重名。<br>    3. 读取器:与实例变量名同名，并且返回类型与实例类型一致。<br>    缺点：<br>    实例变量越多，编写就越麻烦。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/A_C1%E7%BB%88%E7%AB%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -686,7 +628,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">366</span>
+          <span class="site-state-item-count">365</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

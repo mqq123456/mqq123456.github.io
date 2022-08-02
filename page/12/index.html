@@ -148,71 +148,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift191srs%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift191srs%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">srs学习总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:07:26" itemprop="dateModified" datetime="2021-04-12T16:07:26+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.开发直播应用，达到效果如下<br>    可以实现回放功能<br>    可以调用srs api实现当前app有多少个房间<br>    可以支持api回调视频功能，达到播放视频效果<br>    目前已经在那台电脑上跑起来本地的docker服务了<br>    然后是录制，目前测试已经可以录制了<br>    接下来就是访问了，目前的想法是访问那台电脑的地址<br>    目前直播的一些探索感觉对我还是受益匪浅的，特别是docker和srs的学习了解，算是知道了srs的一些功能，一级docker的一些使用语法，这让我很兴奋，我也在iOS和android段采用开源的代码构建了一个类似facetime的页面，能够时间两个人的交互对话，这对以后在直播及会议上可能会有很大的帮助，还有一个问题是，我如果想只是音频的对话能不能实现。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift193%E5%9C%B0%E5%9B%BE%E7%9F%A9%E9%98%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -265,6 +200,75 @@
 <h2 id="地理坐标–-gt-屏幕坐标"><a href="#地理坐标–-gt-屏幕坐标" class="headerlink" title="地理坐标–&gt;屏幕坐标"></a>地理坐标–&gt;屏幕坐标</h2><p>webMercator 平面坐标 单位：米<br>canvas 屏幕坐标 单位：pixel<br>//设置视图级别及视图中心<br>   setView(center: number[] = [0,0], zoom: number = 3) {<br>       this._center = center;<br>       this._zoom = Math.max(3, Math.min(20, zoom));<br>       //center为经纬度，转化为平面坐标<br>       const origin = this._projection.project(center as any);<br>       const bound: Bound = this._projection.bound;<br>       //已知：matrix 转换前 坐标origin，转换后坐标 即canvas的中心 [this._canvas.width / 2, this._canvas.height / 2]<br>       //求：转换矩阵<br>       //解法如下：<br>       const a = 256 * Math.pow(2, this._zoom) / (bound.xmax - bound.xmin) * bound.xscale;<br>       const d = 256 * Math.pow(2, this._zoom) / (bound.ymax - bound.ymin) * bound.yscale;<br>       const e = this._canvas.width / 2 - a * origin[0];<br>       const f = this._canvas.height / 2 - d * origin[1];<br>       this._ctx.setTransform(a , 0, 0, d, e, f);<br>       this.redraw();<br>   }</p>
 <h2 id="屏幕坐标–-gt-屏幕坐标"><a href="#屏幕坐标–-gt-屏幕坐标" class="headerlink" title="屏幕坐标–&gt;屏幕坐标"></a>屏幕坐标–&gt;屏幕坐标</h2><p>   交互表现为鼠标当前位置屏幕坐标不变，进行缩放，即x2 = x1， y2 = y1<br>   其他设定：变换前矩阵（a1,0,0,d1,e1,f1）变换矩阵（a,0,0,d,e,f）,变换后矩阵（a2,0,0,d2,e2,f2）<br>   scale通过滚轮变化计算得到，且 a= d = scale,求e，f<br>   1.将原屏幕坐标x1转成地理坐标 x0 = （x1 - e1） / a1<br>   2.地理坐标x0转成屏幕坐标x2 a2 *x0 + e2 = x2 , e2 = x2 - a2 * x0代入1式e2 = x2 - a2 * (x1 - e1) / a1<br>   3.已知scale = a2 / a1 故 e2 = x2 - scale * ( x1 - e1)<br>   4.另矩阵变换a1 *e + e1 = e2<br>   5.联立3和4 求得 e = （x2 - scale * (x1 - e1) - e1） / a1</p>
 <p>_onWheel(event) {<br>    event.preventDefault();<br>    let scale = 1;<br>    const sensitivity = 100;<br>    const delta = event.deltaY / sensitivity;<br>    if (delta &lt; 0) {<br>       if (this._zoom &gt;= 20) return;<br>       // 放大<br>       scale *= delta * -2;<br>    }<br>    else {<br>       // 缩小<br>       if (this._zoom &lt;= 3) return;<br>       scale /= delta * 2;<br>    }<br>    const zoom = Math.round(Math.log(scale));<br>    scale = Math.pow(2, zoom);<br>    this._zoom += zoom;<br>    //交互表现为 鼠标当前位置 屏幕坐标不变 进行缩放 即x2 = x1<br>    //第一种方案，坐标系不变，变坐标值<br>    //1.将原屏幕坐标 x1 转成 初始坐标 x0 = (x1 - e1) / a1  初始矩阵 (1,0,0,1,0,0)<br>    //2.初始坐标x0 转成 现屏幕坐标x2  a2 * x0 + e2 = x2    e2 = x2 - a2 * x0  代入1式 e2 = x2 - a2 * (x1 - e1) / a1<br>    //3.已知scale = a2 / a1  故 e2 = x2 - scale * (x1 - e1)<br>    //4.另矩阵变换 a1 * e + e1 = e2<br>    //5.联立3和4  求得 e = (x2 - scale * (x1 - e1) - e1) / a1<br>    const matrix = (this._ctx as any).getTransform();<br>    const a1 = matrix.a, e1 = matrix.e, x1 = event.x, x2 = x1; //放大到中心点 x2 = this._canvas.width / 2<br>    const e = (x2 - scale * (x1 - e1) - e1) / a1;<br>    const d1 = matrix.d, f1 = matrix.f, y1 = event.y, y2 = y1; //放大到中心点 y2 = this._canvas.height / 2<br>    const f = (y2 - scale * (y1 - f1) - f1) / d1;<br>    this._ctx.transform( scale, 0, 0, scale, e, f );<br>    this.redraw();<br>    }</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift195Spring%20boot%20Bean/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift195Spring%20boot%20Bean/" class="post-title-link" itemprop="url">Spring Boot Bean</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-14 15:04:01" itemprop="dateModified" datetime="2021-04-14T15:04:01+08:00">2021-04-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>使用Spring框架之后，调用者无需主动获取被依赖对象，调用者只要被动接受Spring容器为调用者的成员变量赋值即可，由此可见，使用Spring后，调用者获取被依赖对象的方式由原来的主动获取，变成了被动接受——所以Rod Johnson称之为控制反转。<br>Spring容器中的Bean</p>
+<p>对于开发者来说，开发者使用Spring框架主要是做两件事：①开发Bean；②配置Bean。对于Spring框架来说，它要做的就是根据配置文件来创建Bean实例，并调用Bean实例的方法完成“依赖注入”——这就是所谓IoC的本质。<br>如果不指定Bean的作用域，Spring默认使用singleton作用域。<br>对于一次HTTP会话，session作用域的Bean将只生成一个实例，这意味着，在同一次HTTP会话内，程序每次请求该Bean，得到的总是同一个实例。只有在Web应用中使用Spring时，该作用域才真正有效；<br>global session: 每个全局的HTTP Session对应一个Bean实例。在典型的情况下，仅在使用portlet context的时候有效，同样只在Web应用中有效。</p>
+<p>什么是DTO：<br>DTO是Data Transfer Object 的简写，既数据传输对象。DTO用于在服务器与客户端之间或服务器与服务器之间进行数据传递</p>
+<p>mybatis-plus<br>注解<br>@TableName ： 表名注解<br>@TableId ： 主键注解<br>@TableField ： 字段注解</p>
+<p>代码生成器<br>通过 AutoGenerator 可以快速生成 Entity、Mapper、Mapper XML、Service、Controller 等各个模块的代码，极大的提升了开发效率。</p>
 
       
     </div>
@@ -370,75 +374,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift195Spring%20boot%20Bean/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift195Spring%20boot%20Bean/" class="post-title-link" itemprop="url">Spring Boot Bean</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-14 15:04:01" itemprop="dateModified" datetime="2021-04-14T15:04:01+08:00">2021-04-14</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>使用Spring框架之后，调用者无需主动获取被依赖对象，调用者只要被动接受Spring容器为调用者的成员变量赋值即可，由此可见，使用Spring后，调用者获取被依赖对象的方式由原来的主动获取，变成了被动接受——所以Rod Johnson称之为控制反转。<br>Spring容器中的Bean</p>
-<p>对于开发者来说，开发者使用Spring框架主要是做两件事：①开发Bean；②配置Bean。对于Spring框架来说，它要做的就是根据配置文件来创建Bean实例，并调用Bean实例的方法完成“依赖注入”——这就是所谓IoC的本质。<br>如果不指定Bean的作用域，Spring默认使用singleton作用域。<br>对于一次HTTP会话，session作用域的Bean将只生成一个实例，这意味着，在同一次HTTP会话内，程序每次请求该Bean，得到的总是同一个实例。只有在Web应用中使用Spring时，该作用域才真正有效；<br>global session: 每个全局的HTTP Session对应一个Bean实例。在典型的情况下，仅在使用portlet context的时候有效，同样只在Web应用中有效。</p>
-<p>什么是DTO：<br>DTO是Data Transfer Object 的简写，既数据传输对象。DTO用于在服务器与客户端之间或服务器与服务器之间进行数据传递</p>
-<p>mybatis-plus<br>注解<br>@TableName ： 表名注解<br>@TableId ： 主键注解<br>@TableField ： 字段注解</p>
-<p>代码生成器<br>通过 AutoGenerator 可以快速生成 Entity、Mapper、Mapper XML、Service、Controller 等各个模块的代码，极大的提升了开发效率。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift196%20Vue3%20TypeScript%E5%AE%9E%E8%B7%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -487,6 +422,76 @@
           <p>Vue3现在已经出来了，感觉用的还是不多，但是我们却是需要拥抱这种变化，特别是TypeScript得到了非常大的使用的情况下，未来可以想象TypeScript在前端将会出现越来越多的使用，现在就让我们走进Vue3，走进TypeScript吧<br>之前也是研究了一段时间的Vue3的变化，感觉却是跟vue2变化非常明显，如果要是一个vue2的项目转换成vue3，我感觉我劝你还是重写吧，特别是组合式api的引入，这让之前的vue的js写法直接废弃了，当然特别是ref、reactive的出现，让我感觉反而比之前的代码还要麻烦了，还要return出去，还要考虑解包。这让我感觉很不方便。<br>今天我又创建了一个vue的项目，准备来仔细研磨一下vue和typeScript，好吧，一上来就让我懵了，原来的defineComponent不负存在，变成了一个继承Vue的一个类，还有就是出现了@Options这种东西，让我好不适应。<br>更让我感到奇怪的是，我尝试写setup函数，竟然没有任何作用，我想vue3的这些特性呢？？？？真是见鬼了。当我百度半天后我才明白，vue3的特性js部分变化其实在对象这方面经过封装后是没有多少变化的，原来是什么样子还是什么样子的，这让我有点喜欢了，我们可以直接用看待java对象的形式，看待一个vue3的TypeScript代码。<br>你定义变量，其实就有ref、reactive类型<br>如：<br>data: any = {<br>    title : “title”,<br>    left : “left”,<br>  }<br>  console.log(isReactive(this.data),this.data);<br>  // true Proxy {title: “title”, left: “left”}<br>  但是ref让我很纠结，打印出来的始终是false<br>  public test = ref(2);<br>  console.log(isRef(this.test),this.test);<br>  // false 2<br>  生命周期方法，这个比较简单，跟所有面向对象，android、ios都比较相似，生命周期如下<br>     created() {<br>       const helloword = shallowRef&lt;ComponentPublicInstance<typeof HelloWorld>&gt;()<br>       console.log(“created”,helloword);<br>     }<br>     mounted() {<br>       console.log(“mounted”);<br>     }<br>     beforeCreate() {<br>       console.log(“mounted”);<br>     }<br>     beforeMount?(): void {<br>       console.log(“beforeMount”);<br>     }<br>     beforeUnmount?(): void {<br>       console.log(“beforeUnmount”);<br>     }<br>     unmounted?(): void {<br>       console.log(“unmounted”);<br>     }<br>     beforeUpdate?(): void {<br>       console.log(“beforeUpdate”);<br>     }<br>     updated?(): void {<br>       console.log(“updated”);<br>     }<br>     activated?(): void {<br>       console.log(“activated”);<br>     }<br>     deactivated?(): void {<br>       console.log(“deactivated”);<br>     }<br>     render?(){<br>       console.log(“render”);<br>     }</p>
 <p>@Options<br>这个东西让我也是比较的难受，其实里面的代码跟vue2的代码一摸一样，我不知道为什么要这样分开设计，感觉还是比较难受的，主要是包含三个部分，组建定义、属性定义、事件监听<br>@Options({<br>  components: { // 组建<br>    HelloWorld,<br>  },<br>  props: { // 属性<br>     msg: String!<br>  },<br>  watch: {// 事件监听<br>    age: {<br>      handler: function(newval,oldval) {<br>        console.log(“watch”,newval);<br>        //this.gotoAbourt();<br>      },<br>    }<br>  }<br>})<br>get方法，同vue中的 computed<br>public get age(): number {<br>  console.log(“get age”, this.mAge);<br>  return this.mAge;<br>}</p>
 <p>总体感觉是TypeScript的vue没有vue3那些弯弯绕绕，还是比较直接的，我想以后的发展应该也会越来越好，我感觉新项目的话值得尝试。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift236%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift236%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/" class="post-title-link" itemprop="url">常见的汇编指令</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-28 14:56:36" itemprop="dateModified" datetime="2021-09-28T14:56:36+08:00">2021-09-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>AT&amp;T<br>寄存器名称    %rax<br>操作数顺序    movq %rax %rdx<br>常数、立即数    movq $3 %rax<br>内存赋值    movq $0xa, 0x1ff7(%rip)<br>取内存地址    leaq -0x18(%rbp),%rax<br>jmp指令 jmp 0x4000102<br>call指令 call *%rdx<br>操作长度 movl %eax %edx<br>B = byte 8<br>S = short 16<br>W = word 16<br>L = long 32<br>Q = quad 64<br>T = ten bytes 80</p>
+<p>常见的寄存器：<br>rax 、rbx、rcx、rdx、rsx、rdi、rbp、rsp<br>r8、r9、r10、r11、r12、r13、r14、r15<br>寄存器的具体用途：<br>rax、rdx常作为函数返回值使用<br>rdi、rsi、rdx、rcx、r8、r9等寄存器常用于存放函数参数<br>rsp、rdp用于栈操作<br>rip 作为指令指针</p>
+<p>规律：<br>内存地址格式为： 0x4bdc(%rip), 一般是全局变量，全局区（数据段）<br>内存地址格式为：-0x78(%rbp), 一般是局部变量，栈空间<br>内存地址格式为：0x10(%rax), 一般是堆空间</p>
+<p>guard语句最大的优势就是在解包(Optional)时候, 比用 if 语句解包更优雅, 避免在大量串行解包的时候出现金字塔.<br>// guard let 保证变量／常量一定有值，没有值则返回。<br>var a: String? = “ddd”<br>guard let b = a else { print(“a is nil”) }<br>print(b) //注意解包之后b的作用域仍然有效</p>
+<p>//if<br>var a: String? = “ddd”<br> if let b = a {<br>     print(b) //解包之后b的只有在 { … } 内才有作用域<br> }</p>
+<p>ArrayList、LinkedList</p>
 
       
     </div>
@@ -1671,76 +1676,6 @@ Cesium.Measure = (function (Cesium) &#123;
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift236%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift236%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/" class="post-title-link" itemprop="url">常见的汇编指令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-28 14:56:36" itemprop="dateModified" datetime="2021-09-28T14:56:36+08:00">2021-09-28</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>AT&amp;T<br>寄存器名称    %rax<br>操作数顺序    movq %rax %rdx<br>常数、立即数    movq $3 %rax<br>内存赋值    movq $0xa, 0x1ff7(%rip)<br>取内存地址    leaq -0x18(%rbp),%rax<br>jmp指令 jmp 0x4000102<br>call指令 call *%rdx<br>操作长度 movl %eax %edx<br>B = byte 8<br>S = short 16<br>W = word 16<br>L = long 32<br>Q = quad 64<br>T = ten bytes 80</p>
-<p>常见的寄存器：<br>rax 、rbx、rcx、rdx、rsx、rdi、rbp、rsp<br>r8、r9、r10、r11、r12、r13、r14、r15<br>寄存器的具体用途：<br>rax、rdx常作为函数返回值使用<br>rdi、rsi、rdx、rcx、r8、r9等寄存器常用于存放函数参数<br>rsp、rdp用于栈操作<br>rip 作为指令指针</p>
-<p>规律：<br>内存地址格式为： 0x4bdc(%rip), 一般是全局变量，全局区（数据段）<br>内存地址格式为：-0x78(%rbp), 一般是局部变量，栈空间<br>内存地址格式为：0x10(%rax), 一般是堆空间</p>
-<p>guard语句最大的优势就是在解包(Optional)时候, 比用 if 语句解包更优雅, 避免在大量串行解包的时候出现金字塔.<br>// guard let 保证变量／常量一定有值，没有值则返回。<br>var a: String? = “ddd”<br>guard let b = a else { print(“a is nil”) }<br>print(b) //注意解包之后b的作用域仍然有效</p>
-<p>//if<br>var a: String? = “ddd”<br> if let b = a {<br>     print(b) //解包之后b的只有在 { … } 内才有作用域<br> }</p>
-<p>ArrayList、LinkedList</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift240Cesium%E9%A3%9E%E8%A1%8C%E6%BC%AB%E6%B8%B8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2450,6 +2385,104 @@ material: new Cesium.Color.fromBytes(0, 191, 255, 100),
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift287M1%E8%BD%AF%E4%BB%B6%E5%88%9D%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift287M1%E8%BD%AF%E4%BB%B6%E5%88%9D%E8%A3%85/" class="post-title-link" itemprop="url">M1 mac 装机</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-02 18:01:54" itemprop="dateModified" datetime="2022-08-02T18:01:54+08:00">2022-08-02</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1.安装最新的Xcode<br>2.Homebrew<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/1265310832e6">https://www.jianshu.com/p/1265310832e6</a><br><a target="_blank" rel="noopener" href="https://brew.sh/">https://brew.sh</a><br>homebrew配置：brew config<br>安装软件，如：brew install node<br>卸载软件，如：brew uninstall node<br>搜索软件，如：brew search node<br>更新软件，如：brew upgrade node<br>查看安装列表，如：brew list<br>列出可更新的软件包，brew outdated<br>检测已经过时的软件：brew outdated<br>升级所有已过时的软件，即列出的以过时软件 ： brew upgrade<br>启动服务 brew services start mysql<br>查看包依赖 brew deps git</p>
+<p>open -e .zshrc<br>open -e .bash_profile<br>cd ~<br>vim ./.bash_profile</p>
+<p>http-server . -c-1  </p>
+<p>brew install ruby<br>gem sources -l<br>gem sources –add <a target="_blank" rel="noopener" href="https://gems.ruby-china.com/">https://gems.ruby-china.com/</a> –remove <a target="_blank" rel="noopener" href="https://rubygems.org/">https://rubygems.org/</a><br>sudo gem install -n /usr/local/bin cocoapods</p>
+<p>brew install git<br>brew install nginx<br>brew install mongodb</p>
+<p>brew install google-chrome<br>brew install launchrocket<br>brew install docker<br>brew install visual-studio-code<br>brew install sorcerer<br>brew install sublime-text<br>brew install charles<br>brew install betterzip<br>brew install cleanmymac<br>brew install smartsvn<br>brew install we-chat<br>2.安装cocoapods<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/baicai_520/article/details/112697063">https://blog.csdn.net/baicai_520/article/details/112697063</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/44c894b69cf6">https://www.jianshu.com/p/44c894b69cf6</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_19484963/article/details/83110004">https://blog.csdn.net/qq_19484963/article/details/83110004</a></p>
+<p>M1电脑预装软件列表<br>Office 软件<br><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1MZjAv01_fT2ZOV5Pi7yDkA?errmsg=Auth+Login+Sucess&amp;errno=0&amp;ssnerror=0&amp;">https://pan.baidu.com/s/1MZjAv01_fT2ZOV5Pi7yDkA?errmsg=Auth+Login+Sucess&amp;errno=0&amp;ssnerror=0&amp;</a></p>
+<p>wps<br><a target="_blank" rel="noopener" href="https://www.wps.cn/">https://www.wps.cn</a></p>
+<p>idea  webstorm pycharm  ps</p>
+<p>node<br><a target="_blank" rel="noopener" href="https://nodejs.org/en/download/">https://nodejs.org/en/download/</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012843349/article/details/112856593">https://blog.csdn.net/u012843349/article/details/112856593</a></p>
+<p>IDEA<br><a target="_blank" rel="noopener" href="https://download.jetbrains.8686c.com/idea/ideaIU-2020.3.2-aarch64.dmg">https://download.jetbrains.8686c.com/idea/ideaIU-2020.3.2-aarch64.dmg</a></p>
+<p>VS code<br><a target="_blank" rel="noopener" href="https://code.visualstudio.com/">https://code.visualstudio.com</a></p>
+<p>chrome<br><a target="_blank" rel="noopener" href="https://www.google.com/chrome/">https://www.google.com/chrome/</a></p>
+<p>mysql<br><a target="_blank" rel="noopener" href="https://dev.mysql.com/downloads/">https://dev.mysql.com/downloads/</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42006613/article/details/111773038">https://blog.csdn.net/qq_42006613/article/details/111773038</a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.android.com/studio">https://developer.android.com/studio</a></p>
+<p>github<br><a target="_blank" rel="noopener" href="https://desktop.github.com/">https://desktop.github.com</a></p>
+<p>xCode<br><a target="_blank" rel="noopener" href="https://apps.apple.com/us/app/xcode/id497799835">https://apps.apple.com/us/app/xcode/id497799835</a></p>
+<p><a target="_blank" rel="noopener" href="https://proxyman.io/">https://proxyman.io</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.charlesproxy.com/download/">https://www.charlesproxy.com/download/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.python.org/">https://www.python.org</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Macvcl/p/14019852.html">https://www.cnblogs.com/Macvcl/p/14019852.html</a></p>
+<h1 id="设置homebrew-core镜像"><a href="#设置homebrew-core镜像" class="headerlink" title="设置homebrew-core镜像"></a>设置homebrew-core镜像</h1><p>HOMEBREW_CORE_GIT_REMOTE=<a target="_blank" rel="noopener" href="https://mirrors.ustc.edu.cn/homebrew-core.git">https://mirrors.ustc.edu.cn/homebrew-core.git</a></p>
+<p>/bin/bash -c “$(curl -fsSL <a target="_blank" rel="noopener" href="https://cdn.jsdelivr.net/gh/ineo6/homebrew-install/install.sh)&quot;">https://cdn.jsdelivr.net/gh/ineo6/homebrew-install/install.sh)&quot;</a></p>
+<p>Arm版安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /opt # 切换到 /opt 目录</span><br><span class="line">mkdir homebrew # 创建 homebrew 目录</span><br><span class="line">sudo chown -R $(whoami) /opt/homebrew # 修改目录所属用户</span><br><span class="line">curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew</span><br></pre></td></tr></table></figure>
+
+<p>intel版的安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arch -x86_64 /bin/bash -c &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>vim ~/.zshrc 或者 vim ~/.bash_profile</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> x86</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">export</span> PATH=<span class="string">&quot;/usr/local/bin:<span class="variable">$PATH</span>&quot;</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">alias</span>  abrew=<span class="string">&#x27;arch -x86_64 /usr/local/bin/brew&#x27;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> arm</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">export</span> PATH=<span class="string">&quot;/opt/homebrew/bin:<span class="variable">$PATH</span>&quot;</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">alias</span>  brew=<span class="string">&#x27;/opt/homebrew/bin/brew&#x27;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>source ~/.zshrc 或者 source ~/.bash_profile</p>
+<p>hexo g -d</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -2519,7 +2552,7 @@ material: new Cesium.Color.fromBytes(0, 191, 255, 100),
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">366</span>
+          <span class="site-state-item-count">365</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

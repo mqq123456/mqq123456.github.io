@@ -148,602 +148,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift147%E5%AD%97%E7%AC%A6%E4%B8%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/06/M_Swift147%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="post-title-link" itemprop="url">字符串</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-06 17:30:38" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:38+08:00">2020-09-06</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="字母异位词"><a href="#字母异位词" class="headerlink" title="字母异位词"></a>字母异位词</h2><pre><code>给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。
-输入: s = &quot;anagram&quot;, t = &quot;nagaram&quot;
-输出: true
-方法一：排序
-public boolean isAnagram(String s, String t) &#123;
-    if (s.length() != t.length()) &#123;
-        return false;
-    &#125;
-    char[] str1 = s.toCharArray();
-    char[] str2 = t.toCharArray();
-    Arrays.sort(str1);
-    Arrays.sort(str2);
-    return Arrays.equals(str1, str2);
-&#125;
-方法二：哈希表
-public boolean isAnagram(String s, String t) &#123;
-    if (s.length() != t.length()) &#123;
-        return false;
-    &#125;
-    int[] counter = new int[26];
-    for (int i = 0; i &lt; s.length(); i++) &#123;
-        counter[s.charAt(i) - &#39;a&#39;]++;
-        counter[t.charAt(i) - &#39;a&#39;]--;
-    &#125;
-    for (int count : counter) &#123;
-        if (count != 0) &#123;
-            return false;
-        &#125;
-    &#125;
-    return true;
-&#125;
-</code></pre>
-<h2 id="是否可以被空格拆分为一个或多个"><a href="#是否可以被空格拆分为一个或多个" class="headerlink" title="是否可以被空格拆分为一个或多个"></a>是否可以被空格拆分为一个或多个</h2><pre><code>给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
-输入: s = &quot;leetcode&quot;, wordDict = [&quot;leet&quot;, &quot;code&quot;]
-输出: true
-解释: 返回 true 因为 &quot;leetcode&quot; 可以被拆分成 &quot;leet code&quot;。
-public class Solution &#123;
-    public boolean wordBreak(String s, List&lt;String&gt; wordDict) &#123;
-        Set&lt;String&gt; wordDictSet = new HashSet(wordDict);
-        boolean[] dp = new boolean[s.length() + 1];
-        dp[0] = true;
-        for (int i = 1; i &lt;= s.length(); i++) &#123;
-            for (int j = 0; j &lt; i; j++) &#123;
-                if (dp[j] &amp;&amp; wordDictSet.contains(s.substring(j, i))) &#123;
-                    dp[i] = true;
-                    break;
-                &#125;
-            &#125;
-        &#125;
-        return dp[s.length()];
-    &#125;
-&#125;
-</code></pre>
-<h2 id="实现一个-Trie-前缀树"><a href="#实现一个-Trie-前缀树" class="headerlink" title="实现一个 Trie (前缀树)"></a>实现一个 Trie (前缀树)</h2><pre><code>包含 insert, search, 和 startsWith 这三个操作
-class Trie &#123;
-    private TrieNode root;
-
-public Trie() &#123;
-    root = new TrieNode();
-&#125;
-
-public void insert(String word) &#123;
-    TrieNode node = root;
-    for (int i = 0; i &lt; word.length(); i++) &#123;
-        char currentChar = word.charAt(i);
-        if (!node.containsKey(currentChar)) &#123;
-            node.put(currentChar, new TrieNode());
-        &#125;
-        node = node.get(currentChar);
-    &#125;
-    node.setEnd();
-&#125;
-private TrieNode searchPrefix(String word) &#123;
-    TrieNode node = root;
-    for (int i = 0; i &lt; word.length(); i++) &#123;
-       char curLetter = word.charAt(i);
-       if (node.containsKey(curLetter)) &#123;
-           node = node.get(curLetter);
-       &#125; else &#123;
-           return null;
-       &#125;
-    &#125;
-    return node;
-&#125;
-public boolean search(String word) &#123;
-   TrieNode node = searchPrefix(word);
-   return node != null &amp;&amp; node.isEnd();
-&#125;
-public boolean startsWith(String prefix) &#123;
-    TrieNode node = searchPrefix(prefix);
-    return node != null;
-&#125;
-
-&#125;
-</code></pre>
-<h2 id="第一个不重复的字符"><a href="#第一个不重复的字符" class="headerlink" title="第一个不重复的字符"></a>第一个不重复的字符</h2><pre><code>给定一个字符串，找到它的第一个不重复的字符，并返回它的索引。如果不存在，则返回 -1。
-方法一： 线性时间复杂度解法
-class Solution &#123;
-    public int firstUniqChar(String s) &#123;
-        HashMap&lt;Character, Integer&gt; count = new HashMap&lt;Character, Integer&gt;();
-        int n = s.length();
-        // build hash map : character and how often it appears
-        for (int i = 0; i &lt; n; i++) &#123;
-            char c = s.charAt(i);
-            count.put(c, count.getOrDefault(c, 0) + 1);
-        &#125;
-    
-    // find the index
-    for (int i = 0; i &lt; n; i++) &#123;
-        if (count.get(s.charAt(i)) == 1) 
-            return i;
-    &#125;
-    return -1;
-&#125;
-&#125;
-</code></pre>
-<h2 id="字符串反转"><a href="#字符串反转" class="headerlink" title="字符串反转"></a>字符串反转</h2><pre><code>编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 char[] 的形式给出。
-双指针
-class Solution &#123;
-    public void reverseString(char[] s) &#123;
-        if(s == null || s.length == 0) return;
-
-    int left = 0;
-    int right = s.length-1;
-    while(left &lt; right)&#123;  //奇数个的时候中间元素不动
-        char temp = s[left];
-        s[left] = s[right];
-        s[right] = temp;
-        left ++;
-        right --;
-    &#125;
-&#125;
-&#125;
-</code></pre>
-<h2 id="回文串验证"><a href="#回文串验证" class="headerlink" title="回文串验证"></a>回文串验证</h2><pre><code>给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
-方法一：筛选 + 判断
-最简单的方法是对字符串 s 进行一次遍历，并将其中的字母和数字字符进行保留
-判断的方法有两种。一种是将字符串进行翻转，然后判断字符串是不是相同，第二种是使用双指针
-class Solution &#123;
-    public boolean isPalindrome(String s) &#123;
-        StringBuffer sgood = new StringBuffer();
-        int length = s.length();
-        for (int i = 0; i &lt; length; i++) &#123;
-            char ch = s.charAt(i);
-            if (Character.isLetterOrDigit(ch)) &#123;
-                sgood.append(Character.toLowerCase(ch));
-            &#125;
-        &#125;
-        StringBuffer sgood_rev = new StringBuffer(sgood).reverse();
-        return sgood.toString().equals(sgood_rev.toString());
-    &#125;
-&#125;
-</code></pre>
-<h2 id="左旋转字符串"><a href="#左旋转字符串" class="headerlink" title="左旋转字符串"></a>左旋转字符串</h2><pre><code>字符串的左旋转操作是把字符串前面的若干个字符转移到字符串的尾部。请定义一个函数实现字符串左旋转操作的功能。比如，输入字符串&quot;abcdefg&quot;和数字2，该函数将返回左旋转两位得到的结果&quot;cdefgab&quot;。
-本题做法较多，本文主要介绍 “字符串切片” ， “列表遍历拼接” ， “字符串遍历拼接” 三种方法。
-由于本题的多解法涉及到了 字符串为不可变对象 的相关概念，导致效率区别较大。因此，单列一节 三种方法的效率分析 ，望对各位有所帮助。
-方法一：字符串切片
-class Solution &#123;
-    public String reverseLeftWords(String s, int n) &#123;
-        return s.substring(n, s.length()) + s.substring(0, n);
-    &#125;
-&#125;
-方法二：列表遍历拼接
-class Solution &#123;
-    public String reverseLeftWords(String s, int n) &#123;
-        StringBuilder res = new StringBuilder();
-        for(int i = n; i &lt; s.length(); i++)
-            res.append(s.charAt(i));
-        for(int i = 0; i &lt; n; i++)
-            res.append(s.charAt(i));
-        return res.toString();
-    &#125;
-&#125;
-方法三：字符串遍历拼接
-class Solution &#123;
-    public String reverseLeftWords(String s, int n) &#123;
-        String res = &quot;&quot;;
-        for(int i = n; i &lt; s.length(); i++)
-            res += s.charAt(i);
-        for(int i = 0; i &lt; n; i++)
-            res += s.charAt(i);
-        return res;
-    &#125;
-&#125;
-</code></pre>
-<h2 id="翻转单词顺序"><a href="#翻转单词顺序" class="headerlink" title="翻转单词顺序"></a>翻转单词顺序</h2><pre><code>输入一个英文句子，翻转句子中单词的顺序，但单词内字符的顺序不变。为简单起见，标点符号和普通字母一样处理。例如输入字符串&quot;I am a student. &quot;，则输出&quot;student. a am I&quot;。
-
-方法一：双指针
-class Solution &#123;
-public String reverseWords(String s) &#123;
-    s = s.trim(); // 删除首尾空格
-    int j = s.length() - 1, i = j;
-    StringBuilder res = new StringBuilder();
-    while(i &gt;= 0) &#123;
-        while(i &gt;= 0 &amp;&amp; s.charAt(i) != &#39; &#39;) i--; // 搜索首个空格
-        res.append(s.substring(i + 1, j + 1) + &quot; &quot;); // 添加单词
-        while(i &gt;= 0 &amp;&amp; s.charAt(i) == &#39; &#39;) i--; // 跳过单词间空格
-        j = i; // j 指向下个单词的尾字符
-    &#125;
-    return res.toString().trim(); // 转化为字符串并返回
-&#125;
-&#125;
-方法二：分割 + 倒序
-class Solution &#123;
-    public String reverseWords(String s) &#123;
-        String[] strs = s.trim().split(&quot; &quot;); // 删除首尾空格，分割字符串
-        StringBuilder res = new StringBuilder();
-        for(int i = strs.length - 1; i &gt;= 0; i--) &#123; // 倒序遍历单词列表
-            if(strs[i].equals(&quot;&quot;)) continue; // 遇到空单词则跳过
-            res.append(strs[i] + &quot; &quot;); // 将单词拼接至 StringBuilder
-        &#125;
-        return res.toString().trim(); // 转化为字符串，删除尾部空格，并返回
-    &#125;
-&#125;
-</code></pre>
-<h2 id="最长不含重复字符的子字符串"><a href="#最长不含重复字符的子字符串" class="headerlink" title="最长不含重复字符的子字符串"></a>最长不含重复字符的子字符串</h2><pre><code>请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
-方法一：动态规划 + 哈希表
-class Solution &#123;
-    public int lengthOfLongestSubstring(String s) &#123;
-        Map&lt;Character, Integer&gt; dic = new HashMap&lt;&gt;();
-        int res = 0, tmp = 0;
-        for(int j = 0; j &lt; s.length(); j++) &#123;
-            int i = dic.getOrDefault(s.charAt(j), -1); // 获取索引 i
-            dic.put(s.charAt(j), j); // 更新哈希表
-            tmp = tmp &lt; j - i ? tmp + 1 : j - i; // dp[j - 1] -&gt; dp[j]
-            res = Math.max(res, tmp); // max(dp[j - 1], dp[j])
-        &#125;
-        return res;
-    &#125;
-&#125;
-方法二： 动态规划 + 线性遍历
-class Solution &#123;
-    public int lengthOfLongestSubstring(String s) &#123;
-        Map&lt;Character, Integer&gt; dic = new HashMap&lt;&gt;();
-        int res = 0, tmp = 0;
-        for(int j = 0; j &lt; s.length(); j++) &#123;
-            int i = j - 1;
-            while(i &gt;= 0 &amp;&amp; s.charAt(i) != s.charAt(j)) i--; // 线性查找 i
-            tmp = tmp &lt; j - i ? tmp + 1 : j - i; // dp[j - 1] -&gt; dp[j]
-            res = Math.max(res, tmp); // max(dp[j - 1], dp[j])
-        &#125;
-        return res;
-    &#125;
-&#125;
-方法三：双指针 + 哈希表
-class Solution &#123;
-    public int lengthOfLongestSubstring(String s) &#123;
-        Map&lt;Character, Integer&gt; dic = new HashMap&lt;&gt;();
-        int i = -1, res = 0;
-        for(int j = 0; j &lt; s.length(); j++) &#123;
-            if(dic.containsKey(s.charAt(j)))
-                i = Math.max(i, dic.get(s.charAt(j))); // 更新左指针 i
-            dic.put(s.charAt(j), j); // 哈希表记录
-            res = Math.max(res, j - i); // 更新结果
-        &#125;
-        return res;
-    &#125;
-&#125;
-</code></pre>
-<h2 id="把数字翻译成字符串"><a href="#把数字翻译成字符串" class="headerlink" title="把数字翻译成字符串"></a>把数字翻译成字符串</h2><pre><code>给定一个数字，我们按照如下规则把它翻译为字符串：0 翻译成 “a” ，1 翻译成 “b”，……，11 翻译成 “l”，……，25 翻译成 “z”。一个数字可能有多个翻译。请编程实现一个函数，用来计算一个数字有多少种不同的翻译方法。
-字符串的第 i 位置：
-
-可以单独作为一位来翻译
-如果第 i−1 位和第 i 位组成的数字在 10 到 25 之间，可以把这两位连起来翻译
-class Solution &#123;
-    public int translateNum(int num) &#123;
-        String src = String.valueOf(num);
-        int p = 0, q = 0, r = 1;
-        for (int i = 0; i &lt; src.length(); ++i) &#123;
-            p = q; 
-            q = r; 
-            r = 0;
-            r += q;
-            if (i == 0) &#123;
-                continue;
-            &#125;
-            String pre = src.substring(i - 1, i + 1);
-            if (pre.compareTo(&quot;25&quot;) &lt;= 0 &amp;&amp; pre.compareTo(&quot;10&quot;) &gt;= 0) &#123;
-                r += p;
-            &#125;
-        &#125;
-        return r;
-    &#125;
-&#125;
-</code></pre>
-<h2 id="替换空格"><a href="#替换空格" class="headerlink" title="替换空格"></a>替换空格</h2><pre><code>    将字符串转成char的数组，声明一个3倍长度的数组，遍历字符串数组当为空格时，添加%20
-输入：s = &quot;We are happy.&quot;
-    输出：&quot;We%20are%20happy.&quot;
-    由于每次替换从 1 个字符变成 3 个字符，使用字符数组可方便地进行替换。建立字符数组地长度为 s 的长度的 3 倍，这样可保证字符数组可以容纳所有替换后的字符。
-    public String replaceSpace(String s) &#123;
-        int length = s.length();
-        char[] array = new char[length * 3];
-        int size = 0;
-        for (int i = 0; i &lt; length; i++) &#123;
-            char c = s.charAt(i);
-            if (c == &#39; &#39;) &#123;
-                array[size++] = &#39;%&#39;;
-                array[size++] = &#39;2&#39;;
-                array[size++] = &#39;0&#39;;
-            &#125; else &#123;
-                array[size++] = c;
-            &#125;
-        &#125;
-        String newStr = new String(array, 0, size);
-        return newStr;
-    &#125;
-</code></pre>
-<h2 id="字符串的排列组合方式（决策树）"><a href="#字符串的排列组合方式（决策树）" class="headerlink" title="字符串的排列组合方式（决策树）"></a>字符串的排列组合方式（决策树）</h2><pre><code>class Solution &#123;
-    List&lt;String&gt; res = new LinkedList&lt;&gt;();
-    char[] c;
-    public String[] permutation(String s) &#123;
-        c = s.toCharArray();
-        dfs(0);
-        return res.toArray(new String[res.size()]);
-    &#125;
-    void dfs(int x) &#123;
-        if(x == c.length - 1) &#123;
-            res.add(String.valueOf(c)); // 添加排列方案
-            return;
-        &#125;
-        HashSet&lt;Character&gt; set = new HashSet&lt;&gt;();
-        for(int i = x; i &lt; c.length; i++) &#123;
-            if(set.contains(c[i])) continue; // 重复，因此剪枝
-            set.add(c[i]);
-            swap(i, x); // 交换，将 c[i] 固定在第 x 位 
-            dfs(x + 1); // 开启固定第 x + 1 位字符
-            swap(i, x); // 恢复交换
-        &#125;
-    &#125;
-    void swap(int a, int b) &#123;
-        char tmp = c[a];
-        c[a] = c[b];
-        c[b] = tmp;
-    &#125;
-&#125;
-</code></pre>
-<h2 id="把字符串转换成整数"><a href="#把字符串转换成整数" class="headerlink" title="把字符串转换成整数"></a>把字符串转换成整数</h2><pre><code>首部空格： 删除之即可；
-符号位： 三种情况，即 &#39;+&#39;−&#39;&#39; , &#39;&#39;无符号&quot; ；新建一个变量保存符号位，返回前判断正负即可。
-非数字字符： 遇到首个非数字的字符时，应立即返回。
-数字字符：
-class Solution &#123;
-    public int strToInt(String str) &#123;
-        char[] c = str.trim().toCharArray();
-        if(c.length == 0) return 0;
-        int res = 0, bndry = Integer.MAX_VALUE / 10;
-        int i = 1, sign = 1;
-        if(c[0] == &#39;-&#39;) sign = -1;
-        else if(c[0] != &#39;+&#39;) i = 0;
-        for(int j = i; j &lt; c.length; j++) &#123;
-            if(c[j] &lt; &#39;0&#39; || c[j] &gt; &#39;9&#39;) break;
-            if(res &gt; bndry || res == bndry &amp;&amp; c[j] &gt; &#39;7&#39;) return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-            res = res * 10 + (c[j] - &#39;0&#39;);
-        &#125;
-        return sign * res;
-    &#125;
-&#125;
-</code></pre>
-<h2 id="数据压缩"><a href="#数据压缩" class="headerlink" title="数据压缩"></a>数据压缩</h2><pre><code>输入：&quot;aabcccccaaa&quot;
-输出：&quot;a2b1c5a3&quot;
-public String compressString(String S) &#123;
-    int N = S.length();
-    int i = 0;
-    StringBuilder sb = new StringBuilder();
-    while (i &lt; N) &#123;
-        int j = i;
-        while (j &lt; N &amp;&amp; S.charAt(j) == S.charAt(i)) &#123;
-            j++;
-        &#125;
-        sb.append(S.charAt(i));
-        sb.append(j - i);
-        i = j;
-    &#125;
-
-String res = sb.toString();
-if (res.length() &lt; S.length()) &#123;
-    return res;
-&#125; else &#123;
-    return S;
-&#125;
-&#125;
-</code></pre>
-<h2 id="无重复子串最大长度"><a href="#无重复子串最大长度" class="headerlink" title="无重复子串最大长度"></a>无重复子串最大长度</h2><pre><code>int lengthOfLongestSubstring(string s) &#123;
-        // 哈希集合，记录每个字符是否出现过
-        unordered_set&lt;char&gt; occ;
-        int n = s.size();
-        // 右指针，初始值为 -1，相当于我们在字符串的左边界的左侧，还没有开始移动
-        int rk = -1, ans = 0;
-        // 枚举左指针的位置，初始值隐性地表示为 -1
-        for (int i = 0; i &lt; n; ++i) &#123;
-            if (i != 0) &#123;
-                // 左指针向右移动一格，移除一个字符
-                occ.erase(s[i - 1]);
-            &#125;
-            while (rk + 1 &lt; n &amp;&amp; !occ.count(s[rk + 1])) &#123;
-                // 不断地移动右指针
-                occ.insert(s[rk + 1]);
-                ++rk;
-            &#125;
-            // 第 i 到 rk 个字符是一个极长的无重复字符子串
-            ans = max(ans, rk - i + 1);
-        &#125;
-        return ans;
-    &#125;
-</code></pre>
-<h2 id="最大上升子序列"><a href="#最大上升子序列" class="headerlink" title="最大上升子序列"></a>最大上升子序列</h2><pre><code>思想：
-创建一个额外的数组，用于存放字串到当前位置的最大值
-遍历数组，每次都和之前的数进行比较，获取最大字串，然后加1，
-public int lengthOfLIS(int[] nums) &#123;
-   if (nums.length == 0) &#123;
-       return 0;
-   &#125;
-   int[] dp = new int[nums.length]; // 创建一个额外的数组，用于存放字串到当前位置的最大值
-   dp[0] = 1; // 默认为1
-   int maxans = 1;
-   for (int i = 1; i &lt; dp.length; i++) &#123;
-       int maxval = 0;
-       for (int j = 0; j &lt; i; j++) &#123;
-           if (nums[i] &gt; nums[j]) &#123; 
-               maxval = Math.max(maxval, dp[j]); // 比较dp中值和mavl的值，取最大值
-           &#125;
-       &#125;
-       dp[i] = maxval + 1; // 当前值加1
-       maxans = Math.max(maxans, dp[i]);
-   &#125;
-   return maxans;
-   &#125;
-</code></pre>
-<h2 id="字符串查找问题；"><a href="#字符串查找问题；" class="headerlink" title="字符串查找问题；"></a>字符串查找问题；</h2><pre><code>字符串查找问题---长字符串查找短字符串
-String 1: ABCDEFGHLMNOPQRS
-String 2: DCGSRQPOM
-答案是true，所有在string2里的字母string1也都有。
-解法，HashTable
-查找某个字符或字符段在字符串中出现的次数
-给一个数组，找出这样一些数，这个数左边的数都比它小，右边的数都比它大
-给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那 两个 整数，并返回他们的数组下标。
-1.双重遍历，两两相加
-2.生成一个map集合，然后遍历nums，用target - nums 在map集合中是否存在，如果存在，则找到了
-3.跟第二个相似，一次遍历，添加到map中的是target - nums[i] ,只要后续遍历中存在这样的key，就是找到了
-给定一个未排序的整数数组，找出其中没有出现的最小的正整数。
-    新建一个数组，将元素插入到数组的对应位置，如果大于数组id直接舍弃，不存在的位置用0代替，范围位置id
-寻找两个数组的中位数，排好序
-分析：分治+二分查找
-在两个有序数组中寻找k小的数
-获取中位数的位置，两个数组和的一半
-剪枝处理
-特殊情况
-分析完了正常的情况，那么就要分析一下特殊情况；
-  1)如果有一个数组是空的，直接返回另一个不为空的数组中的中位数
-  2)如果两个数组元素的个数相等，并且两个数组的中位数相等，直接返回其中一个中位数。
-  3)有可能在进行二分查找的时候出现了数组越界的情况，只需要定义一个最大值和一个最小值，这样可以按照正常的情况来处理了。
-
-double findMedianSortedArrays(int nums1[], int nums2[])&#123;
-int m = m1.length;
-int n = m2.length;
-int k = (m+n) / 2;
-
-if((m+n) %2 == 1)&#123;
-return findKth(nums1,0,m-1,nums2,0,n-1,k+1);
-&#125;else&#123;
-    return (findKth(nums1,0,m-1,nums2,0,n-1,k)+
-    findKth(nums1,0,m-1,nums2,0,n-1,k+1))/2.0
-&#125;
-&#125;
-
-double findKth(int[] nums1,int l1,int h1,int[] nums2,int l2,int h2,int k)&#123;
-int m = h1-l1+1;
-int n = h2-l2+1;
-if(m &gt;n) &#123;
-return findKth(nums2,l2,h2,nums1,l1,h1,k);
-&#125;
-if(m==0) &#123;
-return nums2[l2+k-1];
-&#125;
-&#125;
-
-
-/*分清 起始位置 和 第几个元素 */
-int findKthNumber(vector&lt;int&gt;&amp; nums1,int i ,vector&lt;int&gt;&amp; nums2,int j,int k)&#123;
-    if(i &gt;= nums1.size())   return nums2[j+k-1];
-    if(j &gt;= nums2.size())   return nums1[i+k-1];
-    //if(k ==1) return (double(nums1[i] + nums2[j]));wrong
-    if(k == 1) return min(nums1[i],nums2[j]);
-    //查找有没有k/2个元素的位置     i + k/2 -1 
-    int midVal1 = (i+k/2-1 &lt; nums1.size())?nums1[i+k/2-1]:INT_MAX;
-    int midVal2 = (j+k/2-1 &lt; nums2.size())?nums2[j+k/2-1]:INT_MAX;
-    if(midVal1 &lt; midVal2)
-        return findKthNumber(nums1,i+k/2,nums2,j,k-k/2);
-    else
-        return findKthNumber(nums1,i,nums2,j+k/2,k-k/2);  
-&#125;
-class Solution &#123;
-public:
-    double findMedianSortedArrays(vector&lt;int&gt;&amp; nums1, vector&lt;int&gt;&amp; nums2) &#123;
-        int m = nums1.size(),n = nums2.size();
-        int left = (m+n+1)/2,right = (m+n+2)/2;
-        return        (findKthNumber(nums1,0,nums2,0,left)+findKthNumber(nums1,0,nums2,0,right))/2.0;
-    &#125;
-
-&#125;
-如果没有排序
-快速选择算法
-随机选择一个数作为基准值，以基准值分成两个部分
-如果基准值==k，那么基准值位置就是k
-如果基准值小于k，就忘后搜索
-如果基准值大于k，就往前搜索
-
-public  int findKthLargest(int[] nums, int k)&#123;
-    return quickSelect(nums,nums.length - 1,k);
-&#125;
-int quickSelect(int[] nums,int low,int high,int k) &#123;
-    int pivot = low;
-    for (int j = low; j &lt; hight ; j++) &#123;
-        if (nums[j] &lt;= nums[high]) &#123;
-        swap(nums,pivot++,j);
-    &#125;
-    &#125;
-    swap(nums,pivot,high);
-&#125;
-void swap(int[] nums1, int[] nums2,int i, int j) &#123;
-int m = num.length;
-if(i&lt;m&amp;&amp;j&lt;m)&#123;
-swap(nums1,i,j);
-&#125;else if(i &gt;=m &amp;&amp; j&gt;=m)&#123;
-swap(nums2,i-m,j-m)
-&#125;else if (i &lt;m &amp;&amp; j &gt;= m) &#123;
-int temp = nums1[i];
-nums1[1] = nums2[j-m];
-nums2[j-m] = temp;
-&#125;
-&#125;
-void swap (int[] nums, int i, int j) &#123;
-int temp = nums[i];
-nums[i] = nums[j];
-nums[j] = temp;
-&#125;
-分布式大数据问题
-每台服务器的复杂度限制
-服务器之间通信的网络带宽限时
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift146%E6%A0%88%E9%98%9F%E5%88%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -5139,6 +4543,1372 @@ NSArrayM 试着去最小化内存的移动，因此会移动最少的一边元�
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift139%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/06/M_Swift139%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">UI相关</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:29:58" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:58+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="程序绘制流程"><a href="#程序绘制流程" class="headerlink" title="程序绘制流程"></a>程序绘制流程</h2><pre><code>Core Animation 在 RunLoop 中注册了一个 Observer 监听
+BeforeWaiting(即将进入休眠) 和 Exit (即将退出Loop) 事件 。
+当在操作 UI 时，比如改变了 Frame、更新了 UIView/CALayer
+的层次时，或者手动调用了 UIView/CALayer 的 
+setNeedsLayout/setNeedsDisplay方法后，这个
+UIView/CALayer 就被标记为待处理，当渲染系统准备就绪，
+调用视图的-display方法，同时装配像素存储空间，
+建立一个CoreGraphics上下文（CGContextRef），将上下文push进
+上下文堆栈，绘图程序进入对应的内存存储空间。
+当Oberver监听的事件到来时，回调执行函数中会遍历所有待处理的
+UIView/CAlayer 以执行实际的绘制和调整，并更新 UI 界面。
+需要CPU和GPU一起协作一部数据通过CoreGraphics、CoreImage
+由CPU预处理。最终通过OpenGL ES将数据传送到 GPU，最终显示到屏幕。
+</code></pre>
+<h2 id="试图绘制为什么不立即执行"><a href="#试图绘制为什么不立即执行" class="headerlink" title="试图绘制为什么不立即执行"></a>试图绘制为什么不立即执行</h2><pre><code>继承于UIView的子类重写，进行布局更新，刷新视图。如果某个视图
+自身的bounds或者子视图的bounds发生改变，那么这个方法会在当前
+runloop结束的时候被调用。为什么不是立即调用呢？因为渲染毕
+竟比较消耗性能，特别是视图层级复杂的时候。这种机制下任何UI
+控件布局上的变动不会立即生效，而是每次间隔一个周期，所有
+UI控件在布局上的变动统一生效并且在视图上更新，苹果通过这种高
+性能的机制保障了视图渲染的流畅性。
+</code></pre>
+<h2 id="事件响应流程"><a href="#事件响应流程" class="headerlink" title="事件响应流程"></a>事件响应流程</h2><pre><code>点击屏幕-》UIApplication-〉UIWindow-》hitTest：withEvent：
+-〉pointInside：withEvent：
+-》subviews-〉UIView-》倒序遍历-〉hitTest：withEvent：
+hitTest：withEvent内部实现
+</code></pre>
+<h2 id="UI卡顿原因"><a href="#UI卡顿原因" class="headerlink" title="UI卡顿原因"></a>UI卡顿原因</h2><pre><code>在 VSync 信号到来后，系统图形服务会通过 CADisplayLink 
+等机制通知 App，App 主线程开始在 CPU 中计算显示内容，
+比如视图的创建、布局计算、图片解码、文本绘制等。随后 CPU 
+会将计算好的内容提交到 GPU 去，由 GPU 进行变换、合成、渲染。
+随后 GPU 会把渲染结果提交到帧缓冲区去，等待下一次 VSync 
+信号到来时显示到屏幕上。由于垂直同步的机制，如果在一个 VSync 
+时间内，CPU 或者 GPU 没有完成内容提交，则那一帧就会被丢弃，
+等待下一次机会再显示，而这时显示屏会保留之前的内容不变。
+这就是界面卡顿的原因。
+</code></pre>
+<h2 id="滑动优化方案"><a href="#滑动优化方案" class="headerlink" title="滑动优化方案"></a>滑动优化方案</h2><pre><code>从CPU和GPU两个方面
+CPU
+对象创建，调整，销毁
+预排版（布局计算、文字计算）
+预渲染（文字等异步绘制、图片解码等）
+GPU
+纹理渲染（减少离屏渲染）
+试图混合（减少不必要的试图、半透明颜色）
+</code></pre>
+<h2 id="什么是离屏渲染，触发的条件是什么"><a href="#什么是离屏渲染，触发的条件是什么" class="headerlink" title="什么是离屏渲染，触发的条件是什么"></a>什么是离屏渲染，触发的条件是什么</h2><pre><code>GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作
+何时会触发
+圆角（当和maskToBounds一起使用时）
+图层蒙版
+阴影
+光栅化
+</code></pre>
+<h2 id="UIView和CALayer关系"><a href="#UIView和CALayer关系" class="headerlink" title="UIView和CALayer关系"></a>UIView和CALayer关系</h2><pre><code>layer给view提供了基础设施，使得绘制内容和呈现更高效动画更容易、更低耗
+layer不参与view的事件处理、不参与响应链
+layer的内容生成一个位图(bitmap)
+,触发动画的时候，是把这个动画和状态信息传递给图形硬件，
+图形硬件使用这两个数据就可以构造动画了。处理位图对于图形硬件更快。
+</code></pre>
+<h2 id="CALayer的mask作用"><a href="#CALayer的mask作用" class="headerlink" title="CALayer的mask作用"></a>CALayer的mask作用</h2><pre><code>mask是一个layer层，并且作为背景层和组成层之间的一个遮罩层通道，
+默认是nil。并且如果要创建新的layer赋给mask，
+那么新的layer必须没有superlayer，也不支持含有子mask。
+mask作用的也不只是当前layer的内容，而是layer和它所有子layer的合成内容。
+这个也是可以测试的，设置viewA的layer的mask,
+然后不管在viewA上加多少个视图都是会被mask作用到。
+不要使用不必要的mask，可以预处理图片为圆形；或者添加中间为圆形透
+明的白色背景视图。即使添加额外的视图，会导致额外的计算；
+但仍然会快一点，因为相对于切换上下文，GPU更擅长渲染。
+</code></pre>
+<h2 id="如何高性能给UIImageView加圆角"><a href="#如何高性能给UIImageView加圆角" class="headerlink" title="如何高性能给UIImageView加圆角"></a>如何高性能给UIImageView加圆角</h2><pre><code>不要使用不必要的mask，可以预处理图片为圆形；或者添加中间为圆形
+透明的白色背景视图。 离屏渲染会导致GPU利用率不到100%，
+帧率却很低。（切换上下文会产生idle time）
+1.图片本身做圆角处理
+2.添加一个额外的试图进行压盖
+3.用贝塞尔曲线.重新绘制一个圆形图片
+</code></pre>
+<h2 id="如何使用核心动画"><a href="#如何使用核心动画" class="headerlink" title="如何使用核心动画"></a>如何使用核心动画</h2><pre><code>创建
+设置相关属性
+添加到 CALayer 上，会自动执行动画
+</code></pre>
+<h2 id="如何增加view点击范围"><a href="#如何增加view点击范围" class="headerlink" title="如何增加view点击范围"></a>如何增加view点击范围</h2><pre><code>在pointInside方法中更大范围返回true
+</code></pre>
+<h2 id="hitTest：withEvent内部实现"><a href="#hitTest：withEvent内部实现" class="headerlink" title="hitTest：withEvent内部实现"></a>hitTest：withEvent内部实现</h2><pre><code>// 1.是否响应的必要条件
+if (self.userInteractionEnabled == NO ||self.alpha &lt; 0.05 || self.hidden == YES) &#123;
+    return nil;
+&#125;
+// 2.判断点是不是在视野范围内
+if ([self pointInside:point withEvent:event]) &#123;
+    // 遍历所有的子试图
+    for (UIView *subView  in  self.subviews) &#123;
+        // 坐标转换
+        CGPoint converPoint = [subView convertPoint:point toView:self];
+        // 依次调用子试图的hit test方法
+        UIView *fitView = [subView hitTest:converPoint withEvent:event];
+        if (fitView) &#123;
+            return fitView;
+        &#125;
+    &#125;
+    // 如果子试图都没有返回自己
+    return self;
+&#125;
+return nil;
+首先调用当前视图的pointInside:withEvent:方法判断触摸点
+是否在当前视图内；若返回NO,则hitTest:withEvent:返回nil;
+若返回YES,则向当前视图的所有子视图(subviews)发送hitTest:withEvent:
+消息，所有子视图的遍历顺序是从top到bottom，即从subviews
+数组的末尾向前遍历,直到有子视图返回非空对象或者全部子视图遍历完毕；
+若第一次有子视图返回非空对象,则hitTest:withEvent:方法返回此对象，处理结束；
+如所有子视图都返回非，则hitTest:withEvent:方法返回自身(self)。
+</code></pre>
+<h2 id="程序的启动速度优化"><a href="#程序的启动速度优化" class="headerlink" title="程序的启动速度优化"></a>程序的启动速度优化</h2><pre><code>App开始启动后，系统内核(XNU)首先加载可执行文件（自身App的所
+有.o文件的集合），然后加载动态链接器dyld，dyld是一个专门用来加载动态链接库的库。
+执行从dyld开始，dyld从可执行文件的依赖开始, 递归加载所有的依赖动态链接库。 
+动态链接库包括：iOS 中用到的所有系统 framework，加载OC
+runtime方法的libobjc，系统级别的libSystem，例如libdispatch(GCD)
+和libsystem_blocks (Block)。
+ 1、内核加载可执行文件
+ 2、load dylibs image (加载程序所需的动态库镜像文件)
+ 3、Rebase image /  Bind image (由于ASLR(address space layout
+    randomization)的存在，可执行文件和动态链接库在虚拟内
+    存中的加载地址每次启动都不固定，所以需要修复镜像中的资源指针)
+ 4、Objc setup (注册Objc类、将Category中的方法插入方法列表)
+ 5、initializers (调用Objc类的+load()方法、调用C++类的构造函数)
+针对上边各个启动过程，我们可以做的优化有：
+   1、减少动态库的引用，将项目中不使用的Framework及时删除，将Xcode配置中General -&gt; Linked Frameworks and Libraries中使用不到的系统库不再引用。
+   2、合并动态库。
+   3、尽量不使用内嵌（embedded）的dylib，加载内嵌dylib性能开销较大。
+   4、清理项目中冗余的类、category。对于同一个类有多个category的，建议进行合并。
+   5、将不必须在+load方法中做的事情延迟到+initialize中。
+   6、尽量不要用C++虚函数(创建虚函数表有开销)，不要在C++构造函数中做大量耗时操作。
+</code></pre>
+<h2 id="drawRect和layouSubviews-的区别"><a href="#drawRect和layouSubviews-的区别" class="headerlink" title="drawRect和layouSubviews 的区别"></a>drawRect和layouSubviews 的区别</h2><pre><code>相同：
+1 都是异步执行
+2 都是UIView 的方法
+不同：
+1   layoutSubviews方便数据计算，
+2   drawRect方便视图重绘。
+layoutSubviews在以下情况下会被调用：
+    1、init初始化不会触发layoutSubviews
+    2、addSubview会触发layoutSubviews (向对象添加子视图,或者对象添加到父视图,frame为0时不会)
+    3、改变view的width和hight的时候会触发layoutSubviews
+    4、滚动一个UIScrollView会触发layoutSubviews(受contentSize 的影响)
+    5、旋转Screen会触发父UIView上的layoutSubviews事件
+    6、改变一个UIView大小的时候也会触发父UIView上的layoutSubviews事件
+    7、直接调用setLayoutSubviews。
+    8、不要直接调用这个方法,因为不会有任何的作用
+    .如果你需要强制layout刷新,调用setNeedsLayout来代替, 
+drawRect在以下情况下会被调用： 
+    &gt;1、如果在UIView初始化时没有设置rect大小，将直接导致drawRect不被自动调用。
+    drawRect 调用是在Controller-&gt;loadView, Controller-&gt;viewDidLoad
+    两方法之后掉用的.所以不用担心在控制器中,这些View的drawRect就开始画了
+    .这样可以在控制器中设置一些值给View(如果这些View draw的时候需要用到某些变量 值).
+    2、该方法在调用sizeToFit后被调用，所以可以先调用sizeToFit计算出size。
+    然后系统自动调用drawRect:方法。
+    3、通过设置contentMode属性值为UIViewContentModeRedraw。
+    那么将在每次设置或更改frame的时候自动调用drawRect:。
+    4、直接调用setNeedsDisplay，或者setNeedsDisplayInRect:触发drawRect:，
+    但是有个前提条件是rect不能为0。以上1,2推荐；而3,4不提倡
+</code></pre>
+<h2 id="setNeedsLayout与layoutIfNeeded的区别"><a href="#setNeedsLayout与layoutIfNeeded的区别" class="headerlink" title="setNeedsLayout与layoutIfNeeded的区别"></a>setNeedsLayout与layoutIfNeeded的区别</h2><pre><code>UIView的setNeedsDisplay和setNeedsLayout两个方法都是异步执行的。
+而setNeedsDisplay会自动调用drawRect方法，这样可以拿到
+UIGraphicsGetCurrentContext进行绘制；而setNeedsLayout会默认调用
+layoutSubViews，给当前的视图做了标记；layoutIfNeeded
+查找是否有标记，如果有标记及立刻刷新。
+只有setNeedsLayout和layoutIfNeeded这二者合起来使用，才会起到立刻刷新的效果。
+</code></pre>
+<h2 id="UIResponder的理解和事件响应分析"><a href="#UIResponder的理解和事件响应分析" class="headerlink" title="UIResponder的理解和事件响应分析"></a>UIResponder的理解和事件响应分析</h2><pre><code>UIResponder类是专门用来响应用户的操作处理各种事件的，包括触摸事件(Touch Events)、
+运动事件(Motion Events)、远程控制事件(Remote Control Events)。
+我们知道UIApplication、UIView、UIViewController这几个类是直接继承自
+UIResponder，所以这些类都可以响应事件。当然我们自定义的继承自UIView的
+View以及自定义的继承自UIViewController的控制器都可以响应事件。
+</code></pre>
+<h2 id="loadView的作用"><a href="#loadView的作用" class="headerlink" title="loadView的作用"></a>loadView的作用</h2><pre><code>loadView方法会在每次访问UIViewController的view
+(比如controller.view、self.view)而且view为nil时会被调用，
+此方法主要用来负责创建UIViewController的view(重写loadView方法，
+并且不需要调用[super loadView])
+</code></pre>
+<h2 id="UITableView卡顿原因"><a href="#UITableView卡顿原因" class="headerlink" title="UITableView卡顿原因"></a>UITableView卡顿原因</h2><pre><code>1.最常用的就是cell的重用， 注册重用标识符
+2.避免cell的重新布局
+3.提前计算并缓存cell的属性及内容
+4.减少cell中控件的数量
+5.不要使用ClearColor，无背景色，透明度也不要设置为0
+6.使用局部更新
+7.加载网络数据，下载图片，使用异步加载，并缓存
+8.少使用addView 给cell动态添加view
+9.按需加载cell，cell滚动很快时，只加载范围内的cell
+10.不要实现无用的代理方法，tableView只遵守两个协议
+11.缓存行高
+12.不要做多余的绘制工作。
+13.预渲染图像。
+14.使用正确的数据结构来存储数据。
+</code></pre>
+<h2 id="UITableView优化"><a href="#UITableView优化" class="headerlink" title="UITableView优化"></a>UITableView优化</h2><pre><code>本质上是降低 CPU、GPU 的工作，从这两个大的方面去提升性能。
+卡顿优化在 CPU 层面
+尽量用轻量级的对象，比如用不到事件处理的地方，可以考虑使用 CALayer 取代 UIView
+不要频繁地调用 UIView 的相关属性，比如 frame、bounds、transform 等属性，尽量减少不必要的修改
+尽量提前计算好布局，在有需要时一次性调整对应的属性，不要多次修改属性
+Autolayout 会比直接设置 frame 消耗更多的 CPU 资源
+图片的 size 最好刚好跟 UIImageView 的 size 保持一致
+控制一下线程的最大并发数量
+尽量把耗时的操作放到子线程
+文本处理（尺寸计算、绘制）
+图片处理（解码、绘制）
+卡顿优化在 GPU层面
+尽量避免短时间内大量图片的显示，尽可能将多张图片合成一张进行显示
+GPU能处理的最大纹理尺寸是 4096x4096，一旦超过这个尺寸，就会占用 CPU 资源进行处理，所以纹理尽量不要超过这个尺寸
+尽量减少视图数量和层次
+减少透明的视图（alpha&lt;1），不透明的就设置 opaque 为 YES
+尽量避免出现离屏渲染
+</code></pre>
+<h2 id="iOS-保持界面流畅的技巧"><a href="#iOS-保持界面流畅的技巧" class="headerlink" title="iOS 保持界面流畅的技巧"></a>iOS 保持界面流畅的技巧</h2><pre><code>1.预排版，提前计算
+在接收到服务端返回的数据后，尽量将 CoreText 排版的结果、单个控件的高度、cell 整体的高度提前计算好，将其存储在模型的属性中。需要使用时，直接从模型中往外取，避免了计算的过程。
+尽量少用 UILabel，可以使用 CALayer 。避免使用 AutoLayout 的自动布局技术，采取纯代码的方式
+2.预渲染，提前绘制
+例如圆形的图标可以提前在，在接收到网络返回数据时，在后台线程进行处理，直接存储在模型数据里，回到主线程后直接调用就可以了
+避免使用 CALayer 的 Border、corner、shadow、mask 等技术，这些都会触发离屏渲染。
+3.异步绘制
+4.全局并发线程
+5.高效的图片异步加载
+</code></pre>
+<h2 id="使用-drawRect有什么影响"><a href="#使用-drawRect有什么影响" class="headerlink" title="使用 drawRect有什么影响"></a>使用 drawRect有什么影响</h2><pre><code>drawRect 方法依赖 Core Graphics 框架来进行自定义的绘制 缺点：
+它处理 touch 事件时每次按钮被点击后，都会用 setNeddsDisplay 
+进行强制重绘；而且不止一次，每次单点事件触发两次执行。这样的话从性
+能的角度来说，对 CPU 和内存来说都是欠佳的。特别是如果在我们的界
+面上有多个这样的UIButton 实例，那就会很糟糕了。这个方法的调用机制
+也是非常特别. 当你调用 setNeedsDisplay 方法时, UIKit 将会把当前
+图层标记为 dirty,但还是会显示原来的内容,直到下一次的视图渲染周期,才会将
+标记为 dirty 的图层重新建立 Core Graphics 上下文,然后将内存
+中的数据恢复出来, 再使用 CGContextRef 进行绘制
+</code></pre>
+<h1 id="OC相关"><a href="#OC相关" class="headerlink" title="OC相关"></a>OC相关</h1><h2 id="分类可以添加哪些内容，为什么不能添加属性"><a href="#分类可以添加哪些内容，为什么不能添加属性" class="headerlink" title="分类可以添加哪些内容，为什么不能添加属性"></a>分类可以添加哪些内容，为什么不能添加属性</h2><pre><code>实力方法、类方法、协议、属性（关联对象：）
+在分类的指针结构体中，没有属性列表
+在runtime 中，objc_class 结构体大小是固定的，
+不可能往这里添加数据，只能修改。所以，ivars
+指向了一个固定区域，ivars的内存布局在编译时就已经
+决定，只能修改成员变量的值，不能增加
+成员变量的个数。方法列表是一个二维数组，可以修改
+*methodLists的值来增加成员方法，虽然没办法扩展
+methodLists指向的内存区域，却可以改变这个内
+存区域的值（里面存的是指针），因此，可以动态添加方法，
+不可以添加成员变量。
+</code></pre>
+<h2 id="类扩展和分类的区别"><a href="#类扩展和分类的区别" class="headerlink" title="类扩展和分类的区别"></a>类扩展和分类的区别</h2><pre><code>OC分类属于Runtime运行时特性，是OC语言独有的创新，
+其他编程语言所不具备这样的特性！
+类扩展属于编译器特性，在编译阶段就会被添加合并到原类中！
+</code></pre>
+<h2 id="分类是如何实现的"><a href="#分类是如何实现的" class="headerlink" title="分类是如何实现的"></a>分类是如何实现的</h2><pre><code>获取cls中未完成整合的所有分类 unattachendCategoriesForClass
+将分类拼接到class上 attachCategories
+倒序遍历所有分类
+获取该分类的方法、协议添加到主类上
+// 添加方法
+rw-&gt;methods.attachLists(mlists,mcount);
+// 添加类方法
+rw-&gt;properties.attachLists(proplists,propcount);
+// 添加协议
+rw-&gt;properties.attachLists(protolists,protocount);
+计算拼接后的元素总数，根据新的总数重新分配内存
+重新设置元素总数
+执行内存移位
+</code></pre>
+<h2 id="分类重写了原类中同名方法会怎么样，为什么"><a href="#分类重写了原类中同名方法会怎么样，为什么" class="headerlink" title="分类重写了原类中同名方法会怎么样，为什么"></a>分类重写了原类中同名方法会怎么样，为什么</h2><pre><code>分类添加的方法可以覆盖原类方法
+原因：分类是在运行时添加到原类上的
+同名分类方法是能生效决定于编译顺序（倒序遍历所有分类）
+名字相同的分类会引起编译报错
+</code></pre>
+<h2 id="如何给分类添加属性（关联对象）"><a href="#如何给分类添加属性（关联对象）" class="headerlink" title="如何给分类添加属性（关联对象）"></a>如何给分类添加属性（关联对象）</h2><pre><code>关联对象的实现
+获取其维护的一个HashMap，是一个全局容器
+根据对象指针，查找对象对应的ObjectAssociationMap中的map
+添加关联对象
+</code></pre>
+<h2 id="什么是代理，和通知-BLOCK区别"><a href="#什么是代理，和通知-BLOCK区别" class="headerlink" title="什么是代理，和通知/BLOCK区别"></a>什么是代理，和通知/BLOCK区别</h2><pre><code>代理：是一对一的，对于一个协议就只能用一个代理，所以单例不能用代理。
+通知：是一对多
+block:可以替代代理，优点是代码简洁。缺点：
+block会开辟内存，消耗比较大，delegate则不会
+block防止循环引用，要用弱引用
+</code></pre>
+<h2 id="什么是通知"><a href="#什么是通知" class="headerlink" title="什么是通知"></a>什么是通知</h2><pre><code>同步和异步都是相对于发送通知所在的线程的。
+postNotification:总是会卡住当前线程，待observer执行（如不特殊处
+理selector也会在postNotification:所在线程执行）结束之后才会继续
+往下执行。所以是同步的。
+我们在底层当中的消息的触发其实是依赖与端口的，我们想要在一个线程中发消
+息，在另一个线程中进行处理的话，我们可以用端口来实现
+子线程发通知，需要在子线程添加runloop
+[self performSelector:@selector(postNotification) onThread:self.thread withObject:nil waitUntilDone:YES];
+</code></pre>
+<h2 id="KVO实现原理"><a href="#KVO实现原理" class="headerlink" title="KVO实现原理"></a>KVO实现原理</h2><pre><code>KVO是通过isa-swizzling技术实现的(这句话是整个KVO实现的重点)。
+在运行时根据原类创建一个中间类，这个中间类是原类的子类，并动态修改当前对象的isa指向中间类。
+并且将class方法重写，返回原类的Class。所以苹果建议在开发中不应该依赖isa指针，
+而是通过class实例方法来获取对象类型。
+1.注册A类的name属性变化监听
+       [a addObserver:self forKeyPath:@&quot;name&quot; options:NSKeyValueObservingOptionNew context:nil];
+2.创建A的子类NSKVONotifyingA
+Class noA = objc_allocateClassPair([A class], &quot;NSKVONotifyingA&quot;, observer);
+3.isa指针混合
+将A类的指针指向NSKVONotifyingA，从而到达调用NSKVONotifyingA类的方法的目的
+4.当调用a的setName方法时进入到NSKVONotifyingA类的setName方法
+5.调用willChangeValueForKey回调属性将要变化
+6.调用NSKVONotifyingA类的【self setName】赋值，实际上执行的是A类的setName，达到赋值目的
+7.调用didChangeValueForKey回调属性变化了
+</code></pre>
+<h2 id="KVC的实现原理"><a href="#KVC的实现原理" class="headerlink" title="KVC的实现原理"></a>KVC的实现原理</h2><pre><code>是一种键值机制
+1.首先搜索是否有setKey:的方法（key是成员变量名，首字母大写）
+,没有则会搜索是否有setIsKey:的方法。
+2.如果没有找到setKey:的方法,此时看+
+(BOOL)accessInstanceVariablesDirectly; （是否直接访问成员变量）方法。
+若返回NO，则直接调用- (nullable id)valueForUndefinedKey:;(默认是抛出异常)。
+</code></pre>
+<h2 id="属性关键字"><a href="#属性关键字" class="headerlink" title="属性关键字"></a>属性关键字</h2><pre><code>1、nonatomic、atomiac
+2、readwrite、readonly
+3、strong、retain、weak、assign、copy、unsafe_unretained
+@property 有两个对应的词，一个是 @synthesize，一个是 @dynamic。
+如果 @synthesize 和 @dynamic 都没写，那么默认的就是 @syntheszie var = _var;
+</code></pre>
+<h2 id="include与-import的区别、-import-与-class-的区别"><a href="#include与-import的区别、-import-与-class-的区别" class="headerlink" title="include与#import的区别、#import 与@class 的区别"></a>include与#import的区别、#import 与@class 的区别</h2><pre><code>#include 和#import其效果相同,都是查询类中定义的行为(方法);
+#import不会引起交叉编译,确保头文件只会被导入一次；
+@class 的表明,只定 义了类的名称,而具体类的行为是未知的,一般用于.h 文件；
+@class 比#import 编译效率更高。
+</code></pre>
+<h2 id="解释-const-static-inline-关键字"><a href="#解释-const-static-inline-关键字" class="headerlink" title="解释 const, static, inline 关键字"></a>解释 const, static, inline 关键字</h2><pre><code>const 修饰指针,或者常量,比如不可变,
+static 修饰变量表示作用域,比如全局的私有变量,函数内部的 static 是内部的私有变量。
+Static 修饰函数表示函数是文件作用域
+Inline 表示内联。一般来说 inline 需要和 static 联合用 一般用法是 
+static inline int max(int a, int b) &#123; 
+static inline作用是和宏类似,只不过是方便调试(宏不能断掉调 试,
+static inline 可以)。运行时候是一样的。
+一般 c/c++短小的函数都用 static inline 内联函数 
+</code></pre>
+<h2 id="OC-里怎么实现多继承"><a href="#OC-里怎么实现多继承" class="headerlink" title="OC 里怎么实现多继承"></a>OC 里怎么实现多继承</h2><pre><code>通过协议实现多继承
+通过分类Category实现多继承
+</code></pre>
+<h2 id="load方法实现原理与initialize区别"><a href="#load方法实现原理与initialize区别" class="headerlink" title="load方法实现原理与initialize区别"></a>load方法实现原理与initialize区别</h2><pre><code>1.调用方式
+(1).load是根据函数地址直接调用。
+(2).initialize是通过objc_msgSend调用。
+2.调用时刻(什么时候会调用)
+(1).load是runtime加载类、分类的时候调用(只会调用一次)
+（子类的load之前，会先调用父类的load。）父类-&gt;子类-&gt;分类
+(2).initialize是类第一次接收到消息的时候调用，
+每一个类只会initialize一次(父类的initialize方法可能会被调用多次)。
+</code></pre>
+<h2 id="懒加载的使用"><a href="#懒加载的使用" class="headerlink" title="懒加载的使用"></a>懒加载的使用</h2><pre><code>- (NSArray *)infoArr &#123;
+    if (!_infoArr) &#123;
+        _infoArr = @[];
+    &#125;
+    return _infoArr;
+&#125;
+</code></pre>
+<h2 id="写一个单例"><a href="#写一个单例" class="headerlink" title="写一个单例"></a>写一个单例</h2><pre><code>+ (SingleClass *)sharedSingleton &#123;
+    static SingleClass *_single = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^&#123;
+        _single = [[super allocWithZone:NULL] init];
+    &#125;);
+    return _single;
+    
+&#125;
++ (instancetype)allocWithZone:(struct _NSZone *)zone &#123;
+    return [SingleClass sharedSingleton];
+&#125;
+- (id)copyWithZone:(NSZone *)zone &#123;
+    return [SingleClass sharedSingleton];
+&#125;
+</code></pre>
+<h2 id="nil-NIL-NSNULL区别，id-和-instanceType-区别，self和super的区别，struct和class的区别"><a href="#nil-NIL-NSNULL区别，id-和-instanceType-区别，self和super的区别，struct和class的区别" class="headerlink" title="nil NIL NSNULL区别，id 和 instanceType 区别，self和super的区别，struct和class的区别"></a>nil NIL NSNULL区别，id 和 instanceType 区别，self和super的区别，struct和class的区别</h2><pre><code>id 在编译的时候不能判断对象的真实类型，instancetype 在编译的时候可以判断对象的真实类型。instancetype 只能作为返回值类型。
+self调用自己方法，super调用父类方法，self是类，super是预编译指令
+分别对应objc_msgSend、 objc_msgSendSuper
+class： 引用类型（位于栈上面的指针（引用）和位于堆上的实体对象）
+struct：值类型（实例直接位于栈中）
+</code></pre>
+<h2 id="如何实现一个线程安全的-NSMutableArray"><a href="#如何实现一个线程安全的-NSMutableArray" class="headerlink" title="如何实现一个线程安全的 NSMutableArray?"></a>如何实现一个线程安全的 NSMutableArray?</h2><pre><code>用dispatch_sync和dispatch_barrier_async结合保证NSMutableArray的线程安全，
+dispatch_sync是在当前线程上执行不会另开辟新的线程，当线程返回的时候就可以
+拿到读取的结果，我认为这个方案是最完美的选择，既保证的线程安全有发挥了多
+线程的优势还不用另写方法返回结果
+</code></pre>
+<h2 id="JS-和-OC-互相调用的几种方式"><a href="#JS-和-OC-互相调用的几种方式" class="headerlink" title="JS 和 OC 互相调用的几种方式"></a>JS 和 OC 互相调用的几种方式</h2><pre><code>1.利用定义url调用
+2.利用js直接调用
+3.利用js里对象调用
+</code></pre>
+<h2 id="数据持久性有哪几种"><a href="#数据持久性有哪几种" class="headerlink" title="数据持久性有哪几种"></a>数据持久性有哪几种</h2><pre><code>iOS本地数据保存有多种方式,比如NSUserDefaults、归档、文件保存、数据库、
+CoreData、KeyChain(钥匙串)等多种方式。其中KeyChain
+(钥匙串)是保存到沙盒范围以外的地方，也就是与沙盒无关。
+</code></pre>
+<h1 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h1><h2 id="NSObject的数据结构"><a href="#NSObject的数据结构" class="headerlink" title="NSObject的数据结构"></a>NSObject的数据结构</h2><pre><code>对象是objc_object结构体
+内部有一个 objc_class 类型isa指针
+objc_class 内部有isa指针指向根元类
+根元类的isa指针指向自己
+内部：
+Class superClass; 父类
+cache_t cache;  缓存
+class_data_bits_t bits  数据
+</code></pre>
+<h2 id="类对象和实例对象的isa指针的指向"><a href="#类对象和实例对象的isa指针的指向" class="headerlink" title="类对象和实例对象的isa指针的指向"></a>类对象和实例对象的isa指针的指向</h2><pre><code>实例对象的isa指向类对象
+类的isa指向元类对象
+元类指向根元类；
+根元类指向自己；
+NSObject的父类是nil，根元类的父类是NSObject。
+</code></pre>
+<h2 id="为什么id类型可以指向OC中任意对象"><a href="#为什么id类型可以指向OC中任意对象" class="headerlink" title="为什么id类型可以指向OC中任意对象"></a>为什么id类型可以指向OC中任意对象</h2><pre><code>id类型被定义为指向对象的指针
+NSObject只有一个Class对象isa，而objc_object也是只有一个Class对
+象isa,也就是说id等价于NSObject*。所以id是一个一个比较灵活的对象指
+针，并且是一个指向任何一个继承了Object（或者NSObject）类的对象
+</code></pre>
+<h2 id="为什么不能用isa判断一个类的继承关系"><a href="#为什么不能用isa判断一个类的继承关系" class="headerlink" title="为什么不能用isa判断一个类的继承关系"></a>为什么不能用isa判断一个类的继承关系</h2><pre><code>isa指针不总是指向实例对象所属的类，不能依靠它来确定
+类型，而是应该用class方法来确定实例对象的类。
+因为KVO的实现机理就是将被观察对象的isa指针指向一个中间类
+</code></pre>
+<h2 id="cache-t的数据结构、实现原理及扩容"><a href="#cache-t的数据结构、实现原理及扩容" class="headerlink" title="cache_t的数据结构、实现原理及扩容"></a>cache_t的数据结构、实现原理及扩容</h2><pre><code>用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查找速度，底层结构如下：
+用于快速查找方法执行函数
+是可增量扩展的哈希表结构
+是局部性原理的最佳应用
+哈希查找：发现当发生碰撞的时候，索引会+1，查找下一个。
+槽位如果不够，_mask 会变换，变为原来的2倍，
+并且扩展槽位的时候，会清空数组里原有的缓存内容
+子类没有实现方法会调用父类的方法，
+会将父类方法加入到子类自己的cache 里。
+</code></pre>
+<h2 id="cache-t-扩容"><a href="#cache-t-扩容" class="headerlink" title="cache_t 扩容"></a>cache_t 扩容</h2><pre><code>创建新的新的buckets来替换原有的buckets并抹掉原有的buckets
+减少对方法快速查找流程的影响：调用objc_msgSend时会触发方法
+快速查找，如果进行扩容需要做一些读写操作，对快速查找影响比较大。
+对性能要求比较高：开辟新的buckets空间并抹掉原有buckets
+的消耗比在原有buckets上进行扩展更加高效
+当扩容后，会把新mask设置为newCapacity长度减一，然后清空缓存。
+</code></pre>
+<h2 id="class-rw-t的数据结构，实现原理"><a href="#class-rw-t的数据结构，实现原理" class="headerlink" title="class_rw_t的数据结构，实现原理"></a>class_rw_t的数据结构，实现原理</h2><pre><code>class_ro_t存放的是编译期间就确定的；
+而class_rw_t是在runtime时才确定，它会先将class_ro_t的内容拷贝过去，
+然后再将当前类的分类的这些属性、方法等拷贝到其中。所以可以说class_rw_t
+是class_ro_t的超集，当然实际访问类的方法、属性等也都是访问的class_rw_t中的内容
+struct class_rw_t &#123;
+    uint32_t flags;
+    uint32_t version;
+
+    const class_ro_t *ro; // 编译时生成的属性方法列表，不可改变
+
+    method_array_t methods; // 方法列表
+    property_array_t properties; //属性，和变量的区别，属性是名称，变量是值
+    protocol_array_t protocols; // 协议
+
+    Class firstSubclass;
+    Class nextSiblingClass;
+&#125;;
+</code></pre>
+<h2 id="哈希碰撞的解决方法"><a href="#哈希碰撞的解决方法" class="headerlink" title="哈希碰撞的解决方法"></a>哈希碰撞的解决方法</h2><pre><code>开放地址法
+链地址法
+(哈希表)的原理都是一样的，都是通过一个函数，这个函数传入一个key，
+通过这个key算出一个索引，如果索引冲突了就加一或者减一
+，直至不冲突为止，不同的就是算法不一样。
+</code></pre>
+<h2 id="方法查找的过程"><a href="#方法查找的过程" class="headerlink" title="方法查找的过程"></a>方法查找的过程</h2><pre><code>1.检查这个selector是不是要被忽略的，比如mac os开发，
+   有垃圾回收，就不考虑 retain，release这些函数
+2.检测这个target是不是nil对象，
+   ObjC的特性允许对一个nil对象发消息而不会崩溃
+3.如果以上都通过了，就通过isa指针开始查找这个类的方法列表，
+   先从缓存中找（hashMap的结构，查找速度快），完了跳到对应函数执行
+4.如果缓存列表找不到，class_rw_t就找一下方法分发表
+5.如果方法列表找不到，就到超类的方法分发列表找，
+   一直找到NSObject
+</code></pre>
+<h2 id="消息转发的流程"><a href="#消息转发的流程" class="headerlink" title="消息转发的流程"></a>消息转发的流程</h2><pre><code>（动态添加） 首先是征询接收者所属的类,看其是否能动态添加调用的方法,来处理当前这个未知的选择子;
+-(BOOL)resolveInstanceMethod:(SEL)selector
+（重定向-备援接收者）寻找是否在其他对象内有该方法实现,并将该消息转发给这个对象
+- (id)forwardingTargetForSelector:(SEL)aSelector  
+生成方法签名，然后系统用这个方法签名生成NSInvocation对象。
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector 
+改变选择子
+- (void)forwardInvocation:(NSInvocation *)Invocation 
+抛出异常
+- (void)doesNotRecognizeSelector:(SEL)aSelector方法
+</code></pre>
+<h2 id="objc-msgSend"><a href="#objc-msgSend" class="headerlink" title="objc_msgSend"></a>objc_msgSend</h2><pre><code>当前对象无论调用任何方法返回的都是当前对象
+无论何时，要调用objc_msgSend函数，必须要将函数强制转
+换成合适的函数指针类型才能调用。
+其实编译器会根据情况在objc_msgSend,
+objc_msgSend_stret, objc_msgSendSuper, 或
+objc_msgSendSuper_stret四个方法中选择一个来调用。
+</code></pre>
+<h2 id="系统如何解决新增实例冲突"><a href="#系统如何解决新增实例冲突" class="headerlink" title="系统如何解决新增实例冲突"></a>系统如何解决新增实例冲突</h2><pre><code>类的结构体在编译时都是固定的，如果想修改类的结构需要重新编译
+原来UIViewController的结构体中增加了
+childViewControllers属性，这个时候和子类的内存偏移就
+发生了冲突，只不过，runtime有检测内存地址冲突的机制，
+在类生成实例变量时，会判断实例变量是否有地址冲突，
+如果发生冲突则调整对象的地址偏移。
+</code></pre>
+<h2 id="常用的runtime方法有哪些"><a href="#常用的runtime方法有哪些" class="headerlink" title="常用的runtime方法有哪些"></a>常用的runtime方法有哪些</h2><pre><code>获取属性列表
+获取方法列表
+获取成员变量列表
+获取协议列表
+获得类方法
+添加一个实例变量
+添加方法
+替换方法
+交换方法
+</code></pre>
+<h2 id="runtime的具体应用有哪些，你在什么地方用到了"><a href="#runtime的具体应用有哪些，你在什么地方用到了" class="headerlink" title="runtime的具体应用有哪些，你在什么地方用到了"></a>runtime的具体应用有哪些，你在什么地方用到了</h2><pre><code>动态交换两个方法的实现
+拦截并替换方法
+在方法上增加额外功能
+实现NSCoding的自动归档和解档
+实现字典转模型的自动转换JSONModel、YYModel
+给分类添加属性
+消息转发机制
+KVO实现
+JSPatch替换已有的OC方法实行
+</code></pre>
+<h2 id="runtime-怎么添加属性，方法等"><a href="#runtime-怎么添加属性，方法等" class="headerlink" title="runtime 怎么添加属性，方法等"></a>runtime 怎么添加属性，方法等</h2><pre><code>添加属性：class_addIvar
+但是得在调用objc_allocateClassPari之后，
+objc_registerClassPair之前。
+添加方法：class_addMethod
+</code></pre>
+<h2 id="runtime-如何实现-weak-属性"><a href="#runtime-如何实现-weak-属性" class="headerlink" title="runtime 如何实现 weak 属性"></a>runtime 如何实现 weak 属性</h2><pre><code>runtime 对注册的类，会进行内存布局，存储到 hash 表，这是一个全局表，
+表中是用 weak 指向的对象内存地址作为 key，用所有指向该对象的 weak 指针表作为 value。
+当此对象的引用计数为 0 的时候会 dealloc，假如该对象内存地址是 a，那么就会以 a 为
+key，在这个 weak 表中搜索，找到所有以 a 为键的 weak 对象，从而设置为 nil。
+</code></pre>
+<h2 id="runtime-如何通过selector-找到对应的-IMP-地址？（分别考虑类方法和实例方法）"><a href="#runtime-如何通过selector-找到对应的-IMP-地址？（分别考虑类方法和实例方法）" class="headerlink" title="runtime 如何通过selector 找到对应的 IMP 地址？（分别考虑类方法和实例方法）"></a>runtime 如何通过selector 找到对应的 IMP 地址？（分别考虑类方法和实例方法）</h2><pre><code>每一个类对象中都一个方法列表,方法列表中记录着方法的名称,方法实现,
+以及参数类型,其实selector本质就是方法名称,
+通过这个方法名称就可以在方法列表中找到对应的方法实现.
+</code></pre>
+<h2 id="runtime如何实现weak变量的自动置nil"><a href="#runtime如何实现weak变量的自动置nil" class="headerlink" title="runtime如何实现weak变量的自动置nil"></a>runtime如何实现weak变量的自动置nil</h2><pre><code>runtime 对注册的类， 会进行布局，对于 weak 对象会放入一个 hash 表
+中。 用 weak 指向的对象内存地址作为 key，当此对象的引用计数为0的时
+候会 dealloc，假如 weak 指向的对象内存地址是a，那么就会以a为键， 
+在这个 weak 表中搜索，找到所有以a为键的 weak 对象，从而设置为 nil
+</code></pre>
+<h2 id="map-images-函数Runtime-初始化操作"><a href="#map-images-函数Runtime-初始化操作" class="headerlink" title="map_images 函数Runtime 初始化操作"></a>map_images 函数Runtime 初始化操作</h2><pre><code>在runtime中所有类都存在一个哈希表中，在table的buckets中存储
+1. 加载所有类到类的gdb_objc_realized_classes表中
+2. 对所有类做重映射
+3. 将所有SEL都注册到namedSelectors表中
+4. 修复函数指针遗留
+5. 将所有Protocol添加到protocol_map表中
+6. 将所有Protocol重映射
+7. 初始化所有非懒加载的类，进行rw，ro操作 
+8. 便利所有懒加载类，执行初始化
+9. 处理所有Category包括Class和MetaClass
+10. 初始化所有未初始化类
+</code></pre>
+<h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><h2 id="内存中的5大区都是什么？"><a href="#内存中的5大区都是什么？" class="headerlink" title="内存中的5大区都是什么？"></a>内存中的5大区都是什么？</h2><pre><code>堆区
+栈区
+常量区
+全局区（静态区）
+程序代码区
+</code></pre>
+<h2 id="C-内存如何分布、堆和栈的区别"><a href="#C-内存如何分布、堆和栈的区别" class="headerlink" title="C++内存如何分布、堆和栈的区别"></a>C++内存如何分布、堆和栈的区别</h2><pre><code>堆和栈的区别，工程项目中的哪些数据是储存在堆哪些在栈中
+malloc咋实现
+析构函数是不是必须是虚函数
+</code></pre>
+<h2 id="ARC实现机制，遵循哪些原则"><a href="#ARC实现机制，遵循哪些原则" class="headerlink" title="ARC实现机制，遵循哪些原则"></a>ARC实现机制，遵循哪些原则</h2><pre><code>ARC是RunTime和LLVM共同协作完成的
+</code></pre>
+<h2 id="NSObject内存分配、ISA指针的内存大小"><a href="#NSObject内存分配、ISA指针的内存大小" class="headerlink" title="NSObject内存分配、ISA指针的内存大小"></a>NSObject内存分配、ISA指针的内存大小</h2><pre><code>在64位架构下，如果他的第一位是0 。则代表他是一个 isa
+指针,表示当前对象的类对象的地址，如果是1，则不仅代表一个 isa
+指针,类对象的地址，里面还存储内存管理相关的内容，第二位代表是否有关联对象，
+0代表没有，1代表有（has_assoc）,第三位,代表当前对象是否含有C++代码
+（has_cxx_dtor）,3-15表示当前对象的类对象内存地址,16-31
+,也是，32-35位也是，也就是说，13+16+4 = 33位
+</code></pre>
+<h2 id="Tagged-Pointer、NONPOINTER-ISA实现机制和作用"><a href="#Tagged-Pointer、NONPOINTER-ISA实现机制和作用" class="headerlink" title="Tagged Pointer、NONPOINTER_ISA实现机制和作用"></a>Tagged Pointer、NONPOINTER_ISA实现机制和作用</h2><pre><code>利用联合体可以用相同的存储空间存储不同型别的数据类型，从而节省内存空间
+1.Tagged Pointer专门用来存储小的对象，例如NSNumber和NSDate
+2.Tagged Pointer指针的值不再是地址了，而是真正的值。
+    实际上它不再是一个对象了，它只是一个披着对象皮的普通变量而已。
+    它的内存并不存储在堆中，也不需要malloc和free。
+3.在内存读取上有着3倍的效率，创建时比以前快106倍。
+4.它不单单是一个指针，还包括了其值+类型
+ NONPOINTER_ISA在64位机上，对象的isa区域不再只是一个指向另一块存储空间的指针。
+ 还包含了更多信息，比如引用计数，析构状态，被其他weak 变量引用情况等。
+ 如果引用计数超过了当前指针所能表示的范围，Runtime 会使用一张散列表来管理用计数。
+</code></pre>
+<h2 id="异步多线程访问导致的内存问题分析及解决办法。（代码题）"><a href="#异步多线程访问导致的内存问题分析及解决办法。（代码题）" class="headerlink" title="异步多线程访问导致的内存问题分析及解决办法。（代码题）"></a>异步多线程访问导致的内存问题分析及解决办法。（代码题）</h2><pre><code>ispatch_queue_t queue = dispatch_queue_create(&quot;queue&quot;, DISPATCH_QUEUE_CONCURRENT);
+   for (int i = 0; i &lt; 1000; i ++) &#123;
+       dispatch_async(queue, ^&#123;
+           self.name = [NSString stringWithFormat:@&quot;abcdefghijklmn&quot;];
+       &#125;);
+   &#125;
+运行结果：崩溃（坏内存访问）
+因为setter方法中，对strong修饰的属性会有一个retain和release的操作。在并发多线程的赋值操作中，都是对_name指针进行的操作，可能在_name刚刚被release后进行赋值操作，这个时候_name指向的内存地址是已经被释放了，所以造成了坏内存访问崩溃
+解决办法：
+1.异步改同步
+2.将属性改成原子性
+3.加锁
+dispatch_queue_t queue = dispatch_queue_create(&quot;queue&quot;, DISPATCH_QUEUE_CONCURRENT);
+for (int i = 0; i &lt; 1000; i ++) &#123;
+    dispatch_async(queue, ^&#123;
+        self.name = [NSString stringWithFormat:@&quot;a&quot;];
+    &#125;);
+&#125;
+为什么不崩溃了？因为没有用到引用计数的内存管理方法，使用的是TaggedPointer
+从64bit开始，iOS引入了Tagged
+Pointer技术，用于优化NSNumber、NSDate、NSString等小对象存储
+</code></pre>
+<h2 id="SideTables数据结构及实现原理，为什么用多个SideTables"><a href="#SideTables数据结构及实现原理，为什么用多个SideTables" class="headerlink" title="SideTables数据结构及实现原理，为什么用多个SideTables"></a>SideTables数据结构及实现原理，为什么用多个SideTables</h2><pre><code> SideTables包括了多个SideTable，在不同系统架构中SideTable的个数是不同的；
+ SideTables是哈希表，可以通过一个对象的指针来找到具体的引用计数表或弱引用
+ 表在哪一个具体的SideTable中。
+ 如果只有一个table，意味着内存中分配的所有对象都要在一个表中操作，
+ 因为多个线程可能同时操作这个表，所以就要对这个表加锁，如果并发操作这个表的线
+ 程有成千上万个，就会产生效率问题。所以系统引入了分离锁这样一个技术方案，
+ 把大表拆成多个小表来进行操作，分别对小表加锁，从而提升效率。
+  自旋锁：
+                       
+</code></pre>
+<h2 id="Autoreleasepool的数据结构及实现原理，什么时候释放"><a href="#Autoreleasepool的数据结构及实现原理，什么时候释放" class="headerlink" title="Autoreleasepool的数据结构及实现原理，什么时候释放"></a>Autoreleasepool的数据结构及实现原理，什么时候释放</h2><pre><code>以栈为结点，由双向链表的形式合成的数据结构。与线程一一对应。
+AutoreleasePoolPage每个对象会开辟4096字节内存（也就是虚拟内存一页的大小），
+除了上面的实例变量所占空间，剩下的空间全部用来储存autorelease对象的地址
+一个AutoreleasePoolPage的空间被占满时，会新建一个AutoreleasePoolPage对象，
+连接链表，后来的autorelease对象在新的page加入
+Main函数自动添加了@autoreleasepool&#123;&#125;;
+在for循环中alloc图片数据等内存消耗较大的场景手动插入autoreleasePool。
+在当次runloop将要结束的时候调用AutoreleasePoolPage::pop()。
+在for循环大量使用imageNamed:之类的方法生成UIImage对象可能是个更要命的事情，内
+存随时可能因为占用过多被系统杀掉。
+这种情况下利用Autoreleasepool可以大幅度降低程序的内存占用。
+</code></pre>
+<h2 id="AutoreleasePool-为何可以嵌套使用"><a href="#AutoreleasePool-为何可以嵌套使用" class="headerlink" title="AutoreleasePool 为何可以嵌套使用"></a>AutoreleasePool 为何可以嵌套使用</h2><pre><code>,每次创建一个AutoreleasePool，@AutoreleasePool，其实系统就
+是为我们创建了一个哨兵对象,其实就是创建page，若果当前page没有满，
+其实就是创建一个哨兵，所以可以嵌套使用
+中间用nil作为分割
+从最新加入的对象一直向前清理，可以向前跨越若干个page，直到哨兵所在的page
+</code></pre>
+<h2 id="子线程默认不会开启-Runloop，那出现-Autorelease-对象如何处理，在什么情况下子线程使用AutoreleasePool"><a href="#子线程默认不会开启-Runloop，那出现-Autorelease-对象如何处理，在什么情况下子线程使用AutoreleasePool" class="headerlink" title="子线程默认不会开启 Runloop，那出现 Autorelease 对象如何处理，在什么情况下子线程使用AutoreleasePool"></a>子线程默认不会开启 Runloop，那出现 Autorelease 对象如何处理，在什么情况下子线程使用AutoreleasePool</h2><pre><code>在子线程你创建了 Pool 的话，产生的 Autorelease 对象就会交给 pool 去管理。
+如果你没有创建 Pool ，但是产生了 Autorelease 对象，就会调用 autoreleaseNoPage
+方法。在这个方法中，会自动帮你创建一个 hotpage（hotPage 可以理解为当前正在使用的
+AutoreleasePoolPage，如果你还是不理解，可以先看看 Autoreleasepool
+的源代码，再来看这个问题 ），并调用 page-&gt;add(obj)将对象添加到
+AutoreleasePoolPage 的栈中，也就是说你不进行手动的内存管理，也不会内存泄漏啦！
+</code></pre>
+<h2 id="dealloc调用流程"><a href="#dealloc调用流程" class="headerlink" title="dealloc调用流程"></a>dealloc调用流程</h2><pre><code>1.直接调用 objc_destructInstance()。
+2.之后调用C的 free() 函数。
+3.objc_destructInstance() 调用流程
+1&gt;.先判断 hasCxxDtor，是否有析构函数（析构器），
+要调用 object_cxxDestruct() ，释放（清除成员变量）。
+2&gt;.再判断hasAssocitatedObjects，如果有的话，
+要调用object_remove_associations()， 移除当前对象的关联对象。
+3&gt;.然后调用 clearDeallocating()。 
+4.clearDeallocating() 调用流程
+0&gt;. 判断isa是否优化过，从arm64架构开始，对isa进行了优化，
+变成了一个共用体（union）结构，所以结果一般是优化过了。
+判断是否有弱引用或者引用计数
+1&gt;.执行 clearDeallocating_slow()。
+2&gt;.再执行 weak_clear_no_lock,在这一步骤中，会将指向该对象的弱引用指针置为 nil。
+3&gt;.接下来执行 table.refcnts.eraser()，从引用计数表中擦除该对象的引用计数。
+4&gt;.至此为止，Dealloc 的执行流程结束。
+</code></pre>
+<h2 id="常见的循环引用，如何破除循环引用"><a href="#常见的循环引用，如何破除循环引用" class="headerlink" title="常见的循环引用，如何破除循环引用"></a>常见的循环引用，如何破除循环引用</h2><pre><code>方式1:－－打断引用链条         方式2:－－使用__weak  
+NSTimer破除循环引用
+weak指针：
+既然是强引用导致循环引用，那么用__weak修饰self就好了，想法是对的，但是做法是无效的。
+中间类，block
+及时销毁
+创建一个继承NSProxy的子类WeakProxy，并实现消息转发的相关方法
+</code></pre>
+<h2 id="weak-修饰的变量在地址被释放后，为何被置为-nil？"><a href="#weak-修饰的变量在地址被释放后，为何被置为-nil？" class="headerlink" title="__weak 修饰的变量在地址被释放后，为何被置为 nil？"></a>__weak 修饰的变量在地址被释放后，为何被置为 nil？</h2><pre><code>1、初始化时：runtime会调用objc_initWeak函数，初始化一个新的weak指针
+指向对象的地址。
+2、添加引用时：objc_initWeak函数会调用 objc_storeWeak() 函数，
+objc_storeWeak() 的作用是更新指针指向，创建对应的弱引用表。
+3、释放时，调用clearDeallocating函数。clearDeallocating
+函数首先根据对象地址获取所有weak指针地址的数组，然后遍历这个数组把其中
+的数据设为nil，最后把这个entry从weak表中删除，最后清理对象的记录。
+</code></pre>
+<h2 id="深拷贝和浅拷贝区别"><a href="#深拷贝和浅拷贝区别" class="headerlink" title="深拷贝和浅拷贝区别"></a>深拷贝和浅拷贝区别</h2><pre><code>对于对象来说浅拷贝只是增加引用，深拷贝时开辟新的内存地址存放复制对象
+</code></pre>
+<h2 id="atomic是安全的吗"><a href="#atomic是安全的吗" class="headerlink" title="atomic是安全的吗"></a>atomic是安全的吗</h2><pre><code>不是，只能保证在set和get方法内安全
+</code></pre>
+<h2 id="assign-vs-weak，-block-vs-weak-区别"><a href="#assign-vs-weak，-block-vs-weak-区别" class="headerlink" title="assign vs weak，_block vs _weak 区别"></a>assign vs weak，_block vs _weak 区别</h2><pre><code>weak和assign都是引用计算不变，两个的差别在于，weak用于object
+type，就是指针类型，而assign用于简单的数据类型，如int BOOL 等。
+assign看起来跟weak一样，其实不能混用的，assign的变量在释放后并不设置为nil
+（和weak不同），当你再去引用时候就会发生错误
+block 会对对象强引用，引起retain-cycle，需要使用__weak
+（两个指针，指向同一块地址（self））；
+__weak和__unsafe_unretained这两个关键字都能产生弱引用，但是它们又有以下不同：
+__weak产生的弱引用，当弱指针指向的对象销毁时，也会将这个弱指针的值置为nil
+__block修饰的变量，在运行时会生成一个__block对象，拥有__forwarding指针
+当block拷贝到堆上时，__forwarding指向了堆上的__block 的__forwarding指针
+</code></pre>
+<h2 id="怎么检查内存泄露"><a href="#怎么检查内存泄露" class="headerlink" title="怎么检查内存泄露"></a>怎么检查内存泄露</h2><pre><code>启用Zombie Object进行悬挂指针的检测。
+应用Product -&gt; Analysis进行内存泄露的初步检测。
+可以在xcode的build setting中打开implicit retain of ‘self’ 
+within blocks，xcode编译器会给出警告，逐个排查警告。
+应用Leak Instrument进行内存泄露查找。
+在以上方法不奏效的情况下，通过查看dealloc是否调用查看某个class是否泄露的问题
+</code></pre>
+<h2 id="图片加载占用内存对比"><a href="#图片加载占用内存对比" class="headerlink" title="图片加载占用内存对比"></a>图片加载占用内存对比</h2><pre><code>图片较小，并且使用频繁，使用 imageName: 来加载(按钮图标/主页里面图片)
+图片较大，并且使用较少，使用 imageWithContentsOfFile: 来加载(版本新特性/相册)
+</code></pre>
+<h2 id="block一般用那个关键字修饰，为什么"><a href="#block一般用那个关键字修饰，为什么" class="headerlink" title="block一般用那个关键字修饰，为什么"></a>block一般用那个关键字修饰，为什么</h2><pre><code>此答案便是因为block在创建时是stack对象,（栈空间上）
+如果我们需要在离开当前函数仍能够使用我们创建的block。
+我们就需要把它拷贝到堆上以便进行以引用计数为基础的内存管理。
+</code></pre>
+<h2 id="写一个MRC的set方法"><a href="#写一个MRC的set方法" class="headerlink" title="写一个MRC的set方法"></a>写一个MRC的set方法</h2><pre><code>-(void)setDelegate:(id)delegate 
+&#123; 
+    if (_delegate != delegate) &#123; 
+        [_delegate release]; 
+        _delegate = [delegate retain/copy]; 
+    &#125; 
+&#125;
+</code></pre>
+<h2 id="如何解决定时器循环引用"><a href="#如何解决定时器循环引用" class="headerlink" title="如何解决定时器循环引用"></a>如何解决定时器循环引用</h2><pre><code>1.及时调用invalidate
+在控制器中创建定时器将target给到self，在runloop中，对timer、self有了强引用
+如果timer执行invalidate，则在runloop中，就会取消对timer及self的强引用了。
+2.使用带block的定时器（支持iOS10以上），在block里面用walkSelf
+3.加入了一个中间者NSProxy，使得timer不直接持有self，而是持有proxy，
+让proxy对象弱引用self来解决循环引用（消息重定）
+NSProxy是一个用来做消息转发的抽象类
+,使用时需写一个子类继承自NSProxy并且子类需要实现两个方法，
+- (void)forwardInvocation:(NSInvocation *)invocation;
+和- (nullable NSMethodSignature *)methodSignatureForSelector:(SEL)sel。
+当NSProxy对象发送消息时，会跳过查找方法实现、动态方法解析、
+被援接受者几个步骤直接进行消息的重定向，所以相比较NSObject的消息转发而言，
+NSProxy减少了几个步骤，效率更高性能更优。
+</code></pre>
+<h1 id="Block"><a href="#Block" class="headerlink" title="Block"></a>Block</h1><h2 id="Block为什么用copy"><a href="#Block为什么用copy" class="headerlink" title="Block为什么用copy"></a>Block为什么用copy</h2><pre><code>Block在没有使用外部变量时，内存存在全局区，然而，当Block在使用外部变量的时候，
+内存是存在于栈区，当Block copy之后，是存在堆区的。存在于栈区的特点是对象随时有
+可能被销毁，一旦销毁在调用的时候，就会造成系统的崩溃。所以Block要用copy关键字。
+</code></pre>
+<h2 id="Block如何截获不同变量，代码分析"><a href="#Block如何截获不同变量，代码分析" class="headerlink" title="Block如何截获不同变量，代码分析"></a>Block如何截获不同变量，代码分析</h2><pre><code>Block是将函数及其执行上下文封装起来的对象。
+对于基本数据类型的局部变量截获的是其值
+对于对象类型的局部变量连同所有权修饰符一起截获（强引用）
+以指针形式结果局部静态变量
+不截获全局变量、全局静态变量
+</code></pre>
+<h2 id="Block本质数据结构"><a href="#Block本质数据结构" class="headerlink" title="Block本质数据结构"></a>Block本质数据结构</h2><pre><code>Block是将函数及其执行上下文封装起来的对象。
+Block本质上是一个结构体，也有自己的isa
+</code></pre>
+<h2 id="栈上的Block经过copy操作后发生哪些变化"><a href="#栈上的Block经过copy操作后发生哪些变化" class="headerlink" title="栈上的Block经过copy操作后发生哪些变化"></a>栈上的Block经过copy操作后发生哪些变化</h2><pre><code>ARC环境下，一旦Block赋值就会触发copy，__block就会copy到堆上，
+Block也是__NSMallocBlock。ARC环境下也是存在__NSStackBlock的时候，
+这种情况下，__block就在栈上。
+</code></pre>
+<h2 id="block循环引用"><a href="#block循环引用" class="headerlink" title="block循环引用"></a>block循环引用</h2><pre><code>__weak所有权修饰变量，是联通属性关键字拷贝的
+</code></pre>
+<h2 id="block原理"><a href="#block原理" class="headerlink" title="__block原理"></a>__block原理</h2><pre><code>__block 修改变量
+都有.__forwarding指针
+栈上的__forwarding指向自己（变量）
+经过copy后，栈上的.__forwarding指针指向了堆上的__block变量
+.__forwarding存在的意义
+不论任何内存位置都可以顺利访问统一个__block变量
+</code></pre>
+<h2 id="strong原理"><a href="#strong原理" class="headerlink" title="__strong原理"></a>__strong原理</h2><pre><code>strongSelf是block内部的一个局部变量，变量的作用域仅限于局部代码，
+而程序一旦跳出作用域，strongSelf就会被释放，这个临时产生的“循环引用”
+就会被自动打破，代码的执行事实上也是这样子的。
+__strong修饰的变量在超出其作用域时retain是会自减
+</code></pre>
+<h1 id="RunLoop"><a href="#RunLoop" class="headerlink" title="RunLoop"></a>RunLoop</h1><h2 id="RunLoop概念及数据结构、事件循环机制"><a href="#RunLoop概念及数据结构、事件循环机制" class="headerlink" title="RunLoop概念及数据结构、事件循环机制"></a>RunLoop概念及数据结构、事件循环机制</h2><pre><code>CFRunLoop
+CFRunLoopMode
+Source/Timer/Observer
+source0
+需要手动唤醒线程
+source1
+具备唤醒线程的能力
+CFRunLoopObserver
+观测时间点
+kCFRunLoopEntry
+kCFRunLoopBeforeTimers
+CommonMode的特性
+NSRunLoopCommonModes
+commonMode不是实际存在的一种mode
+是同步Source/Timer/Observer到多个Mode中的一种技术方案
+一个 RunLoop 包含若干个 Mode，每个 Mode 又包含若干个
+Source/Timer/Observer。每次调用 RunLoop 的主函数时，只能指定其中一个
+Mode，这个Mode被称作 CurrentMode。如果需要切换 Mode，只能退出
+Loop，再重新指定一个 Mode 进入。这样做主要是为了分隔开不同组的
+Source/Timer/Observer，让其互不影响。
+</code></pre>
+<h2 id="CFRunLoopMode、CFRunLoopTimer、CFRunLoopObserver作用"><a href="#CFRunLoopMode、CFRunLoopTimer、CFRunLoopObserver作用" class="headerlink" title="CFRunLoopMode、CFRunLoopTimer、CFRunLoopObserver作用"></a>CFRunLoopMode、CFRunLoopTimer、CFRunLoopObserver作用</h2><h2 id="RunLoop和NStimer"><a href="#RunLoop和NStimer" class="headerlink" title="RunLoop和NStimer"></a>RunLoop和NStimer</h2><pre><code>NSTimer需要添加到Runloop中， 才能执行的情况
+准确的Timer应该和当前线程的RunLoopMode保持一致
+一个RunLoop不能同时共存两个mode
+当滚动视图滚动时，当前RunLoop处于UITrackingRunLoopMode，
+NSTimer的RunLoopMode和当前线程的RunLoopMode不一致，所以会停止
+解决方式：将timer的runloopMode改为UITrackingRunLoopMode或
+者NSRunLoopCommonModes
+如果NSTimer在分线程中创建，会发生什么NSTimer没有启动
+在主线程中，系统默认创建并启动主线程的runloop
+在分线程中，系统不会自动启动runloop，需要手动启动？
+</code></pre>
+<h2 id="RunLoop和多线程"><a href="#RunLoop和多线程" class="headerlink" title="RunLoop和多线程"></a>RunLoop和多线程</h2><pre><code>在异步线程中下载很多图片,如果失败了,该如何处理?请结合RunLoop来谈谈解决方案
+在异步线程中启动一个RunLoop重新发送网络请求,下载图片
+如果程序启动就需要执行一个耗时操作，你会怎么做？
+开启一个异步的子线程，并启动它的RunLoop来执行该耗时操作
+</code></pre>
+<h2 id="如何实现一个常驻线程"><a href="#如何实现一个常驻线程" class="headerlink" title="如何实现一个常驻线程"></a>如何实现一个常驻线程</h2><pre><code>给子线程添加RunLoop
+ @autoreleasepool &#123;
+    // 子线程对应的runloop需要自己创建并开启
+    // 创建子线程对应的runloop,使子线程一直存在
+    NSRunLoop *currentRunloop = [NSRunLoop currentRunLoop];
+    // 给runloop添加一个基于port的事件(系统事件),让runloop的运行模式不为空,保证runloop不退出
+    [currentRunloop addPort:[NSPort port] forMode:NSDefaultRunLoopMode];
+    // 开启运行循环
+    [currentRunloop run];
+    &#125;
+</code></pre>
+<h2 id="利用-runloop-解释一下页面的渲染的过程"><a href="#利用-runloop-解释一下页面的渲染的过程" class="headerlink" title="利用 runloop 解释一下页面的渲染的过程"></a>利用 runloop 解释一下页面的渲染的过程</h2><pre><code>当我们调用 [UIView setNeedsDisplay] 时，这时会调用当前 View.layer 
+的 [view.layer setNeedsDisplay]方法。
+这等于给当前的 layer 打上了一个脏标记，而此时并没有直接进行绘制工作。
+而是会到当前的 Runloop 即将休眠，也就是 beforeWaiting 时才会进行绘制工作。
+紧接着会调用 [CALayer display]，进入到真正绘制的工作。CALayer 
+层会判断自己的 delegate 有没有实现异步绘制的代理方法
+displayer:，这个代理方法是异步绘制的入口，如果没有实现这个方法，
+那么会继续进行系统绘制的流程，然后绘制结束。
+CALayer 内部会创建一个 Backing Store，用来获取图形上下文。
+接下来会判断这个 layer 是否有 delegate。
+如果有的话，会调用 [layer.delegate drawLayer:inContext:]，
+并且会返回给我们 [UIView DrawRect:] 的回调，让我们在系统绘制的基础之上再做一些事情。
+如果没有 delegate，那么会调用 [CALayer drawInContext:]。
+以上两个分支，最终 CALayer 都会将位图提交到 Backing Store，最后提交给 GPU。
+</code></pre>
+<h2 id="你在开发过程中怎么使用RunLoop？什么应用场景？"><a href="#你在开发过程中怎么使用RunLoop？什么应用场景？" class="headerlink" title="你在开发过程中怎么使用RunLoop？什么应用场景？"></a>你在开发过程中怎么使用RunLoop？什么应用场景？</h2><pre><code>开启一个常驻线程（让一个子线程不进入消亡状态，等待其他线程发来的消息，处理其他事件）
+在子线程中开启一个定时器
+在子线程中进行一些长期监控
+可以控制定时器在特定模式下运行
+可以让某些事件（行为，任务）在特定模式下执行
+可以添加observer监听RunLoop的状态，比如监听点击事件的处理（比如在所有点击事件前做一些处理）
+1）NSTimer
+2）ImageView显示：控制方法在特定的模式下可用
+3）PerformSelector
+4）常驻线程：在子线程中开启一个runloop
+5）自动释放池
+</code></pre>
+<h1 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h1><h2 id="进程与线程、并行-和-并发-区别"><a href="#进程与线程、并行-和-并发-区别" class="headerlink" title="进程与线程、并行 和 并发 区别"></a>进程与线程、并行 和 并发 区别</h2><pre><code>1.线程是进程的执行单元，进程的所有任务都在线程中执行
+2.线程是 CPU 分配资源和调度的最小单位
+多线程的实现原理：事实上，同一时间内单核的CPU只能执行一个线程，
+多线程是CPU快速的在多个线程之间进行切换（调度），造成了多个线程同时执行的假象。
+并行：充分利用计算机的多核，在多个线程上同步进行
+并发：在一条线程上通过快速切换，让人感觉在同步进行
+</code></pre>
+<h2 id="GCD、NSOperation、NSThread区别优缺点"><a href="#GCD、NSOperation、NSThread区别优缺点" class="headerlink" title="GCD、NSOperation、NSThread区别优缺点"></a>GCD、NSOperation、NSThread区别优缺点</h2><pre><code>第一种：pthread
+    a.特点：
+        1）一套通用的多线程API
+        2）适用于Unix\Linux\Windows等系统
+        3）跨平台\可移植
+        4）使用难度大
+    b.使用语言：c语言
+    c.使用频率：几乎不用
+    d.线程生命周期：由程序员进行管理
+第二种：NSThread
+    a.特点：
+        1）使用更加面向对象
+        2）简单易用，可直接操作线程对象
+        b.使用语言：OC语言
+        c.使用频率：偶尔使用
+        d.线程生命周期：由程序员进行管理
+第三种：GCD
+    a.特点：
+        1）旨在替代NSThread等线程技术
+        2）充分利用设备的多核（自动）
+    b.使用语言：C语言
+    c.使用频率：经常使用
+    d.线程生命周期：自动管理
+第四种：NSOperation
+    a.特点：
+        1）基于GCD（底层是GCD）
+        2）比GCD多了一些更简单实用的功能
+        3）使用更加面向对象
+    b.使用语言：OC语言
+    c.使用频率：经常使用
+    d.线程生命周期：自动管理
+</code></pre>
+<h2 id="performSelector-withObject-afterDelay-为什么在子线程无效"><a href="#performSelector-withObject-afterDelay-为什么在子线程无效" class="headerlink" title="performSelector:withObject:afterDelay:为什么在子线程无效"></a>performSelector:withObject:afterDelay:为什么在子线程无效</h2><pre><code>没有performSelector内部实现时NSTimer，nstime需要基于runloop才能实现
+</code></pre>
+<h2 id="如何让多个网络请求完成后执行下一步"><a href="#如何让多个网络请求完成后执行下一步" class="headerlink" title="如何让多个网络请求完成后执行下一步"></a>如何让多个网络请求完成后执行下一步</h2><pre><code>dispatch_group_t
+</code></pre>
+<h2 id="多个网络请求顺序执行后执行下一步"><a href="#多个网络请求顺序执行后执行下一步" class="headerlink" title="多个网络请求顺序执行后执行下一步"></a>多个网络请求顺序执行后执行下一步</h2><pre><code>dispatch_semaphore_wait
+</code></pre>
+<h2 id="异步操作两组数据时-执行完第一组之后-才能执行第二组"><a href="#异步操作两组数据时-执行完第一组之后-才能执行第二组" class="headerlink" title="异步操作两组数据时, 执行完第一组之后, 才能执行第二组"></a>异步操作两组数据时, 执行完第一组之后, 才能执行第二组</h2><pre><code>dispatch_barrier_async
+</code></pre>
+<h2 id="你知道哪些锁、使用场景"><a href="#你知道哪些锁、使用场景" class="headerlink" title="你知道哪些锁、使用场景"></a>你知道哪些锁、使用场景</h2><pre><code>@synchronized 一个对象层面的锁，锁住了整个对象，底层使用了互斥递归
+锁来实现
+pathread_mutex 互斥锁（c语言）和信号量的实现原理类似，也是阻塞线程并进入睡眠
+，需要进行上下文切换。
+NSLock 对象锁-简单的互斥锁（内部封装了一个 pthread_mutex）
+NSCondition （封装了一个互斥锁和条件变量。互斥锁保证线程安全，条件
+NSCondition和NSLock、@synchronized等是不同的是，
+NSCondition可以给每个线程分别加锁，加锁后不影响其他线程进入临界区。
+这是非常强大。
+NSConditionLock （借助 NSCondition 来实现，本质是生产者-消费者模型）
+也可以像NSCondition一样做多线程之间的任务等待调用，而且是线程安全的。
+NSRecursiveLock 递归锁有时候“加锁代码”中存在递归调用，递归开始前加
+dispatch_semaphore GCD中信号量，也可以解决资源抢占问题,
+支持信号通知和信号等待。每当发送一个信号通知，则信号量+1；
+每当发送一个等待信号时信号量-1,；如果信号量为0则信号会处于等待状态，
+直到信号量大于0开始执行
+OSSpinLock 自旋锁(不建议使用)
+自旋锁的实现原理比较简单，就是死循环。当a线程获得锁以后，b线程想要获取
+锁就需要等待a线程释放锁。在没有获得锁的期间，b线程会一直处于忙等的状
+态。如果a线程在临界区的执行时间过长，则b线程会消耗大量的cpu时间，不太
+划算。所以，自旋锁用在临界区执行时间比较短的环境性能会很高。
+</code></pre>
+<h2 id="自旋和互斥对比"><a href="#自旋和互斥对比" class="headerlink" title="自旋和互斥对比"></a>自旋和互斥对比</h2><pre><code>相同点：都能保证同一时间只有一个线程访问共享资源。
+都能保证线程安全。
+不同点：
+互斥锁：如果共享数据已经有其他线程加锁了，线程会进入
+休眠状态等待锁。一旦被访问的资源被解锁，则等待资源的
+线程会被唤醒。
+自旋锁：如果共享数据已经有其他线程加锁了，线程会以死循环
+的方式等待锁，一旦被访问的资源被解锁，则等待资源的线程会
+立即执行。
+自旋锁的效率高于互斥锁。
+由于自旋时不释放CPU，因而持有自旋锁的线程应该尽快释放
+自旋锁，否则等待该自旋锁的线程会一直在哪里自旋，这就会浪
+费CPU时间。
+持有自旋锁的线程在sleep之前应该释放自旋锁以便其他可以获得
+该自旋锁。内核编程中，如果持有自旋锁的代码sleep了就可能
+导致整个系统挂起。
+</code></pre>
+<h1 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h1><h2 id="HTTP请求方式有哪些"><a href="#HTTP请求方式有哪些" class="headerlink" title="HTTP请求方式有哪些"></a>HTTP请求方式有哪些</h2><pre><code>GET、POST、HEAD、PUT、DELETE、OPTIONS
+</code></pre>
+<h2 id="HTTP特点"><a href="#HTTP特点" class="headerlink" title="HTTP特点"></a>HTTP特点</h2><pre><code>无连接：HTTP的持久性
+是限制每次连接只处理一个请求。服务器处理完客户的请求，
+并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。
+Keep-Alive 功能使客户端到服务器端的连接持续有效，当出现对服务器的后继请求时，Keep-Alive 功能避免了建立或者重新建立连接
+无状态：Cookie/Session
+无状态是指协议对于事务处理没有记忆能力，服务器不知道客户端是什么状态。
+即我们给服务器发送 HTTP 请求之后，服务器根据请求，会给我们发送数据过来，但是，
+发送完，不会记录任何信息。缺少状态意味着如果后续处理需要前面的信息，
+则它必须重传，这样可能导致每次连接传送的数据量增大。
+HTTP 是一个无状态协议，这意味着每个请求都是独立的，Keep-Alive 没能改变这个结果。
+</code></pre>
+<h2 id="HTTP三次握手，为什么需要三次"><a href="#HTTP三次握手，为什么需要三次" class="headerlink" title="HTTP三次握手，为什么需要三次"></a>HTTP三次握手，为什么需要三次</h2><pre><code>客户端发送SYN请求连接
+服务端接受SYN，返回SYN和ACK
+客户端接受SYN和ACK，返回服务端ACK
+“第三次握手”是客户端向服务器端发送数据，这个数据就是要告诉服务器，
+客户端有没有收到服务器“第二次握手”时传过去的数据。若发送的这个数据是“
+收到了”的信息，接收后服务器就正常建立TCP连接，否则建立TCP连接失败，
+服务器关闭连接端口。由此减少服务器开销和接收到失效请求发生的错误。
+</code></pre>
+<h2 id="HTTP四次挥手，为什么需要四次"><a href="#HTTP四次挥手，为什么需要四次" class="headerlink" title="HTTP四次挥手，为什么需要四次"></a>HTTP四次挥手，为什么需要四次</h2><pre><code>客户端发送FIN请求释放连接  FIN-WAIT-1阶段
+服务端返回ACK，服务端处于准备断开状态  CLOSE-WAIT阶段（半关闭状态），客户端收到，进入FIN-WAIT-2阶段
+服务端做好释放准备，再次向客户端发送FIN和ACK，LAST-ACK阶段
+客户端收到FIN和ACK，发送ACK断开连接，TIME-WAIT阶段
+随后客户端开始在TIME-WAIT阶段等待2MSL
+服务端收到客户端LAST-ACK，进入CLOSED阶段。
+与“三次挥手”一样，在客户端与服务器端传输的TCP报文中，双方的确认号Ack和
+序号Seq的值，都是在彼此Ack和Seq值的基础上进行计算的，这样做保证了TCP报文
+传输的连贯性，一旦出现某一方发出的TCP报文丢失，便无法继续&quot;挥手&quot;，
+以此确保了&quot;四次挥手&quot;的顺利完成。
+</code></pre>
+<h2 id="为什么“握手”是三次，“挥手”却要四次？"><a href="#为什么“握手”是三次，“挥手”却要四次？" class="headerlink" title="为什么“握手”是三次，“挥手”却要四次？"></a>为什么“握手”是三次，“挥手”却要四次？</h2><pre><code>建立连接时，被动方服务器端结束CLOSED阶段进入“握手”阶段并不需要任何准备，
+可以直接返回SYN和ACK报文，开始建立连接。
+释放连接时，被动方服务器，突然收到主动方客户端释放连接的请求时并不能
+立即释放连接，因为还有必要的数据需要处理，所以服务器先返回ACK确认收到报文
+，经过CLOSE-WAIT阶段准备好释放连接之后，才能返回FIN释放连接报文。
+</code></pre>
+<h2 id="为什么客户端在TIME-WAIT阶段要等2MSL"><a href="#为什么客户端在TIME-WAIT阶段要等2MSL" class="headerlink" title="为什么客户端在TIME-WAIT阶段要等2MSL"></a>为什么客户端在TIME-WAIT阶段要等2MSL</h2><pre><code>为的是确认服务器端是否收到客户端发出的ACK确认报文
+当客户端发出最后的ACK确认报文时，并不能确定服务器端能够收到该段报文。
+所以客户端在发送完ACK确认报文之后，会设置一个时长为2MSL的计时器。MSL指的是Maximum Segment
+Lifetime：一段TCP报文在传输过程中的最大生命周期。
+2MSL即是服务器端发出为FIN报文和客户端发出的ACK确认报文所能保持有效的最大时长。
+</code></pre>
+<h2 id="HTTPS-TLS-SSL加密过程"><a href="#HTTPS-TLS-SSL加密过程" class="headerlink" title="HTTPS TLS/SSL加密过程"></a>HTTPS TLS/SSL加密过程</h2><pre><code>1、身份验证机制
+2、数据传输的机密性
+3、消息完整性验证
+1、客户端向服务器端索要并验证公钥。
+ 2、双方协商生成&quot;对话密钥&quot;。
+ 3、双方采用&quot;对话密钥&quot;进行加密通信。
+ 其中，前两个阶段，被称为“握手阶段”。
+ TLS握手过程有单向验证和双向验证之分，简单解释一下，单向验证就是
+ server端将证书发送给客户端，客户端验证server端证书的合法性等，
+ 例如百度、新浪、google等普通的https网站，双向验证则是不仅客户端会验
+ 证server端的合法性，同时server端也会验证客户端的合法性，例如银行网银登陆
+ ，支付宝登陆交易等。
+ 1、确认使用的加密通信协议版本，比如TLS 1.0版本。如果浏览器与服务器支持的版本不一致，服务器关闭加密通信。
+ 2、一个服务器生成的随机数（Sever Random），稍后用于生成&quot;对话密钥&quot;。
+ 3、确认使用的加密方法，比如RSA公钥加密。
+ 4、服务器证书（Certificate）。
+ 5、支持的一些SSL/TLS扩展。
+</code></pre>
+<h2 id="HTTPS过程"><a href="#HTTPS过程" class="headerlink" title="HTTPS过程"></a>HTTPS过程</h2><pre><code>①客户端发送报文进行SSL通信。报文中包含客户端支持的SSL的指定版本、
+加密组件列表（加密算法及密钥长度等）。
+②服务器应答，并在应答报文中包含SSL版本以及加密组件。
+服务器的加密组件内容是从接受到的客户端加密组件内筛选出来的。
+③服务器发送报文，报文中包含公开密钥证书。
+④服务器发送报文通知客户端，最初阶段SSL握手协商部分结束。
+⑤SSL第一次握手结束之后，客户端发送一个报文作为回应。
+报文中包含通信加密中使用的一种被称Pre-master
+secret的随机密码串。该密码串已经使用服务器的公钥加密。
+⑥客户端发送报文，并提示服务器，此后的报文通信会采用
+Pre-master secret密钥加密。
+⑦客户端发送Finished报文。该报文包含连接至今全部报文的
+整体校验值。这次握手协商是否能够完成成功，要以服务器是否能够正确解密该报文作为判定标准。
+⑧服务器同样发送Change Cipher Spec报文。
+⑨服务器同样发送Finished报文。
+⑩服务器和客户端的Finished报文交换完毕之后，SSL连接就算建立完成。
+⑪应用层协议通信，即发送HTTP响应。
+⑫最后由客户端断开链接。断开链接时，发送close_nofify报文
+</code></pre>
+<h2 id="为什么一定要用三个随机数，来生成”会话密钥"><a href="#为什么一定要用三个随机数，来生成”会话密钥" class="headerlink" title="为什么一定要用三个随机数，来生成”会话密钥"></a>为什么一定要用三个随机数，来生成”会话密钥</h2><pre><code>不管是客户端还是服务器，都需要随机数，这样生成的密钥才不会每次都一样。
+由于SSL协议中证书是静态的，因此十分有必要引入一种随机因素来保证协商出来的密钥的随机性。
+对于RSA密钥交换算法来说，pre-master-key本身就是一个随机数，
+再加上hello消息中的随机，三个随机数通过一个密钥导出器最终导出一个对称密钥。
+pre master的存在在于SSL协议不信任每个主机都能产生完全随机的随机数，
+如果随机数不随机，那么pre master secret就有可能被猜出来，那么仅适用
+pre master secret作为密钥就不合适了，因此必须引入新的随机因素，那么客户端和
+服务器加上pre master secret三个随机数一同生成的密钥就不容易被猜出了，一个伪随机
+可能完全不随机，可是是三个伪随机就十分接近随机了，每增加一个自由度，
+随机性增加的可不是一。
+</code></pre>
+<h2 id="中间人攻击（charles抓包原理）"><a href="#中间人攻击（charles抓包原理）" class="headerlink" title="中间人攻击（charles抓包原理）"></a>中间人攻击（charles抓包原理）</h2><pre><code>1、截获客户端与服务器通信的通道
+2、然后在 SSL 建立连接的时候，进行中间人攻击
+3、将自己伪装成客户端，获取到服务器真实有效的 CA 证书（非对称加密的公钥）
+4、将自己伪装成服务器，获取到客服端的之后通信的密钥（对称加密的密钥）
+5、有了证书和密钥就可以监听之后通信的内容了
+</code></pre>
+<h2 id="UDP协议及特点、"><a href="#UDP协议及特点、" class="headerlink" title="UDP协议及特点、"></a>UDP协议及特点、</h2><pre><code>无连接协议，也称透明协议，也位于传输层。
+UDP通讯协议的特点：
+将数据封装为数据包。面向无连接。
+每个数据包大小限制在64K。
+因为无连接，所以不可靠。
+因为不需要建立连接，所以速度快。
+UDP通讯是不分服务端和客服端的，只分发送端和接收端。
+</code></pre>
+<h2 id="TCP特点"><a href="#TCP特点" class="headerlink" title="TCP特点"></a>TCP特点</h2><pre><code>基于连接（点对点）
+传输数据前需要建立好连接，然后在传输
+双工通信
+TCP连接一旦建立，就可以在连接上进行双向的通信
+基于字节流而非报文
+将数据按字节大小进行编号，接收端通过ACK来确认收到的数据编号，通过这种机制能够保证TCP协议的有序性和完整性，因此TCP能够提供可靠性传输
+
+可靠传输
+拥塞控制
+慢启动，拥塞避免，拥塞发生，快速恢复四个算法
+流量控制能力
+</code></pre>
+<h2 id="TCP特点及与UDP区别"><a href="#TCP特点及与UDP区别" class="headerlink" title="TCP特点及与UDP区别"></a>TCP特点及与UDP区别</h2><pre><code>1） TCP提供面向连接的传输，通信前要先建立连接（三次握手机制）；
+UDP提供无连接的传输，通信前不需要建立连接。
+2） TCP提供可靠的传输（有序，无差错，不丢失，不重复）；
+UDP提供不可靠的传输。
+3） TCP面向字节流的传输，因此它能将信息分割成组，
+并在接收端将其重组； UDP是面向数据报的传输，没有分组开销。
+4） TCP提供拥塞控制和流量控制机制； UDP不提供拥塞控制和流量控制机制。
+</code></pre>
+<h2 id="DNS解析流程"><a href="#DNS解析流程" class="headerlink" title="DNS解析流程"></a>DNS解析流程</h2><pre><code>DNS服务器一般分三种，根DNS服务器，顶级DNS服务器，权威DNS服务器。
+1）浏览器缓存　　
+2）系统缓存　　
+3）路由器缓存　　　　
+4） ISP（互联网服务提供商）DNS缓存
+5）根域名服务器　　　
+6）顶级域名服务器　　
+8）保存结果至缓存
+</code></pre>
+<h2 id="DNS劫持"><a href="#DNS劫持" class="headerlink" title="DNS劫持"></a>DNS劫持</h2><pre><code>一般而言，用户上网的DNS服务器都是运营商分配的，所以，在这个节点上，运营商可以为所欲为。
+例如，访问http://jiankang.qq.com/index.html，
+正常DNS应该返回腾讯的ip，而DNS劫持后，会返回一个运营商的中间服务器ip。
+访问该服务器会一致性的返回302，让用户浏览器跳转到预处理好的带广告的网页，
+在该网页中再通过iframe打开用户原来访问的地址。
+</code></pre>
+<h2 id="HTTP劫持"><a href="#HTTP劫持" class="headerlink" title="HTTP劫持"></a>HTTP劫持</h2><pre><code>在运营商的路由器节点上，设置协议检测，一旦发现是HTTP请求，而
+且是html类型请求，则拦截处理。后续做法往往分为2种，1种是类
+似DNS劫持返回302让用户浏览器跳转到另外的地址，还有1种是在服务器返
+回的HTML数据中插入js或dom节点（广告）。
+</code></pre>
+<h2 id="Cookie机制及作用"><a href="#Cookie机制及作用" class="headerlink" title="Cookie机制及作用"></a>Cookie机制及作用</h2><pre><code>Cookie就是这样的一种机制。它可以弥补HTTP协议无状态的不足。
+在Session出现之前，基本上所有的网站都采用Cookie来跟踪会话。
+服务器在向客户端回传相应的超文本的同时也会发回这些个人
+信息存放于HTTP响应头（Response Header）；当客户端浏览器接收到来
+自服务器的响应之后，浏览器会将这些信息存放在一个统一的位置
+自此，客户端再向服务器发送请求的时候，都会把相应的Cookie再次发回至服务器。
+Cookie的maxAge决定着Cookie的有效期，单位为秒（Second）。
+</code></pre>
+<h2 id="Session机制及作用"><a href="#Session机制及作用" class="headerlink" title="Session机制及作用"></a>Session机制及作用</h2><pre><code>Web应用程序中还经常使用Session来记录客户端状态。
+Session是服务器端使用的一种记录客户端状态的机制，
+使用上比Cookie简单一些，相应的也增加了服务器的存储压力。
+Session技术则是服务端的解决方案，它是通过服务器来保持状态的。
+URL地址重写是对客户端不支持Cookie的解决方案。
+URL地址重写的原理是将该用户Session的id信息重写到URL地址中。
+服务器能够解析重写后的URL获取Session的id。这样即使客户端不支持Cookie，
+也可以使用Session来记录用户状态。
+</code></pre>
+<h2 id="Cookie与Session的区别"><a href="#Cookie与Session的区别" class="headerlink" title="Cookie与Session的区别"></a>Cookie与Session的区别</h2><pre><code>cookie数据存放在客户的浏览器上，session数据放在服务器上；
+cookie不是很安全，别人可以分析存放在本地的COOKIE并进行COOKIE欺骗
+，考虑到安全应当使用session；
+session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的
+性能。考虑到减轻服务器性能方面，应当使用COOKIE；
+</code></pre>
+<h2 id="如何保证cookie的安全"><a href="#如何保证cookie的安全" class="headerlink" title="如何保证cookie的安全"></a>如何保证cookie的安全</h2><pre><code>对cookie进行加密处理
+只在https上携带cookie
+设置cookie为httpOnly，防止跨站脚本攻击
+</code></pre>
+<h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><h2 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h2><pre><code>单一职责原则
+    CALayer：动画和视图的显示。
+    UIView：只负责事件传递、事件响应。
+    生成的数据模型
+开闭原则
+    对修改关闭，对扩展开放。 要考虑到后续的扩展性，而不是在原有的基础上来回修改
+接口隔离原则
+    使用多个专门的协议、而不是一个庞大臃肿的协议，如 
+    UITableviewDelegate + UITableViewDataSource
+依赖倒置原则
+    抽象不应该依赖于具体实现、具体实现可以依赖于抽象。 
+    调用接口感觉不到内部是如何操作的
+里氏替换原则
+    父类可以被子类无缝替换，且原有的功能不受任何影响 如：KVO
+迪米特法则
+    一个对象应当对其他对象尽可能少的了解，实现高聚合、低耦合
+</code></pre>
+<h2 id="iOS有哪些常见的设计模式"><a href="#iOS有哪些常见的设计模式" class="headerlink" title="iOS有哪些常见的设计模式?"></a>iOS有哪些常见的设计模式?</h2><pre><code>01代理委托Delegate是协议的一种
+,通过@protocol方式实现，常见的有tableView，textField等。
+02观察者 通知机制(notification)和KVO机制(Key-value Observing)
+03MVC
+04单例（Singleton）,UIApplication, NSBundle, NSNotificationCenter,
+NSFileManager, NSUserDefault, NSURLCache等都是单例.
+05策略
+06工厂
+</code></pre>
+<h2 id="单例优缺点"><a href="#单例优缺点" class="headerlink" title="单例优缺点"></a>单例优缺点</h2><pre><code>主要优点：
+1、提供了对唯一实例的受控访问。
+2、由于在系统内存中只存在一个对象，因此可以节约系统资源，对于一些需
+要频繁创建和销毁的对象单例模式无疑可以提高系统的性能。
+3、允许可变数目的实例。
+主要缺点：
+1、由于单利模式中没有抽象层，因此单例类的扩展有很大的困难。
+2、单例类的职责过重，在一定程度上违背了“单一职责原则”。
+3、滥用单例将带来一些负面问题，会导致共享连接池对象的程序过多而出现连接池溢出
+</code></pre>
+<h2 id="内存设计、磁盘设计、网络设计原则"><a href="#内存设计、磁盘设计、网络设计原则" class="headerlink" title="内存设计、磁盘设计、网络设计原则"></a>内存设计、磁盘设计、网络设计原则</h2><pre><code>内存设计:存储的Size,淘汰策略 LRU算法
+磁盘设计:存储方式\大小限制\淘汰策略
+网络设计:图片请求最大并发\请求超时策略\请求优先级
+</code></pre>
+<h2 id="MVP、MVVM模式思想"><a href="#MVP、MVVM模式思想" class="headerlink" title="MVP、MVVM模式思想"></a>MVP、MVVM模式思想</h2><pre><code>MVVM 即模型-视图-视图模型
+在MVVM的框架下视图和模型是不能直接通信的。它们通过ViewModel来通信，
+ViewModel通常要实现一个observer观察者，当数据发生变化，ViewModel
+能够监听到数据的这种变化，然后通知到对应的视图做自动更新，而当用户操作视图，
+ViewModel也能监听到视图的变化，然后通知数据做改动，这实际上就实现了数据的
+双向绑定。并且MVVM中的View 和 ViewModel可以互相通信。
+优点 VIew可以独立于Model的变化和修改，一个ViewModel可以绑定到不同的View上，
+降低耦合，增加重用
+缺点 过于简单的项目不适用、大型的项目视图状态较多时构建和维护成本太大
+合理的运用架构模式有利于项目、团队开发工作，但是到底选择哪个设计模式，
+哪种设计模式更好，就像本文开头所说，不同的设计模式，只是让不同的场
+景有了更多的选择方案。根据项目场景和开发需求，选择最合适的解决方案。
+MVP（Model、View、Presenter）：MVP模式是MVC模式的一个演化版本，其中Model
+与MVC模式中Model层没有太大区别，主要提供数据存储功能，一般都是用来封
+装网络获取的json数据；
+优点 模型和视图完全分离，可以做到修改视图而不影响模型；更高效的使用模型，View不依赖Model，可以说VIew能做到对业务逻辑完全分离
+缺点 Presenter中除了处理业务逻辑以外，还要处理View-Model两层的协调，也会导致Presenter层的臃肿
+</code></pre>
+<h2 id="ReactNative的数据流思想"><a href="#ReactNative的数据流思想" class="headerlink" title="ReactNative的数据流思想"></a>ReactNative的数据流思想</h2><pre><code>Flux是Facebook用来构建用户端的web应用的应用程序体系架构。
+它通过利用数据的单向流动为React的可复用的视图组件提供了补充。
+相比于形式化的框架它更像是一个架构思想，不需要太多新的代码你就可以马上
+使用Flux构建你的应用。
+一个 Flux 应用主要包含四个部分：
+dispatcher
+处理动作分发，维护 Store 之间的依赖关系
+stores
+数据和逻辑部分
+views
+React 组件，这一层可以看作 controller-views，作为视图同时响应用户交互
+actions
+提供给 dispatcher 传递数据给 store
+视图上添加的所有的视图组成一个视图多叉树；
+比如某个UI发生变化后，需要反向到根节点，然后由根节点想下遍历查找需
+要更新的结点；
+任何一个子节点是没有权利自我更新的，需要把自我变化更
+新的消息传递给根节点，由根节点进行更新，相当于由主动行为变成被动行为
+</code></pre>
+<h2 id="AsyncDisplayKit"><a href="#AsyncDisplayKit" class="headerlink" title="AsyncDisplayKit"></a>AsyncDisplayKit</h2><pre><code>UI 线程中一旦出现繁重的任务就会导致界面卡顿，这类任务通常分为3类：
+排版，绘制，UI对象操作。
+排版通常包括计算视图大小、计算文本高度、重新计算子式图的排版等操作。
+绘制一般有文本绘制 (例如 CoreText)、图片绘制 (例如预先解压)、元素绘制 (Quartz)等操作。
+UI对象操作通常包括 UIView/CALayer 等 UI 对象的创建、设置属性和销毁。
+其中前两类操作可以通过各种方法扔到后台线程执行，而最后一类操作只能在主
+线程完成，并且有时后面的操作需要依赖前面操作的结果
+（例如TextView创建时可能需要提前计算出文本的大小）。ASDK
+所做的，就是尽量将能放入后台的任务放入后台，不能的则尽量推迟
+(例如视图的创建、属性的调整)。
+为此，ASDK 创建了一个名为 ASDisplayNode 的对象，并在内部封装了
+UIView/CALayer，它具有和 UIView/CALayer 相似的属性，例如
+frame、backgroundColor等。所有这些属性都可以在后台线程更改，开发者可以只
+通过 Node 来操作其内部的 UIView/CALayer，这样就可以将排版和绘制
+放入了后台线程。但是无论怎么操作，
+这些属性总需要在某个时刻同步到主线程的 UIView/CALayer 去。
+
+ASDK 仿照 QuartzCore/UIKit 框架的模式，实现了一套类似的界面
+更新的机制：即在主线程的 RunLoop 中添加一个 Observer，监听了
+kCFRunLoopBeforeWaiting 和 kCFRunLoopExit
+事件，在收到回调时，遍历所有之前放入队列的待处理的任务，然后一一执行。
+</code></pre>
+<h2 id="AFNetworking-底层原理分析"><a href="#AFNetworking-底层原理分析" class="headerlink" title="AFNetworking 底层原理分析"></a>AFNetworking 底层原理分析</h2><pre><code>AFNetworking是封装的NSURLSession的网络请求，由五个模块组成：
+分别由NSURLSession,Security,Reachability,Serialization,UIKit五部分组成
+NSURLSession：网络通信模块（核心模块） 对应 AFNetworking中的
+AFURLSessionManager和对HTTP协议进行特化处理的AFHTTPSessionManager
+,AFHTTPSessionManager是继承于AFURLSessionmanager的
+Security：网络通讯安全策略模块 对应 AFSecurityPolicy
+Reachability：网络状态监听模块 对应AFNetworkReachabilityManager
+Seriaalization：网络通信信息序列化、反序列化模块 对应AFURLResponseSerialization
+UIKit：对于iOS UIKit的扩展库
+</code></pre>
+<h2 id="SDWebImage加载图片过程，图片缓存设计"><a href="#SDWebImage加载图片过程，图片缓存设计" class="headerlink" title="SDWebImage加载图片过程，图片缓存设计"></a>SDWebImage加载图片过程，图片缓存设计</h2><pre><code>0、首先显示占位图
+1、在webimagecache中寻找图片对应的缓存，它是以url为数据索引先在内存中
+查找是否有缓存；
+2、如果没有缓存，就通过md5处理过的key来在磁盘中查找
+对应的数据，如果找到就会把磁盘中的数据加到内存中，并显示出来；
+3、如果内存和磁盘中都没有找到，就会向远程服务器发送请求，开始下载图片；
+4、下载完的图片加入缓存中，并写入到磁盘中；
+5、整个获取图片的过程是在子线程中进行，在主线程中显示。
+</code></pre>
+<h2 id="SDWebImage框架设计中"><a href="#SDWebImage框架设计中" class="headerlink" title="SDWebImage框架设计中"></a>SDWebImage框架设计中</h2><pre><code>1.设计UIImageView的分类，添加方法
+2.在SDWebImageManager里面判断图片加载逻辑
+3.在SDWebImageDecoder处理图片解码
+4.在SDWebImageDownloader处理图片下载
+5.在SDImageCache里缓存图片
+</code></pre>
+<h2 id="YYKit"><a href="#YYKit" class="headerlink" title="YYKit"></a>YYKit</h2><pre><code>YYModel — 高性能的 iOS JSON 模型框架。
+YYCache — 高性能的 iOS 缓存框架。
+YYImage — 功能强大的 iOS 图像框架。
+YYWebImage — 高性能的 iOS 异步图像加载框架。
+YYText — 功能强大的 iOS 富文本框架。
+</code></pre>
+<h2 id="组建化优缺点"><a href="#组建化优缺点" class="headerlink" title="组建化优缺点"></a>组建化优缺点</h2><pre><code>业务分层、解耦，使代码变得可维护；
+有效的拆分、组织日益庞大的工程代码，使工程目录变得可维护；
+便于各业务功能拆分、抽离，实现真正的功能复用；
+</code></pre>
+<h2 id="复杂页面架构"><a href="#复杂页面架构" class="headerlink" title="复杂页面架构"></a>复杂页面架构</h2><pre><code>视图层(View&amp;ViewController)
+业务逻辑处理(ViewModel)
+数据层(Model&amp;Engine)
+数据流
+数据与数据关系
+MVVM框架思想
+ReactiveNative的数据流思想
+系统UIView更新机制的思想
+FaceBook的开源框架AsyncDisplayKit关于预排版的设计思想
+</code></pre>
+<h1 id="开发日常"><a href="#开发日常" class="headerlink" title="开发日常"></a>开发日常</h1><h2 id="APP启动时间应从哪些方面优化？"><a href="#APP启动时间应从哪些方面优化？" class="headerlink" title="APP启动时间应从哪些方面优化？"></a>APP启动时间应从哪些方面优化？</h2><pre><code>App启动时间可以通过xcode提供的工具来度量，在Xcode的Product-&gt;Scheme–&gt;Edit 
+Scheme-&gt;Run-&gt;Auguments中，将环境变量DYLD_PRINT_STATISTICS设为YES，
+优化需以下方面入手
+dylib loading time
+    核心思想是减少dylibs的引用
+    合并现有的dylibs（最好是6个以内）
+    使用静态库
+rebase/binding time
+    核心思想是减少DATA块内的指针
+    减少Object C元数据量，减少Objc类数量，减少实例变量和函数（与面向对象设计思想冲突）
+    减少c++虚函数
+    多使用Swift结构体（推荐使用swift）
+ObjC setup time
+    核心思想同上，这部分内容基本上在上一阶段优化过后就不会太过耗时
+initializer time
+    使用initialize替代load方法
+    减少使用c/c++的attribute((constructor))；推荐使用
+    dispatch_once() pthread_once() std:once()等方法
+    推荐使用swift
+    不要在初始化中调用dlopen()方法，因为加载过程是单线程，无锁
+    ，如果调用dlopen则会变成多线程，会开启锁的消耗，同时有可能死锁
+    不要在初始化中创建线程
+</code></pre>
+<h2 id="如何降低APP包的大小"><a href="#如何降低APP包的大小" class="headerlink" title="如何降低APP包的大小"></a>如何降低APP包的大小</h2><pre><code>可执行文件
+编译器优化：Strip Linked Product、Make Strings Read-Only、Symbols Hidden
+by Default 设置为 YES，去掉异常支持，Enable C++ Exceptions、Enable
+Objective-C Exceptions 设置为 NO， Other C Flags 添加 -fno-exceptions
+利用 AppCode 检测未使用的代码：菜单栏 -&gt; Code -&gt; Inspect Code
+编写LLVM插件检测出重复代码、未被调用的代码
+资源（图片、音频、视频 等）
+优化的方式可以对资源进行无损的压缩
+去除没有用到的资源： 
+</code></pre>
+<h2 id="如何检测离屏渲染与优化"><a href="#如何检测离屏渲染与优化" class="headerlink" title="如何检测离屏渲染与优化"></a>如何检测离屏渲染与优化</h2><pre><code>检测，通过勾选Xcode的Debug-&gt;View Debugging–&gt;Rendering-&gt;Run-&gt;Color 
+Offscreen-Rendered Yellow项。
+优化，如阴影，在绘制时添加阴影的路径
+</code></pre>
+<h2 id="怎么检测图层混合"><a href="#怎么检测图层混合" class="headerlink" title="怎么检测图层混合"></a>怎么检测图层混合</h2><pre><code>1、模拟器debug中color blended layers红色区域表示图层发生了混合
+2、Instrument-选中Core Animation-勾选Color Blended Layers
+避免图层混合：
+确保控件的opaque属性设置为true，确保backgroundColor和父视图颜色一致且不透明
+如无特殊需要，不要设置低于1的alpha值
+确保UIImage没有alpha通道
+</code></pre>
+<h2 id="UILabel图层混合"><a href="#UILabel图层混合" class="headerlink" title="UILabel图层混合"></a>UILabel图层混合</h2><pre><code>UILabel图层混合解决方法： iOS8以后设置背景色为非透明色并且设置label.layer
+.masksToBounds=YES让label只会渲染她的实际size区域，
+就能解决UILabel的图层混合问题
+iOS8 之前只要设置背景色为非透明的就行
+为什么设置了背景色但是在iOS8上仍然出现了图层混合呢？
+UILabel在iOS8前后的变化，在iOS8以前，UILabel使用的是CALayer作为底图层，
+而在iOS8开始，UILabel的底图层变成了_UILabelLayer，绘制文本也有所改变。在
+背景色的四周多了一圈透明的边，而这一圈透明的边明显超出了图层的矩形区域，设
+置图层的masksToBounds为YES时，图层将会沿着Bounds进行裁剪 图层混合问题解决了
+</code></pre>
+<h2 id="日常如何检查内存泄露？"><a href="#日常如何检查内存泄露？" class="headerlink" title="日常如何检查内存泄露？"></a>日常如何检查内存泄露？</h2><pre><code>目前我知道的方式有以下几种
+Memory Leaks
+Alloctions
+Analyse
+Debug Memory Graph
+MLeaksFinder
+泄露的内存主要有以下两种：
+Laek Memory 这种是忘记 Release 操作所泄露的内存。
+Abandon Memory 这种是循环引用，无法释放掉的内存。
+</code></pre>
+<h2 id="LLDB常用的调试命令？"><a href="#LLDB常用的调试命令？" class="headerlink" title="LLDB常用的调试命令？"></a>LLDB常用的调试命令？</h2><pre><code>po：print object的缩写，表示显示对象的文本描述，如果对象不存在则打印nil。
+p：可以用来打印基本数据类型。
+call：执行一段代码 如：call NSLog(@&quot;%@&quot;, @“yang”)
+expr：动态执行指定表达式
+bt：打印当前线程堆栈信息 （bt all 打印所有线程堆栈信息）
+image：常用来寻找栈地址对应代码位置 如：image lookup --address 0xxxx
+</code></pre>
+<h2 id="iOS-常见的崩溃类型有哪些？"><a href="#iOS-常见的崩溃类型有哪些？" class="headerlink" title="iOS 常见的崩溃类型有哪些？"></a>iOS 常见的崩溃类型有哪些？</h2><pre><code>unrecognized selector crash
+KVO crash
+NSNotification crash
+NSTimer crash
+Container crash
+NSString crash
+Bad Access crash （野指针）
+UI not on Main Thread Crash
+</code></pre>
+<h2 id="iOS-App-稳定性指标及监测"><a href="#iOS-App-稳定性指标及监测" class="headerlink" title="iOS App 稳定性指标及监测"></a>iOS App 稳定性指标及监测</h2><pre><code>开发过程中，主要是通过监控内存使用及泄露，CPU使用率，FPS，启动时间等指标，
+以及常见的UI的主线程监测，NSAssert断言等，最好能在Debug模式下，实时显
+示在界面上，针对出现的问题及早解决。
+</code></pre>
+<h2 id="cocoapods-常见问题"><a href="#cocoapods-常见问题" class="headerlink" title="cocoapods 常见问题"></a>cocoapods 常见问题</h2><pre><code>cocoaPods 是为IOS 提供依赖管理的工具,他是管理第三方类库的工具.
+pod update
+cocoaPods的实现思路，为什么没有使用cocoaPods管理自己的SDK
+</code></pre>
+<h2 id="iOS的签名机制是怎么样的"><a href="#iOS的签名机制是怎么样的" class="headerlink" title="iOS的签名机制是怎么样的"></a>iOS的签名机制是怎么样的</h2><pre><code>签名机制：
+先将应用内容通过摘要算法，得到摘要
+再用私钥对摘要进行加密得到密文
+将源文本、密文、和私钥对应的公钥一并发布
+验证流程：
+查看公钥是否是私钥方的
+然后用公钥对密文进行解密得到摘要
+将APP用同样的摘要算法得到摘要，两个摘要进行比对，如果相等那么一切正常
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -5208,7 +5978,7 @@ NSArrayM 试着去最小化内存的移动，因此会移动最少的一边元�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">366</span>
+          <span class="site-state-item-count">365</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
