@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近帮朋友开发了一个iOS的程序，是一个商城的App，很久没有开发ios了，在这里还是总结一下吧。我大概用了1个月的时间吧，主要是周六日写，差不多吧，有些地方写的比较复杂了，有些地方一开始想的比较简单了，后面又改的比较复杂了，所以还是比较头疼的，iOS开发还是比较繁琐的，但是速度也不见得非常的慢，总之代码量肯定是要比java少很多，但是，也不见得快多少。先总结一下开发流程吧，我大概花了两天的时间整">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发整理">
+<meta property="og:url" content="http://example.com/2022/08/03/N_12iOS%E5%BC%80%E5%8F%91%E5%9B%9E%E9%A1%BE/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="最近帮朋友开发了一个iOS的程序，是一个商城的App，很久没有开发ios了，在这里还是总结一下吧。我大概用了1个月的时间吧，主要是周六日写，差不多吧，有些地方写的比较复杂了，有些地方一开始想的比较简单了，后面又改的比较复杂了，所以还是比较头疼的，iOS开发还是比较繁琐的，但是速度也不见得非常的慢，总之代码量肯定是要比java少很多，但是，也不见得快多少。先总结一下开发流程吧，我大概花了两天的时间整">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-03T09:00:27.505Z">
+<meta property="article:modified_time" content="2023-09-09T04:47:03.974Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2022/08/03/N_12iOS%E5%BC%80%E5%8F%91%E5%9B%9E%E9%A1%BE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>iOS开发整理 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_12iOS%E5%BC%80%E5%8F%91%E5%9B%9E%E9%A1%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS开发整理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-09 12:47:03" itemprop="dateModified" datetime="2023-09-09T12:47:03+08:00">2023-09-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近帮朋友开发了一个iOS的程序，是一个商城的App，很久没有开发ios了，在这里还是总结一下吧。<br>我大概用了1个月的时间吧，主要是周六日写，差不多吧，有些地方写的比较复杂了，有些地方一开始想的比较简单了，后面又改的比较复杂了，所以还是比较头疼的，iOS开发还是比较繁琐的，但是速度也不见得非常的慢，总之代码量肯定是要比java少很多，但是，也不见得快多少。<br>先总结一下开发流程吧，我大概花了两天的时间整理了一下框架，研究了一些插件，总之用到的插件有：<br>SDWebImage<br>AFNetworking<br>YYModel<br>MJRefresh<br>WHToast<br>SDCycleScrollView<br>用到的功能插件有：<br>face_verify_framework：阿里云人脸核身SDK，进行本地化podspec<br>Pod::Spec.new do |s|<br>  s.name = “face_verify_framework”<br>  s.version = “0.0.1”<br>  s.summary = “A short description”<br>  s.homepage         = ‘<a target="_blank" rel="noopener" href="https://github.com/&#39;">https://github.com/&#39;</a><br>  s.license          =  “MIT”<br>  s.authors = {“mqq”=&gt;”<a href="mailto:&#x6d;&#113;&#113;&#x31;&#x32;&#x33;&#52;&#x35;&#x36;&#x40;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#111;&#x6d;">&#x6d;&#113;&#113;&#x31;&#x32;&#x33;&#52;&#x35;&#x36;&#x40;&#103;&#105;&#116;&#104;&#117;&#x62;&#x2e;&#x63;&#111;&#x6d;</a>“}<br>  s.description = “TODO: Add long description of the pod here.”<br>  s.frameworks = [‘CoreGraphics’,’Accelerate’,’SystemConfiguration’,’AssetsLibrary’,’CoreTelephony’,’QuartzCore’,’CoreFoundation’,’CoreLocation’,’ImageIO’,’CoreMedia’,’CoreMotion’,’AVFoundation’,’WebKit’,’AudioToolbox’,’CFNetwork’,’MobileCoreServices’,’AdSupport’]<br>  s.libraries = [‘c++’,’z’,’c++.1’,’resolv’,’c++abi’,’z.1.2.8’]<br>  s.source = { :path =&gt; ‘.’ }<br>  s.ios.deployment_target    = ‘9.0’<br>  s.ios.vendored_framework   = ‘Libs/<em>.framework’<br>  s.ios.resource = ‘Resources/</em>.bundle’<br>  s.pod_target_xcconfig = {<br>    ‘DEFINES_MODULE’ =&gt; ‘YES’,<br>    ‘EXCLUDED_ARCHS[sdk=iphonesimulator*]’ =&gt; ‘i386’,<br>    ‘ENABLE_BITCODE’ =&gt; ‘NO’,<br>    ‘OTHER_LDFLAGS’ =&gt; ‘-ObjC -framework “BioAuthAPI” -lxml2’<br>  }<br>end</p>
+<p>login_framework：阿里云一键认证登录SDK<br>QMLineSDK：融云客服</p>
+<p>整个项目的结构包括：<br>订单<br>用户<br>主页商品<br>个人中心<br>登录<br>基础类包括：<br>公用的导航条、webview、baseController等</p>
+<p>组件化：<br>项目比较小，组件比较简单，没有做复杂的路由跳转，纯原生代码，很多地方考虑性能采用代码布局UI、部分简单页面直接采用xib绘制<br>采用自定义UI有：<br>滚动顶部pageView<br>弹出气泡：popView<br>二维码：QR<br>扫一扫：Scan<br>支付密码输入框：input<br>自定义标签集合：tagsLab</p>
+<p>封装代码较少，采用轻量级的设计模式，代码尽量简单化，MVC尽量清晰。<br>总之也是话费了一些时间来完成这样一个开发，没有遇到很头疼的问题，是对之前的iOS开发一个很好的总结和回顾吧，总之非常值得的一次开发体验。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/03/N_15Mysql%E6%88%AA%E5%9B%BE/" rel="prev" title="Mysql截图">
+      <i class="fa fa-chevron-left"></i> Mysql截图
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/03/N_10Flutter%20riverpod/" rel="next" title="Flitter Riverpod">
+      Flitter Riverpod <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">390</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

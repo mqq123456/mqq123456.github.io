@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift221Flutter%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift288Mapbox%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift221Flutter%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">Flutter学习总结</a>
+            <a href="/2021/08/19/M_Swift288Mapbox%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Mapbox设计原理</a>
         </h2>
 
         <div class="post-meta">
@@ -172,14 +172,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-19 10:46:47" itemprop="dateModified" datetime="2021-05-19T10:46:47+08:00">2021-05-19</time>
+                <time title="修改时间：2022-08-03 16:43:06" itemprop="dateModified" datetime="2022-08-03T16:43:06+08:00">2022-08-03</time>
               </span>
 
           
@@ -193,9 +193,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>对于行(Row)来说，主轴是水平方向，横轴垂直方向。对于列（Column）来说，主轴垂直方向，横轴水平方向。<br>MainAxisAlignment 和CrossAxisAlignment 类提供了很多控制对齐的常量.<br>spaceEvenly，它会在每个图像之间，之前和之后均匀分配空闲的水平空间<br>通过使用Expanded widget，可以将widget的大小设置为适和行或列,Expanded widget具有一个flex属性，它是一个整数，用于确定widget的弹性系数,默认弹性系数是1。例如，要创建一个由三个widget组成的行，其中中间widget的宽度是其他两个widget的两倍，将中间widget的弹性系数设置为2：</p>
-<p>聚集 widgets<br>默认情况下，行或列沿着其主轴会尽可能占用尽可能多的空间，但如果要将孩子紧密聚集在一起，可以将mainAxisSize设置为MainAxisSize.min<br>为了最大限度地减少由嵌套严重的布局代码导致的视觉混淆，可以在变量和函数中实现UI的各个部分。</p>
-<p>Container<br>添加 padding, margins, borders, background color, 或将其他装饰添加到widget.包含单个子widget，但该子widget可以是Row，Column，甚至是widget树的根<br>GridView<br>将 widgets 排列为可滚动的网格.GridView.count 允许您指定列数GridView.extent 允许您指定项的最大像素宽度<br>ListView<br>将widget排列为可滚动列表，比Column配置少，但更易于使用并支持滚动<br>Stack<br>将widget重叠在另一个widget之上.子列表中的第一个widget是base widget; 随后的子widget被覆盖在基础widget的顶部，Stack的内容不能滚动<br>Card 接受单个子项，但该子项可以是Row，Column或其他包含子级列表的widget 显示圆角和阴影，Card内容不能滚动</p>
+          <p>SDK设计：</p>
+<p>数据IO层：负责资源数据的加载、解析、数据缓存等，包括缓存数据和网络数据等；</p>
+<p>资源管理层：负责地图资源的管理调度，资源包括地图样式、图片、文字、地图数据等；</p>
+<p>渲染组织层：负责将地图数据和样式，生成渲染所需数据，渲染状态控制、渲染排序等；</p>
+<p>渲染接口层：负责对渲染API（OpenGL、gles）的封装，实现渲染的跨平台性；</p>
+<p>地图控制层：负责对地图的控制，包括位置、层级、风格等，负责事件的分发处理，负责对外（sdk层）接口的封装；</p>
+<p>SDK封装层：负责地图引擎空间部分的实现，负责根据不同平台实现不同的语言的封装，如iOS的OC封装、Android的JNI封装等。</p>
+<p>技术点：<br>earcut - 三角剖分<br>csscolorparser - css解析<br>面数据中心点计算- 面数据标签<br>geojson 解析<br>地图几何对象构建<br>碰撞检测 -<br>pbf解析<br>Mvt数据解析<br>sql存储<br>zip压缩<br>坐标转换</p>
+<p>鸿蒙实现方式：<br>1.采用引入android包的方式<br>2.在鸿蒙中获取activity</p>
+<p>harmony方案<br>采用安卓原生代码:<br>map.jar + android.jar + 安卓部分依赖库</p>
+<p>android api说明：<br>LibraryLoader.java：加载so文件在这个类里面；<br>Annotations:覆盖物代码，基本都是获取参数，具体实现都在渲染库代码里；<br>Camera：视野相关代码；<br>Constants：定义常量；<br>Exceptions：自定义异常；<br>http：网络请求，<br>Offline：离线地图、缓存相关，大部分代码我都删了，只保留了清除缓存的逻辑；<br>Snapshotter：截屏相关；<br>MapsInitializer.java：初始化类<br>Model：bitmap操作相关代码；<br>Renderer：android渲染类相关，配置opengl相关参数；<br>Widgets：地图控件view，放大缩小按钮、比例尺、罗盘都在这里面；<br>Map：地图操作类，设置样式、各种手势回调；</p>
+<p>ios api<br>#import “MAAccountManager.h” // token<br>#import “MAAnnotation.h” // 覆盖物<br>#import “MAAnnotationImage.h” // 图片<br>#import “MABackgroundStyleLayer.h” // 背景图层<br>#import “MACircleStyleLayer.h”<br>#import “MACluster.h”<br>#import “MACompassButton.h” // 组件<br>#import “MAIndoorFloorsView.h”<br>#import “MAComputedShapeSource.h”<br>#import “MAFeature.h” // 图层<br>#import “MAFillExtrusionStyleLayer.h”<br>#import “MAFillStyleLayer.h”<br>#import “MAForegroundStyleLayer.h”<br>#import “MAGeometry.h” // 坐标计算<br>#import “MAGeometryEngine.h” //<br>#import “MAHeatmapStyleLayer.h”<br>#import “MAHillshadeStyleLayer.h”<br>#import “MAImageSource.h”<br>#import “MALight.h” // 三维<br>#import “MALineStyleLayer.h”<br>#import “MALoggingConfiguration.h”<br>#import “MAMapCamera.h” // 视野<br>#import “MAMapSnapshotter.h”<br>#import “MAMapView.h” // 地图对象<br>#import “MAMapViewDelegate.h” // 协议<br>#import “MAMapView+IBAdditions.h”<br>#import “MAMultiPoint.h”<br>#import “MAOfflinePack.h” // 离线地图<br>#import “MAOfflineRegion.h”<br>#import “MAOfflineStorage.h”<br>#import “MAOpenGLStyleLayer.h”<br>#import “MAOverlay.h” // 图层<br>#import “MAPointAnnotation.h”<br>#import “MAPointCollection.h”<br>#import “MAPolygon.h”<br>#import “MAPolyline.h”<br>#import “MACircle.h”<br>#import “MAArc.h”<br>#import “MARasterDEMSource.h”<br>#import “MARasterStyleLayer.h”<br>#import “MARasterTileSource.h”<br>#import “MAShape.h”<br>#import “MAShapeCollection.h”<br>#import “MAShapeOfflineRegion.h”<br>#import “MAShapeSource.h”<br>#import “MASource.h”<br>#import “MAStyle.h”<br>#import “MAStyleLayer.h”<br>#import “MAStyleValue.h”<br>#import “MASymbolStyleLayer.h”<br>#import “MATilePyramidOfflineRegion.h”<br>#import “MATileSource.h”<br>#import “MATypes.h”<br>#import “MAVectorStyleLayer.h”<br>#import “MAVectorTileSource.h”<br>#import “NSExpression+MAAdditions.h”<br>#import “NSPredicate+MAAdditions.h”<br>#import “NSValue+MAAdditions.h”</p>
 
       
     </div>
@@ -215,7 +224,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift225QT%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift231Arcgis%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -229,7 +238,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift225QT%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">QT与OC的比较</a>
+            <a href="/2021/08/10/M_Swift231Arcgis%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Arcgis ios 学习</a>
         </h2>
 
         <div class="post-meta">
@@ -238,16 +247,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-08-10 18:49:05 / 修改时间：19:28:02" itemprop="dateCreated datePublished" datetime="2021-08-10T18:49:05+08:00">2021-08-10</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-09 14:38:44" itemprop="dateModified" datetime="2021-06-09T14:38:44+08:00">2021-06-09</time>
-              </span>
 
           
 
@@ -260,312 +263,76 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>说实话，写了太多的前端开发了，越来越感觉现在的前端有点大一统的趋势，移动端将来会进一步萎靡。<br>废话不多说，最近一个QT的项目让我们去做一点前端页面，我们也是很兴奋的参与进来了，<br>感觉用QT开发mac项目还是可以的，windows项目更是不用说了，总之在pc端还是比较方便的。<br>与很多前端开发比较相似，应该说是跟iOS开发比较相似，都是控件绘制，约束，拖拽等，<br>本身OC也是c，c++也是c，所以说，相似性能打百分之80吧。<br>第一个概念元对象Object，这个跟iOS NSObject及其相似，就是根类，所有的qt对象都继承自Object<br>connect信号，qt中的信号同 oc里面的调用叫发消息，send_msg<br>qt对象的生命周期，跟oc也差不多，只要你绑定到widget上，就不用管释放了，qt会有一个树的概念来存储对象<br>树枝被释放了，树枝上的树叶也自然被释放了，所以我们只要把对象绑定到Widget中就可以了<br>一些鼠标键盘的事件拉，这个跟oc也差不多，都可以重写事件，然后进行自定义操作<br>窗口就更相似了，这里是Widget，不是View，不过QT中没有Controller的概念<br>QT中的样式使用qss，这个可以说要比oc强太多了，oc的组件样式都让苹果定义好了，一般都是按照他的样式来<br>自定义的话也可以，不过比较麻烦<br>Layout这个其实跟android比较相似，不过我觉得跟iOS的约束也同理，这里的设计更倾向于androd<br>最后是tableView的设计，这个也比较相似iOS，不过delegate的设计有点不同，model更像是oc中的delegate，<br>qt中的delegate更像是自定义ui样式时候使用</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift223QT%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/06/M_Swift223QT%E5%B8%B8%E7%94%A8%E6%8E%A7%E4%BB%B6/" class="post-title-link" itemprop="url">QT常用控件</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-09 11:28:17" itemprop="dateModified" datetime="2021-06-09T11:28:17+08:00">2021-06-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="按钮"><a href="#按钮" class="headerlink" title="按钮"></a>按钮</h2><p>QAbstractButton： 提供普通按钮的抽象类<br>QPushButton    按钮<br>QToolButton    工具按钮<br>QRadioButton    单选按钮<br>QCheckBox    复选按钮<br>QButtonGroup： 按钮控件的组合容器(Container)<br>QGroupBox： 带有标题的相同类型的组框(GroupBox Frame)<br>QCommandLinkButton    命令链接按钮<br>QButtonBox    组合按钮<br>QComboBox ： 单击按钮，可在弹出的选项中选择一个</p>
-<h2 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h2><p>QLable: 显示文字或图片，不提供用户交互<br>QLineEdit 行编辑框类<br>QTextEdit: 支持修改和显示rich text<br>QSpinBox 旨在处理整数和离散值输入（例如：月份名称），<br>QDoubleSpinBox 则用于处理浮点值输入<br>QSimpleRichText: 用于显示由stylesheet定制的rich text，一但构造完成，不能被修<br>改<br>QTextBrowser: 支持显示rich text，适合有超文本接连的场合，不能被修改。<br>QAbstractSpinBox： 在旋转框和行编辑中显示值的抽象类<br>QPlainTextEdit<br>QScrollArea</p>
-<h2 id="数字日期"><a href="#数字日期" class="headerlink" title="数字日期"></a>数字日期</h2><p>QDateTimeEdit 日期时间编辑框类<br>QLCDNumber 数字显示框类<br>QTimeEdit： 编辑或显示时间的控件<br>QDateEdit： 编辑或显示日期的控件<br>QDateTimeEdit： 编辑或者显示时间和日期的控件<br>QDial： 用于描述仪表盘样式<br>QSpinBoxnBox： 整数旋转框(spinBox)样式<br>QDoubleSpinBox: 可以使用double类型的旋转框<br>QCalenDar: 以日历的形式显示用户选择的日期(以月为单位)的控件</p>
-<h2 id="滑动滚动"><a href="#滑动滚动" class="headerlink" title="滑动滚动"></a>滑动滚动</h2><p>QProgressBar 进度条类<br>QSlider 滑动条类<br>QAbstractScrollArea： 在滚动条中提供必要的功能的抽象类<br>QAbstractSlider： 使用给定范围内的整数值的抽象类<br>QScrollArea： 可以扩展查看其它控件的滚动条控件<br>QScrollBar： 水平和垂直滚动条控件<br>QSlider： 水平和垂直滑块<br>QDial</p>
-<h2 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h2><p>QImage 图像类<br>QPixmap 图片资源<br>QIconView 图标视图类</p>
-<h2 id="弹框"><a href="#弹框" class="headerlink" title="弹框"></a>弹框</h2><p>QDialog    弹框<br>QMessageBox 消息对话框类 （information、warning、question、about）<br>QDockWidget 停靠窗口<br>QInputDialog   标准输入框<br>QFileDialog 文件对话框类<br>QColorDialog 颜色对话框类<br>QFontDialog 字体对话框类<br>QPrintDialog 打印对话框类 <br>QPalate  调色板<br>QToolTip 提示类<br>QPopupMenu 弹出性菜单类<br>QFontComboBox： 可使用选择字体的下拉框控件<br>QProgressDialog 进度条对话框类<br>QWizard 向导对话框类<br>QWhatsThis 回答”What’s This?”这个问题</p>
-<h2 id="主窗口"><a href="#主窗口" class="headerlink" title="主窗口"></a>主窗口</h2><p>QApplication 应用程序类　<br>QFrame<br>QMainWindow 主窗口类<br>QMenuBar 菜单栏类<br>QAction 动作类<br>QMenu： 可以在菜单栏的菜单控件、Context和弹出菜单中使用的控件<br>QToolBox： 成列的QToolButton控件<br>QTabBar： TabBar控件(在标签对话框中使用)</p>
-<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>QListView: 列表形态的视图控件<br>QTableView: 基于模型/视图的表格视图控件<br>QListBox 列表框类<br>QTable 表格类<br>QTabWidget： 表格控件<br>QColumnView: 基于模型/视图的列视图控件<br>QDataWidgetMapper: 连接控件和模型的映射</p>
-<h2 id="显示大小"><a href="#显示大小" class="headerlink" title="显示大小"></a>显示大小</h2><p>QSizeGrip： 可以改变上层视图大小<br>QSplitter: 具有分割功能的控件<br>QStatckedWidget： 可以在屏幕上同时显示多个控件<br>QSplitterHandle： 可以控制分割功能的控件</p>
-<p>QSplitter *splitter= new QSplitter;<br>splitter-&gt;addWidget(t_widget);<br>splitter-&gt;addWidget(p_widget);<br>splitter-&gt;setStretchFactor(1,3);<br>splitter-&gt;show();</p>
-<h2 id="QEvent"><a href="#QEvent" class="headerlink" title="QEvent"></a>QEvent</h2><p>bool myWidget::event(QEvent *e) 事件分发<br>virtual bool QObject::eventFilter ( QObject * watched, QEvent * event ); 事件过滤<br>void mousePressEvent(QMouseEvent *event);       // 单击 event-&gt;button()==Qt::LeftButton 左键，Qt::RightButton右键<br>void mouseReleaseEvent(QMouseEvent *event);     // 释放<br>void mouseDoubleClickEvent(QMouseEvent *event); // 双击<br>void mouseMoveEvent(QMouseEvent *event);        // 移动<br>void wheelEvent(QWheelEvent *event);            // 滑轮<br>void Widget::keyPressEvent(QKeyEvent *event)      // 键盘按下   event-&gt;modifiers() 特殊键位，event-&gt;key() 普通键位<br>void Widget::keyReleaseEvent(QKeyEvent *event)    // 键盘释放<br>focusInEvent(QFocusEvent *e)<br>focusOutEvent(QFocusEvent *e)<br>changeEvent(QEvent *e)<br>paintEvent(QPaintEvent *e) = 0<br>timerEvent(QTimerEvent *e)<br>常见事件有绘图事件(paintEvent),定时器事件(timerEvent),进入事件(enterEvent),离开事件(leaveEvent),鼠标事件(QMouseEvent),键盘事件(QKeyEvent),焦点事件(QFocusEvent),关闭事件(closeEvent)等等</p>
-<h2 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h2><p>connect(sender, SIGNAL(signal), receiver, SLOT(slot));         // 建立连接<br>disconnect(sender, SIGNAL(signal), receiver, SLOT(slot));    // 取消连接</p>
-<h2 id="按钮信号类型"><a href="#按钮信号类型" class="headerlink" title="按钮信号类型"></a>按钮信号类型</h2><p>clicked(bool checked = false)<br>pressed()<br>released()<br>toggled(bool checked)</p>
-<h2 id="自动信号槽"><a href="#自动信号槽" class="headerlink" title="自动信号槽"></a>自动信号槽</h2><p>用户自己定义信号和槽：需要自己触发信号
- </p>
-<h2 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h2><p>QList 用于添加、插入、替换、移动、删除数据项的函数有：insert()、replace()、removeAt()、move()、swap()、append()、prepend()、removeFirst() 和 removeLast() 等。<br>是提供类似于堆栈的后入先出（LIFO）操作的容器类，push() 和 pop() 是主要的接口函数<br>QLinkedList<T><br>是链式列表，数据项不是用连续的内存存储的，它基于迭代器访问数据项，并且插入和删除数据项的操作时间相同<br>QVector<T><br>提供动态数组的功能，以下标索引访问数据<br>QStack<br>是提供类似于堆栈的后入先出（LIFO）操作的容器类，push() 和 pop() 是主要的接口函数<br>QQueue<br>是提供类似于队列先入先出（FIFO）操作的容器类。enqueue() 和 dequeue() 是主要操作函数<br>QSet<br>是基于散列表的集合模板类，它存储数据的顺序是不定的，查找值的速度非常快<br>QMap<br>提供一个字典（关联数组)，一个键映射到一个值。QMap 存储数据是按照键的顺序<br>QHash<br>同QMap不在乎存储顺序，使用 QHash 会更快。<br>QMultiMap、QMultiHash<br>是 QMap 的子类，是用于处理多值映射的便利类。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift226QT%E5%AE%9E%E6%88%98%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/06/M_Swift226QT%E5%AE%9E%E6%88%98%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%B8%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="post-title-link" itemprop="url">QT实战文件读取与正则表达式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-24 14:04:52" itemprop="dateModified" datetime="2021-06-24T14:04:52+08:00">2021-06-24</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>m_posData.clear();<br>  m_file.seek(0);<br>  QTextStream in(&amp;m_file);<br>  QRegExp regExp = this-&gt;getSplitRegExp();<br>  QString line;<br>  int lineCount = 0;<br>  while (m_spinBox-&gt;value() &gt;= lineCount) { // 文件忽略行<br>      line = in.readLine();<br>      lineCount++;<br>  }<br>  m_posData.clear();<br>  m_dataHeaders = line.split(regExp);<br>  if (m_dataHeaders.size() &lt; m_AdjustNames.size()) {<br>      m_topTableModel-&gt;clear();<br>      m_bottomTableModel-&gt;clear();<br>      QMessageBox::information(this, QStringLiteral(“提示”), QStringLiteral(“数据格式异常！”));<br>      return;<br>  }<br>  while (!line.isNull()) {<br>      QStringList item = line.split(regExp);<br>      if(item.size() &gt;= m_dataHeaders.size()) {<br>          m_posData.append(item);<br>      }<br>      line = in.readLine();<br>  }</p>
-<p>QRegExp ImportPOSFileAdjustDialog::getSplitRegExp()<br>{<br>    QStringList decollatorflags;<br>    decollatorflags &lt;&lt; “ “ &lt;&lt;”|”&lt;&lt;”.”&lt;&lt;”,”&lt;&lt;”:”;<br>    QString regExpString =”[“;<br>    QList&lt;QAbstractButton*&gt;list = m_decollatorGroupBox-&gt;buttons();<br>    for(int i =0 ;i&lt;list.length();i++)<br>    {<br>        QAbstractButton *cheBtn = list.at(i);<br>        if(cheBtn-&gt;isChecked())<br>        {<br>            regExpString += decollatorflags.at(i);<br>        }<br>    }<br>    regExpString += “]”;<br>    if (m_continuousDecollatorGroupBox-&gt;checkedButton()-&gt;text() == “合并”){<br>        regExpString += “+”;<br>    }<br>    QRegExp regExp(regExpString);<br>    return regExp;<br>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">QT实战技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-24 14:33:58" itemprop="dateModified" datetime="2021-06-24T14:33:58+08:00">2021-06-24</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>首先要绘制垂直方向的布局，然后再在垂直方向的布局里面嵌套水平方向的布局<br>布局也能设置间隔边距<br>mainLayout-&gt;setSpacing(10);<br>mainLayout-&gt;setMargin(1);<br>样式可以直接采用setStyleSheet，同css一摸一样<br>左侧对齐的话可以在末尾添加一个addSpacerItem，将控件压制到左侧<br>QSpacerItem的QSizePolicy是一个万能的东西，我们可以根据他设置大小固定不固定，要不要最大化等等<br>设置Dialog关闭立即删除this-&gt;setAttribute(Qt::WA_DeleteOnClose, true);</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift224QT%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/06/M_Swift224QT%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">QT开发总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-09 11:55:34" itemprop="dateModified" datetime="2021-06-09T11:55:34+08:00">2021-06-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="样式表同css"><a href="#样式表同css" class="headerlink" title="样式表同css"></a>样式表同css</h2><p>加载<br>QApplication a(argc, argv);<br>    QFile qss(“:/new/icon/ai3d.qss”);<br>    if( qss.open(QFile::ReadOnly))<br>    {<br>        qDebug(“open success”);<br>        QString style = QLatin1String(qss.readAll());<br>        a.setStyleSheet(style);<br>        qss.close();<br>    }<br>    else<br>    {<br>        qDebug(“Open failed”);<br>    }</p>
-<h2 id="TableView-Model"><a href="#TableView-Model" class="headerlink" title="TableView Model"></a>TableView Model</h2><pre><code>// 行数
+          <p>最近公司接到一个基于arcgis的ipad项目，很兴奋，终于有机会能够写iOS了<br>用国内的高德、百度、以及公司自己的地图项目久了，确实也容易闭塞，看了Arcgis的接口后才发现，地图的项目大了以后，以及服务都开放以后，接口的设计也越开放了。<br>arcgis有开放的地图服务以及地图样式，当然，收费的话你也可以自己做地图样式，但是开放程度肯定跟mapbox无法相提并论，公司最近在了解mapbox，我也研究下mapbox的设计，思想确实很高级，后面再讲吧。<br>iOS嘛，先说一些基础的接口吧</p>
+<h2 id="1-地图构造"><a href="#1-地图构造" class="headerlink" title="1.地图构造"></a>1.地图构造</h2><p>self.mapView.map = [[AGSMap alloc] initWithBasemap:[AGSBasemap lightGrayCanvasBasemap]];<br>这一点跟国内地图厂商非常不同，国内的地图api，都是在mapview上的，arcgis的设计很特别，所有的地图接口都在mapview 的map对象上，map对象又通过basemap创建，basemap里面其实就是地图的底图数据。你可以穿入arcgis官方的底图地址，也可以传如你的arcgis server 的地址。这样的话，你的地图才会有底图。<br>当然了，mapview也不是什么都没有一些坐标之类的接口开始有的，参见AGSMapViewCommon<br>mapview的继承关系 AGSMapView -》 AGSMapViewCommon -〉 AGSGeoView -》AGSView-〉（UIView，NSView）</p>
+<h2 id="2-图层Layer"><a href="#2-图层Layer" class="headerlink" title="2.图层Layer"></a>2.图层Layer</h2><p>所有的图层都被添加到mapView.map.operationalLayers中，这是一个可变数组，你可以用NSMutableArray的接口随意操作这个数组，比如添加一个图层，删除一个图层，切换两个图层的顺序等等，非常的方便。千万不要把图层想想成高德、百度的接口中的覆盖物，这就查远了。 </p>
+<h2 id="3-Table"><a href="#3-Table" class="headerlink" title="3.Table"></a>3.Table</h2><p>这个概念一定会刷新你的认知的，我一开始没有理解这个table，做了很多东西才发现，其实table就是服务接口。arcgis的服务是对外开放的，你可以定义各种各样的服务接口，前提是遵循arcgis 的服务接口规范，地图数据支持各种查询、分析，非常的强大，所有你可以添加很多地图服务，然后调用服务进行数据分析，前提是服务要添加到地图上，所以地图也有一个mapView也有一个tables可变数组。</p>
+<h2 id="4-graphicsOverlays"><a href="#4-graphicsOverlays" class="headerlink" title="4.graphicsOverlays"></a>4.graphicsOverlays</h2><p>这个就是覆盖物了，但是跟你直观的覆盖物不同，这个是添加的覆盖物图层，每个图层才能添加覆盖物。相当于二维数组的概念，也许是为了数据分层吧，总之arcgis对数据分层看的比较重要，国内厂商大多使用index的设计模式，虽然代价低点，感觉不是太直接。<br>这里也不是贬低国内的厂商，只是从地图的发展这个方向，感觉国内还是与国外差距比较明显的，自我定位还是要明确的。<br>地图还有其他的一些组成Layer、Feature、Geomerty等等<br>arcgis的服务我也研究了一下有如下：<br>@property (nonatomic, strong) AGSGeoprocessingTask *geoprocessingTask;<br>@property (nonatomic, strong) AGSGeoprocessingJob * geoprocessingJob;<br>@property (nonatomic, strong) AGSServiceFeatureTable *serviceFeatureTable;<br>@property (nonatomic, strong) AGSLocatorTask *locatorTask;</p>
+<h2 id="地图选点查询"><a href="#地图选点查询" class="headerlink" title="地图选点查询"></a>地图选点查询</h2><p>[self.mapView identifyLayersAtScreenPoint:screenPoint tolerance:12 returnPopupsOnly:NO completion:^(NSArray&lt;AGSIdentifyLayerResult *&gt; * _Nullable identifyResults, NSError * _Nullable error) {<br>    for (int i = 0; i &lt; identifyResults.count; i++) {<br>        AGSIdentifyLayerResult *identifyResult = identifyResults[i];<br>        if (identifyResult.geoElements.count &gt; 0) {<br>            AGSArcGISFeature *feature = (AGSArcGISFeature *)identifyResult.geoElements.firstObject;<br>            self.selectArcGISFeature = feature;<br>            NSLog(@”attributes = %@”,[self stringToUtf8String:feature.attributes.description]);<br>            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@”点击结果” message:[self stringToUtf8String:feature.attributes.description] delegate:nil cancelButtonTitle:@”取消” otherButtonTitles: nil];<br>            [alertView show];<br>        }else{<br>            if (identifyResult.sublayerResults.count &gt; 0) {<br>                NSMutableString *str = [[NSMutableString alloc] init];<br>                NSMutableArray *array = [[NSMutableArray alloc] init];<br>                for (int j = 0; j &lt; identifyResult.sublayerResults.count; j++) {<br>                    AGSIdentifyLayerResult *identifyResult1 = identifyResult.sublayerResults[j];<br>                    if (identifyResult1.geoElements.count &gt; 0) {<br>                        AGSArcGISFeature *feature = (AGSArcGISFeature *)identifyResult1.geoElements.firstObject;<br>                        [array addObject:feature];<br>                        self.selectArcGISFeature = feature;<br>                        NSLog(@”attributes = %@”,[self stringToUtf8String:feature.attributes.description]);<br>                        [str appendString:[NSString stringWithFormat:@”\nfeature%d = %@”,j+1,[self stringToUtf8String:feature.attributes.description]]];<br>                    }<br>                }<br>                if (completion) {<br>                    completion(array[0]);<br>                }<br>                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@”点击结果” message:str delegate:nil cancelButtonTitle:@”取消” otherButtonTitles: nil];<br>                [alertView show];<br>            }<br>        }</p>
+<pre><code>&#125;
 </code></pre>
-<p>   int rowCount(const QModelIndex &amp;parent) const;<br>   // 列数<br>   int columnCount(const QModelIndex &amp;parent) const;<br>   // 数据展示形式<br>   QVariant data(const QModelIndex &amp;index, int role) const;<br>   switch (role)<br>          {<br>          case Qt::DisplayRole:// 数据展示<br>          {<br>              int ncol = index.column();<br>              int nrow =  index.row();<br>              return m_data.at(nrow);<br>          }<br>          case Qt::EditRole: // 编辑<br>              return QVariant();<br>          case Qt::FontRole: // 字体<br>              return QFont(“consolas”, 12, 12);<br>          case Qt::TextAlignmentRole:// 对齐方式<br>               return Qt::AlignCenter;<br>          case Qt::ForegroundRole://前景<br>              return QBrush(Qt::white);<br>          case Qt::CheckStateRole: // 选中状态<br>          {<br>              if (index.column() == 0)<br>              {<br>                  AerialTriangulationTaskData values = m_data.at(index.row());<br>                  return values.selected ? Qt::Checked : Qt::Unchecked;<br>              }<br>          }<br>          }<br>        return QVariant();<br>   // 设置数据<br>   bool setData(const QModelIndex &amp;index, const QVariant &amp;value, int role);<br>   // 选中状态<br>   Qt::ItemFlags flags(const QModelIndex &amp;index) const;<br>   // 表头展示<br>   QVariant headerData(int section, Qt::Orientation orientation, int role) const;</p>
-<h2 id="QSizePolicy"><a href="#QSizePolicy" class="headerlink" title="QSizePolicy"></a>QSizePolicy</h2><p>QSizePolicy::Fixed              不能放大也不能缩小。<br>QSizePolicy::Minimum        可以变大，最小为设定值<br>QSizePolicy::Maximum       可以变小，最大值为设定值<br>QSizePolicy::Preferred        不倾向于扩展比sizeHint()大（QWidget的缺省策略）<br>QSizePolicy::Expanding      尽量占用剩余空间<br>QSizePolicy::MinimumExpanding  大小是最小值，并且是足够的。部件允许使用额外空间<br>QSizePolicy::Ignored    部件将会得到尽可能多的空间。</p>
-<h2 id="tableView"><a href="#tableView" class="headerlink" title="tableView"></a>tableView</h2><p>   m_tableView = new QTableView;<br>   m_tableView-&gt;setShowGrid(false); // 不显示边框<br>   m_tableView-&gt;setAlternatingRowColors(true); // 隔行换色<br>   m_tableView-&gt;setSelectionBehavior(QAbstractItemView::SelectRows); // 选中时为整行选中<br>   m_tableView-&gt;horizontalHeader()-&gt;setStretchLastSection(true);//最后一行是否铺满剩余空间<br>   QHeaderView *verticalHeader = m_tableView-&gt;verticalHeader(); // 垂直表头<br>   QHeaderView *horizontalHeader = m_tableView-&gt;horizontalHeader(); // 水平表头<br>   verticalHeader-&gt;hide(); // 隐藏垂直方向行头<br>   verticalHeader-&gt;setDefaultSectionSize(44); // 设置高度<br>   horizontalHeader-&gt;setMinimumHeight(44); // 设置最小高度<br>   m_tableView-&gt;setColumnWidth(0, 36);// 设置列宽度</p>
-<h2 id="圆角边框"><a href="#圆角边框" class="headerlink" title="圆角边框"></a>圆角边框</h2><p>void ImportPOSFileAdjustWidget::paintEvent(QPaintEvent *event)<br>{<br>    QStylePainter painter(this);<br>    painter.setRenderHint(QPainter::Antialiasing);<br>    painter.setBrush(QBrush(Qt::transparent));<br>    painter.setPen(QColor(“#C1C1C1”));<br>    QRect rect = this-&gt;rect();<br>    painter.drawRoundedRect(rect, 3, 3);<br>    QWidget::paintEvent(event);<br>}</p>
-<h2 id="间距"><a href="#间距" class="headerlink" title="间距"></a>间距</h2><p>mainLayout-&gt;setSpacing(10);<br>mainLayout-&gt;setMargin(1);<br>mainLayout-&gt;setContentsMargins(1, 1, 1, 1);</p>
-<h2 id="tableView-Delegate"><a href="#tableView-Delegate" class="headerlink" title="tableView Delegate"></a>tableView Delegate</h2><p>void PosInfoTableDelegate::paint(QPainter <em>painter, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index) const<br>{<br>    QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;</em> buttons = m_btns.value(index);<br>    if (!buttons) {<br>        QStyleOptionButton* button1 = new QStyleOptionButton();<br>        button1-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4);<br>        button1-&gt;text = QStringLiteral(“查看”);<br>        QPalette pal = button1-&gt;palette;<br>        pal.setColor(QPalette::ButtonText, QColor(255, 255, 255));<br>        button1-&gt;palette = pal;<br>        button1-&gt;icon = QIcon(“:/new/icon/largeImage.png”);<br>        button1-&gt;iconSize = QSize(40,40);</p>
-<pre><code>    QStyleOptionButton* button2 = new QStyleOptionButton();
-    button2-&gt;rect = option.rect.adjusted(button1-&gt;rect.width() + 4, 4, -4, -4);
-    button2-&gt;icon =  QIcon(&quot;:/new/icon/closeTab.png&quot;);
-    button2-&gt;iconSize = QSize(40,40);
-    buttons =new  QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;(button1, button2);
-    (const_cast&lt;PosInfoTableDelegate *&gt;(this))-&gt;m_btns.insert(index, buttons);
-&#125;
-buttons-&gt;first-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4); //
-buttons-&gt;second-&gt;rect = option.rect.adjusted(buttons-&gt;first-&gt;rect.width() + 4, 4, -4, -4);
-painter-&gt;save();
-
-if (option.state &amp; QStyle::State_Selected) &#123;
-    painter-&gt;fillRect(option.rect, option.palette.highlight());
-
-&#125;
-painter-&gt;restore();
-QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;first, painter);
-QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;second, painter);
+<p>}];</p>
+<ul>
+<li>(void)identifyGraphicsOverlaysAtScreenPoint:(CGPoint)screenPoint completion:(ArcgisQueryCompletionBlock)completion {<br>  [self.mapView identifyGraphicsOverlaysAtScreenPoint:screenPoint tolerance:100 returnPopupsOnly:NO completion:^(NSArray&lt;AGSIdentifyGraphicsOverlayResult *&gt; * _Nullable identifyResults, NSError * _Nullable error) {<pre><code>  completion(identifyResults);
 </code></pre>
+  }];</li>
+</ul>
 <p>}</p>
-<p>bool PosInfoTableDelegate::editorEvent(QEvent <em>event, QAbstractItemModel <em>model, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index)<br>{<br>    if (event-&gt;type() == QEvent::MouseButtonRelease) {<br>        QMouseEvent</em> e =(QMouseEvent</em>)event;<br>        if (m_btns.contains(index)) {<br>            QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;* btns = m_btns.value(index);<br>            if (btns-&gt;first-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                emit lookRow(index.row());<br>            } else if(btns-&gt;second-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                btns-&gt;second-&gt;state &amp;= (~QStyle::State_Sunken);<br>                emit deleteRow(index.row());<br>            }<br>        }<br>    }<br>    return false;<br>}</p>
+<ul>
+<li><p>(void)identifyLayer:(AGSLayer *)layer screenPoint:(CGPoint)screenPoint completion:(ArcgisQueryCompletionBlock)completion{<br>  [self.mapView identifyLayer:layer screenPoint:screenPoint tolerance:100 returnPopupsOnly:NO maximumResults:10 completion:^(AGSIdentifyLayerResult * _Nonnull identifyResult) {</p>
+<pre><code>  completion(identifyResult);
+</code></pre>
+<p>  }];<br>}</p>
+<h2 id="AGSQueryParameters"><a href="#AGSQueryParameters" class="headerlink" title="AGSQueryParameters"></a>AGSQueryParameters</h2><p>AGSQueryParameters *parameters = [[AGSQueryParameters alloc] init];<br>parameters.whereClause = [NSString stringWithFormat:@”NAME LIKE ‘%@%@%@’”,@”%”,text,@”%”];<br>[self.addressSearchService queryFeaturesWithParameters:parameters completion:^(AGSFeatureQueryResult * _Nullable result, NSError * _Nullable error) {<br>  NSArray&lt;AGSArcGISFeature *&gt; *features = (NSArray&lt;AGSArcGISFeature *&gt; *)[result featureEnumerator].allObjects;<br>  completion(features);<br>}];</p>
+<h2 id="pragma-mark-featureCollectionTableGeoprocessing"><a href="#pragma-mark-featureCollectionTableGeoprocessing" class="headerlink" title="pragma mark - featureCollectionTableGeoprocessing"></a>pragma mark - featureCollectionTableGeoprocessing</h2></li>
+<li><p>(void)featureCollectionTableGeoprocessing:(AGSGeometry *)geometry completion:(ArcgisQueryCompletionBlock)completion{<br>  AGSFeature *newFeature = [featureCollectionTable createFeature];<br>  [newFeature setGeometry:geometry];<br>  __block AGSFeatureCollectionTable *strongFeatureCollectionTable = featureCollectionTable;<br>  [featureCollectionTable addFeature:newFeature completion:^(NSError * _Nullable error) {</p>
+<pre><code>  [self performGeoprocessing:strongFeatureCollectionTable completion:completion];
+</code></pre>
+<p>  }];<br>}</p>
+</li>
+<li><p>(void)performGeoprocessing:(AGSFeatureCollectionTable *)featureCollectionTable completion:(ArcgisQueryCompletionBlock)completion{<br>  AGSGeoprocessingParameters *params = [[AGSGeoprocessingParameters alloc] initWithExecutionType:AGSGeoprocessingExecutionTypeAsynchronousSubmit];<br>  AGSGeoprocessingFeatures *geoprocessingFeatures = [[AGSGeoprocessingFeatures alloc] initWithFeatureSet:featureCollectionTable];<br>  params.inputs = @{@”Clip_Features”:geoprocessingFeatures};</p>
+<p>  self.geoprocessingJob = [self.geoprocessingTask geoprocessingJobWithParameters:params];</p>
+<p>  [self.geoprocessingJob startWithStatusHandler:^(AGSJobStatus status) {</p>
+<pre><code>  NSLog(@&quot;serverJobID = %@, status = %ld&quot;,self.geoprocessingJob.serverJobID,status);
+</code></pre>
+<p>  } completion:^(AGSGeoprocessingResult * _Nullable result, NSError * _Nullable error) {</p>
+<pre><code>  NSLog(@&quot;AGSGeoprocessingResult = %ld&quot;,result.outputs.count);
+  if (result.outputs.count &gt; 0) &#123;
+      NSLog(@&quot;AGSGeoprocessingResult = %ld&quot;,result.outputs.count);
+  &#125;
+  completion(result);
+  if (error) &#123;
+      NSLog(@&quot;error = %@&quot;,[error description]);
+  &#125;
+</code></pre>
+<p>  }];<br>}</p>
+<h2 id="pragma-mark-AGSLocatorTask"><a href="#pragma-mark-AGSLocatorTask" class="headerlink" title="pragma mark - AGSLocatorTask"></a>pragma mark - AGSLocatorTask</h2></li>
+<li><p>(void)geocodeWithSearchText:(NSString *)text completion:(ArcgisQueryCompletionBlock)completion{<br>  [self.locatorTask geocodeWithSearchText:text completion:^(NSArray&lt;AGSGeocodeResult *&gt; * _Nullable geocodeResults, NSError * _Nullable error) {</p>
+<pre><code>  completion(geocodeResults);
+</code></pre>
+<p>  }];<br>}</p>
+</li>
+<li><p>(void)suggestWithSearchText:(NSString *)text completion:(ArcgisQueryCompletionBlock)completion{<br>  [self.locatorTask suggestWithSearchText:text completion:^(NSArray&lt;AGSSuggestResult *&gt; * _Nullable suggestResults, NSError * _Nullable error) {</p>
+<pre><code>  completion(suggestResults);
+</code></pre>
+<p>  }];<br>}</p>
+<h2 id="pragma-mark-AGSServiceFeatureTable"><a href="#pragma-mark-AGSServiceFeatureTable" class="headerlink" title="pragma mark - AGSServiceFeatureTable"></a>pragma mark - AGSServiceFeatureTable</h2></li>
+<li><p>(void)serviceFeatureTableQueryFeatures:(AGSGeometry *)geometry completion:(ArcgisQueryCompletionBlock)completion {<br>  AGSQueryParameters *parameters = [[AGSQueryParameters alloc] init];<br>  parameters.geometry = geometry;<br>  [self.serviceFeatureTable queryFeaturesWithParameters:parameters completion:^(AGSFeatureQueryResult * _Nullable result, NSError * _Nullable error) {</p>
+<pre><code>  completion(result);
+</code></pre>
+<p>  }];<br>}</p>
+</li>
+<li><p>(void)serviceFeatureTableQueryExtent:(AGSGeometry *)geometry completion:(ArcgisQueryCompletionBlock)completion {<br>  AGSQueryParameters *parameters = [[AGSQueryParameters alloc] init];<br>  parameters.geometry = geometry;<br>  [self.serviceFeatureTable queryExtentWithParameters:parameters completion:^(AGSEnvelope * _Nullable extent, NSError * _Nullable error) {</p>
+<pre><code>  completion(extent);
+</code></pre>
+<p>  }];<br>}</p>
+</li>
+<li><p>(void)serviceFeatureTableQueryStatistics:(AGSGeometry *)geometry completion:(ArcgisQueryCompletionBlock)completion {<br>  AGSStatisticDefinition *definition = [[AGSStatisticDefinition alloc] initWithOnFieldName:@”” statisticType:AGSStatisticTypeSum outputAlias:@””];<br>  AGSStatisticsQueryParameters *parameters = [[AGSStatisticsQueryParameters alloc] initWithStatisticDefinitions:@[definition]];<br>  [parameters setGeometry:geometry];<br>  [self.serviceFeatureTable queryStatisticsWithParameters:parameters completion:^(AGSStatisticsQueryResult * _Nullable result, NSError * _Nullable error) {</p>
+<pre><code>  completion(result);
+</code></pre>
+<p>  }];<br>}</p>
+</li>
+</ul>
 
       
     </div>
@@ -585,7 +352,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;second,
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift229QT%E5%AE%9E%E6%88%98%E8%A1%A8%E5%8D%95%E5%86%85%E7%BB%98%E5%88%B6%E5%A4%9A%E4%B8%AA%E6%8C%89%E9%92%AE/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift233mapbox%E8%B0%83%E7%A0%94/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -599,7 +366,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;second,
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift229QT%E5%AE%9E%E6%88%98%E8%A1%A8%E5%8D%95%E5%86%85%E7%BB%98%E5%88%B6%E5%A4%9A%E4%B8%AA%E6%8C%89%E9%92%AE/" class="post-title-link" itemprop="url">QT实战表单绘制多个按钮</a>
+            <a href="/2021/08/10/M_Swift233mapbox%E8%B0%83%E7%A0%94/" class="post-title-link" itemprop="url">mapbox功能调研</a>
         </h2>
 
         <div class="post-meta">
@@ -609,14 +376,14 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;second,
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-08-10 18:49:05" itemprop="dateCreated datePublished" datetime="2021-08-10T18:49:05+08:00">2021-08-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-24 16:16:34" itemprop="dateModified" datetime="2021-06-24T16:16:34+08:00">2021-06-24</time>
+                <time title="修改时间：2022-03-14 21:37:48" itemprop="dateModified" datetime="2022-03-14T21:37:48+08:00">2022-03-14</time>
               </span>
 
           
@@ -630,29 +397,12 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;second,
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这个确实难倒我了，我百度了很多地方最终也不甚明白，特别是在绘制的地方，当我调整绘制样式的时候真是的费了九牛二虎之力啊，太难了，下面展示下代码吧</p>
-<p>void PosInfoTableDelegate::paint(QPainter <em>painter, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index) const<br>{<br>    QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;</em> buttons = m_btns.value(index);<br>    if (!buttons) {<br>        QStyleOptionButton* button1 = new QStyleOptionButton();<br>        button1-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4);<br>        button1-&gt;text = QStringLiteral(“查看”);<br>        QPalette pal = button1-&gt;palette; // 这里是为了让文本颜色的修改，这个调色板还有很多接口，但是我操作很多都无法改变背景色，让我很失望<br>        pal.setColor(QPalette::ButtonText, QColor(255, 255, 255));<br>        button1-&gt;palette = pal;<br>        button1-&gt;icon = QIcon(“://largeImage.png”);<br>        button1-&gt;iconSize = QSize(40,40);</p>
-<pre><code>    QStyleOptionButton* button2 = new QStyleOptionButton();
-    button2-&gt;rect = option.rect.adjusted(button1-&gt;rect.width() + 4, 4, -4, -4);
-    button2-&gt;icon =  QIcon(&quot;://closeTab.png&quot;);
-    button2-&gt;iconSize = QSize(40,40);
-    buttons =new  QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;(button1, button2);
-    (const_cast&lt;PosInfoTableDelegate *&gt;(this))-&gt;m_btns.insert(index, buttons);
-&#125;
-buttons-&gt;first-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4); //
-buttons-&gt;second-&gt;rect = option.rect.adjusted(buttons-&gt;first-&gt;rect.width() + 4, 4, -4, -4);
-painter-&gt;save();
-
-if (option.state &amp; QStyle::State_Selected) &#123;
-    painter-&gt;fillRect(option.rect, option.palette.highlight());
-
-&#125;
-painter-&gt;restore();
-// 这个地方CE_PushButtonLabel 是为了防止按钮带背景色，我曾采用n种方式都无法去除背景色，最后只能这样了
-QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;first, painter);
-QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;second, painter);
-</code></pre>
-<p>}<br>// 这个是点击事件，不多说<br>bool PosInfoTableDelegate::editorEvent(QEvent <em>event, QAbstractItemModel <em>model, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index)<br>{<br>    if (event-&gt;type() == QEvent::MouseButtonRelease) {<br>        QMouseEvent</em> e =(QMouseEvent</em>)event;<br>        if (m_btns.contains(index)) {<br>            QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;* btns = m_btns.value(index);<br>            if (btns-&gt;first-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                emit lookRow(index.row());<br>            } else if(btns-&gt;second-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                btns-&gt;second-&gt;state &amp;= (~QStyle::State_Sunken);<br>                emit deleteRow(index.row());<br>            }<br>        }<br>    }<br>    return false;<br>}</p>
+          <p>1.Map通过样式json文件绘制<br>具体字段内容参考：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/mapbox-gl-js/style-spec/">https://docs.mapbox.com/mapbox-gl-js/style-spec/</a></p>
+<p>我们地图：也有样式配置文件，原理上基本一致，各种样式支持情况需要重新设计<br>达到效果：<br>    更新stye.json，地图样式同步变化</p>
+<p>2.采用mvt格式数据，bpf协议传输数据。<br>mapbox数据请求示例：<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf</a>?<br>sku=101fNMKdfrxXw&amp;access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p1dHRybDR5MGJuZjQzcGhrZ2doeGgwNyJ9.a-vxW4UaxOoUMWUTGnEArw</p>
+<p>我们也是mvt格式，不是标准mvt，需要将我们数据格式同步到标准mvt格式上，<br>mapbox pbf标准mvt解析参考：<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/protozero">https://github.com/mapbox/protozero</a><br><a target="_blank" rel="noopener" href="https://github.com/mapbox/vtzero">https://github.com/mapbox/vtzero</a><br><a target="_blank" rel="noopener" href="https://github.com/tlglovewf/pbfvectortile">https://github.com/tlglovewf/pbfvectortile</a></p>
+<p>3.支持geojson绘制<br>    支持geojson跟mvt数据转换（支持一种格式数据绘制即可）<br>4.坐标<br>    mvt采用瓦片坐标，以瓦片左上角为原点（0，0），瓦片上的数据坐标全是基于瓦片的。<br>5.绘制方式：<br>    mapbox中layer的设计不是根据数据来源分类，根据数据点、线、面进行分类，fill类型的layer只负责填充；<br>line类型的layer只负责线条；symbol类型的layer会处理sprite，文字等；raster类型的layer就只负责图片，<br>circle类型的layer是更高一层的业务处理需要，可以在layer里面设置filter，满足条件的元素才会被呈现出来，<br>并用layer设定的样式渲染。细化地图样式，点、线、面，可实现批量绘制，达到优化性能目的<br>    需确认我们设计模式是否与mapbox相似<br>6.数据库设计<br>    支持sqllite存储，方便数据迁移，<br>    相同数据会采用去重处理，如大海整个矢量瓦片都是大海数据，所有大海的数据瓦片都是一样的，会将所有的大海数据id指向同一块数据。<br>    我们数据采用文件夹形式存储，根据瓦片id分文件夹，需要优化为sqllite存储<br>7.离线缓存<br>    缓存数据采用sqllite数据库进行存储，表结构相对简单，表内数据采用压缩格式(zlib)进行存储。<br>    region_id-》resource_id-〉tiles-》</p>
+<p>mapbox开源介绍<br>mapbox很多东西都开源了，开发中可以参考。<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/awesome-vector-tiles">https://github.com/mapbox/awesome-vector-tiles</a></p>
 
       
     </div>
@@ -672,7 +422,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift235iOS%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -686,7 +436,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">后端与微服务知识</a>
+            <a href="/2021/08/10/M_Swift235iOS%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">iOS视频学习</a>
         </h2>
 
         <div class="post-meta">
@@ -696,14 +446,14 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-08-10 18:49:05" itemprop="dateCreated datePublished" datetime="2021-08-10T18:49:05+08:00">2021-08-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-25 10:32:34" itemprop="dateModified" datetime="2021-06-25T10:32:34+08:00">2021-06-25</time>
+                <time title="修改时间：2022-03-27 15:30:37" itemprop="dateModified" datetime="2022-03-27T15:30:37+08:00">2022-03-27</time>
               </span>
 
           
@@ -717,25 +467,36 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><p>具有控制反转（IoC）和面向切面（AOP）两大核心，通过声明式方式灵活地进行事务的管理，提高开发效率和质量。包含如下模块：<br> Data Access/Integration（数据访问／集成）： JDBC、ORM、OXM、JMS 和 Transactions 模块<br> Web 层包括 Web、Servlet、Struts 和 Portlet 组件<br> Core Container（核心容器）由 Beans 模块、Core 核心模块、Context 上下文模块和 Expression Language 表达式语言模块组成<br>AOP 模块：提供了面向切面编程实现，允许定义方法拦截器和切入点，将代码按照功能进行分离，以降低耦合性。<br>Aspects 模块：提供与 AspectJ 的集成，是一个功能强大且成熟的面向切面编程（AOP）框架<br>Instrumentation 模块：提供了类工具的支持和类加载器的实现，可以在特定的应用服务器中使用。<br>Test 模块：支持 Spring 组件，使用 JUnit 或 TestNG 框架的测试。</p>
-<h2 id="spring-boot"><a href="#spring-boot" class="headerlink" title="spring boot"></a>spring boot</h2><p>其设计目的是用来简化新Spring应用的初始搭建以及开发过程，开箱即用和约定优于配置。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。内嵌Tomcat或Jetty等Servlet容器，简化Maven配置，尽可能自动配置Spring容器</p>
-<h2 id="Spring-Cloud"><a href="#Spring-Cloud" class="headerlink" title="Spring Cloud"></a>Spring Cloud</h2><p> 就是微服务系统架构的一站式解决方案，在平时我们构建微服务的过程中需要做如 服务发现注册 、配置中心 、消息总线 、负载均衡 、断路器 、数据监控 等操作，而 Spring Cloud 为我们提供了一套简易的编程模型，使我们能在 Spring Boot 的基础上轻松地实现微服务项目的构建。</p>
-<h2 id="Spring-Cloud-Alibaba"><a href="#Spring-Cloud-Alibaba" class="headerlink" title="Spring Cloud Alibaba"></a>Spring Cloud Alibaba</h2><p>是阿里巴巴提供的微服务开发一站式解决方案，是阿里巴巴开源中间件与 Spring Cloud 体系的融合。基于 Nacos 提供 spring-cloud-alibaba-starter-nacos-discovery &amp; spring-cloud-alibaba-starter-nacos-config 实现了服务注册 &amp; 配置管理功能。</p>
-<h2 id="微服务意义"><a href="#微服务意义" class="headerlink" title="微服务意义"></a>微服务意义</h2><p>微服务的核心是服务治理，而服务治理的关键是服务划分。故微服务架构的本质就是对码农的分化和治理</p>
-<h2 id="Nacos"><a href="#Nacos" class="headerlink" title="Nacos"></a>Nacos</h2><p>帮助您更敏捷和容易地构建、交付和管理微服务平台。 Nacos 是构建以“服务”为中心的现代应用架构(例如微服务范式、云原生范式)的服务基础设施。</p>
-<h2 id="Feign"><a href="#Feign" class="headerlink" title="Feign"></a>Feign</h2><p>是声明式的web service客户端，它让微服务之间的调用变得更简单了，类似controller调用service。Spring Cloud集成了Ribbon和Eureka，可在使用Feign时提供负载均衡的http客户端。</p>
-<h2 id="Spring-Cloud-Ribbon"><a href="#Spring-Cloud-Ribbon" class="headerlink" title="Spring Cloud Ribbon"></a>Spring Cloud Ribbon</h2><p>是一个基于HTTP和TCP的客户端负载均衡工具，它基于Netflix Ribbon实现。通过Spring Cloud的封装，可以让我们轻松地将面向服务的REST模版请求自动转换成客户端负载均衡的服务调用</p>
-<h2 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h2><p>是阿里开源的项目，提供了流量控制、熔断降级、系统负载保护等多个维度来保障服务之间的稳定性</p>
-<h2 id="网关GateWay"><a href="#网关GateWay" class="headerlink" title="网关GateWay"></a>网关GateWay</h2><p>网关的角色是作为一个 API 架构，用来保护、增强和控制对于 API 服务的访问。Spring Cloud Gateway旨在为微服务架构提供一种简单而有效的统一的API路由管理方式。</p>
-<h2 id="Spring-Cloud-Euraka"><a href="#Spring-Cloud-Euraka" class="headerlink" title="Spring-Cloud Euraka"></a>Spring-Cloud Euraka</h2><p>是Spring Cloud集合中一个组件，它是对Euraka的集成，用于服务注册和发现。Eureka是Netflix中的一个开源框架。它和 zookeeper、Consul一样，都是用于服务注册管理的，同样，Spring-Cloud 还集成了Zookeeper和Consul。<br>Eureka由多个instance(服务实例)组成，这些服务实例可以分为两种：Eureka Server和Eureka Client。为了便于理解，我们将Eureka client再分为Service Provider和Service Consumer。<br>Eureka Server 提供服务注册和发现<br>Service Provider 服务提供方，将自身服务注册到Eureka，从而使服务消费方能够找到<br>Service Consumer服务消费方，从Eureka获取注册服务列表，从而能够消费服务</p>
-<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><p>是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby一个开源的实现，是Hadoop和Hbase的重要组件。它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
-<h2 id="cap原理"><a href="#cap原理" class="headerlink" title="cap原理"></a>cap原理</h2><p>P:Partition tolerance,网络分区容错。类似多机房部署，保证服务稳定性。<br>A: Availability，可用性。<br>C:Consistency ，一致性。<br>CAP定理：CAP三个属性对于分布式系统不同同时做到。如AP/CP/AC。</p>
-<h2 id="Zookeepr和Eureka区别"><a href="#Zookeepr和Eureka区别" class="headerlink" title="Zookeepr和Eureka区别"></a>Zookeepr和Eureka区别</h2><p>（1）Zookeeper是CP，分布式协同服务，突出一致性。对ZooKeeper的的每次请求都能得到一致的数据结果，但是无法保证每次访问服务可用性。如请求到来时，zookeer正在做leader选举，此时不能提供服务，即不满足A可用性。<br>（2）Euere是AP，高可用与可伸缩的Service发现服务，突出可用性。相对于Zookeeper而言，可能返回数据没有一致性，但是保证能够返回数据，服务是可用的。</p>
-<h2 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h2><p>是一个开源的、提供友好操作界面的持续集成(CI)工具，起源于Hudson（Hudson是商用的），主要用于持续、自动的构建/测试软件项目、监控外部任务的运行（这个比较抽象，暂且写上，不做解释）。Jenkins用Java语言编写，可在Tomcat等流行的servlet容器中运行，也可独立运行。通常与版本管理工具(SCM)、构建工具结合使用。常用的版本控制工具有SVN、GIT，构建工具有Maven、Ant、Gradle。</p>
-<h2 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h2><p>是一个基于Apache Ant和Apache Maven概念的项目自动化构建开源工具。它使用一种基于Groovy的特定领域语言(DSL)来声明项目设置，目前也增加了基于Kotlin语言的kotlin-based DSL，抛弃了基于XML的各种繁琐配置</p>
-<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>是一个开源的应用容器引擎，基于 Go 语言 并遵从 Apache2.0 协议开源。<br>Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。<br>容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低</p>
-<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>是一个开源的使用 ANSI C 语言编写、遵守 BSD 协议、支持网络、可基于内存、分布式、可选持久性的键值对(Key-Value)存储数据库，并提供多种语言的 API。<br>Redis 通常被称为数据结构服务器，因为值（value）可以是字符串(String)、哈希(Hash)、列表(list)、集合(sets)和有序集合(sorted sets)等类型。</p>
-<h2 id="seata"><a href="#seata" class="headerlink" title="seata"></a>seata</h2><p>阿里开源的，是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。</p>
+          <p>1.alloc原理<br>alloc -&gt; _objc_rootAlloc -&gt; callAlloc -&gt; objc_msgSend<br>_<br>alloc init new的区别<br>alloc 使用了_zoneAlloc , 它是给对象分配内存的时候，把关联的对象分配到一个相邻的内存区域内，以便于调用时消耗很少的代价，提升了程序处理速度。<br>2.堆、栈</p>
+<p>3.汇编</p>
+<p>4.编译器优化<br>苹果允许的，可以优化启动时间，将启动加载的代码放在一页上。（虚拟内存，物理内存，一页16kb）<br>在Mac 、iOS中，是使用了/usr/lib/dyld程序来加载动态库，dyld 加载可执行文件，动态库(递归加载)<br>runtime<br>load、initialize、map_images<br>main() 函数执行后<br>首屏渲染完成后<br>dyld<br>减少动态库、合并一些动态库(定期清理不必要的动态库)。减少动态库加载。每个库本身都有依赖关系，苹果公司建议使用更少的动态库，苹果最多支持6个非系统的动态库合并为一个。<br>减少Objc类、分类的数量、减少Selector数量(定期清理不必要的类、分类)<br>减少C++虚函数数量， 减少C++全局变量的数量<br>Swift尽量使用struct<br>runtime<br>用+initialize方法和dispatch_once取代所有的attribute((constructor))、C++静态构造器、ObjC的+load，因为在一个+load()方法里，运行时进行方法替换操作会带来4毫秒的损耗。<br>main() 函数执行后<br>功能级别的优化：main()函数开始执行后到首屏渲染完成前，只处理首屏相关的业务，其他的非首屏业务的初始化，监听注册，配置文件读取放在首屏渲染完成后去做<br>ReactiveCocoa创建一个信号6毫秒，+load()执行一次，4毫秒<br>检测App耗时<br>抓取主线程的方法调用堆栈，计算一段时间各个方法的耗时，Xcode自带的Time Profiler<br>对objc_msgSend方法进行hook来掌握所有方法的执行耗时 objc_msgSend源码 <a target="_blank" rel="noopener" href="https://opensource.apple.com/source/objc4/objc4-723/runtime/Messengers.subproj/">https://opensource.apple.com/source/objc4/objc4-723/runtime/Messengers.subproj/</a><br>fackbook开源了fishhook的代码<a target="_blank" rel="noopener" href="https://github.com/facebook/fishhook">https://github.com/facebook/fishhook</a> 其大致思路为：通过重新绑定符号，实现对c方法的hook。dyld是通过更新Mach-O二进制的_DATA segment特定的部分中的指针来绑定lazy和non-lazy符号，通过确认传递给rebind_symbol里每个符号更新的位置，就可以找出替换来重新绑定这些符号。<br>在不影响用户体验的前提下，尽可能将一些操作延迟，不要全部都放在finishLaunching方法中 按需加载<br>不使用xib，直接视用代码加载首页视图<br>NSUserDefaults实际上是在Library文件夹下会生产一个plist文件，如果文件太大的话一次能读取到内存中可能很耗时，这个影响需要评估，如果耗时很大的话需要拆分(需考虑老版本覆盖安装兼容问题)<br>每次用NSLog方式打印会隐式的创建一个Calendar，因此需要删减启动时各业务方打的log，或者仅仅针对内测版输出log<br>梳理应用启动时发送的所有网络请求，是否可以统一在异步线程请求</p>
+<p>3.2优化方向</p>
+<p>尽可能减少CPU、GPU资源消耗<br>尽量用轻量级的对象，比如用不到事件处理的地方，可以考虑使用CALayer取代UIView<br>不要频繁地调用UIView的相关属性，比如frame、bounds、transform等属性，尽量减少不必要的修改<br>尽量提前计算好布局，在有需要时一次性调整对应的属性，不要多次修改属性<br>Autolayout会比直接设置frame消耗更多的CPU资源<br>图片的size最好刚好跟UIImageView的size保持一致<br>控制一下线程的最大并发数量<br>尽量避免短时间内大量图片的显示，尽可能将多张图片合成一张进行显示<br>GPU能处理的最大纹理尺寸是4096x4096，一旦超过这个尺寸，就会占用CPU资源进行处理，所以纹理尽量不要超过这个尺寸<br>尽量减少视图数量和层次<br>减少透明的视图(alpha&lt;1)，不透明的就设置opaque为YES<br>尽量把耗时的操作放到子线程<br>文本处理(尺寸计算、绘制) p<br>图片处理(解码、绘制)</p>
+<p>3.3、离屏渲染</p>
+<p>尽量避免出现离屏渲染<br>在OpenGL中，GPU有2种渲染方式<br>On-Screen Rendering:当前屏幕渲染，在当前用于显示的屏幕缓冲区进行渲染操作<br>Off-Screen Rendering:离屏渲染，在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作<br>离屏渲染消耗性能的原因<br>需要创建新的缓冲区<br>离屏渲染的整个过程，需要多次切换上下文环境，先是从当前屏幕(On-Screen)切换到离屏(Off-Screen);等到离屏渲染结束以后，将离屏缓冲区的渲染结果显示到屏幕上，又需要将上下文环境从离屏切换到当前屏幕<br>哪些操作会触发离屏渲染?<br>光栅化，layer.shouldRasterize = YES<br>遮罩，layer.mask<br>圆角，同时设置layer.masksToBounds = YES、layer.cornerRadius大于0（考虑通过CoreGraphics绘制裁剪圆角，或者叫UI提供圆角图片）<br>阴影，layer.shadowXXX (如果设置了layer.shadowPath就不会产生离屏渲染)</p>
+<p>内存泄露</p>
+<p>一、查找泄漏点 (两种工具)</p>
+<p>​</p>
+<p>1 &gt; Analyze</p>
+<ul>
+<li>学 名: 静态分析工具- 查 找: 可以通过 Product -&gt;Analyze 菜单项启动- 快捷键: CMD+shift +b.- Analyze主要分析以下四种问题: 1) 逻辑错误：访问空指针或未初始化的变量等； 2) 内存管理错误：如内存泄漏等； 3) 声明错误：从未使用过的变量； 4) Api调用错误：未包含使用的库和框架。</li>
+</ul>
+<p>2 &gt;Instruments</p>
+<ul>
+<li>学 名: 动态分析工具- 查 找: Product -&gt;Profile 菜单项启动- 快捷键: CMD + i. 简 介:它有很多跟踪模块可以动态分析和跟踪内存, CPU 和文件系统.</li>
+</ul>
+<p>四、耗电优化</p>
+<p>尽可能降低CPU、GPU功耗<br>少用定时器<br>优化I/O操作<br>尽量不要频繁写入小数据，最好批量一次性写入<br>读写大量重要数据时，考虑用dispatch_io，其提供了基于GCD的异步操作文件I/O的API。用dispatch_io系统会优化磁盘访问<br>数据量比较大的，建议使用数据库(比如SQLite、CoreData)</p>
+<p>网络优化<br>减少、压缩网络数据<br>如果多次请求的结果是相同的，尽量使用缓存<br>使用断点续传，否则网络不稳定时可能多次传输相同的内容<br>网络不可用时，不要尝试执行网络请求<br>让用户可以取消长时间运行或者速度很慢的网络操作，设置合适的超时时间<br>批量传输，比如，下载视频流时，不要传输很小的数据包，直接下载整个文件或者一大块一大块地下载。如果下载广告，一 次性多下载一些，然后再慢慢展示。如果下载电子邮件，一次下载多封，不要一封一封地下载<br>定位优化<br>如果只是需要快速确定用户位置，最好用CLLocationManager的requestLocation方法。定位完成后，会自动让定位硬件断电<br>如果不是导航应用，尽量不要实时更新位置，定位完毕就关掉定位服务<br>尽量降低定位精度，比如尽量不要使用精度最高的kCLLocationAccuracyBest<br>需要后台定位时，尽量设置pausesLocationUpdatesAutomatically为YES，如果用户不太可能移动的时候系统会自动暂停位置更新<br>尽量不要使用startMonitoringSignificantLocationChanges，优先考虑startMonitoringForRegion:</p>
+<p>用户移动、摇晃、倾斜设备时，会产生动作(motion)事件，这些事件由加速度计、陀螺仪、磁力计等硬件检测。在不需要检测的场合，应该及时关闭这些硬件</p>
+<p>swift闭包：结构体</p>
+<p>GPU 垂直同步+双缓冲区</p>
+<p>离屏渲染：<br>离屏缓冲区、数据合并+</p>
+<p>Runtime的理解：<br>平时编写的OC代码，在程序运行过程中，其实最终会转换成Runtime的C语言代码，Runtime是Object-C的幕后工作者<br>Object-C需要Runtime来创建类和对象，进行消息发送和转发<br>将尽可能多的决策从编译时和链接时推迟到运行时（Apple）<br>运行时系统充当着Object-C语言的操作系统，它使语言能够工作(Apple)</p>
+<p>用来干什么 基本作用</p>
+<p>在程序运行过程中，动态的创建类，动态添加、修改这个类的属性和方法；<br>遍历一个类中所有的成员变量、属性、以及所有方法<br>消息传递、转发</p>
+<p>用在哪些地方 Runtime的典型事例</p>
+<p>给系统分类添加属性、方法<br>方法交换<br>获取对象的属性、私有属性<br>字典转换模型<br>KVC、KVO<br>归档(编码、解码)<br>NSClassFromString class&lt;-&gt;字符串<br>block<br>类的自我检测</p>
 
       
     </div>
@@ -755,7 +516,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift227QT%E5%AE%9E%E6%88%98%E5%AD%97%E6%AE%B5%E9%87%8D%E6%96%B0%E9%80%89%E6%8B%A9/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift232mapbox%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -769,7 +530,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift227QT%E5%AE%9E%E6%88%98%E5%AD%97%E6%AE%B5%E9%87%8D%E6%96%B0%E9%80%89%E6%8B%A9/" class="post-title-link" itemprop="url">QT实战字段重新选择</a>
+            <a href="/2021/08/10/M_Swift232mapbox%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">mapbox 学习</a>
         </h2>
 
         <div class="post-meta">
@@ -779,14 +540,14 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-08-10 18:49:05" itemprop="dateCreated datePublished" datetime="2021-08-10T18:49:05+08:00">2021-08-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-24 14:22:27" itemprop="dateModified" datetime="2021-06-24T14:22:27+08:00">2021-06-24</time>
+                <time title="修改时间：2021-08-11 11:10:39" itemprop="dateModified" datetime="2021-08-11T11:10:39+08:00">2021-08-11</time>
               </span>
 
           
@@ -800,7 +561,11 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>今天遇到这样一个问题，解决了很久，最终才能如愿实现，现记录一下实现方案。<br>问题是这样的，我现在有一个指定格式的文档数据，数据中字段采用指定分割符分割，类似scv格式的数据采用，分割一样，我们需要读取这些数据，将数据保存为指定的模型。这个是一个非常正规的操作，现在的需求是，我文档的字段排序是错乱的，需要用户手动去选择某个字段具体在哪个位置。这个问题确实让我头疼了。具体描述是这样的<br>我们有字段 A，B，C，D，E，F<br>文档中有0，1，2，3，4，5，6，7，8，9，10列<br>我们默认：<br>A-&gt;1<br>B-&gt;2<br>C-&gt;3<br>D-&gt;4<br>E-&gt;5<br>F-&gt;6<br>7，8，9，10列忽略<br>然后当用户将A列放置在第2列时我们的数据变化<br>A、A、C、D、E、F、空、空、空、空<br>当我们将A放置在第8列时我们数据变化<br>A、B、C、D、E、F、空、A、空、空<br>我们虽然只有A-F5个字段，但是当用户选择后，数据会发生变大的情况<br>我本来想用一个Map，来分别存储Key和value，但是Map不太好按照顺序查找，这让我很难受<br>于是我选择了用两个List来存储字段和位置<br>调整后的存储结构如下<br>字段数组： A、B、C、D、E、F、A<br>位置数组： 0、1、2、3、4、5、8<br>这样，我知道有字段名，就能对应的找到字段的位置。<br>说起来很简单，但是业务上我要考虑很多，所以还是让我费了一会的功夫，就当记录着玩吧</p>
+          <p>最近在了解mapbox相关的知识，现在也总结一下</p>
+<h2 id="1-mapbox是什么"><a href="#1-mapbox是什么" class="headerlink" title="1.mapbox是什么"></a>1.mapbox是什么</h2><p>mapbox主要是用来做地图定制化的开发的，核心是mapbox studio<br>2.mapbox优势是什么<br>1.支持样式自定义，能快速设计出一套样式地图<br>2.支持mvt格式数据，数据小。<br>3.细化地图样式，点、线、面，可实现批量绘制，快速<br>4.支持mysql存储，方便数据迁移<br>3.mapbox设计思想原理<br>1.能表达整个Map的Style文件<br>2.layer的设计不是根据数据来源分类，根据数据点、线、面进行分类，fill类型的layer只负责填充；<br>line类型的layer只负责线条；symbol类型的layer会处理sprite，文字等；raster类型的layer就只负责图片，<br>circle类型的layer是更高一层的业务处理需要，可以在layer里面设置filter，满足条件的元素才会被呈现出来，<br>并用layer设定的样式渲染<br>缓存数据采用sqllite数据库进行存储，表结构相对简单，表内数据采用压缩格式(zlib)进行存储。<br>mvt<br>region_id-》resource_id-〉tiles-》<br>4.mapbox开源介绍<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/awesome-vector-tiles">https://github.com/mapbox/awesome-vector-tiles</a></p>
+<p>mapbox数据请求<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf</a>?<br>sku=101fNMKdfrxXw&amp;access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p1dHRybDR5MGJuZjQzcGhrZ2doeGgwNyJ9.a-vxW4UaxOoUMWUTGnEArw</p>
+<p>mapbox pbf 解析<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/protozero">https://github.com/mapbox/protozero</a><br><a target="_blank" rel="noopener" href="https://github.com/mapbox/vtzero">https://github.com/mapbox/vtzero</a><br><a target="_blank" rel="noopener" href="https://github.com/tlglovewf/pbfvectortile">https://github.com/tlglovewf/pbfvectortile</a></p>
+<p>Mapbox样式由一组根属性组成，其中一些描述单个全局属性，一些包含嵌套属性。<br>一些根属性(如版本、名称和元数据)对映射的外观或行为没有任何影响，但提供了与映射相关<br>的重要描述性信息。其他的，如层和源，是至关重要的，并决定哪些地图功能将出现在您的地图上，以及它们将是<br>什么样子。一些属性(如中心、缩放、间距和方位)为地图渲染器提供了一组初始显示地图时使用的默认值。</p>
 
       
     </div>
@@ -820,7 +585,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift222QT%E5%B8%B8%E7%94%A8%E6%8A%80%E5%B7%A7/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift237CMake/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -834,7 +599,7 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift222QT%E5%B8%B8%E7%94%A8%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">QT常用技巧</a>
+            <a href="/2021/06/28/M_Swift237CMake/" class="post-title-link" itemprop="url">CMake</a>
         </h2>
 
         <div class="post-meta">
@@ -844,14 +609,14 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-09 11:38:13" itemprop="dateModified" datetime="2021-06-09T11:38:13+08:00">2021-06-09</time>
+                <time title="修改时间：2022-03-14 21:42:33" itemprop="dateModified" datetime="2022-03-14T21:42:33+08:00">2022-03-14</time>
               </span>
 
           
@@ -865,534 +630,297 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="tableView-mvc模型"><a href="#tableView-mvc模型" class="headerlink" title="tableView mvc模型"></a>tableView mvc模型</h2><p>QAbstractItemDelegate<br>QAbstractItemModel<br>QAbstractItemView</p>
-<h2 id="获取屏幕分辨率"><a href="#获取屏幕分辨率" class="headerlink" title="获取屏幕分辨率"></a>获取屏幕分辨率</h2><p>qDebug()&lt;&lt; “screen width:”&lt;<a href="QApplication::desktop()-">QApplication::desktop()-</a>width();<br>qDebug()&lt;&lt; “screen height:”&lt;<a href="QApplication::desktop()-">QApplication::desktop()-</a>height();</p>
-<h2 id="获取客户使用区大小"><a href="#获取客户使用区大小" class="headerlink" title="获取客户使用区大小"></a>获取客户使用区大小</h2><p>qDebug()&lt;&lt; “screen avaliabe width:”&lt;<a href="QApplication::desktop()-">QApplication::desktop()-</a>availableGeometry().width();<br>qDebug()&lt;&lt; “screen avaliabe heigth:”&lt;<a href="QApplication::desktop()-">QApplication::desktop()-</a>availableGeometry().height();</p>
-<h2 id="获取应用程序矩形大小"><a href="#获取应用程序矩形大小" class="headerlink" title="获取应用程序矩形大小"></a>获取应用程序矩形大小</h2><p>qDebug()&lt;&lt; “application avaliabe width:”&lt;<a href="QApplication::desktop()-">QApplication::desktop()-</a>screenGeometry().width();<br>qDebug()&lt;&lt; “application avaliabe heigth:”&lt;<a href="QApplication::desktop()-">QApplication::desktop()-</a>screenGeometry().height();</p>
-<h2 id="设置-icon"><a href="#设置-icon" class="headerlink" title="设置 icon"></a>设置 icon</h2><p>QIcon icon;<br>icon.addPixmap(QPixmap(QString::fromUtf8(“:/bmp/logo.png”)), QIcon::Normal, QIcon::Off);<br>WndTest-&gt;setWindowIcon(icon);<br>WndTest-&gt;setIconSize(QSize(256, 256));</p>
-<h2 id="字体更改"><a href="#字体更改" class="headerlink" title="字体更改"></a>字体更改</h2><p>QFont font;<br>            font.setPointSize(40);<br>            font.setBold(true);<br>            font.setWeight(75);<br>            QLabel *lfontnew = new QLabel();<br>            lfontnew-&gt;setFont(font);</p>
-<h2 id="文本颜色更改"><a href="#文本颜色更改" class="headerlink" title="文本颜色更改"></a>文本颜色更改</h2><p>void WndTest::changeColor( QWidget *obj, QColor clr )<br>{<br>QPalette *palette = new QPalette();<br>palette-&gt;setColor(QPalette::Text,clr);<br>obj-&gt;setPalette(*palette);<br>delete palette;<br>}</p>
-<h2 id="取消pushbutton点击时出现的边框效果"><a href="#取消pushbutton点击时出现的边框效果" class="headerlink" title="取消pushbutton点击时出现的边框效果"></a>取消pushbutton点击时出现的边框效果</h2><p>btn-&gt;setFocusPolicy(Qt::NoFocus);</p>
-<h2 id="把所有按钮添加一个buttongroup"><a href="#把所有按钮添加一个buttongroup" class="headerlink" title="把所有按钮添加一个buttongroup"></a>把所有按钮添加一个buttongroup</h2><p>然后选中所有按钮，在右下角属性中将checkable打勾，然后在代码中通过ui-&gt;buttonGroup-&gt;setExclusive(true)；设置该组按钮为互斥</p>
-<h2 id="设置图像可自适应标签大小："><a href="#设置图像可自适应标签大小：" class="headerlink" title="设置图像可自适应标签大小："></a>设置图像可自适应标签大小：</h2><p>QLabel::setScaledContents(true);<br>用label显示图片时，图片有可能会把label撑大，这时只要给label一个最小值，无论图片有多大，label都不会再被撑大了</p>
-<h2 id="QMap来保存所创建的label对象"><a href="#QMap来保存所创建的label对象" class="headerlink" title="QMap来保存所创建的label对象"></a>QMap来保存所创建的label对象</h2><p>动态添加一系列label时，可用QMap来保存所创建的label对象，如：graphicsMap[number] = label;</p>
-<h2 id="获取控件的全局坐标："><a href="#获取控件的全局坐标：" class="headerlink" title="获取控件的全局坐标："></a>获取控件的全局坐标：</h2><p>int x = label-&gt;mapToGlobal(QPoint(0, 0)).x();<br>int y = label-&gt;mapToGlobal(QPoint(0, 0)).y();<br>int w = label-&gt;geometry().width();<br>int h = label-&gt;geometry().height();</p>
-<h2 id="设置有背景的控件"><a href="#设置有背景的控件" class="headerlink" title="设置有背景的控件"></a>设置有背景的控件</h2><p>比如QTabWidget，让其背景透明可设置样式表时加上    background-color:argb(0,0,0,0); 原来自带的背景就透明掉了；</p>
-<h2 id="在主程序外调用qApp"><a href="#在主程序外调用qApp" class="headerlink" title="在主程序外调用qApp"></a>在主程序外调用qApp</h2><p>可以使用宏定义获得QApplication的指针<br>#define qApp (static_cast&lt;QApplication *&gt;(QCoreApplication::instance()))<br>或者<br>#define qApp QCoreApplication::instance()<br>11、当调用QComboBox::clear()时，index会变为-1而不是0，同时会触发currentIndexChange()这个槽函数。</p>
-<h2 id="信号常用触发形式"><a href="#信号常用触发形式" class="headerlink" title="信号常用触发形式"></a>信号常用触发形式</h2><p>clicked——QPushbutton<br>triggered——QAction<br>toggled ——QRadioButton（单选按钮）</p>
-<h2 id="append函数可以实现自动换行显示。"><a href="#append函数可以实现自动换行显示。" class="headerlink" title="append函数可以实现自动换行显示。"></a>append函数可以实现自动换行显示。</h2><h2 id="delay函数用处"><a href="#delay函数用处" class="headerlink" title="delay函数用处"></a>delay函数用处</h2><p>：当现实文字信息换行时，会等到整个槽函数执行完成之后才将全部信息打印出来；这是在中间插一句delay（）；打断一下即可正常显示。</p>
-<h2 id="槽函数"><a href="#槽函数" class="headerlink" title="槽函数"></a>槽函数</h2><p>connect(button,SIGNAL(clicked()),this,SLOT(槽函数)));<br>//connect(对象,发出的信号,对象,处理信号的槽函数);<br>connect(&amp;b1,&amp;QPushButton::clicked,this,&amp;MyWidget::close);<br>槽函数的特性：</p>
-<p>（1）槽函数没有返回值；</p>
-<p>（2）槽函数需要与信号函数对应；</p>
-<p>（3）槽函数的参数 是为了接收信号传过来的数据；</p>
-<p>（4）参函数的参数应该是不大于信号参数的个数，可以少于；</p>
-<p>（5）槽函数可以重载；</p>
-<h2 id="发送信号"><a href="#发送信号" class="headerlink" title="发送信号"></a>发送信号</h2><p>emit sigSub();</p>
-<h2 id="布局方式"><a href="#布局方式" class="headerlink" title="布局方式"></a>布局方式</h2><p>QBoxLayout可以在水平方向或垂直方向上排列控件。<br>QHBoxLayout：水平布局，在水平方向上排列控件。<br>QVBoxLayout：垂直布局，在垂直方向上排列控件。</p>
-<h2 id="QTextEdit"><a href="#QTextEdit" class="headerlink" title="QTextEdit"></a>QTextEdit</h2><p>QTextDocument *doc=showWidget-&gt;text-&gt;document();<br>doc-&gt;print(&amp;printer);</p>
-<h2 id="图形方法"><a href="#图形方法" class="headerlink" title="图形方法"></a>图形方法</h2><p>QPainterPath path;<br>Path.moveTo(0,0);<br>path.lineTo(200,0);<br>path.lineTo(200,100);<br>path.lineTo(0,100);</p>
-<h2 id="QPushButton"><a href="#QPushButton" class="headerlink" title="QPushButton"></a>QPushButton</h2><p>QPushButton* btn = new QPushButton;<br>// btn-&gt;show(); // 用顶层方式弹出。若想在MyWiget窗口中显示，就需要依赖MyWidget窗口<br>// 设置父亲<br>btn-&gt;setParent(this);<br>// 设置文字<br>btn-&gt;setText(“Nemo”);// 将char<em>隐式类型转化为QString<br>// 重置按钮大小<br>btn-&gt;resize(150 ,100);<br>// 创建按钮第二种方式<br>QPushButton</em> btn2 = new QPushButton(“第二按钮”, this); //此方式可以安装btn2大小进行显示<br>// 重置窗口大小<br>this-&gt;resize(400, 200);// 宽  高<br>// 后创建，显示靠前<br>// 移动第二个按钮<br>btn2-&gt;move(100, 100);<br>// 重置窗口标题<br>setWindowTitle(“xxx—xxx”);<br>// 设置窗口大小<br>setFixedSize(800, 600)</p>
-<h2 id="模态对话框"><a href="#模态对话框" class="headerlink" title="模态对话框"></a>模态对话框</h2><p>dlg.exec();//阻塞</p>
-<h2 id="非模态对话框"><a href="#非模态对话框" class="headerlink" title="非模态对话框"></a>非模态对话框</h2><p>dlg.setAttribute(Qt::WA_DeleteOnClose);<br>dlg-&gt;show();  </p>
-<h2 id="提示对话框"><a href="#提示对话框" class="headerlink" title="提示对话框"></a>提示对话框</h2><p>#include <QMessageBox><br>QMessageBox::about(this,”Tips”,”hello”);<br>if(QMessageBox::Ok == QMessageBox::question(this,”Tips”,”hello”,QMessageBox::Ok|QMessageBox::Cancel))<br>{</p>
-<h2 id="停靠窗口"><a href="#停靠窗口" class="headerlink" title="停靠窗口"></a>停靠窗口</h2><p>QDockWidget *dockWidget = new QDockWidget(tr(“Dock Widget”), this);<br>dockWidget-&gt;setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);<br>addDockWidget(Qt::LeftDockWidgetArea, dockWidget);</p>
-<h2 id="动态修改CentralWidget"><a href="#动态修改CentralWidget" class="headerlink" title="动态修改CentralWidget"></a>动态修改CentralWidget</h2><p>centralWidget()-&gt;setParent(0);<br>//新的CentralWidget<br>setCentralWidget(_newCentral);</p>
-<h2 id="分裂器"><a href="#分裂器" class="headerlink" title="分裂器"></a>分裂器</h2><p>QSplitter *splitter= new QSplitter;<br>splitter-&gt;addWidget(t_widget);<br>splitter-&gt;addWidget(p_widget);<br>splitter-&gt;setStretchFactor(1,3);<br>splitter-&gt;show();</p>
-<h2 id="QListWidget，与QListView区别"><a href="#QListWidget，与QListView区别" class="headerlink" title="QListWidget，与QListView区别"></a>QListWidget，与QListView区别</h2><p>QListWidget是基于Item，而QListView是基于Model的</p>
-<p>Widget 控件（组件）在创建时是不可见的，它可以包含子控件，在删除该 Widget 时，子控件也将一<br>起删除。<br>#include <QLCDNumber> // 时钟效果数字<br>#include <QDebug>       //调试类<br>#include <QInputDialog> //标准输入框<br>#include <QListWidget> //<br>#include <QTextEdit><br>#include <QDialog><br>#include <QTableWidget> //表格组件:内置了网络布局<br>#include <QTableView><br>#include <QListWidget>  //列表组件:<br>#include <QListView><br>#include <QTreeWidget>  //树形组件:<br>#include <QTreeView><br>#include <QColumnView><br>#include <QTableWidgetItem> //表项<br>#include <QLabel><br>#include <QPixmap><br>#include <QMouseEvent>  //鼠标事件<br>#include <QKeyEvent>    //按键事件</p>
-<h2 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h2><h3 id="QAbstractButton类"><a href="#QAbstractButton类" class="headerlink" title="QAbstractButton类"></a>QAbstractButton类</h3><pre><code>1.是按钮部件的抽象基类，提供了按钮所共有的功能。
-2.实现了一个抽象按钮，并且让它的子类来指定如何处理用户的动作，并指定如何绘制按钮。
-3.提供了点击和勾选按钮。    
-</code></pre>
-<p>QRadioButton和QCheckBox类只提供了勾选按钮，<br>QPushButton和QToolButton提供了点击按钮，如果需要的话，它们还可以提供切换行为。<br>任何按钮，都可以显示一个包含文本和图标的标签。setText()用来设置文本，setIcon()可以置图标。如果按钮被禁用，其标签更改为“disabled”样式。</p>
-<p>常用状态：<br>    isDown() 按钮是否被按下。<br>    isChecked() 按钮是否被选中。只有切换按钮才能被切换为选中或不选中（请看下面）。<br>    isEnabled() 按钮是否可以被用户按下。<br>    setAutoRepeat() 如果用户按下按钮，按钮是否可以自动回复。<br>    setToggleButton() 按钮是否是一个切换按钮。</p>
-<p>信号：QAbstractButton提供了四个信号：<br>    pressed() 当鼠标光标在按钮内，鼠标左键被按下时，发送此信号。<br>    released() 当鼠标左键被释放时，发送此信号。<br>    clicked() 当按钮被按下然后又被释放，或按下快捷键，或当animateClick()被调用时，发送此信号。<br>    toggled() 当切换按钮的状态变化时，发送此信号。<br>使用：<br>      QAbstractButton *pButton = new QPushButton(this);<br>    // 设置图标、图标大小、文本<br>    pButton-&gt;setIcon(QIcon(“:/Images/logo”));<br>    pButton-&gt;setIconSize(QSize(18, 18));<br>    pButton-&gt;setText(“Click Me”);<br>    // 连接信号与槽<br>    connect(pButton, &amp;QAbstractButton::clicked, this, &amp;MainWindow::onClicked);<br>    void MainWindow::onClicked()<br>    {<br>        qDebug() &lt;&lt; “Enter…”;        //点击按钮时，就会输出信息”Enter…”。<br>    }<br>互斥:只能选中一个按钮<br>    raidobutton_1-&gt;setCheckable(true);  //设置可选<br>    raidobutton_1-&gt;setChecked(true);    //设置选中</p>
-<p>//QPushButton  //命令按钮<br>    QPushButton *file_button = new QPushButton(“文 件”);</p>
-<h3 id="QtoolButton-工具按钮-ToolButton-控件"><a href="#QtoolButton-工具按钮-ToolButton-控件" class="headerlink" title="QtoolButton    //工具按钮  //ToolButton 控件"></a>QtoolButton    //工具按钮  //ToolButton 控件</h3><pre><code>QToolButton类提供了用于命令或选项可以快速访问的按钮，通常可以用在QToolBar里面。
-工具按钮和普通的命令按钮不同，通常不显示文本，而显示图标。
-</code></pre>
-<h3 id="RadioButton-单选按钮，切换按钮"><a href="#RadioButton-单选按钮，切换按钮" class="headerlink" title="RadioButton  单选按钮，切换按钮"></a>RadioButton  单选按钮，切换按钮</h3><p>QRadioButton部件提供了一个带有文本标签的单选框（单选按钮）。<br>可以切换选中（checked）或未选中（unchecked）状态的选项按钮<br>    raidobutton_1 = new QRadioButton(“男”);<br>    raidobutton_1-&gt;setCheckable(true);  //可选<br>    raidobutton_1-&gt;setChecked(true);    //选中<br>    raidobutton_2 = new QRadioButton(“女”);<br>    raidobutton_2-&gt;setCheckable(true);</p>
-<h3 id="按钮组QButtonGroup-单选按钮做互斥"><a href="#按钮组QButtonGroup-单选按钮做互斥" class="headerlink" title="按钮组QButtonGroup  //单选按钮做互斥"></a>按钮组QButtonGroup  //单选按钮做互斥</h3><p>如果你需要为属于同一父部件的单选框设置多个互斥按钮组，把它们加入QButtonGroup中。<br>    QButtonGroup *button_group = new QButtonGroup;<br>    button_group-&gt;addButton(raidobutton_1);</p>
-<pre><code>button_group-&gt;addButton(raidobutton_2);
-</code></pre>
-<p>//QCheckBox    //复选框，选项按钮，可多选<br>    like_box_1 = new QCheckBox(“足 球”);<br>    like_box_1-&gt;setCheckable(true);<br>    like_box_1-&gt;setChecked(true);<br>    like_box_2 = new QCheckBox(“蓝 球”);<br>    like_box_2-&gt;setCheckable(true);</p>
-<p>QSpinBox和QDoubleSpinBox均派生自QAbstractSpinBox<br>QSpinBox旨在处理整数和离散值（例如：月份名称）<br>QDoubleSpinBox则用于处理浮点值。默认的精度是2位小数，但可以通过setDecimals()来改变。<br>他们之间的区别就是处理数据的类型不同，其他功能都基本相同。</p>
-<h3 id="QSpinBox做年龄"><a href="#QSpinBox做年龄" class="headerlink" title="QSpinBox做年龄"></a>QSpinBox做年龄</h3><pre><code>QSpinBox *age_box;
-age_box = new QSpinBox;
-age_box-&gt;setRange(1,300);        // 范围
-age_box-&gt;setSingleStep(1);        // 步长
-age_box-&gt;setValue(24);            // 当前值(默认值)
-</code></pre>
-<h3 id="QDoubleSpinBox"><a href="#QDoubleSpinBox" class="headerlink" title="QDoubleSpinBox"></a>QDoubleSpinBox</h3><p>  上面的所有功能对于QDoubleSpinBox同样适用。<br>  主要使用setDecimals()设置精度，然后利用setSingleStep()来设置步长即可。<br>    QDoubleSpinBox *pSpinBox = new QDoubleSpinBox(this);<br>    pSpinBox-&gt;setRange(0, 20);          // 范围<br>    pSpinBox-&gt;setDecimals(3);          // 精度<br>    pSpinBox-&gt;setSingleStep(0.005); // 步长</p>
-<h3 id="QToolBox类-提供了一个列（选项卡式的）部件条目"><a href="#QToolBox类-提供了一个列（选项卡式的）部件条目" class="headerlink" title="QToolBox类: 提供了一个列（选项卡式的）部件条目"></a>QToolBox类: 提供了一个列（选项卡式的）部件条目</h3><pre><code>可以在一个tab列上显示另外一个，并且当前的item显示在当前的tab下面。
-每个tab都在tab列中有一个索引位置。tab的item是一个QWidget 。 
- 1.创建QGroupBox,并设置布局管理器为竖直布局
-QGroupBox *group_1 = new QGroupBox;
-QVBoxLayout *vlayout_1 = new QVBoxLayout(group_1);   
-  2.创建QToolButton,将把按钮加入竖直布局
-QToolButton *button_1_1 = this-&gt;add_button(&quot;贝 贝&quot;,&quot;://images/bb.png&quot;);
-QToolButton *button_1_2 = this-&gt;add_button(&quot;京 京&quot;,&quot;://images/jj.png&quot;);
-QToolButton *button_1_3 = this-&gt;add_button(&quot;欢 欢&quot;,&quot;://images/hh.png&quot;);
-</code></pre>
-<p>//封装，添加用户函数<br>QToolButton *MyQQ::add_button(const QString &amp;name,const QString &amp;path) //添加一个用户<br>{<br>    QToolButton *toolbutton_1_1 = new QToolButton;<br>    toolbutton_1_1-&gt;setText(name);          //设置按钮文本<br>    toolbutton_1_1-&gt;setIcon(QIcon(path));   //设置按钮图片<br>    toolbutton_1_1-&gt;setIconSize(QSize(ICONWIDTH,ICONHEIGHT));   //设置按钮大小<br>    toolbutton_1_1-&gt;setToolButtonStyle(Qt::ToolButtonTextUnderIcon);   //设置图片和文本的样式<br>    toolbutton_1_1-&gt;setAutoRaise(true);     //设置自动弹出<br>    this-&gt;connect(toolbutton_1_1,SIGNAL(clicked(bool)),this,SLOT(slot_message()));<br>    return toolbutton_1_1;<br>}</p>
-<h3 id="QFrame"><a href="#QFrame" class="headerlink" title="QFrame"></a>QFrame</h3><p>Frame 控件（框架）用来存放其他控件，也可用于装饰。它一般用来作为更加复杂容器的基础，也可<br>以用在 form 中作为占位控件。</p>
-<h3 id="QLineEdit"><a href="#QLineEdit" class="headerlink" title="QLineEdit"></a>QLineEdit</h3><pre><code>1.允许用户输入和编辑单行纯文本，提供了很多有用的编辑功能，包括：撤消和重做、剪切和粘贴、拖放
-2.通过改变输入框的echoMode()，同时也可以设置为一个“只写”字段，用于输入密码等。
-3.文本的长度可以被限制为maxLength()，可以使用一个validator()或inputMask()来任意限制文本
+          <p>CMake工具用于生成Makefile文件。用户通过编写CMakeLists.txt文件，描述构建过程（编译、连接、测试、打包），之后通过解析该文件，生成目标平台的Makefile文件，做到”Write once, run everywhere”。</p>
+<p>如果是构建平台是MinGW，会什么makefile文件，使用mingw32-make构建。<br>如果构建平台是VS系列，会生成vcxproj文件，可以使用msbuild工具构建。<br>如果构造平台是NMake，可以使用nmake构建。</p>
+<p>可以使用以下命令编译：</p>
+<p>cmake –build <CMakeCachePath> –target <ProjectName></p>
+<p>可以使用以下命令清理编译结果：</p>
+<p>cmake –build <CMakeCachePath> –target clean</p>
+<p>可以使用以下命令，查看cmake支持的构建工具：<br>cmake -G</p>
+<p>在生成Makefile时，指定构建工具：<br>cmake -G “<generator>“ <projectPath></p>
+<p> -A <platform-name>           = Specify platform name if supported by</p>
+<p>iOS编译<br>cmake .. -G Xcode -DCMAKE_TOOLCHAIN_FILE=ios.toolchain.cmake -DPLATFORM=OS64</p>
+<p>cmake –build . –config Release</p>
 
- QLineEdit *lineEdit;                                //声明 QLineEdit 控件
-lineEdit = new QLineEdit(this);                    //创建 QLineEdit 控件
-lineEdit-&gt;setGeometry(QRect(100,100,200,25));    //位置大小
-</code></pre>
-<h3 id="QTextEdit："><a href="#QTextEdit：" class="headerlink" title="QTextEdit："></a>QTextEdit：</h3><p>//文本域,多行文本框<br>可以使用setText()或insert()来改变文本，通过text()来获取文本；<br>    QTextEdit *textEdit;                              //声明<br>    textEdit = new QTextEdit(this);                    //实例 QTextEdit 控件<br>    textEdit-&gt;setGeometry(QRect(50,50,200,150));    //控件位置大小<br>    textEdit-&gt;setText(“我是第一行<br/>我是第二行”);    //内容</p>
-<h3 id="QComboBox"><a href="#QComboBox" class="headerlink" title="QComboBox"></a>QComboBox</h3><p>#include <QComboBox>                    //下拉列表<br>    QComboBox *comboBox;                //声明<br>    comboBox = new QComboBox(this);        //构造控件<br>    //edu_box-&gt;addItem(“高 中”);<br>    comboBox-&gt;setGeometry(QRect(50,50,120,25));    //控件显示位置大<br>    QStringList str;<br>    str &lt;&lt; “数学” &lt;&lt; “语文” &lt;&lt; “地理”;    //定义字符串列表<br>    comboBox-&gt;addItems(str);               //将字符串列表绑定 QComboBox 控件</p>
-<h3 id="QSpinBox"><a href="#QSpinBox" class="headerlink" title="QSpinBox"></a>QSpinBox</h3><p>#include <QSpinBox>    //整形分量框<br>    QSpinBox *spinBox;                //声明控件<br>    spinBox = new QSpinBox(this);    //创建<br>    spinBox-&gt;setGeometry(QRect(50,50,100,25));    //位置<br>    spinBox-&gt;setRange(0,200);    //值范围<br>    spinBox-&gt;setValue(10);        //初始值<br>    spinBox-&gt;setSuffix(“元”);    //后缀<br>    spinBox-&gt;setPrefix(“$”);    //前缀</p>
-<h3 id="QFileDialog"><a href="#QFileDialog" class="headerlink" title="QFileDialog"></a>QFileDialog</h3><p>//标准文件对话框：获取文件名<br>#include <QFileDialog><br>    QLineEdit *fileedit;            //声明文件对话框<br>    fileedit = new QLineEdit;    //构建对话框<br>    //构造按钮<br>    //连接槽函数<br>    this-&gt;connect(file_button,SIGNAL(clicked(bool)),this,SLOT(slot_getFile()));<br>void DialogGui::slot_getFile()//获取文件名的槽函数<br>{<br>    qDebug() &lt;&lt; __func__ &lt;&lt; endl;   //Qt中输出要用调试输出<br>    //打开文件对话框，获取文件路径，修改lineedit的内容<br>    QString path = QFileDialog::getOpenFileName(this,”文件对话框”,”D:\“,”C++头文件(*.h);;C++源文件(*.cpp);;所有文件(*.*)”);       //打开文件对话框<br>    if(!path.trimmed().isEmpty())   //判断用户是否点击打开,trimmed()去除首尾空格<br>        fileedit-&gt;setText(path);    //通过文本的设置函数，将获得的文本地址赋给框<br>}</p>
-<h3 id="QFontDialog"><a href="#QFontDialog" class="headerlink" title="QFontDialog"></a>QFontDialog</h3><p>//字体对话框：设置字体<br>#include <QFontDialog><br>    QLineEdit *fontedit;                    //声明对话框<br>    fontedit = new QLineEdit(“中国，加油”);    //构建对话框，并初始化<br>    //构造按钮 。。。<br>    //连接槽函数<br>    this-&gt;connect(font_button,SIGNAL(clicked(bool)),this,SLOT(slot_getFont()));<br>void DialogGui::slot_getFont()<br>{<br>    qDebug() &lt;&lt; __func__ &lt;&lt; endl;   //Qt中输出要用调试输出<br>    bool isok = false;                                            //打开字体对话框<br>    QFont font = QFontDialog::getFont(&amp;isok,QFont(“隶书”,35),this,”字体对话框”);<br>    if(isok)    //如果为true表示用户点击了确定<br>        fontedit-&gt;setFont(font);    //通过字体的设置函数，将获得的字体赋给框<br>}</p>
-<h3 id="QColorDialog"><a href="#QColorDialog" class="headerlink" title="QColorDialog"></a>QColorDialog</h3><p>//颜色对话框：颜色填充<br>#include <QColorDialog><br>    QFrame *colorFrame;         //声明颜色的方框<br>    colorFrame = new QFrame;    //构造方框<br>    colorFrame-&gt;setFrameShape(QFrame::Box); //设置方框的形状<br>    colorFrame-&gt;setAutoFillBackground(true);    //设置方框的背景颜色自动填充<br>    //构造按钮 。。。<br>    //连接槽函数<br>    this-&gt;connect(color_button,SIGNAL(clicked(bool)),this,SLOT(slot_getColor()));<br>void DialogGui::slot_getColor()   //获取颜色<br>{<br>    qDebug() &lt;&lt; __func__ &lt;&lt; endl;   //Qt中输出要用调试输出<br>    QColor color = QColorDialog::getColor(Qt::red,this,”颜色对话框”);<br>    if(color.isValid())     //验证颜色数是否有效<br>    {<br>        //设置颜色:通过Palette去设置颜色<br>        colorFrame-&gt;setPalette(QPalette(color));//通过颜色的设置函数，将获得的颜色赋给框<br>    }<br>}</p>
-<h3 id="QInputDialog"><a href="#QInputDialog" class="headerlink" title="QInputDialog"></a>QInputDialog</h3><p>//标准输入框：手动输入，如输入名字，年龄等信息；<br>#include <QInputDialog><br>    name_label = new QLabel;                    //构造一个文本框<br>    name_label-&gt;setAlignment(Qt::AlignCenter);  //设置label上的文本居中<br>    name_label-&gt;setFrameStyle(QFrame::Panel | QFrame::Sunken);  //设置label的样式为panel和sunken<br>      QPushButton *name_button = new QPushButton;        //构造一个按钮<br>    name_button-&gt;setIcon(QIcon(“://images/btn.png”));//给按钮做一个图片<br>    //连接槽函数<br>    this-&gt;connect(name_button,SIGNAL(clicked(bool)),this,SLOT(slot_getName()));</p>
-<p>void InputDialogGui::slot_getName()    //设置槽函数实现功能<br>{<br>    //打开文本输入框，获取得文本，设置到label中<br>    bool ok = false;<br>    QString name = QInputDialog::getText(this,”文本输入框”,”请输入姓名:”,QLineEdit::Normal,”张 三”,&amp;ok);<br>    if(ok &amp;&amp; !name.trimmed().isEmpty()) //如果 用户点击了确定<br>        name_label-&gt;setText(name);        //通过框的设置函数，将获得的名字赋给框<br>}<br>//下面三个分别实现<br>    //年龄（选项输入框getItem），性别（整型输入框getInt），身高（浮点型输入框getDouble）<br>void InputDialogGui::slot_getSex()        //1.年龄（选项输入框getItem）<br>{<br>    QStringList sexlist;<br>    sexlist.push_back(“男”);<br>    sexlist.push_back(“女”);<br>    sexlist.push_back(“人妖”);<br>    bool ok = false;<br>    QString sex = QInputDialog::getItem(this,”选项输入框”,”请选择性别:”,sexlist,1,false,&amp;ok);<br>    if(ok)<br>        sex_label-&gt;setText(sex);<br>}<br>void InputDialogGui::slot_getAge()        //2.性别（整型输入框getInt）<br>{<br>    bool ok = false;<br>    int age = QInputDialog::getInt(this,”整型输入框”,”请输入年龄:”,24,1,300,2,&amp;ok);<br>    if(ok)<br>        age_label-&gt;setText(QString::number(age));<br>}<br>void InputDialogGui::slot_getHeight()    //3.身高（浮点型输入框getDouble）<br>{<br>    bool ok = false;<br>    qreal height = QInputDialog::getDouble(this,”浮点型输入框:”,”请输入身高:”,150,1,300,1,&amp;ok);<br>    if(ok)<br>        height_label-&gt;setText(QString::number(height));<br>}</p>
-<h3 id="QMessageBox"><a href="#QMessageBox" class="headerlink" title="QMessageBox"></a>QMessageBox</h3><p>#include <QMessageBox>  //标准消息对话框<br>    QPushButton *question_button = new QPushButton(tr(“question”));<br>   this-&gt;connect(question_button,SIGNAL(clicked(bool)),this,SLOT(slot_question()));<br>void MessageBoxGui::slot_question()<br>{<br>    int button = QMessageBox::question(this,tr(“question message box”),tr(“are you close file?”),QMessageBox::Ok | QMessageBox::Cancel);<br>    if(button == QMessageBox::Ok)   //表示用户点击了OK按钮<br>        messlabel-&gt;setText(tr(“question/ok”));      //在实际使用中，应该实现实际功能<br>    else if(button == QMessageBox::Cancel)  //表示用户点击了cancel按钮<br>        messlabel-&gt;setText(tr(“question/cancel”));<br>}    //以上未系统的消息对话框</p>
-<p>//自定义的消息对话框<br>    QPushButton *constom_button = new QPushButton(tr(“constom”));<br>    this-&gt;connect(constom_button,SIGNAL(clicked(bool)),this,SLOT(slot_comstum()));<br>void MessageBoxGui::slot_comstum()    //利用槽函数自定义消息对话框<br>{<br>    //1.创建消息对话框对象<br>    QMessageBox constom_mbox;<br>    //2.设置对话框的属性<br>    constom_mbox.setWindowTitle(tr(“comstum message box”));<br>    constom_mbox.setIconPixmap(QPixmap(“://images/linuxredhat.png”));<br>    constom_mbox.setText(tr(“this is my comstum message box”));<br>    //3.添加按钮<br>    QPushButton *lock_button = constom_mbox.addButton(tr(“lock”),QMessageBox::ActionRole);<br>    QPushButton *unlock_button = constom_mbox.addButton(tr(“unlock”),QMessageBox::ActionRole);<br>    QPushButton *cancel_button = constom_mbox.addButton(QMessageBox::Cancel);<br>    //4.运行<br>//    constom_mbox.show();        //error,无法判断用户点击的按钮<br>    constom_mbox.exec();        //对于dialog及子类的显示必须调用exec();<br>    //5.获取用户点击的按钮，判断<br>    QAbstractButton *button = constom_mbox.clickedButton(); //获取用户点击的按钮，<br>    if(button == lock_button)<br>        messlabel-&gt;setText(tr(“constum/lock”));<br>    else if(button == unlock_button)<br>        messlabel-&gt;setText(tr(“constum/unlock”));<br>    else if(button == cancel_button)<br>        messlabel-&gt;setText(tr(“constum/cancel”));<br>}</p>
-<h3 id="QDateTimeEdit"><a href="#QDateTimeEdit" class="headerlink" title="QDateTimeEdit"></a>QDateTimeEdit</h3><p>#include <QDateTimeEdit>    //日期时间编辑器<br>    提供了一个部件，用于编辑日期和时间。<br>    通过使用键盘或箭头键来增加和减少日期和时间值。<br>    日期和时间的格式按照setDisplayFormat()设置的显示。</p>
-<pre><code>// 设置日期时间格式
-QDateTimeEdit *dateTimeEdit = new QDateTimeEdit(this);
-QDateTimeEdit *dateTimeEdit2 = new QDateTimeEdit(QDateTime::currentDateTime(), this);
-QDateTimeEdit *dateEdit = new QDateTimeEdit(QDate::currentDate(), this);
-QDateTimeEdit *timeEdit = new QDateTimeEdit(QTime::currentTime(), this);
-dateTimeEdit-&gt;setDisplayFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);
-dateTimeEdit2-&gt;setDisplayFormat(&quot;yyyy/MM/dd HH-mm-ss&quot;);
-dateEdit-&gt;setDisplayFormat(&quot;yyyy.M.d&quot;);
-timeEdit-&gt;setDisplayFormat(&quot;H:mm&quot;);
-yyyy：年，4个数表示。 
-MM：月，01-12。 
-dd：日，01-31。 
-HH：时，00-23。 
-mm：分，00 - 59。 
-ss：秒，00-59。
+      
+    </div>
 
     
-</code></pre>
-<p>QDateEdit和QTimeEdit均继承自QDateTimeEdit，许多特性和功能都有QDateTimeEdit提供。<br>不要用QDateEdit来设置或获取时间，也不要用QTimeEdit来设置或获取日期。如果要同时操作日期时间，请使用QDateTimeEdit。<br>    //dateEdit-&gt;setDisplayFormat(“yyyy/MM/dd”);<br>    //timeEdit-&gt;setDisplayFormat(“HH:mm:ss”);</p>
-<h3 id="QTimeEdit"><a href="#QTimeEdit" class="headerlink" title="QTimeEdit"></a>QTimeEdit</h3><p>//时间编辑器<br>#include <QTimeEdit><br>    time：保存了部件的显示时间。<br>    minimumTime：定义了用户可以设置的最小时间。<br>    maximumTime：定义了用户可以设置的最大时间。<br>    displayFormat：包含了一个字符串用于格式化时间<br>    QTimeEdit *timeEdit = new QTimeEdit(QTime::currentTime(), this);</p>
-<h3 id="QDateEdit"><a href="#QDateEdit" class="headerlink" title="QDateEdit"></a>QDateEdit</h3><p>//日期控件<br>#include <QDateEdit><br>    date：保存了部件的显示日期。<br>    minimumDate：定义了用户可以设置的最小日期。<br>    maximumDate：定义了用户可以设置的最大日期。<br>    displayFormat：包含了一个字符串用于格式化日期。<br>    QDateEdit *dateEdit = new QDateEdit(QDate::currentDate(), this);</p>
-<h3 id="QDateTime"><a href="#QDateTime" class="headerlink" title="QDateTime"></a>QDateTime</h3><p>//日期时间<br>#include <QDateTime><br>    QDateTime dateTime = dateEdit-&gt;dateTime();   </p>
-<h3 id="QDate"><a href="#QDate" class="headerlink" title="QDate"></a>QDate</h3><p>//日期类<br>#include <QDate><br>    QDate date = dateEdit-&gt;date();</p>
-<h3 id="QTime"><a href="#QTime" class="headerlink" title="QTime"></a>QTime</h3><p>//时间类<br>#include <QTime><br>    QTimeEdit *timeEdit;                            //声明<br>    timeEdit = new QTimeEdit(this);                    //构造控件<br>    timeEdit-&gt;setGeometry(QRect(50,50,120,25));    //位置<br>    QDateTime sysTime = QDateTime::currentDateTime();//获取系统时间<br>    //获取时分秒以“：”号拆分赋予 list 数组<br>    QStringList list = sysTime.toString(“hh:mm:ss”).split(‘:’);<br>    //将时分秒绑定控件 timeEdit- &gt;setTime(QTime(list[0].toInt(),list[1].toInt(),list[2].toInt()));</p>
-<pre><code>bdate_edit_1-&gt;setDate(bdate);                    //设置日期
-bdate_edit_1-&gt;setDisplayFormat(&quot;yyyy年M月dd日&quot;);   //设置日期显示格式
-bdate_edit_1-&gt;setCalendarPopup(true);               //弹出日历
-
-//1.获取时间并转化为字符串
-QTime time = QTime::currentTime();
-QString tim_str = time.toString(&quot;hh:mm&quot;);
-//2.根据isshow控制符来决定是否显示:
-if(isshow)
-    tim_str[2] = &#39;:&#39;;
-else
-    tim_str[2] = &#39; &#39;;
-//3.显示时间字符串
-this-&gt;display(tim_str);
-</code></pre>
-<h3 id="QTimer"><a href="#QTimer" class="headerlink" title="QTimer"></a>QTimer</h3><p>//实时更新时间<br>#include <QTimer><br>     QTimer *timer;                //声明<br>    timer = new QTimer;<br>    connect(timer,SIGNAL(timeout()),this,SLOT(timerTime()));</p>
-<pre><code>void MainWindow::timerTime()&#123;
-QDateTime sysTime = QDateTime::currentDateTime();//获取系统时间
-label-&gt;setText(sysTime.toString());
-&#125;
-    
-</code></pre>
-<h2 id="布局："><a href="#布局：" class="headerlink" title="布局："></a>布局：</h2><pre><code>//网格布局
-QGridLayout:把子窗口排列在一个二维的网格中，窗口可占据多个单元格。
-     QGridLayout *left_layout = new QGridLayout;
-    left_layout-&gt;addWidget(lable_1,0,0);        //lable_1   nameedit
-    left_layout-&gt;addWidget(nameedit,0,1);        //lable_2    sex_hlayout
-    left_layout-&gt;addWidget(lable_2,1,0);
-    left_layout-&gt;addLayout(sex_hlayout,1,1);
-   
-//竖直布局        
-QVBoxLayout:把子窗口从上到下排列在一个垂直列上。
-    QVBoxLayout *right_layout = new QVBoxLayout;
-    right_layout-&gt;addLayout(head_layout);
-    right_layout-&gt;addWidget(label_10);
-    right_layout-&gt;addWidget(indiv_edit);
-
-//水平布局
-QHBoxLayout:把子窗口从左到右排列在一个水平行上。
-    sex_hlayout-&gt;addWidget(raidobutton_1);
-    sex_hlayout-&gt;addWidget(raidobutton_2);
-    sex_hlayout-&gt;addStretch();    //添加了一个伸缩空间
-    //在第一个控件之前添加伸缩，这样所有的控件就会居右显示。
-    //在最后一个控件之后添加伸缩，这样所有的控件就会居左显示。
-    //在第一个控件之前、最后一个控件之后添加伸缩，这样所有的控件就会居中显示。
-    //在每一个控件之间都添加伸缩，这样所有的控件之间的间距都会相同。
-
-//表单布局
-QFormLayout：管理输入型控件和关联的标签组成的那些Form表单。
-    把子窗口按照标签-输入框的形式排列在两列。    
-    两列和若干行组成的形式时,QFormLayout更为方便些
-    多行多列，应毫不犹豫的尽量使用栅格布局QGridLayout
-    QFormLayout *pLayout = new QFormLayout();
-    pLayout-&gt;addRow(QStringLiteral(&quot;用户名：&quot;), pUserLineEdit);
-    pLayout-&gt;addRow(QStringLiteral(&quot;密码：&quot;), pPasswordLineEdit);
-    pLayout-&gt;addRow(QStringLiteral(&quot;验证码：&quot;), pVerifyLineEdit);
-    pLayout-&gt;setSpacing(10);
-    pLayout-&gt;setMargin(10);
-    setLayout(pLayout);
-通过addRow()来创建一个带有给定文本的QLabel及QWidget控件行，它们可以自动的设置为伙伴关系。
-
-//控制表单行的显示策略
-QFormLayout::RowWrapPolicy枚举：
-    QFormLayout::DontWrapRows    0    输入框始终在标签旁边
-    QFormLayout::WrapLongRows 1    标签有足够空间适应，最小大小比可用空间大，输入框会被换到下一行
-    QFormLayout::WrapAllRows    2    输入框始终在标签下边
-    
-//窗体布局    
-QstackLayout    
-
-间隔器：
-    水平间隔器：Horizontal Spacer
-    竖直间隔器：Vertical Spacer   
     
     
-</code></pre>
-<h2 id="QTableWidget"><a href="#QTableWidget" class="headerlink" title="QTableWidget"></a>QTableWidget</h2><pre><code>    在单元格中添加控件：
-    QComboBox *comBox = new QComboBox();
-    comBox-&gt;addItem(&quot;F&quot;);
-    comBox-&gt;addItem(&quot;M&quot;);
-    ui-&gt;qtablewidget-&gt;setCellWidget(0,3,comBox);//这里不是setItem而是setCellWidget
-    为单元格添加checkBox：
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
 
-    QTableWidgetItem *item = new QTableWidgetItem();
-    //设置item的check状态的时候，item会自动变成QCheckBox的样子,
-    //不必通过setCellWidget专门插入QCheckBox控件
-    //通过item-&gt;checkState()可以获取该item是否勾选
-    item-&gt;setCheckState(Qt::Unchecked);
-    ui-&gt;tableWidgetCourseList-&gt;setItem(rowIndex, columnIndex, item);
-    单元格中显示字符串：
-    QTableWidgetItem *item = new QTableWidgetItem(QString(&quot;xx&quot;));
-    ui-&gt;tableWidgetCourseList-&gt;setItem(rowIndex, columnIndex, item);
-    设置单元格关联的自定义数据：
-    QTableWidgetItem *item = new QTableWidgetItem(QString(&quot;&quot;));
-    QVariant courseModelVariant=QVariant::fromValue(MyClass(&quot;xx&quot;));
-    item-&gt;setData(USER_DEFINE_ROLE,courseModelVariant);
-    this-&gt;ui-&gt;tableWidgetCourseList-&gt;setItem(rowIndex, columnIndex, item);
-    获取单元格关联的自定义数据：
-    QTableWidgetItem * item = this-&gt;ui-&gt;tableWidgetCourseList-&gt;item(row,col);
-    Myclass model = item-&gt;data(USER_DEFINE_ROLE).value&lt;MyClass&gt;();
-    设置单元格中的文本对齐方式：
-    ui-&gt;tableWidgetCourseList-&gt;item(rowIndex, columnIndex)-&gt;setTextAlignment(Qt::AlignCenter);
-    通过x，y坐标获取所在的item对象：
-    QModelIndex index = ui-&gt;tableWidgetCourseList-&gt;indexAt(QPoint(x,y));
-    int row = index.row();
-    int col = index.column();
-    QTableWidgetItem * item = ui-&gt;tableWidgetCourseList-&gt;item(row,col);
-    设置表头的列宽：
-    ui-&gt;tableWidgetCourseList-&gt;horizontalHeader()-&gt;resizeSection(colIndex,20);//宽20
-    设置列宽自适应：
-    ui-&gt;tableWidgetCourseList-&gt;horizontalHeader()-&gt;setSectionResizeMode(colIndex,QHeaderView::Stretch);
-    初始化表头文本：
-    QStringList headerText;
-    headerText.append(&quot;列1&quot;);
-    headerText.append(&quot;列2&quot;);
-    headerText.append(&quot;列3&quot;);
-    ui-&gt;tableWidgetCourseList-&gt;setHorizontalHeaderLabels(headerText);
-    为表头添加复选框按钮：
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift234OpenGL%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/">
 
-    在表头上添加复选框不能通过在表头单元格中添加QCheckBox的方式实现，必须进行重绘，下面的代码是我们自定义的表头类
-    myqheaderview.h的内容：
-    //该类实现自定义的表头,主要是为了在表头中加入CheckBox控件
-    class MyQHeaderView : public QHeaderView
-    &#123;
-        Q_OBJECT
-    public:
-        explicit MyQHeaderView(Qt::Orientation orientation, QWidget *parent = 0);
-     
-        void setChecked(bool checked);
-     
-    signals:
-        void headCheckBoxToggled(bool checked);
-     
-    protected:
-        void paintSection(QPainter *painter, const QRect &amp;rect, int logicalIndex) const;
-        void mousePressEvent(QMouseEvent *event);
-     
-    private:
-        QRect checkBoxRect(const QRect &amp;sourceRect) const;
-     
-        bool m_isOn;
-    &#125;;
-    myqheadview.cpp的内容：
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
 
-    MyQHeaderView::MyQHeaderView(Qt::Orientation orientation, QWidget *parent)
-        : QHeaderView(orientation, parent)
-        , m_isOn(false)
-    &#123;
-        // set clickable by default
-        setChecked(false);
-    &#125;
-     
-    void MyQHeaderView::setChecked(bool checked)
-    &#123;
-        if (isEnabled() &amp;&amp; m_isOn != checked)
-        &#123;
-            m_isOn = checked;
-            updateSection(0);
-            emit headCheckBoxToggled(m_isOn);
-        &#125;
-    &#125;
-     
-    void MyQHeaderView::paintSection(QPainter *painter, const QRect &amp;rect, int logicalIndex) const
-    &#123;
-        painter-&gt;save();
-        QHeaderView::paintSection(painter, rect, logicalIndex);
-        painter-&gt;restore();
-        if (logicalIndex == 0)
-        &#123;
-            QStyleOptionButton option;
-            if (isEnabled())
-                option.state |= QStyle::State_Enabled;
-            option.rect = checkBoxRect(rect);
-            if (m_isOn)
-                option.state |= QStyle::State_On;
-            else
-                option.state |= QStyle::State_Off;
-            style()-&gt;drawControl(QStyle::CE_CheckBox, &amp;option, painter);
-        &#125;
-    &#125;
-     
-    void MyQHeaderView::mousePressEvent(QMouseEvent *event)
-    &#123;
-        if (isEnabled() &amp;&amp; logicalIndexAt(event-&gt;pos()) == 0)
-        &#123;
-            m_isOn = !m_isOn;
-            updateSection(0);
-            emit headCheckBoxToggled(m_isOn);
-        &#125;
-        else QHeaderView::mousePressEvent(event);
-    &#125;
-     
-    QRect MyQHeaderView::checkBoxRect(const QRect &amp;sourceRect) const
-    &#123;
-        QStyleOptionButton checkBoxStyleOption;
-        QRect checkBoxRect = style()-&gt;subElementRect(QStyle::SE_CheckBoxIndicator,
-                                                     &amp;checkBoxStyleOption);
-        QPoint checkBoxPoint(sourceRect.x()+5,
-                             sourceRect.y() +
-                             sourceRect.height() / 2 -
-                             checkBoxRect.height() / 2);
-        return QRect(checkBoxPoint, checkBoxRect.size());
-    &#125;
-    使用自定义表头：
-    MyQHeaderView*myHeader=new MyQHeaderView(Qt::Horizontal, ui-&gt;tableWidgetCourseList);
-    ui-&gt;tableWidgetCourseList-&gt;setHorizontalHeader(myHeader);
-    为QTableWidget添加一行数据实际上是根据行数和列数，循环QTableWidget的所有单元格，对每个单元格item设置数据来实现的。
-    似乎Qt中new出来的控件类型都只负责new不用delete的，感到很奇怪，后来经过查资料发现很多人有同样的疑问，有人给出原因是因为Qt中的所有的控件类是继承自QObject类，如果在new的时候指定了父亲(在构造函数的参数中有parent这个参数)，那么它的清理是在其父亲被delete的时候被delete的。Qt不建议程序员在代码中手工delete一个QObject，如果一定要这么做，需要使用QObject的deleteLater()函数，否则可能出现Qt正在一级一级的从一个父亲类开始清理下面的所有子对象的时候，程序中手工调用delete也去清理其中的子对象，那么这个时候就可能出现问题，所以建议使用deleteLater()函数，它会让所有事件都发送完成之后再清理该片内存。
-    QT的线程
-</code></pre>
-<h2 id="Qt的线程"><a href="#Qt的线程" class="headerlink" title="Qt的线程"></a>Qt的线程</h2><p>使用起来非常简单，我们首先要建立一个自定义的类(例如MyThread)，继承自QThread，并实现其run方法即可。在使用线程的时候直接得到MyThread的实例，调用其start()函数即可启动线程，线程启动之后会自动调用其实现的run方法，该方法就是线程的执行函数，我们的线程任务就写在这里，当run退出之后线程基本就结束了，QThread有一个started和finished信号，我们可以为这两个信号指定槽函数，在线程启动和结束的时候执行一段代码进行资源的初始化和资源的释放操作。</p>
-<h2 id="TableView技巧"><a href="#TableView技巧" class="headerlink" title="TableView技巧"></a>TableView技巧</h2><p>tableWidget-&gt;setEditTriggers(QAbstractItemView::NoEditTriggers);</p>
-<p>（参数含义：QAbstractItemView.NoEditTriggers–不能对表格内容进行修改</p>
-<p>QAbstractItemView.CurrentChanged–任何时候都能对单元格修改</p>
-<p>QAbstractItemView.DoubleClicked–双击单元格</p>
-<p>QAbstractItemView.SelectedClicked–单击已选中的内容 </p>
-<p>QAbstractItemView.EditKeyPressed–</p>
-<p>QAbstractItemView.AnyKeyPressed–按下任意键就能修改</p>
-<p>QAbstractItemView.AllEditTriggers–以上条件全包括）<br>tableWidget-&gt;setSelectionBehavior(QAbstractItemView::SelectRows);  //整行选中的方式</p>
-<p>（参数含义：AbstractItemView.SelectItems–选中单个单元格</p>
-<p>QAbstractItemView.SelectRows–选中一行</p>
-<p>QAbstractItemView.SelectColumns–选中一列）<br>tableWidget-&gt;setSelectionMode(QAbstractItemView::ExtendedSelection);  //设置为可以选中多个目标</p>
-<p>（参数含义：QAbstractItemView.NoSelection–不能选择</p>
-<p> QAbstractItemView.SingleSelection–选中单个目标</p>
-<p> QAbstractItemView.MultiSelection–选中多个目标</p>
-<p>QAbstractItemView.ExtendedSelection/QAbstractItemView.ContiguousSelection 的区别不明显，主要功能是正常情况下是单选，但按下Ctrl或Shift键后，可以多选）<br>tableWidget-&gt;verticalHeader()-&gt;setVisible(false);   //隐藏列表头  </p>
-<p>tableWidget-&gt;horizontalHeader()-&gt;setVisible(false); //隐藏行表头<br>QTableWidgetItem *columnHeaderItem0 = tableWidget-&gt;horizontalHeaderItem(0); //获得水平方向表头的Item对象  </p>
-<p>columnHeaderItem0-&gt;setFont(QFont(“Helvetica”)); //设置字体  </p>
-<p>columnHeaderItem0-&gt;setBackgroundColor(QColor(0,60,10)); //设置单元格背景颜色  </p>
-<p>columnHeaderItem0-&gt;setTextColor(QColor(200,111,30)); //设置文字颜色<br>单元格中添加图片<br>tableWidget-&gt;setItem(row, 0, new QTableWidgetItem(QIcon(“:/new/images/kingdemo.ico”),tr(“”)));<br>单元格字体颜色<br>QTableWidgetItem *item = new QTableWidgetItem(“Apple”);<br>item-&gt;setBackgroundColor(QColor(0,60,10));<br>item-&gt;setTextColor(QColor(200,111,100));<br>item-&gt;setFont(QFont(“Helvetica”));<br>tableWidget-&gt;setItem(0,3,item);<br>设置单元格的大小<br>//首先，可以指定某个行或者列的大小<br>tableWidget-&gt;setColumnWidth(3,200);</p>
-<p>tableWidget-&gt;setRowHeight(3,60);<br>//还可以将行和列的大小设为与内容相匹配</p>
-<p>tableWidget-&gt;resizeColumnsToContents();</p>
-<p>tableWidget-&gt;resizeRowsToContents();<br>12.获得单击单元格的内容<br>通过实现 itemClicked (QTableWidgetItem *) 信号的槽函数，就可以获得鼠标单击到的单元格指针，进而获得其中的文字信息</p>
-<p>connect(tableWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(getItem(QTreeWidgetItem*,int)));<br>13.QTableWidget要调整表格行宽主要涉及以下函数<br>tableWidget-&gt;horizontalHeader()-&gt;setResizeMode(QHeaderView::Stretch);//使列完全填充并平分</p>
-<p>  tableWidget-&gt;verticalHeader()-&gt;setResizeMode(QHeaderView::Stretch);//行自适应宽度                                                                                                      </p>
-<p>  tableWidget-&gt;resizeColumnsToContents(); //根据内容调整列宽</p>
-<p>  tableWidget-&gt;resizeColumnToContents(int col);//根据内容自动调整给定列宽</p>
-<p>  tableWidget-&gt;horizontalHeader()-&gt;setResizeMode//把给定列设置为给定模式</p>
-<p>//主要模式有Stretch和Fixed<br>15.清除<br>  tableWidget-&gt;clear();//清除所有可见数据（包括表头），行还在</p>
-<p>  tableWidget-&gt;clearContents();//只清除表中数据，不清除表头内容</p>
-<p>  tableWidget-&gt;setRowCount(0)；//连行也清除掉<br>  16.排序<br>    tableWidget-&gt;sortByColumn(0, Qt::AscendingOrder);//顾名思义，该函数意思是将某列按升序/降序的方式排列<br>    int row = tableWidget-&gt;rowCount();//获取表格中当前总行数</p>
-<h2 id="TableView常用方法"><a href="#TableView常用方法" class="headerlink" title="TableView常用方法"></a>TableView常用方法</h2><pre><code>  tableWidget-&gt;setRowCount(row+1);//添加一行
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift234OpenGL%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">OpenGL视频学习</a>
+        </h2>
 
-  tableWidget-&gt;removeRow(row);//清除已有的行列
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
 
-  Int row1 = tableWidget-&gt;currentItem()-&gt;row();//当前选中行
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-14 21:37:58" itemprop="dateModified" datetime="2022-03-14T21:37:58+08:00">2022-03-14</time>
+              </span>
 
-  bool focus = tableWidget-&gt;isItemSelected(tableWidget-&gt;currentItem());//判断是否选中一行
+          
 
-  QString proName = tableWidget-&gt;item(row, col)-&gt;text();//获取某一格内容
+        </div>
+      </header>
 
-  setShowGrid(true);//显示表格线
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
-  verticalHeader()-&gt;setVisible(false);//隐藏左边垂直
+      
+          <p>向量(Vector)： 一个定义了在空间中方向和/或位置的数学实体。<br>矩阵(Matrix)： 一个矩形阵列的数学表达式。<br>在opengl中通常使用4x4的变换矩阵<br>缩放：向量乘相同数<br>位移：向量加另一个向量<br>大多数的旋转函数使用弧度制<br>坐标转换：局部-》观察——〉投影<br>视口变换将位于-1.0到1.0范围的坐标变换到由glViewport函数所定义的坐标范围内<br>投影：墨卡托<br>相机：<br>视口(Viewport)： 我们需要渲染的窗口<br>图形管线(Graphics Pipeline)： 一个顶点在呈现为像素之前经过的全部过程<br>着色器(Shader)： 一个运行在显卡上的小型程序。很多阶段的图形管道都可以使用自定义的着色器来代替原有的功能<br>顶点缓冲对象(Vertex Buffer Object)： 一个调用显存并存储所有顶点数据供显卡使用的缓冲对象<br>顶点数组对象(Vertex Array Object)： 存储缓冲区和顶点属性状态<br>索引缓冲对象(Element Buffer Object)： 一个存储索引供索引化绘制使用的缓冲对象<br>Uniform： 一个特殊类型的GLSL变量。它是全局的（在一个着色器程序中每一个着色器都能够访问uniform变量），并且只需要被设定一次<br>纹理(Texture)： 一种包裹着物体的特殊类型图像，给物体精细的视觉效果<br>纹理缠绕(Texture Wrapping)： 定义了一种当纹理顶点超出范围(0, 1)时指定OpenGL如何采样纹理的模式。<br>局部空间(Local Space)： 一个物体的初始空间。所有的坐标都是相对于物体的原点的。<br>世界空间(World Space)： 所有的坐标都相对于全局原点。<br>观察空间(View Space)： 所有的坐标都是从摄像机的视角观察的。<br>裁剪空间(Clip Space)： 所有的坐标都是从摄像机视角观察的，但是该空间应用了投影。这个空间应该是一个顶点坐标最终的空间，作为顶点着色器的输出。OpenGL负责处理剩下的事情（裁剪/透视除法）。<br>屏幕空间(Screen Space)： 所有的坐标都由屏幕视角来观察。坐标的范围是从0到屏幕的宽/高。<br>LookAt矩阵： 一种特殊类型的观察矩阵，它创建了一个坐标系，其中所有坐标都根据从一个位置正在观察目标的用户旋转或者平移。<br>欧拉角(Euler Angles)： 被定义为偏航角(Yaw)，俯仰角(Pitch)，和滚转角(Roll)从而允许我们通过这三个值构造任何3D方向。</p>
 
-  QHeaderView *headerView = horizontalHeader();
+      
+    </div>
 
-  headerView-&gt;setMovable(false);//去除表头的移动
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
 
-  headerView-&gt;resizeSection(0,284);//设置第一列宽
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/">
 
-  headerView-&gt;resizeSection(1,127);//设置第二列宽
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
 
-  headerView-&gt;setResizeMode(QHeaderView::Fixed);//列表不能移动
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">geotools学习</a>
+        </h2>
 
-  headerView-&gt;setClickable(false);//不响应鼠标单击
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
 
-  setEditTriggers(QTableWidget::NoEditTriggers);//不能编辑
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:29:47" itemprop="dateModified" datetime="2021-11-21T16:29:47+08:00">2021-11-21</time>
+              </span>
 
-  setSelectionBehavior(QTableWidget::SelectRows);//一次选中一行
+          
 
-  setSelectionMode(QAbstractItemView::SingleSelection);//只能单选
+        </div>
+      </header>
 
-  /*QScrollBar *scrollBar = horizontalScrollBar();
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
-  scrollBar-&gt;hide();*/
+      
+          <p>安装gdal<br>brew install gdal<br>安装tippecanoe<br>brew install gdal tippecanoe<br>安装mbutil<br>git clone <a target="_blank" rel="noopener" href="https://github.com/mapbox/mbutil.git">https://github.com/mapbox/mbutil.git</a><br>cd mbutil<br>sudo python setup.py install</p>
+<p>shpfile转geojson<br>ogr2ogr -f GeoJSON ne_10m_railroads.geojson ne_10m_railroads.shp</p>
+<p>geojson转mbtile<br>tippecanoe -o file.mbtiles file.json<br>使用tippecanoe 直接生成缓存目录的pbf：<br>tippecanoe us_states.json -e us_stats_tileset -zg<br>如果你不确定所使用数据的最大级别，可以使用 -zg 来根据数据密度自动估算一个级别。<br>tippecanoe -o outfile.mbtiles -Z8  -z20 infile.geojson<br> -Z 是切片的最小zoom, -z 切片的最大zoom<br>tippecanoe us_states.json -e us_stats_tileset -Z8  -z8<br>合并多个图层<br>tippecanoe -e us_stats_tileset -zg us_states.json us_states1.json<br>tippecanoe在制作切片进行了gzip压缩<br>tippecanoe -e lakepbf -pC -Z8 -z14 -f lake.geojson</p>
+<p>mbtile转pbf<br>mb-util –image_format=pbf opgrsp_gb.mbtiles ./opgrsp_gb_tileset<br>转换出来的是gzip格式的，需要解压缩一下<br>gzip -d -r -S .pbf *<br>解压缩后会丢失.pbf的后缀，可以直接在地址上不加后缀，或者调用如下<br>find . -type f -exec mv ‘{}’ ‘{}’.pbf ;</p>
+<p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a></p>
+<p>数据转换：<br>java开发，采用geotools工具集，将mif或shp文件转换成geojson</p>
 
-  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//去掉水平滚动条
+      
+    </div>
 
-  setVerticalScrollMode(QAbstractItemView::ScrollPerItem);//垂直滚动条按项移动
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
 
-  setAutoScroll(false);//去掉自动滚动
-</code></pre>
-<h2 id="自适应宽度"><a href="#自适应宽度" class="headerlink" title="自适应宽度"></a>自适应宽度</h2><p>ui.Retina_1-&gt;horizontalHeader()-&gt;setStretchLastSection(true);<br>ui.Retina_1-&gt;horizontalHeader()-&gt;setSectionResizeMode(QHeaderView::Stretch);</p>
-<h2 id="设置默认高度"><a href="#设置默认高度" class="headerlink" title="设置默认高度"></a>设置默认高度</h2><p>ui.Retina_1-&gt;verticalHeader()-&gt;setDefaultSectionSize(25);</p>
-<h2 id="隐藏滚动条"><a href="#隐藏滚动条" class="headerlink" title="隐藏滚动条"></a>隐藏滚动条</h2><p>ui.Retina_1-&gt;setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);<br>ui.Retina_1-&gt;setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);</p>
-<p>ui.Retina_1-&gt;setEditTriggers(QAbstractItemView::NoEditTriggers);//不可编辑<br>ui.Retina_1-&gt;setSelectionMode(QAbstractItemView::NoSelection);//不可选择<br>ui.Retina_1-&gt;verticalHeader()-&gt;setVisible(false); //隐藏列表头 </p>
-<h2 id="QLineEdit-1"><a href="#QLineEdit-1" class="headerlink" title="QLineEdit"></a>QLineEdit</h2><p>1.void setClearButtonEnabled(bool); //是否设置一个清空按钮.<br>2.void setEchoMode(QLineEdit::EchoMode); //设置行编辑框内文本的显示模式.<br>3.void setAlignent(Qt::Alignment flag); //设置文本输入的位置.<br>4.void setValidator(QVaildator*); //设置输入验证器<br>5.void setPlaceText(QString); //设置占位符.<br>7.void setReadOnly(bool); //把该行编辑框设置为只读模式，无法进行编辑.<br>3.void selectAll(); //选中框内所有文本.<br>信号:<br>1.void cursorPositionChanged(int old, int new); //光标位置改变就发现信号.<br>2.void returnPressed(); //光标在行编辑框内时，点击回车即发出信号.<br>3.void selectionChanged() //选择的文本发生变化时，发出信号.<br>4.void textChanged(const QString &amp; text) //文本发生变化时，发出信号.</p>
-<h2 id="表格控件根据内容自动调整宽度和高度"><a href="#表格控件根据内容自动调整宽度和高度" class="headerlink" title="表格控件根据内容自动调整宽度和高度"></a>表格控件根据内容自动调整宽度和高度</h2><pre><code>ui-&gt;tableView-&gt;resizeColumnsToContents();
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift248mapbox%20api/">
 
-ui-&gt;tableView-&gt;resizeRowsToContents();
-</code></pre>
-<h2 id="其他类"><a href="#其他类" class="headerlink" title="其他类"></a>其他类</h2><p>  QFileInfo      显示文件信息类：主要作用是显示文件名字和文件路径，当然还有文件大小和最近修改时间（还有绝对路径和相对路径的关系） </p>
-<p>  QNetWorkInterface   提供网络接口  获取ip地址 </p>
-<p>  QNetworkRequest    QNetworkReply    QNetworkAccessManager   构建HTTP客户端 </p>
-<p>  QMatrix   指定坐标系的2D变换–&gt;  平移  纵移  缩放   旋转    通常在渲染图像的时候使用 </p>
-<p> QTextCodeC            qt中用来进行编码转换的类（unicode和其他编码方式转换） </p>
-<p> QSqlQuery             这个类封装了基本数据的一些基本语法操作（增删改查）,自动识别select等语句，返回true或者false报告状态</p>
-<p> QSqlRecord            这个类封装了数据库的记录功能和特性。能从记录的数据中删除和添加字段，并且支持字段的查找功能（记录都是一条一条的）　</p>
-<h2 id="透明度"><a href="#透明度" class="headerlink" title="透明度"></a>透明度</h2><p> QPushButtonBox     这个类比单纯的使用pushbutton更加方便且更加美观。可以尝试使用这个类<br> 控件设置透明度：</p>
-<p>   QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(this);</p>
-<p>   effect-&gt;setOpacity(0.9); //设置透明度    ui-&gt;widget-&gt;setGraphicsEffect(effect); //加在需要设置透明的控件上</p>
-<pre><code> 控件设置圆角边框：
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
 
- //通过控件的样式表即可实现
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift248mapbox%20api/" class="post-title-link" itemprop="url">mapbox api</a>
+        </h2>
 
- ui-&gt;widget-&gt;setStyleSheet(“border-radius:3px;”);
- 控件重叠，即实现控件“浮动效果”：
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
 
- 　　在界面存在布局的情况下，是无法将连个控件重叠在一起的，如果我们要实现界面中一部分控件“浮动”其他控件上的效果，可以通过栈布局的方式来实现。然而在默认情况下，栈布局同时只能显示一帧画面，要做到栈布局中所有控件同时显示，要用到一下代码：
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:30:12" itemprop="dateModified" datetime="2021-11-21T16:30:12+08:00">2021-11-21</time>
+              </span>
 
- QStackedLayout*laylout=(QStackedLayout*)ui-&gt;stackedWidget-&gt;layout();
+          
 
- laylout-&gt;setStackingMode(QStackedLayout::StackAll);
- QLabel标签添加点击事件：
+        </div>
+      </header>
 
- 　　QLabel没有特定的信号槽来让我们处理点击事件，需要通过一下方法：
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
- 为标签绑定点击事件的监听函数
+      
+          <p>Example request: Retrieve vector tiles</p>
+<p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<h1 id="Return-a-style-optimized-tile-using-the-style-query-parameter"><a href="#Return-a-style-optimized-tile-using-the-style-query-parameter" class="headerlink" title="Return a style-optimized tile using the style query parameter"></a>Return a style-optimized tile using the style query parameter</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/12/1171/1566.mvt?style=mapbox://styles/mapbox/streets-v11@00&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/12/1171/1566.mvt?style=mapbox://styles/mapbox/streets-v11@00&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<p>Example request: Retrieve raster tiles</p>
+<h1 id="Retrieve-a-2x-tile-this-512x512-tile-is-appropriate-for-high-density-displays"><a href="#Retrieve-a-2x-tile-this-512x512-tile-is-appropriate-for-high-density-displays" class="headerlink" title="Retrieve a 2x tile; this 512x512 tile is appropriate for high-density displays"></a>Retrieve a 2x tile; this 512x512 tile is appropriate for high-density displays</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.satellite/1/0/0@2x.jpg90?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.satellite/1/0/0@2x.jpg90?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<p>Example request: Retrieve a style</p>
+<p><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
+<p>Example request: Retrieve features from vector tiles</p>
+<h1 id="Retrieve-features-within-a-10-meter-radius-of-the-specified-location"><a href="#Retrieve-features-within-a-10-meter-radius-of-the-specified-location" class="headerlink" title="Retrieve features within a 10 meter radius of the specified location"></a>Retrieve features within a 10 meter radius of the specified location</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=10&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=10&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<h1 id="Return-at-most-20-features"><a href="#Return-at-most-20-features" class="headerlink" title="Return at most 20 features"></a>Return at most 20 features</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?limit=20&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?limit=20&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<h1 id="Query-multiple-tilesets"><a href="#Query-multiple-tilesets" class="headerlink" title="Query multiple tilesets"></a>Query multiple tilesets</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/%7Btileset_id_1%7D,%7Btileset_id_2%7D,%7Btileset_id_3%7D/tilequery/-122.42901,37.80633.json&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/{tileset_id_1},{tileset_id_2},{tileset_id_3}/tilequery/-122.42901,37.80633.json&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<h1 id="Return-only-results-from-the-poi-label-and-building-layers-within-a-30-meter-radius-of-the-specified-location"><a href="#Return-only-results-from-the-poi-label-and-building-layers-within-a-30-meter-radius-of-the-specified-location" class="headerlink" title="Return only results from the poi_label and building layers within a 30 meter radius of the specified location"></a>Return only results from the poi_label and building layers within a 30 meter radius of the specified location</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=30&amp;layers=poi_label,building&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=30&amp;layers=poi_label,building&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
+<p>数据服务：<br>地址 + 版本 + 数据名称 + xyz坐标 + token<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?token=123">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?token=123</a></p>
+<p>样式服务：<br>地址 + 版本 + 样式名称 + token<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?token=123">https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?token=123</a></p>
+<p>图标（sprite）：<br>mapbox://sprites/mapbox/streets-v11<br>首先，对于索引文件和图像文件，它们将在高dpi设备上将@2x附加到URL。<br>其次，它们将附加文件扩展名:索引文件的扩展名是.json，图像文件的扩展名是.png。<br>例如，如果你在你的样式中指定了”sprite”: “<a href="https://example.com/sprite&quot;%EF%BC%8C%E6%B8%B2%E6%9F%93%E5%99%A8%E4%BC%9A%E5%8A%A0%E8%BD%BD">https://example.com/sprite&quot;，渲染器会加载</a>:<br><a href="https://example.com/sprite.json%E5%92%8Chttps://example.com/sprite.png%EF%BC%8C%E6%88%96%E8%80%85">https://example.com/sprite.json和https://example.com/sprite.png，或者</a><br><a href="https://example.com/sprite@2x.json%E5%92%8Chttps://example.com/sprite@2x.png%E3%80%82">https://example.com/sprite@2x.json和https://example.com/sprite@2x.png。</a></p>
+<p>字体（glyphs）：<br>mapbox://fonts/mapbox/{fontstack}/{range}.pbf</p>
 
- ui-&gt;label -&gt;installEventFilter(this);
+      
+    </div>
 
- 重写窗体类的eventFilter（）函数
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
 
- bool MainForm::eventFilter(QObject *obj, QEvent *event)&#123;
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift250mapbox-3dtile/">
 
- if(obj==ui-&gt;label)&#123;
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
 
-    //过滤出单击事件
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift250mapbox-3dtile/" class="post-title-link" itemprop="url">mapbox-3dtile</a>
+        </h2>
 
-         if (event-&gt;type() == QEvent::MouseButtonPress) &#123;
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
 
-              //处理函数
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:30:55" itemprop="dateModified" datetime="2021-11-21T16:30:55+08:00">2021-11-21</time>
+              </span>
 
-             return true;
+          
 
-         &#125;
+        </div>
+      </header>
 
- &#125;
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
- //其他判断…
-
-     return QWidget::eventFilter(obj,event);
-
- &#125;
- QLabel 同时显示文字和图片:
-
- 　　QLabel 在QDisginer编辑时可以通过属性窗口设置图片和文字，但最终程序运行时是不会同时显示的，即这两个属性会相互覆盖，只显示其一。为达到图文同时显示，可通过重载QLabel的 paintEvent（）函数来实现，若我们在属性中设置好了图片，需显示额文字，可通过以下方法：
-
- void QCustLabel::paintEvent(QPaintEvent *event)&#123;
-
-     //先按默认防止进行标签绘制
-
-     QLabel::paintEvent(event);
-
- QPainter painter(this);
-
- //设置文字颜色
-
-     painter.setPen(Qt::white);
-
-     //要显示的可以作为一个成员变量
-
- QString info=this-&gt;desInfo;
-
- //设置文字信息的x坐标和y坐标
-
- //此处用了水平居中和垂直居中
-
-     int x=this-&gt;width()/2-(this-&gt;fontMetrics().width(info)/2);
-
- int y=this-&gt;height()/2+(this-&gt;fontMetrics().height()/2);
-
- //绘出文字
-
-     painter.drawText(QPoint(x,y),info);
-
- &#125;
- 　　此方法中用到了 Qt的二维绘图类 QPainter，此处使用的方法还是比较简单的，关于QPainter使用总结，会在接下来的文章中给出。
-
- 由此，我们可以在label中随意指定文字、图片的显示方式。
- 
-</code></pre>
-<p>一. 背景刷成黑色,前景色设为白色。<br>方法一、paltette方式，经测试，该方法不会影响到其他控件,推荐使用<br>QPalette bgpal = palette();<br>bgpal.setColor (QPalette::Background, QColor (0, 0 , 0, 255));<br>//bgpal.setColor (QPalette::Background, Qt::transparent);<br>bgpal.setColor (QPalette::Foreground, QColor (255,255,255,255)); setPalette (bgpal);<br>setStyleSheet (“background-color: rgb(0,0,0);color: rgb(255,255,255);”);<br>setStyleSheet (“venus–TitleBar {background-color: rgb(0,0,0);color: rgb(255,255,255);}”);<br>this-&gt;setObjectName(“pw”);// 设置对象句,相当于css里的id<br>this-&gt;setStyleSheet(“#pw {border-image: url(:/new/prefix1/Pic/54.png);}”);// 设置id对应元素的背景色<br>setStyleSheet (“border:2px groove gray;border-radius:10px;padding:2px 4px;”); // 圆角矩形<br>圆角窗口</p>
-<p>点击(此处)折叠或打开</p>
-<p>RoundRectWin::RoundRectWin()<br>{<br>    QPalette p = palette();<br>   QPixmap img(“roundrect.png”);<br>    QBitmap mask(“roundrect_mask.png”);<br>    p.setBrush(QPalette::Window, QBrush(img));<br>    setPalette(p);<br>    setMask(mask);<br>    resize(img.size());<br>    //setWindowFlags(Qt::FramelessWindowHint);//这句会去掉标题栏 } 注意:mask的图多余部分设为白色<br> }</p>
-<h2 id="半透明窗口"><a href="#半透明窗口" class="headerlink" title="半透明窗口"></a>半透明窗口</h2><p> 1.窗口整体透明，但是窗体上的控件不透明。 通过设置窗体的背景色来实现，将背景色设置为全透。</p>
-<p> QPalette pal = palette();<br> pal.setColor(QPalette::Background, QColor(0x00,0xff,0x00,0x00));<br> setPalette(pal);<br> //窗体标题栏不透明，窗体客户区上的控件不透明<br> setAttribute(Qt::WA_TranslucentBackground, true);<br>//2.窗口及其上面的控件都半透明<br>setWindowOpacity(0.7);<br>窗口整体不透明，局部透明<br>void TestWindow::paintEvent( QPaintEvent* )<br>{<br>   QPainter p(this);<br>    p.setCompositionMode( QPainter::CompositionMode_Clear );<br>    p.fillRect( 10, 10, 300, 300, Qt::SolidPattern );<br>}<br>控制QPixmap的alpha</p>
-<p>   QPixmap temp(pixmapTop.size()); temp.fill(Qt::transparent);<br>    QPainter p(&amp;temp);<br>    p.setCompositionMode(QPainter::CompositionMode_Source);<br>    p.drawPixmap(0, 0, pixmapTop);<br>    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);<br>    p.fillRect(temp.rect(), QColor(0, 0, 0, alpha)); //–lable显示前景图片 ui-&gt;label-&gt;setScaledContents(true);<br>    ui-&gt;label-&gt;setPixmap(temp);<br>    layout 的边界<br>    layout-&gt;setMargin (0);<br>qt 设置子控件为半透明和背景色问题 </p>
-<pre><code>在子widget的构造函数里添加如下几句： 
-
-QPalette myPalette;
-QColor myColor(0,0,0);
-myColor.setAlphaF(0.2);
-myPalette.setBrush(backgroundRole(),myColor);
-this-&gt;setPalette(myPalette);
-this-&gt;setAutoFillBackground(true);
-原理是：改子widget的背景色+修改alpha值（设置半透明）
-改子widget的背景色 ：
-QPalette myPalette;
-QColor myColor(0,0,0);
-myPalette.setBrush(backgroundRole(),myColor);
-this-&gt;setPalette(myPalette);
-this-&gt;setAutoFillBackground(true);//这句很关键，缺少的话，背景色修改不成功
-背景图片
-
-QPixmap pixmap(“:/images/*.png”); 
-  setMask(pixmap.mask()); 
-QPalette palette; 
-palette.setBrush(QPalette::Background, QBrush( pixmap ) ); 
-setPalette(palette); 
-resize( pixmap.size() ); 
-setMask(pixmap.mask());
-</code></pre>
+      
+          <p>mapbox结合3dtile<br><a target="_blank" rel="noopener" href="https://github.com/Geodan/mapbox-3dtiles">https://github.com/Geodan/mapbox-3dtiles</a><br><a target="_blank" rel="noopener" href="https://github.com/liujun3660105/mapbox-3dtiles">https://github.com/liujun3660105/mapbox-3dtiles</a></p>
 
       
     </div>
@@ -1411,7 +939,7 @@ setMask(pixmap.mask());
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1477,7 +1005,7 @@ setMask(pixmap.mask());
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">365</span>
+          <span class="site-state-item-count">390</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1505,7 +1033,7 @@ setMask(pixmap.mask());
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

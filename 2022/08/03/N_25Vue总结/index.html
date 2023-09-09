@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Vue 插槽开发 组件内使用外部自定义计算属性样式可以采用数据形式:class&#x3D;”[‘btn’,{‘btn-no’:!hasSeleted}]” 小程序分包（包之间不能互相引用）“pages”: [        &#x2F;&#x2F;pages数组中第一项表示应用启动页，参考：https:&#x2F;&#x2F;uniapp.dcloud.io&#x2F;collocation&#x2F;pages        {            “path”">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue总结">
+<meta property="og:url" content="http://example.com/2022/08/03/N_25Vue%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="Vue 插槽开发 组件内使用外部自定义计算属性样式可以采用数据形式:class&#x3D;”[‘btn’,{‘btn-no’:!hasSeleted}]” 小程序分包（包之间不能互相引用）“pages”: [        &#x2F;&#x2F;pages数组中第一项表示应用启动页，参考：https:&#x2F;&#x2F;uniapp.dcloud.io&#x2F;collocation&#x2F;pages        {            “path”">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-03T09:00:27.505Z">
+<meta property="article:modified_time" content="2023-09-09T04:51:02.730Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2022/08/03/N_25Vue%E6%80%BB%E7%BB%93/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Vue总结 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_25Vue%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vue总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-09 12:51:02" itemprop="dateModified" datetime="2023-09-09T12:51:02+08:00">2023-09-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Vue</p>
+<p>插槽开发</p>
+<p>组件内使用<br><view><slot name="content"></slot></view><br>外部自定义<br><template v-slot:content><br></template><br>计算属性<br>样式可以采用数据形式<br>:class=”[‘btn’,{‘btn-no’:!hasSeleted}]”</p>
+<p>小程序分包<br>（包之间不能互相引用）<br>“pages”: [<br>        //pages数组中第一项表示应用启动页，参考：<a target="_blank" rel="noopener" href="https://uniapp.dcloud.io/collocation/pages">https://uniapp.dcloud.io/collocation/pages</a><br>        {<br>            “path”: “pages/index/index”,<br>            “style”: {<br>                “navigationStyle”: “custom”,<br>                “backgroundColor”: “#F4F5F7”<br>            }<br>        }<br>    ],<br>    “subPackages”: [{<br>            “root”: “page_main”,<br>            “pages”: [{<br>                // 首页<br>                “path”: “index”,<br>                “style”: {<br>                    “navigationStyle”: “custom”,<br>                    “backgroundColor”: “#F4F5F7”<br>                }<br>            },{<br>                // 首页<br>                “path”: “monitor”,<br>                “style”: {<br>                    “navigationStyle”: “custom”,<br>                    “backgroundColor”: “#F4F5F7”<br>                }<br>            }]<br>        },<br>    。。。。。。。<br>css定位<br>relative<br>    相对定位，即相对于元素的正常位置进行定位，您可以通过 top、right、bottom、left 这 4 个属性来设置元素相对于正常位置的偏移量，在此过程中不会对其它元素造成影响。<br>absolute<br>    绝对定位，相对于第一个非 static 定位的父级元素进行定位，可以通过 top、right、bottom、left 这 4 个属性来设置元素相对于父级元素位置的偏移量。如果没有满足条件的父级元素，则会相对于浏览器窗口来进行定位。使用绝对定位的元素不会对其它元素造成影响。<br>fixed<br>    固定定位，相对于浏览器的创建进行定位，可以使用 top、right、bottom、left 这 4 个属性来定义元素相对于浏览器窗口的位置。使用固定定位的元素无论如何滚动浏览器窗口元素的位置都是固定不变的。<br>sticky    粘性定位，它是 relative 和 fixed 的结合体，能够实线类似吸附的效果，当滚动页面时它的效果与 relative 相同，当要滚动到屏幕之外时则会自动变成 fixed 的效果。<br>display: flex;<br>display:flex 是一种布局方式。它即可以应用于容器中，也可以应用于行内元素。是W3C提出的一种新的方案，可以简便、完整、响应式地实现各种页面布局。目前，它已经得到了所有浏览器的支持。<br>意为”弹性布局”，用来为盒状模型提供最大的灵活性。设为Flex布局以后，子元素的float、clear和vertical-align属性将失效。<br>flex-direction 容器内元素的排列方向(默认横向排列)<br>flex-wrap 容器内元素的换行(默认不换行)<br>justify-content 元素在主轴（页面）上的排列<br>1：justify-content : center;元素在主轴（页面）上居中排列<br>2：justify-content : flex-start;元素在主轴（页面）上由左或者上开始排列<br>3：justify-content : flex-end;元素在主轴（页面）上由右或者下开始排列<br>4：justify-content : space-between;元素在主轴（页面）上左右两端或者上下两端开始排列<br>5：justify-content : space-around;每个元素两侧的间隔相等。所以，元素之间的间隔比元素与边框的间隔大一倍。<br>align-items 元素在主轴（页面）当前行的横轴（纵轴）方向上的对齐方式<br>1：align-items : flex-start; 弹性盒子元素的侧轴（纵轴）起始位置的边界紧靠住该行的侧轴起始边界（靠上对齐）。<br>2：align-items : flex-end; 弹性盒子元素的侧轴（纵轴）起始位置的边界紧靠住该行的侧轴结束边界。（靠下对齐）<br>3：align-items : center; 弹性盒子元素在该行的侧轴（纵轴）上居中放置。（居中对齐）<br>align-content 在弹性容器内的元素没有占用交叉轴上所有可用的空间时对齐容器内的各项（垂直）<br>3:align-content: stretch; 元素位于容器的中心。各行向弹性盒容器的中间位置堆叠。<br>4:align-content: center; 默认值。元素被拉伸以适应容器。各行将会伸展以占用剩余的空间。如果剩余的空间是负数，该值等效于’flex-start’<br>5:align-content: space-between;元素位于各行之间留有空白的容器内。各行在弹性盒容器中平均分布。<br>1.Flex布局以后，子元素的float、clear和vertical-align属性将失效。<br>2.justify-content：水平排列<br>3.align-content:垂直排列<br>4.align-items 水平居中基准线<br>5.flex可以用于块级元素，也可用于行内元素</p>
+<p>小程序canvas绘制<br>实现了两个人头像的合并</p>
+<p>Echarts在小程序中的应用</p>
+<p>Node</p>
+<p>Python常用脚本</p>
+<p>谷歌地图切片服务<br>图片、视频优化器<br>PDF 转图片<br>拼写修正</p>
+<p>Php</p>
+<p>Swift</p>
+<p>OC</p>
+<p>React</p>
+<p>MySQL</p>
+<p>多端开发的探索<br>目前前端的开发越来越繁杂，这让我们非常的头疼，我们如何来做这些东西呢<br>1.考虑到dart的生成功能，我想我们可以考虑从后端的角度出发，打造一款生成器，当后端人员开发完接口后，能同时生成前端多端的接口调用模版，这让我们非常的兴奋，那我们应该怎么做呢</p>
+<p>2.首先从最简单的vue开始<br>我们首先需要生成一个api接口。然后再生成一个用户信息</p>
+<p>openapi-generator generate -i /Users/mqq/Desktop/mytest/user.yml -g ruby -o /Users/mqq/Desktop/mytest/gen</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/03/N_19swagger%20Editer/" rel="prev" title="Swagger Editor">
+      <i class="fa fa-chevron-left"></i> Swagger Editor
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/08/03/N_22Vue%E5%89%8D%E7%AB%AF%E6%95%B4%E7%90%86/" rel="next" title="论前端代码的整洁性">
+      论前端代码的整洁性 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">390</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

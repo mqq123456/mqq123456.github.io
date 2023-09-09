@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net8UIDynamic/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/09/19/M_13Lat_Lng/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/31/D_Net8UIDynamic/" class="post-title-link" itemprop="url">UIDynamic</a>
+            <a href="/2016/09/19/M_13Lat_Lng/" class="post-title-link" itemprop="url">经纬度十进制（小数）转六十进制（度分秒）的方法</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-31 18:00:49" itemprop="dateCreated datePublished" datetime="2016-07-31T18:00:49+08:00">2016-07-31</time>
+              <time title="创建时间：2016-09-19 09:54:10" itemprop="dateCreated datePublished" datetime="2016-09-19T09:54:10+08:00">2016-09-19</time>
             </span>
 
           
@@ -186,25 +186,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>简单介绍</p>
-</blockquote>
-<p>1.什么是UIDynamic<br>UIDynamic是从iOS 7开始引入的一种新技术，隶属于UIKit框架<br>可以认为是一种物理引擎，能模拟和仿真现实生活中的物理现象<br>如：重力、弹性碰撞等现象<br> <br>2.物理引擎的价值<br>广泛用于游戏开发，经典成功案例是“愤怒的小鸟”<br>让开发人员可以在远离物理学公式的情况下，实现炫酷的物理仿真效果<br>提高了游戏开发效率，产生更多优秀好玩的物理仿真游戏<br> <br>3.知名的2D物理引擎<br>Box2d<br>Chipmunk
- </p>
-<blockquote>
-<p>使用步骤</p>
-</blockquote>
-<p>要想使用UIDynamic来实现物理仿真效果，大致的步骤如下<br>（1）创建一个物理仿真器（顺便设置仿真范围）<br>（2）创建相应的物理仿真行为（顺便添加物理仿真元素）<br>（3）将物理仿真行为添加到物理仿真器中  开始仿真
- </p>
-<blockquote>
-<p>相关说明</p>
-</blockquote>
-<p>1.三个概念<br>（1）谁要进行物理仿真？<br>　　物理仿真元素（Dynamic Item）<br> <br>（2）执行怎样的物理仿真效果？怎样的动画效果？<br>　　物理仿真行为（Dynamic Behavior） <br> <br>（3）让物理仿真元素执行具体的物理仿真行为<br>　　物理仿真器（Dynamic Animator）<br> <br>2.物理仿真元素<br>注意：<br>不是任何对象都能做物理仿真元素<br>不是任何对象都能进行物理仿真<br> <br>物理仿真元素要素：<br>任何遵守了UIDynamicItem协议的对象<br>UIView默认已经遵守了UIDynamicItem协议，因此任何UI控件都能做物理仿真<br>UICollectionViewLayoutAttributes类默认也遵守UIDynamicItem协议<br> <br>3.物理仿真行为<br>（1）UIDynamic提供了以下几种物理仿真行为<br>UIGravityBehavior：重力行为<br>UICollisionBehavior：碰撞行为<br>UISnapBehavior：捕捉行为<br>UIPushBehavior：推动行为<br>UIAttachmentBehavior：附着行为<br>UIDynamicItemBehavior：动力元素行为<br> <br>（2）物理仿真行为须知<br>上述所有物理仿真行为都继承自UIDynamicBehavior<br>所有的UIDynamicBehavior都可以独立进行<br>组合使用多种行为时，可以实现一些比较复杂的效果<br> <br> <br>4.物理仿真器<br>（1）物理仿真器须知<br>它可以让物理仿真元素执行物理仿真行为<br>它是UIDynamicAnimator类型的对象<br> <br>（2）UIDynamicAnimator的初始化</p>
+          <p>#pragma mark - 经纬度单位转换</p>
 <ul>
-<li>(instancetype)initWithReferenceView:(UIView *)view;<br>view参数：是一个参照视图，表示物理仿真的范围
- </li>
+<li>(NSString <em>)stringWithCoordinateString:(NSString <em>)coordinateString{<br>  //示例：118.815033<br>  /</em></em> 将经度或纬度整数部分提取出来 */<br>  int latNumber = [coordinateString intValue];//118  /** 取出小数点后面两位(为转化成’分’做准备) <em>/<br>  NSArray <em>array = [coordinateString componentsSeparatedByString:@”.”];<br>  /</em></em> 小数点后面部分 */<br>  NSString *minuteCompnetString = [array lastObject];  /** 拼接字字符串(将字符串转化为0.xxxx形式) */<br>  NSString *str1 = [NSString stringWithFormat:@”0.%@”, minuteCompnetString];  /** 将字符串转换成float类型以便计算 */<br>  float minuteNum = [str1 floatValue];   //0.815033  /** 将小数点后数字转化为’分’(minuteNum * 60) <em>/<br>  float minuteNum1 = minuteNum * 60;    //0.815033</em>60=48.90198  /** 将转化后的float类型转化为字符串类型 */<br>  NSString *latStr = [NSString stringWithFormat:@”%f”, minuteNum1];  /** 取整数部分即为纬度或经度’分’ */<br>  int latMinute = [latStr intValue]; //48  //取秒<br>  /** 取出小数点后面两位(为转化成’秒’做准备) <em>/<br>  NSArray <em>secondArr = [latStr componentsSeparatedByString:@”.”];<br>  /</em></em> 小数点后面部分 */<br>  NSString *lastCompnetString = [secondArr lastObject];  /** 拼接字字符串(将字符串转化为0.xxxx形式) */<br>  NSString *str2 = [NSString stringWithFormat:@”0.%@”, lastCompnetString];  /** 将字符串转换成float类型以便计算 */<br>  float secondNum = [str2 floatValue];   //0.90198  /** 将小数点后数字转化为’分’(minuteNum * 60) <em>/<br>  float secondNum1 = secondNum * 60;    //0.90198</em>60=54.1188  /** 将转化后的float类型转化为字符串类型 */<br>  NSString *latStr2 = [NSString stringWithFormat:@”%f”, secondNum1];  /** 取整数部分即为纬度或经度’分’ */<br>  int latSecond = [latStr2 intValue]; //54  /** 将经度或纬度字符串合并为(xx°xx’)形式 */<br>  NSString *string = [NSString stringWithFormat:@”%d°%d’%d’’”, latNumber, latMinute, latSecond];  return string;<br>}</li>
 </ul>
-<p>5.物理仿真器的说明<br>（1）UIDynamicAnimator的常见方法<br>　　- (void)addBehavior:(UIDynamicBehavior <em>)behavior;  　　//添加1个物理仿真行为<br>　　- (void)removeBehavior:(UIDynamicBehavior <em>)behavior;　　//移除1个物理仿真行为<br>　　- (void)removeAllBehaviors;  　　//移除之前添加过的所有物理仿真行为<br> <br>（2）UIDynamicAnimator的常见属性<br>　　@property (nonatomic, readonly) UIView</em> referenceView;  //参照视图 <br>　　@property (nonatomic, readonly, copy) NSArray</em> behaviors;//添加到物理仿真器中的所有物理仿真行为<br>　　@property (nonatomic, readonly, getter = isRunning) BOOL running;//是否正在进行物理仿真<br>　　@property (nonatomic, assign) id <UIDynamicAnimatorDelegate> delegate;//代理对象（能监听物理仿真器的仿真过程，比如开始和结束）</p>
 
       
     </div>
@@ -224,7 +209,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net7SVN/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/09/07/M_11mou/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -238,7 +223,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/07/31/D_Net7SVN/" class="post-title-link" itemprop="url">svn</a>
+            <a href="/2016/09/07/M_11mou/" class="post-title-link" itemprop="url">mou</a>
         </h2>
 
         <div class="post-meta">
@@ -248,7 +233,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-07-31 17:57:27" itemprop="dateCreated datePublished" datetime="2016-07-31T17:57:27+08:00">2016-07-31</time>
+              <time title="创建时间：2016-09-07 18:23:23" itemprop="dateCreated datePublished" datetime="2016-09-07T18:23:23+08:00">2016-09-07</time>
             </span>
 
           
@@ -262,702 +247,1019 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>介绍</p>
+          <h1 id="Mou"><a href="#Mou" class="headerlink" title="Mou"></a>Mou</h1><p><img src="http://25.io/mou/Mou_128.png" alt="Mou icon"></p>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p><strong>Mou</strong>, the missing Markdown editor for <em>web developers</em>.</p>
+<h3 id="Syntax"><a href="#Syntax" class="headerlink" title="Syntax"></a>Syntax</h3><h4 id="Strong-and-Emphasize"><a href="#Strong-and-Emphasize" class="headerlink" title="Strong and Emphasize"></a>Strong and Emphasize</h4><p><strong>strong</strong> or <strong>strong</strong> ( Cmd + B )</p>
+<p><em>emphasize</em> or <em>emphasize</em> ( Cmd + I )</p>
+<p><strong>Sometimes I want a lot of text to be bold.<br>Like, seriously, a <em>LOT</em> of text</strong></p>
+<h4 id="Blockquotes"><a href="#Blockquotes" class="headerlink" title="Blockquotes"></a>Blockquotes</h4><blockquote>
+<p>Right angle brackets &gt; are used for block quotes.</p>
 </blockquote>
-<p>svn 是多人协同开发的代码管理器,是从大名鼎鼎的代码管理器 CVS 演变<br>而来,当然除了 svn 外,还有一个流行的代码管理器 git,但是企业中大多喜欢 用 svn,原因是 svn 具有很强的文档目录权限管理,而 git 在开源社区非常流行, git 没有权限管理。</p>
-<blockquote>
-<p>svn 服务端和客户端模型</p>
-</blockquote>
-<p>svn 分为客户端和服务器端 2 中,对于一般开发人员主要使用使用 svn 客户<br>端,对于项目经理或者 IT 维护组需要进行 svn 服务器端进行诸如代码备份, merge 等操作。<br>对于 iOS 开发,svn 使用有 2 种。读者个人趋向于 svn 命令行使用 当然更多推荐使用工具 Version: <a target="_blank" rel="noopener" href="http://192.168.88.8/download/softwares/svn">http://192.168.88.8/download/softwares/svn</a> 工具/Versions02.zip 网页版本: <a target="_blank" rel="noopener" href="http://192.168.88.10/svn">http://192.168.88.10/svn</a><br>不推荐大家使用 Xcode 自带的 SVN 工具<br>对于 Versions 不能加入.a 静态库的解决方案<br>编辑 vi <del>/.subversion/config<br>找到以 global-ignores 开头的行, 然后去掉里面的 *.a 即可<br>global-ignores = *.o *.lo *.la *.al .libs *.so <em>.so.[0-9]</em> *.pyc *.pyo *</del>.nib *.so *.pbxuser <em>.mode</em> <em>.perspective</em> .DS_Store xcuserdata project.xcworkspace<br>3. svn操作命令之通用参数<br>–username yang<br>–password 123456 如果没有用户名和密码就不用此参数<br>4. svn操作命令之下载checkout(co) svn checkout<br>svn checkout 是下载代码库<br>-r 18下载18号版本 例子 1.<br>svn –username yang –password 123456<br>checkout <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 ios1212 目录<br>例子 2.<br>svn –username yang –password 123456<br>checkout <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a> myios1212 svn –username yang –password 123456<br>checkout -r18 <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a><br>下载完成后会在当前目录中创建 myios1212 目录<br>上述 <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a> 是代码服务器网址 这里 checkout 也可以写成 co<br>5. svn操作命令之查看信息info 比如 svn info<br>svn info 是查看版本信息<br>localhost:ios1212 yang$ svn info<br>Path: .<br>URL: <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212">http://1000phone.cn/stuproj/ios1212</a><br>Repository Root: <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj">http://1000phone.cn/stuproj</a><br>Repository UUID: 489a8e6b-8e7d-4fdf-9695-3480148b3a5a Revision: 10<br>Node Kind: directory<br>Schedule: normal<br>Last Changed Author: yang<br>Last Changed Rev: 3<br>Last Changed Date: 2012-11-19 17:28:36 +0800 (Mon, 19 Nov 2012)<br>6. svn操作命令之查看版本日志信息log svn log<br>svn log 会显示该目录下面所有的版本信息,按照时间倒序排列 如下面显示:</p>
-<hr>
-<p>r1123 | oyangjian | 2012-11-20 21:25:10 +0800 (二, 2012-11-20) | 4 行<br>增加了 addsvnuser<br>M common_db.php</p>
-<hr>
-<p>r1122 | oyangjian | 2012-11-20 21:24:35 +0800 (二, 2012-11-20) | 4 行<br>解决了乱码问题<br>M showcompileinfo.php</p>
-<hr>
-<p>r1121 | oyangjian | 2012-11-20 21:23:13 +0800 (二, 2012-11-20) | 4 行<br>FIX 了修改密码错误情况 M register.php<br>7. svn操作命令之增加文件add<br>用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) svn add RootViewController.m<br>把 RootViewController.m 文件加入到本地的代码库中<br>8. svn操作命令之删除文件或者文件夹delete 用法例子(在 xcode 增加文件自动会增加,在 xcode 中写程序不用)<br>svn delete RootViewController.m 在本地代码库中删除 RootViewController.m 文件<br>9. svn操作命令之改名文件mv svn mv test.m Car.m<br>(在 xcode 增加文件自动会增加,在 xcode 中写程序不用) 在本地把 test.m 文件修改成 Car.m 文件<br>M M A A<br>Demo/Demo.xcodeproj/project.pbxproj<br>Demo/Demo/AppDelegate.m Demo/Demo/RootViewController.h Demo/Demo/RootViewController.m<br>注意上面的 add delete mv 都是在本地代码库中修改<br>10. svn操作命令之提交变化commit 把本地代码库中所有的修改的内容同步到服务器中 注意不同步的话,本地的修改不能反映到服务器上<br>svn –username yang –password 123456 commit<br>11. svn操作命令之同步服务器内容update 把服务器最新版本同步到本地来<br>svn update<br>12 svn操作命令之查看patch文件diff<br>查看任意 2 个版本之间的差异 svn diff –r18:29<br>13 svn操作命令之查看状态status localhost:yang1212 yang$ svn status<br>14 svn操作命令之创建目录mkdir svn –username yang –password 123456<br>mkdir <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212/test1234">http://1000phone.cn/stuproj/ios1212/test1234</a> 在服务器 ios1212 目录上创建子目录 test1234<br>15 svn操作命令之导入项目import svn –username yang –password 123456<br>import myproject <a target="_blank" rel="noopener" href="http://1000phone.cn/stuproj/ios1212/myproject2">http://1000phone.cn/stuproj/ios1212/myproject2</a> 在本机的 myporject 目录传到服务器 ios1212 目录上并且改</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net5KVC%E5%92%8CKVO/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net5KVC%E5%92%8CKVO/" class="post-title-link" itemprop="url">KVC和KVO</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:17:42" itemprop="dateCreated datePublished" datetime="2016-07-31T00:17:42+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p> 什么是KVC?<br>//  Key Value Coding的简写, 称为键值编码<br>//  作用: 访问对象中属性的一种方式, 通过字符串为关键字访问属性</p>
-</blockquote>
-<blockquote>
-<p>KVC的基本使用<br>//  问题: setValue:forUndefinedKey:</p>
-</blockquote>
-<blockquote>
-<p>KeyPath的使用</p>
-</blockquote>
-<p>// 4.常用方法<br>//  setValuesForKeysWithDictionary:</p>
-<p>//总结: 开发中常用<br>//1. setValuesForKeysWithDictionary方法<br>//2. 当对象没有对应属性出现错误怎么解决</p>
-<p>//KVC常用用途把网络上字典转化为model<br>NSDictionary *dict = @{@”speed”:@(100),@”temp”:@”test”};<br>for(NSString *key in dict)<br>{<br>[car setValue:dict[key] forKey:key];<br>}</p>
-<p>//设置car中engine对象的power属性<br>[car setValue:@(100) forKeyPath:@”engine.power”];</p>
-<p>//把字典中各个属性的值赋给对象对应的属性或实例变量<br>[car setValuesForKeysWithDictionary:dict2];</p>
-<blockquote>
-<p>什么是KVO</p>
-</blockquote>
-<p>//  Key Value Observing的简写, 键值监听<br>//  作用: 需要监视一个属性的变化, 变化了之后做出处理</p>
-<blockquote>
-<p>KVO的基本使用</p>
-</blockquote>
-<p>// 常用<br>//  项目监听一个属性的变化, 并在界面上显示, 使用KVO<br>//  实例: 监听和显示下载进度<br>//KVO<br>//效果: 当speed有了变化之后执行self中observeValueForKeyPath方法<br>[car addObserver:self forKeyPath:@”speed” options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];<br>监听的实现<br>-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context<br>{<br>double newSpeed = [[object valueForKeyPath:keyPath] doubleValue];</p>
-<p>NSLog(@”newSpeed = %f”,newSpeed);<br>}<br>程序完成的时候要移除监听<br>-(void)dealloc<br>{<br>//移除监听<br>//[car removeObserver:self forKeyPath:@”speed”];<br>}</p>
-<p>KVC 与 KVO 是 Objective C 的关键概念，个人认为必须理解的东西，下面是实例讲解。<br>Key-Value Coding (KVC)<br>KVC，即是指 NSKeyValueCoding，一个非正式的 Protocol，提供一种机制来间接访问对象的属性。KVO 就是基于 KVC 实现的关键技术之一。<br>一个对象拥有某些属性。比如说，一个 Person 对象有一个 name 和一个 address 属性。以 KVC 说法，Person 对象分别有一个 value 对应他的 name 和 address 的 key。 key 只是一个字符串，它对应的值可以是任意类型的对象。从最基础的层次上看，KVC 有两个方法：一个是设置 key 的值，另一个是获取 key 的值。如下面的例子：</p>
-<p>KVO这种编码方式使用起来很简单，很适用与datamodel修改后，引发的UIVIew的变化这种情况，就像上边的例子那样，当更改属性的值后，监听对象会立即得到通知。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net3GCD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net3GCD/" class="post-title-link" itemprop="url">GCD</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:14:53" itemprop="dateCreated datePublished" datetime="2016-07-31T00:14:53+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>什么是GCD</p>
-</blockquote>
-<p>Grand Central Dispach–<br>好用：1.简单<br>基于block c函数接口<br>功能强大：支持多核心编程<br>支持高级编程功能</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>//开启一个新的线程<br>//queue<br>//三种：main——queue主线程队列<br>//globle——queue全局队列。异步任务加载这里<br>//自定义的<br>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>}<br>});<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”B=%d”,i);<br>}<br>});</p>
-<blockquote>
-<p>模拟网络数据下载</p>
-</blockquote>
-<p>[self simulaterNetworkDataDownload];</p>
-<blockquote>
-<p>延迟执行，延时5s执行</p>
-</blockquote>
-<p>[self delayRunCode];</p>
-<blockquote>
-<p>有的代码指向执行一次</p>
-</blockquote>
-<p>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];</p>
-<blockquote>
-<p>多个任务同时执行，等待所有任务结束</p>
-</blockquote>
-<p>//    模拟迅雷多路下载后关机<br>[self simulaterThreadDownload];</p>
-<p>}<br>-(void)simulaterThreadDownload<br>{<br>dispatch_group_t group=dispatch_group_create();</p>
-<p>//任务添加<br>dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;30; i++)<br>{<br>NSLog(@” B=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>});<br>//先是所有任务执行完成<br>dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>NSLog(@”所有的任务执行完成”);<br>});<br>}<br>-(void)runOneCode<br>{<br>static dispatch_once_t onceToken;<br>dispatch_once(&amp;onceToken, ^{<br>NSLog(@”这句话我只说一次”);<br>});<br>}<br>-(void)delayRunCode<br>{<br>dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br>NSLog(@”我是一只小小小小鸟,永远永远也飞不高”);<br>});</p>
-<p>}<br>-(void)simulaterNetworkDataDownload<br>{<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];<br>[self.view addSubview:_progressView];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>注意：不要再主线程里更新UI<br>//            _progressView.progress+=0.01;</p>
-<p>dispatch_async(dispatch_get_main_queue(), ^{<br>_progressView.progress+=0.01;<br>});<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>NSLog(@”下载完成”);<br>});</p>
-<p>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net4AVAudioPlayer/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net4AVAudioPlayer/" class="post-title-link" itemprop="url">AVAudioPlayer</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:14:33" itemprop="dateCreated datePublished" datetime="2016-07-31T00:14:33+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>创建播放器对象</p>
-</blockquote>
-<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”lalala.mp3” ofType:nil];<br>_player =[[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:path] error:nil];<br>//预加准备<br>[_player prepareToPlay];</p>
-<p>//添加一个按钮：开始播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>[_player play];<br>}];</p>
-<p>//添加一个按钮：停止播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 150, 100, 30) title:@”暂停” action:^(UIButton *button) {<br>[_player pause];<br>}];<br>//滑块控件<br>_slider=[[UISlider alloc]initWithFrame:CGRectMake(100, 200, 100, 30)];<br>[self.view addSubview:_slider];<br>[_slider addTarget:self action:@selector(dealSlider:) forControlEvents:UIControlEventValueChanged];<br>_slider.value=1;<br>进度条<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(50, 50, 200, 20)];<br>[self.view addSubview:_progressView];<br>[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dealTimer:) userInfo:nil repeats:YES];</p>
-<p>}</p>
-<p>-(void)dealTimer:(NSTimer *)t<br>{<br>_progressView.progress=_player.currentTime / _player.duration;<br>}<br>-(void)dealSlider:(UISlider *)s<br>{<br>_player.volume=s.value;<br>}</p>
-<blockquote>
-<p>网络音乐的播放</p>
-</blockquote>
-<p>1.使用AudioStreamer.h开源库<br>配置开源库<br>创建对象<br>{<br>AudioStreamer *_streamer;<br>}</p>
-<p>NSString *urlString=@”<a target="_blank" rel="noopener" href="http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061&quot;">http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061&quot;</a>;<br>//    如果是self调用时的警告可以<br>//    __weak UIViewController *vc=self;</p>
-<p>__block typeof (_streamer) t=_streamer;</p>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>t =[[AudioStreamer alloc]initWithURL:[NSURL URLWithString:urlString]];<br>[t start];<br>}];</p>
-<blockquote>
-<p>播放本地视频文件</p>
-</blockquote>
-<p>//1、配置<br>//添加mediaPlayer<br>//如何播放在线视频文件</p>
-<p>#import “ViewController.h”</p>
-<p>#import &lt;MediaPlayer/MediaPlayer.h&gt;</p>
-<p>#import “UIView+ZJQuickControl.h”</p>
-<ul>
-<li>(void)viewDidLoad<br>{<br>[super viewDidLoad];</li>
-</ul>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {</p>
-<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”dzs.mp4” ofType:nil];<br>MPMoviePlayerViewController *mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL fileURLWithPath:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
-<blockquote>
-<p>播放在线视频</p>
-</blockquote>
-<p>//<a target="_blank" rel="noopener" href="http://quiet.local/baoman.mp4">http://quiet.local/baoman.mp4</a></p>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放网络mp4” action:^(UIButton *button) {</p>
-<p>NSString *path=@”<a target="_blank" rel="noopener" href="http://quiet.local/baoman.mp4&quot;">http://quiet.local/baoman.mp4&quot;</a>;<br>MPMoviePlayerViewController *mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL URLWithString:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net2NSOperation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net2NSOperation/" class="post-title-link" itemprop="url">NSOperation</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:10:52" itemprop="dateCreated datePublished" datetime="2016-07-31T00:10:52+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>NSOperation、NSOperationQueue</p>
-</blockquote>
-<p>//对于NSThread的封装，提供了更为方便的使用接口<br>//支持block</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>//最好不要直接使用===一般继承自己的类，然后再使用<br>//<br>//NSOperation *operation1=[[NSOperation alloc] init];<br>// 使用NSBlockOperation /NSInvocationOperation<br>NSBlockOperation *bo=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo start];<br>NSBlockOperation *bo2=[NSBlockOperation blockOperationWithBlock:^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>}];<br>//启动<br>//    [bo2 start];<br>//操作队列   理解为：线程池<br>//注意：如果直接执行NSBlockOperation的花会在主线程中执行<br>//如果加到NSOperationQueue就会新开1个线程执行<br>NSOperationQueue *queue=[[NSOperationQueue alloc]init];<br>[queue addOperation:bo];<br>[queue addOperation:bo2];</p>
-<p>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net1NSThread/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net1NSThread/" class="post-title-link" itemprop="url">NSThread</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:08:41" itemprop="dateCreated datePublished" datetime="2016-07-31T00:08:41+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>什么是NSThread？</p>
-</blockquote>
-<p>NSThread 是ios提供的操作和使用线程的一个类<br>线程：<br>进程：理解，活着的程序，是程序执行的一个操作系统实体</p>
-<blockquote>
-<p>NSThread的创建线程</p>
-</blockquote>
-<p>//每个线程执行对应一个方法<br>NSThread *thread1=[[NSThread alloc]initWithTarget:self selector:@selector(thread1:) object:nil];<br>//启动线程<br>[thread1 start];</p>
-<p>//以类方法创建线程<br>//    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];<br>//可以实现同时执行的效果，以前都是先执行A后执行B，现在有了多线程，可以实现同时执行</p>
-<blockquote>
-<p>为什么要实行线程</p>
-</blockquote>
-<p>//UI界面中如果直接执行耗时任务的，界面会卡死，为了能让界面执行耗时任务的时候继续反应，使用新的线程去执行耗时任务<br>//应用场合：下载网络文件，同时执行多个任务，加载大文件，加载大数据<br>//3.为什么要实行线程<br>UIButton *button=[UIButton buttonWithType:UIButtonTypeSystem];<br>button.frame=CGRectMake(100, 100, 100, 30);<br>[button setTitle:@”耗时任务” forState:UIControlStateNormal];<br>[self.view addSubview:button];<br>[button addTarget:self action:@selector(btnClick:) forControlEvents:UIControlEventTouchUpInside];<br>-(void)btnClick:(UIButton *)button<br>{<br>    //暂停5秒<br>    //    [NSThread sleepForTimeInterval:5];<br>    //    [self dealThread2:nil];<br>    //    如果直接执行的话UI界面会卡死，没有反应<br>    //开启一个新的线程执行<br>    [NSThread detachNewThreadSelector:@selector(dealThread2:) toTarget:self withObject:nil];</p>
-<p>}</p>
-<p>//4.监控线程的执行完成<br>//如何知道那个线程执行接收，使用block–以后要学<br>//4.监控线程的执行完成<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealThreadExit:) name:NSThreadWillExitNotification object:nil];<br>-(void)dealThreadExit:(NSNotification *)no<br>{<br>    NSLog(@”线程执行完成”);<br>    NSLog(@”ui=%@”,no.userInfo);<br>}<br>//5.线程的控制，线程同步<br>//遇到情况：多个线程访问同一块数据<br>//如何解决：<br>//a+10   1.先从内存拿出，修改，再放回去<br>//访问数据的时候加锁<br>//5.线程的控制，线程同步<br>_lock=[[NSLock alloc]init];</p>
-<p>[NSThread detachNewThreadSelector:@selector(addFunc:) toTarget:self withObject:nil];<br>[NSThread detachNewThreadSelector:@selector(subFunc) toTarget:self withObject:nil];</p>
-<p>[self setAddBlock:^(NSString *mmm){<br>    NSLog(@”hbbbgeregour====%@”,mmm);<br>}];</p>
-<p>#pragma mark - 线程同步<br>-(void)addFunc:(NSThread *)th<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        [_lock lock];<br>        _num++;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        [_lock unlock];</p>
-<pre><code>&#125;
-NSLog(@&quot;add num=%d&quot;,_num);
-if (self.addBlock)
-&#123;
-    self.addBlock(@&quot;add&quot;);
-&#125;
+<h4 id="Links-and-Email"><a href="#Links-and-Email" class="headerlink" title="Links and Email"></a>Links and Email</h4><p>An email <a href="mailto:&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#101;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#x6d;">&#101;&#120;&#x61;&#x6d;&#x70;&#108;&#101;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#99;&#111;&#x6d;</a> link.</p>
+<p>Simple inline link <a target="_blank" rel="noopener" href="http://chenluois.com/">http://chenluois.com</a>, another inline link <a target="_blank" rel="noopener" href="http://25.io/smaller/">Smaller</a>, one more inline link with title <a target="_blank" rel="noopener" href="http://resizesafari.com/" title="a Safari extension">Resize</a>.</p>
+<p>A <a target="_blank" rel="noopener" href="http://25.io/mou/" title="Markdown editor on Mac OS X">reference style</a> link. Input id, then anywhere in the doc, define the link with corresponding id:</p>
+<p>Titles ( or called tool tips ) in the links are optional.</p>
+<h4 id="Images"><a href="#Images" class="headerlink" title="Images"></a>Images</h4><p>An inline image <img src="http://25.io/smaller/favicon.ico" alt="Smaller icon" title="Title here">, title is optional.</p>
+<p>A <img src="http://resizesafari.com/favicon.ico" alt="Resize icon" title="Title"> reference style image.</p>
+<h4 id="Inline-code-and-Block-code"><a href="#Inline-code-and-Block-code" class="headerlink" title="Inline code and Block code"></a>Inline code and Block code</h4><p>Inline code are surround by <code>backtick</code> key. To create a block code:</p>
+<pre><code>Indent each line by at least 1 tab, or 4 spaces.
+var Mou = exactlyTheAppIwant; 
 </code></pre>
-<p>}<br>-(void)subFunc<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //加锁<br>        //        [_lock lock];<br>        _num–;<br>        [NSThread sleepForTimeInterval:0.001];<br>        //减锁<br>        //        [_lock unlock];</p>
-<pre><code>&#125;
-NSLog(@&quot;sub num=%d&quot;,_num);
-</code></pre>
+<h4 id="Ordered-Lists"><a href="#Ordered-Lists" class="headerlink" title="Ordered Lists"></a>Ordered Lists</h4><p>Ordered lists are created using “1.” + Space:</p>
+<ol>
+<li>Ordered list item</li>
+<li>Ordered list item</li>
+<li>Ordered list item</li>
+</ol>
+<h4 id="Unordered-Lists"><a href="#Unordered-Lists" class="headerlink" title="Unordered Lists"></a>Unordered Lists</h4><p>Unordered list are created using “*” + Space:</p>
+<ul>
+<li>Unordered list item</li>
+<li>Unordered list item</li>
+<li>Unordered list item </li>
+</ul>
+<p>Or using “-“ + Space:</p>
+<ul>
+<li>Unordered list item</li>
+<li>Unordered list item</li>
+<li>Unordered list item</li>
+</ul>
+<h4 id="Hard-Linebreak"><a href="#Hard-Linebreak" class="headerlink" title="Hard Linebreak"></a>Hard Linebreak</h4><p>End a line with two or more spaces will create a hard linebreak, called <code>&lt;br /&gt;</code> in HTML. ( Control + Return )<br>Above line ended with 2 spaces.</p>
+<h4 id="Horizontal-Rules"><a href="#Horizontal-Rules" class="headerlink" title="Horizontal Rules"></a>Horizontal Rules</h4><p>Three or more asterisks or dashes:</p>
+<hr>
+<hr>
+<hr>
+<h4 id="Headers"><a href="#Headers" class="headerlink" title="Headers"></a>Headers</h4><p>Setext-style:</p>
+<h1 id="This-is-H1"><a href="#This-is-H1" class="headerlink" title="This is H1"></a>This is H1</h1><h2 id="This-is-H2"><a href="#This-is-H2" class="headerlink" title="This is H2"></a>This is H2</h2><p>atx-style:</p>
+<h1 id="This-is-H1-1"><a href="#This-is-H1-1" class="headerlink" title="This is H1"></a>This is H1</h1><h2 id="This-is-H2-1"><a href="#This-is-H2-1" class="headerlink" title="This is H2"></a>This is H2</h2><h3 id="This-is-H3"><a href="#This-is-H3" class="headerlink" title="This is H3"></a>This is H3</h3><h4 id="This-is-H4"><a href="#This-is-H4" class="headerlink" title="This is H4"></a>This is H4</h4><h5 id="This-is-H5"><a href="#This-is-H5" class="headerlink" title="This is H5"></a>This is H5</h5><h6 id="This-is-H6"><a href="#This-is-H6" class="headerlink" title="This is H6"></a>This is H6</h6><h3 id="Extra-Syntax"><a href="#Extra-Syntax" class="headerlink" title="Extra Syntax"></a>Extra Syntax</h3><h4 id="Footnotes"><a href="#Footnotes" class="headerlink" title="Footnotes"></a>Footnotes</h4><p>Footnotes work mostly like reference-style links. A footnote is made of two things: a marker in the text that will become a superscript number; a footnote definition that will be placed in a list of footnotes at the end of the document. A footnote looks like this:</p>
+<p>That’s some text with a footnote.[^1]</p>
+<p>[^1]: And that’s the footnote.</p>
+<h4 id="Strikethrough"><a href="#Strikethrough" class="headerlink" title="Strikethrough"></a>Strikethrough</h4><p>Wrap with 2 tilde characters:</p>
+<p><del>Strikethrough</del></p>
+<h4 id="Fenced-Code-Blocks"><a href="#Fenced-Code-Blocks" class="headerlink" title="Fenced Code Blocks"></a>Fenced Code Blocks</h4><p>Start with a line containing 3 or more backticks, and ends with the first line with the same number of backticks:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Fenced code blocks are like Stardard Markdown’s regular code</span><br><span class="line">blocks, except that they’re not indented and instead rely on</span><br><span class="line">a start and end fence lines to delimit the code block.</span><br></pre></td></tr></table></figure>
+
+<h4 id="Tables"><a href="#Tables" class="headerlink" title="Tables"></a>Tables</h4><p>A simple table looks like this:</p>
+<table>
+<thead>
+<tr>
+<th>First Header</th>
+<th>Second Header</th>
+<th>Third Header</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+</tbody></table>
+<p>If you wish, you can add a leading and tailing pipe to each line of the table:</p>
+<table>
+<thead>
+<tr>
+<th>First Header</th>
+<th>Second Header</th>
+<th>Third Header</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+<tr>
+<td>Content Cell</td>
+<td>Content Cell</td>
+<td>Content Cell</td>
+</tr>
+</tbody></table>
+<p>Specify alignment for each column by adding colons to separator lines:</p>
+<table>
+<thead>
+<tr>
+<th align="left">First Header</th>
+<th align="center">Second Header</th>
+<th align="right">Third Header</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Left</td>
+<td align="center">Center</td>
+<td align="right">Right</td>
+</tr>
+<tr>
+<td align="left">Left</td>
+<td align="center">Center</td>
+<td align="right">Right</td>
+</tr>
+</tbody></table>
+<h3 id="Shortcuts"><a href="#Shortcuts" class="headerlink" title="Shortcuts"></a>Shortcuts</h3><h4 id="View"><a href="#View" class="headerlink" title="View"></a>View</h4><ul>
+<li>Toggle live preview: Shift + Cmd + I</li>
+<li>Toggle Words Counter: Shift + Cmd + W</li>
+<li>Toggle Transparent: Shift + Cmd + T</li>
+<li>Toggle Floating: Shift + Cmd + F</li>
+<li>Left/Right = 1/1: Cmd + 0</li>
+<li>Left/Right = 3/1: Cmd + +</li>
+<li>Left/Right = 1/3: Cmd + -</li>
+<li>Toggle Writing orientation: Cmd + L</li>
+<li>Toggle fullscreen: Control + Cmd + F</li>
+</ul>
+<h4 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a>Actions</h4><ul>
+<li>Copy HTML: Option + Cmd + C</li>
+<li>Strong: Select text, Cmd + B</li>
+<li>Emphasize: Select text, Cmd + I</li>
+<li>Inline Code: Select text, Cmd + K</li>
+<li>Strikethrough: Select text, Cmd + U</li>
+<li>Link: Select text, Control + Shift + L</li>
+<li>Image: Select text, Control + Shift + I</li>
+<li>Select Word: Control + Option + W</li>
+<li>Select Line: Shift + Cmd + L</li>
+<li>Select All: Cmd + A</li>
+<li>Deselect All: Cmd + D</li>
+<li>Convert to Uppercase: Select text, Control + U</li>
+<li>Convert to Lowercase: Select text, Control + Shift + U</li>
+<li>Convert to Titlecase: Select text, Control + Option + U</li>
+<li>Convert to List: Select lines, Control + L</li>
+<li>Convert to Blockquote: Select lines, Control + Q</li>
+<li>Convert to H1: Cmd + 1</li>
+<li>Convert to H2: Cmd + 2</li>
+<li>Convert to H3: Cmd + 3</li>
+<li>Convert to H4: Cmd + 4</li>
+<li>Convert to H5: Cmd + 5</li>
+<li>Convert to H6: Cmd + 6</li>
+<li>Convert Spaces to Tabs: Control + [</li>
+<li>Convert Tabs to Spaces: Control + ]</li>
+<li>Insert Current Date: Control + Shift + 1</li>
+<li>Insert Current Time: Control + Shift + 2</li>
+<li>Insert entity &lt;: Control + Shift + ,</li>
+<li>Insert entity &gt;: Control + Shift + .</li>
+<li>Insert entity &amp;: Control + Shift + 7</li>
+<li>Insert entity Space: Control + Shift + Space</li>
+<li>Insert Scriptogr.am Header: Control + Shift + G</li>
+<li>Shift Line Left: Select lines, Cmd + [</li>
+<li>Shift Line Right: Select lines, Cmd + ]</li>
+<li>New Line: Cmd + Return</li>
+<li>Comment: Cmd + /</li>
+<li>Hard Linebreak: Control + Return</li>
+</ul>
+<h4 id="Edit"><a href="#Edit" class="headerlink" title="Edit"></a>Edit</h4><ul>
+<li>Auto complete current word: Esc</li>
+<li>Find: Cmd + F</li>
+<li>Close find bar: Esc</li>
+</ul>
+<h4 id="Post"><a href="#Post" class="headerlink" title="Post"></a>Post</h4><ul>
+<li>Post on Scriptogr.am: Control + Shift + S</li>
+<li>Post on Tumblr: Control + Shift + T</li>
+</ul>
+<h4 id="Export"><a href="#Export" class="headerlink" title="Export"></a>Export</h4><ul>
+<li>Export HTML: Option + Cmd + E</li>
+<li>Export PDF:  Option + Cmd + P</li>
+</ul>
+<h3 id="And-more"><a href="#And-more" class="headerlink" title="And more?"></a>And more?</h3><p>Don’t forget to check Preferences, lots of useful options are there.</p>
+<p>Follow <a target="_blank" rel="noopener" href="https://twitter.com/mou">@Mou</a> on Twitter for the latest news.</p>
+<p>For feedback, use the menu <code>Help</code> - <code>Send Feedback</code></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/09/03/F_1DaXue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/09/03/F_1DaXue/" class="post-title-link" itemprop="url">写给大学的你们</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2016-09-03 15:46:25 / 修改时间：21:37:39" itemprop="dateCreated datePublished" datetime="2016-09-03T15:46:25+08:00">2016-09-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="写给你们"><a href="#写给你们" class="headerlink" title="写给你们"></a>写给你们</h1><p>生命中总是不免有些东西让我们感动，我们热烈的希望去喜欢一个人，总是在追求，也许人生总是这样，让我们琢磨不定</p>
+<blockquote>
+<p>我们打闹，我们青春</p>
+</blockquote>
+<p><img src="http://b63.photo.store.qq.com/psu?/d5cd7898-2428-4c49-877d-e3a82d1b88d8/OWueTnwlL0n7QOMnxy9KXFmulWE6nConj0UHlCt4v*4!/b/YSlFmSUNoQAAYrpMnCUNowAA&bo=ngL2AQAAAAABBEg!&rf=viewer_4" alt="我们打闹，我们青春"></p>
+<blockquote>
+<p>一年一度的牡丹花会</p>
+</blockquote>
+<p><img src="http://b323.photo.store.qq.com/psb?/V10sskC22oqd3a/PuPX0MvQGXtNQGxTMqaU1GLVmLhAfpHrA*x1aVcSvVQ!/b/dFINicDhIgAA&bo=UQIgAwAAAAABAFc!&rf=viewer_4" alt="还记得那年的牡丹园吗？"></p>
+<blockquote>
+<p>我的三个徒弟ps 我不是唐僧</p>
+</blockquote>
+<p><img src="http://b326.photo.store.qq.com/psb?/V10sskC22oqd3a/XcpyVLliEInF0KsHeUqKErywxtJb3tu1ys9UMVgWJlQ!/b/dMjMVcJqAQAA&bo=IANRAgAAAAABAFc!&rf=viewer_4" alt="我的三个徒弟"></p>
+<blockquote>
+<p>那年我们一起疯狂过的轮滑</p>
+</blockquote>
+<p><img src="http://b321.photo.store.qq.com/psb?/V10sskC22ZZ3cy/y4k63rlBXeLOqLYPy9HCRz5xWqGsDleNv812liPnm3E!/b/dN5MWb82GQAA&bo=ngLyAQAAAAABB08!&rf=viewer_4" alt="那年我们一起疯狂过的轮滑"></p>
+<blockquote>
+<p>我们最后的游泳课</p>
+</blockquote>
+<p><img src="http://b326.photo.store.qq.com/psb?/3810a6b4-4005-4db0-a25c-12967145b67b/6fe3nf1gFhFuFpEXHHTWEqyDKO1JV0dJEdunuQksve4!/b/dDlUVMJxDQAA&bo=gAJeAyADNgQBAOk!&rf=viewer_4" alt="我们最后的游泳课"></p>
+<blockquote>
+<p>记得第一次吃自助，吃的好撑，还带走了好多葡萄干<br><img src="http://b328.photo.store.qq.com/psb?/V10sskC21HFOJO/nuesvTBF8YiOmXNjEGLlnG2S9hjACJleCNXfajtsPus!/b/dJMHhMOGHgAA&bo=UQIgAwAAAAABB1A!&rf=viewer_4" alt="记得第一次吃自助，吃的好撑，还带走了好多葡萄干"></p>
+</blockquote>
+<p>老李，这个大学生涯中陪伴我最多的男人<br><img src="http://b321.photo.store.qq.com/psb?/V10sskC21HFOJO/m9xZsy5G0a7JBdIezSpLONl7wM5pzbr8jrZgMhgX5nU!/b/dKTTV78TNAAA&bo=UQIgAwAAAAABB1A!&rf=viewer_4" alt="老李，这个大学生涯中陪伴我最多的男人"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/09/03/F_2JeHun/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/09/03/F_2JeHun/" class="post-title-link" itemprop="url">写给你们，关于我们，至即将结婚的自己</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-09-03 15:46:25" itemprop="dateCreated datePublished" datetime="2016-09-03T15:46:25+08:00">2016-09-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2016-09-04 17:35:31" itemprop="dateModified" datetime="2016-09-04T17:35:31+08:00">2016-09-04</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/GeAK4Zp1qSLX4qfZgWopEPLWyfHnLAc2LHQTcOqSi0E!/b/dK0AAAAAAAAA&bo=VAY4BIYprxsBCVs!&rf=viewer_4" alt="封面"></p>
+<h1 id="关于我们的爱情💓"><a href="#关于我们的爱情💓" class="headerlink" title="关于我们的爱情💓"></a>关于我们的爱情💓</h1><ul>
+<li>开启<br>快要结婚了，也分享一下我们的爱情💓，从大学起，我们就是同学，虽然是同学，但是大学的四年里，真的其实前三年的时光里基本上都没有交集，我是一个不喜欢与陌生人相处的人（ps所以根本就不会谈恋爱），我觉得我即使和很好的朋友在一起也容易一不小心就冷场了，她其实还是挺喜欢和人相处的，但是我总是显得比较冷淡，其实我们真正的相处是在QQ里，那时候已经大四了，心中不免觉得（大四了，大学就这么结束了。。。我连一个女朋友都没有找到，真的，人生是太失败了），我们在偶然的聊天中认识彼此，便迅速的产生好感，但是又羞于同学并没有公开恋情，家里催婚似的情景让我想到了把你带回家里，让你跟我的家人认识，你也没有拒绝，就这样我们飞速的就恋爱了，有人总说恋爱是一个漫长的过程，我觉的其实真的不是，恋爱其实是一个迅速升温的过程，就像一把干柴似的一下就燃烧🔥起来了，这是天秤座与生俱来的天赋，我觉得天秤座本身就是一个恋爱的星座，但是，真正的生活，真的很远很远。</li>
+<li>生活<br>恋爱之后，我们之间的矛盾越来越多，吵架变成了家常，我们租住在校外的小房子里。过着吵架的生活，每周几个小伙伴过来一起改善一下伙食，那是我们最幸福的事情了，至今我在北京漂泊的时候，每周都习惯性的去改善下伙食，每当这个时候便想起了我们一起的曾经。</li>
+<li>共患难<br>大学毕业之后我就得了严重的面瘫，久治不愈，在大学里、在家里、在上海、在北京，一路上，都是有你相陪，虽然一路上吵吵闹闹，磕磕绊绊，我们终究还是一起走过来了，也许这是老天对我们的考验，终究会成为我们以后漫漫长路中最稳固的基石。</li>
+<li>心连心<br>我才发现世界多不完美，成功或失败都有一些错觉，沧海有多广江湖有多深，局中人才了解。我们终于经过岁月的磨合后彼此认识了自己，再也不会去计较彼此的小毛病，终于学会了关心彼此，终于学会了理解，我们结婚去！🎎</li>
+</ul>
+<hr>
+<h1 id="图片，纪录我们走过的点滴"><a href="#图片，纪录我们走过的点滴" class="headerlink" title="图片，纪录我们走过的点滴"></a>图片，纪录我们走过的点滴</h1><ul>
+<li>像牡丹花一样美丽<br><img src="http://b189.photo.store.qq.com/psb?/3810a6b4-4005-4db0-a25c-12967145b67b/dgVrI3FWTPCg3ePbzGWI9531dbtDf9kTivS8N6ieJWk!/b/dCGDtnBsFAAA&bo=gAJVAwAAAAABB*Q!&rf=viewer_4" alt="牡丹园游玩的我们"></li>
+<li>曾经被评做年度浪漫<br><img src="http://b200.photo.store.qq.com/psb?/3810a6b4-4005-4db0-a25c-12967145b67b/pYBku2gGK40ShWOAkkdHzElqheQJmVf1Lwq3TdENYKs!/b/dMVEPXcIGAAA&bo=gAJfAwAAAAAFB*o!&rf=viewer_4" alt="曾经被评做年度浪漫"></li>
+<li>河北那些青涩的回忆<br><img src="http://b200.photo.store.qq.com/psb?/3810a6b4-4005-4db0-a25c-12967145b67b/z7Yz3WYm7y9MmlwV6Xj7VEo0LPH*0HiET4dOFTosIO8!/b/dEsoOnfwFwAA&bo=gAJfAwAAAAAFB*o!&rf=viewer_4" alt="河北那些青涩的回忆"></li>
+<li>我们毕业了<br><img src="http://b189.photo.store.qq.com/psb?/3810a6b4-4005-4db0-a25c-12967145b67b/A8n3bdK3q65Pwt79PaUocm7lOplufr67nsx9WKK2kS0!/b/dDlMsHBjFAAA&bo=gAJVAwAAAAAFB*A!&rf=viewer_4" alt="我们毕业了"></li>
+<li>终于有了工作<br><img src="http://b349.photo.store.qq.com/psb?/3810a6b4-4005-4db0-a25c-12967145b67b/C9RPcDGlStJR.MxgqsGE*N9EeAMZcMAKNuYm331w9Zc!/b/dF0BAAAAAAAA&bo=gAJVAwAAAAABB*Q!&rf=viewer_4" alt="终于有了工作"></li>
+<li>那个冬天有点冷<br><img src="http://b2.photo.store.qq.com/psb?/V10sskC20VvDT5/9rNVDNFBQK2q0bTadAT87nlLJrrjg9gFGDwWR8uBU90!/b/dAIAAAAAAAAA&bo=gAJVAwAAAAAFB*A!&rf=viewer_4" alt="那个冬天有点冷"><h3 id="北京北京"><a href="#北京北京" class="headerlink" title="北京北京"></a>北京北京</h3></li>
+<li>天安门<br><img src="http://b34.photo.store.qq.com/psb?/V10sskC23HFwmi/HozYFL.69AvbvkJvdpKV9p8o6eXIC39YQYGb*zjZIEE!/b/dCIAAAAAAAAA&bo=gAJVAwAAAAAFAPc!&rf=viewer_4" alt="也算是一起热闹过"></li>
+<li>鸟巢<br><img src="http://b22.photo.store.qq.com/psb?/V10sskC23HFwmi/.ViZ3cuGpkw2S605nAzA1PE3CtkyjZG*8m*Ljoc9fOQ!/b/dBYAAAAAAAAA&bo=gAJVAwAAAAAFB*A!&rf=viewer_4" alt="鸟巢"></li>
+<li>颐和园<br><img src="http://b34.photo.store.qq.com/psb?/V10sskC23HFwmi/TPmfR4S6VZLJkLUYqhXgJB9WHAmasWJ1KNRKnrK3bR0!/b/dCIAAAAAAAAA&bo=gAJVAwAAAAAFB*A!&rf=viewer_4" alt="颐和园"></li>
+<li>水立方<br><img src="http://b21.photo.store.qq.com/psb?/V10sskC23HFwmi/k9o2yX4Q.Vo0m0UHPys46pIMOepcZxG6PN2SCZTYUF0!/b/dBUAAAAAAAAA&bo=VQOAAgAAAAAFB*A!&rf=viewer_4" alt="水立方"></li>
+<li>毕业后我们还在一起<br><img src="http://b32.photo.store.qq.com/psb?/V10sskC23zGm2r/4mBj1.2dEiagx47Pl6da*ss9wyjGBTR0tnPZ2FLEnBo!/b/dCAAAAAAAAAA&bo=gAJVAwAAAAAFB*A!&rf=viewer_4" alt="毕业后我们还在一起"></li>
+<li>我们领结婚证<br><img src="http://b256.photo.store.qq.com/psb?/V10sskC20VvDT5/.TvRuqE83rtntxTz*FDlqoiT4te0HBgJqK9DWsajIJU!/b/dAABAAAAAAAA&bo=vwOAAgAAAAAFBxo!&rf=viewer_4" alt="我们领结婚证"></li>
+</ul>
+<hr>
+<h1 id="关于结婚"><a href="#关于结婚" class="headerlink" title="关于结婚"></a>关于结婚</h1><p>结婚是每个人生命中的大事，很多人知道我结婚以后发来慰问，说我快结婚了，紧张不紧张😓，我其实还是蛮紧张的，😓😓😓，总是很担心，怕好多事情做不好，我本身交际能力就不是很好，我也一直想努力的去寻找一些细节，希望能过将婚礼举行的更好一些，我还是没有很多期待，反倒是多了些担心，谢谢很多朋友的关心，我想我会把事情做好。</p>
+<p>我曾憧憬着怎么样才能举办一场婚礼，我百度，我搜索了好多，我总是想为未来做写准备，可是总是不知道要做些什么，我理解的婚礼就是一群人的狂欢节，对于远道而来的朋友，我真心的感谢你们千里迢迢，来参加我们的婚礼，我想我们何不把这场婚礼当作是一场浪漫的旅行，一场特殊的旅行，一场关于重逢的旅行，期待你们的参与，在此🙏，其实我心里有很多的项目，我们可以爬山，在山上吃烧烤，可以下河，划船，在沙滩上打排球。希望您能参加到我们的活动中来。希望每个远道而来的朋友都能够感受到快乐。</p>
+<h1 id="最后怎么能少了那些漂亮的婚纱照呢"><a href="#最后怎么能少了那些漂亮的婚纱照呢" class="headerlink" title="最后怎么能少了那些漂亮的婚纱照呢"></a>最后怎么能少了那些漂亮的婚纱照呢</h1><p><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/b4WZsQhd2MrLKI95HphuTHEWLHPOlscAKvT2ECG4AAM!/b/dK0AAAAAAAAA&bo=OAQQBRIXrxsBCbY!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/o.0IU8CH14m3gzT8R57pMDvZ9yyMKrA2.Gr2YLx6HDE!/b/dK4AAAAAAAAA&bo=OAT6BYkF2AcFCbo!&rf=viewer_4"><br><img src="http://a2.qpic.cn/psb?/V10sskC21eWqvb/zkZJlxQC9gRjMJnO8BxD*lPi8hUXt1nst8hdLvdbbSI!/b/dPoAAAAAAAAA&bo=6AU4BGET1w0FAFo!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/y.WK0gWaHwoKD7HtLK05muKT27CKrbdrZql5th*zpCs!/b/dKcAAAAAAAAA&bo=6AU4BGET1w0FAFo!&rf=viewer_4"><br><img src="http://a2.qpic.cn/psb?/V10sskC21eWqvb/Mw4w6njJO8pw9MBU2gLkm6UCr3mCsnOvW2AQWCefTMc!/b/dKwAAAAAAAAA&bo=6AU4BGET1w0FAFo!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/YtYP4wFVO2kxJBn2eNkSbO5T9*apZKF3wvrXPSI*uS0!/b/dKsAAAAAAAAA&bo=6AU4BGET1w0FAFo!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/hXwhmU06JKztbPgqaUoP0Ox0ab6EMo1vExY5bKVrJZA!/b/dPgAAAAAAAAA&bo=6AU4BGET1w0FAFo!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/UN2gOEzkubznsZMzmJZJQFHnzPvQo9FaGTVDnZ28d3I!/b/dAIBAAAAAAAA&bo=6AU4BGET1w0FAFo!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/3iLfMkRohqlEXzDJnUAVeAMG7tNDNAPddJ2Fne4eEO8!/b/dK4AAAAAAAAA&bo=6AU4BGET1w0FAFo!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/*RiZsUoQx3zEr15qeToME99WpafGC2.kc.p6WcbAnU4!/b/dK4AAAAAAAAA&bo=6AU4BGET1w0FAFo!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/TMFbI5*bACL78jLDscuvTn0fcqyYdzDnvs0kFwzd5q0!/b/dK0AAAAAAAAA&bo=EAU4BNcNiQsFAFI!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/19bwgaMhhQZDBVBHfe0up7AU.6zl8VaC.EKlaZ.AWX4!/b/dK0AAAAAAAAA&bo=OAQQBYkL1w0FAFI!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/ocMWiT0kEEDNZIfiVqPUwAN5W3HLJupHAvIogx6iyec!/b/dKsAAAAAAAAA&bo=OASgBewGOgkFAGM!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/gfZksuY2u36QkpyjTID6aKrrn5ynbOdj*rZU66B4gFM!/b/dK0AAAAAAAAA&bo=8gU4BJscTRQBADI!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/yQ51CcT90imubSv9vlxCp5y5Ab.Anp4Uq72vIA*WN0o!/b/dK4AAAAAAAAA&bo=8gU4BJscTRQBADI!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/TOvnFLRNtJKubv8fRi4rHT.0uOF9eXR3Iop*yMacJ1E!/b/dLAAAAAAAAAA&bo=8gU4BJscTRQBADI!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/ikiC07YZ*1WbY6qcehL98HL6p1r5AUSFRMWTOPHGNRg!/b/dK0AAAAAAAAA&bo=8gU4BJscTRQBADI!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/OTHy5LPinfZxs4VzPcIpF4TZ8o4LmmwypIYXXaNosVo!/b/dKsAAAAAAAAA&bo=8gU4BJscTRQBADI!&rf=viewer_4"><br><img src="http://a2.qpic.cn/psb?/V10sskC21eWqvb/NxdiKQtJhKLKjZi9ES*7AbOFJkEHLl2xU*FKToHrLTg!/b/dKAAAAAAAAAA&bo=8gU4BJscTRQBADI!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/Jtpbthqppp5SwGravQQkwGSh0mtt5rUpoIlR.gttmNI!/b/dLAAAAAAAAAA&bo=8gU4BJscTRQBADI!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/R1PXtVx7rk6NMvKWqinpjiX2eFIZMSLUSokSGnI7qB0!/b/dP8AAAAAAAAA&bo=8gU4BJscTRQBADI!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/TZLsk85*NYND6SIls.BslpooQ7hqOsg12jMmRoduSAc!/b/dPgAAAAAAAAA&bo=OAQ4BIgRiBEFACM!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/nIZwxAwTznlupH.5cUC2ZFZ1pOzFML4iLuxwZr1c0Ps!/b/dPsAAAAAAAAA&bo=OAQ4BIgRiBEFACM!&rf=viewer_4"><br><img src="http://a2.qpic.cn/psb?/V10sskC21eWqvb/yNsQh2MSDLB8pxP5wrL1nJNwrsPyA6Xqvj*3qnKChs0!/b/dKwAAAAAAAAA&bo=gAJUBYgRXyUBABc!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/WbDC0fb4rboxeg0M2U8.EiNoqeDF2c2gi4UhwVt**bo!/b/dPgAAAAAAAAA&bo=OAQ4BF8lXyUBACc!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/D.2ECBAf9jAtlFt0ey.R.lCsf3Cl5PTJoP*wwPGQyHA!/b/dLAAAAAAAAAA&bo=OASgBewGOgkFAGM!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/SplNSogMMJVy9xsGwXiGb5xQ86EtI1rz.foMYtDwIko!/b/dBwBAAAAAAAA&bo=OASgBewGOgkFAGM!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/BY.0r5x35hq.udvvzf4K67I2TW5L7i805FE1gITxjVE!/b/dK4AAAAAAAAA&bo=OASgBewGOgkFAGM!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/sPhhvaj2wtb3rISXIndqwSVkG94*WokBfvp5xLpMWbk!/b/dKgAAAAAAAAA&bo=OASgBewGOgkFAGM!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/1GtRuUlrfVe*Dr76CAA17j*e4xKK205dXaQFSO38rfs!/b/dPgAAAAAAAAA&bo=OASgBewGOgkFAGM!&rf=viewer_4"><br><img src="http://a1.qpic.cn/psb?/V10sskC21eWqvb/NDj6cTdlngo2oAw7xNAGeWVQnbK*t7Qgq.kmdXHW1Qg!/b/dK4AAAAAAAAA&bo=OASgBewGOgkFAGM!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/WkJyBDVRCMNl*6ap2pZaxXQpPpo*C13P8og73F1rgHM!/b/dPsAAAAAAAAA&bo=cAg4BHQSOgkFADI!&rf=viewer_4"><br><img src="http://a3.qpic.cn/psb?/V10sskC21eWqvb/thUGuk1q9WJqUJ3hL.8WxLd3cx6.aR7bjlTHavd*HJk!/b/dK0AAAAAAAAA&bo=RgU4BBIXdBIBADs!&rf=viewer_4"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/23/M_10OC%E6%B3%A8%E9%87%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/23/M_10OC%E6%B3%A8%E9%87%8A/" class="post-title-link" itemprop="url">OC 开发注释，规范</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-23 16:14:29" itemprop="dateCreated datePublished" datetime="2016-08-23T16:14:29+08:00">2016-08-23</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>/********************** View Cycle ***********************/</p>
+<p>/**</p>
+<ul>
+<li><p> Description</p>
+</li>
+<li><p> 1.第一区块 viewDidLoad,viewDidAppear等方法</p>
+</li>
+</ul>
+<p>*</p>
+<p>*/</p>
+<p>/********************** UITableViewDataSource ********************/</p>
+<p>/**</p>
+<ul>
+<li><p> Description</p>
+</li>
+<li><p> 2.如果有用tableview/collectview 则放置 datasource模块</p>
+</li>
+<li><p> 要点:保持protocol名 和mark名字一样 点击可以直接跳转</p>
+</li>
+</ul>
+<p>*/</p>
+<p>/********************** CustomeDelegate ***********************/</p>
+<p>/**</p>
+<ul>
+<li><p> Description</p>
+</li>
+<li><p> 4.放置自定义的的一些protocol方法</p>
+</li>
+<li><p> 要点:保持protocol名 和mark名字一样 点击可以直接跳转</p>
+</li>
+</ul>
+<p>*/</p>
+<p>/********************** Event Action ***********************/</p>
+<p>/**</p>
+<ul>
+<li><p> Description</p>
+</li>
+<li><p> 5.按钮，手势等控件的一些事件方法</p>
+</li>
+</ul>
+<p>*</p>
+<p>*/</p>
+<p>/********************** Private Methods ***********************/</p>
+<p>/**</p>
+<ul>
+<li><p> Description</p>
+</li>
+<li><p> 6.放置私有方法 只有这个viewcontroller使用</p>
+</li>
+<li></li>
+</ul>
+<p>*/</p>
+<p>/********************** Getters And Setters ***********************/</p>
+<p>/**</p>
+<ul>
+<li><p> Description</p>
+</li>
+<li><p> 7.放置熟悉初始化操作</p>
+</li>
+<li><p> 要点:主要逻辑区块靠前，设置初始化放置后方</p>
+</li>
+</ul>
+<p>*/</p>
+<blockquote>
+<p>全部注释如下</p>
+</blockquote>
+<p>#pragma mark - Life cycle<br>#pragma mark - Init data<br>#pragma mark - Loading data<br>#pragma mark - Create view<br>#pragma mark - UITableViewDelegate<br>#pragma mark - SystemDelegate<br>#pragma mark - CustomDelegate<br>#pragma mark - Observer<br>#pragma mark - Enent response<br>#pragma mark - Private methods<br>#pragma mark - Setter and getter</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/14/M_9Markdown/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/14/M_9Markdown/" class="post-title-link" itemprop="url">Markdown</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-14 15:46:25" itemprop="dateCreated datePublished" datetime="2016-08-14T15:46:25+08:00">2016-08-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2016-08-16 14:03:42" itemprop="dateModified" datetime="2016-08-16T14:03:42+08:00">2016-08-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="写在开始之前"><a href="#写在开始之前" class="headerlink" title="写在开始之前"></a>写在开始之前</h1><p>什么是Markdown<br>Markdown 是一种轻量级的「标记语言」，它的优点很多，目前也被越来越多的写作爱好者，撰稿者广泛使用。看到这里请不要被「标记」、「语言」所迷惑，Markdown 的语法十分简单。常用的标记符号也不超过十个，这种相对于更为复杂的HTML 标记语言来说，Markdown 可谓是十分轻量的，学习成本也不需要太多，且一旦熟悉这种语法规则，会有一劳永逸的效果<br>它用简洁的语法代替排版，而不像一般我们用的字处理软件 Word 有大量的排版、字体设置。它使我们专心于码字，用「标记」语法，来代替常见的排版格式。<br>由于hexo这种博客中的md文件要使用markdown，本人特意看了下markdown的书写格式</p>
+<p>标题： </p>
+<h1 id="一级标题"><a href="#一级标题" class="headerlink" title="一级标题"></a>一级标题</h1><h2 id="二级标题"><a href="#二级标题" class="headerlink" title="二级标题"></a>二级标题</h2><h2 id="二级标题-1"><a href="#二级标题-1" class="headerlink" title="二级标题"></a>二级标题</h2><h3 id="三级标题"><a href="#三级标题" class="headerlink" title="三级标题"></a>三级标题</h3><h4 id="四级标题"><a href="#四级标题" class="headerlink" title="四级标题"></a>四级标题</h4><h5 id="五级标题"><a href="#五级标题" class="headerlink" title="五级标题"></a>五级标题</h5><p><em>注：#和「一级标题」之间建议保留一个字符的空格，这是最标准的 Markdown 写法。</em></p>
+<p>列表</p>
+<ul>
+<li>无序列表0</li>
+<li>无序列表1</li>
+<li>无序列表2</li>
+</ul>
+<p>有序列表</p>
+<ol>
+<li>文本0</li>
+<li>文本1</li>
+<li>aaa</li>
+<li>aaa</li>
+</ol>
+<p>链接和图片<br>链接<br>格式：</p>
+<h3 id="显示文本"><a href="#显示文本" class="headerlink" title="显示文本"></a><a href="%E9%93%BE%E6%8E%A5%E5%9C%B0%E5%9D%80">显示文本</a></h3><p>例如：<a target="_blank" rel="noopener" href="http://jianshu.io/">简书</a></p>
+<p>图片<br><img src="%E9%93%BE%E6%8E%A5" alt="图注"></p>
+<p>带有括号的链接：<br>![图1][1]<br>[1]: <a target="_blank" rel="noopener" href="http://latex.codecogs.com/gif.latex?%5Cprod%20%5C(n_%7Bi%7D%5C)+1">http://latex.codecogs.com/gif.latex?\prod%20\(n_{i}\)+1</a></p>
+<p>引用</p>
+<blockquote>
+<p>怕鬼的无神论者</p>
+</blockquote>
+<p>04粗体&amp;斜体<br>用两个 *包含一段文本就是粗体的语法，用一个 *包含一段文本就是斜体的语法。<br>正常 <strong>粗体</strong> <em>斜体</em></p>
+<p>05表格<br>表格1<br>| Tables  | Are | Cool |<br>| —– |:—-:| —-:|<br>| col 3 is | right-aligned | $1600 |<br>| col 2 is | centered | $12 |<br>| zebra stripes | are neat | $1 |</p>
+<table>
+<thead>
+<tr>
+<th>dog</th>
+<th>bird</th>
+<th>cat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>foo</td>
+<td>foo</td>
+<td>foo</td>
+</tr>
+<tr>
+<td>bar</td>
+<td>bar</td>
+<td>bar</td>
+</tr>
+<tr>
+<td>baz</td>
+<td>baz</td>
+<td>baz</td>
+</tr>
+</tbody></table>
+<p>分割线</p>
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/14/M_8Hexo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/14/M_8Hexo/" class="post-title-link" itemprop="url">Hexo Docs中文用法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-14 15:46:25" itemprop="dateCreated datePublished" datetime="2016-08-14T15:46:25+08:00">2016-08-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2017-03-08 19:16:40" itemprop="dateModified" datetime="2017-03-08T19:16:40+08:00">2017-03-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1.常用命令<br>    hexo server<br>    hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</p>
+<p><img src="http://b34.photo.store.qq.com/psb?/V10sskC23HFwmi/qozQRt9WZGcdM8pHc6H55CSXvasXR5hDsG8FKI4mSCY!/b/dCIAAAAAAAAA&bo=VQOAAgAAAAAFAPc!&rf=viewer_4" alt="清纯美女1"><br><img src="http://wiki.jikexueyuan.com/project/hexo-document/helpers.html" alt="hahah"></p>
+<p>categories: </p>
+<ul>
+<li>Sports</li>
+<li>Baseball<br>tags:</li>
+<li>Injury</li>
+<li>Fight</li>
+<li>Shocking</li>
+</ul>
+<p>标签插件</p>
+<p>这里说的标签插件不同于文章中的标签，它可以帮助你在文章中快速嵌入一些特殊的内容。</p>
+<blockquote>
+<p>（1）Block Quote-块引用</p>
+</blockquote>
+<p>插入带有作者信息的应用，体现在Html上就是在 blockquote 标签下加入了 footer 标签。但是会给文章带来不一样的显示效果，书写格式非常简单。</p>
+<blockquote><p>content</p>
+<footer><strong>[author[</strong><cite>source]] [link] [source_link_title]</cite></footer></blockquote>
+
+<blockquote>
+<p>（2）Code Block代码块</p>
+</blockquote>
+<p>在文章中插入代码块可以使用下面方式书写</p>
+<figure class="highlight plain"><figcaption><span>[title] [lang:language] [url] [link text]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code snippet</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>（3）Pull Quote</p>
+</blockquote>
+<p>这个插件可以帮助您在文章中插入重要引述。</p>
+<blockquote class="pullquote [class]"><p>content</p>
+</blockquote>
+<blockquote>
+<p>（4）jsFiddle</p>
+</blockquote>
+<p>在文章中嵌入jsFiddle片段。</p>
+<iframe scrolling="no" width="[width]" height="[height]" src="https://jsfiddle.net/shorttag/embedded/[tabs]/[skin]" frameborder="0" loading="lazy" allowfullscreen></iframe>
+<blockquote>
+<p>（5）Gist</p>
+</blockquote>
+<p>嵌入Gist片段</p>
+<script src="//gist.github.com/gist_id.js?file=[filename]"></script>
+<blockquote>
+<p>（6）iFrame</p>
+</blockquote>
+<p>插入网页框架</p>
+<iframe src="url" width="[width]" height="[height]" frameborder="0" loading="lazy" allowfullscreen></iframe>
+<blockquote>
+<p>（7）Image</p>
+</blockquote>
+<p>插入图片，可以自定义大小</p>
+<img src="/path/to/image" class="[class names]" title="[width] [height] [title text [alt text]]">
+<blockquote>
+<p>（8）Link</p>
+</blockquote>
+<p>插入带有target=”_blank”属性值的链接。</p>
+<a href="" title="" target="">text url [external] [title]</a>
+<blockquote>
+<p>（9）Include Code</p>
+</blockquote>
+<p>从资源目录中插入代码片段。</p>
+
+<blockquote>
+<p>（10）Youtube</p>
+</blockquote>
+<p>在文章中插入Youtube视频。天朝的孩子就不用试了</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/video_id" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<blockquote>
+<p>（11）Vimeo</p>
+</blockquote>
+<p>在文章中插入Vimeo视频。</p>
+<div class="video-container"><iframe src="https://player.vimeo.com/video/video_id" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<blockquote>
+<p>（12）Include Posts</p>
+</blockquote>
+<p>包含其他文章的链接。</p>
+
+<a href="#">Post not found: slug [title]</a>
+<blockquote>
+<p>（13）Include Assets</p>
+</blockquote>
+<p>包含文章资源。 (具体怎么使用，还不太明白，后续再补充)</p>
+
+
+
+<blockquote>
+<p>（14）Raw</p>
+</blockquote>
+<p>一些内容不想被主题渲染，可以使用该插件呈现原始状态。</p>
+
+content
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_5Swift%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E7%9A%84%E8%BD%AC%E6%8D%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/03/M_5Swift%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E7%9A%84%E8%BD%AC%E6%8D%A2/" class="post-title-link" itemprop="url">Swfit编程思想的转换</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-03 19:18:50" itemprop="dateCreated datePublished" datetime="2016-08-03T19:18:50+08:00">2016-08-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>原来的代码+原来的思想+Swift. 哪里出错了呢?<br>最理想的情况当然就是从一个100%的Swift项目开始.如果你能做到,很好.但是多数情况下,我们有着已存在的代码,却很想开始使用Swift语言,那我们应该从哪里开始呢?</p>
+<p>为什么?<br>回过来说一下:你为什么想用Swift写程序呢?原因有很多:Swift语言是编程语言的新星;有着更棒的语法;Swift是苹果向我们推荐的iOS开发语言.<br>在将来,Swift的关注度会继续增加,并且Swift将成为开发OSX和iOS程序最适合,最受支持,最简便的编程语言.</p>
+<p>SwiftAwesomeness</p>
+<p>正如上图,这就是未来Swfit的趋势,那你又能做什么来从Swift方式开始呢?</p>
+<p>Swift方式<br>有许多方面需要考虑,但我们先讨论下两大内容: 安全性和值语义.</p>
+<p>安全性<br>Nil是Objective-C中很棒的存在:你可以发消息给nil,系统运行时会不会Crash,继续保持响应.</p>
+<p>然而Swift中的nil是很不一样的,通常其类型机制会阻止你试图使用nil调用方法或者访问一个内容为nil的属性.虽然你可以避开这个类型机制,但这样做就如同在C语言中使用指向null的指针一样糟糕:你将容易在运行时掉入陷阱,使你的应用Crash.</p>
+<p>在Swift中,所有都是类型安全的.一个String类型的字符串就是字符串,且不会为nil.理解上类似于C++的引用而不是C中的指针,因为它们永远不会为nil.</p>
+<p>可选变量<br>在可选变量中,nil是可以使用的.一个可选类型的字符串变量可以是一个字符串,也可以为nil.你每次都要检查是什么.不然你可以强制解包这个可选变量,或者改变它成一个隐式解包的可选变量,这意味着成为一个可选类型但表现跟一个真正的值一样,一旦它是nil,这个app就会Crash</p>
+<p>unwarp<br>Cocoa里充满了可选类型的变量,这代表着每次你所持有的数据,都不得不检查内部真正的内容</p>
+<p>这在想法上是一个巨大的提升,你要明白不应该有机会向nil发送消息.在一个强类型语言机制里,要么它是nil,要么就是某个值.如果它在程序运行时未知的,就需要检查,不要试着强制解包它</p>
+<p>将可选变量想做一个箱子:箱子里可以什么都没有(为nill),也可以有个值.但你在解包或者拆箱这个可选变量之前总是需要检查它,就像你会问在这个可选变量内部到底是什么?</p>
+<p>box<br>在Swift已经有大量的其他例子显示了Swift语言的安全性:初始化方法,更少未定义的行为,内存安全.Nil安全是Swift语言面世以来相当常见的对语言安全性的体现.</p>
+<p>值类型<br>值类型在Swift随处可见.显而易见,Obejctvie-C有着像NSInteger的基本数据类型,和像CGRect结构体.但是许多像NSString,NSArray等等都是类,为引用类型.</p>
+<p>在Swfit中,一个完全不同的地方就在于它的标准库都有超过80个结构体,只有4个类,可以通过浏览头文件看到.</p>
+<p>字符串,数字,集合这些类型在Swift都是值类型.这就意味着如果你有一个可变的Swfit字符串,把它传入一个函数,你将得到的是字符串的拷贝.再次说明下,这可不是一件糟糕的事:我们在一直使用Objective-C中,有copy和mutableCopy.这对于多数普遍类型的新默认行为是一个巨大的提升.</p>
+<p>桥接<br>Swift被设计出来当然要能与Objective-C很好协同工作,由于Cocoa是为Objective-C建立的,所以这是很有必要的.所有这些Cocoa APIs 几乎都能被Swfit调用,这意味着你自定义的Objective-C类也能很好桥接到Swift类</p>
+<p>这里就有问题出现了:以Swift开始,添加Objective-C,如何正像期望一样调用从Objective-C桥接到Swfit方法</p>
+<p>Swift 到 Objective-C<br>Swiftz中有许多特性比如原生的结构体,加强的枚举等等,不能完全地桥接到Objective-C,这就意味着你使用Swift最新特性来写最新和最好的Swift框架,许多框架你就不能在Objective-C上使用.</p>
+<p>即使你限制自己只用Swift一些能兼容的特性写程序,你也不能让Swift的类继承自Objective-C的类.你可以借鉴table views或collection views的模式,使用代理和布局对象来解决这个问题,但你要始终记得如果你Swfit的API需要继承,默认在Objective-C不可见的.</p>
+<p>如果你用@objc<br>标记了你的类和协议,那么他们在Obejctive-C在就是可用的.dynamic<br>修饰符也显示使用了@objc<br>使得在Objective-C语言上可用,但它也使得你所限定的属性或者方法使用了Objective-C动态分发.</p>
+<p>Swift 到 Objective-C</p>
+<p>如果你想要使用swizzle或者其他动态特性,你将需要使用dynamic<br>标识符,仅仅@objc<br>不能保证它是使用objc_msgSend()<br>方法使得可能方法仍是编译过的或者内联的.<br>再一次强调:只有具有兼容性的特性才能工作.如果你在Swfit枚举对象中实现一个方法,它不会桥接过去,如果你的枚举存储不是int而是其他类型,它也不会桥接过去.</p>
+<p>Objective-C 到 Swift: Nullability<br>Objective-C转向Swift有许多好的方面来优化.你给在Objective-C中属性,参数,和返回值的类型添加标注.<br>_Null_unspecified(default)</p>
+<p>桥接为一个在Swift显示解包的可选值<br>_Nonnull</p>
+<p>变量值不会为nil;桥接为一个常规的引用<br>_Nullable</p>
+<p>变量值可以为nil;桥接为一个可选变量<br>如果你标注了你Obejctive-C代码, 在Swift中将会有很好的类型转变.即使你没有接触过Swfit,当你写Objective-C时这些标注会在你代码完成后出现.并且如果你声明一个方法参数为_Nonnull<br>而你传入了nil,你就会得到一个编译警告.<br>这是很好的练习来开始添加这些标注.在你使用已存在的API时会有所有帮助,让你更容易地开始使用Swfit.</p>
+<p>Objective-C 到 Swift: Lightweight Generics<br>轻量泛型是Swfit2新出来的特性.那些NSArray,NSDictionary,NSSet能存储任何原来的NSObject对象的集合类型需要大量的转换.在Objective-C中不会出现这样的问题,但记得在Swfit的所有都安全相关,正确的转换需要大量的类型检查.你应该先检测类型,而不是强制转换.<br>现在有了泛型,这意味着你写的Objective-C代码会是这样的:<br>NSArray&lt;NSString *&gt; * _Nonnull<br>这是一个将存储NSString对象的NSArray.有着Nullability标注,你会明白这数组本身不能为nil;你将总能得到一个数组.如果你之前写过Java或C++你应该会熟悉这样的泛型写法.</p>
+<p>而这个桥接到Swfit后会是这个样子的:[String]<br>一个简洁的Swfit的存储String的数组.</p>
+<p>小小的提醒: 轻量泛型只对基础集合的array, dictionary, sets 起作用</p>
+<p>需要跨的坑<br>我简易完全用Swfit开始新项目,如果你需要第三方库,这不会影响你用Swfit还是Obejctive-C,你都能调用.如果你已经有了存在的项目代码,想开始引入Swfit代码,尝试Obejctive-C向Swfit方法的保证桥接.例如已经实例化的视图控制器,视图在Swfit工作正常;它们都起源于NSObject,所以需要的话你能访问它们通过Objective-C.</p>
+<p>Bridge</p>
+<p>还有其他方面:Swfit泛型,枚举的存储不仅仅是整型,内嵌类型,结构体等等,这些需要等到你完全入门100%Swift,不要灰心,那天会比你所想的提前到来.</p>
+<p>在那之前,继续友好地使用Obejctive-C,做好使用Swfit的准备.下面资源可以帮助你完成这一转变.</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_6Swift%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%B1%BB%EF%BC%9F%20%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/03/M_6Swift%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%B1%BB%EF%BC%9F%20%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%9F/" class="post-title-link" itemprop="url">Swift什么时候使用类？ 什么时候使用结构体？</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-03 19:13:32" itemprop="dateCreated datePublished" datetime="2016-08-03T19:13:32+08:00">2016-08-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在Swfit中,什么时候用结构体，什么时候用类？</p>
+<p>到底是用类的做法优于用结构体，还是用结构体的做法优于类。函数式编程倾向于值类型，面向对象编程更喜欢类。<br>在Swift 中，类和结构体有许多不同的特性。下面是两者不同的总结：</p>
+<p>类支持继承，结构体不支持。<br>类是引用类型，结构体是值类型<br>并没有通用的规则决定结构体和类哪一个更好用。一般的建议是使用最小的工具来完成你的目标，但是有一个好的经验是多使用结构体，除非你用了继承和引用语义。想要了解更多，点击这里。</p>
+<p>注意：在运行时，结构体的在性能方面更优于类，原因是结构体的方法调用是静态绑定，而类的方法调用是动态实现的。这就是尽可能得使用结构体代替类的又一个好的原因。</p>
+<p>class 与 struct 的主要区别：类是引用类型，而结构体是值类型。</p>
+<p>class 引用类型<br>//类 - 引用类型</p>
+<p>class 未成型人类 {<br>var 身高 = 168<br>init() { }</p>
+<p>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
+<p>let 小华 = 未成型人类()</p>
+<p>let 大明 = 未成型人类(身高: 200)<br>let 黑仔 = 大明<br>let 高佬 = 大明<br>高佬.身高 += 10<br>print(大明.身高) // = 210</p>
+<p>let 小高 = 高佬<br>小高.身高 += 10<br>print(大明.身高) // = 220</p>
+<p>struct 值类型<br>//结构体 - 值类型</p>
+<p>struct 克隆人 {<br>var 身高 = 180<br>init() { }<br>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
+<p>var 小A = 克隆人()<br>小A.身高 = 122<br>let cokeA = 小A<br>print(cokeA.身高) // = 122<br>print(小A.身高) // = 122</p>
+<p>let 小B = 克隆人()<br>print(小A.身高) // = 180<br>什么时候使用类？ 什么时候使用结构体？<br>注意：虽说赋值时候值类型表面上经常要执行拷贝现象，但 Swift 在管理所有的值拷贝会确保性能最优化，所以我们没有必要去回避赋值来确保性能最优化。<br>/* 什么时候使用类？ 什么时候使用结构体？<br>一般情况下，可以：<br>1⃣ 把类看成是物体<br>如： 人、车、动物、商店等..一般跟生物沾边多<br>比如一个人有少属性，虽有不同人种，但是他们很多属性都是一样的，使用类的继承关系，很好描述人这一类东东…</p>
+<p>2⃣ 把结构体看作值<br>如：位置（经纬度）、坐标、温度等..一般跟物理沾边多<br>结构体比类更加 “轻量级”，因为结构体的内存空间是开在系统的栈中，而类则开在系统的堆中。当然对于小程序来说，可以忽略不计。</p>
+<p>还有什么时候使用也不是绝对的，因为他们都有很多类似的地方，也看个人习惯思维爱好之类。何况现在 Swift</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_5Swift_initializer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/08/03/M_5Swift_initializer/" class="post-title-link" itemprop="url">initializer</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-03 15:17:31" itemprop="dateCreated datePublished" datetime="2016-08-03T15:17:31+08:00">2016-08-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>designated initializer<br>convenience initializer<br>required 关键字<br>protocol中的initializer<br>Designated Initializer</p>
+<blockquote>
+<p>当我们创建一个class的时候，如果这个class拥有未初始化的非Optional属性，则必须提供一个构造器(称为designated initializer)。这句话有两个重点：<br>1.未初始化；2.非Optional属性。<br>比较一下下面几种写法：</p>
+</blockquote>
+<p>//A<br>class Person {<br>let name : String = “”<br>}<br>//B<br>class Person {<br>let name : String<br>}<br>//C<br>class Person {<br>var name : String?<br>}<br>//D<br>class Person {<br>let name : String?<br>}<br>A,C都可以正常编译，B,D会报错(error: class ‘Person’ has no initializers)。因为Swift不允许非Optional变量在没有初始化的情况下使用或者访问，这样会造成潜在的风险，于是Swift编译器对构造器做了严格的限制:类必须提供一个designated initializer，并且初始化所有未初始化的非Optional属性</p>
+<p>A,B两种写法中，let换成var结果是一样的。但是D比较特殊，在Swift中，常量在访问和使用之前必须初始化(哪怕是Optional)</p>
+<p>var p : String?<br>print(p)<br>//正常编译<br>let p : String?<br>print(p)<br>//报错：error: constant ‘p’ used before being initialized<br>由此可见我们上面的描述并不准确，应当是未初始化的非Optional属性或Optinal常量。不过一般我们不会声明一个Optional常量，另外这么说也是在太过拗口，所以就简单称之为未初始化的非Optional属性吧(下文也会这样表述)。</p>
+<p>同样，在子类初始化过程中，Swift也做了严格的限制</p>
+<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}<br>首先，Engineer必须调用super.init，如果你这样写：</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>self.name = name<br>}<br>不好意思，self.name是常量，不可修改。即便我们将let name : String改为var name : String，仍会报错，而且是两个：</p>
+<p>error: super.init isn’t called on all paths before returning from initializer<br>error: use of ‘self’ in property access ‘name’ before super.init initializes self<br>从这两个错误信息可以看出，在子类的构造器中，父类的成员变量必须通过父类的designated initializer进行初始化。也就是说，我们必须调用super.init（第一个error），而且在调用super.init之前不能使用和访问任何父类的成员变量（第二个error）。</p>
+<p>其次,super.init必须在子类所有未初始化的非Optional属性初始化之后调用。</p>
+<p>这跟我们以前所了解的不同，例如在JAVA的构造器中我们会先调用super.init。Swift之所以这样做，同样是为了安全性。<br>假设我们要求在初始化一个Person之后，立刻输出一些信息用来debug：</p>
+<p>class Person {<br>var name : String<br>init(name : String){<br>self.name = name<br>printDescription()<br>}</p>
+<p>func printDescription() -&gt; () {<br>print(“name=(name)”)<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
+<p>override func printDescription() -&gt; () {<br>print(“name=(name), title=(title)”)<br>}<br>}<br>如果在Engineer的init中，我们首先调用super.init，那么我们就会在初始化title之前执行子类的printDescription方法，这是Swift所不允许的。</p>
+<p>Convenience Initializer<br>一个类可以提供多个designated initializer，但是designated initializer不可以调用designated initializer。<br>如果需要提供一个依赖designated initializer的构造器，需要添加关键字convenience，称为convenience initializer。<br>在上面的例子中，假设我们从文件中读取人的信息，读取到的是“名字;职位;联系方式”格式的字符串。我们需要写一个构造器方法从这串文字中解析出相应的信息。</p>
+<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}</p>
+<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}<br>因为新的构造器调用了self.init，因此需要添加关键字convenience，否则会报错：error: designated initializer for ‘Person’ cannot delegate (with ‘self.init’); did you mean this to be a convenience initializer?</p>
+<p>一个类可以拥有多个convenience initializer，而且convenience initializer可以调用其他convenience initializer。<br>convenience initializer有以下约束：</p>
+<p>必须调用当前类的designated initializer，调用父类的designated initializer是不行的。<br>只有当前类可以使用（子类也可以使用，不过需要特殊处理。见下文）。<br>Required 关键字<br>如果父类中的构造器需要在子类中重写，可以使用required关键字。子类必须重写父类中标记为required的构造器方法(不管是designated initializer还是convenience initializer)。<br>上面的例子中，init(convertFromLiteral value : String)并不适合子类，所以我们加上required关键字，编译器会提示我们Engineer没有实现required initializer。</p>
+<p>class Engineer: Person {<br>var title : String</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
+<p>required convenience init(convertFromLiteral value : String){<br>var name = “”<br>var title = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>}else if(title.characters.count == 0){<br>title = component<br>break<br>}<br>}<br>self.init(name: name, title: title)<br>}<br>}<br>上文提到了convenience initializer只有当前类才能使用，Swift不允许子类通过父类构造器进行初始化是显而易见的。convenience initializer实际上更像一个方法，如果我们将某个convenience initializer所依赖的designated initializer标记为required，就相当于告诉了编译器我们的子类一定重写了这个designated initializer。也就是说，如果我们的子类通过这个convenience initializer进行初始化，最终会执行子类中重写的designated initializer。</p>
+<p>说这么一大堆，用代码看的更清楚：</p>
+<p>class Person {<br>let name : String<br>required init(name : String){<br>self.name = name<br>}</p>
+<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}</p>
+<p>class Engineer: Person {<br>var title : String</p>
+<p>required init(name: String) {<br>self.title = “unknow”<br>super.init(name: name)<br>}</p>
+<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}</p>
+<p>let peter = Person.init(convertFromLiteral: “peter;”)<br>print(peter.name)<br>let tom = Engineer.init(convertFromLiteral: “tom;”)<br>print(tom.name + “, “ + tom.title)<br>将父类中convenience initializer所依赖的designated initializer标记为required，我们就可以通过该convenience initializer初始化子类了。</p>
+<p>Protocol中的Initializer<br>Swift提供了很多包涵构造器的protocol，如StringLiteralConvertible，DictionaryLiteralConvertible，ArrayLiteralConvertible等。</p>
+<p>如果我们想通过如下方式初始化，我们就需要用到StringLiteralConvertible</p>
+<p>let peter : Person = “Peter”<br>代码如下：</p>
+<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
+<p>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
+<p>let peter : Person = “Peter”<br>是不是很cool？</p>
+<p>需要注意的是，Swfit很好的控制了构造器的作用域（默认情况下，convenience initializer是子类不可见的），但是protocol中的方法是子类可见的。所以protocol中的构造器方法都必须声明为required。<br>如果实现protocol的是一个final类，那么则没必要再是required，因为它不会有子类。<br>等一下，如果Person是第三方库中的类呢？<br>你可能会说没问题啊，我们可以通过extension实现StringLiteralConvertible</p>
+<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
 <p>}</p>
-<p>//6.UI主线程如何操作UI？<br>//ui主线程，<br>//    工作子线程<br>//    注意：不要在子线程中直接操作UI，交给主线程UI；<br>[self howToUpDateUIInSubThread];<br>-(void)howToUpDateUIInSubThread<br>{<br>    _progress =[[UIProgressView alloc]initWithFrame:CGRectMake(10, 200, 300, 20)];<br>    [self.view addSubview:_progress];<br>    //添加一个按钮<br>    UIButton *button=[UIButton buttonWithType:UIButtonTypeSystem];<br>    button.frame=CGRectMake(100, 300, 100, 30);<br>    [button setTitle:@”下载文件” forState:UIControlStateNormal];<br>    [self.view addSubview:button];<br>    [button addTarget:self action:@selector(startDownloadClick:) forControlEvents:UIControlEventTouchUpInside];<br>}<br>-(void)startDownloadClick:(UIButton *)button<br>{<br>    [NSThread detachNewThreadSelector:@selector(download:) toTarget:self withObject:nil];<br>}<br>-(void)download:(NSThread <em>)thread<br>{<br>    for(int i=0;i&lt;1000;i++)<br>    {<br>        //更新UI<br>        //        _progress.progress+=0.01;<br>        //在主线程中执行一个方法<br>        [self performSelectorOnMainThread:@selector(upDateUI) withObject:nil waitUntilDone:NO];<br>        [NSThread sleepForTimeInterval:0.001];<br>        NSLog(@”进度为%f%%”,_progress.progress</em>100);<br>    }<br>}<br>-(void)upDateUI<br>{<br>    _progress.progress+=0.001;<br>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/C_UI13UITableView/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/C_UI13UITableView/" class="post-title-link" itemprop="url">UITableView</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:00:01" itemprop="dateCreated datePublished" datetime="2016-07-31T00:00:01+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>我们为什么要实现单元格的复用机制</p>
-</blockquote>
-<p>单元格每一个cell的生成都是要init alloc的，所以当我们滑动表格试图的时候会生成很多cell，无异于浪费了大量的内存<br>单元格的复用机制原理<br>一开始的时候我们创建了桌面最多能显示的单元格数，cell<br>当我们向下滚动表格试图的时候，单元格上部的内容会消失，下部的内容会出现，这个时候我们将上部分消失的单元格赋给下部分出现的单元格<br>因此我们就做到了只生成了屏幕范围可显示的单元格个数，就实现滑动表格试图时，以后不会再init alloc单元格cell了，从而实现了节省内存的原理<br>单元格的复用机制<br>-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath<br>{</p>
-<p>定义一个cell标示符，用以区分不同的cell<br>以后有不同风格的cell就可以使用了<br>static NSString *cellID=@”cell”;<br>从cell复用池中拿到可用的cell<br>UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:cellID];<br>检测，拿到一个可用的cell<br>if(cell ==nil)<br>{<br>创建新的cell<br>cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];<br>}</p>
-<p>&lt;3&gt;显示分组数据<br>显示每段       多少section数据<br>-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView<br>{<br>return _dataArray.count;<br>}<br>告诉表格每段要显示多少行<br>重要参数：section每次传入制定序号<br>-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section<br>{<br>NSArray *array=_dataArray[section];<br>return array.count;<br>}</p>
-<blockquote>
-<p>单元格行的高度</p>
-</blockquote>
-<p>//通过这个方法可以指定任意行的高度。<br>-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath<br>{<br>    return 44.0f;<br>}</p>
-<p>单元格的背景<br>单元格的内容视图contentView</p>
-<blockquote>
-<p>某行选中的事件处理</p>
-</blockquote>
-<p>-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath<br>{}<br>//某行被取消选中了<br>-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath<br>{<br>NSLog(@”被取消选中了”);<br>}</p>
-<blockquote>
-<p>添加头部视图和尾部视图</p>
-</blockquote>
-<p>//    添加头部试图<br>UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 100)];<br>imageView.image=[UIImage imageNamed:@”fenjing.jpg”];<br>_tableView.tableHeaderView=imageView;<br>//    添加尾部试图<br>UIImageView *footImage=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 150)];<br>footImage.image=[UIImage imageNamed:@”head2.jpg”];<br>_tableView.tableFooterView=footImage;</p>
-<blockquote>
-<p>表格视图的编辑(难点)</p>
-</blockquote>
-<p>&lt;1&gt;单元格的删除操作[重点, 必须掌握]</p>
-<p>&lt;2&gt;单元格的增加操作</p>
-<p>&lt;3&gt;单元格的移动操作</p>
-<p>&lt;4&gt;多行选中和多行删除操作</p>
-<p>2.表格视图的设置</p>
-<p>&lt;1&gt;设置表格的索引</p>
-<p>&lt;2&gt;设置段头和段尾</p>
-<p>&lt;3&gt;表格的分割线</p>
-<p>3.表格视图的搜索</p>
-<p>&lt;1&gt;添加搜索条 UISearchBar–&gt;tableHeaderView</p>
-<p>4.表格视图控制器</p>
-<blockquote>
-<p>cell的定制</p>
-</blockquote>
-<p>1.我们使用MVC模式实现cell的定制。<br>什么是MVC模式<br>V是：VIew视图     作用：展示数据，接收用户交互<br>C是：Controller控制器<br>作用：负责把数据从Model中拿出来放到View上。<br>根据View的操作区修改数据。<br>M是：Model模型    作用：存储和表示数据</p>
-<p>理解：简单理解为每个界面分为三层——Model，VIew，Controller<br>效果：让开发变得更简单，可维护性更强，可扩展性更强，可阅读性更强<br>下面我们就具体看一下MVC模式应该怎么设计，在MVC模式下如何定制cell<br>1.Model的设计<br>这里：你要建立数据模型，存储数据（数据模型：就是oc中的类）<br>现在获取的数据本质上是原始数据，<br>以后原始数据有很多中  plist  JSON  数据库  文本文件<br>注意：不要直接使用原始数据<br>把所有的原始数据存储到数据模型Model<br>将解析数据存储到Model中<br>建立数组接收每个Model对象。</p>
-<p>2.cell的定制<br>就是将cell上所有的空间全部封装成一个类。<br>在这个类里，我们创建这些控件，设置相应的坐标<br>将这些类添加到self.contentView</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI11UIScrollView/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI11UIScrollView/" class="post-title-link" itemprop="url">UIScrollView</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:54:29" itemprop="dateCreated datePublished" datetime="2016-07-30T23:54:29+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>属性</p>
-</blockquote>
-<p>内容区域contentSize<br>@property(nonatomic) CGSize contentSize;<br>偏移量contentOffset<br>@property(nonatomic) CGPoint contentOffset;<br>弹簧效果bounces<br>@property(nonatomic) BOOL bounces;<br>分页效果pagingEnabled<br>@property(nonatomic,getter=isPagingEnabled) BOOL pagingEnabled;<br>允许滑动视图本身，如果设为no只能通过方法滑动，不能直接用手滑动<br>@property(nonatomic,getter=isScrollEnabled) BOOL scrollEnabled;<br>显示水平进度条showsHorizontalScrollIndicator<br>@property(nonatomic) BOOL showsHorizontalScrollIndicator;<br>显示垂直进度条showsVerticalScrollIndicator<br>@property(nonatomic) BOOL showsVerticalScrollIndicator;<br>放大和缩小的倍数<br>@property(nonatomic) CGFloat minimumZoomScale;<br>@property(nonatomic) CGFloat maximumZoomScale;</p>
-<p>1缩放到某个区域，（具体出现的区域受缩放倍数的影响）</p>
-<ul>
-<li>(void)zoomToRect:(CGRect)rect animated:(BOOL)animated;</li>
-</ul>
-<p>2种通过代码滑动视图的方法，一个是设置偏移量，一个是滑动到某个区域（常用第一个）</p>
-<ul>
-<li>(void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;</li>
-<li>(void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated;</li>
-</ul>
-<blockquote>
-<p>滚动视图的基本使用</p>
-</blockquote>
-<p>演示UIScrollView滚动试图基本使用<br>UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 11000, 5600)];<br>imageView.image=[UIImage imageNamed:@”1001.jpg”];<br>[self.view addSubview:imageView];<br>使用滚动试图<br>声明一个滚动试图<br>UIScrollView *scrollView=[[UIScrollView alloc]initWithFrame:self.view.bounds];<br>[self.view addSubview:scrollView];<br>imageView放到了滚动试图中<br>[scrollView addSubview:imageView];<br>滚动试图比较特殊，有两个大小。本身大小，其中内容大小<br>scrollView.contentSize=CGSizeMake(11000, 5600);<br>滚动试图常用属性<br>是否显示水平或竖直滚动条。<br>水平，横向<br>scrollView.showsHorizontalScrollIndicator=NO;<br>竖直，纵向<br>scrollView.showsVerticalScrollIndicator=NO;<br>设置分页滚动<br>scrollView.pagingEnabled=YES;<br>设置是否可以拉出空白区域，bounces蹦跳  scrollView.bounces=YES;</p>
-<blockquote>
-<p>滚动视图的基本原理 + 滚动视图的事件处理</p>
-</blockquote>
-<p>滚动试图缩放和基本原理UIScrollViewDelegate<br>scrollView.delegate=self;<br>开始拖拽<br>滚动。。。。。<br>结束拖拽<br>开始减速<br>滚动。。。。。<br>减速结束（滚动停止）；<br>【UIScrollViewDelegate】<br>代理方法<br>滑动过程中</p>
-<ul>
-<li>(void)scrollViewDidScroll:(UIScrollView *)scrollView;<br>开始拖动</li>
-<li>(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;<br>停止拖动</li>
-<li>(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;<br>开始滑动</li>
-<li>(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;<br>停止滑动</li>
-<li>(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView; </li>
-</ul>
-<blockquote>
-<p>滚动视图的缩放</p>
-</blockquote>
-<p>设置最大最小缩放比例<br>通过代理方法，告诉滚动试图，哪个试图应该缩放<br>scrollView.maximumZoomScale=10;<br>scrollView.minimumZoomScale=0.1;<br>代理方法，告诉scrollView哪个试图应该缩放<br>当试图滚动的时候执行<br>试图缩放。<br>允许缩放的视图(一个scrollview中只能有一个可以缩放且必须设置可以缩放的范围)<br>-(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView<br>{<br>返回被缩放的试图<br>return imageView;<br>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/30/C_UI12%E6%89%8B%E5%8A%BF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/30/C_UI12%E6%89%8B%E5%8A%BF/" class="post-title-link" itemprop="url">手势</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-30 23:54:09" itemprop="dateCreated datePublished" datetime="2016-07-30T23:54:09+08:00">2016-07-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>轻击手势Tap</p>
-</blockquote>
-<p>UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(dealTap:)];<br>[_imageView addGestureRecognizer:tap];</p>
-<p>}<br>-(void)dealTap:(UITapGestureRecognizer *)tap<br>{<br>NSLog(@”被点击了”);<br>}</p>
-<blockquote>
-<p>缩放手势Pinch</p>
-</blockquote>
-<p>UIPinchGestureRecognizer *pain=[[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(dealPinch:)];<br>[_imageView addGestureRecognizer:pain];<br>}<br>-(void)dealPinch:(UIPinchGestureRecognizer *)pinch<br>{<br>有一个非常重要的控件 ，缩放系数。pinch.scale<br>NSLog(@”缩放”);<br>仿射变换（改变view的位置大小）<br>_imageView.transform=CGAffineTransformMakeScale(pinch.scale, pinch.scale);<br>}</p>
-<blockquote>
-<p>旋转手势Rotation</p>
-</blockquote>
-<p>UIRotationGestureRecognizer *rotation=[[UIRotationGestureRecognizer alloc]initWithTarget:self action:@selector(dealrotation:)];<br>[_imageView addGestureRecognizer:rotation];</p>
-<p>}<br>-(void)dealrotation:(UIRotationGestureRecognizer *)ro<br>{<br>重要属性。。rotation.rotation表示旋转角度<br>_imageView.transform=CGAffineTransformMakeRotation(ro.rotation);<br>}</p>
-<blockquote>
-<p>滑动手势Swipe</p>
-</blockquote>
-<p>UISwipeGestureRecognizer *swipe=[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(dealSwipe:)];<br>[_imageView addGestureRecognizer:swipe];<br>}<br>-(void)dealSwipe:(UISwipeGestureRecognizer *)swipe<br>{<br>NSLog(@”滑动”);<br>注意：滑动默认的方向是向右<br>swipe.direction=UISwipeGestureRecognizerDirectionRight;<br>static int index=0;<br>NSArray *array=@[@”1173.jpg”,@”1092.jpg”];<br>index++;<br>if(index&gt;array.count-1)<br>{<br>index=0;<br>}<br>_imageView.image=[UIImage imageNamed:array[index]];<br>//    if(index ==0)<br>//    {<br>//        _imageView.image=[UIImage imageNamed:@”1173.jpg”];<br>//        index=1;<br>//    }<br>//    else<br>//    {<br>//        _imageView.image=[UIImage imageNamed:@”1092.jpg”];<br>//        index=0;<br>//    }<br>}</p>
-<blockquote>
-<p>拖移手势Pan</p>
-</blockquote>
-<p>UIPanGestureRecognizer *pan=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(dealPan:)];<br>[_imageView addGestureRecognizer:pan];<br>}<br>-(void)dealPan:(UIPanGestureRecognizer *)pan<br>{<br>重要的属性locationInView<br>CGPoint point=[pan locationInView:self.view];<br>_imageView.center=point;<br>}<br>长按手势LongPress<br>UILongPressGestureRecognizer *longPress=[[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(dealLongPress:)];<br>[_imageView addGestureRecognizer:longPress];</p>
-<p>}<br>-(void)dealLongPress:(UILongPressGestureRecognizer *)longPress<br>{<br>NSLog(@”长按”);<br>重要的属性 longPress.state<br>if(longPress.state==UIGestureRecognizerStateBegan)<br>{<br>UIAlertView *al=[[UIAlertView alloc]init];<br>al.message=@”是否保存图片”;<br>[al addButtonWithTitle:@”取消”];<br>[al show];<br>}</p>
-<p>}</p>
+<p>extension Person: StringLiteralConvertible{<br>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
+<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
+<p>let peter : Person = “Peter”<br>真是这样吗？Sorry!!!</p>
+<p>首先，required initializer必须在类中声明。所以上面的required关键字要不得<br>其次，protocol中的构造器方法必须声明为required，除非Person是final的。</p>
 
       
     </div>
@@ -976,7 +1278,7 @@ NSLog(@&quot;sub num=%d&quot;,_num);
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/33/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/33/">33</a><span class="page-number current">34</span><a class="page-number" href="/page/35/">35</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="extend next" rel="next" href="/page/35/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/33/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/33/">33</a><span class="page-number current">34</span><a class="page-number" href="/page/35/">35</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/35/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1042,7 +1344,7 @@ NSLog(@&quot;sub num=%d&quot;,_num);
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">365</span>
+          <span class="site-state-item-count">390</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1070,7 +1372,7 @@ NSLog(@&quot;sub num=%d&quot;,_num);
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/02/M_Swift166vue%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E4%BB%8B%E7%BB%8D/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift227QT%E5%AE%9E%E6%88%98%E5%AD%97%E6%AE%B5%E9%87%8D%E6%96%B0%E9%80%89%E6%8B%A9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/02/M_Swift166vue%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">前端vue介绍</a>
+            <a href="/2021/05/06/M_Swift227QT%E5%AE%9E%E6%88%98%E5%AD%97%E6%AE%B5%E9%87%8D%E6%96%B0%E9%80%89%E6%8B%A9/" class="post-title-link" itemprop="url">QT实战字段重新选择</a>
         </h2>
 
         <div class="post-meta">
@@ -172,14 +172,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-02 16:18:56" itemprop="dateCreated datePublished" datetime="2021-03-02T16:18:56+08:00">2021-03-02</time>
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 20:38:50" itemprop="dateModified" datetime="2021-04-12T20:38:50+08:00">2021-04-12</time>
+                <time title="修改时间：2021-06-24 14:22:27" itemprop="dateModified" datetime="2021-06-24T14:22:27+08:00">2021-06-24</time>
               </span>
 
           
@@ -193,115 +193,602 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>参考：src/router/index.js<br><a target="_blank" rel="noopener" href="https://router.vuejs.org/zh/api/">https://router.vuejs.org/zh/api/</a></p>
-<h2 id="axios-请求"><a href="#axios-请求" class="headerlink" title="axios 请求"></a>axios 请求</h2><p>参考src/utils/request<br>对请求进行简单封装，axios/index.ts<br>import axios, { AxiosRequestConfig, AxiosResponse } from ‘axios’</p>
-<p>axios.defaults.baseURL = ‘<a target="_blank" rel="noopener" href="http://localhost:3001/&#39;">http://localhost:3001/&#39;</a></p>
-<p>axios.interceptors.request.use((config:AxiosRequestConfig) =&gt; {<br>    return config;<br>})</p>
-<p>axios.interceptors.response.use((response:AxiosResponse) =&gt; {<br>    if(response.data.err == 1){<br>        return Promise.reject(response.data.data);<br>    }<br>    return response.data.data;<br>},err =&gt; {<br>    return Promise.reject(err);<br>})</p>
-<p>export default axios</p>
-<h2 id="模版封装"><a href="#模版封装" class="headerlink" title="模版封装"></a>模版封装</h2><p>参考components<br>创建模版组建import 进来，然后使用-代替大写引入即可</p>
-<h2 id="Vue常用语法"><a href="#Vue常用语法" class="headerlink" title="Vue常用语法"></a>Vue常用语法</h2><pre><code>1.结构
-name: &#39;IceFill&#39; // vue名称
-components: &#123;MyStore&#125;, // 模版
-filters 过滤器
-&#123;&#123;item.deleteStatus | toStateChinese&#125;&#125;
-2.数据绑定
-v-text=“” 只能绑定纯文本
-v-html：可以识别msg文本中的DOM标签。
-v-bind可以绑定属性,可以直接简写为冒号‘:’。下面例子将title属性绑定在mytitle上
-&lt;input type=&quot;button&quot; value=&quot;按钮&quot; v-bind:title=&quot;mytitle&quot; &gt;
-v-model=“” 表单元素value 不可直接&#123;&#123;&#125;&#125;获取，需在vue初始化设置一下
-v-model永远指向表单元素的value值，
-注意除v-model外绑定变量前面要加: 如：:disabled=&quot;isDetail&quot; 
-3.事件绑定
-v-on:click=“” 或者 @click＝“”
-4.循环
-v-for=“item in list” 循环 item循环到的数组值
-v-for=“(item,key) in list” key循环到的下标index
-5.逻辑判断
-v-if 布尔值 为false 代表节点消失（有更高的渲染开销）
--if 与 v-else-if v-else 可以构成判断（必须要连着一块写）
-v-if和v-show的区别
-7.样式
-v-bind:style=“&#123; color: activeColor, fontSize: fontSize + ‘px’ &#125;”
-8.类名设置
-v-bind:class=“&#123;‘class-a’:isa,‘class-b’:isb&#125;”
-！important:能够覆盖样式原本的权重，增加指定的样式的权重
-9.路由使用
-https://router.vuejs.org/zh/api/
-this.$router.push(&#39;/add-snow&#39;)
-10.模版导入
-import &#123; getUserLineInfo, getUserInfo &#125; from &#39;@/api/user&#39;
-11.生命周期
-beforeCreate
-created
-beforeMount
-Mounted
-beforeUpdate
-Updated
-beforeDestroy
-destroyed
-方法
-methods、computed、data、watch、props
-其他常用方法
-数据合并
-Object.assign（a，b）
-异步安全
-new Promise((resolve, reject) =&gt; &#123;&#125;)
-Json
-JSON.parse、JSON.stringify
-异步：async、await
-事件传递
-this.$emit(&#39;clickRow&#39;, row)
+          <p>今天遇到这样一个问题，解决了很久，最终才能如愿实现，现记录一下实现方案。<br>问题是这样的，我现在有一个指定格式的文档数据，数据中字段采用指定分割符分割，类似scv格式的数据采用，分割一样，我们需要读取这些数据，将数据保存为指定的模型。这个是一个非常正规的操作，现在的需求是，我文档的字段排序是错乱的，需要用户手动去选择某个字段具体在哪个位置。这个问题确实让我头疼了。具体描述是这样的<br>我们有字段 A，B，C，D，E，F<br>文档中有0，1，2，3，4，5，6，7，8，9，10列<br>我们默认：<br>A-&gt;1<br>B-&gt;2<br>C-&gt;3<br>D-&gt;4<br>E-&gt;5<br>F-&gt;6<br>7，8，9，10列忽略<br>然后当用户将A列放置在第2列时我们的数据变化<br>A、A、C、D、E、F、空、空、空、空<br>当我们将A放置在第8列时我们数据变化<br>A、B、C、D、E、F、空、A、空、空<br>我们虽然只有A-F5个字段，但是当用户选择后，数据会发生变大的情况<br>我本来想用一个Map，来分别存储Key和value，但是Map不太好按照顺序查找，这让我很难受<br>于是我选择了用两个List来存储字段和位置<br>调整后的存储结构如下<br>字段数组： A、B、C、D、E、F、A<br>位置数组： 0、1、2、3、4、5、8<br>这样，我知道有字段名，就能对应的找到字段的位置。<br>说起来很简单，但是业务上我要考虑很多，所以还是让我费了一会的功夫，就当记录着玩吧</p>
 
+      
+    </div>
 
-## 页面开发流程
-1.在src/views下面创建页面文件
-如src/views/ice-fault/ice-fault.vue
-包括html、js、css三个部分，可以参考其他页面，或者复制其它页面进行删减
-2.在路由中引入页面
-src/router/index.js
-  &#123;
-    path: &#39;/ice-fault&#39;,
-    name: &#39;IceFault&#39;,
-    component: () =&gt; import(&#39;@/views/ice-fault/ice-fault.vue&#39;),
-    meta: &#123;
-      title: &#39;冰害故障管理&#39;
-    &#125;
-  &#125;,
-在入口除采用router跳转到页面中
-3.编写页面布局
-页面所使用的组建全部在element-ui官网中
-框架样式修改，在chrome中打开调试工具，找到ui组建样式的class，然后根据情况自定义
-4.编写业务逻辑
-js部分数据写在data中、方法在methods中、比较常规
-5.网络请求
-在src/api下面建页面请求接口
-如：src/api/ice/fault/index.js
-import request from &#39;utils/request&#39;
-// 新增冰害故障
-export function iceFaultAdd(data) &#123;
-  return request(&#123;
-    url: `/icetroubledamage/record`,
-    method: &#39;post&#39;,
-    data
-  &#125;)
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift224QT%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/06/M_Swift224QT%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">QT开发总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-09 11:55:34" itemprop="dateModified" datetime="2021-06-09T11:55:34+08:00">2021-06-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="样式表同css"><a href="#样式表同css" class="headerlink" title="样式表同css"></a>样式表同css</h2><p>加载<br>QApplication a(argc, argv);<br>    QFile qss(“:/new/icon/ai3d.qss”);<br>    if( qss.open(QFile::ReadOnly))<br>    {<br>        qDebug(“open success”);<br>        QString style = QLatin1String(qss.readAll());<br>        a.setStyleSheet(style);<br>        qss.close();<br>    }<br>    else<br>    {<br>        qDebug(“Open failed”);<br>    }</p>
+<h2 id="TableView-Model"><a href="#TableView-Model" class="headerlink" title="TableView Model"></a>TableView Model</h2><pre><code>// 行数
+</code></pre>
+<p>   int rowCount(const QModelIndex &amp;parent) const;<br>   // 列数<br>   int columnCount(const QModelIndex &amp;parent) const;<br>   // 数据展示形式<br>   QVariant data(const QModelIndex &amp;index, int role) const;<br>   switch (role)<br>          {<br>          case Qt::DisplayRole:// 数据展示<br>          {<br>              int ncol = index.column();<br>              int nrow =  index.row();<br>              return m_data.at(nrow);<br>          }<br>          case Qt::EditRole: // 编辑<br>              return QVariant();<br>          case Qt::FontRole: // 字体<br>              return QFont(“consolas”, 12, 12);<br>          case Qt::TextAlignmentRole:// 对齐方式<br>               return Qt::AlignCenter;<br>          case Qt::ForegroundRole://前景<br>              return QBrush(Qt::white);<br>          case Qt::CheckStateRole: // 选中状态<br>          {<br>              if (index.column() == 0)<br>              {<br>                  AerialTriangulationTaskData values = m_data.at(index.row());<br>                  return values.selected ? Qt::Checked : Qt::Unchecked;<br>              }<br>          }<br>          }<br>        return QVariant();<br>   // 设置数据<br>   bool setData(const QModelIndex &amp;index, const QVariant &amp;value, int role);<br>   // 选中状态<br>   Qt::ItemFlags flags(const QModelIndex &amp;index) const;<br>   // 表头展示<br>   QVariant headerData(int section, Qt::Orientation orientation, int role) const;</p>
+<h2 id="QSizePolicy"><a href="#QSizePolicy" class="headerlink" title="QSizePolicy"></a>QSizePolicy</h2><p>QSizePolicy::Fixed              不能放大也不能缩小。<br>QSizePolicy::Minimum        可以变大，最小为设定值<br>QSizePolicy::Maximum       可以变小，最大值为设定值<br>QSizePolicy::Preferred        不倾向于扩展比sizeHint()大（QWidget的缺省策略）<br>QSizePolicy::Expanding      尽量占用剩余空间<br>QSizePolicy::MinimumExpanding  大小是最小值，并且是足够的。部件允许使用额外空间<br>QSizePolicy::Ignored    部件将会得到尽可能多的空间。</p>
+<h2 id="tableView"><a href="#tableView" class="headerlink" title="tableView"></a>tableView</h2><p>   m_tableView = new QTableView;<br>   m_tableView-&gt;setShowGrid(false); // 不显示边框<br>   m_tableView-&gt;setAlternatingRowColors(true); // 隔行换色<br>   m_tableView-&gt;setSelectionBehavior(QAbstractItemView::SelectRows); // 选中时为整行选中<br>   m_tableView-&gt;horizontalHeader()-&gt;setStretchLastSection(true);//最后一行是否铺满剩余空间<br>   QHeaderView *verticalHeader = m_tableView-&gt;verticalHeader(); // 垂直表头<br>   QHeaderView *horizontalHeader = m_tableView-&gt;horizontalHeader(); // 水平表头<br>   verticalHeader-&gt;hide(); // 隐藏垂直方向行头<br>   verticalHeader-&gt;setDefaultSectionSize(44); // 设置高度<br>   horizontalHeader-&gt;setMinimumHeight(44); // 设置最小高度<br>   m_tableView-&gt;setColumnWidth(0, 36);// 设置列宽度</p>
+<h2 id="圆角边框"><a href="#圆角边框" class="headerlink" title="圆角边框"></a>圆角边框</h2><p>void ImportPOSFileAdjustWidget::paintEvent(QPaintEvent *event)<br>{<br>    QStylePainter painter(this);<br>    painter.setRenderHint(QPainter::Antialiasing);<br>    painter.setBrush(QBrush(Qt::transparent));<br>    painter.setPen(QColor(“#C1C1C1”));<br>    QRect rect = this-&gt;rect();<br>    painter.drawRoundedRect(rect, 3, 3);<br>    QWidget::paintEvent(event);<br>}</p>
+<h2 id="间距"><a href="#间距" class="headerlink" title="间距"></a>间距</h2><p>mainLayout-&gt;setSpacing(10);<br>mainLayout-&gt;setMargin(1);<br>mainLayout-&gt;setContentsMargins(1, 1, 1, 1);</p>
+<h2 id="tableView-Delegate"><a href="#tableView-Delegate" class="headerlink" title="tableView Delegate"></a>tableView Delegate</h2><p>void PosInfoTableDelegate::paint(QPainter <em>painter, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index) const<br>{<br>    QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;</em> buttons = m_btns.value(index);<br>    if (!buttons) {<br>        QStyleOptionButton* button1 = new QStyleOptionButton();<br>        button1-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4);<br>        button1-&gt;text = QStringLiteral(“查看”);<br>        QPalette pal = button1-&gt;palette;<br>        pal.setColor(QPalette::ButtonText, QColor(255, 255, 255));<br>        button1-&gt;palette = pal;<br>        button1-&gt;icon = QIcon(“:/new/icon/largeImage.png”);<br>        button1-&gt;iconSize = QSize(40,40);</p>
+<pre><code>    QStyleOptionButton* button2 = new QStyleOptionButton();
+    button2-&gt;rect = option.rect.adjusted(button1-&gt;rect.width() + 4, 4, -4, -4);
+    button2-&gt;icon =  QIcon(&quot;:/new/icon/closeTab.png&quot;);
+    button2-&gt;iconSize = QSize(40,40);
+    buttons =new  QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;(button1, button2);
+    (const_cast&lt;PosInfoTableDelegate *&gt;(this))-&gt;m_btns.insert(index, buttons);
 &#125;
-import进入页面
-import &#123;
-  iceFaultDelete,
-  iceFaultSearch,
-&#125; from &#39;api/ice-fault&#39;
-6.组建引入
-a)import
-import BarChart from &#39;@/components/charts/ice-fault/barChart.vue&#39;
-b)components
- components: &#123;
-    BarChart,
-  &#125;,
-c)使用
-&lt;bar-chart :chart-data=&quot;areaArrCount&quot; :count=&quot;areaArrCount.total&quot; @bar-detail=&quot;openChartDetail&quot;&gt; &lt;/bar-chart&gt;
-传值在组建的props中定义
+buttons-&gt;first-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4); //
+buttons-&gt;second-&gt;rect = option.rect.adjusted(buttons-&gt;first-&gt;rect.width() + 4, 4, -4, -4);
+painter-&gt;save();
+
+if (option.state &amp; QStyle::State_Selected) &#123;
+    painter-&gt;fillRect(option.rect, option.palette.highlight());
+
+&#125;
+painter-&gt;restore();
+QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;first, painter);
+QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;second, painter);
+</code></pre>
+<p>}</p>
+<p>bool PosInfoTableDelegate::editorEvent(QEvent <em>event, QAbstractItemModel <em>model, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index)<br>{<br>    if (event-&gt;type() == QEvent::MouseButtonRelease) {<br>        QMouseEvent</em> e =(QMouseEvent</em>)event;<br>        if (m_btns.contains(index)) {<br>            QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;* btns = m_btns.value(index);<br>            if (btns-&gt;first-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                emit lookRow(index.row());<br>            } else if(btns-&gt;second-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                btns-&gt;second-&gt;state &amp;= (~QStyle::State_Sunken);<br>                emit deleteRow(index.row());<br>            }<br>        }<br>    }<br>    return false;<br>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift229QT%E5%AE%9E%E6%88%98%E8%A1%A8%E5%8D%95%E5%86%85%E7%BB%98%E5%88%B6%E5%A4%9A%E4%B8%AA%E6%8C%89%E9%92%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/06/M_Swift229QT%E5%AE%9E%E6%88%98%E8%A1%A8%E5%8D%95%E5%86%85%E7%BB%98%E5%88%B6%E5%A4%9A%E4%B8%AA%E6%8C%89%E9%92%AE/" class="post-title-link" itemprop="url">QT实战表单绘制多个按钮</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-24 16:16:34" itemprop="dateModified" datetime="2021-06-24T16:16:34+08:00">2021-06-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>这个确实难倒我了，我百度了很多地方最终也不甚明白，特别是在绘制的地方，当我调整绘制样式的时候真是的费了九牛二虎之力啊，太难了，下面展示下代码吧</p>
+<p>void PosInfoTableDelegate::paint(QPainter <em>painter, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index) const<br>{<br>    QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;</em> buttons = m_btns.value(index);<br>    if (!buttons) {<br>        QStyleOptionButton* button1 = new QStyleOptionButton();<br>        button1-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4);<br>        button1-&gt;text = QStringLiteral(“查看”);<br>        QPalette pal = button1-&gt;palette; // 这里是为了让文本颜色的修改，这个调色板还有很多接口，但是我操作很多都无法改变背景色，让我很失望<br>        pal.setColor(QPalette::ButtonText, QColor(255, 255, 255));<br>        button1-&gt;palette = pal;<br>        button1-&gt;icon = QIcon(“://largeImage.png”);<br>        button1-&gt;iconSize = QSize(40,40);</p>
+<pre><code>    QStyleOptionButton* button2 = new QStyleOptionButton();
+    button2-&gt;rect = option.rect.adjusted(button1-&gt;rect.width() + 4, 4, -4, -4);
+    button2-&gt;icon =  QIcon(&quot;://closeTab.png&quot;);
+    button2-&gt;iconSize = QSize(40,40);
+    buttons =new  QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;(button1, button2);
+    (const_cast&lt;PosInfoTableDelegate *&gt;(this))-&gt;m_btns.insert(index, buttons);
+&#125;
+buttons-&gt;first-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4); //
+buttons-&gt;second-&gt;rect = option.rect.adjusted(buttons-&gt;first-&gt;rect.width() + 4, 4, -4, -4);
+painter-&gt;save();
+
+if (option.state &amp; QStyle::State_Selected) &#123;
+    painter-&gt;fillRect(option.rect, option.palette.highlight());
+
+&#125;
+painter-&gt;restore();
+// 这个地方CE_PushButtonLabel 是为了防止按钮带背景色，我曾采用n种方式都无法去除背景色，最后只能这样了
+QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;first, painter);
+QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;second, painter);
+</code></pre>
+<p>}<br>// 这个是点击事件，不多说<br>bool PosInfoTableDelegate::editorEvent(QEvent <em>event, QAbstractItemModel <em>model, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index)<br>{<br>    if (event-&gt;type() == QEvent::MouseButtonRelease) {<br>        QMouseEvent</em> e =(QMouseEvent</em>)event;<br>        if (m_btns.contains(index)) {<br>            QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;* btns = m_btns.value(index);<br>            if (btns-&gt;first-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                emit lookRow(index.row());<br>            } else if(btns-&gt;second-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                btns-&gt;second-&gt;state &amp;= (~QStyle::State_Sunken);<br>                emit deleteRow(index.row());<br>            }<br>        }<br>    }<br>    return false;<br>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">QT实战技巧</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-24 14:33:58" itemprop="dateModified" datetime="2021-06-24T14:33:58+08:00">2021-06-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>首先要绘制垂直方向的布局，然后再在垂直方向的布局里面嵌套水平方向的布局<br>布局也能设置间隔边距<br>mainLayout-&gt;setSpacing(10);<br>mainLayout-&gt;setMargin(1);<br>样式可以直接采用setStyleSheet，同css一摸一样<br>左侧对齐的话可以在末尾添加一个addSpacerItem，将控件压制到左侧<br>QSpacerItem的QSizePolicy是一个万能的东西，我们可以根据他设置大小固定不固定，要不要最大化等等<br>设置Dialog关闭立即删除this-&gt;setAttribute(Qt::WA_DeleteOnClose, true);</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">后端与微服务知识</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-25 10:32:34" itemprop="dateModified" datetime="2021-06-25T10:32:34+08:00">2021-06-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><p>具有控制反转（IoC）和面向切面（AOP）两大核心，通过声明式方式灵活地进行事务的管理，提高开发效率和质量。包含如下模块：<br> Data Access/Integration（数据访问／集成）： JDBC、ORM、OXM、JMS 和 Transactions 模块<br> Web 层包括 Web、Servlet、Struts 和 Portlet 组件<br> Core Container（核心容器）由 Beans 模块、Core 核心模块、Context 上下文模块和 Expression Language 表达式语言模块组成<br>AOP 模块：提供了面向切面编程实现，允许定义方法拦截器和切入点，将代码按照功能进行分离，以降低耦合性。<br>Aspects 模块：提供与 AspectJ 的集成，是一个功能强大且成熟的面向切面编程（AOP）框架<br>Instrumentation 模块：提供了类工具的支持和类加载器的实现，可以在特定的应用服务器中使用。<br>Test 模块：支持 Spring 组件，使用 JUnit 或 TestNG 框架的测试。</p>
+<h2 id="spring-boot"><a href="#spring-boot" class="headerlink" title="spring boot"></a>spring boot</h2><p>其设计目的是用来简化新Spring应用的初始搭建以及开发过程，开箱即用和约定优于配置。该框架使用了特定的方式来进行配置，从而使开发人员不再需要定义样板化的配置。内嵌Tomcat或Jetty等Servlet容器，简化Maven配置，尽可能自动配置Spring容器</p>
+<h2 id="Spring-Cloud"><a href="#Spring-Cloud" class="headerlink" title="Spring Cloud"></a>Spring Cloud</h2><p> 就是微服务系统架构的一站式解决方案，在平时我们构建微服务的过程中需要做如 服务发现注册 、配置中心 、消息总线 、负载均衡 、断路器 、数据监控 等操作，而 Spring Cloud 为我们提供了一套简易的编程模型，使我们能在 Spring Boot 的基础上轻松地实现微服务项目的构建。</p>
+<h2 id="Spring-Cloud-Alibaba"><a href="#Spring-Cloud-Alibaba" class="headerlink" title="Spring Cloud Alibaba"></a>Spring Cloud Alibaba</h2><p>是阿里巴巴提供的微服务开发一站式解决方案，是阿里巴巴开源中间件与 Spring Cloud 体系的融合。基于 Nacos 提供 spring-cloud-alibaba-starter-nacos-discovery &amp; spring-cloud-alibaba-starter-nacos-config 实现了服务注册 &amp; 配置管理功能。</p>
+<h2 id="微服务意义"><a href="#微服务意义" class="headerlink" title="微服务意义"></a>微服务意义</h2><p>微服务的核心是服务治理，而服务治理的关键是服务划分。故微服务架构的本质就是对码农的分化和治理</p>
+<h2 id="Nacos"><a href="#Nacos" class="headerlink" title="Nacos"></a>Nacos</h2><p>帮助您更敏捷和容易地构建、交付和管理微服务平台。 Nacos 是构建以“服务”为中心的现代应用架构(例如微服务范式、云原生范式)的服务基础设施。</p>
+<h2 id="Feign"><a href="#Feign" class="headerlink" title="Feign"></a>Feign</h2><p>是声明式的web service客户端，它让微服务之间的调用变得更简单了，类似controller调用service。Spring Cloud集成了Ribbon和Eureka，可在使用Feign时提供负载均衡的http客户端。</p>
+<h2 id="Spring-Cloud-Ribbon"><a href="#Spring-Cloud-Ribbon" class="headerlink" title="Spring Cloud Ribbon"></a>Spring Cloud Ribbon</h2><p>是一个基于HTTP和TCP的客户端负载均衡工具，它基于Netflix Ribbon实现。通过Spring Cloud的封装，可以让我们轻松地将面向服务的REST模版请求自动转换成客户端负载均衡的服务调用</p>
+<h2 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h2><p>是阿里开源的项目，提供了流量控制、熔断降级、系统负载保护等多个维度来保障服务之间的稳定性</p>
+<h2 id="网关GateWay"><a href="#网关GateWay" class="headerlink" title="网关GateWay"></a>网关GateWay</h2><p>网关的角色是作为一个 API 架构，用来保护、增强和控制对于 API 服务的访问。Spring Cloud Gateway旨在为微服务架构提供一种简单而有效的统一的API路由管理方式。</p>
+<h2 id="Spring-Cloud-Euraka"><a href="#Spring-Cloud-Euraka" class="headerlink" title="Spring-Cloud Euraka"></a>Spring-Cloud Euraka</h2><p>是Spring Cloud集合中一个组件，它是对Euraka的集成，用于服务注册和发现。Eureka是Netflix中的一个开源框架。它和 zookeeper、Consul一样，都是用于服务注册管理的，同样，Spring-Cloud 还集成了Zookeeper和Consul。<br>Eureka由多个instance(服务实例)组成，这些服务实例可以分为两种：Eureka Server和Eureka Client。为了便于理解，我们将Eureka client再分为Service Provider和Service Consumer。<br>Eureka Server 提供服务注册和发现<br>Service Provider 服务提供方，将自身服务注册到Eureka，从而使服务消费方能够找到<br>Service Consumer服务消费方，从Eureka获取注册服务列表，从而能够消费服务</p>
+<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><p>是一个分布式的，开放源码的分布式应用程序协调服务，是Google的Chubby一个开源的实现，是Hadoop和Hbase的重要组件。它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
+<h2 id="cap原理"><a href="#cap原理" class="headerlink" title="cap原理"></a>cap原理</h2><p>P:Partition tolerance,网络分区容错。类似多机房部署，保证服务稳定性。<br>A: Availability，可用性。<br>C:Consistency ，一致性。<br>CAP定理：CAP三个属性对于分布式系统不同同时做到。如AP/CP/AC。</p>
+<h2 id="Zookeepr和Eureka区别"><a href="#Zookeepr和Eureka区别" class="headerlink" title="Zookeepr和Eureka区别"></a>Zookeepr和Eureka区别</h2><p>（1）Zookeeper是CP，分布式协同服务，突出一致性。对ZooKeeper的的每次请求都能得到一致的数据结果，但是无法保证每次访问服务可用性。如请求到来时，zookeer正在做leader选举，此时不能提供服务，即不满足A可用性。<br>（2）Euere是AP，高可用与可伸缩的Service发现服务，突出可用性。相对于Zookeeper而言，可能返回数据没有一致性，但是保证能够返回数据，服务是可用的。</p>
+<h2 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h2><p>是一个开源的、提供友好操作界面的持续集成(CI)工具，起源于Hudson（Hudson是商用的），主要用于持续、自动的构建/测试软件项目、监控外部任务的运行（这个比较抽象，暂且写上，不做解释）。Jenkins用Java语言编写，可在Tomcat等流行的servlet容器中运行，也可独立运行。通常与版本管理工具(SCM)、构建工具结合使用。常用的版本控制工具有SVN、GIT，构建工具有Maven、Ant、Gradle。</p>
+<h2 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h2><p>是一个基于Apache Ant和Apache Maven概念的项目自动化构建开源工具。它使用一种基于Groovy的特定领域语言(DSL)来声明项目设置，目前也增加了基于Kotlin语言的kotlin-based DSL，抛弃了基于XML的各种繁琐配置</p>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>是一个开源的应用容器引擎，基于 Go 语言 并遵从 Apache2.0 协议开源。<br>Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。<br>容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低</p>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>是一个开源的使用 ANSI C 语言编写、遵守 BSD 协议、支持网络、可基于内存、分布式、可选持久性的键值对(Key-Value)存储数据库，并提供多种语言的 API。<br>Redis 通常被称为数据结构服务器，因为值（value）可以是字符串(String)、哈希(Hash)、列表(list)、集合(sets)和有序集合(sorted sets)等类型。</p>
+<h2 id="seata"><a href="#seata" class="headerlink" title="seata"></a>seata</h2><p>阿里开源的，是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift205SVG%E4%BA%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift205SVG%E4%BA%86%E8%A7%A3/" class="post-title-link" itemprop="url">SVG了解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:32" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Svg：是使用 XML 来描述二维图形和绘图程序的语言。可伸缩矢量图形 (Scalable Vector Graphics)，使用 XML 格式定义图形，图像在放大或改变尺寸的情况下其图形质量不会有所损失<br>svg解析：<br>第一行包含了 XML 声明。请注意 standalone 属性！该属性规定此 SVG 文件是否是”独立的”，或含有对外部文件的引用。</p>
+<p>SVG 代码以 <svg> 元素开始<br>SVG有一些预定义的形状元素，可被开发者使用和操作：<br>矩形 <rect><br>圆形 <circle><br>椭圆 <ellipse><br>线 <line><br>折线 <polyline><br>多边形 <polygon><br>路径 <path><br>文本 - <text><br>stroke<br>stroke-width<br>stroke-linecap<br>stroke-dasharray<br>滤镜<br>模糊效果<defs> 和 <filter><br>阴影 feOffset feBlend<br>线性渐变 - <linearGradient><br>放射性渐变 - <radialGradient><br>path说明：<br>M = moveto<br>L = lineto<br>H = horizontal lineto<br>V = vertical lineto<br>C = curveto<br>S = smooth curveto<br>Q = quadratic Bézier curve<br>T = smooth quadratic Bézier curveto<br>A = elliptical Arc<br>Z = closepath</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/" class="post-title-link" itemprop="url">vue构建前端权限管理页面</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:38" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前端开发完后需要实现权限管理，需要不同的地方有不同的权限，本来这个应该是后端的一个接口来控制的，但是，思来想去页面是前端的，<br>也得前端告诉后端有哪些地方需要权限啊，接下来就是权限设计的计划了<br>因为最终还是要后端来给前端的，交互方式普遍都是采用json，那么就思考怎么生成json吧，具体json设计如下<br>     array:[<br>      {<br>        key:”dashbord”,<br>        name:”总览权限控制”,<br>        value:[<br>          {<br>            key:”show”,<br>            name:’是否显示’,<br>            value: true<br>          },{<br>            key:”show_daily”,<br>            name:’是否显示工作日报’,<br>            value: true<br>          }<br>        ]<br>    }];<br>其实非常直接，就是哪些对方需要权限，然后按模块划分出来，这样就是一个数组的结构，然后每个数组就是一个模块<br>每个模块都有一个key来表示模块的唯一性，有name来描述模块，模块下面有很多权限，我们又设计成一个数组<br>每个权限都是key、name、value形式，分别表示唯一性，权限描述、是否具备权限。<br>json设计完了，那么我想我们如果有一个非常漂亮的展示页面就更直观了，我们使用elementui，开源的框架能够非常方便的构建ui<br>具体设计如下：<br> &lt;el-tabs tab-position=”left” @tab-click=”handleClick”&gt;<br>    <el-tab-pane :label="item.name" v-for="(item,index) of array" :key="index"><br>      <el-row :gutter="20" v-for="(subitem,subindex) of item.value" :key="subindex" style="padding:10px;"><br>        <el-col :span="8"><el-input v-model="subitem.name" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8"><el-input v-model="subitem.key" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8" style="line-height:40px;"><el-switch v-model="subitem.value"></el-switch></el-col><br>      </el-row><br>      <el-row><br>        <el-col :span="20">&lt;el-button @click=”addChildClick”&gt;新增</el-button></el-col><br>      </el-row><br>    </el-tab-pane><br>  </el-tabs><br>代码非常简单，就是遍历json，把模块做成一个左侧的tab栏<br>然后再每个模块栏里面遍历value，用输入框和switch表示权限信息，我的想法是利用input的双向绑定，我们能够非常简单的修改编辑权限<br>当然，编辑的也就是我们的json数据了，我们再设计一个下载按钮就可以非常方便的下载数据了：<br>     var json = JSON.stringify(this.array,null,’\t’);<br>    const link = document.createElement(‘a’)<br>    link.style.display = ‘none’<br>    link.href = window.URL.createObjectURL(new Blob([json]))<br>    link.setAttribute(‘download’, ‘permissions.json’)<br>    document.body.appendChild(link)<br>    link.click()<br>    document.body.removeChild(link)<br>后面我们又设计了一个新增的按钮，然后也可以新增权限了，这里就不再赘述了，<br>最大的问题是我们修改完数据，我们不能动态的修改vue中json的代码，我想我们是不是应该把这个下载和json设计在一个位置，这样就可以实现数据修改了</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift208Vue%E6%8E%A5%E5%8F%A3%E6%A8%A1%E7%89%88%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift208Vue%E6%8E%A5%E5%8F%A3%E6%A8%A1%E7%89%88%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">vue接口模版设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:41" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>因为最近后端在做微服务的改造，我们根据后端的代码也进行了一下前端api接口的整合，也按照后端微服务的形式<br>设计成了一个个的模块，每个模块代表一个微服务。<br>整理完之后，我突然发现，其实前端关于接口方面的代码非常的统一，比较适合做成模版，然后直接拷贝就可以了<br>比较像Xcode，idea等里面的快捷键设计，就像iOS写UITableVuew一样，代理方法非常多，一个一个的敲代理方法<br>会比较耗时，我们通常会将这段代码设计成一个代码块，然后设置一个快捷输入，就能够非常快速的把这段代码敲出来<br>当然我现在写前端比较少，不知道vs code里面是不是也有这种设计，但是今天闲来没事，想设计一个这样的页面，<br>实现代码的模版导出，首先，我们先整理出接口的前端页面有哪些：<br>    // 接口封装<br>    export function getIceLineCount(data){ // 接口名称<br>      return request({<br>        url:<code>/indexWeb/lineCount</code>, // 接口地址<br>        method:’post’, // method<br>        data,// 请求参数<br>      })<br>    }<br>    // 接口参数<br>    iceLineCountQuery: {<br>        pageNum: 1,<br>        pageSize: 20,<br>        deviceName :’’,<br>        cityCompany: “”,<br>        districtCompany: “”,<br>        sfjnsy:1,<br>        voltageLevel: [],<br>    },<br>    // 接口调用<br>    getIceLineCount() {<br>       getIceLineCount(this.iceLineCountQuery).then((res) =&gt; {<br>          console.log(‘getIceLineCount’, res)<br>       })<br>    },<br>其实主要就是这三部分，接口封装、接口参数、接口调用，我们设计一个UI界面<br>    <el-input v-model="methodName" placeholder="请输入接口名称"></el-input><br>    <el-input v-model="url" placeholder="请输入接口地址"></el-input><br>    <el-input v-model="parmas" type="textarea" autosize placeholder="请输入参数"></el-input><br>    <el-input v-model="result" type="textarea" autosize placeholder="请输入参数"></el-input><br>UI界面比较简单，输入接口名称，接口地址，请求参数，输出：接口封装、接口参数、接口调用，的相应代码<br>我们定义模版字符串如下：<br>    get result() : string {<br>        return “// 接口封装\nexport function get” + this.methodName +  “(data){\n<br>      return request({\n<br>        url:<code>&quot; + this.url + &quot;</code>,\n<br>        method:’post’,\n<br>        data \n<br>      })\n<br>    } \n<br>    // 请求参数\n”+ this.methodName.charAt(0).toLowerCase() + this.methodName.slice(1) + “Query: {\n<br>    “ + this.parmas + “\n<br>    },\n<br>    // 接口调用\nget”+ this.methodName +”() {\n<br>      get”+ this.methodName +”(this.”+ this.methodName.charAt(0).toLowerCase() + this.methodName.slice(1) + “Query).then((res) =&gt; {\n<br>        console.log(‘get”+ this.methodName +”‘, res)\n<br>      })\n<br>    },”<br>然后利用input model的双向绑定特性，只要我们输入方法名，接口地址和参数我们就能动态的变更模版字符串，<br>然后输出接口模版，这样我们就实现了api模版的导出了，非常简单。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/" class="post-title-link" itemprop="url">开发杂谈</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:49" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>iOS路由实现原理：基于url，基于反射<br>Category+NSInvocation 方案的优点是便捷，因为 Category 的专用接口放在平台库，以后有除了 BKit 以外的其他调用方也可以直接调用，还有更多强大的功能。<br>组件之间的依赖除了显式的依赖，还存在很多隐式依赖，代码层面，除了普通的接口依赖，还有宏依赖、枚举依赖、全局变量依赖以及内联函数等的依赖。单仓 lint 进行编译链接完备性检查并不能解决依赖变动对其他二进制的影响。<br>因此需要借助源码层面的依赖分析，判断当前组件的变更对其他依赖当前组件的二进制是否有影响，在 CI 流程中及时发现并拦截。否则错误的二进制发版，会直接导致整个 CI 研发流程和本地研发都受到影响。<br>大型项目的组件化工作是一个系统性工程。涉及工程架构的改造、CI/CD 研发工具链的支撑、本地研发工具链的支撑，业务架构的设计优化，需要从各个方面综合考虑成本和收益。<br>没有最好的架构，只有更好的架构，在架构演进的过程中，我们需要充分考虑架构的改动对业务的影响以及能给业务带来的收益。好的架构一定是能帮助业务节省时间，保证质量的。与此同时，我们在架构改进的过程中，要保证不能影响业务的正常迭代，所以向前兼容且避免大面积冲突也是很重要的事情。<br>组件化里面处处都有惊喜，比如一个小小的 hmap 优化，可以很大程度的减少编译耗时，比如一个二进制的压缩和解压的优化，可以很大程度减少 pod install 的整体耗时。<br>当然这里面也会有很多很棘手的问题，需要通过一些特殊的方案解决，比如针对分布式开发，由于阻塞式发版必然会导致一些不同分支存在冲突的代码发版后影响主干的稳定性。<br>前端可视化探索总结：基于积木形式的拖拽界面，基于markdown形式的文档编辑界面<br>Venom：iOS工程集成，类似pod<br>Metabase：可以帮助你把数据库中的数据更好的呈现给更多人<br>Lerna js多包存储库管理工具<br>H5长列表渲染：<br>如果只渲染展示可见范围内的 dom ，原来的滚动条就没了，如何重现原有的滚动条？<br>滚动条的问题解决后，如何根据当前滚动位置来知道该渲染列表的哪部分？<br>ThreadPoolExecutor：类似iOS中的GCD<br>线程池运行的状态，并不是用户显式设置的，而是伴随着线程池的运行，由内部来维护。线程池内部使用一个变量维护两个值：运行状态(runState)和线程数量 (workerCount)。在具体实现中，线程池将运行状态(runState)、线程数量 (workerCount)两个关键参数的维护放在了一起<br>主要作用：任务调度、任务缓冲、线程回收<br>LruCache：采用的缓存算法为LRU(Least Recently Used)，即最近最少使用算法。这一算法的核心思想是当缓存数据达到预设上限后，会优先淘汰近期最少使用的缓存对象。LruCache内部维护一个双向链表和一个映射表。链表按照使用顺序存储缓存数据，越早使用的数据越靠近链表尾部，越晚使用的数据越靠近链表头部；映射表通过Key-Value结构，提供高效的查找操作，通过键值可以判断某一数据是否缓存，如果缓存直接获取缓存数据所属的链表节点，进一步获取缓存数据。LruCache结构图如下所示，上半部分是双向链表，下半部分是映射表（不一定有序）。双向链表中value_1所处位置为链表头部，value_N所处位置为链表尾部。<br>HashLruCache：引入某种哈希算法，将缓存数据分散到N个LruCache上。<br>冷启动解决方案：<br>    解决存量问题：优化当前性能瓶颈点，优化启动流程，缩短冷启动时间。<br>    管控增量问题：冷启动流程规范化，通过代码范式和文档指导后续冷启动过程代码的维护，控制时间增量。<br>    完善监控：完善冷启动性能指标监控，收集更详细的数据，及时发现性能问题。<br>iOS静态分析：Static Analyzer、Infer、OCLint<br>Js定时器：1.存放 callback 2.启动一个倒计时 3.倒计时结束，取出存好的 callback，RUN！<br>前端加密：我们也可以借助 webpack-subresource-integrity 轻易实现 integrity 的添加过程，保持对开发者透明。<br>开启 SRI，浏览器会对相关资源进行 CORS 校验，所以被加载的资源要么在同域下，要么得满足 CORS 机制（具体方式可查看 脚本错误量极致优化-监控上报与 Script error 中 跨源资源共享机制 ( CORS ) 章节）。<br>HTTPS 可以有效应对流量劫持的问题，SRI 在资源完整性再上一道屏障，CSP 也进行了其他方面的补充。“三驾马车” 为页面资源安全 “保驾护航”。当然这也绝非银弹，安全之路充满着荆棘与挑战，任重道远。<br>alloy-worker：Worker 的多线程能力有望成为复杂前端项目的标配, 在减少 UI 线程卡顿和压榨计算机性能上有收益. 但目前国内实践较少, 一方面是业务复杂程度未触及; 另一方面是社区缺少科普和实践分享.<br>聊天界面反向渲染，竟然实现了聊天信息始终在底部。。。。<br>html优化：压缩、减包、拆包、动态加载包及图片优化上<br>cdn 分发、dns 解析、http 缓存、数据预请求，数据缓存及首屏优化大杀器——直出等<br>大部分主流的页面会通过服务器进行渲染，吐出 html 文件到前端<br>通过离线包技术能够很好解决 html 文件本身加载需要时间的问题。离线包基本思路都是通过 webview 统一拦截 url，将资源映射到本地离线包，更新的时候对版本资源检测，下载和维护本地缓存目录中的资源。比如腾讯的 webso 和 Alloykit 的离线包方案。<br>前端内存优化：</p>
+<ol>
+<li>避免没有必要全局变量的使用<br>我们可以在 JS 文件的开头通过添加”use strict” 开启严格的解析模式，来避免一些意外创建的全局变量。</li>
+<li>及时解除引用</li>
+<li>减少对象的创建</li>
+<li>内存不是缓存</li>
+<li>避免复杂的递归调用；</li>
+<li>合理使用的 IndexedDB</li>
+</ol>
+<p>我们应该编写有类型系统的 JavaScript，而不是能编译成 JavaScript 的 Java/C#。任何一个 TypeScript 程序，在手动删去类型部分，将后缀改成 .js 后，都应能够正常运行。<br>基本类型<br>基本类型，也可以理解为原子类型。包括 number、boolean、string、null、undefined、function、array、字面量（true，false，1，2，‘a’）等。它们无法再细分。<br>页面可视化组建：html模版、配置字段、业务逻辑、布局样式、Json数据驱动</p>
+<p>AVAudioSession<br>AVAudioSessionMode<br>AVAudioSessionCategoryAmbient // 背景声音，可以与其他音乐混合，用于以非语音为主的应用<br>AVAudioSessionCategory<br>AVAudioSessionCategoryPlayback // 只用于播放<br>AVAudioSessionCategoryPlayAndRecord // 既可以录音也可以播放<br>AVAudioSessionInterruptionNotification // 电话打断等<br>媒体声音被抑制：<br>媒体声音在媒体音量下开启播放，播放途中因为连麦而切换到了通话音量，此时因为系统特性，媒体音量会被通话音量抑制而导致声音变小。<br>针对该问题，我们使用音视频 SDK 提供的混音、混流功能来规避。基本原理是播放媒体资源时，我们拿到资源的 pcm 音频数据，将数据抛给 RTC 的 audioUnit 进行混合，由 RTC 音频播放单元统一播放，如果此时 RTC 使用的是通话音量，则媒体资源也是使用的通话音量播放，反之亦然。以此来保证媒体资源与 RTC 始终保持统一的音量控制机制，而避免声音大小存在差异。<br>安装包优化<br>2.1、使用合适的资源压缩配置<br>    Pod 库和主工程的最低支持版本从 iOS 8.0 提升成 iOS 9.0<br>    开启 Pod 库和主工程 Xcode Build Settings 中的 ASSETCATALOG_COMPILER_OPTIMIZATION space 选项<br>     xcrun assetutil –info Assets.car 命令检查 Assets.car 中每张图片使用的编码压缩算法<br>2.2、使用 RGB with palette 压缩图片<br>Mach-O 文件优化<br>3.1、使用 -Oz 编译参数<br>Oz 的核心原理是对重复的连续机器指令外联成函数进行复用，和“内联函数”的原理正好相反。因此，开启 Oz，能减小二进制的大小，但同时理论上会带来执行效率的额外消耗。<br>3.2、使用链接时优化 LTO<br>Link-Time Optimization 链接时优化，是 Xcode 自带的一个编译/链接参数。根据 WWDC 2016 《What’s New in LLVM》[4]的介绍，LTO 对包大小和运行效率都有正向影响。今日头条在编译和链接中均开启 Incremental LTO 后，包体积减小 6.5MB。<br>如果我们用 @dynamic 修饰一个属性，不生成成员变量、get/set 方法，则一个属性可以由 224B 减少到 36B，即仅包含 property 部分的大小。<br>3.5、__TEXT 段迁移<br>在链接阶段使用 -rename_p 选项将 __TEXT,__text 迁移到 __BD_TEXT,__text，减少苹果对可执行文件的加密范围，提升可执行文件的压缩效率，从而减少 Download Size。<br>WebView 渲染需要经过下面几个步骤：<br>    解析 HTML 文件<br>    加载 JavaScript 和 CSS 文件<br>    解析并执行 JavaScript<br>    构建 DOM 结构<br>    加载图片等资源<br>    页面加载完毕<br>模板拆分<br>    把头条详情页的公共样式 CSS 和 逻辑 JS 都抽离出来，形成一个独立而完备的详情页模板，这样我们就可以把模板直接内置在客户端中。<br>模板优化<br>    WebView 需要在加载完主 HTML 之后再去加载 HTML 中的 JS 和 CSS，需要多次 IO 操作，于是我们将 JS 和 CSS 还有一些图片都内联到一个文件中，这样，加载模板时就只需要一次 IO 操作，也大大减少因为 IO 加载冲突导致模板加载失败问题<br>模板简化<br>    我们将部分非必须的脚本异步化拉取，精简不必要的样式和 JS 代码，将模板大小压缩了 20% 以上<br>    我们并不需要在用户进入页面的时候才去创建 WebView 以及加载模板，我们只需要在合适的时机在后台创建 WebView，并且提前预热加载模板，当用户点击进入页面的时候就能使用已经加载好模板的 WebView，直接将详情页的内容数据通过 JS 注入到页面中，前端收到数据后进行页面渲染即可。<br>    我们每次使用的时候都是同一个模板，所以我们使用完当前 WebView 之后，只需要在用户退出页面的时候把正文数据清空，这样进入下一个页面的时候就能够继续复用这个 WebView 重新注入数据即可。<br>网络优化<br>    CDN 加速<br>    我们将详情页内容数据分为静态和动态两部分，将正文内容、标题、作者栏等用户主要消费的又基本不变的内容托管到了 CDN 上，托管到 CDN 之后，全国各地的用户可以直接从最佳节点就获取到详情页数据，也大大节省了带宽成本。<br>    容灾<br>    为了防止某个 CDN 出现故障，导致服务雪崩，服务端会下发多个 CDN 链接，当用户访问当前 CDN 节点的出异常时，可以快速自动切换到下个 CDN 节点。<br>    2. 快速超时<br>    一般的超时策略，客户端在请求时，会遍历请求 CDN 1、2、3。如果这些 CDN 都请求失败，则整个网络请求算作失败。<br>    假设请求 CDN 的超时时间是 15s。如果 CDN 1 出现故障，则需要等待 15s 才能切换到 CDN 2上，这对于详情页的加载时间来说是不可接受，如果用户网络突然变差，则需要等待 45s 才能返回失败展示错误页。<br>    渲染优化<br>    为了提高用户的首屏效率，我们在服务端就会把所有的详情页正文的 HTML 数据组装好，通过将服务端直出内容注入到页面中时，可以直接给 WebView 进行渲染，对于其他动态下发的内容（比如相关搜索），前端再进行二次异步处理，提升用户效率。<br>    所以在详情页中，我们会将图片和视频等非文字内容通过原生组件的方式放在客户端进行渲染，既可以提高渲染效率，也可以减少不必要的流量消耗。<br>    当 WKWebView 上占用内存过大时，WKWebView 所在的 WebContent Process 会被系统 kill 掉，反映在用户体验上就是发生了白屏。<br>    WKWebView 提供的回调 webViewWebContentProcessDidTerminate 函数中通过 reload 方法重新加载当前页面恢复，但是这种情况只适用于通过 loadRequest 加载的请求，在详情页中，由于使用了模板化的 WebView 中，重新 reload 只能重新 reload 模板，并不能正常恢复整个详情页，需要客户端重新加载模板之后再重新注入数据。</p>
+<p> 遍历方式</p>
+<pre><code>for each或者iterator
+移动端适配mediaquery媒体查询
+@media screen and (max-width: 300px) &#123;
+    body &#123;
+        background-color:lightblue;
+    &#125;
+&#125;
+rem原理
+字体单位，跟px不同的是根据root element动态变化
+1ren=16px 浏览器默认字体大小
+
+
+Java注解
+@Override @Deprecated @Suppvisewarning
+Spring注解
+@Autowirte @Service @Repository
+MyBatis
+@InsertProvider @UpdateProvider @Options
 </code></pre>
 
       
@@ -322,7 +809,7 @@ c)使用
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/02/M_Swift167vue%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -336,7 +823,7 @@ c)使用
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/02/M_Swift167vue%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">vue前端开发环境搭建</a>
+            <a href="/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Dart学习</a>
         </h2>
 
         <div class="post-meta">
@@ -345,16 +832,10 @@ c)使用
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-03-02 16:18:56" itemprop="dateCreated datePublished" datetime="2021-03-02T16:18:56+08:00">2021-03-02</time>
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:55" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-21 14:34:08" itemprop="dateModified" datetime="2021-04-21T14:34:08+08:00">2021-04-21</time>
-              </span>
 
           
 
@@ -367,897 +848,7 @@ c)使用
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>安装如下框架<br>node、npm、nvm等<br>mac推荐使用homebrew安装</p>
-<h2 id="开发工具"><a href="#开发工具" class="headerlink" title="开发工具"></a>开发工具</h2><p>建议Visual Studio Code （vscode有很多插件，网上自行百度）</p>
-<h2 id="项目创建"><a href="#项目创建" class="headerlink" title="项目创建"></a>项目创建</h2><p>采用vue-cli创建项目，先全局安装vue-cli<br>Vue 3 npm install -g @vue/cli<br>Vue 2 npm install -g vue-cli<br>创建完成后输入vue -v 查看版本<br>Vue2创建项目 vue init webpack projectname<br>Vue3创建项目 vue create projectname<br>新项目建议使用vue3，创建流程参考如下地址<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/loveyaxin/p/10107550.html">https://www.cnblogs.com/loveyaxin/p/10107550.html</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/12a64b7bc665">https://www.jianshu.com/p/12a64b7bc665</a><br>建议安装依赖有：<br>Choose Vue version<br>Babel<br>TypeScript<br>Router<br>Vuex<br>CSS Pre-processors</p>
-<h2 id="浏览器"><a href="#浏览器" class="headerlink" title="浏览器"></a>浏览器</h2><p>Chrome<br>推荐安装vue调试插件</p>
-<h2 id="组建安装"><a href="#组建安装" class="headerlink" title="组建安装"></a>组建安装</h2><p>初级建议项目依赖安装vue ui安装<br>安装完vue-cli后，终端执行命令：vue-ui<br>常用组建推荐使用npm安装<br>npm install element-plus –save<br>采用vue-cli脚本安装<br>Vue add vue-router<br>Vue基础组建<br>“vue”: “^2.6.11”, // vue<br>“vue-router”: “^3.1.6”, // 路由<br>“vuex”: “^3.1.3” // 数据共享</p>
-<h2 id="常用UI组建"><a href="#常用UI组建" class="headerlink" title="常用UI组建"></a>常用UI组建</h2><p>pc端：ElementUI、 View UI<br>移动端：vant、Mint UI、Cube UI<br>管理系统框架：vue-vben-admin</p>
-<h2 id="常用CSS及预处理库"><a href="#常用CSS及预处理库" class="headerlink" title="常用CSS及预处理库"></a>常用CSS及预处理库</h2><p>“sass”: “^1.26.5”,<br>“sass-loader”: “^8.0.2”,<br>sass和less区别<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pink-chen/p/10727915.html">https://www.cnblogs.com/pink-chen/p/10727915.html</a><br>“animate.css”: “^3.7.2”, // 动画组建<br>“normalize.css”: “^8.0.1”,// css在不同浏览器中样式统一<br>lib-flexible 是网页做 html 的 font-size 适配用的<br>postcss-pxtorem 是在编译的时候对 px 单位转换为 rem 单位时使用</p>
-<h2 id="常用js库"><a href="#常用js库" class="headerlink" title="常用js库"></a>常用js库</h2><p>百度搜索即可，一般都有教程<br>“core-js”: “^3.6.5”,// 基础js<br>“axios”: “^0.19.2”, // 网络请求<br>“docxtemplater”: “^3.19.7”, // 前端word模版库<br>“echarts”: “^4.9.0”, // 图表库<br>“file-saver”: “^2.0.5”, // 文件保存库<br>“js-base64”: “^2.5.2”, // 加密<br>“js-cookie”: “^2.2.1”, // 存储<br>“js-md5”: “^0.7.3”, // 加密<br>“jszip-utils”: “^0.1.0”, // 压缩<br>“pizzip”: “^3.0.6”, // 压缩<br>“qs”: “^6.9.4”, // url编码<br>“screenfull”: “^5.0.2”, // 全屏功能<br>图片裁剪、压缩组件： vue-croppa<br>时间格式化库： date-fns<br>动画js库： Velocity.js<br>打印div组件： vue-print-nb<br>丰富文本编辑器：  vue-quill-editor</p>
-<h2 id="Webpack配置"><a href="#Webpack配置" class="headerlink" title="Webpack配置"></a>Webpack配置</h2><p>vue内部已经配置好了webpack，如果想扩展需要创建vue.config.js<br>vue.config.js<br><a target="_blank" rel="noopener" href="https://cli.vuejs.org/zh/config/#publicpath">https://cli.vuejs.org/zh/config/#publicpath</a></p>
-<h2 id="为什么npm打包的dist不能直接访问"><a href="#为什么npm打包的dist不能直接访问" class="headerlink" title="为什么npm打包的dist不能直接访问"></a>为什么npm打包的dist不能直接访问</h2><p>这是因为dist文件是需要放在服务器上运行的，资源默认放在根目录下。打开index.html可以发现，css和js文件的引用使用的是绝对路径，例如：，对本地磁盘来说，/指向磁盘根目录，所以找不到引用的文件。</p>
-<p>有以下解决方案：1. 使用http-server创建一个服务器来访问资源；2. 将index.html中资源引用的绝对路径改为相对路径；3.还可以手写一个简单的node服务器。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/02/M_Swift168vue%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/02/M_Swift168vue%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD/" class="post-title-link" itemprop="url">前端页面常见功能</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-02 16:18:56" itemprop="dateCreated datePublished" datetime="2021-03-02T16:18:56+08:00">2021-03-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 15:48:07" itemprop="dateModified" datetime="2021-04-12T15:48:07+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.echarts图标（柱状图、折线图、饼状图等）<br>参考echarts官网<br><a target="_blank" rel="noopener" href="https://echarts.apache.org/zh/index.html">https://echarts.apache.org/zh/index.html</a><br>2.echarts和百度地图结合展示（地图覆盖物等）<br>参考百度地图js api 及echarts地图组建<br><a target="_blank" rel="noopener" href="https://echarts.apache.org/examples/zh/index.html">https://echarts.apache.org/examples/zh/index.html</a><br>3.列表数据导出excel<br>后端实现，前端采用axios 支持excel格式导出<br>responseType: ‘blob’,<br>4.word编辑下载及转pdf预览<br>目前项目采用json格式存储word，前端解析json数据展示成word文档样式，编辑就是修改json数据，数据采用v-mode模式双向绑定输入框，实现动态修改。<br>导出采用docxtemplater前端定义word模版格式，将数据塞进word模版中<br>echarts采用前端生成，转成图片存放如前端word模版中<br>pdf预览采用将前端word模版发送给后端，后端通过aspose-words工具转成pdf存储进文件服务器<br>5.excel编辑、下载<br>参考el-table的编辑功能</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift175%E5%9C%B0%E5%9B%BE%E9%A1%B9%E7%9B%AE%E4%B8%AD%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift175%E5%9C%B0%E5%9B%BE%E9%A1%B9%E7%9B%AE%E4%B8%AD%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">地图项目中对象设计</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-31 10:37:09" itemprop="dateModified" datetime="2021-03-31T10:37:09+08:00">2021-03-31</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Feature、FeatureClass、FeatureLayer，这三者熟悉AO和AE的同仁，应该很清楚，这是三个必知必会的概念。Feature：单个地理要素，含有空间信息与属性信息：Feature=Geometry+Properties；FeatureClass：要素类或要素集合，同一类的要素集合，具有相同地理概化特征（空间图形类型相同），又具有相同的属性特征；FeatureLayer：FeatureClass的一个视图，就ArcGIS概念来类比，FeatureLayer  ≈ FeatureClass + Zoom Level + Filter + Renderer（Symbology）+ Label + …<br>注意：本文的Graphic更接近ArcGIS Engine的Graphic而非ArcGIS JS API的Graphic，以后会建立Feature类，Feature = Geometry + Properties （即空间+属性）。而目前的Graphic用以描述图形，一个Graphic对应一个Symbol（当然具体应用时可复用）；Feature则常用于，同一类要素组成FeatureClass，并通过设置Renderer来呈现为Feature-Layer</p>
-<h2 id="Symbol的理解"><a href="#Symbol的理解" class="headerlink" title="Symbol的理解"></a>Symbol的理解</h2><p> /**</p>
-<ul>
-<li>符号基类</li>
-<li>@remarks</li>
-<li>如按现实世界来抽取对象基类，下述属性不应放在基类</li>
-<li>但考虑到Canvas的上下文设定，才决定抽取到基类</li>
-<li>/</li>
-</ul>
-<h2 id="Feature的理解"><a href="#Feature的理解" class="headerlink" title="Feature的理解"></a>Feature的理解</h2><p>/**</p>
-<ul>
-<li>矢量要素</li>
-<li><p></li>
-<li>Graphic vs Feature：Graphic作为图形，可以一图形对应一渲染符号；而Feature作为矢量要素，常规应该根据图层设定的渲染方式Renderer来得到各个Feature的渲染符号，而非单一设置。<br/></li>
-<li>Graphic = Geometry + Symbol<br/></li>
-<li>Feature = Geometry + Properties<br/></li>
-<li>ArcGIS AO/AE: Feature = Geometry + Properties<br/></li>
-<li>ArcGIS JS API: Feature = Graphic = Geometry + Properties + Symbol<br/></li>
-<li></p></li>
-<li>/<h2 id="Layer的理解"><a href="#Layer的理解" class="headerlink" title="Layer的理解"></a>Layer的理解</h2>/**</li>
-<li>图层基类</li>
-<li>/<h2 id="Graphic的理解"><a href="#Graphic的理解" class="headerlink" title="Graphic的理解"></a>Graphic的理解</h2>/**</li>
-<li>图形要素</li>
-<li>区别与Feature，单纯的图形</li>
-<li>/</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift176%E7%82%B9%E3%80%81%E7%BA%BF%E3%80%81%E9%9D%A2%E7%BB%98%E5%88%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift176%E7%82%B9%E3%80%81%E7%BA%BF%E3%80%81%E9%9D%A2%E7%BB%98%E5%88%B6/" class="post-title-link" itemprop="url">点、线、面绘制</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:04:04" itemprop="dateModified" datetime="2021-04-12T16:04:04+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <pre><code>/**
- * 绘制点
- * @param &#123;CanvasRenderingContext2D&#125; ctx - 绘图上下文
- * @param &#123;number&#125; screenX - 屏幕坐标X
- * @param &#123;number&#125; screenY - 屏幕坐标Y
- */
-draw(ctx: CanvasRenderingContext2D, screenX, screenY) &#123;
-    ctx.save();
-    ctx.strokeStyle = this.strokeStyle;
-    ctx.fillStyle = this.fillStyle;
-    ctx.lineWidth = this.lineWidth;
-    ctx.beginPath(); //Start path
-    //keep size
-    //地理坐标 转回 屏幕坐标
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.arc(screenX, screenY, this.radius, 0, Math.PI * 2, true);
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-&#125;
-/**
- * 绘制线
- * @param &#123;CanvasRenderingContext2D&#125; ctx - 绘图上下文
- * @param &#123;number[][]&#125; screen - 线对应坐标点的屏幕坐标集合
- */
-draw(ctx: CanvasRenderingContext2D, screen: number[][]) &#123;
-    ctx.save();
-    ctx.strokeStyle = this.strokeStyle;
-    ctx.lineWidth = this.lineWidth;
-    //keep lineWidth
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.beginPath();
-    screen.forEach( (point: any,index) =&gt; &#123;
-        const screenX = point[0], screenY = point[1];
-        if (index === 0)&#123;
-            ctx.moveTo(screenX, screenY);
-        &#125; else &#123;
-            ctx.lineTo(screenX, screenY);
-        &#125;
-    &#125;);
-    ctx.stroke();
-    ctx.restore();
-&#125;
- /**
- * 绘制面
- * @remarks
- * 奇偶填充
- * https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/fill
- * @param &#123;CanvasRenderingContext2D&#125; ctx - 绘图上下文
- * @param &#123;number[][][]&#125; screen - 面对应坐标点的屏幕坐标集合
- */
-draw(ctx: CanvasRenderingContext2D, screen: number[][][]) &#123;
-    ctx.save();
-    ctx.strokeStyle = this.strokeStyle;
-    ctx.fillStyle = this.fillStyle;
-    ctx.lineWidth = this.lineWidth;
-    //keep lineWidth
-    ctx.setTransform(1,0,0,1,0,0);
-    //TODO:  exceeding the maximum extent(bound), best way is overlap by extent. find out: maximum is [-PI*R, PI*R]??
-    ctx.beginPath();
-    screen.forEach( ring =&gt; &#123;
-        ring.forEach((point: any,index) =&gt; &#123;
-            const screenX = point[0], screenY = point[1];
-            if (index === 0)&#123;
-                ctx.moveTo(screenX, screenY);
-            &#125; else &#123;
-                ctx.lineTo(screenX, screenY);
-            &#125;
-        &#125;);
-    &#125;);
-    ctx.closePath();
-    //奇偶填充
-    //https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/fill
-    ctx.fill(&quot;evenodd&quot;);
-    ctx.stroke();
-    ctx.restore();
-&#125;
- /**
- * 绘制图标
- * @remarks
- * 注意异步加载
- * @param &#123;CanvasRenderingContext2D&#125; ctx - 绘图上下文
- * @param &#123;number&#125; screenX - 屏幕坐标X
- * @param &#123;number&#125; screenY - 屏幕坐标Y
- */
-async draw(ctx: CanvasRenderingContext2D, screenX, screenY) &#123;
-    if (!this.loaded) await this.load();
-    if (this.icon) &#123;
-        ctx.save();
-        const matrix = (ctx as any).getTransform();
-        //keep size
-        ctx.setTransform(1,0,0,1,0,0);
-        //请对应参考offset属性的描述内容
-        ctx.drawImage(this.icon, screenX + this.offsetX, screenY + this.offsetY, this.width, this.height);
-        ctx.restore();
-    &#125;
-&#125;
-/**
- * 绘制字符符号
- * @param &#123;CanvasRenderingContext2D&#125; ctx - 绘图上下文
- * @param &#123;number&#125; screenX - 屏幕坐标X
- * @param &#123;number&#125; screenY - 屏幕坐标Y
- */
-draw(ctx: CanvasRenderingContext2D, screenX, screenY) &#123;
-    ctx.save();
-    ctx.strokeStyle = this.strokeStyle;
-    ctx.fillStyle = this.fillStyle;
-    ctx.lineWidth = this.lineWidth;
-    ctx.beginPath(); //Start path
-    //keep size
-    ctx.setTransform(1,0,0,1,0,0);
-    //绘制外圈
-    ctx.arc(screenX, screenY, this.radius, 0, Math.PI * 2, true);
-    ctx.fill();
-    ctx.stroke();
-    ctx.textBaseline = &quot;middle&quot;;
-    ctx.textAlign = &quot;center&quot;;
-    ctx.fillStyle = this.fontColor;
-    ctx.font =  this.fontSize + &quot;px/1 &quot; + this.fontFamily +  &quot; &quot; + this.fontWeight;
-    //绘制字符
-    ctx.fillText(this.letter, screenX, screenY);
-    ctx.restore();
-&#125;
-/**
- * 绘制箭头
- * @param &#123;CanvasRenderingContext2D&#125; ctx - 绘图上下文
- * @param &#123;number[][]&#125; screen - 线对应坐标点的屏幕坐标集合
- */
-draw(ctx: CanvasRenderingContext2D, screen: number[][]) &#123;
-    ctx.save();
-    ctx.strokeStyle = this.strokeStyle;
-    ctx.lineWidth = this.lineWidth;
-    //keep lineWidth
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.beginPath();
-    screen.forEach( (point: any,index) =&gt; &#123;
-        const screenX = point[0], screenY = point[1];
-        if (index === 0)&#123;
-            ctx.moveTo(screenX, screenY);
-        &#125; else &#123;
-            ctx.lineTo(screenX, screenY);
-        &#125;
-    &#125;);
-    ctx.stroke();
-    //已知 起点和终点  求沿线距起点定长的点
-    const _getPointAlongLine = (p1, p2, d) =&gt; &#123;
-        //line length
-        let l = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
-        let t = d / l;
-        return [(1 - t) * p1[0] + t * p2[0], (1 - t) * p1[1] + t * p2[1]];
-    &#125;;
-    //已知 起点 y = kx + b   求沿线距起点定长的点 两个点
-    const _getPointAlongLine2 = (k, b, p, d) =&gt; &#123;
-        let x0 = p[0] + Math.sqrt( (d * d) / (k * k + 1)), x1 = p[0] - Math.sqrt( (d * d) / (k * k + 1));
-        return [[x0, k * x0 + b], [x1, k * x1 + b]];
-    &#125;;
-    screen.reduce( (prev, cur) =&gt; &#123;
-        if (prev) &#123;
-            const length = Math.sqrt((cur[0] - prev[0]) * (cur[0] - prev[0]) + (cur[1] - prev[1]) * (cur[1] - prev[1]));
-            if (length &gt;= this.minLength) &#123;
-                //中点 即箭头
-                const [middleX, middleY] = [(prev[0] + cur[0])/2, (prev[1] + cur[1])/2];
-                //箭尾垂线的垂足
-                const [footX, footY] = _getPointAlongLine([middleX, middleY], prev, Math.cos(this.arrowAngle) * this.arrowLength);
-                const k = (cur[1] - prev[1]) / (cur[0] - prev[0]);
-                // 1/k 垂线
-                const points = _getPointAlongLine2( -1/k, footY - footX * -1/k, [footX, footY], Math.sin(this.arrowAngle) * this.arrowLength);
-                //两点
-                points.forEach(point =&gt; &#123;
-                    ctx.beginPath();
-                    ctx.moveTo(middleX, middleY);
-                    ctx.lineTo(point[0], point[1]);
-                    ctx.stroke();
-                &#125;);
-            &#125;
-            return cur;
-        &#125; else &#123;
-            return cur;
-        &#125;
-    &#125;);
-    ctx.restore();
-&#125;
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift177%E8%8E%B7%E5%8F%96%E7%82%B9%E7%BA%BF%E9%9D%A2%E4%B8%AD%E5%BF%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift177%E8%8E%B7%E5%8F%96%E7%82%B9%E7%BA%BF%E9%9D%A2%E4%B8%AD%E5%BF%83/" class="post-title-link" itemprop="url">获取点线面中心</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:04:22" itemprop="dateModified" datetime="2021-04-12T16:04:22+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <pre><code>/**
- * 获取点中心点
- * @param &#123;CoordinateType&#125; type - 坐标类型
- * @param &#123;Projection&#125; projection - 坐标投影转换
- * @return &#123;number[]&#125; 中心点坐标
- */
-getCenter(type: CoordinateType = CoordinateType.Latlng, projection: Projection = new WebMercator()) &#123;
-    if (!this._projected) this.project(projection);
-    if (type === CoordinateType.Latlng) &#123;
-        return [this._lng, this._lat];
-    &#125; else &#123;
-        return [this._x, this._y];
-    &#125;
-&#125;
-/**
- * 获取线的中心点
- * @remarks
- * from Leaflet
- * @param &#123;CoordinateType&#125; type - 坐标类型
- * @param &#123;Projection&#125; projection - 坐标投影转换
- * @return &#123;number[]&#125; 中心点坐标
- */
-getCenter(type: CoordinateType = CoordinateType.Latlng, projection: Projection = new WebMercator()) &#123;
-    if (!this._projected) this.project(projection);
-    let i, halfDist, segDist, dist, p1, p2, ratio,
-        points = this._coordinates,
-        len = points.length;
-
-    if (!len) &#123; return null; &#125;
-
-    // polyline centroid algorithm; only uses the first ring if there are multiple
-
-    for (i = 0, halfDist = 0; i &lt; len - 1; i++) &#123;
-        halfDist += Math.sqrt((points[i + 1][0] - points[i][0]) * (points[i + 1][0] - points[i][0]) + (points[i + 1][1] - points[i][1]) * (points[i + 1][1] - points[i][1])) / 2;
-    &#125;
-
-    let center;
-    // The line is so small in the current view that all points are on the same pixel.
-    if (halfDist === 0) &#123;
-        center = points[0];
-    &#125;
-
-    for (i = 0, dist = 0; i &lt; len - 1; i++) &#123;
-        p1 = points[i];
-        p2 = points[i + 1];
-        segDist = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
-        dist += segDist;
-
-        if (dist &gt; halfDist) &#123;
-            ratio = (dist - halfDist) / segDist;
-            center = [
-                p2[0] - ratio * (p2[0] - p1[0]),
-                p2[1] - ratio * (p2[1] - p1[1])
-            ];
-        &#125;
-    &#125;
-
-    if (type === CoordinateType.Latlng) &#123;
-        return projection.unproject(center);
-    &#125; else &#123;
-        return center;
-    &#125;
-&#125;
-/**
- * 获取面的中心点
- * @remarks
- * from Leaflet
- * @param &#123;CoordinateType&#125; type - 坐标类型
- * @param &#123;Projection&#125; projection - 坐标投影转换
- * @return &#123;number[]&#125; 中心点坐标
- */
-getCenter(type: CoordinateType = CoordinateType.Latlng, projection: Projection = new WebMercator()) &#123;
-    if (!this._projected) this.project(projection);
-    let i, j, p1, p2, f, area, x, y, center,
-        points = this._coordinates[0],
-        len = points.length;
-
-    if (!len) &#123; return null; &#125;
-
-    // polygon centroid algorithm; only uses the first ring if there are multiple
-
-    area = x = y = 0;
-
-    for (i = 0, j = len - 1; i &lt; len; j = i++) &#123;
-        p1 = points[i];
-        p2 = points[j];
-
-        f = p1[1] * p2[0] - p2[1] * p1[0];
-        x += (p1[0] + p2[0]) * f;
-        y += (p1[1] + p2[1]) * f;
-        area += f * 3;
-    &#125;
-
-    if (area === 0) &#123;
-        // Polygon is so small that all points are on same pixel.
-        center = points[0];
-    &#125; else &#123;
-        center = [x / area, y / area];
-    &#125;
-
-    if (type === CoordinateType.Latlng) &#123;
-        return projection.unproject(center);
-    &#125; else &#123;
-        return center;
-    &#125;
-&#125;
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift179%E5%A2%A8%E5%8D%A1%E6%89%98Mercartor/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift179%E5%A2%A8%E5%8D%A1%E6%89%98Mercartor/" class="post-title-link" itemprop="url">墨卡托Mercartor</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:04:54" itemprop="dateModified" datetime="2021-04-12T16:04:54+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>/**</p>
-<ul>
-<li>球体墨卡托</li>
-<li>/<br>export class WebMercator extends Projection {<br>  /**<ul>
-<li>地球半径</li>
-<li>/<br>static R: number = 6378137;<br>/**</li>
-<li>投影后的平面坐标范围</li>
-<li>/<br>get bound(): Bound {<br>  return new Bound(-Math.PI * WebMercator.R, Math.PI * WebMercator.R, Math.PI * WebMercator.R, -Math.PI * WebMercator.R);<br>}<br>/**</li>
-<li>@description: 经纬度转平面坐标</li>
-<li>@param {number} lng - 经度 </li>
-<li>@param {number} lat - 纬度</li>
-<li>@return {number[]} 地理平面坐标</li>
-<li>/<br>project([lng, lat]): number[] {<br>  const d = Math.PI / 180, sin = Math.sin(lat * d);<br>  return [WebMercator.R * lng * d, WebMercator.R * Math.log((1 + sin) / (1 - sin)) / 2];<br>}<br>/**</li>
-<li>@description: 平面坐标转经纬度坐标</li>
-<li>@param {number} lng - 经度 </li>
-<li>@param {number} lat - 纬度</li>
-<li>@return {number[]} 经纬度坐标</li>
-<li>/<br>unproject([x, y]): number[] {<br>  const d = 180 / Math.PI;<br>  return [x * d / WebMercator.R, (2 * Math.atan(Math.exp(y / WebMercator.R)) - (Math.PI / 2)) * d];<br>}<br>}</li>
-</ul>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift178%E7%9F%A9%E9%98%B5-%E5%9D%90%E6%A0%87%E8%BD%AC%E6%8D%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift178%E7%9F%A9%E9%98%B5-%E5%9D%90%E6%A0%87%E8%BD%AC%E6%8D%A2/" class="post-title-link" itemprop="url">矩阵-坐标转换</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:04:35" itemprop="dateModified" datetime="2021-04-12T16:04:35+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>（经纬度转平面坐标、平面坐标转经纬度坐标）<br>    /**<br>     * @description: 设置坐标投影<br>     * @param {<em>} projection 坐标投影变化<br>     * @return {</em>}<br>     */<br>    setProjection(projection) {<br>        this._projection = projection;<br>        //const bound: Bound = this._projection.bound;<br>        //this._ctx.setTransform(256 * Math.pow(2, this._zoom) / (bound.xmax - bound.xmin) * bound.xscale , 0, 0, 256 * Math.pow(2, this._zoom) / (bound.ymax - bound.ymin) * bound.yscale, this._canvas.width / 2, this._canvas.height / 2);<br>        //center为经纬度，转化为平面坐标<br>        const origin = this._projection.project(this._center as any);<br>        const bound: Bound = this._projection.bound;<br>        // 已知：地理坐标origin，转换后屏幕坐标，即canvans的中心，【this.canvans.width / 2, this.canvans.height / 2】<br>        // 求：屏幕坐标转换矩阵=Ma初始矩阵：地理坐标转屏幕坐标<br>        const a = 256 * Math.pow(2, this._zoom) / (bound.xmax - bound.xmin) * bound.xscale;<br>        const d = 256 * Math.pow(2, this._zoom) / (bound.ymax - bound.ymin) * bound.yscale;<br>        const e = this._canvas.width / 2 - a * origin[0];<br>        const f = this._canvas.height / 2 - d * origin[1];<br>        this._ctx.setTransform(a, 0, 0, d, e, f);<br>    }<br>    //响应滚轮缩放<br>    _onWheel(event) {<br>        event.preventDefault();<br>        const sevsitivity = 5;<br>        if (Math.abs(event.deltaY) &lt;= sevsitivity) return;<br>        const delta = event.deltaY &lt; 0 ? -1 : 1;<br>        let scale = 1;<br>        if (delta &lt; 0) {<br>            // 放大<br>            scale *= delta * -2;<br>        } else {<br>            // 缩小<br>            scale /= delta * -2;<br>        }<br>        let zoom = Math.round(Math.log(scale));<br>        if (zoom &gt; 0) {<br>            // 放大<br>            zoom = this._zoom + zoom &gt;= 20 ? 20 - this._zoom : zoom;<br>        } else if (zoom &lt; 0) {<br>            // 缩小<br>            zoom = this._zoom + zoom &lt;= 3 ? 3 - this._zoom : zoom;<br>        }<br>        if (zoom == 0) return;<br>        this._zoom += zoom;<br>        scale = Math.pow(2, zoom);<br>        // 交互设计表现为 鼠标当前位置 屏幕坐标不变，进行缩放 即 x2 = x1 y2 = y1<br>        // 其他设定：变换前矩阵（a1,0,0,d1,e1,f1）变换矩阵（a,0,0,d,e,f）变换后矩阵（a2,0,0,d2,e2,f2）<br>        // scale已经通过滚轮变换得到， 且a=d=scale ，求e和f<br>        // 1.将原屏幕坐标x1转换成地理坐标 x0 = (x1 -ee1) / a1<br>        // 2.地理坐标x0 转换成现屏幕坐标x2 a2 *x0 + e2 = x2, e2 = x2 - a2 * x0,代入1式 e2 = x2 - a2 * (x1 - e1) / a1<br>        // 3.已知scale = a2 / a1 故 e2 = x2 - scale * (x1- e1)<br>        // 4.另矩阵变换 a1 * e + e1 = e2<br>        // 5.联立3和4求得 e = (x2 - scale * (x1 - e1) - e1) / a1<br>        const matrix = (this._ctx as any).getTransform();<br>        const a1 = matrix.a, e1 = matrix.e, x1 = event.x, x2 = x1;// 放大到中心点 x2 = this._canvas.width / 2<br>        const e = (x2 - scale * (x1 - e1) - e1) / a1;<br>        const d1 = matrix.d, f1 = matrix.f, y1 = event.y, y2 = y1;//放大到中心点 y2 = this._canvas.height / 2<br>        const f = (y2 - scale * (y1 - f1) - f1) / d1;<br>        this._ctx.transform(scale, 0, 0, scale, e, f);<br>        this.redraw();<br>    }</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift182%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%EF%BC%8C%E7%9F%A9%E9%98%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift182%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%EF%BC%8C%E7%9F%A9%E9%98%B5/" class="post-title-link" itemprop="url">线性代数，矩阵</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:05:36" itemprop="dateModified" datetime="2021-04-12T16:05:36+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <pre><code>学习一下线性代数，特别是矩阵的一些知识，我觉得应该很有用
-矩阵：
-向量：
-单位矩阵：
-线性变换的本质就是作用于向量上的放缩、旋转（镜面反射）！而线性代数在某种程度上可以看作是通过不同的表现形式来展示线性变换！
-旋转矩阵线性变换（旋转矩阵 [公式] ）只是旋转了坐标系，而不改变向量 [公式] (包括线性相关性、向量模数等),但是，向量的表示是依赖于坐标系的，所以，在新的坐标系中，同一个向量变成了 [公式] .
-</code></pre>
-<p>世界如何，不是神秘的，神秘的是世界存在<br>整个现代世界观的基础是建立在一个错觉之上，即所谓的自然法则是对自然现象的解释</p>
-<p>向量间的加法以及另一个数集带来的乘法为这个空间赋予了基本结构<br>在3D游戏中移动、转动、缩放和光照等也都是靠矩阵运算完成的<br>实际上，对于矩阵乘法C=AB，作用后得到的新矩阵C可以看作是矩阵A经过某种变换得到的，也可以看作是矩阵B经过某种变换后得到的，而这种变换显然就是乘以另一个矩阵的过程，结合前面提到的矩阵的几何意义，故可以把矩阵乘法C=AB看作是图形A（或B）经过变换B（或A）后得到新图形C，或者是向量空间A（或B）经过变换B（或A）后得到新的向量空间C，对于简单的变换矩阵这一点最容易感性体会到；例如变换矩阵<br>最近浏览网络发现其实我们可以去学习一些公开课，学习一些知识，这会让我们有很多收获</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift183bound%E6%98%AF%E5%90%A6%E4%BA%A4%E5%8F%89%E5%8F%A0%E7%9B%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift183bound%E6%98%AF%E5%90%A6%E4%BA%A4%E5%8F%89%E5%8F%A0%E7%9B%96/" class="post-title-link" itemprop="url">bound是否交叉叠盖</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:05:55" itemprop="dateModified" datetime="2021-04-12T16:05:55+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <pre><code>/**
- * 是否交叉叠盖
- * @param &#123;Bound&#125; bound - 交叉叠盖检测对象
- * @return &#123;boolean&#125; 是否交叉叠盖
- */
-intersect(bound: Bound) &#123;
-    return (bound.xmax &gt;= this._xmin) &amp;&amp; (bound.xmin &lt;= this._xmax) &amp;&amp; (bound.ymax &gt;= this._ymin) &amp;&amp; (bound.ymin &lt;= this._ymax);
-&#125;
-</code></pre>
-<h1 id="bound的缩放"><a href="#bound的缩放" class="headerlink" title="bound的缩放"></a>bound的缩放</h1><pre><code>/**
- * 缩放整个边界
- * @param &#123;number&#125; s - 缩放倍数
- */
-scale(s: number) &#123;
-    this._xmin = this._xmin - (s - 1) * (this._xmax - this._xmin)/2;
-    this._xmax = this._xmax + (s - 1) * (this._xmax - this._xmin)/2;
-    this._ymin = this._ymin - (s - 1) * (this._ymax - this._ymin)/2;
-    this._ymax = this._ymax + (s - 1) * (this._ymax - this._ymin)/2;
-&#125;
-</code></pre>
+          <p>Future 异步、延迟等操作，跟js的Premis一致<br>Future 的所有API的返回值仍然是一个Future对象，所以可以很方便的进行链式调用”<br>Dart中的async/await 和JavaScript中的async/await功能和用法是一模一样的<br>async用来表示函数是异步的，定义的函数会返回一个Future对象，可以使用then方法添加回调函数。<br>await 后面是一个Future，表示等待该异步任务完成，异步完成后才会往下走；await必须出现在 async 函数内部。</p>
 
       
     </div>
@@ -1276,7 +867,7 @@ scale(s: number) &#123;
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/9/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/11/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1342,7 +933,7 @@ scale(s: number) &#123;
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">365</span>
+          <span class="site-state-item-count">390</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1370,7 +961,7 @@ scale(s: number) &#123;
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
