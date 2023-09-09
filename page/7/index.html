@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift288Mapbox%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift290Vue3%E6%B7%B1%E5%BA%A6%E7%90%86%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/19/M_Swift288Mapbox%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Mapbox设计原理</a>
+            <a href="/2021/08/19/M_Swift290Vue3%E6%B7%B1%E5%BA%A6%E7%90%86%E8%A7%A3/" class="post-title-link" itemprop="url">前端总结</a>
         </h2>
 
         <div class="post-meta">
@@ -179,7 +179,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-03 16:43:06" itemprop="dateModified" datetime="2022-08-03T16:43:06+08:00">2022-08-03</time>
+                <time title="修改时间：2022-08-02 18:02:29" itemprop="dateModified" datetime="2022-08-02T18:02:29+08:00">2022-08-02</time>
               </span>
 
           
@@ -193,18 +193,78 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>SDK设计：</p>
-<p>数据IO层：负责资源数据的加载、解析、数据缓存等，包括缓存数据和网络数据等；</p>
-<p>资源管理层：负责地图资源的管理调度，资源包括地图样式、图片、文字、地图数据等；</p>
-<p>渲染组织层：负责将地图数据和样式，生成渲染所需数据，渲染状态控制、渲染排序等；</p>
-<p>渲染接口层：负责对渲染API（OpenGL、gles）的封装，实现渲染的跨平台性；</p>
-<p>地图控制层：负责对地图的控制，包括位置、层级、风格等，负责事件的分发处理，负责对外（sdk层）接口的封装；</p>
-<p>SDK封装层：负责地图引擎空间部分的实现，负责根据不同平台实现不同的语言的封装，如iOS的OC封装、Android的JNI封装等。</p>
-<p>技术点：<br>earcut - 三角剖分<br>csscolorparser - css解析<br>面数据中心点计算- 面数据标签<br>geojson 解析<br>地图几何对象构建<br>碰撞检测 -<br>pbf解析<br>Mvt数据解析<br>sql存储<br>zip压缩<br>坐标转换</p>
-<p>鸿蒙实现方式：<br>1.采用引入android包的方式<br>2.在鸿蒙中获取activity</p>
-<p>harmony方案<br>采用安卓原生代码:<br>map.jar + android.jar + 安卓部分依赖库</p>
-<p>android api说明：<br>LibraryLoader.java：加载so文件在这个类里面；<br>Annotations:覆盖物代码，基本都是获取参数，具体实现都在渲染库代码里；<br>Camera：视野相关代码；<br>Constants：定义常量；<br>Exceptions：自定义异常；<br>http：网络请求，<br>Offline：离线地图、缓存相关，大部分代码我都删了，只保留了清除缓存的逻辑；<br>Snapshotter：截屏相关；<br>MapsInitializer.java：初始化类<br>Model：bitmap操作相关代码；<br>Renderer：android渲染类相关，配置opengl相关参数；<br>Widgets：地图控件view，放大缩小按钮、比例尺、罗盘都在这里面；<br>Map：地图操作类，设置样式、各种手势回调；</p>
-<p>ios api<br>#import “MAAccountManager.h” // token<br>#import “MAAnnotation.h” // 覆盖物<br>#import “MAAnnotationImage.h” // 图片<br>#import “MABackgroundStyleLayer.h” // 背景图层<br>#import “MACircleStyleLayer.h”<br>#import “MACluster.h”<br>#import “MACompassButton.h” // 组件<br>#import “MAIndoorFloorsView.h”<br>#import “MAComputedShapeSource.h”<br>#import “MAFeature.h” // 图层<br>#import “MAFillExtrusionStyleLayer.h”<br>#import “MAFillStyleLayer.h”<br>#import “MAForegroundStyleLayer.h”<br>#import “MAGeometry.h” // 坐标计算<br>#import “MAGeometryEngine.h” //<br>#import “MAHeatmapStyleLayer.h”<br>#import “MAHillshadeStyleLayer.h”<br>#import “MAImageSource.h”<br>#import “MALight.h” // 三维<br>#import “MALineStyleLayer.h”<br>#import “MALoggingConfiguration.h”<br>#import “MAMapCamera.h” // 视野<br>#import “MAMapSnapshotter.h”<br>#import “MAMapView.h” // 地图对象<br>#import “MAMapViewDelegate.h” // 协议<br>#import “MAMapView+IBAdditions.h”<br>#import “MAMultiPoint.h”<br>#import “MAOfflinePack.h” // 离线地图<br>#import “MAOfflineRegion.h”<br>#import “MAOfflineStorage.h”<br>#import “MAOpenGLStyleLayer.h”<br>#import “MAOverlay.h” // 图层<br>#import “MAPointAnnotation.h”<br>#import “MAPointCollection.h”<br>#import “MAPolygon.h”<br>#import “MAPolyline.h”<br>#import “MACircle.h”<br>#import “MAArc.h”<br>#import “MARasterDEMSource.h”<br>#import “MARasterStyleLayer.h”<br>#import “MARasterTileSource.h”<br>#import “MAShape.h”<br>#import “MAShapeCollection.h”<br>#import “MAShapeOfflineRegion.h”<br>#import “MAShapeSource.h”<br>#import “MASource.h”<br>#import “MAStyle.h”<br>#import “MAStyleLayer.h”<br>#import “MAStyleValue.h”<br>#import “MASymbolStyleLayer.h”<br>#import “MATilePyramidOfflineRegion.h”<br>#import “MATileSource.h”<br>#import “MATypes.h”<br>#import “MAVectorStyleLayer.h”<br>#import “MAVectorTileSource.h”<br>#import “NSExpression+MAAdditions.h”<br>#import “NSPredicate+MAAdditions.h”<br>#import “NSValue+MAAdditions.h”</p>
+          <p>Pinia 的优点<br>vuex 将不再接受新的功能，建议将 Pinia 用于新的项目。<br>简便，存储和组件变得很类似，你可以轻松写出优雅的存储。<br>类型安全，通过类型推断，可以提供自动完成的功能。<br>vue devtools 支持，可以方便进行调试。<br>Pinia 支持扩展，可以非常方便地通过本地存储，事物等进行扩展。<br>模块化设计，通过构建多个存储模块，可以让程序自动拆分它们。<br>非常轻巧，只有大约 1kb 的大小。<br>服务器端渲染支持。<br>yarn add pinia@next<br>与 Vuex 相比，Pinia 提供了一个更简单的 API，具有更少的操作，提供了 Composition-API 风格的 API，最重要的是，在与 TypeScript 一起使用时具有可靠的类型推断支持。</p>
+<p>hooks<br>Hooks 提供了一种更明确的方式来组织代码，使得代码能重用，更重要的是，它允许不同的逻辑部分进行通信、协同工作。<br>解决问题：<br>在表达状态概念时，类 是最常见的组织形式。类本身存在一些问题，比如绑定关系冗长、复杂，导致不易读，This 的指向总会让人摸不清头脑；<br>不仅如此，在重用方面，使用渲染工具或高阶组件类的模式很常见，但这样容易陷入 “pyramid of doom” （末日金字塔），可以将它理解为过度的嵌套关系；<br>Hooks 允许我们使用函数调用来定义组件的状态逻辑，这些函数有更强的组合性、重用性；同时，仍然可以进行状态的访问和维护；</p>
+<p>组件化<br>计算属性<br>watch<br>父子传递<br>插槽<br>router<br>组合api<br>vite<br>transition</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift232mapbox%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/10/M_Swift232mapbox%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">mapbox 学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-10 18:49:05" itemprop="dateCreated datePublished" datetime="2021-08-10T18:49:05+08:00">2021-08-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-11 11:10:39" itemprop="dateModified" datetime="2021-08-11T11:10:39+08:00">2021-08-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近在了解mapbox相关的知识，现在也总结一下</p>
+<h2 id="1-mapbox是什么"><a href="#1-mapbox是什么" class="headerlink" title="1.mapbox是什么"></a>1.mapbox是什么</h2><p>mapbox主要是用来做地图定制化的开发的，核心是mapbox studio<br>2.mapbox优势是什么<br>1.支持样式自定义，能快速设计出一套样式地图<br>2.支持mvt格式数据，数据小。<br>3.细化地图样式，点、线、面，可实现批量绘制，快速<br>4.支持mysql存储，方便数据迁移<br>3.mapbox设计思想原理<br>1.能表达整个Map的Style文件<br>2.layer的设计不是根据数据来源分类，根据数据点、线、面进行分类，fill类型的layer只负责填充；<br>line类型的layer只负责线条；symbol类型的layer会处理sprite，文字等；raster类型的layer就只负责图片，<br>circle类型的layer是更高一层的业务处理需要，可以在layer里面设置filter，满足条件的元素才会被呈现出来，<br>并用layer设定的样式渲染<br>缓存数据采用sqllite数据库进行存储，表结构相对简单，表内数据采用压缩格式(zlib)进行存储。<br>mvt<br>region_id-》resource_id-〉tiles-》<br>4.mapbox开源介绍<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/awesome-vector-tiles">https://github.com/mapbox/awesome-vector-tiles</a></p>
+<p>mapbox数据请求<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf</a>?<br>sku=101fNMKdfrxXw&amp;access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p1dHRybDR5MGJuZjQzcGhrZ2doeGgwNyJ9.a-vxW4UaxOoUMWUTGnEArw</p>
+<p>mapbox pbf 解析<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/protozero">https://github.com/mapbox/protozero</a><br><a target="_blank" rel="noopener" href="https://github.com/mapbox/vtzero">https://github.com/mapbox/vtzero</a><br><a target="_blank" rel="noopener" href="https://github.com/tlglovewf/pbfvectortile">https://github.com/tlglovewf/pbfvectortile</a></p>
+<p>Mapbox样式由一组根属性组成，其中一些描述单个全局属性，一些包含嵌套属性。<br>一些根属性(如版本、名称和元数据)对映射的外观或行为没有任何影响，但提供了与映射相关<br>的重要描述性信息。其他的，如层和源，是至关重要的，并决定哪些地图功能将出现在您的地图上，以及它们将是<br>什么样子。一些属性(如中心、缩放、间距和方位)为地图渲染器提供了一组初始显示地图时使用的默认值。</p>
 
       
     </div>
@@ -352,76 +412,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift233mapbox%E8%B0%83%E7%A0%94/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/10/M_Swift233mapbox%E8%B0%83%E7%A0%94/" class="post-title-link" itemprop="url">mapbox功能调研</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-10 18:49:05" itemprop="dateCreated datePublished" datetime="2021-08-10T18:49:05+08:00">2021-08-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-14 21:37:48" itemprop="dateModified" datetime="2022-03-14T21:37:48+08:00">2022-03-14</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.Map通过样式json文件绘制<br>具体字段内容参考：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/mapbox-gl-js/style-spec/">https://docs.mapbox.com/mapbox-gl-js/style-spec/</a></p>
-<p>我们地图：也有样式配置文件，原理上基本一致，各种样式支持情况需要重新设计<br>达到效果：<br>    更新stye.json，地图样式同步变化</p>
-<p>2.采用mvt格式数据，bpf协议传输数据。<br>mapbox数据请求示例：<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf</a>?<br>sku=101fNMKdfrxXw&amp;access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p1dHRybDR5MGJuZjQzcGhrZ2doeGgwNyJ9.a-vxW4UaxOoUMWUTGnEArw</p>
-<p>我们也是mvt格式，不是标准mvt，需要将我们数据格式同步到标准mvt格式上，<br>mapbox pbf标准mvt解析参考：<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/protozero">https://github.com/mapbox/protozero</a><br><a target="_blank" rel="noopener" href="https://github.com/mapbox/vtzero">https://github.com/mapbox/vtzero</a><br><a target="_blank" rel="noopener" href="https://github.com/tlglovewf/pbfvectortile">https://github.com/tlglovewf/pbfvectortile</a></p>
-<p>3.支持geojson绘制<br>    支持geojson跟mvt数据转换（支持一种格式数据绘制即可）<br>4.坐标<br>    mvt采用瓦片坐标，以瓦片左上角为原点（0，0），瓦片上的数据坐标全是基于瓦片的。<br>5.绘制方式：<br>    mapbox中layer的设计不是根据数据来源分类，根据数据点、线、面进行分类，fill类型的layer只负责填充；<br>line类型的layer只负责线条；symbol类型的layer会处理sprite，文字等；raster类型的layer就只负责图片，<br>circle类型的layer是更高一层的业务处理需要，可以在layer里面设置filter，满足条件的元素才会被呈现出来，<br>并用layer设定的样式渲染。细化地图样式，点、线、面，可实现批量绘制，达到优化性能目的<br>    需确认我们设计模式是否与mapbox相似<br>6.数据库设计<br>    支持sqllite存储，方便数据迁移，<br>    相同数据会采用去重处理，如大海整个矢量瓦片都是大海数据，所有大海的数据瓦片都是一样的，会将所有的大海数据id指向同一块数据。<br>    我们数据采用文件夹形式存储，根据瓦片id分文件夹，需要优化为sqllite存储<br>7.离线缓存<br>    缓存数据采用sqllite数据库进行存储，表结构相对简单，表内数据采用压缩格式(zlib)进行存储。<br>    region_id-》resource_id-〉tiles-》</p>
-<p>mapbox开源介绍<br>mapbox很多东西都开源了，开发中可以参考。<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/awesome-vector-tiles">https://github.com/mapbox/awesome-vector-tiles</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift235iOS%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -516,7 +506,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift232mapbox%E5%AD%A6%E4%B9%A0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/10/M_Swift233mapbox%E8%B0%83%E7%A0%94/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -530,7 +520,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/10/M_Swift232mapbox%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">mapbox 学习</a>
+            <a href="/2021/08/10/M_Swift233mapbox%E8%B0%83%E7%A0%94/" class="post-title-link" itemprop="url">mapbox功能调研</a>
         </h2>
 
         <div class="post-meta">
@@ -547,7 +537,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-11 11:10:39" itemprop="dateModified" datetime="2021-08-11T11:10:39+08:00">2021-08-11</time>
+                <time title="修改时间：2022-03-14 21:37:48" itemprop="dateModified" datetime="2022-03-14T21:37:48+08:00">2022-03-14</time>
               </span>
 
           
@@ -561,11 +551,77 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>最近在了解mapbox相关的知识，现在也总结一下</p>
-<h2 id="1-mapbox是什么"><a href="#1-mapbox是什么" class="headerlink" title="1.mapbox是什么"></a>1.mapbox是什么</h2><p>mapbox主要是用来做地图定制化的开发的，核心是mapbox studio<br>2.mapbox优势是什么<br>1.支持样式自定义，能快速设计出一套样式地图<br>2.支持mvt格式数据，数据小。<br>3.细化地图样式，点、线、面，可实现批量绘制，快速<br>4.支持mysql存储，方便数据迁移<br>3.mapbox设计思想原理<br>1.能表达整个Map的Style文件<br>2.layer的设计不是根据数据来源分类，根据数据点、线、面进行分类，fill类型的layer只负责填充；<br>line类型的layer只负责线条；symbol类型的layer会处理sprite，文字等；raster类型的layer就只负责图片，<br>circle类型的layer是更高一层的业务处理需要，可以在layer里面设置filter，满足条件的元素才会被呈现出来，<br>并用layer设定的样式渲染<br>缓存数据采用sqllite数据库进行存储，表结构相对简单，表内数据采用压缩格式(zlib)进行存储。<br>mvt<br>region_id-》resource_id-〉tiles-》<br>4.mapbox开源介绍<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/awesome-vector-tiles">https://github.com/mapbox/awesome-vector-tiles</a></p>
-<p>mapbox数据请求<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf</a>?<br>sku=101fNMKdfrxXw&amp;access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p1dHRybDR5MGJuZjQzcGhrZ2doeGgwNyJ9.a-vxW4UaxOoUMWUTGnEArw</p>
-<p>mapbox pbf 解析<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/protozero">https://github.com/mapbox/protozero</a><br><a target="_blank" rel="noopener" href="https://github.com/mapbox/vtzero">https://github.com/mapbox/vtzero</a><br><a target="_blank" rel="noopener" href="https://github.com/tlglovewf/pbfvectortile">https://github.com/tlglovewf/pbfvectortile</a></p>
-<p>Mapbox样式由一组根属性组成，其中一些描述单个全局属性，一些包含嵌套属性。<br>一些根属性(如版本、名称和元数据)对映射的外观或行为没有任何影响，但提供了与映射相关<br>的重要描述性信息。其他的，如层和源，是至关重要的，并决定哪些地图功能将出现在您的地图上，以及它们将是<br>什么样子。一些属性(如中心、缩放、间距和方位)为地图渲染器提供了一组初始显示地图时使用的默认值。</p>
+          <p>1.Map通过样式json文件绘制<br>具体字段内容参考：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/mapbox-gl-js/style-spec/">https://docs.mapbox.com/mapbox-gl-js/style-spec/</a></p>
+<p>我们地图：也有样式配置文件，原理上基本一致，各种样式支持情况需要重新设计<br>达到效果：<br>    更新stye.json，地图样式同步变化</p>
+<p>2.采用mvt格式数据，bpf协议传输数据。<br>mapbox数据请求示例：<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/10/299/387.vector.pbf</a>?<br>sku=101fNMKdfrxXw&amp;access_token=pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2p1dHRybDR5MGJuZjQzcGhrZ2doeGgwNyJ9.a-vxW4UaxOoUMWUTGnEArw</p>
+<p>我们也是mvt格式，不是标准mvt，需要将我们数据格式同步到标准mvt格式上，<br>mapbox pbf标准mvt解析参考：<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/protozero">https://github.com/mapbox/protozero</a><br><a target="_blank" rel="noopener" href="https://github.com/mapbox/vtzero">https://github.com/mapbox/vtzero</a><br><a target="_blank" rel="noopener" href="https://github.com/tlglovewf/pbfvectortile">https://github.com/tlglovewf/pbfvectortile</a></p>
+<p>3.支持geojson绘制<br>    支持geojson跟mvt数据转换（支持一种格式数据绘制即可）<br>4.坐标<br>    mvt采用瓦片坐标，以瓦片左上角为原点（0，0），瓦片上的数据坐标全是基于瓦片的。<br>5.绘制方式：<br>    mapbox中layer的设计不是根据数据来源分类，根据数据点、线、面进行分类，fill类型的layer只负责填充；<br>line类型的layer只负责线条；symbol类型的layer会处理sprite，文字等；raster类型的layer就只负责图片，<br>circle类型的layer是更高一层的业务处理需要，可以在layer里面设置filter，满足条件的元素才会被呈现出来，<br>并用layer设定的样式渲染。细化地图样式，点、线、面，可实现批量绘制，达到优化性能目的<br>    需确认我们设计模式是否与mapbox相似<br>6.数据库设计<br>    支持sqllite存储，方便数据迁移，<br>    相同数据会采用去重处理，如大海整个矢量瓦片都是大海数据，所有大海的数据瓦片都是一样的，会将所有的大海数据id指向同一块数据。<br>    我们数据采用文件夹形式存储，根据瓦片id分文件夹，需要优化为sqllite存储<br>7.离线缓存<br>    缓存数据采用sqllite数据库进行存储，表结构相对简单，表内数据采用压缩格式(zlib)进行存储。<br>    region_id-》resource_id-〉tiles-》</p>
+<p>mapbox开源介绍<br>mapbox很多东西都开源了，开发中可以参考。<br><a target="_blank" rel="noopener" href="https://github.com/mapbox/awesome-vector-tiles">https://github.com/mapbox/awesome-vector-tiles</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift234OpenGL%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift234OpenGL%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">OpenGL视频学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-14 21:37:58" itemprop="dateModified" datetime="2022-03-14T21:37:58+08:00">2022-03-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>向量(Vector)： 一个定义了在空间中方向和/或位置的数学实体。<br>矩阵(Matrix)： 一个矩形阵列的数学表达式。<br>在opengl中通常使用4x4的变换矩阵<br>缩放：向量乘相同数<br>位移：向量加另一个向量<br>大多数的旋转函数使用弧度制<br>坐标转换：局部-》观察——〉投影<br>视口变换将位于-1.0到1.0范围的坐标变换到由glViewport函数所定义的坐标范围内<br>投影：墨卡托<br>相机：<br>视口(Viewport)： 我们需要渲染的窗口<br>图形管线(Graphics Pipeline)： 一个顶点在呈现为像素之前经过的全部过程<br>着色器(Shader)： 一个运行在显卡上的小型程序。很多阶段的图形管道都可以使用自定义的着色器来代替原有的功能<br>顶点缓冲对象(Vertex Buffer Object)： 一个调用显存并存储所有顶点数据供显卡使用的缓冲对象<br>顶点数组对象(Vertex Array Object)： 存储缓冲区和顶点属性状态<br>索引缓冲对象(Element Buffer Object)： 一个存储索引供索引化绘制使用的缓冲对象<br>Uniform： 一个特殊类型的GLSL变量。它是全局的（在一个着色器程序中每一个着色器都能够访问uniform变量），并且只需要被设定一次<br>纹理(Texture)： 一种包裹着物体的特殊类型图像，给物体精细的视觉效果<br>纹理缠绕(Texture Wrapping)： 定义了一种当纹理顶点超出范围(0, 1)时指定OpenGL如何采样纹理的模式。<br>局部空间(Local Space)： 一个物体的初始空间。所有的坐标都是相对于物体的原点的。<br>世界空间(World Space)： 所有的坐标都相对于全局原点。<br>观察空间(View Space)： 所有的坐标都是从摄像机的视角观察的。<br>裁剪空间(Clip Space)： 所有的坐标都是从摄像机视角观察的，但是该空间应用了投影。这个空间应该是一个顶点坐标最终的空间，作为顶点着色器的输出。OpenGL负责处理剩下的事情（裁剪/透视除法）。<br>屏幕空间(Screen Space)： 所有的坐标都由屏幕视角来观察。坐标的范围是从0到屏幕的宽/高。<br>LookAt矩阵： 一种特殊类型的观察矩阵，它创建了一个坐标系，其中所有坐标都根据从一个位置正在观察目标的用户旋转或者平移。<br>欧拉角(Euler Angles)： 被定义为偏航角(Yaw)，俯仰角(Pitch)，和滚转角(Roll)从而允许我们通过这三个值构造任何3D方向。</p>
 
       
     </div>
@@ -660,7 +716,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift234OpenGL%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift250mapbox-3dtile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -674,7 +730,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/06/28/M_Swift234OpenGL%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">OpenGL视频学习</a>
+            <a href="/2021/06/28/M_Swift250mapbox-3dtile/" class="post-title-link" itemprop="url">mapbox-3dtile</a>
         </h2>
 
         <div class="post-meta">
@@ -691,7 +747,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-14 21:37:58" itemprop="dateModified" datetime="2022-03-14T21:37:58+08:00">2022-03-14</time>
+                <time title="修改时间：2021-11-21 16:30:55" itemprop="dateModified" datetime="2021-11-21T16:30:55+08:00">2021-11-21</time>
               </span>
 
           
@@ -705,7 +761,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>向量(Vector)： 一个定义了在空间中方向和/或位置的数学实体。<br>矩阵(Matrix)： 一个矩形阵列的数学表达式。<br>在opengl中通常使用4x4的变换矩阵<br>缩放：向量乘相同数<br>位移：向量加另一个向量<br>大多数的旋转函数使用弧度制<br>坐标转换：局部-》观察——〉投影<br>视口变换将位于-1.0到1.0范围的坐标变换到由glViewport函数所定义的坐标范围内<br>投影：墨卡托<br>相机：<br>视口(Viewport)： 我们需要渲染的窗口<br>图形管线(Graphics Pipeline)： 一个顶点在呈现为像素之前经过的全部过程<br>着色器(Shader)： 一个运行在显卡上的小型程序。很多阶段的图形管道都可以使用自定义的着色器来代替原有的功能<br>顶点缓冲对象(Vertex Buffer Object)： 一个调用显存并存储所有顶点数据供显卡使用的缓冲对象<br>顶点数组对象(Vertex Array Object)： 存储缓冲区和顶点属性状态<br>索引缓冲对象(Element Buffer Object)： 一个存储索引供索引化绘制使用的缓冲对象<br>Uniform： 一个特殊类型的GLSL变量。它是全局的（在一个着色器程序中每一个着色器都能够访问uniform变量），并且只需要被设定一次<br>纹理(Texture)： 一种包裹着物体的特殊类型图像，给物体精细的视觉效果<br>纹理缠绕(Texture Wrapping)： 定义了一种当纹理顶点超出范围(0, 1)时指定OpenGL如何采样纹理的模式。<br>局部空间(Local Space)： 一个物体的初始空间。所有的坐标都是相对于物体的原点的。<br>世界空间(World Space)： 所有的坐标都相对于全局原点。<br>观察空间(View Space)： 所有的坐标都是从摄像机的视角观察的。<br>裁剪空间(Clip Space)： 所有的坐标都是从摄像机视角观察的，但是该空间应用了投影。这个空间应该是一个顶点坐标最终的空间，作为顶点着色器的输出。OpenGL负责处理剩下的事情（裁剪/透视除法）。<br>屏幕空间(Screen Space)： 所有的坐标都由屏幕视角来观察。坐标的范围是从0到屏幕的宽/高。<br>LookAt矩阵： 一种特殊类型的观察矩阵，它创建了一个坐标系，其中所有坐标都根据从一个位置正在观察目标的用户旋转或者平移。<br>欧拉角(Euler Angles)： 被定义为偏航角(Yaw)，俯仰角(Pitch)，和滚转角(Roll)从而允许我们通过这三个值构造任何3D方向。</p>
+          <p>mapbox结合3dtile<br><a target="_blank" rel="noopener" href="https://github.com/Geodan/mapbox-3dtiles">https://github.com/Geodan/mapbox-3dtiles</a><br><a target="_blank" rel="noopener" href="https://github.com/liujun3660105/mapbox-3dtiles">https://github.com/liujun3660105/mapbox-3dtiles</a></p>
 
       
     </div>
@@ -795,7 +851,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift248mapbox%20api/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift252mapbox%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -809,7 +865,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/06/28/M_Swift248mapbox%20api/" class="post-title-link" itemprop="url">mapbox api</a>
+            <a href="/2021/06/28/M_Swift252mapbox%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" class="post-title-link" itemprop="url">mapbox开源项目</a>
         </h2>
 
         <div class="post-meta">
@@ -826,7 +882,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-21 16:30:12" itemprop="dateModified" datetime="2021-11-21T16:30:12+08:00">2021-11-21</time>
+                <time title="修改时间：2021-11-21 16:31:40" itemprop="dateModified" datetime="2021-11-21T16:31:40+08:00">2021-11-21</time>
               </span>
 
           
@@ -840,87 +896,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Example request: Retrieve vector tiles</p>
-<p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
-<h1 id="Return-a-style-optimized-tile-using-the-style-query-parameter"><a href="#Return-a-style-optimized-tile-using-the-style-query-parameter" class="headerlink" title="Return a style-optimized tile using the style query parameter"></a>Return a style-optimized tile using the style query parameter</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/12/1171/1566.mvt?style=mapbox://styles/mapbox/streets-v11@00&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/12/1171/1566.mvt?style=mapbox://styles/mapbox/streets-v11@00&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
-<p>Example request: Retrieve raster tiles</p>
-<h1 id="Retrieve-a-2x-tile-this-512x512-tile-is-appropriate-for-high-density-displays"><a href="#Retrieve-a-2x-tile-this-512x512-tile-is-appropriate-for-high-density-displays" class="headerlink" title="Retrieve a 2x tile; this 512x512 tile is appropriate for high-density displays"></a>Retrieve a 2x tile; this 512x512 tile is appropriate for high-density displays</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.satellite/1/0/0@2x.jpg90?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.satellite/1/0/0@2x.jpg90?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
-<p>Example request: Retrieve a style</p>
-<p><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
-<p>Example request: Retrieve features from vector tiles</p>
-<h1 id="Retrieve-features-within-a-10-meter-radius-of-the-specified-location"><a href="#Retrieve-features-within-a-10-meter-radius-of-the-specified-location" class="headerlink" title="Retrieve features within a 10 meter radius of the specified location"></a>Retrieve features within a 10 meter radius of the specified location</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=10&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=10&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
-<h1 id="Return-at-most-20-features"><a href="#Return-at-most-20-features" class="headerlink" title="Return at most 20 features"></a>Return at most 20 features</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?limit=20&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?limit=20&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
-<h1 id="Query-multiple-tilesets"><a href="#Query-multiple-tilesets" class="headerlink" title="Query multiple tilesets"></a>Query multiple tilesets</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/%7Btileset_id_1%7D,%7Btileset_id_2%7D,%7Btileset_id_3%7D/tilequery/-122.42901,37.80633.json&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/{tileset_id_1},{tileset_id_2},{tileset_id_3}/tilequery/-122.42901,37.80633.json&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
-<h1 id="Return-only-results-from-the-poi-label-and-building-layers-within-a-30-meter-radius-of-the-specified-location"><a href="#Return-only-results-from-the-poi-label-and-building-layers-within-a-30-meter-radius-of-the-specified-location" class="headerlink" title="Return only results from the poi_label and building layers within a 30 meter radius of the specified location"></a>Return only results from the poi_label and building layers within a 30 meter radius of the specified location</h1><p>$ curl “<a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=30&amp;layers=poi_label,building&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/-122.42901,37.80633.json?radius=30&amp;layers=poi_label,building&amp;access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&quot;</a></p>
-<p>数据服务：<br>地址 + 版本 + 数据名称 + xyz坐标 + token<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?token=123">https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?token=123</a></p>
-<p>样式服务：<br>地址 + 版本 + 样式名称 + token<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?token=123">https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?token=123</a></p>
-<p>图标（sprite）：<br>mapbox://sprites/mapbox/streets-v11<br>首先，对于索引文件和图像文件，它们将在高dpi设备上将@2x附加到URL。<br>其次，它们将附加文件扩展名:索引文件的扩展名是.json，图像文件的扩展名是.png。<br>例如，如果你在你的样式中指定了”sprite”: “<a href="https://example.com/sprite&quot;%EF%BC%8C%E6%B8%B2%E6%9F%93%E5%99%A8%E4%BC%9A%E5%8A%A0%E8%BD%BD">https://example.com/sprite&quot;，渲染器会加载</a>:<br><a href="https://example.com/sprite.json%E5%92%8Chttps://example.com/sprite.png%EF%BC%8C%E6%88%96%E8%80%85">https://example.com/sprite.json和https://example.com/sprite.png，或者</a><br><a href="https://example.com/sprite@2x.json%E5%92%8Chttps://example.com/sprite@2x.png%E3%80%82">https://example.com/sprite@2x.json和https://example.com/sprite@2x.png。</a></p>
-<p>字体（glyphs）：<br>mapbox://fonts/mapbox/{fontstack}/{range}.pbf</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift250mapbox-3dtile/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/28/M_Swift250mapbox-3dtile/" class="post-title-link" itemprop="url">mapbox-3dtile</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-21 16:30:55" itemprop="dateModified" datetime="2021-11-21T16:30:55+08:00">2021-11-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>mapbox结合3dtile<br><a target="_blank" rel="noopener" href="https://github.com/Geodan/mapbox-3dtiles">https://github.com/Geodan/mapbox-3dtiles</a><br><a target="_blank" rel="noopener" href="https://github.com/liujun3660105/mapbox-3dtiles">https://github.com/liujun3660105/mapbox-3dtiles</a></p>
+          <p>mapbox-gl-native<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native">https://hub.fastgit.org/mapbox/mapbox-gl-native</a></p>
+<p>iOS SDK<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git">https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git</a>     ios-v5.9.0</p>
+<p>iOS例子<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/ios-sdk-examples">https://hub.fastgit.org/mapbox/ios-sdk-examples</a></p>
+<p>Android SDK<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-android/tree/android-v9.2.1">https://hub.fastgit.org/mapbox/mapbox-gl-native-android/tree/android-v9.2.1</a><br>Js</p>
+<p>Mvt数据服务等<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/openmaptiles">https://hub.fastgit.org/openmaptiles</a></p>
+<p>mvt数据转换流程<br><a target="_blank" rel="noopener" href="https://geovation.github.io/build-your-own-static-vector-tile-pipeline">https://geovation.github.io/build-your-own-static-vector-tile-pipeline</a><br><a target="_blank" rel="noopener" href="https://www.doc88.com/p-7844750681654.html">https://www.doc88.com/p-7844750681654.html</a></p>
 
       
     </div>

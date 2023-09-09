@@ -213,7 +213,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift224QT%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift221Flutter%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -227,7 +227,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/05/06/M_Swift224QT%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">QT开发总结</a>
+            <a href="/2021/05/06/M_Swift221Flutter%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">Flutter学习总结</a>
         </h2>
 
         <div class="post-meta">
@@ -244,7 +244,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-09 11:55:34" itemprop="dateModified" datetime="2021-06-09T11:55:34+08:00">2021-06-09</time>
+                <time title="修改时间：2021-05-19 10:46:47" itemprop="dateModified" datetime="2021-05-19T10:46:47+08:00">2021-05-19</time>
               </span>
 
           
@@ -258,36 +258,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="样式表同css"><a href="#样式表同css" class="headerlink" title="样式表同css"></a>样式表同css</h2><p>加载<br>QApplication a(argc, argv);<br>    QFile qss(“:/new/icon/ai3d.qss”);<br>    if( qss.open(QFile::ReadOnly))<br>    {<br>        qDebug(“open success”);<br>        QString style = QLatin1String(qss.readAll());<br>        a.setStyleSheet(style);<br>        qss.close();<br>    }<br>    else<br>    {<br>        qDebug(“Open failed”);<br>    }</p>
-<h2 id="TableView-Model"><a href="#TableView-Model" class="headerlink" title="TableView Model"></a>TableView Model</h2><pre><code>// 行数
-</code></pre>
-<p>   int rowCount(const QModelIndex &amp;parent) const;<br>   // 列数<br>   int columnCount(const QModelIndex &amp;parent) const;<br>   // 数据展示形式<br>   QVariant data(const QModelIndex &amp;index, int role) const;<br>   switch (role)<br>          {<br>          case Qt::DisplayRole:// 数据展示<br>          {<br>              int ncol = index.column();<br>              int nrow =  index.row();<br>              return m_data.at(nrow);<br>          }<br>          case Qt::EditRole: // 编辑<br>              return QVariant();<br>          case Qt::FontRole: // 字体<br>              return QFont(“consolas”, 12, 12);<br>          case Qt::TextAlignmentRole:// 对齐方式<br>               return Qt::AlignCenter;<br>          case Qt::ForegroundRole://前景<br>              return QBrush(Qt::white);<br>          case Qt::CheckStateRole: // 选中状态<br>          {<br>              if (index.column() == 0)<br>              {<br>                  AerialTriangulationTaskData values = m_data.at(index.row());<br>                  return values.selected ? Qt::Checked : Qt::Unchecked;<br>              }<br>          }<br>          }<br>        return QVariant();<br>   // 设置数据<br>   bool setData(const QModelIndex &amp;index, const QVariant &amp;value, int role);<br>   // 选中状态<br>   Qt::ItemFlags flags(const QModelIndex &amp;index) const;<br>   // 表头展示<br>   QVariant headerData(int section, Qt::Orientation orientation, int role) const;</p>
-<h2 id="QSizePolicy"><a href="#QSizePolicy" class="headerlink" title="QSizePolicy"></a>QSizePolicy</h2><p>QSizePolicy::Fixed              不能放大也不能缩小。<br>QSizePolicy::Minimum        可以变大，最小为设定值<br>QSizePolicy::Maximum       可以变小，最大值为设定值<br>QSizePolicy::Preferred        不倾向于扩展比sizeHint()大（QWidget的缺省策略）<br>QSizePolicy::Expanding      尽量占用剩余空间<br>QSizePolicy::MinimumExpanding  大小是最小值，并且是足够的。部件允许使用额外空间<br>QSizePolicy::Ignored    部件将会得到尽可能多的空间。</p>
-<h2 id="tableView"><a href="#tableView" class="headerlink" title="tableView"></a>tableView</h2><p>   m_tableView = new QTableView;<br>   m_tableView-&gt;setShowGrid(false); // 不显示边框<br>   m_tableView-&gt;setAlternatingRowColors(true); // 隔行换色<br>   m_tableView-&gt;setSelectionBehavior(QAbstractItemView::SelectRows); // 选中时为整行选中<br>   m_tableView-&gt;horizontalHeader()-&gt;setStretchLastSection(true);//最后一行是否铺满剩余空间<br>   QHeaderView *verticalHeader = m_tableView-&gt;verticalHeader(); // 垂直表头<br>   QHeaderView *horizontalHeader = m_tableView-&gt;horizontalHeader(); // 水平表头<br>   verticalHeader-&gt;hide(); // 隐藏垂直方向行头<br>   verticalHeader-&gt;setDefaultSectionSize(44); // 设置高度<br>   horizontalHeader-&gt;setMinimumHeight(44); // 设置最小高度<br>   m_tableView-&gt;setColumnWidth(0, 36);// 设置列宽度</p>
-<h2 id="圆角边框"><a href="#圆角边框" class="headerlink" title="圆角边框"></a>圆角边框</h2><p>void ImportPOSFileAdjustWidget::paintEvent(QPaintEvent *event)<br>{<br>    QStylePainter painter(this);<br>    painter.setRenderHint(QPainter::Antialiasing);<br>    painter.setBrush(QBrush(Qt::transparent));<br>    painter.setPen(QColor(“#C1C1C1”));<br>    QRect rect = this-&gt;rect();<br>    painter.drawRoundedRect(rect, 3, 3);<br>    QWidget::paintEvent(event);<br>}</p>
-<h2 id="间距"><a href="#间距" class="headerlink" title="间距"></a>间距</h2><p>mainLayout-&gt;setSpacing(10);<br>mainLayout-&gt;setMargin(1);<br>mainLayout-&gt;setContentsMargins(1, 1, 1, 1);</p>
-<h2 id="tableView-Delegate"><a href="#tableView-Delegate" class="headerlink" title="tableView Delegate"></a>tableView Delegate</h2><p>void PosInfoTableDelegate::paint(QPainter <em>painter, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index) const<br>{<br>    QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;</em> buttons = m_btns.value(index);<br>    if (!buttons) {<br>        QStyleOptionButton* button1 = new QStyleOptionButton();<br>        button1-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4);<br>        button1-&gt;text = QStringLiteral(“查看”);<br>        QPalette pal = button1-&gt;palette;<br>        pal.setColor(QPalette::ButtonText, QColor(255, 255, 255));<br>        button1-&gt;palette = pal;<br>        button1-&gt;icon = QIcon(“:/new/icon/largeImage.png”);<br>        button1-&gt;iconSize = QSize(40,40);</p>
-<pre><code>    QStyleOptionButton* button2 = new QStyleOptionButton();
-    button2-&gt;rect = option.rect.adjusted(button1-&gt;rect.width() + 4, 4, -4, -4);
-    button2-&gt;icon =  QIcon(&quot;:/new/icon/closeTab.png&quot;);
-    button2-&gt;iconSize = QSize(40,40);
-    buttons =new  QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;(button1, button2);
-    (const_cast&lt;PosInfoTableDelegate *&gt;(this))-&gt;m_btns.insert(index, buttons);
-&#125;
-buttons-&gt;first-&gt;rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4); //
-buttons-&gt;second-&gt;rect = option.rect.adjusted(buttons-&gt;first-&gt;rect.width() + 4, 4, -4, -4);
-painter-&gt;save();
-
-if (option.state &amp; QStyle::State_Selected) &#123;
-    painter-&gt;fillRect(option.rect, option.palette.highlight());
-
-&#125;
-painter-&gt;restore();
-QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;first, painter);
-QApplication::style()-&gt;drawControl(QStyle::CE_PushButton, buttons-&gt;second, painter);
-</code></pre>
-<p>}</p>
-<p>bool PosInfoTableDelegate::editorEvent(QEvent <em>event, QAbstractItemModel <em>model, const QStyleOptionViewItem &amp;option, const QModelIndex &amp;index)<br>{<br>    if (event-&gt;type() == QEvent::MouseButtonRelease) {<br>        QMouseEvent</em> e =(QMouseEvent</em>)event;<br>        if (m_btns.contains(index)) {<br>            QPair&lt;QStyleOptionButton*, QStyleOptionButton*&gt;* btns = m_btns.value(index);<br>            if (btns-&gt;first-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                emit lookRow(index.row());<br>            } else if(btns-&gt;second-&gt;rect.contains(e-&gt;x(), e-&gt;y())) {<br>                btns-&gt;second-&gt;state &amp;= (~QStyle::State_Sunken);<br>                emit deleteRow(index.row());<br>            }<br>        }<br>    }<br>    return false;<br>}</p>
+          <p>对于行(Row)来说，主轴是水平方向，横轴垂直方向。对于列（Column）来说，主轴垂直方向，横轴水平方向。<br>MainAxisAlignment 和CrossAxisAlignment 类提供了很多控制对齐的常量.<br>spaceEvenly，它会在每个图像之间，之前和之后均匀分配空闲的水平空间<br>通过使用Expanded widget，可以将widget的大小设置为适和行或列,Expanded widget具有一个flex属性，它是一个整数，用于确定widget的弹性系数,默认弹性系数是1。例如，要创建一个由三个widget组成的行，其中中间widget的宽度是其他两个widget的两倍，将中间widget的弹性系数设置为2：</p>
+<p>聚集 widgets<br>默认情况下，行或列沿着其主轴会尽可能占用尽可能多的空间，但如果要将孩子紧密聚集在一起，可以将mainAxisSize设置为MainAxisSize.min<br>为了最大限度地减少由嵌套严重的布局代码导致的视觉混淆，可以在变量和函数中实现UI的各个部分。</p>
+<p>Container<br>添加 padding, margins, borders, background color, 或将其他装饰添加到widget.包含单个子widget，但该子widget可以是Row，Column，甚至是widget树的根<br>GridView<br>将 widgets 排列为可滚动的网格.GridView.count 允许您指定列数GridView.extent 允许您指定项的最大像素宽度<br>ListView<br>将widget排列为可滚动列表，比Column配置少，但更易于使用并支持滚动<br>Stack<br>将widget重叠在另一个widget之上.子列表中的第一个widget是base widget; 随后的子widget被覆盖在基础widget的顶部，Stack的内容不能滚动<br>Card 接受单个子项，但该子项可以是Row，Column或其他包含子级列表的widget 显示圆角和阴影，Card内容不能滚动</p>
 
       
     </div>
@@ -394,71 +367,6 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">QT实战技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-24 14:33:58" itemprop="dateModified" datetime="2021-06-24T14:33:58+08:00">2021-06-24</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>首先要绘制垂直方向的布局，然后再在垂直方向的布局里面嵌套水平方向的布局<br>布局也能设置间隔边距<br>mainLayout-&gt;setSpacing(10);<br>mainLayout-&gt;setMargin(1);<br>样式可以直接采用setStyleSheet，同css一摸一样<br>左侧对齐的话可以在末尾添加一个addSpacerItem，将控件压制到左侧<br>QSpacerItem的QSizePolicy是一个万能的东西，我们可以根据他设置大小固定不固定，要不要最大化等等<br>设置Dialog关闭立即删除this-&gt;setAttribute(Qt::WA_DeleteOnClose, true);</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift230QT%E5%90%8E%E7%AB%AF%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9F%A5%E8%AF%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -542,6 +450,71 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/06/M_Swift228QT%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">QT实战技巧</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-06 10:12:24" itemprop="dateCreated datePublished" datetime="2021-05-06T10:12:24+08:00">2021-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-24 14:33:58" itemprop="dateModified" datetime="2021-06-24T14:33:58+08:00">2021-06-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>首先要绘制垂直方向的布局，然后再在垂直方向的布局里面嵌套水平方向的布局<br>布局也能设置间隔边距<br>mainLayout-&gt;setSpacing(10);<br>mainLayout-&gt;setMargin(1);<br>样式可以直接采用setStyleSheet，同css一摸一样<br>左侧对齐的话可以在末尾添加一个addSpacerItem，将控件压制到左侧<br>QSpacerItem的QSizePolicy是一个万能的东西，我们可以根据他设置大小固定不固定，要不要最大化等等<br>设置Dialog关闭立即删除this-&gt;setAttribute(Qt::WA_DeleteOnClose, true);</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift205SVG%E4%BA%86%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -602,65 +575,6 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/" class="post-title-link" itemprop="url">vue构建前端权限管理页面</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:38" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>前端开发完后需要实现权限管理，需要不同的地方有不同的权限，本来这个应该是后端的一个接口来控制的，但是，思来想去页面是前端的，<br>也得前端告诉后端有哪些地方需要权限啊，接下来就是权限设计的计划了<br>因为最终还是要后端来给前端的，交互方式普遍都是采用json，那么就思考怎么生成json吧，具体json设计如下<br>     array:[<br>      {<br>        key:”dashbord”,<br>        name:”总览权限控制”,<br>        value:[<br>          {<br>            key:”show”,<br>            name:’是否显示’,<br>            value: true<br>          },{<br>            key:”show_daily”,<br>            name:’是否显示工作日报’,<br>            value: true<br>          }<br>        ]<br>    }];<br>其实非常直接，就是哪些对方需要权限，然后按模块划分出来，这样就是一个数组的结构，然后每个数组就是一个模块<br>每个模块都有一个key来表示模块的唯一性，有name来描述模块，模块下面有很多权限，我们又设计成一个数组<br>每个权限都是key、name、value形式，分别表示唯一性，权限描述、是否具备权限。<br>json设计完了，那么我想我们如果有一个非常漂亮的展示页面就更直观了，我们使用elementui，开源的框架能够非常方便的构建ui<br>具体设计如下：<br> &lt;el-tabs tab-position=”left” @tab-click=”handleClick”&gt;<br>    <el-tab-pane :label="item.name" v-for="(item,index) of array" :key="index"><br>      <el-row :gutter="20" v-for="(subitem,subindex) of item.value" :key="subindex" style="padding:10px;"><br>        <el-col :span="8"><el-input v-model="subitem.name" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8"><el-input v-model="subitem.key" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8" style="line-height:40px;"><el-switch v-model="subitem.value"></el-switch></el-col><br>      </el-row><br>      <el-row><br>        <el-col :span="20">&lt;el-button @click=”addChildClick”&gt;新增</el-button></el-col><br>      </el-row><br>    </el-tab-pane><br>  </el-tabs><br>代码非常简单，就是遍历json，把模块做成一个左侧的tab栏<br>然后再每个模块栏里面遍历value，用输入框和switch表示权限信息，我的想法是利用input的双向绑定，我们能够非常简单的修改编辑权限<br>当然，编辑的也就是我们的json数据了，我们再设计一个下载按钮就可以非常方便的下载数据了：<br>     var json = JSON.stringify(this.array,null,’\t’);<br>    const link = document.createElement(‘a’)<br>    link.style.display = ‘none’<br>    link.href = window.URL.createObjectURL(new Blob([json]))<br>    link.setAttribute(‘download’, ‘permissions.json’)<br>    document.body.appendChild(link)<br>    link.click()<br>    document.body.removeChild(link)<br>后面我们又设计了一个新增的按钮，然后也可以新增权限了，这里就不再赘述了，<br>最大的问题是我们修改完数据，我们不能动态的修改vue中json的代码，我想我们是不是应该把这个下载和json设计在一个位置，这样就可以实现数据修改了</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift208Vue%E6%8E%A5%E5%8F%A3%E6%A8%A1%E7%89%88%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -701,6 +615,134 @@ QApplication::style()-&gt;drawControl(QStyle::CE_PushButtonLabel, buttons-&gt;se
 
       
           <p>因为最近后端在做微服务的改造，我们根据后端的代码也进行了一下前端api接口的整合，也按照后端微服务的形式<br>设计成了一个个的模块，每个模块代表一个微服务。<br>整理完之后，我突然发现，其实前端关于接口方面的代码非常的统一，比较适合做成模版，然后直接拷贝就可以了<br>比较像Xcode，idea等里面的快捷键设计，就像iOS写UITableVuew一样，代理方法非常多，一个一个的敲代理方法<br>会比较耗时，我们通常会将这段代码设计成一个代码块，然后设置一个快捷输入，就能够非常快速的把这段代码敲出来<br>当然我现在写前端比较少，不知道vs code里面是不是也有这种设计，但是今天闲来没事，想设计一个这样的页面，<br>实现代码的模版导出，首先，我们先整理出接口的前端页面有哪些：<br>    // 接口封装<br>    export function getIceLineCount(data){ // 接口名称<br>      return request({<br>        url:<code>/indexWeb/lineCount</code>, // 接口地址<br>        method:’post’, // method<br>        data,// 请求参数<br>      })<br>    }<br>    // 接口参数<br>    iceLineCountQuery: {<br>        pageNum: 1,<br>        pageSize: 20,<br>        deviceName :’’,<br>        cityCompany: “”,<br>        districtCompany: “”,<br>        sfjnsy:1,<br>        voltageLevel: [],<br>    },<br>    // 接口调用<br>    getIceLineCount() {<br>       getIceLineCount(this.iceLineCountQuery).then((res) =&gt; {<br>          console.log(‘getIceLineCount’, res)<br>       })<br>    },<br>其实主要就是这三部分，接口封装、接口参数、接口调用，我们设计一个UI界面<br>    <el-input v-model="methodName" placeholder="请输入接口名称"></el-input><br>    <el-input v-model="url" placeholder="请输入接口地址"></el-input><br>    <el-input v-model="parmas" type="textarea" autosize placeholder="请输入参数"></el-input><br>    <el-input v-model="result" type="textarea" autosize placeholder="请输入参数"></el-input><br>UI界面比较简单，输入接口名称，接口地址，请求参数，输出：接口封装、接口参数、接口调用，的相应代码<br>我们定义模版字符串如下：<br>    get result() : string {<br>        return “// 接口封装\nexport function get” + this.methodName +  “(data){\n<br>      return request({\n<br>        url:<code>&quot; + this.url + &quot;</code>,\n<br>        method:’post’,\n<br>        data \n<br>      })\n<br>    } \n<br>    // 请求参数\n”+ this.methodName.charAt(0).toLowerCase() + this.methodName.slice(1) + “Query: {\n<br>    “ + this.parmas + “\n<br>    },\n<br>    // 接口调用\nget”+ this.methodName +”() {\n<br>      get”+ this.methodName +”(this.”+ this.methodName.charAt(0).toLowerCase() + this.methodName.slice(1) + “Query).then((res) =&gt; {\n<br>        console.log(‘get”+ this.methodName +”‘, res)\n<br>      })\n<br>    },”<br>然后利用input model的双向绑定特性，只要我们输入方法名，接口地址和参数我们就能动态的变更模版字符串，<br>然后输出接口模版，这样我们就实现了api模版的导出了，非常简单。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift209Vue%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift209Vue%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">vue2数据驱动原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:45" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>首先通过 Object.defineProperty 遍历数据 data 劫持每个属性的 getter 和 setter 生成 Observer，通过一个 Depend 收集依赖，然后在数据发生变化时通知消息给 Watcher，触发相应监听回调，然后达到数据驱动视图的目的<br>// 第 1 步: 定义数据和视图<br>var model = {<br>  isShow: false<br>}<br>var view = document.querySelector(‘div’)</p>
+<p>// 第 2 步: 定义视图刷新方法<br>var updateView = function(value) {<br>  view.style.display = value ? ‘’ : ‘none’<br>}</p>
+<p>// 第 3 步: 设置初始视图表现<br>var directiveKey = view.getAttribute(‘v-show’)<br>updateView(model[directiveKey])</p>
+<p>// 第 4 步: 监听数据变化，然后刷新视图，达到数据驱动的目的<br>Object.defineProperty(model, ‘isShow’, {<br>  set: function(val) {<br>    updateView(val)<br>  }<br>})<br>vue3是采用数据劫持结合发布者-订阅者模式的方式，通过new Proxy()来劫持各个属性的setter，getter，在数据变动时发布消息给订阅者，触发相应的监听回调。<br>3.proxy比Object.defineProperty好在哪里？</p>
+<p>proxy优势：</p>
+<p>A.可以直接监听对象而非属性</p>
+<p>B.可以直接监听数组的变化</p>
+<p>C.Proxy有多达13种拦截方式，不限于apply、ownKeys、deleteProperty、has等等是Object.defineProperty不具备的</p>
+<p>D.Proxy返回的是一个新对象，可以只操作新的对象达到目的，而Object.defineProperty只能遍历对象属性直接修改</p>
+<p>Object.defineProperty的优势：</p>
+<p>A.兼容性好，支持IE9，而Proxy的存在浏览器兼容性问题，而且无法用polyfill磨平。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/" class="post-title-link" itemprop="url">vue构建前端权限管理页面</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:38" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前端开发完后需要实现权限管理，需要不同的地方有不同的权限，本来这个应该是后端的一个接口来控制的，但是，思来想去页面是前端的，<br>也得前端告诉后端有哪些地方需要权限啊，接下来就是权限设计的计划了<br>因为最终还是要后端来给前端的，交互方式普遍都是采用json，那么就思考怎么生成json吧，具体json设计如下<br>     array:[<br>      {<br>        key:”dashbord”,<br>        name:”总览权限控制”,<br>        value:[<br>          {<br>            key:”show”,<br>            name:’是否显示’,<br>            value: true<br>          },{<br>            key:”show_daily”,<br>            name:’是否显示工作日报’,<br>            value: true<br>          }<br>        ]<br>    }];<br>其实非常直接，就是哪些对方需要权限，然后按模块划分出来，这样就是一个数组的结构，然后每个数组就是一个模块<br>每个模块都有一个key来表示模块的唯一性，有name来描述模块，模块下面有很多权限，我们又设计成一个数组<br>每个权限都是key、name、value形式，分别表示唯一性，权限描述、是否具备权限。<br>json设计完了，那么我想我们如果有一个非常漂亮的展示页面就更直观了，我们使用elementui，开源的框架能够非常方便的构建ui<br>具体设计如下：<br> &lt;el-tabs tab-position=”left” @tab-click=”handleClick”&gt;<br>    <el-tab-pane :label="item.name" v-for="(item,index) of array" :key="index"><br>      <el-row :gutter="20" v-for="(subitem,subindex) of item.value" :key="subindex" style="padding:10px;"><br>        <el-col :span="8"><el-input v-model="subitem.name" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8"><el-input v-model="subitem.key" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8" style="line-height:40px;"><el-switch v-model="subitem.value"></el-switch></el-col><br>      </el-row><br>      <el-row><br>        <el-col :span="20">&lt;el-button @click=”addChildClick”&gt;新增</el-button></el-col><br>      </el-row><br>    </el-tab-pane><br>  </el-tabs><br>代码非常简单，就是遍历json，把模块做成一个左侧的tab栏<br>然后再每个模块栏里面遍历value，用输入框和switch表示权限信息，我的想法是利用input的双向绑定，我们能够非常简单的修改编辑权限<br>当然，编辑的也就是我们的json数据了，我们再设计一个下载按钮就可以非常方便的下载数据了：<br>     var json = JSON.stringify(this.array,null,’\t’);<br>    const link = document.createElement(‘a’)<br>    link.style.display = ‘none’<br>    link.href = window.URL.createObjectURL(new Blob([json]))<br>    link.setAttribute(‘download’, ‘permissions.json’)<br>    document.body.appendChild(link)<br>    link.click()<br>    document.body.removeChild(link)<br>后面我们又设计了一个新增的按钮，然后也可以新增权限了，这里就不再赘述了，<br>最大的问题是我们修改完数据，我们不能动态的修改vue中json的代码，我想我们是不是应该把这个下载和json设计在一个位置，这样就可以实现数据修改了</p>
 
       
     </div>
@@ -790,65 +832,6 @@ Spring注解
 MyBatis
 @InsertProvider @UpdateProvider @Options
 </code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Dart学习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:55" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Future 异步、延迟等操作，跟js的Premis一致<br>Future 的所有API的返回值仍然是一个Future对象，所以可以很方便的进行链式调用”<br>Dart中的async/await 和JavaScript中的async/await功能和用法是一模一样的<br>async用来表示函数是异步的，定义的函数会返回一个Future对象，可以使用then方法添加回调函数。<br>await 后面是一个Future，表示等待该异步任务完成，异步完成后才会往下走；await必须出现在 async 函数内部。</p>
 
       
     </div>

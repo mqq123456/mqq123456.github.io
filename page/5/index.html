@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift266Flutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift264Flutter%20Dart/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/19/M_Swift266Flutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">Flutter开发技巧</a>
+            <a href="/2021/08/19/M_Swift264Flutter%20Dart/" class="post-title-link" itemprop="url">Flutter Dart</a>
         </h2>
 
         <div class="post-meta">
@@ -179,7 +179,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-03 15:45:05" itemprop="dateModified" datetime="2022-08-03T15:45:05+08:00">2022-08-03</time>
+                <time title="修改时间：2022-03-14 21:37:17" itemprop="dateModified" datetime="2022-03-14T21:37:17+08:00">2022-03-14</time>
               </span>
 
           
@@ -193,60 +193,63 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Flutter-iOS-开发"><a href="#Flutter-iOS-开发" class="headerlink" title="Flutter iOS 开发"></a>Flutter iOS 开发</h2><pre><code>flutter iOS混合
-flutter 调用iOS
-await methodChannel.invokeMethod(&#39;iOSFlutter&#39;, &#39;参数&#39;);
-iOS调用flutter
-</code></pre>
-<p>FlutterViewController* flutterViewController = [[FlutterViewController alloc] initWithProject:nil nibName:nil bundle:nil];<br>    flutterViewController.navigationItem.title = @”Demo”;<br>    [flutterViewController setInitialRoute:@”home”];<br>    // 要与main.dart中一致<br>    NSString *channelName = @”com.pages.your/native_post”;</p>
-<pre><code>FlutterEventChannel *evenChannal = [FlutterEventChannel eventChannelWithName:channelName binaryMessenger:flutterViewController];
-// 代理FlutterStreamHandler
-[evenChannal setStreamHandler:self];
-
-[self.navigationController pushViewController:flutterViewController animated:YES];
-</code></pre>
-<h2 id="flutter-android-开发"><a href="#flutter-android-开发" class="headerlink" title="flutter android 开发"></a>flutter android 开发</h2><pre><code>1）添加 FlutterActivity 到 AndroidManifest.xml 中：
-</code></pre>
-<p><activity
-  android:name="io.flutter.embedding.android.FlutterActivity"
-  android:theme="@style/LaunchTheme"
-  android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-  android:hardwareAccelerated="true"
-  android:windowSoftInputMode="adjustResize"
-  /><br>myButton.setOnClickListener {<br>  startActivity(<br>    FlutterActivity<br>      .withNewEngine()<br>      .initialRoute(“/my_route”)<br>      .build(this)<br>  )<br>}</p>
-<h2 id="缓存-Flutter-引擎方式跳转："><a href="#缓存-Flutter-引擎方式跳转：" class="headerlink" title="缓存 Flutter 引擎方式跳转："></a>缓存 Flutter 引擎方式跳转：</h2><p>class MyApplication : Application() {<br>  lateinit var flutterEngine : FlutterEngine<br>  override fun onCreate() {<br>    super.onCreate()<br>    // Instantiate a FlutterEngine.<br>    flutterEngine = FlutterEngine(this)<br>    // Configure an initial route.<br>    flutterEngine.navigationChannel.setInitialRoute(“your/route/here”);<br>    // Start executing Dart code to pre-warm the FlutterEngine.<br>    flutterEngine.dartExecutor.executeDartEntrypoint(<br>      DartExecutor.DartEntrypoint.createDefault()<br>    )<br>    // Cache the FlutterEngine to be used by FlutterActivity or FlutterFragment.<br>    FlutterEngineCache<br>      .getInstance()<br>      .put(“my_engine_id”, flutterEngine)<br>  }<br>}</p>
-<p>myButton.setOnClickListener {<br>  startActivity(<br>    FlutterActivity<br>      .withCachedEngine(“my_engine_id”)<br>      .build(this)<br>  )<br>}</p>
-<h2 id="Dart和C，C-混合编程"><a href="#Dart和C，C-混合编程" class="headerlink" title="Dart和C，C++混合编程"></a>Dart和C，C++混合编程</h2><p>C代码<br>#include&lt;windows.h&gt;</p>
-<p>int add(int a, int b){<br>    return a + b;<br>}</p>
-<p>void showBox(){<br>    MessageBox(NULL,”Hello Dart”,”Title”,MB_OK);<br>}</p>
-<p>import  ‘dart:ffi’  as ffi;<br>import  ‘dart:io’  show Platform;</p>
-<p>/// 根据C中的函数来定义方法签名（所谓方法签名，就是对一个方法或函数的描述，包括返回值类型，形参类型）<br>/// 这里需要定义两个方法签名，一个是C语言中的，一个是转换为Dart之后的<br>typedef NativeAddSign = ffi.Int32 Function(ffi.Int32,ffi.Int32);<br>typedef DartAddSign = int Function(int, int);</p>
-<p>/// showBox函数方法签名<br>typedef NativeShowSign = ffi.Void Function();<br>typedef DartShowSign = void Function();</p>
-<p>void main(List<String> args) {<br>  if (Platform.isWindows) {<br>    // 加载dll动态库<br>    ffi.DynamicLibrary dl = ffi.DynamicLibrary.open(“../src/test.dll”);</p>
-<pre><code>// lookupFunction有两个作用，1、去动态库中查找指定的函数；2、将Native类型的C函数转化为Dart的Function类型
-var add = dl.lookupFunction&lt;NativeAddSign, DartAddSign&gt;(&quot;add&quot;);
-var showBox = dl.lookupFunction&lt;NativeShowSign, DartShowSign&gt;(&quot;showBox&quot;);
-
-// 调用add函数
-print(add(8, 9));
-// 调用showBox函数
-showBox();
-</code></pre>
-<p>  }<br>}</p>
-<h2 id="检测手段"><a href="#检测手段" class="headerlink" title="检测手段"></a>检测手段</h2><p> 1、Flutter Inspector<br>帮你找到 App 中频繁重绘导致性能消耗过大的部分。页面的进度条动画刷新时会导致整个布局频繁重绘。</p>
-<p>2、性能图层<br>蓝色垂直的线条表示已执行的正常帧，绿色的线条代表的是当前帧，如果其中有一帧处理时间过长，就会导致界面卡顿，图表中就会展示出一个红色竖条。</p>
-<p>3、Raster 线程问题4、UI 线程问题定位5、检查多视图叠加的视图渲染开关 checkerboardOffscreenLayers6、检查缓存的图像开关 checkerboardRasterCacheImages<br>二、关键优化指标<br> 1、页面异常率2、页面帧率3、页面加载时长<br>三、布局加载优化 1、常规优化2、深入优化<br>四、启动速度优化 1、引擎预加载2、Dart VM 预热<br>五、内存优化 1、const 实例化2、识别出消耗多余内存的图片3、针对 ListView item 中有 image 的情况来优化内存六、包体积优化 1、图片优化2、移除冗余的二三库3、启用代码缩减和资源缩减4、构建单 ABI 架构的包</p>
-<h2 id="flutter自定义组件："><a href="#flutter自定义组件：" class="headerlink" title="flutter自定义组件："></a>flutter自定义组件：</h2><p>1.组合其它组件（最简单，优先考虑）<br>2.自绘 可以通过Flutter中提供的CustomPaint和Canvas来实现UI自绘。<br>3.实现RenderObject。是一个抽象类，它定义了一个抽象方法paint(…)：</p>
-<h2 id="现在地图发展趋势："><a href="#现在地图发展趋势：" class="headerlink" title="现在地图发展趋势："></a>现在地图发展趋势：</h2><p>1.由于移动端跨平台的兴起，地图SDK更偏向于兼容发展<br>目前高德地图SDK兼容了很多平台如：android、iOS、HarmonyOS、小程序、web、js、Flutter、等等<br>另一个地图领域在向3D方向靠拢，高德也支持三维模型gltf加载，比较大地图公司的话，cesium.js、three.js在三维方面有比较大的发展方向。但是三维场景的使用范围和能力还是在探索阶段。</p>
-<h2 id="flutter高质量博客"><a href="#flutter高质量博客" class="headerlink" title="flutter高质量博客"></a>flutter高质量博客</h2><p><a target="_blank" rel="noopener" href="https://github.com/boyan01">https://github.com/boyan01</a><br><a target="_blank" rel="noopener" href="https://github.com/lijy91">https://github.com/lijy91</a></p>
-<h2 id="Flutter是如何实现在桌面端和移动端设备的设计的？"><a href="#Flutter是如何实现在桌面端和移动端设备的设计的？" class="headerlink" title="Flutter是如何实现在桌面端和移动端设备的设计的？"></a>Flutter是如何实现在桌面端和移动端设备的设计的？</h2><p>答案是flutter是通过两套代码实现的，虽然在一个工程里面，但是桌面和移动端的UI是不一致的，一套代码是无法实现设计的<br> final platform = ref.watch(debugNavigatorPlatformProvider);<br>    switch (platform) {<br>      case NavigationPlatform.desktop:<br>        home = const HomeWindow();<br>        break;<br>      case NavigationPlatform.mobile:<br>        home = const MobileWindow();<br>        break;<br>    }<br>目前查看了一个仿网易的app，同时支持桌面端和移动端，目前看结果是这样。</p>
-<h2 id="Flutter存储数据方式"><a href="#Flutter存储数据方式" class="headerlink" title="Flutter存储数据方式"></a>Flutter存储数据方式</h2><p>shared_preferences<br>sqflite<br>Hive是一个快速，轻量级的NoSQL数据库，适用于Flutter和Dart应用程序。 如果您想要一个简单的键值数据库，没有很多关系，并且确实易于使用，那么Hive真的很有用。<br>Bloc 是状态管理方案，状态，意味着 APP 一旦关闭，其状态就会丢失。但应用使用期间，其状态是可以实时更新、跨页面、跨组件同步更新的。</p>
-<h2 id="Flutter-状态管理"><a href="#Flutter-状态管理" class="headerlink" title="Flutter 状态管理"></a>Flutter 状态管理</h2><p>1.setState<br>2.scoped_model源自 Fuchsia 代码，使用 InheritedWidget 实现<br>3.provide<br>4.RxDart<br>5.Fish-Redux</p>
-<h2 id="path-provider方法和说明"><a href="#path-provider方法和说明" class="headerlink" title="path_provider方法和说明"></a>path_provider方法和说明</h2><p>方法    属性    描述<br>getTemporaryDirectory()    Future<Directory>    临时目录<br>getApplicationSupportDirectory()    Future<Directory>    应用程序支持目录<br>getLibraryDirectory()    Future<Directory>    应用程序持久文件目录<br>getApplicationDocumentsDirectory()    Future<Directory>    文档目录<br>getExternalStorageDirectory()    Future<Directory>    外部存储目录<br>getExternalCacheDirectories()    Future&lt;List<Directory>?&gt;    外部存储缓存目录<br>getExternalStorageDirectories()    Future&lt;List<Directory>?&gt;    外部存储目录（单独分区）<br>getDownloadsDirectory()    Future&lt;Directory?&gt;    桌面程序下载目录</p>
-<h2 id="flutter-hooks"><a href="#flutter-hooks" class="headerlink" title="flutter_hooks"></a>flutter_hooks</h2><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3b59763d105d">https://www.jianshu.com/p/3b59763d105d</a></p>
-<p>MethodChannel    用于 Flutter 与 原生平台之间函数的互相调用<br>BasicMessageChannel    它传递的是字节数组，使用时自定义编解码器<br>EventChannel    用于 Flutter 与 原生平台之间事件的通信</p>
-<p>flutter端调用移动端<br>channel.invokeMethod<br>iOS端<br>channel.setMethodCallHandler { (call, res) in<br>android端<br>channel.setMethodCallHandler { call, res -&gt;</p>
-<p>原生端调用flutter<br>iOS、Android<br>channel.invokeMethod(“your_method_name”, params)<br>flutter<br>channel.setMethodCallHandler((call) {</p>
+          <h2 id="什么是Flutter"><a href="#什么是Flutter" class="headerlink" title="什么是Flutter"></a>什么是Flutter</h2><p>Flutter是google开发跨平台方案，可以实现一份代码同时运行在iOS和Android设备上。<br>Flutter以Dart作为开发语言，提供Meterial和Copertino两套视觉库。<br>可以理解为SDK工具包，有自己渲染引擎Skia，还包含一个C++引擎，<br>类 Flutter 的自绘引擎方案在未来会有机会大放异彩。<br>JIT：在运行时即时编译，在开发周期中使用，可以动态下发和执行代码，开发测试效率高，但运行速度和执行性能则会因为运行时即时编译受到影响。<br>AOT：即提前编译，可以生成被直接执行的二进制代码，运行速度快、执行性能表现好，但每次执行前都需要提前编译，开发测试效率低。</p>
+<h2 id="Dart-的特点"><a href="#Dart-的特点" class="headerlink" title="Dart 的特点"></a>Dart 的特点</h2><p>Dart 具有运行速 度快、执行性能好的特点。<br>编译原理：开发时 JIT，提升开发效率；发布时 AOT，提升性能。<br>跟node比较相似，但是不会面对 JS 与 Native 之间交互的问题了。<br>Dart 的内存策略，采用多生代算法（与 Node 有一些类似）。<br>线程模型依旧是单线程 Event Loop 模型，通过 isolate 进行隔离，可以降低开发难度（与 Node 也非常类似）。<br>Dart 的生态，这个跟 Node.js 差距十分明显，npm 还是行业中最活跃的。<br>而静态语法与排版方式，纯前端入门还是有一定成本</p>
+<h2 id="Flutter-选择-Dart-的原因"><a href="#Flutter-选择-Dart-的原因" class="headerlink" title="Flutter 选择 Dart 的原因"></a>Flutter 选择 Dart 的原因</h2><p>健全的类型系统，同时支持静态类型检查和运行时类型检查。<br>代码体积优化（TreeShaking），编译时只保留运行时需要调用的代码（不允许反射这样的隐式引用），所以庞大的 Widgets 库不会造成发布体积过大。<br>丰富的底层库，Dart 自身提供了非常多的库。多生代无锁垃圾回收器，专门为 UI 框架中常见的大量 Widgets 对象创建和销毁优化。<br>跨平台，iOS 和 Android 共用一套代码。<br>JIT &amp; AOT 运行模式，支持开发时的快速迭代和正式发布后最大程度发挥硬件性能。<br>Native Binding。在 Android 上，v8 的 Native Binding 可以很好地实现，但是 iOS 上的 JavaScriptCore 不可以，所以如果使用 JavaScript，Flutter 基础框架的代码模式就很难统一了。而 Dart 的 Native Binding 可以很好地通过 Dart Lib 实现。</p>
+<h2 id="Flutter缺点"><a href="#Flutter缺点" class="headerlink" title="Flutter缺点"></a>Flutter缺点</h2><p>不支持反射，无法热修复。</p>
+<h2 id="Flutter-实现思路"><a href="#Flutter-实现思路" class="headerlink" title="Flutter 实现思路"></a>Flutter 实现思路</h2><p>自研 UI 框架，它的渲染引擎是 Skia 图形库来实现的，而开发语言选择了同时支持 JIT 和 AOT 的 Dart。不仅保证了开发效率，同时也提升了执行效率。由于 Flutter 自绘 UI 的实现方式，因此也尽可能的减少了不同平台之间的差异。也保持和原生应用一样的高性能。因此，Flutter 也是跨平台开发方案中最灵活和彻底的那个，它重写了底层渲染逻辑和上层开发语言的一整套完整解决方案。</p>
+<h2 id="Skia"><a href="#Skia" class="headerlink" title="Skia"></a>Skia</h2><p>Skia 是一个 2D 的绘图引擎库，其前身是一个向量绘图软件，Chrome 和 Android 均采用 Skia 作为绘图引擎。Skia 提供了非常友好的 API，并且在图形转换、文字渲染、位图渲染方面都提供了友好、高效的表现。Skia 是跨平台的，所以可以被嵌入到 Flutter 的 iOS SDK 中，而不用去研究 iOS 闭源的 CoreGraphics / Core Animation。</p>
+<h2 id="Flutter绘制流程"><a href="#Flutter绘制流程" class="headerlink" title="Flutter绘制流程"></a>Flutter绘制流程</h2><p>Dart 进行视图数据的合成，然后交给 Skia 引擎进行处理，处理之后再交给 GPU 进行数据合成，然后准备上屏。当一帧图像绘制完毕后准备绘制下一帧时，显示器会发出一个垂直同步信号（VSync），所以 60Hz 的屏幕就会一秒内发出 60 次这样的信号。<br>用户操作-》动画-〉构建-》布局元素-〉绘制元素-》合成-〉光栅化</p>
+<p>当Vsync信号到来以后，Flutter 框架会按照图里的顺序执行一系列动作: 动画（Animate）、构建（Build）、布局（Layout）和绘制（Paint），最终生成一个场景（Scene）之后送往底层，由GPU绘制到屏幕上。</p>
+<h2 id="绘制流程"><a href="#绘制流程" class="headerlink" title="绘制流程"></a>绘制流程</h2><p>当调⽤ markNeedsPaint() 时， RenderObject 就会 往上的⽗节点去查找，根据 isRepaintBoundary 是否为 true，会决定是否从这⾥开 始去触发重绘。换个说法就是，确定要更新哪些区域。<br>通过 isRepaintBoundary 往上确定了更新区域，通过requestVisualUpdate ⽅法触发更新往下绘制。</p>
+<p>以 Vsync 信号为驱动，在框架渲染完成之后会输出 Layer Tree。Layer Tree 被送入 Engine，Engine 会把 Layer Tree 调度到 GPU 线程，在 GPU 线程内合成（compsite）Layer Tree，然后由 Skia 2D 渲染引擎渲染后送入 GPU 显示。这里提到 Layer Tree 是因为我们即将要分析的渲染流水线绘制阶段最终输出就是这样的 LayerTree。所以绘制阶段并不是简单的调用 Paint 函数这么简单了，而是很多地方都涉及到 Layer Tree 的管理。<br>Skia 在 VSync 信号同步时从渲染树合成位图，然后交给 CPU 进而完成上屏。<br>重绘：一个典型场景就是 ScrollView。ScorllView 滚动的时候会刷新视图，从而触发内容重绘，而当滚动内容重绘时，一般情况下其它内容是不需要被重绘的。这个时候重绘边界就非常有价值了。</p>
+<h2 id="Widget概念"><a href="#Widget概念" class="headerlink" title="Widget概念"></a>Widget概念</h2><p>Flutter 中的 Widget 是完全不可变的！只要当视图发生变化，Flutter 就会重新创建一个新的 Widget 进行更新<br>Element 是 Widget 的一个实例化对象<br>Element 承载了视图构建的上下文数据，是连接结构化的配置信息到完成最终渲染的桥梁； Element 是一个可变的数据结构， 可以大致理解为 Virtual DOM。可以进行 diff 更新； 可以将真正需要修改的数据同步到 RenderObject 中。最大程度的降低渲染视图的修改，提升渲染效率。<br>Flutter 的渲染分为 4 个部分。布局、绘制、合成、渲染，其中 布局和绘制是在 RenderObject 中完成的。 Flutter 采用深度优的方式渲染对象树，确定树中的各个对象的位置和尺寸，并把它绘制到不同图层， 绘制完成之后交给</p>
+<p>Widget 只是 Element 的⼀个配置描述<br>Widget 和 Element 之间是⼀对多的关系 。实际上渲染树是由 Element 实例的节点构成的 树，⽽作为配置⽂件的 Widget 可能被复⽤到树的多个部分，对应产⽣多个Element<br>RenderObject 才是实际的渲染对象，Element 持有 RenderObject 和 Widget<br> Widget 都是通过实现 RenderBox 实现布局的<br>Widget 重新创建，Element 树和 RenderObject 树并不会完全重新创 建<br>在 newWidget 与 oldWidget 的 runtimeType 和 key 相等时会选择使⽤ newWidget 去更新已经存在的 Element 对象，不然就选 择重新创建新的 Element。</p>
+<h2 id="树的更新规则"><a href="#树的更新规则" class="headerlink" title="树的更新规则"></a>树的更新规则</h2><p>找到widget对应的element节点，设置element为dirty，触发drawframe, drawframe会调用element的performRebuild()进行树重建<br>widget.build() == null, deactive element.child,删除子树，流程结束<br>element.child.widget == NULL, mount 的新子树，流程结束<br>element.child.widget == widget.build() 无需重建，否则进入流程5<br>Widget.canUpdate(element.child.widget, newWidget) == true，更新child的slot，element.child.update(newWidget)(如果child还有子节点，则递归上面的流程进行子树更新),流程结束，否则转6<br>Widget.canUpdate(element.child.widget, newWidget) ！= true（widget的classtype 或者 key 不相等），deactivew element.child，mount 新子树</p>
+<h2 id="Provider原理"><a href="#Provider原理" class="headerlink" title="Provider原理"></a>Provider原理</h2><p>Model变化后自动通知ChangeNotifierProvider（订阅者），ChangeNotifierProvider内部会重新构建InheritedWidget<br>依赖InheriterWidget的子孙Widget就会更新<br>带来的益处：<br>1.我们的业务代码更关注数据，只要更新model，则UI会自动更新，而不用在状态改变后再去手动调用setState显示更新<br>2.数据改变的消息传递被屏蔽了，我们无需手动处理改变事件的发布订阅，一切都被封装在Proverder中<br>3.大型复杂应用中，尤其是全局共享状态非常多时，使用Provider会大大简化代码逻辑，提高开发效率</p>
+<h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><p>构造函数-》initState-〉didChangeDependencies-》显示在RenderTree<br>状态改变<br>组件状态改变-〉didUpdateWidget-》重新build组件树<br>销毁<br>Deactive-〉disponse-》结束</p>
+<h2 id="如何获取控件大小"><a href="#如何获取控件大小" class="headerlink" title="如何获取控件大小"></a>如何获取控件大小</h2><p>通过 key 去获取到控件对象的BuildContext ，⽽我们也知道 BuildContext 的实现其实是 Element</p>
+<h2 id="图片绘制流程"><a href="#图片绘制流程" class="headerlink" title="图片绘制流程"></a>图片绘制流程</h2><p>1、⾸先 Image 通过 ImageProvider 得到 ImageStream 对象<br>2、然后 _ImageState 利⽤ ImageStream 添加监听，等待图⽚数据<br>3、接着 ImageProvider 通过 load ⽅法去加载并返回ImageStreamCompleter 对象<br>4、然后 ImageStream 会关联 ImageStreamCompleter<br>5、之后 ImageStreamCompleter 会通过 http 下载图⽚，再经过PaintingBinding 编码转化后，得到 ui.Codec 可绘制对象，并封装成ImageInfo 返回<br>6、接着 ImageInfo 回调到 ImageStream 的监听，设置给 _ImageState build的 RawImage 对象。<br>7、最后 RawImage 的 RenderImage 通过 paint 绘制 ImageInfo 中的ui.Codec<br>作用：<br>Image ：⽤于显示图⽚的 Widget，最后通过内部的 RenderImage 绘制。<br>ImageProvider ：提供加载图⽚的⽅式如 NetworkImage 、 FileImage、 MemoryImage 、 AssetImage 等，从⽽获取 ImageStream ，⽤于监听结果。<br>ImageStream ：图⽚的加载对象，通过 ImageStreamCompleter 最后会返回⼀ 个 ImageInfo ，⽽ ImageInfo 内包含有 RenderImage 最后的绘制对象ui.Image 。</p>
+<h2 id="Stream"><a href="#Stream" class="headerlink" title="Stream"></a>Stream</h2><p>Stream 并不是 Flutter 中特 有的，⽽是 Dart 中⾃带的逻辑。<br>基于事件流驱动设计代码，然后监听订阅事件，并针对事件变换处理响应。<br>StreamController ：如类名描述，⽤于整个 Stream 过程的控制，提供各类接 ⼝⽤于创建各种事件流。<br>StreamSink：⼀般作为事件的⼊⼝，提供如 add ， addStream 等。<br>Stream：事件源本身，⼀般可⽤于监听事件或者对事件进⾏转换，如 listen<br>、 where 。<br>StreamSubscription：事件订阅后的对象，表⾯上⽤于管理订阅过等各类操 作，如 cacenl 、 pause ，同时在内部也是事件的中转关键。<br>Stream 分单订阅流和广播流。</p>
+<h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><p>因为 Dart 是 单线程应⽤ ，和⼤多数单 线程应⽤⼀样，Dart 是以 消息循环机制 来运⾏的，⽽这⾥⾯主要包含两个任务队 列，⼀个是 microtask 内部队列，⼀个是 event 外部队列，⽽ microtask 的优先级 ⼜⾼于event 。<br> 在 Flutter 中通过 StreamBuilder 构建 Widget</p>
+<p>Future 表示一个不会立即完成的计算过程。与普通函数直接返回结果不同的是异步函数返回一个将会包含结果的 Future。该 Future 会在结果准备好时通知调用者。<br>await、async<br>async是和await搭配使用的，await只在async函数中出现。在async 函数里可以没有await或者有多个await。<br>Stream 是一系列异步事件的序列。其类似于一个异步的 Iterable，不同的是当你向 Iterable 获取下一个事件时它会立即给你，但是 Stream 则不会立即给你而是在它准备好时告诉你。</p>
+<h2 id="状态管理"><a href="#状态管理" class="headerlink" title="状态管理"></a>状态管理</h2><p>局部状态：<br>Flutter提供了类似StatefulWidget、InheritWidget组件来实现局部状态管理，当这些Widget发生变化时，所有子树中依赖其数据的widget都会进行rebuild。<br>全局状态：<br>Flutter没有提供原生的全局状态管理机制，虽然可以在根布局控件使用InheritWidget来实现全局状态管理，但是这样会存在类似依赖传递过深等问题。因此大多数情况下，需要依赖一些第三方库实现全局状态管理<br>最简单的状态管理<br>我们可以使用 State + InheritedWidget实现最简单的状态管理机制<br>Stream在Flutter中标志着的事件流或者管道一类的概念，通过Stream可以快速的实现给予事件流驱动的业务逻辑。界面通过订阅事件，并针对各个事件进行变化处理，实现响应式更新界面。<br>无论是Flutter原生提供的Stream，还是ReactiveX提供的RxDart，亦或是Provider，以及没有在文章中出现的scoped_model、阿里开源的fish_redux，这一系列的组件，都为我们提供了一个很好的状态管理机制，而我们在使用过程中，大可通过自身业务需求，按需选型。</p>
+<p>而setState的刷新机制，其实我们大家应该都知道，实质上是调用了markNeedsBuild，markNeedsBuild方法会标记element为dirty，这样在下一帧WidgetsBinding.drawFrame的时候，会进行绘制</p>
+<p>如下图所示，在 scoped_model 的整个实现流程中， ScopedModel 这个 Widget 很 巧妙的借助了 AnimatedBuildler 。 因为 AnimatedBuildler 继承了 AnimatedWidget ，在 AnimatedWidget 的⽣命周期<br>中会对 Listenable 接⼝添加监听，⽽ Model 恰好就实现了 Listenable 接⼝<br> AnimatedWidget 和 Listenable 在 Flutter<br>中的特性组合，⾄于 ScopedModelDescendant 就只是为了跨 Widget 共享 Model<br>⽽做的⼀层封装，主要还是通过 ScopedModel.of<CountModel>(context) 获取到对应<br>Model 对象，这这个实现上， scoped_model 依旧利⽤了 Flutter 的特性控件<br>InheritedWidget 实现。<br>Flutter 中 context 的实现是 Element ， 在 Element 的 inheritFromWidgetOfExactType ⽅法实现⾥，有⼀个 Map&lt;Type,<br>InheritedElement&gt; _inheritedWidgets 的对象。</p>
+<p>BloC 全称 Business Logic Component ，它属于⼀种设计模式，在 Flutter 中它主 要是通过 Stream 与 SteamBuilder 来实现设计的</p>
+<p>redux 中⼀般有 Store 、 Action 、 Reducer 三个主要对 象<br>创建 Store ⽤于管理状态 。 给 Store 增加 appReducer 合集⽅法，增加需要拦截的 middleware ，并初 始化状态。 将 Store 设置给 StoreProvider 这个 InheritedWidget 。<br>通过 StoreConnector / StoreBuilder 加载显示 Store 中的数据。</p>
+<h2 id="手势"><a href="#手势" class="headerlink" title="手势"></a>手势</h2><p>⼿势 信息被打包成 ByteBuffer 进⾏传递，最后在 Dart 层的<br>_dispatchPointerDataPacket ⽅法中，通过 _unpackPointerDataPacket ⽅法解析成 可⽤的 PointerDataPacket 对象使⽤。<br> GestureBinding 的 _handlePointerEvent ⽅法中主要是 hitTest<br>和 dispatchEvent ： 通过 hitTest 碰撞，得到⼀个包含控件的待处理成员列表<br>HitTestResult ，然后通过 dispatchEvent 分发事件并产⽣竞争，得到胜利者相 应。<br>因为 RenderObject 默认都实现了 HitTestTarget 接⼝，所以可以理解为：<br>HitTestTarget ⼤部分时候都是 RenderObject ，⽽ HitTestResult 就是⼀个带着 碰撞测试后的控件列表。<br>递归就让我们⾃下⽽上的得到了⼀个 HitTestResult 的相应控件列表了，最底 下的 Child 在最上⾯。<br>只有带有 RenderPointerListener (RenderObject) / Listener (Widget) 的才 会处理 handleEvent 事件，并且从上述源码可以看出，handleEvent 的执⾏是不 会被拦截打断的</p>
+<h2 id="事件竞争"><a href="#事件竞争" class="headerlink" title="事件竞争"></a>事件竞争</h2><p>通过⼀个竞技场，各个 控件参与竞争，直接胜利的或者活到最后的第⼀位，你就获胜得到了胜利。<br>GestureRecognizer ：⼿势识别器基类<br>GestureArenaManagerr ：⼿势竞技管理，它管理了整个“战争”的过程，原则上 竞技胜出的条件是 ：第⼀个竞技获胜的成员或最后⼀个不被拒绝的成员。<br>GestureArenaEntry ：提供⼿势事件竞技信息的实体，内封装参与事件竞技的 成员。<br>所有竞技的成员可以理解为就是 GestureRecognizer 之间的竞争。<br>如果⼀个⼿势试图在竞技场开 放时(isOpen=true)获胜，它将成为⼀个带有“渴望获胜”的属性的对象。当竞 技场关闭(isOpen=false)时，竞技场将寻找⼀个“渴望获胜”的对象成为新的参 与者，如果这时候刚好只有⼀个，那这⼀个参与者将成为这次竞技场胜利的⻘ 睐存在。<br>⽽事件流程中第⼀个事件⼀般都会是PointerDownEvent 。<br>Down 事件时通过 addPointer 加⼊了 GestureRecognizer 竞技场的区域，在没移 除的情况下，事件可以参加后续事件的竞技，在某个事件阶段移除的话，之后的事 件序列也会⽆法接受。事件的竞争如果没有胜利者，在 UP 流程中会强制指定第⼀ 个为胜利者。</p>
+<h2 id="state"><a href="#state" class="headerlink" title="state"></a>state</h2><p>⽽事实上 State 实现跨帧共享，就是将 State<br>保存在 Element 中，这样 Element 每次调⽤ Widget build() 时，是通过<br>state.build(this); 得到的新 Widget ，所以写在 State 的数据就得以复⽤了。<br> setState ，其实是调⽤了 markNeedsBuild ， markNeedsBuild 内部 会标记 element 为 diry ，然后在下⼀帧 WidgetsBinding.drawFrame 才会被绘 制，这可以也看出 setState 并不是⽴即⽣效的。</p>
+<h2 id="InheritedWidget"><a href="#InheritedWidget" class="headerlink" title="InheritedWidget"></a>InheritedWidget</h2><p>共享的是 Widget ，只是这个 Widget 是⼀个<br>ProxyWidget ，它⾃⼰本身并不绘制什么，但共享这个 Widget 内保存有的值， 却达到了共享状态的⽬的。用于子节点向祖先节点获取数据的机制,子节点状态变更，向上上报通过发送通知的方式</p>
+<h2 id="Provider"><a href="#Provider" class="headerlink" title="Provider"></a>Provider</h2><h2 id="VirtualDisplay"><a href="#VirtualDisplay" class="headerlink" title="VirtualDisplay"></a>VirtualDisplay</h2><p>VirtualDisplay 类似于⼀个虚拟显示区域，需要结合 DisplayManager ⼀起 调⽤，⼀般在副屏显示或者录屏场景下会⽤到。 VirtualDisplay 会将虚拟 显示区域的内容渲染在⼀个 Surface 上。<br>在 iOS 平台上就不使⽤类似 VirtualDisplay 的⽅法，⽽是通过将 Flutter UI 分为两个透明纹理来完成组合：⼀个在 iOS 平台视图之下，⼀个在其上⾯。</p>
+<h2 id="Layer"><a href="#Layer" class="headerlink" title="Layer"></a>Layer</h2><p> Widget -&gt; Element -&gt;RenderObject -&gt; Layer 这样的变化过程，⽽其中 Layer 的组成由<br>RenderObject 中的 isRepaintBoundary 标志位决定。</p>
+<h2 id="Layer绘制"><a href="#Layer绘制" class="headerlink" title="Layer绘制"></a>Layer绘制</h2><p>先是创建了 PictureRecorder ； 然后使⽤ PictureRecorder 创建了 Canvas ； 之后使⽤ Canvas 绘制蓝⾊⼩⽅块； 结束绘制后通过 SceneBuilder 的 pushOffset 和 addPicture 加载了绘制的 内容；<br>通过 window.render 绘制出画⾯。</p>
+<p>Scene 和 Layer 之间的苟且</p>
+<p>Layer分为ContainerLayer和非ContainerLayer<br>ContainerLayer 是可以具备⼦节点，也就是带有 append ⽅法，⼤致可以分为： 位移类（ OffsetLayer / TransformLayer ）; 透明类（ OpacityLayer ） 裁剪类（ ClipRectLayer / ClipRRectLayer / ClipPathLayer );<br>阴影类 ( PhysicalModelLayer )</p>
+<p>Layer 是如何更新？这就涉及了 Layer 内部的 markNeedsAddToScene 和<br>updateSubtreeNeedsAddToScene 这两个⽅法<br>当_needsAddToScene 等于 true 时，对应 Layer 的 addToScene 才会被调⽤；⽽ 当 Layer 的 _needsAddToScene 为 false 且 _engineLayer 不为空时就触发<br>Layer 的复⽤。<br> runApp 的时候创建了 RenderView ，并且 RenderView 内部的<br>compositeFrame 就是通过 _window.render 来提交 Layer 的绘制。<br>Flutter Framework 的 Layer 在绘制之前，需要经历<br>SceneBuinlder 的处理得到 EngineLayer ，其实 Flutter Framework 中的 Layer<br>可以理解为 SceneBuinlder 的对象封装，⽽ EngineLayer 才是真正的 Engine 图 层 ，在之后得到的 Scene 会被提交 Engine 绘制。</p>
+<h2 id="Dart"><a href="#Dart" class="headerlink" title="Dart"></a>Dart</h2><p>var 的语法糖和 dynamic、各类操作符、⽀持操作符重载、⽅法当做参数传递<br>async await / async* yield</p>
+<h2 id="Mixins"><a href="#Mixins" class="headerlink" title="Mixins"></a>Mixins</h2><p>mixin是为了解决继承方面的问题而引入的机制，Dart为了支持多重继承，引入了mixin关键字，它最大的特殊处在于：mixin定义的类不能有构造方法</p>
+<h2 id="isolate"><a href="#isolate" class="headerlink" title="isolate"></a>isolate</h2><p>可以理解为iOS中的RunLoop，主线程默认开启RunLoop循环，子线程需要自己手动添加<br>每个isolate包含一个事件循环以及两个事件队列，event loop事件循环，以及event queue和microtask queue事件队列，event和microtask队列有点类似iOS的source0和source1。<br>event queue：负责处理I/O事件、绘制事件、手势事件、接收其他isolate消息等外部事件。<br>microtask queue：可以自己向isolate内部添加事件，事件的优先级比event queue高。</p>
+<h2 id="编译流程"><a href="#编译流程" class="headerlink" title="编译流程"></a>编译流程</h2><p>gen_snapshot是dart编译器，采用了tree shaking(类似依赖树逻辑，可生成最小包，也因而在Flutter中禁止了dart支持的反射特性)等技术,用于生成汇编形式的机器代码，再通过xcrun等编译工具链生成最终的App.framework。换句话说，所有的dart代码，包括业务代码，三方package代码，它们所依赖的flutter框架代码，最终将会变成App.framework。</p>
+<h2 id="ChangeNotifier"><a href="#ChangeNotifier" class="headerlink" title="ChangeNotifier"></a>ChangeNotifier</h2><h2 id="StreamBuilder"><a href="#StreamBuilder" class="headerlink" title="StreamBuilder"></a>StreamBuilder</h2><h2 id="MediaQuery"><a href="#MediaQuery" class="headerlink" title="MediaQuery"></a>MediaQuery</h2><p> MediaQuery 是⼀个 InheritedWidget ，它会往下共享对应的<br>MediaQueryData ，在 MediaQueryData 中保存了各种设备的信息，⽐如 size<br>、 devicePixelRatio 、 textScaleFactor 、 viewPadding 以及 viewInsets 等。</p>
+<h2 id="Navigator"><a href="#Navigator" class="headerlink" title="Navigator"></a>Navigator</h2><p> 其实是⼀个 StatefulWidget ，当 MaterialApp 被更新时，可以看到在 NavigatorState 的<br>didUpdateWidget 回调中会调⽤ _history ⾥所有路由的 changedExternalState()<br>⽅法。</p>
+<p>MediaQueryData.fromWindow(WidgetsBinding.instance.window) ，之后⼜恰好在有键<br>盘的⻚⾯打开后触发了 MaterialApp 的更新，导致了 PageRoute 重新 builder ， 使得没有键盘的 Scaffold 使⽤了弹出键盘的 viewInsets.bottom 。 所以这⾥只需要将 MediaQueryData.fromWindow 换成 MediaQuery.of(context) 就可 以解决问题，⽽当在没有 context 或者需要直接使⽤ MediaQueryData.fromWindow<br>时，那⼀定要搭配上 WidgetsBindingObserver.didChangeMetrics 配合更新。</p>
+<p>Widget ：就是我们平常写的控件， Flutter 宇宙中万物皆 Widget ，它们 都是不可变⼀帧，同时也是被⼈吐槽很多的嵌套模式，当然换个⻆度，事实上 你把他当作 Widget 配置⽂件来写或者就好理解了。<br>Element ：它是 BuildContext 的实现类， Widget 实现跨帧保存的 state就是存放在这⾥，同时它也充当了 Widget 和 RenderObject 之间的桥梁。<br>RenderObject ：它才是真正⼲活（layout、paint）等，同时它才是真实的“dom” 。<br>Layer ：⼀整块的重绘区域（isRepaintBoundary），决定重绘的影响区域。</p>
+<p>skia 在绘制的时候， saveLayer 是⽐较消耗性能的，⽐如透明合 成、 clipRRect 等等都会可能需要 saveLayer 的调⽤， ⽽ saveLayer 会 清空GPU绘制的缓存，导致性能上的损耗，所以开发过程中如果掉帧严重， 可以针对这⼀块进⾏优化。</p>
+<p>Flutter Framework 使用 Dart 语言开发，所以 App 进程中需要一个 Dart 运行<br>环境（VM），和 Android Art 一样，Flutter 也对 Dart 源码做了 AOT 编译，直接将<br>Dart 源码编译成了本地字节码，没有了解释执行的过程，提升执行性能。这里重点<br>关注 Dart VM 内存分配 (Allocate) 和回收 (GC) 相关的部分。<br>和 Java 显著不同的是 Dart 的”线程”(Isolate) 是不共享内存的，各自的堆<br>(Heap) 和栈 (Stack) 都是隔离的，并且是各自独立 GC 的，彼此之间通过消息通道<br>来通信。Dart 天然不存在数据竞争和变量状态同步的问题，整个 Flutter Framework Widget 的渲染过程都运行在一个 isolate 中。<br>老年代 (Old Generation): 在新生代的 GC 中“幸存”下来的对象，它们会被<br>转移到老年代中。老年代存放生命力周期较长，内存较大的对象。老年代通常<br>比新生代要大很多。老年代的 GC 回收采用“标记 - 清除”算法，分成标记和<br>清除两个阶段。在标记阶段会触发停顿 (stop the world)，多线程并发的完成<br>对垃圾对象的标记，降低标记阶段耗时。在清理阶段，由 GC 线程负责清理回<br>收对象，和应用线程同时执行，不影响应用运行。</p>
+<h2 id="原生通信"><a href="#原生通信" class="headerlink" title="原生通信"></a>原生通信</h2><p>Flutter 通过 PlatformChannel 与原生进行交互，其中 PlatformChannel 分为三种：<br>BasicMessageChannel：用于传递字符串和半结构化的信息。<br>MethodChannel：用于传递方法调用（method invocation）。<br>EventChannel: 用于数据流（event streams）的通信。</p>
+<h2 id="Dart-类型"><a href="#Dart-类型" class="headerlink" title="Dart 类型"></a>Dart 类型</h2><p>在dart中的一切皆是对象，包括数字、布尔值、函数等，它们和Java一样都继承于Object, 所以它们的默认值也就是null. 在dart主要有: 布尔类型bool、数字类型num(数字类型又分为int，double，并且两者父类都是num)、字符串类型String、集合类型(List, Set, Map)、Runes类和Symbols类型(后两个用的并不太多)</p>
+<h2 id="flutter怎么调用native"><a href="#flutter怎么调用native" class="headerlink" title="flutter怎么调用native"></a>flutter怎么调用native</h2><p>1.创建插件<br>flutter create –template=plugin XXXX<br>2.打开Android 和iOS 工程，添加原生调用的类或插件<br>3.编写交互接口<br>onMethodCall(MethodCall call, Result result)<br>MethodCall call：请求本身<br>Result result：结果处理方法<br>如：<br>if (call.method.equals(“calculate”))<br>    int a = call.argument(“a”);<br>    int b = call.argument(“b”);<br>    int r = a + b;<br>    result.success(“” + r);</p>
+<p>Flutter AOT和JIT</p>
+<p>Embedder</p>
+<p>Platform Runner</p>
+<p>UI Runner</p>
+<p>GPU Runner</p>
+<p>IO Runner</p>
+<p>学习流程</p>
+<p>Flutter设计原理<br>Dart语法<br>Flutter UI</p>
+<p>页面还原<br>    Widget<br>    页面布局<br>    依赖管理<br>    生命周期<br>    状态管理<br>    路由导航<br>    动画效果<br>    屏幕适配<br>用户交互<br>    点击判断<br>    手势操作<br>线程模型<br>    原理解析<br>    事件<br>    UI<br>开发模式<br>    混合开发<br>    独立开发<br>组件封装<br>    基础组件<br>    业务组件</p>
 
       
     </div>
@@ -411,7 +414,7 @@ showBox();
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift272Flutter%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift273Flutter%E5%B7%A5%E5%85%B7%E7%B1%BB%E6%8F%92%E4%BB%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -425,7 +428,7 @@ showBox();
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/19/M_Swift272Flutter%E5%A4%9A%E7%BA%BF%E7%A8%8B/" class="post-title-link" itemprop="url">Flutter多线程</a>
+            <a href="/2021/08/19/M_Swift273Flutter%E5%B7%A5%E5%85%B7%E7%B1%BB%E6%8F%92%E4%BB%B6/" class="post-title-link" itemprop="url">Flutter工具类插件</a>
         </h2>
 
         <div class="post-meta">
@@ -442,7 +445,7 @@ showBox();
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-27 17:53:56" itemprop="dateModified" datetime="2022-04-27T17:53:56+08:00">2022-04-27</time>
+                <time title="修改时间：2022-04-27 18:06:51" itemprop="dateModified" datetime="2022-04-27T18:06:51+08:00">2022-04-27</time>
               </span>
 
           
@@ -456,7 +459,80 @@ showBox();
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>如果想要了解async、await的原理，就要先了解协程的概念，async、await本质上就是协程的一种语法糖。协程，也叫作coroutine，是一种比线程更小的单元。如果从单元大小来说，基本可以理解为进程-&gt;线程-&gt;协程。<br>协程分为无线协程和有线协程，无线协程在离开当前调用位置时，会将当前变量放在堆区，当再次回到当前位置时，还会继续从堆区中获取到变量。所以，一般在执行当前函数时就会将变量直接分配到堆区，而async、await就属于无线协程的一种。<br>由于并没有开启新的线程，只是进行IO中断改变CPU调度，所以网络请求这样的异步操作可以使用async、await，但如果是执行大量耗时同步操作的话，应该使用isolate开辟新的线程去执行。<br>isolate的整体模型我自己的理解其实更像进程，而async、await更像是线程”。如果对比一下isolate和进程的定义，会发现确实isolate很像是进程。</p>
+          <h2 id="web页面截图工具"><a href="#web页面截图工具" class="headerlink" title="web页面截图工具"></a>web页面截图工具</h2><p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/webcontent_converter">https://pub.flutter-io.cn/packages/webcontent_converter</a></p>
+<h2 id="颜色转换工具"><a href="#颜色转换工具" class="headerlink" title="颜色转换工具"></a>颜色转换工具</h2><p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/color_convert">https://pub.flutter-io.cn/packages/color_convert</a></p>
+<h2 id="http工具"><a href="#http工具" class="headerlink" title="http工具"></a>http工具</h2><p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/alice">https://pub.flutter-io.cn/packages/alice</a></p>
+<h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/responsive_table">https://pub.flutter-io.cn/packages/responsive_table</a></p>
+<h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><p><a target="_blank" rel="noopener" href="https://github.com/youngchan1988/flow_graph">https://github.com/youngchan1988/flow_graph</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift274Flutter%E5%9F%BA%E4%BA%8EGetXController%E5%B0%81%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift274Flutter%E5%9F%BA%E4%BA%8EGetXController%E5%B0%81%E8%A3%85/" class="post-title-link" itemprop="url">Flutter基于GetX的Controller封装</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-27 17:58:08" itemprop="dateModified" datetime="2022-04-27T17:58:08+08:00">2022-04-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="基于getx"><a href="#基于getx" class="headerlink" title="基于getx"></a>基于getx</h2><p>abstract class BaseController<M> extends SuperController with ToastMixin<br>{</p>
+<p>}</p>
+<h2 id="混入taost"><a href="#混入taost" class="headerlink" title="混入taost"></a>混入taost</h2><p>toast mixin ToastMixin</p>
+<h2 id="封装http"><a href="#封装http" class="headerlink" title="封装http"></a>封装http</h2><p>controller一般都会有网络业务逻辑，所以我们封装了网络请求的接口</p>
+<h2 id="列表刷新疯子"><a href="#列表刷新疯子" class="headerlink" title="列表刷新疯子"></a>列表刷新疯子</h2><p>BaseRefreshController封装带刷新页面控制器<br>1.定义加载状态  0加载中 1加载成功 2加载数据为空 3加载失败<br>2.定义页码<br>3.实现上拉下拉接口</p>
 
       
     </div>
@@ -525,6 +601,154 @@ showBox();
 <h2 id="继承getView"><a href="#继承getView" class="headerlink" title="继承getView"></a>继承getView</h2><p>我们的类是继承在GetView上的。getView可以获取到controller</p>
 <h2 id="混入toast"><a href="#混入toast" class="headerlink" title="混入toast"></a>混入toast</h2><p>我们的每个类都要有toast提示，所以我们添加了mixin， with Toast</p>
 <h2 id="页面公共组件"><a href="#页面公共组件" class="headerlink" title="页面公共组件"></a>页面公共组件</h2><p>我们根据页面常用描述实现了很多页面绘制的展示，如导航栏、侧边栏、标题，是否显示等</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift275Flutter%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift275Flutter%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">Flutter网络请求架构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-27 17:50:57" itemprop="dateModified" datetime="2022-04-27T17:50:57+08:00">2022-04-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="retrofit-dio-json-annotation"><a href="#retrofit-dio-json-annotation" class="headerlink" title="retrofit + dio + json_annotation"></a>retrofit + dio + json_annotation</h1><h2 id="1-为什么要使用retrofit"><a href="#1-为什么要使用retrofit" class="headerlink" title="1.为什么要使用retrofit"></a>1.为什么要使用retrofit</h2><p>注解的方式生成请求 Rest Api 的各种方法，会让服务接口更清晰。<br>接口参考如下：<br>  @GET(“helloword”)<br>  Future<HelloEntity> helloword(@Query(“date”) String date);<br>@RestApi、@GET、@POST、@Query</p>
+<p>retrofit会为我们生成对应的.g.dart。我们在对应文件里面用dio实现网络请求</p>
+<h2 id="dio"><a href="#dio" class="headerlink" title="dio"></a>dio</h2><p>Dio 一个强大的 Dart Http 请求库，支持 Restful API、FormData、拦截器、请求取消、Cookie管理、文件上传/下载、超时等…</p>
+<h2 id="json-annotation"><a href="#json-annotation" class="headerlink" title="json_annotation"></a>json_annotation</h2><p>根据json字符串的结构和字段构造实体类，通过注解，生成对应的.g.dart类<br>@JsonSerializable()</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift278%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95%E7%9F%A5%E8%AF%86%E7%82%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift278%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95%E7%9F%A5%E8%AF%86%E7%82%B9/" class="post-title-link" itemprop="url">面试记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-02 17:59:42" itemprop="dateModified" datetime="2022-08-02T17:59:42+08:00">2022-08-02</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>多线程、原理：优缺点：pthread、NSThread、GCD、NSOperation、<br>线程锁：原理：synchronized（互斥+递归）、NSLock（互斥）、NSCondition（互斥锁+条件变量。可以给线程加锁）、NSConditionLock（生产者消费者模型）、NSRecursiveLock（递归锁）、dispatch_semaphore（信号量）<br>自旋锁和互斥锁区别 ：自旋不释放CPU，效率高，占用资源大<br>GCD功能：延迟执行、只执行一次、串行执行、主队列执行、异步执行、同步执行、任务调度优先级<br>死锁原因：<br>三个网络执行完再处理：dispatch_group_notify<br>串行执行：dispatch_barrier_async形成栅栏<br>如何保证NSNotificationCenter线程安全：block-weak方式、delloc移除监听、NSPropty<br>iOS线程间的通信：NSMachPort<br>延时操作：sleep、NSTimer、dispatch_after、performSelector afterDelay:<br>NSTimer子线程执行：添加到RunLoop中<br>计算机线程安全：原子操作、锁、信号量、过度优化<br>类和类对象：struct objc_class : objc_object<br>protocol_t继承objc_object，所以也就具备对象特征<br>weak 对象会放入一个 hash 表中。 用 weak 指向的对象内存地址作为 key<br>load：加载时调用，父类-&gt;子类-&gt;分类<br>initialize：第一次调用类的属性方法时会调用<br>类和元类都有自己的继承体系，但它们都有共同的根父类NSObject，而NSObject的父类指向nil。<br>OC发消息流程：<br>1.检查方法是否需要忽略、target是否是nil<br>2.通过isa查找缓存、方法列表、父类方法列表至NSObject<br>3.动态方法解析、是否能给类添加方法（动态接收者）<br>4.消息转发给其他接收者（备用接收者、完整转发）<br>5.抛出异常<br>runtime常见操作：<br>1.动态添加方法<br>2.交换两个方法<br>3.拦截方法，添加功能<br>4.动态创建模型对象<br>5.归档和解档的属性遍历<br>Runloop：结构原理<br>autorelease pool和runloop关系<br>NSTimer其实是一种资源，source必须加到runloop中才会起作用，performSelecter:afterDelay:其实是往runloop中添加NSTimer，如果线程中没有runloop，那么这个方法就会失效。<br>CAAnimation是由RunloopObserver触发回调来重绘<br>AutoreleasePool原理和结构：由若干个AutoreleasePoolPage以双向链表的形式组合<br>weak实现原理：Runtime维护了一个weak表，用于存储指向某个对象的所有weak指针。weak<br>    表其实是一个hash（哈希）表，Key是所指对象的地址，Value是weak指针的<br>    地址（这个地址的值是所指对象的地址）数组。<br>Block原理：是一个OC对象<br> __block、__weak __strong</p>
+<p>tableView卡顿<br>应用优化<br>卡顿检测<br>启动流出<br>AFN、SDWebImage<br>事件分发：UIApplication-》UIWindow-〉View-》 hitTest:withEvent: -〉pointInside:withEvent:<br>点手机和runloop关系：NSMachPort可以用做runloop源苹果注册了一个 Source1 (基于 mach port 的)<br>用来接收系统事件，其回调函数为   __IOHIDEventSystemClientQueueCallback()<br>我们触发了事件（触摸/锁屏/摇晃等）后由IOKit.framework生成一个 IOHIDEvent事件<br>而IOKit是苹果的硬件驱动框架 _UIApplicationHandleEventQueue()把IOHIDEvent处理包<br>装成UIEvent进行处理分发<br>Category：原理：装饰模式<br>remethodizeClass 这个函数的主要作用是将 Category 中的方法、属性和协议整合到类（主类或元类）中，更新类的数据字段</p>
+<p>类别（category）主要有三个作用<br>类别和Extension区别<br>类别为什么不能添加实例变量<br>如何在重写后，保证只调用原类方法<br>在协议 和 分类 中如何使用 @property<br>如何在Category中添加变量<br>KVO实现原理<br>设计模式：代理模式、观察者模式、单例模式、工厂模式<br>架构： MVC、MVVM、MVP</p>
+<p>http三次握手4次挥手<br>OSI七层协议：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层<br>加密：对称、非对称<br>pod：原理<br>dSYM：</p>
+<p>PREP表达法是指：position（观点） 、reason （理由）、 evidence（证据）</p>
+<p>如何解决面试官的问题</p>
+<p>问题列表：<br>内存<br>介绍iOS的内存管理？</p>
+<p>Runtime原理NSObject数据结构<br>runtime实现原理<br>nsobject数据结构</p>
+<p>hash相关应用场景<br>cache相关的应用<br>生命周期<br>Block<br>Copy<br>RunLoop<br>多线程<br>网络<br>编译原理</p>
+<p>程序优化<br>梳理程序绘制流程<br>滑动优化<br>程序启动优化<br>block<br>多线程<br>RunLoop</p>
+<p>copy<br>网络</p>
+<p>Runtime的理解：<br>平时编写的OC代码，在程序运行过程中，其实最终会转换成Runtime的C语言代码，Runtime是Object-C的幕后工作者<br>Object-C需要Runtime来创建类和对象，进行消息发送和转发<br>将尽可能多的决策从编译时和链接时推迟到运行时（Apple）<br>运行时系统充当着Object-C语言的操作系统，它使语言能够工作(Apple)</p>
+<p>用来干什么 基本作用</p>
+<p>在程序运行过程中，动态的创建类，动态添加、修改这个类的属性和方法；<br>遍历一个类中所有的成员变量、属性、以及所有方法<br>消息传递、转发</p>
+<p>用在哪些地方 Runtime的典型事例</p>
+<p>给系统分类添加属性、方法<br>方法交换<br>获取对象的属性、私有属性<br>字典转换模型<br>KVC、KVO<br>归档(编码、解码)<br>NSClassFromString class&lt;-&gt;字符串<br>block<br>类的自我检测</p>
 
       
     </div>
@@ -640,7 +864,7 @@ showBox();
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift274Flutter%E5%9F%BA%E4%BA%8EGetXController%E5%B0%81%E8%A3%85/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift280%E7%94%9F%E6%B4%BB%E7%AC%94%E8%AE%B0%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -654,7 +878,7 @@ showBox();
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/19/M_Swift274Flutter%E5%9F%BA%E4%BA%8EGetXController%E5%B0%81%E8%A3%85/" class="post-title-link" itemprop="url">Flutter基于GetX的Controller封装</a>
+            <a href="/2021/08/19/M_Swift280%E7%94%9F%E6%B4%BB%E7%AC%94%E8%AE%B0%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">欢迎来到生活笔记</a>
         </h2>
 
         <div class="post-meta">
@@ -671,7 +895,7 @@ showBox();
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-27 17:58:08" itemprop="dateModified" datetime="2022-04-27T17:58:08+08:00">2022-04-27</time>
+                <time title="修改时间：2022-08-02 18:00:25" itemprop="dateModified" datetime="2022-08-02T18:00:25+08:00">2022-08-02</time>
               </span>
 
           
@@ -685,280 +909,7 @@ showBox();
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="基于getx"><a href="#基于getx" class="headerlink" title="基于getx"></a>基于getx</h2><p>abstract class BaseController<M> extends SuperController with ToastMixin<br>{</p>
-<p>}</p>
-<h2 id="混入taost"><a href="#混入taost" class="headerlink" title="混入taost"></a>混入taost</h2><p>toast mixin ToastMixin</p>
-<h2 id="封装http"><a href="#封装http" class="headerlink" title="封装http"></a>封装http</h2><p>controller一般都会有网络业务逻辑，所以我们封装了网络请求的接口</p>
-<h2 id="列表刷新疯子"><a href="#列表刷新疯子" class="headerlink" title="列表刷新疯子"></a>列表刷新疯子</h2><p>BaseRefreshController封装带刷新页面控制器<br>1.定义加载状态  0加载中 1加载成功 2加载数据为空 3加载失败<br>2.定义页码<br>3.实现上拉下拉接口</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift278%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95%E7%9F%A5%E8%AF%86%E7%82%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift278%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95%E7%9F%A5%E8%AF%86%E7%82%B9/" class="post-title-link" itemprop="url">面试记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 17:59:42" itemprop="dateModified" datetime="2022-08-02T17:59:42+08:00">2022-08-02</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>多线程、原理：优缺点：pthread、NSThread、GCD、NSOperation、<br>线程锁：原理：synchronized（互斥+递归）、NSLock（互斥）、NSCondition（互斥锁+条件变量。可以给线程加锁）、NSConditionLock（生产者消费者模型）、NSRecursiveLock（递归锁）、dispatch_semaphore（信号量）<br>自旋锁和互斥锁区别 ：自旋不释放CPU，效率高，占用资源大<br>GCD功能：延迟执行、只执行一次、串行执行、主队列执行、异步执行、同步执行、任务调度优先级<br>死锁原因：<br>三个网络执行完再处理：dispatch_group_notify<br>串行执行：dispatch_barrier_async形成栅栏<br>如何保证NSNotificationCenter线程安全：block-weak方式、delloc移除监听、NSPropty<br>iOS线程间的通信：NSMachPort<br>延时操作：sleep、NSTimer、dispatch_after、performSelector afterDelay:<br>NSTimer子线程执行：添加到RunLoop中<br>计算机线程安全：原子操作、锁、信号量、过度优化<br>类和类对象：struct objc_class : objc_object<br>protocol_t继承objc_object，所以也就具备对象特征<br>weak 对象会放入一个 hash 表中。 用 weak 指向的对象内存地址作为 key<br>load：加载时调用，父类-&gt;子类-&gt;分类<br>initialize：第一次调用类的属性方法时会调用<br>类和元类都有自己的继承体系，但它们都有共同的根父类NSObject，而NSObject的父类指向nil。<br>OC发消息流程：<br>1.检查方法是否需要忽略、target是否是nil<br>2.通过isa查找缓存、方法列表、父类方法列表至NSObject<br>3.动态方法解析、是否能给类添加方法（动态接收者）<br>4.消息转发给其他接收者（备用接收者、完整转发）<br>5.抛出异常<br>runtime常见操作：<br>1.动态添加方法<br>2.交换两个方法<br>3.拦截方法，添加功能<br>4.动态创建模型对象<br>5.归档和解档的属性遍历<br>Runloop：结构原理<br>autorelease pool和runloop关系<br>NSTimer其实是一种资源，source必须加到runloop中才会起作用，performSelecter:afterDelay:其实是往runloop中添加NSTimer，如果线程中没有runloop，那么这个方法就会失效。<br>CAAnimation是由RunloopObserver触发回调来重绘<br>AutoreleasePool原理和结构：由若干个AutoreleasePoolPage以双向链表的形式组合<br>weak实现原理：Runtime维护了一个weak表，用于存储指向某个对象的所有weak指针。weak<br>    表其实是一个hash（哈希）表，Key是所指对象的地址，Value是weak指针的<br>    地址（这个地址的值是所指对象的地址）数组。<br>Block原理：是一个OC对象<br> __block、__weak __strong</p>
-<p>tableView卡顿<br>应用优化<br>卡顿检测<br>启动流出<br>AFN、SDWebImage<br>事件分发：UIApplication-》UIWindow-〉View-》 hitTest:withEvent: -〉pointInside:withEvent:<br>点手机和runloop关系：NSMachPort可以用做runloop源苹果注册了一个 Source1 (基于 mach port 的)<br>用来接收系统事件，其回调函数为   __IOHIDEventSystemClientQueueCallback()<br>我们触发了事件（触摸/锁屏/摇晃等）后由IOKit.framework生成一个 IOHIDEvent事件<br>而IOKit是苹果的硬件驱动框架 _UIApplicationHandleEventQueue()把IOHIDEvent处理包<br>装成UIEvent进行处理分发<br>Category：原理：装饰模式<br>remethodizeClass 这个函数的主要作用是将 Category 中的方法、属性和协议整合到类（主类或元类）中，更新类的数据字段</p>
-<p>类别（category）主要有三个作用<br>类别和Extension区别<br>类别为什么不能添加实例变量<br>如何在重写后，保证只调用原类方法<br>在协议 和 分类 中如何使用 @property<br>如何在Category中添加变量<br>KVO实现原理<br>设计模式：代理模式、观察者模式、单例模式、工厂模式<br>架构： MVC、MVVM、MVP</p>
-<p>http三次握手4次挥手<br>OSI七层协议：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层<br>加密：对称、非对称<br>pod：原理<br>dSYM：</p>
-<p>PREP表达法是指：position（观点） 、reason （理由）、 evidence（证据）</p>
-<p>如何解决面试官的问题</p>
-<p>问题列表：<br>内存<br>介绍iOS的内存管理？</p>
-<p>Runtime原理NSObject数据结构<br>runtime实现原理<br>nsobject数据结构</p>
-<p>hash相关应用场景<br>cache相关的应用<br>生命周期<br>Block<br>Copy<br>RunLoop<br>多线程<br>网络<br>编译原理</p>
-<p>程序优化<br>梳理程序绘制流程<br>滑动优化<br>程序启动优化<br>block<br>多线程<br>RunLoop</p>
-<p>copy<br>网络</p>
-<p>Runtime的理解：<br>平时编写的OC代码，在程序运行过程中，其实最终会转换成Runtime的C语言代码，Runtime是Object-C的幕后工作者<br>Object-C需要Runtime来创建类和对象，进行消息发送和转发<br>将尽可能多的决策从编译时和链接时推迟到运行时（Apple）<br>运行时系统充当着Object-C语言的操作系统，它使语言能够工作(Apple)</p>
-<p>用来干什么 基本作用</p>
-<p>在程序运行过程中，动态的创建类，动态添加、修改这个类的属性和方法；<br>遍历一个类中所有的成员变量、属性、以及所有方法<br>消息传递、转发</p>
-<p>用在哪些地方 Runtime的典型事例</p>
-<p>给系统分类添加属性、方法<br>方法交换<br>获取对象的属性、私有属性<br>字典转换模型<br>KVC、KVO<br>归档(编码、解码)<br>NSClassFromString class&lt;-&gt;字符串<br>block<br>类的自我检测</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift279%E5%89%8D%E7%AB%AF%E5%9C%B0%E5%9B%BE%E5%88%B6%E4%BD%9C%E8%AE%BE%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift279%E5%89%8D%E7%AB%AF%E5%9C%B0%E5%9B%BE%E5%88%B6%E4%BD%9C%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">室内地图绘制</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 18:00:11" itemprop="dateModified" datetime="2022-08-02T18:00:11+08:00">2022-08-02</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>现在有一个简单的想法，就是地图数据的制作<br>我们没有办法做像arcgis那样的数据，但是我们可以利用mapbox，制作非常简单的像室内图的数据<br>我们可以随便copy地图数据，然后把数据合并成新的图层，然后发布出来，或者制作成矢量瓦片，这不失为一个非常好的办法。<br>应用场景：<br>目前的制图工具非常考验开发者的制图功底，我们又没有那么多专业的人才。现在的生活又非常需要丰富的图形话来方便用户生活。<br>比如过<br>快递、外卖、核酸检测15分钟生活圈。室内地图。换乘站点查找等等。<br>我们可以非常简单的绘制出来。有一个非常重要的问题，这种东西是无法发布出去的，将会非常的麻烦</p>
-<p>室内图制作：<br>点（同所有的icon）<br>线 node、line<br>面 region</p>
-<p>先绘制面<br>    选择两点，生成面<br>    裁剪 （选点，然后切割，选择要切割掉的数据）<br>    弧线 （起点，弧点，终点）<br>    设置属性 （墙体，房间，等等）所有空间都是闭合的</p>
-<p>再绘制路线<br>    选点设置路线，一条一条路线的选择，一定是直线，<br>    （路线的相交、起终点处设置为node）</p>
-<p>再绘制poi点<br>    选点，然后设置属性名称</p>
-<p>技术点：<br>根据两个点生成面<br>根据面内的一个点，分割面<br>根据面边上的一个点，分割面<br>根据弧线分割面，起点和终点必须在面边上</p>
-<p>问题：<br>1.比较难实现选点<br>2.比较难设计UI<br>3.macos平台框架不是太熟悉</p>
-<p>geojson数据个够</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift279%E9%9D%A2%E8%AF%95%E9%9A%BE%E7%82%B9%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift279%E9%9D%A2%E8%AF%95%E9%9A%BE%E7%82%B9%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">面试难点</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 17:59:54" itemprop="dateModified" datetime="2022-08-02T17:59:54+08:00">2022-08-02</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="GPU原理"><a href="#GPU原理" class="headerlink" title="GPU原理"></a>GPU原理</h2><p>顶点着色<br>图元装配<br>光栅化<br>片着色<br>片段处理</p>
-<h2 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h2><p>获取属性、方法、成员变量、协议、交换方法、动态获取类、生成类实例</p>
-<h2 id="RunLoop"><a href="#RunLoop" class="headerlink" title="RunLoop"></a>RunLoop</h2><p>它是一个处理事件的循环 包括： Source/Timer/Observer/Port<br>处理事件：事件响应、手势识别、界面刷新、{AutoreleasePool}自动释放池、{NSTimer}等事件处理。</p>
-<h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><p>线程类型、锁类型、延迟执行、分组执行、栅栏方法、信号量</p>
-<h2 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h2><p>当一个对象在创建之后它的引用计数器值加1，当调用这个对象的alloc、retain、new、copy方法之后引用计数器值自动在原<br>来的基础上加1，当调用这个对象的release方法之后它的引用计数器值减1，如果一个对象的引用计数器值为0，则系统会自动<br>调用这个对象的dealloc方法来销毁这个对象。</p>
-<h2 id="应用优化"><a href="#应用优化" class="headerlink" title="应用优化"></a>应用优化</h2><pre><code>一、首页启动速度   
-    启动过程中做的事情越少越好、不在UI线程上作耗时的
-    操作、在合适的时机开始后台任务、尽量减小包的大小
-二、页面浏览速度
-    json的处理、数据压缩、内容缓存、算法的优化
-三、操作流畅度优化：
-    见tableVIew的优化
-四、数据库的优化：
-    数据库设计上面的重构、查询语句的优化、分库分表
-五、服务器端和客户端的交互优化：
-    客户端尽量减少请求、服务端尽量做多的逻辑
-    处理、通信协议的优化
-六、非技术性能优化
-    产品逻辑性、代码规范、界面交互规范等
-</code></pre>
-<h2 id="卡顿检测"><a href="#卡顿检测" class="headerlink" title="卡顿检测"></a>卡顿检测</h2><pre><code>1.使用instrument
-2.在程序运行期间能及时获取卡顿信息Runloop
-</code></pre>
-<h2 id="项目架构设计"><a href="#项目架构设计" class="headerlink" title="项目架构设计"></a>项目架构设计</h2><h2 id="Auto-Layout原理"><a href="#Auto-Layout原理" class="headerlink" title="Auto Layout原理"></a>Auto Layout原理</h2><p>Auto Layout本质就是一个线性方程解析Engine。基于Auto Layout的布局，不在需要像frame时代一样，关注视图尺寸、位置的常数，转而关注视图之间关系，描述一个表示视图间布局关系的约束集合，由Engine解析出最终数值。</p>
-<h2 id="二分查找"><a href="#二分查找" class="headerlink" title="二分查找"></a>二分查找</h2><h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><p>冒泡、选择、插入、希尔、归并、快速、堆</p>
-<p>问题2:<br>本地生活，说实话，我总感觉目前的互联网还没有渗透到最后的地方，我们没有办法找到周边的东西，除了像外卖一样，我们能查看到周边的美食也能送到我们身边，其他的我们没有感觉高非常的方便。<br>我们如何才能提高这方面的效率呢？那我们怎么能做到这一点呢？<br>一个什么样的产品能够拉近商家和用户的距离呢？<br>一个什么样的产品能够促使用户能够付费呢？<br>很多东西我们往往去互联网上买，但是实际上我们周边就有这样的产品，是不是我们用更简单的方式会更好。<br>从抖音来看，用户更倾向于设计自己的东西，越来越知道打造自己ip的重要性，那么我们能不能为用户提供这样的打造自己ip的场景。<br>为什么一定是抖音才能打造自己的ip，为什么我们不行。<br>随着生活水平的提供，中国人应该越来越懂得消费了，应该也知道如何消费了，<br>从目前来看中国人的消费水平和旅游的能力还是偏低的，我们如何才能提高消费的透明度。<br>旅游ip平台。<br>从上海这次疫情来看，当这种封闭的形式到来之后，人民的饮食生活还是受到影响。</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/imaNNeoFighT/fl_chart">https://github.com/imaNNeoFighT/fl_chart</a></p>
-<p>Flutter的绘制能力是得到验证了，且有开源的代码，绘制这个方向应该是比较开放<br>Flutter文档编写方面，现在研究的是markdown，目前也实现了一款markdown的编辑器，还算成功<br>Flutter图表展示，目前看echarts是有插件的，此外还有其他的插件，应该是不是问题<br>Flutter地图，目前看只能是高德地图，其它的还没有成型<br>flutter json解析，非常麻烦，不适合做<br>Flutter word、excel预览 具备，但是都是采用的比较常规的一些插件<br>flutter 直播<br>flutter 拍照<br>flutter 美颜</p>
-<p>flutter常用框架</p>
-<p>Getx原理剖析<br>1.getx响应式原理<br>getx存在Getbuilder和obs两种方式<br>Builder实际上是创建一个statefulWidget，实现了刷新的机制<br>Obs实际上是重写了数据对象int、string、list、map等，在对象内实现了监听的绑定。<br>在获取value时候进行绑定监听。<br>Obs实际上使用StreamSubscription来实现的。比较适合单个组件数据的更新<br>Getbuilder是使用statefulWidget setState实现的。比较适合多个组件数据的批量更新。</p>
-<p>依赖管理：</p>
-<p>整理自己的知识点<br>1.cesium，可以开源一下<br>2.</p>
-<p>Flutter网络请求架构<br>retrofit + dio + json_annotation<br>1.为什么要使用retrofit<br>注解的方式生成请求 Rest Api 的各种方法，会让服务接口更清晰。<br>接口参考如下：<br>  @GET(“helloword”)<br>  Future<HelloEntity> helloword(@Query(“date”) String date);<br>@RestApi、@GET、@POST、@Query</p>
-<p>retrofit会为我们生成对应的.g.dart。我们在对应文件里面用dio实现网络请求<br>2.dio<br>Dio 一个强大的 Dart Http 请求库，支持 Restful API、FormData、拦截器、请求取消、Cookie管理、文件上传/下载、超时等…<br>3.json_annotation<br>根据json字符串的结构和字段构造实体类，通过注解，生成对应的.g.dart类<br>@JsonSerializable()</p>
-<p>Flutter 页面封装（加载中，成功，失败，空数据）<br>1.toast mixin ToastMixin<br>2.网络请求<br>abstract class BaseController<M> extends SuperController with ToastMixin<br>{</p>
-<p>}<br>3.列表刷新的布局<br>封装当前页码，上拉，下拉等</p>
-<p>shared_preferences脱离context的封装<br>我们将shared_preferences保存到getx中，可以实现从getx中获取shared_preferences数据。</p>
-<p>如果想要了解async、await的原理，就要先了解协程的概念，async、await本质上就是协程的一种语法糖。协程，也叫作coroutine，是一种比线程更小的单元。如果从单元大小来说，基本可以理解为进程-&gt;线程-&gt;协程。<br>协程分为无线协程和有线协程，无线协程在离开当前调用位置时，会将当前变量放在堆区，当再次回到当前位置时，还会继续从堆区中获取到变量。所以，一般在执行当前函数时就会将变量直接分配到堆区，而async、await就属于无线协程的一种。<br>由于并没有开启新的线程，只是进行IO中断改变CPU调度，所以网络请求这样的异步操作可以使用async、await，但如果是执行大量耗时同步操作的话，应该使用isolate开辟新的线程去执行。<br>isolate的整体模型我自己的理解其实更像进程，而async、await更像是线程”。如果对比一下isolate和进程的定义，会发现确实isolate很像是进程。</p>
-<p> #数据json解析（官方框架）<br>  json_annotation: ^4.4.0 # null safe<br>  json_serializable: ^6.1.1 # null safe</p>
-<p>标注为@JsonSerializable的类，会生成对应的.g.dart类<br>flutter网络请求实现<br>网络请求框架基于Retrofit+Dio实现，配合官方JsonSerialize实现解析；</p>
-<p>封装列表页面下拉刷新+上拉加载更多等<br>Keframe 方案：分帧入屏 ,既然单帧的绘制时间太长，那我们就将一帧分成多帧。<br>将屏幕上的 widget 扔进一个执行队列，将模块内的时间做拆分，多个 widget 不同时进行绘制，一个绘制完成后再进行下一个 widget 的绘制。</p>
-<p>cached_network_image：它可以将网络图像进行本地缓存，在需要的时候直接加载，提供了两个使用方法</p>
-<p>基于getx的页面封装：<br>1.我们的类是继承在GetView上的。<br>getView可以获取到controller<br>2.我们的每个类都要有toast提示，所以我们添加了mixin， with Toast<br>3.我们根据页面常用描述实现了很多页面绘制的展示，如导航栏、侧边栏、标题，是否显示等<br>4.我们基类页面实现了基Basegetxcontroller。<br>Basegetxcontroller封装<br>1.继承于getx的SuperController<br>2.我们的每个类都要有toast提示，所以我们添加了mixin， with Toast<br>3.controller一般都会有网络业务逻辑，所以我们封装了网络请求的接口<br>BaseRefreshController封装带刷新页面控制器<br>1.定义加载状态  0加载中 1加载成功 2加载数据为空 3加载失败<br>2.定义页码<br>3.实现上拉下拉接口</p>
-<p>Flutter本地数据库管理<br>我们知道spring是一个非常流行的框架，对于数据管理也是有dao、service等一些概念，这些概念用到flutter中也是同样适用的，所以我们非常高兴的来设计flutter种数据库设计<br>我们采用数据库框架drift 原名moor<br>依赖：<br>dependencies:<br>  drift: ^1.0.1<br>  sqlite3_flutter_libs: ^0.5.0<br>  path_provider: ^2.0.0<br>  path: ^1.8.0</p>
-<p>dev_dependencies:<br>  drift_dev: ^1.0.2<br>  build_runner: ^2.1.4</p>
-<p>1.使用 drift， 可以用简单的 Dart 代码基于表结构创建 Model<br>2.编写sql语句，包括表创建，增删改查接口等<br>3.编写database.dart 文件，关联drift表<br>4.用flutter packages pub run build_runner build 生成全部代码。</p>
-<p>web页面截图工具</p>
-<p>颜色转换工具<br><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/color_convert">https://pub.flutter-io.cn/packages/color_convert</a><br>http工具<br><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/alice">https://pub.flutter-io.cn/packages/alice</a></p>
-<p>表格<br><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/responsive_table">https://pub.flutter-io.cn/packages/responsive_table</a></p>
-<p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/flutterbook/install">https://pub.flutter-io.cn/packages/flutterbook/install</a></p>
-<p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/graphx">https://pub.flutter-io.cn/packages/graphx</a><br>dart_clipboard<br>keframe<br>json_view<br>fluent_ui<br><a target="_blank" rel="noopener" href="https://github.com/MaikuB/flutter_local_notifications">https://github.com/MaikuB/flutter_local_notifications</a><br><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/flutter_quill">https://pub.flutter-io.cn/packages/flutter_quill</a><br><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/syncfusion_flutter_datagrid_export">https://pub.flutter-io.cn/packages/syncfusion_flutter_datagrid_export</a><br>file_picker_cross<br>hotkey_manager<br>connectivity_plus</p>
-<p>常常在想自己的价值在哪里，这真的是要命了，公司一个人一个人的走了，我还剩下什么。<br>我感觉公司现在就剩下根了，我们的价值还能体现吗？我们还能给公司创造财富吗？<br>就我们几个人，我们还能撑起多大的项目。我们努力这么久，现在就只能是这样了吗？<br>这么多的商务，人事，项目经理，难道就撑不起这个公司了吗？真的是让人透心凉啊。<br>不管了，我去做核酸了。</p>
-<p>无论如何把自己锻炼成一个大前端软件开发者，这样能应对以后复杂的社会环境。<br>不要想自己如何努力就能成功，还是要脚踏实地，人生就是有那么多起伏曲折，我们不可能这么顺利<br>走一步看一步吧，起码现在我们都在努力的活着，起码现在我们的工资是有保障的。<br>我们也不要去想未来，我们也不要考虑有没有未来，我们现在这么几个人，无论创造什么样的价值，我们都是值得<br>flutter pub run build_runner build</p>
+          <p> 生活笔记就像是您的大脑一样，可以存储您生活工作中的所有知识经历.生活笔记是您的生活记录创作平台，比如说您是一个学生，您可以创作各种学科类型的知识进行存储、比如说您是上班族，您可以用生活笔记记录您的工作状态，比如说您是美食爱好者，您可以用生活笔记记录您学会做的美食，您品尝过的美食等等。这些统统可以保存进您的生活笔记。生活笔记是您自己的，我们不制作平台，您记录的生活笔记完全保存在您的设备上，您不用担心您的数据的泄漏，生活笔记不会进行任何网络信息的传输。此外，生活笔记拥有桌面端和移动端，您的笔记保存在本地数据库中，您可以将本地数据库导入到您的桌面端、手机端、为了防止您的数据丢失，您也可以将数据保存至您的邮箱及网盘中，这些都是您可以触手可及的。在当今各种写作平台上进行创作，您的创作内容甚至都无法保存到本地，您只能依靠平台进行浏览和分享，感觉您写作的东西不是您自己的一样，这虽然有助于您的知识分享，但是隐私的记录是无法依靠这种平台来实现的，这始终都不是安全的。生活笔记不同，他是专门为您的生活量身定制的笔记，无论各行各业的人，都可以在自己的行业在自己的知识内创建知识分类，进行知识创作，生活笔记就像您的大脑一样，如果你想的话哦可以记录您的一切</p>
 
       
     </div>
