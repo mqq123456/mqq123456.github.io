@@ -148,6 +148,202 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift266Flutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift266Flutter%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">Flutter开发技巧</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-03 15:45:05" itemprop="dateModified" datetime="2022-08-03T15:45:05+08:00">2022-08-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Flutter-iOS-开发"><a href="#Flutter-iOS-开发" class="headerlink" title="Flutter iOS 开发"></a>Flutter iOS 开发</h2><pre><code>flutter iOS混合
+flutter 调用iOS
+await methodChannel.invokeMethod(&#39;iOSFlutter&#39;, &#39;参数&#39;);
+iOS调用flutter
+</code></pre>
+<p>FlutterViewController* flutterViewController = [[FlutterViewController alloc] initWithProject:nil nibName:nil bundle:nil];<br>    flutterViewController.navigationItem.title = @”Demo”;<br>    [flutterViewController setInitialRoute:@”home”];<br>    // 要与main.dart中一致<br>    NSString *channelName = @”com.pages.your/native_post”;</p>
+<pre><code>FlutterEventChannel *evenChannal = [FlutterEventChannel eventChannelWithName:channelName binaryMessenger:flutterViewController];
+// 代理FlutterStreamHandler
+[evenChannal setStreamHandler:self];
+
+[self.navigationController pushViewController:flutterViewController animated:YES];
+</code></pre>
+<h2 id="flutter-android-开发"><a href="#flutter-android-开发" class="headerlink" title="flutter android 开发"></a>flutter android 开发</h2><pre><code>1）添加 FlutterActivity 到 AndroidManifest.xml 中：
+</code></pre>
+<p><activity
+  android:name="io.flutter.embedding.android.FlutterActivity"
+  android:theme="@style/LaunchTheme"
+  android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+  android:hardwareAccelerated="true"
+  android:windowSoftInputMode="adjustResize"
+  /><br>myButton.setOnClickListener {<br>  startActivity(<br>    FlutterActivity<br>      .withNewEngine()<br>      .initialRoute(“/my_route”)<br>      .build(this)<br>  )<br>}</p>
+<h2 id="缓存-Flutter-引擎方式跳转："><a href="#缓存-Flutter-引擎方式跳转：" class="headerlink" title="缓存 Flutter 引擎方式跳转："></a>缓存 Flutter 引擎方式跳转：</h2><p>class MyApplication : Application() {<br>  lateinit var flutterEngine : FlutterEngine<br>  override fun onCreate() {<br>    super.onCreate()<br>    // Instantiate a FlutterEngine.<br>    flutterEngine = FlutterEngine(this)<br>    // Configure an initial route.<br>    flutterEngine.navigationChannel.setInitialRoute(“your/route/here”);<br>    // Start executing Dart code to pre-warm the FlutterEngine.<br>    flutterEngine.dartExecutor.executeDartEntrypoint(<br>      DartExecutor.DartEntrypoint.createDefault()<br>    )<br>    // Cache the FlutterEngine to be used by FlutterActivity or FlutterFragment.<br>    FlutterEngineCache<br>      .getInstance()<br>      .put(“my_engine_id”, flutterEngine)<br>  }<br>}</p>
+<p>myButton.setOnClickListener {<br>  startActivity(<br>    FlutterActivity<br>      .withCachedEngine(“my_engine_id”)<br>      .build(this)<br>  )<br>}</p>
+<h2 id="Dart和C，C-混合编程"><a href="#Dart和C，C-混合编程" class="headerlink" title="Dart和C，C++混合编程"></a>Dart和C，C++混合编程</h2><p>C代码<br>#include&lt;windows.h&gt;</p>
+<p>int add(int a, int b){<br>    return a + b;<br>}</p>
+<p>void showBox(){<br>    MessageBox(NULL,”Hello Dart”,”Title”,MB_OK);<br>}</p>
+<p>import  ‘dart:ffi’  as ffi;<br>import  ‘dart:io’  show Platform;</p>
+<p>/// 根据C中的函数来定义方法签名（所谓方法签名，就是对一个方法或函数的描述，包括返回值类型，形参类型）<br>/// 这里需要定义两个方法签名，一个是C语言中的，一个是转换为Dart之后的<br>typedef NativeAddSign = ffi.Int32 Function(ffi.Int32,ffi.Int32);<br>typedef DartAddSign = int Function(int, int);</p>
+<p>/// showBox函数方法签名<br>typedef NativeShowSign = ffi.Void Function();<br>typedef DartShowSign = void Function();</p>
+<p>void main(List<String> args) {<br>  if (Platform.isWindows) {<br>    // 加载dll动态库<br>    ffi.DynamicLibrary dl = ffi.DynamicLibrary.open(“../src/test.dll”);</p>
+<pre><code>// lookupFunction有两个作用，1、去动态库中查找指定的函数；2、将Native类型的C函数转化为Dart的Function类型
+var add = dl.lookupFunction&lt;NativeAddSign, DartAddSign&gt;(&quot;add&quot;);
+var showBox = dl.lookupFunction&lt;NativeShowSign, DartShowSign&gt;(&quot;showBox&quot;);
+
+// 调用add函数
+print(add(8, 9));
+// 调用showBox函数
+showBox();
+</code></pre>
+<p>  }<br>}</p>
+<h2 id="检测手段"><a href="#检测手段" class="headerlink" title="检测手段"></a>检测手段</h2><p> 1、Flutter Inspector<br>帮你找到 App 中频繁重绘导致性能消耗过大的部分。页面的进度条动画刷新时会导致整个布局频繁重绘。</p>
+<p>2、性能图层<br>蓝色垂直的线条表示已执行的正常帧，绿色的线条代表的是当前帧，如果其中有一帧处理时间过长，就会导致界面卡顿，图表中就会展示出一个红色竖条。</p>
+<p>3、Raster 线程问题4、UI 线程问题定位5、检查多视图叠加的视图渲染开关 checkerboardOffscreenLayers6、检查缓存的图像开关 checkerboardRasterCacheImages<br>二、关键优化指标<br> 1、页面异常率2、页面帧率3、页面加载时长<br>三、布局加载优化 1、常规优化2、深入优化<br>四、启动速度优化 1、引擎预加载2、Dart VM 预热<br>五、内存优化 1、const 实例化2、识别出消耗多余内存的图片3、针对 ListView item 中有 image 的情况来优化内存六、包体积优化 1、图片优化2、移除冗余的二三库3、启用代码缩减和资源缩减4、构建单 ABI 架构的包</p>
+<h2 id="flutter自定义组件："><a href="#flutter自定义组件：" class="headerlink" title="flutter自定义组件："></a>flutter自定义组件：</h2><p>1.组合其它组件（最简单，优先考虑）<br>2.自绘 可以通过Flutter中提供的CustomPaint和Canvas来实现UI自绘。<br>3.实现RenderObject。是一个抽象类，它定义了一个抽象方法paint(…)：</p>
+<h2 id="现在地图发展趋势："><a href="#现在地图发展趋势：" class="headerlink" title="现在地图发展趋势："></a>现在地图发展趋势：</h2><p>1.由于移动端跨平台的兴起，地图SDK更偏向于兼容发展<br>目前高德地图SDK兼容了很多平台如：android、iOS、HarmonyOS、小程序、web、js、Flutter、等等<br>另一个地图领域在向3D方向靠拢，高德也支持三维模型gltf加载，比较大地图公司的话，cesium.js、three.js在三维方面有比较大的发展方向。但是三维场景的使用范围和能力还是在探索阶段。</p>
+<h2 id="flutter高质量博客"><a href="#flutter高质量博客" class="headerlink" title="flutter高质量博客"></a>flutter高质量博客</h2><p><a target="_blank" rel="noopener" href="https://github.com/boyan01">https://github.com/boyan01</a><br><a target="_blank" rel="noopener" href="https://github.com/lijy91">https://github.com/lijy91</a></p>
+<h2 id="Flutter是如何实现在桌面端和移动端设备的设计的？"><a href="#Flutter是如何实现在桌面端和移动端设备的设计的？" class="headerlink" title="Flutter是如何实现在桌面端和移动端设备的设计的？"></a>Flutter是如何实现在桌面端和移动端设备的设计的？</h2><p>答案是flutter是通过两套代码实现的，虽然在一个工程里面，但是桌面和移动端的UI是不一致的，一套代码是无法实现设计的<br> final platform = ref.watch(debugNavigatorPlatformProvider);<br>    switch (platform) {<br>      case NavigationPlatform.desktop:<br>        home = const HomeWindow();<br>        break;<br>      case NavigationPlatform.mobile:<br>        home = const MobileWindow();<br>        break;<br>    }<br>目前查看了一个仿网易的app，同时支持桌面端和移动端，目前看结果是这样。</p>
+<h2 id="Flutter存储数据方式"><a href="#Flutter存储数据方式" class="headerlink" title="Flutter存储数据方式"></a>Flutter存储数据方式</h2><p>shared_preferences<br>sqflite<br>Hive是一个快速，轻量级的NoSQL数据库，适用于Flutter和Dart应用程序。 如果您想要一个简单的键值数据库，没有很多关系，并且确实易于使用，那么Hive真的很有用。<br>Bloc 是状态管理方案，状态，意味着 APP 一旦关闭，其状态就会丢失。但应用使用期间，其状态是可以实时更新、跨页面、跨组件同步更新的。</p>
+<h2 id="Flutter-状态管理"><a href="#Flutter-状态管理" class="headerlink" title="Flutter 状态管理"></a>Flutter 状态管理</h2><p>1.setState<br>2.scoped_model源自 Fuchsia 代码，使用 InheritedWidget 实现<br>3.provide<br>4.RxDart<br>5.Fish-Redux</p>
+<h2 id="path-provider方法和说明"><a href="#path-provider方法和说明" class="headerlink" title="path_provider方法和说明"></a>path_provider方法和说明</h2><p>方法    属性    描述<br>getTemporaryDirectory()    Future<Directory>    临时目录<br>getApplicationSupportDirectory()    Future<Directory>    应用程序支持目录<br>getLibraryDirectory()    Future<Directory>    应用程序持久文件目录<br>getApplicationDocumentsDirectory()    Future<Directory>    文档目录<br>getExternalStorageDirectory()    Future<Directory>    外部存储目录<br>getExternalCacheDirectories()    Future&lt;List<Directory>?&gt;    外部存储缓存目录<br>getExternalStorageDirectories()    Future&lt;List<Directory>?&gt;    外部存储目录（单独分区）<br>getDownloadsDirectory()    Future&lt;Directory?&gt;    桌面程序下载目录</p>
+<h2 id="flutter-hooks"><a href="#flutter-hooks" class="headerlink" title="flutter_hooks"></a>flutter_hooks</h2><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3b59763d105d">https://www.jianshu.com/p/3b59763d105d</a></p>
+<p>MethodChannel    用于 Flutter 与 原生平台之间函数的互相调用<br>BasicMessageChannel    它传递的是字节数组，使用时自定义编解码器<br>EventChannel    用于 Flutter 与 原生平台之间事件的通信</p>
+<p>flutter端调用移动端<br>channel.invokeMethod<br>iOS端<br>channel.setMethodCallHandler { (call, res) in<br>android端<br>channel.setMethodCallHandler { call, res -&gt;</p>
+<p>原生端调用flutter<br>iOS、Android<br>channel.invokeMethod(“your_method_name”, params)<br>flutter<br>channel.setMethodCallHandler((call) {</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift270%E4%B8%89%E7%BB%B4BIM%E7%9B%B8%E5%85%B3%E8%B0%83%E7%A0%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift270%E4%B8%89%E7%BB%B4BIM%E7%9B%B8%E5%85%B3%E8%B0%83%E7%A0%94/" class="post-title-link" itemprop="url">三维BIM相关调研</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-02 17:43:40" itemprop="dateModified" datetime="2022-08-02T17:43:40+08:00">2022-08-02</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="osg"><a href="#osg" class="headerlink" title="osg"></a>osg</h2><p><a target="_blank" rel="noopener" href="http://www.osgchina.org/">http://www.osgchina.org/</a><br><a target="_blank" rel="noopener" href="https://github.com/openscenegraph/OpenSceneGraph">https://github.com/openscenegraph/OpenSceneGraph</a><br><a target="_blank" rel="noopener" href="http://docs.osgearth.org/en/latest/">http://docs.osgearth.org/en/latest/</a><br><a target="_blank" rel="noopener" href="https://github.com/gwaldron/osgearth">https://github.com/gwaldron/osgearth</a></p>
+<h2 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h2><p><a target="_blank" rel="noopener" href="https://github.com/opensourceBIM/BIMserver">https://github.com/opensourceBIM/BIMserver</a><br><a target="_blank" rel="noopener" href="https://github.com/yorikvanhavre/BIM_Workbench">https://github.com/yorikvanhavre/BIM_Workbench</a><br><a target="_blank" rel="noopener" href="https://github.com/opensourceBIM/BIMsurfer">https://github.com/opensourceBIM/BIMsurfer</a></p>
+<h2 id="恒歌"><a href="#恒歌" class="headerlink" title="恒歌"></a>恒歌</h2><p><a target="_blank" rel="noopener" href="https://www.henggetec.com/">https://www.henggetec.com</a></p>
+<h2 id="技术选型："><a href="#技术选型：" class="headerlink" title="技术选型："></a>技术选型：</h2><p>前端：cesium、osg、qt、vue</p>
+<h2 id="other"><a href="#other" class="headerlink" title="other"></a>other</h2><p><a target="_blank" rel="noopener" href="https://github.com/techsoft3d/bim_viewer_tutorial">https://github.com/techsoft3d/bim_viewer_tutorial</a><br><a target="_blank" rel="noopener" href="https://github.com/SEUZFY/BIMConvertToGeo">https://github.com/SEUZFY/BIMConvertToGeo</a><br><a target="_blank" rel="noopener" href="https://github.com/donalffons/opencascade.js">https://github.com/donalffons/opencascade.js</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.sohu.com/a/524793964_100237201">https://www.sohu.com/a/524793964_100237201</a><br><a target="_blank" rel="noopener" href="https://github.com/OpenWebCAD/node-occ">https://github.com/OpenWebCAD/node-occ</a><br><a target="_blank" rel="noopener" href="https://github.com/zalo/CascadeStudio">https://github.com/zalo/CascadeStudio</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/google/model-viewer">https://github.com/google/model-viewer</a><br><a target="_blank" rel="noopener" href="https://github.com/f3d-app/f3d">https://github.com/f3d-app/f3d</a><br><a target="_blank" rel="noopener" href="https://github.com/cesiumlab/XbsjEarthUI">https://github.com/cesiumlab/XbsjEarthUI</a><br><a target="_blank" rel="noopener" href="https://github.com/xeokit/xeokit-sdk">https://github.com/xeokit/xeokit-sdk</a><br><a target="_blank" rel="noopener" href="https://github.com/openscad/openscad">https://github.com/openscad/openscad</a><br><a target="_blank" rel="noopener" href="https://github.com/OGStudio/openscenegraph-cross-platform-guide">https://github.com/OGStudio/openscenegraph-cross-platform-guide</a></p>
+<h2 id="开源绘图软件"><a href="#开源绘图软件" class="headerlink" title="开源绘图软件"></a>开源绘图软件</h2><p><a target="_blank" rel="noopener" href="https://github.com/FreeCAD/FreeCAD">https://github.com/FreeCAD/FreeCAD</a><br><a target="_blank" rel="noopener" href="https://github.com/Macad3D/Macad3D">https://github.com/Macad3D/Macad3D</a><br><a target="_blank" rel="noopener" href="https://github.com/fougue/mayo">https://github.com/fougue/mayo</a></p>
+<p>// 平台<br><a target="_blank" rel="noopener" href="https://www.sohu.com/a/524793964_100237201">https://www.sohu.com/a/524793964_100237201</a><br>// 服务<br><a target="_blank" rel="noopener" href="https://github.com/opensourceBIM/BIMserver">https://github.com/opensourceBIM/BIMserver</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/yorikvanhavre/BIM_Workbench">https://github.com/yorikvanhavre/BIM_Workbench</a><br><a target="_blank" rel="noopener" href="https://github.com/opensourceBIM/BIMsurfer">https://github.com/opensourceBIM/BIMsurfer</a></p>
+<p>//<br><a target="_blank" rel="noopener" href="https://github.com/techsoft3d/bim_viewer_tutorial">https://github.com/techsoft3d/bim_viewer_tutorial</a><br><a target="_blank" rel="noopener" href="https://github.com/SEUZFY/BIMConvertToGeo">https://github.com/SEUZFY/BIMConvertToGeo</a><br><a target="_blank" rel="noopener" href="https://github.com/donalffons/opencascade.js">https://github.com/donalffons/opencascade.js</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/OpenWebCAD/node-occ">https://github.com/OpenWebCAD/node-occ</a><br><a target="_blank" rel="noopener" href="https://github.com/zalo/CascadeStudio">https://github.com/zalo/CascadeStudio</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/google/model-viewer">https://github.com/google/model-viewer</a><br><a target="_blank" rel="noopener" href="https://github.com/f3d-app/f3d">https://github.com/f3d-app/f3d</a><br><a target="_blank" rel="noopener" href="https://github.com/cesiumlab/XbsjEarthUI">https://github.com/cesiumlab/XbsjEarthUI</a><br><a target="_blank" rel="noopener" href="https://github.com/xeokit/xeokit-sdk">https://github.com/xeokit/xeokit-sdk</a><br><a target="_blank" rel="noopener" href="https://github.com/openscad/openscad">https://github.com/openscad/openscad</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.osgchina.org/ueditor/php/upload/file/20201223/1608688488737443.pdf">http://www.osgchina.org/ueditor/php/upload/file/20201223/1608688488737443.pdf</a><br><a target="_blank" rel="noopener" href="http://www.osgchina.org/ueditor/php/upload/file/20201223/1608688498656795.pdf">http://www.osgchina.org/ueditor/php/upload/file/20201223/1608688498656795.pdf</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift271Flutter%20%E6%95%B0%E6%8D%AE%E5%BA%93drift/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -196,6 +392,143 @@
           <p>Flutter本地数据库管理<br>我们知道spring是一个非常流行的框架，对于数据管理也是有dao、service等一些概念，这些概念用到flutter中也是同样适用的，所以我们非常高兴的来设计flutter种数据库设计<br>我们采用数据库框架drift 原名moor<br>依赖：<br>dependencies:<br>  drift: ^1.0.1<br>  sqlite3_flutter_libs: ^0.5.0<br>  path_provider: ^2.0.0<br>  path: ^1.8.0</p>
 <p>dev_dependencies:<br>  drift_dev: ^1.0.2<br>  build_runner: ^2.1.4</p>
 <p>1.使用 drift， 可以用简单的 Dart 代码基于表结构创建 Model<br>2.编写sql语句，包括表创建，增删改查接口等<br>3.编写database.dart 文件，关联drift表<br>4.用flutter packages pub run build_runner build 生成全部代码。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift274Flutter%E5%9F%BA%E4%BA%8EGetXController%E5%B0%81%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift274Flutter%E5%9F%BA%E4%BA%8EGetXController%E5%B0%81%E8%A3%85/" class="post-title-link" itemprop="url">Flutter基于GetX的Controller封装</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-27 17:58:08" itemprop="dateModified" datetime="2022-04-27T17:58:08+08:00">2022-04-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="基于getx"><a href="#基于getx" class="headerlink" title="基于getx"></a>基于getx</h2><p>abstract class BaseController<M> extends SuperController with ToastMixin<br>{</p>
+<p>}</p>
+<h2 id="混入taost"><a href="#混入taost" class="headerlink" title="混入taost"></a>混入taost</h2><p>toast mixin ToastMixin</p>
+<h2 id="封装http"><a href="#封装http" class="headerlink" title="封装http"></a>封装http</h2><p>controller一般都会有网络业务逻辑，所以我们封装了网络请求的接口</p>
+<h2 id="列表刷新疯子"><a href="#列表刷新疯子" class="headerlink" title="列表刷新疯子"></a>列表刷新疯子</h2><p>BaseRefreshController封装带刷新页面控制器<br>1.定义加载状态  0加载中 1加载成功 2加载数据为空 3加载失败<br>2.定义页码<br>3.实现上拉下拉接口</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift275Flutter%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/08/19/M_Swift275Flutter%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">Flutter网络请求架构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-27 17:50:57" itemprop="dateModified" datetime="2022-04-27T17:50:57+08:00">2022-04-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="retrofit-dio-json-annotation"><a href="#retrofit-dio-json-annotation" class="headerlink" title="retrofit + dio + json_annotation"></a>retrofit + dio + json_annotation</h1><h2 id="1-为什么要使用retrofit"><a href="#1-为什么要使用retrofit" class="headerlink" title="1.为什么要使用retrofit"></a>1.为什么要使用retrofit</h2><p>注解的方式生成请求 Rest Api 的各种方法，会让服务接口更清晰。<br>接口参考如下：<br>  @GET(“helloword”)<br>  Future<HelloEntity> helloword(@Query(“date”) String date);<br>@RestApi、@GET、@POST、@Query</p>
+<p>retrofit会为我们生成对应的.g.dart。我们在对应文件里面用dio实现网络请求</p>
+<h2 id="dio"><a href="#dio" class="headerlink" title="dio"></a>dio</h2><p>Dio 一个强大的 Dart Http 请求库，支持 Restful API、FormData、拦截器、请求取消、Cookie管理、文件上传/下载、超时等…</p>
+<h2 id="json-annotation"><a href="#json-annotation" class="headerlink" title="json_annotation"></a>json_annotation</h2><p>根据json字符串的结构和字段构造实体类，通过注解，生成对应的.g.dart类<br>@JsonSerializable()</p>
 
       
     </div>
@@ -280,7 +613,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift280%E7%94%9F%E6%B4%BB%E7%AC%94%E8%AE%B0%E8%AE%BE%E8%AE%A1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift273Flutter%E5%B7%A5%E5%85%B7%E7%B1%BB%E6%8F%92%E4%BB%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -294,7 +627,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/19/M_Swift280%E7%94%9F%E6%B4%BB%E7%AC%94%E8%AE%B0%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">欢迎来到生活笔记</a>
+            <a href="/2021/08/19/M_Swift273Flutter%E5%B7%A5%E5%85%B7%E7%B1%BB%E6%8F%92%E4%BB%B6/" class="post-title-link" itemprop="url">Flutter工具类插件</a>
         </h2>
 
         <div class="post-meta">
@@ -311,7 +644,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 18:00:25" itemprop="dateModified" datetime="2022-08-02T18:00:25+08:00">2022-08-02</time>
+                <time title="修改时间：2022-04-27 18:06:51" itemprop="dateModified" datetime="2022-04-27T18:06:51+08:00">2022-04-27</time>
               </span>
 
           
@@ -325,7 +658,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p> 生活笔记就像是您的大脑一样，可以存储您生活工作中的所有知识经历.生活笔记是您的生活记录创作平台，比如说您是一个学生，您可以创作各种学科类型的知识进行存储、比如说您是上班族，您可以用生活笔记记录您的工作状态，比如说您是美食爱好者，您可以用生活笔记记录您学会做的美食，您品尝过的美食等等。这些统统可以保存进您的生活笔记。生活笔记是您自己的，我们不制作平台，您记录的生活笔记完全保存在您的设备上，您不用担心您的数据的泄漏，生活笔记不会进行任何网络信息的传输。此外，生活笔记拥有桌面端和移动端，您的笔记保存在本地数据库中，您可以将本地数据库导入到您的桌面端、手机端、为了防止您的数据丢失，您也可以将数据保存至您的邮箱及网盘中，这些都是您可以触手可及的。在当今各种写作平台上进行创作，您的创作内容甚至都无法保存到本地，您只能依靠平台进行浏览和分享，感觉您写作的东西不是您自己的一样，这虽然有助于您的知识分享，但是隐私的记录是无法依靠这种平台来实现的，这始终都不是安全的。生活笔记不同，他是专门为您的生活量身定制的笔记，无论各行各业的人，都可以在自己的行业在自己的知识内创建知识分类，进行知识创作，生活笔记就像您的大脑一样，如果你想的话哦可以记录您的一切</p>
+          <h2 id="web页面截图工具"><a href="#web页面截图工具" class="headerlink" title="web页面截图工具"></a>web页面截图工具</h2><p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/webcontent_converter">https://pub.flutter-io.cn/packages/webcontent_converter</a></p>
+<h2 id="颜色转换工具"><a href="#颜色转换工具" class="headerlink" title="颜色转换工具"></a>颜色转换工具</h2><p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/color_convert">https://pub.flutter-io.cn/packages/color_convert</a></p>
+<h2 id="http工具"><a href="#http工具" class="headerlink" title="http工具"></a>http工具</h2><p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/alice">https://pub.flutter-io.cn/packages/alice</a></p>
+<h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><p><a target="_blank" rel="noopener" href="https://pub.flutter-io.cn/packages/responsive_table">https://pub.flutter-io.cn/packages/responsive_table</a></p>
+<h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><p><a target="_blank" rel="noopener" href="https://github.com/youngchan1988/flow_graph">https://github.com/youngchan1988/flow_graph</a></p>
 
       
     </div>
@@ -345,7 +682,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift282%E7%94%9F%E6%B4%BB%E7%AC%94%E8%AE%B0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift277%E5%9C%B0%E5%9B%BE%E7%BB%98%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -359,7 +696,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/19/M_Swift282%E7%94%9F%E6%B4%BB%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">生活笔记桌面端</a>
+            <a href="/2021/08/19/M_Swift277%E5%9C%B0%E5%9B%BE%E7%BB%98%E5%88%B6/" class="post-title-link" itemprop="url">地图绘制</a>
         </h2>
 
         <div class="post-meta">
@@ -376,7 +713,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 18:00:49" itemprop="dateModified" datetime="2022-08-02T18:00:49+08:00">2022-08-02</time>
+                <time title="修改时间：2022-08-02 17:57:56" itemprop="dateModified" datetime="2022-08-02T17:57:56+08:00">2022-08-02</time>
               </span>
 
           
@@ -390,27 +727,38 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="功能简介"><a href="#功能简介" class="headerlink" title="功能简介"></a>功能简介</h2><ul>
-<li>备忘录，办公提醒。</li>
-<li>博客，基于markdown，编写后的数据保存在本地文件夹，也可以同时保存至笔记中。</li>
-<li>笔记，目的是不同知识学习积累记录，采用思维导图，头脑风暴模式，为笔记建立类型树图，建议将笔记分区在不同的类型中。</li>
-<li>生活，类似朋友圈，可以发布图片等信息，方便记录生活。</li>
-<li>日记，生活数据的私密保存，采用加密模式，需要密码才能打开，可有效保证数据安全。</li>
-<li>思维导图，可以实现树状图的编辑，修改，保存，导出。</li>
-<li>画板，可以实现绘画功能和导出。</li>
-<li>配置，方便对于账号密码等信息存储，采用加密模式，需要密码才能打开，可有效保证数据安全。</li>
-<li>废纸篓，有效保证数据删除安全性。</li>
+          <p>最近有一个新的想法，制作一个地图数据<br>我们知道地图都是要用arcmap等制图工具制作出来的，这非常的麻烦，也需要非常专业的人才能制作出来，但是像生活中的一些场景，我们根本不需要制作那么麻烦的地图，我们知识需要一个室内展示的简易图形，我们只是希望图形能有一些交互，但是，这是我想的。<br>比如说一个仓库的简易展示平面图，一个商场的简易展示平面图。我们如果能非常简单的就制作出来了，我想这一定是有价值的。<br>当然，从我多年的地图开发经验，我想，是时候展示自己的专业能力了，我想如果我们开发出来一个这样的东西，那么一定是非常有作用的。<br>我们非常了解mapbox，我想这是一个优点，mapbox开源的情况下给了我们非常大的发挥空间。<br>我们不想像arcgis那样专业，但是mapbox跨平台性非常的好，这也是非常重要的一点。<br>还有一点是mapbox的数据非常的开放，我们非常清楚mapbox的数据格式，这多我们制图是非常有帮助的。<br>首先我想的是在桌面平台，因为制图，还是要求用户非常精细的操作的，最好还是桌面端的软件。<br>另外一点，我们想的是qt在桌面夸平台的方面非常友好，这也是非常有帮助的。那么我们怎么做呢？<br>首先我的想法是这样的<br>我们首先在地图上选择一个区域，作为这个图层的边界，在室内图上来讲是building数据。  </p>
+<h2 id="面绘制"><a href="#面绘制" class="headerlink" title="面绘制"></a>面绘制</h2><ul>
+<li>我们需要两个点来实现这个区域。我简单像是一个矩形，后面再对这个矩形进行裁剪</li>
+<li>裁剪方法 ，我简单的想法还是选点，你选中矩形内的一个点，那么矩形会被这个点的两条平行线分割成4份，然后，用户选择去掉那一份。</li>
+<li>有的时候往往不是直线，这里我们就需要对弧线的绘制了。弧线的绘制是用三个点来实现的，其中起点和终点必须在多边形的边上</li>
+<li>最后用户如果像手动绘制，那么只能是一点点的选点进行绘制，这非常的麻烦，且选点的顺序必须是连贯递进的，当然我们最好也不希望出现这种情况。</li>
 </ul>
-<h2 id="待开发事项"><a href="#待开发事项" class="headerlink" title="待开发事项"></a>待开发事项</h2><ul>
-<li>多平台兼容</li>
-<li>云数据村粗</li>
+<h2 id="建筑内面绘制"><a href="#建筑内面绘制" class="headerlink" title="建筑内面绘制"></a>建筑内面绘制</h2><ul>
+<li>我们绘制好了building数据，下面就是室内区域绘制了，其实也是面数据，我们也是同绘制面的流程一样。绘制出来</li>
+<li>考虑到绘制非常的麻烦，我们最好是有模版数据，可以让用户非常方便的进行选择绘制。<h2 id="路线的绘制"><a href="#路线的绘制" class="headerlink" title="路线的绘制"></a>路线的绘制</h2></li>
+<li>路线是室内行动轨迹一个参照，这非常的重要，我们考虑路线最好一定是直线。</li>
+<li>选择路线的轨迹也是用户顺序选点来实现的，最后生成的路线数据会进行整理，分切为一个一个的小线段，线段之间会用node进行连接</li>
+<li>路线的作用一个是直观寻找物品的路线，另一个是可以为以后路线规划进行指导<h2 id="poi点绘制"><a href="#poi点绘制" class="headerlink" title="poi点绘制"></a>poi点绘制</h2></li>
+<li>poi点有非常多的种类，我们可以通过选点进行设置，添加poi类型和poi名称</li>
 </ul>
-<h2 id="版本更新"><a href="#版本更新" class="headerlink" title="版本更新"></a>版本更新</h2><ul>
-<li><strong>v1.0</strong> app上线，功能初步成型。<br>我们总是想记录一些东西<br>一些探索性质的东西我我们总是想记录下来，也许以后我们都不会再回头去看，但是我们总是这样做<br>我们大脑装不下太多的东西，怎么办？我们总是想整理一些东西，但是我们总是怕麻烦，当我们用很大的功夫去做一件事情的时候，我们总是在走的路上越走越觉得太麻烦了，我们有没有更好的办法呢？<br>我们知道一个公司的话会有很多的规章制度，让员工去遵守，从而达到公司发展，规章制度虽然麻烦，但是最后一定可以让我们进步的<br>就像是我们上班一样，公司规定我们早九晚六的工作，我们严格遵守，我们上班时间就是固定的，我们作息时间就是稳定的<br>但是当我们不上班的时候，这个事情就变得很麻烦，我们没有</li>
-</ul>
-<p>项目所需要的条件<br>1.构思项目：1文件读取，文件流</p>
-<p>1.文件处理能力<br>2.文本处理能力<br>3.博客客户端<br>4.markerdown<br>5.json解析<br>6.备忘录<br>7.</p>
-<p>1.常用功能<br>2.博客<br>3.记事本<br>4.朋友圈</p>
+<h2 id="数据编辑操作"><a href="#数据编辑操作" class="headerlink" title="数据编辑操作"></a>数据编辑操作</h2><p>我们考虑不光有新增，我们也要有修改和删除的一系列操作，这样才会体验流畅。<br>我们有回退按钮，每一步都可以会退到上一次编辑的地方<br>删除，采用选中的方式进行删除<br>修改，目前感觉还是删除后再添加比较方便，修改每一个数据不是太方便操作。</p>
+<h2 id="数据问题"><a href="#数据问题" class="headerlink" title="数据问题"></a>数据问题</h2><p>我们采用geojson，我们制作好的点、线、面数据最后合并成geojson。<br>文件名称分别为：building、region、line、node、poi</p>
+<h2 id="geojosn分析"><a href="#geojosn分析" class="headerlink" title="geojosn分析"></a>geojosn分析</h2><p>FeatureCollection<br> – features<br>    – Feature<br>       – geometry  </p>
+<h2 id="geojson转shp和mvt"><a href="#geojson转shp和mvt" class="headerlink" title="geojson转shp和mvt"></a>geojson转shp和mvt</h2><p>这个我们已经开发过，已经实现了这个功能，我想比较简单了。</p>
+<p>想了半天，感觉这个东西只能用qt来开发了。下面的问题是要研究下qt的接口了</p>
+<p>突然发现geojson。io这个网站，感觉这个很方便，我想是用这个工具进行改造，改造成室内地图制作工具</p>
+<p>1.故事板<br>2.采集数据<br>3.绘制数据<br>4.地图可视化制作<br>5.更新地图样式<br>6.运动轨迹播放效果<br>7.覆盖影像<br>8.聚合<br>9.室内地图<br>10.3d模型<br>12.geojson编辑</p>
+<p>现在有一个简单的想法，就是地图数据的制作<br>我们没有办法做像arcgis那样的数据，但是我们可以利用mapbox，制作非常简单的像室内图的数据<br>我们可以随便copy地图数据，然后把数据合并成新的图层，然后发布出来，或者制作成矢量瓦片，这不失为一个非常好的办法。<br>应用场景：<br>目前的制图工具非常考验开发者的制图功底，我们又没有那么多专业的人才。现在的生活又非常需要丰富的图形话来方便用户生活。<br>比如过<br>快递、外卖、核酸检测15分钟生活圈。室内地图。换乘站点查找等等。<br>我们可以非常简单的绘制出来。有一个非常重要的问题，这种东西是无法发布出去的，将会非常的麻烦</p>
+<p>室内图制作：<br>点（同所有的icon）<br>线 node、line<br>面 region</p>
+<p>先绘制面<br>    选择两点，生成面<br>    裁剪 （选点，然后切割，选择要切割掉的数据）<br>    弧线 （起点，弧点，终点）<br>    设置属性 （墙体，房间，等等）所有空间都是闭合的</p>
+<p>再绘制路线<br>    选点设置路线，一条一条路线的选择，一定是直线，<br>    （路线的相交、起终点处设置为node）</p>
+<p>再绘制poi点<br>    选点，然后设置属性名称</p>
+<p>技术点：<br>根据两个点生成面<br>根据面内的一个点，分割面<br>根据面边上的一个点，分割面<br>根据弧线分割面，起点和终点必须在面边上</p>
+<p>问题：<br>1.比较难实现选点<br>2.比较难设计UI<br>3.macos平台框架不是太熟悉</p>
+<p>geojson数据个够</p>
+<p>地图场景<br>1.故事板<br>2.采集数据<br>3.绘制数据<br>4.地图可视化制作<br>5.更新地图样式<br>6.运动轨迹播放效果<br>7.覆盖影像<br>8.聚合<br>9.室内地图<br>10.3d模型<br>12.geojson编辑<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/mapbox-gl-js/example/gradient-sky/">https://docs.mapbox.com/mapbox-gl-js/example/gradient-sky/</a><br>图例<br>mapbox-gl-legend<br><a target="_blank" rel="noopener" href="https://www.npmjs.com/package/sailing_echartslayer">https://www.npmjs.com/package/sailing_echartslayer</a><br>拖拽功能<br><a target="_blank" rel="noopener" href="https://sortablejs.github.io/Vue.Draggable/#/clone">https://sortablejs.github.io/Vue.Draggable/#/clone</a><br><a target="_blank" rel="noopener" href="https://github.com/SortableJS/vue.draggable.next">https://github.com/SortableJS/vue.draggable.next</a></p>
+<p>异步组件<br>组件按需引入<br>打包分包</p>
 
       
     </div>
@@ -430,7 +778,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift284%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift278%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95%E7%9F%A5%E8%AF%86%E7%82%B9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -444,7 +792,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/19/M_Swift284%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">面试多端知识点</a>
+            <a href="/2021/08/19/M_Swift278%E9%9D%A2%E8%AF%95%E8%AE%B0%E5%BD%95%E7%9F%A5%E8%AF%86%E7%82%B9/" class="post-title-link" itemprop="url">面试记录</a>
         </h2>
 
         <div class="post-meta">
@@ -461,7 +809,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 18:01:17" itemprop="dateModified" datetime="2022-08-02T18:01:17+08:00">2022-08-02</time>
+                <time title="修改时间：2022-08-02 17:59:42" itemprop="dateModified" datetime="2022-08-02T17:59:42+08:00">2022-08-02</time>
               </span>
 
           
@@ -475,20 +823,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>线程（Thread）<br>iOS中线程<br>    Pthread、NSThread、GCD、NSOperation<br>    synchronized（互斥+递归）、NSLock（互斥），automito、NSCondition（互斥锁+条件变量。可以给线程加锁）、<br>    NSConditionLock（生产者消费者模型）、NSRecursiveLock（递归锁）、dispatch_semaphore（信号量<br>Android中线程<br>    Thread、Runnable Handler、AsyncTask、ThreadPool<br>Flutter中线程<br>    Dart 中并没有线程，只有 Isolate（隔离区）。Isolates 之间不会共享内存，就像几个运行在不同进程中的 worker，    通过事件循环（Event Looper）在事件队列（Event Queue）上传递消息通信。</p>
-<p>内存管理<br>iOS</p>
-<p>Android<br>    一般不用考虑，java的虚拟机存在垃圾回收机制。（java的可达算法）<br>Flutter<br>    与java比较相似，垃圾收集器是分代的（新生代、老年代）凹凸指针，状态调换</p>
-<p>事件循环</p>
-<p>RunLoop</p>
-<p>Looper</p>
-<p>ioslate</p>
-<p>核心<br>iOS-runtime</p>
-<p>OpenGL</p>
-<p>设计模式<br>    代理、单例、观察者、工厂<br>    MVC、MVP、MVVM<br>    设计原则<br>    组件化<br>网络<br>    三次握手四次挥手、https、ssl、tcp、udp、dns、coolie、session<br>数据结构<br>    哈希、字典、数组、链表、</p>
-<p>Timer延迟</p>
-<p>openGL<br>iOS<br>AutoLayout线性方程解析引擎<br>Android</p>
-<p>Flutter<br>动画（Animate）、构建（Build）、布局（Layout）和绘制（Paint），最终生成一个场景（Scene）之后送往底层</p>
-<p>设计策略<br>LRU缓存策略、hashmap扩容、反射、hash碰撞、多叉树、编译过程、常见崩溃、</p>
+          <p>多线程、原理：优缺点：pthread、NSThread、GCD、NSOperation、<br>线程锁：原理：synchronized（互斥+递归）、NSLock（互斥）、NSCondition（互斥锁+条件变量。可以给线程加锁）、NSConditionLock（生产者消费者模型）、NSRecursiveLock（递归锁）、dispatch_semaphore（信号量）<br>自旋锁和互斥锁区别 ：自旋不释放CPU，效率高，占用资源大<br>GCD功能：延迟执行、只执行一次、串行执行、主队列执行、异步执行、同步执行、任务调度优先级<br>死锁原因：<br>三个网络执行完再处理：dispatch_group_notify<br>串行执行：dispatch_barrier_async形成栅栏<br>如何保证NSNotificationCenter线程安全：block-weak方式、delloc移除监听、NSPropty<br>iOS线程间的通信：NSMachPort<br>延时操作：sleep、NSTimer、dispatch_after、performSelector afterDelay:<br>NSTimer子线程执行：添加到RunLoop中<br>计算机线程安全：原子操作、锁、信号量、过度优化<br>类和类对象：struct objc_class : objc_object<br>protocol_t继承objc_object，所以也就具备对象特征<br>weak 对象会放入一个 hash 表中。 用 weak 指向的对象内存地址作为 key<br>load：加载时调用，父类-&gt;子类-&gt;分类<br>initialize：第一次调用类的属性方法时会调用<br>类和元类都有自己的继承体系，但它们都有共同的根父类NSObject，而NSObject的父类指向nil。<br>OC发消息流程：<br>1.检查方法是否需要忽略、target是否是nil<br>2.通过isa查找缓存、方法列表、父类方法列表至NSObject<br>3.动态方法解析、是否能给类添加方法（动态接收者）<br>4.消息转发给其他接收者（备用接收者、完整转发）<br>5.抛出异常<br>runtime常见操作：<br>1.动态添加方法<br>2.交换两个方法<br>3.拦截方法，添加功能<br>4.动态创建模型对象<br>5.归档和解档的属性遍历<br>Runloop：结构原理<br>autorelease pool和runloop关系<br>NSTimer其实是一种资源，source必须加到runloop中才会起作用，performSelecter:afterDelay:其实是往runloop中添加NSTimer，如果线程中没有runloop，那么这个方法就会失效。<br>CAAnimation是由RunloopObserver触发回调来重绘<br>AutoreleasePool原理和结构：由若干个AutoreleasePoolPage以双向链表的形式组合<br>weak实现原理：Runtime维护了一个weak表，用于存储指向某个对象的所有weak指针。weak<br>    表其实是一个hash（哈希）表，Key是所指对象的地址，Value是weak指针的<br>    地址（这个地址的值是所指对象的地址）数组。<br>Block原理：是一个OC对象<br> __block、__weak __strong</p>
+<p>tableView卡顿<br>应用优化<br>卡顿检测<br>启动流出<br>AFN、SDWebImage<br>事件分发：UIApplication-》UIWindow-〉View-》 hitTest:withEvent: -〉pointInside:withEvent:<br>点手机和runloop关系：NSMachPort可以用做runloop源苹果注册了一个 Source1 (基于 mach port 的)<br>用来接收系统事件，其回调函数为   __IOHIDEventSystemClientQueueCallback()<br>我们触发了事件（触摸/锁屏/摇晃等）后由IOKit.framework生成一个 IOHIDEvent事件<br>而IOKit是苹果的硬件驱动框架 _UIApplicationHandleEventQueue()把IOHIDEvent处理包<br>装成UIEvent进行处理分发<br>Category：原理：装饰模式<br>remethodizeClass 这个函数的主要作用是将 Category 中的方法、属性和协议整合到类（主类或元类）中，更新类的数据字段</p>
+<p>类别（category）主要有三个作用<br>类别和Extension区别<br>类别为什么不能添加实例变量<br>如何在重写后，保证只调用原类方法<br>在协议 和 分类 中如何使用 @property<br>如何在Category中添加变量<br>KVO实现原理<br>设计模式：代理模式、观察者模式、单例模式、工厂模式<br>架构： MVC、MVVM、MVP</p>
+<p>http三次握手4次挥手<br>OSI七层协议：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层<br>加密：对称、非对称<br>pod：原理<br>dSYM：</p>
+<p>PREP表达法是指：position（观点） 、reason （理由）、 evidence（证据）</p>
+<p>如何解决面试官的问题</p>
+<p>问题列表：<br>内存<br>介绍iOS的内存管理？</p>
+<p>Runtime原理NSObject数据结构<br>runtime实现原理<br>nsobject数据结构</p>
+<p>hash相关应用场景<br>cache相关的应用<br>生命周期<br>Block<br>Copy<br>RunLoop<br>多线程<br>网络<br>编译原理</p>
+<p>程序优化<br>梳理程序绘制流程<br>滑动优化<br>程序启动优化<br>block<br>多线程<br>RunLoop</p>
+<p>copy<br>网络</p>
+<p>Runtime的理解：<br>平时编写的OC代码，在程序运行过程中，其实最终会转换成Runtime的C语言代码，Runtime是Object-C的幕后工作者<br>Object-C需要Runtime来创建类和对象，进行消息发送和转发<br>将尽可能多的决策从编译时和链接时推迟到运行时（Apple）<br>运行时系统充当着Object-C语言的操作系统，它使语言能够工作(Apple)</p>
+<p>用来干什么 基本作用</p>
+<p>在程序运行过程中，动态的创建类，动态添加、修改这个类的属性和方法；<br>遍历一个类中所有的成员变量、属性、以及所有方法<br>消息传递、转发</p>
+<p>用在哪些地方 Runtime的典型事例</p>
+<p>给系统分类添加属性、方法<br>方法交换<br>获取对象的属性、私有属性<br>字典转换模型<br>KVC、KVO<br>归档(编码、解码)<br>NSClassFromString class&lt;-&gt;字符串<br>block<br>类的自我检测</p>
 
       
     </div>
@@ -508,7 +858,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift285%E6%80%BB%E7%BB%932022-1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift279%E5%89%8D%E7%AB%AF%E5%9C%B0%E5%9B%BE%E5%88%B6%E4%BD%9C%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -522,7 +872,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/08/19/M_Swift285%E6%80%BB%E7%BB%932022-1/" class="post-title-link" itemprop="url">总结2022-1</a>
+            <a href="/2021/08/19/M_Swift279%E5%89%8D%E7%AB%AF%E5%9C%B0%E5%9B%BE%E5%88%B6%E4%BD%9C%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">室内地图绘制</a>
         </h2>
 
         <div class="post-meta">
@@ -539,7 +889,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 18:01:33" itemprop="dateModified" datetime="2022-08-02T18:01:33+08:00">2022-08-02</time>
+                <time title="修改时间：2022-08-02 18:00:11" itemprop="dateModified" datetime="2022-08-02T18:00:11+08:00">2022-08-02</time>
               </span>
 
           
@@ -553,317 +903,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>上个月进行了一些面试，我想是时候总结一下了，上个月的面试总体来说还是比较顺利的，但是比较可惜的是最后的面试都到hr环节了，最后因为我对薪资问题还是没有应聘成功。<br>从上个月来看面试3家除第一家面试的比较仓促，准备也不足外，其他2家面试的都还不错，不过两家面试官对于技术的问题深度都不是太高，我也需要警惕一下是否自己准备的足够充分了。<br>进入这个月自从上海疫情爆发以后，特别是清明节过后，整个的环境就变得越来越差了，这让我很难受，我到现在都没有一家面试的机会，这有点出乎我的意料了。怎么说，我还是要继续准备吧，还是要努力提供自己的能力，能力提高了，才能有更好的发挥吧。<br>之前的时候是有点松懈了，但是怎么说呢，一直压抑着自己也不是太好，太放松也会出现问题，这确实很难平衡，我们总是在想未来的情况，我未来能干什么？<br>我给了自己很多路线，貌似都很好走，继续在公司耗着，考老师，回老家继续干这个行业，看似都是路线，但是也始终都在摇摆，这确实很难受，我这么干耗着真的有价值吗？<br>工作这么多年了，我究竟得到了什么我努力的一切真的不值吗？这是让我很深思的问题。<br>怎么说呢，工作给我带来收入上提高，其他的真的一点都没有吗？这确实让我很头疼<br>我在想如果失业了怎么办</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift288Mapbox%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift288Mapbox%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Mapbox设计原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-03 16:43:06" itemprop="dateModified" datetime="2022-08-03T16:43:06+08:00">2022-08-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>SDK设计：</p>
-<p>数据IO层：负责资源数据的加载、解析、数据缓存等，包括缓存数据和网络数据等；</p>
-<p>资源管理层：负责地图资源的管理调度，资源包括地图样式、图片、文字、地图数据等；</p>
-<p>渲染组织层：负责将地图数据和样式，生成渲染所需数据，渲染状态控制、渲染排序等；</p>
-<p>渲染接口层：负责对渲染API（OpenGL、gles）的封装，实现渲染的跨平台性；</p>
-<p>地图控制层：负责对地图的控制，包括位置、层级、风格等，负责事件的分发处理，负责对外（sdk层）接口的封装；</p>
-<p>SDK封装层：负责地图引擎空间部分的实现，负责根据不同平台实现不同的语言的封装，如iOS的OC封装、Android的JNI封装等。</p>
-<p>技术点：<br>earcut - 三角剖分<br>csscolorparser - css解析<br>面数据中心点计算- 面数据标签<br>geojson 解析<br>地图几何对象构建<br>碰撞检测 -<br>pbf解析<br>Mvt数据解析<br>sql存储<br>zip压缩<br>坐标转换</p>
-<p>鸿蒙实现方式：<br>1.采用引入android包的方式<br>2.在鸿蒙中获取activity</p>
-<p>harmony方案<br>采用安卓原生代码:<br>map.jar + android.jar + 安卓部分依赖库</p>
-<p>android api说明：<br>LibraryLoader.java：加载so文件在这个类里面；<br>Annotations:覆盖物代码，基本都是获取参数，具体实现都在渲染库代码里；<br>Camera：视野相关代码；<br>Constants：定义常量；<br>Exceptions：自定义异常；<br>http：网络请求，<br>Offline：离线地图、缓存相关，大部分代码我都删了，只保留了清除缓存的逻辑；<br>Snapshotter：截屏相关；<br>MapsInitializer.java：初始化类<br>Model：bitmap操作相关代码；<br>Renderer：android渲染类相关，配置opengl相关参数；<br>Widgets：地图控件view，放大缩小按钮、比例尺、罗盘都在这里面；<br>Map：地图操作类，设置样式、各种手势回调；</p>
-<p>ios api<br>#import “MAAccountManager.h” // token<br>#import “MAAnnotation.h” // 覆盖物<br>#import “MAAnnotationImage.h” // 图片<br>#import “MABackgroundStyleLayer.h” // 背景图层<br>#import “MACircleStyleLayer.h”<br>#import “MACluster.h”<br>#import “MACompassButton.h” // 组件<br>#import “MAIndoorFloorsView.h”<br>#import “MAComputedShapeSource.h”<br>#import “MAFeature.h” // 图层<br>#import “MAFillExtrusionStyleLayer.h”<br>#import “MAFillStyleLayer.h”<br>#import “MAForegroundStyleLayer.h”<br>#import “MAGeometry.h” // 坐标计算<br>#import “MAGeometryEngine.h” //<br>#import “MAHeatmapStyleLayer.h”<br>#import “MAHillshadeStyleLayer.h”<br>#import “MAImageSource.h”<br>#import “MALight.h” // 三维<br>#import “MALineStyleLayer.h”<br>#import “MALoggingConfiguration.h”<br>#import “MAMapCamera.h” // 视野<br>#import “MAMapSnapshotter.h”<br>#import “MAMapView.h” // 地图对象<br>#import “MAMapViewDelegate.h” // 协议<br>#import “MAMapView+IBAdditions.h”<br>#import “MAMultiPoint.h”<br>#import “MAOfflinePack.h” // 离线地图<br>#import “MAOfflineRegion.h”<br>#import “MAOfflineStorage.h”<br>#import “MAOpenGLStyleLayer.h”<br>#import “MAOverlay.h” // 图层<br>#import “MAPointAnnotation.h”<br>#import “MAPointCollection.h”<br>#import “MAPolygon.h”<br>#import “MAPolyline.h”<br>#import “MACircle.h”<br>#import “MAArc.h”<br>#import “MARasterDEMSource.h”<br>#import “MARasterStyleLayer.h”<br>#import “MARasterTileSource.h”<br>#import “MAShape.h”<br>#import “MAShapeCollection.h”<br>#import “MAShapeOfflineRegion.h”<br>#import “MAShapeSource.h”<br>#import “MASource.h”<br>#import “MAStyle.h”<br>#import “MAStyleLayer.h”<br>#import “MAStyleValue.h”<br>#import “MASymbolStyleLayer.h”<br>#import “MATilePyramidOfflineRegion.h”<br>#import “MATileSource.h”<br>#import “MATypes.h”<br>#import “MAVectorStyleLayer.h”<br>#import “MAVectorTileSource.h”<br>#import “NSExpression+MAAdditions.h”<br>#import “NSPredicate+MAAdditions.h”<br>#import “NSValue+MAAdditions.h”</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift289Sonar%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift289Sonar%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">sonar使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 18:02:15" itemprop="dateModified" datetime="2022-08-02T18:02:15+08:00">2022-08-02</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.下载sonar<br><a target="_blank" rel="noopener" href="https://www.sonarqube.org/developer-edition/">https://www.sonarqube.org/developer-edition/</a><br>2.安装sonar-scanner<br>brew install sonar-scanner<br>3.启动sonar服务<br>cd 到sonarqube-9.5.0.56709/bin/macosx-universal-64<br>执行sh sonar.sh start<br>4.打开sonar服务<br><a target="_blank" rel="noopener" href="http://localhost:9000/">http://localhost:9000</a>   用户名和密码都是admin，修改为用户名admin，密码123456</p>
-<p>5.下载Build Wrapper<br><a target="_blank" rel="noopener" href="http://localhost:9000/static/cpp/build-wrapper-macosx-x86.zip">http://localhost:9000/static/cpp/build-wrapper-macosx-x86.zip</a><br>6.静态分析<br>在/platform/ios路径下，把下载的build-wrapper-macosx-x86拷贝到这里<br>新建文件夹build_wrapper_output_directory 存放分析结果<br>执行如下命令：<br>build-wrapper-macosx-x86 –out-dir build_wrapper_output_directory xcodebuild -workspace ios.xcworkspace -scheme mbgl-core</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift281%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3flutter/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift281%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3flutter/" class="post-title-link" itemprop="url">深入理解flutter</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 18:00:38" itemprop="dateModified" datetime="2022-08-02T18:00:38+08:00">2022-08-02</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>android风格和iOS风格的UI<br>widgets<br>rendering<br>animation<br>painting<br>gestures<br>foundation<br>skia — dart —— text<br>跨平台应用的框架，没有使用WebView或者系统平台自带的控件，使用自身的高性能渲染引擎(Skia)自绘，</p>
-<p>widget树的概念</p>
-<p>widget只是一个配置数据结构，创建是非常轻量的，加上flutter团队对widget的创建/销毁做了优化，不用担心整个widget树重新创建所带来的性能问题，但是renderobject就不一样了，renderobject涉及到layout、paint等复杂操作，是一个真正渲染的view，整个view 树重新创建开销就比较大，所以答案是否定的。</p>
-<p>树的更新规则<br>找到widget对应的element节点，设置element为dirty，触发drawframe, drawframe会调用element的performRebuild()进行树重建<br>widget.build() == null, deactive element.child,删除子树，流程结束<br>element.child.widget == NULL, mount 的新子树，流程结束<br>element.child.widget == widget.build() 无需重建，否则进入流程5<br>Widget.canUpdate(element.child.widget, newWidget) == true，更新child的slot，element.child.update(newWidget)(如果child还有子节点，则递归上面的流程进行子树更新),流程结束，否则转6<br>Widget.canUpdate(element.child.widget, newWidget) ！= true（widget的classtype 或者 key 不相等），deactivew element.child，mount 新子树</p>
-<p>数据从根往下传数据，常规做法是一层层往下，当深度变大，数据的传输变的困难，flutter提供InheritedWidget用于子节点向祖先节点获取数据的机制<br>子节点状态变更，向上上报通过发送通知的方式</p>
-<p>Flutter建议复杂的image渲染使用RepaintBoundary，image的渲染需要io操作，然后解码，最后渲染，使用RepaintBoundary可以进行gpu的缓存，但是不一定就会缓存，engine会判断这个image是否足够复杂，毕竟gpu缓存还是非常珍贵的，同时RepaintBoundary还会对一些反复渲染的layer进行缓存处理（反复渲染3次及以上，这个是flutter的视频中提到的）</p>
-<p>和iOS应用很像，在Dart的线程中也存在事件循环和消息队列的概念，但在Dart中线程叫做isolate。应用程序启动后，开始执行main函数并运行main isolate。<br>每个isolate包含一个事件循环以及两个事件队列，event loop事件循环，以及event queue和microtask queue事件队列，event和microtask队列有点类似iOS的source0和source1。</p>
-<p>event queue：负责处理I/O事件、绘制事件、手势事件、接收其他isolate消息等外部事件。<br>microtask queue：可以自己向isolate内部添加事件，事件的优先级比event queue高。<br>这两个队列也是有优先级的，当isolate开始执行后，会先处理microtask的事件，当microtask队列中没有事件后，才会处理event队列中的事件，并按照这个顺序反复执行。但需要注意的是，当执行microtask事件时，会阻塞event队列的事件执行，这样就会导致渲染、手势响应等event事件响应延时。为了保证渲染和手势响应，应该尽量将耗时操作放在event队列中。</p>
-<p>其中gen_snapshot是dart编译器，采用了tree shaking(类似依赖树逻辑，可生成最小包，也因而在Flutter中禁止了dart支持的反射特性)等技术,用于生成汇编形式的机器代码，再通过xcrun等编译工具链生成最终的App.framework。换句话说，所有的dart代码，包括业务代码，三方package代码，它们所依赖的flutter框架代码，最终将会变成App.framework。<br>​<br>在Flutter与Native混合开发的模式下，Platform Channel的应用场景非常多，理解Platform Channel的工作原理，有助于我们在从事这方面开发时能做到得心应手。</p>
-<p>Platform Task Runner</p>
-<p>UI Task Runner Thread（Dart Runner）</p>
-<p>GPU Task Runner</p>
-<p>IO Task Runner</p>
-<p>每一个Engine实例都为UI，GPU，IO，Platform Runner创建各自新的线程。</p>
-<p>如上图，Redux 的主要由三部分组成：Store 、Action 、 Reducer 。<br>Action ⽤于定义⼀个数据变化的请求⾏为。<br>Reducer ⽤于根据 Action 产⽣新状态，⼀般是⼀个⽅法。<br>Store ⽤于存储和管理 state。</p>
-<p>Widget ：就是我们平常写的控件， Flutter 宇宙中万物皆 Widget ，它们 都是不可变⼀帧，同时也是被⼈吐槽很多的嵌套模式，当然换个⻆度，事实上 你把他当作 Widget 配置⽂件来写或者就好理解了。<br>Element ：它是 BuildContext 的实现类， Widget 实现跨帧保存的 state<br>就是存放在这⾥，同时它也充当了 Widget 和 RenderObject 之间的桥梁。<br>RenderObject ：它才是真正⼲活（layout、paint）等，同时它才是真实的<br>“dom” 。<br>Layer ：⼀整块的重绘区域（isRepaintBoundary），决定重绘的影响区域。</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/97b745368826">https://www.jianshu.com/p/97b745368826</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/60a41d787191">https://www.jianshu.com/p/60a41d787191</a></p>
-<p>马太瑞奥<br>考普廷闹</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/M_Swift286flutter%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/19/M_Swift286flutter%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">flutter总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-08-19 11:47:57" itemprop="dateCreated datePublished" datetime="2021-08-19T11:47:57+08:00">2021-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-02 18:01:42" itemprop="dateModified" datetime="2022-08-02T18:01:42+08:00">2022-08-02</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.什么是flutter<br>google 、dart、skia、jit、aot、ioslate、静态语言，类型检查安全、不支持反射、编译最小树<br>PlatformChannel，ffi</p>
-<p>Widget：不可变、重建、配置表<br>element：上下文、虚拟dom、diff更新、保存state<br>renderObject：布局、绘制、合成、渲染、layout、parint<br>Layer：绘制区域，提交给skia<br>绘制流程<br>GPU垂直同步信号机制，动画，合成、布局、绘制、合成、光栅化<br>setstate 、markNeedsBuild、dirty、drawframe、preformRebuild、isRepaintBoundary<br>状态管理<br>provider、InheriterWidget<br>bloc、<br>state<br>streamSubscription<br>streamController</p>
-<p>多线程<br>本身是单线程的，ioslate中、event、microktask<br>frature、await、async</p>
-<p>生命周期：<br>initState、changeDependencies、didUpdateWidget、build、deactive、disponse</p>
-<p>手势：<br>hitTest 碰撞、dispatchEvent分发 GestureRecognizer手势识别</p>
-<p>gc：<br>老年代、标记清除</p>
-<p>其他：<br>屏幕适配、性能分析、混合开发、业务组件封装</p>
-<p>flutter组件<br>动画、iOS、function、手势、android、绘制、服务、任务、<br>异步、集合、数学、文件流、日期、平台</p>
-<p>flutter整理<br>1.flutter的布局<br>布局有水平、垂直、居中、弹性、层叠布局等<br>容器按形式分为单节点和多节点<br>容器按功能分为装饰、限制、变换、位置、尺寸、绘制<br>Flutter为我们提供了非常丰富的组件，iOS、andorid各一套，建议倾向于使用android库。</p>
-<p>2.flutter开发<br>Flutter没有为开发者设计开发模式，我们常用的mvc结构在flutter中没有体现。<br>我们可以使用getx来实现mvc的架构模式。</p>
-<p>Getx原理剖析<br>1.getx响应式原理<br>getx存在Getbuilder和obs两种方式<br>Builder实际上是创建一个statefulWidget，实现了刷新的机制<br>Obs实际上是重写了数据对象int、string、list、map等，在对象内实现了监听的绑定。<br>在获取value时候进行绑定监听。<br>Obs实际上使用StreamSubscription来实现的。比较适合单个组件数据的更新<br>Getbuilder是使用statefulWidget setState实现的。比较适合多个组件数据的批量更新。</p>
-<h2 id="Flutter图片展示"><a href="#Flutter图片展示" class="headerlink" title="Flutter图片展示"></a>Flutter图片展示</h2><p>Flutter提供的图片组件没有原生的图片组件性能高，我们可以参考闲鱼组件方式，调用原生来实现图片的展示，iOS是SDWebImage</p>
-<h2 id="flutter线程"><a href="#flutter线程" class="headerlink" title="flutter线程"></a>flutter线程</h2><p>每个isolate包含一个事件循环以及两个事件队列，event loop事件循环，以及event queue和microtask queue事件队列，event和microtask队列有点类似iOS的source0和source1。</p>
-<p>常用组件<br>getx<br>dio<br>shared_preferences<br>sqflite<br>fluttertoast</p>
-<p>flutter绘制流程</p>
-<p>Widget概念<br>widget只是一个配置数据结构，创建是非常轻量的，加上flutter团队对widget的创建/销毁做了优化，不用担心整个widget树重新创建所带来的性能问题，但是renderobject就不一样了，renderobject涉及到layout、paint等复杂操作，是一个真正渲染的view，整个view 树重新创建开销就比较大，所以答案是否定的。<br>Widget ：就是我们平常写的控件， Flutter 宇宙中万物皆 Widget ，它们 都是不可变⼀帧，同时也是被⼈吐槽很多的嵌套模式，当然换个⻆度，事实上 你把他当作 Widget 配置⽂件来写或者就好理解了。<br>Element ：它是 BuildContext 的实现类， Widget 实现跨帧保存的 state<br>就是存放在这⾥，同时它也充当了 Widget 和 RenderObject 之间的桥梁。<br>RenderObject ：它才是真正⼲活（layout、paint）等，同时它才是真实的<br>“dom” 。<br>Layer ：⼀整块的重绘区域（isRepaintBoundary），决定重绘的影响区域。</p>
-<p>树的更新规则<br>找到widget对应的element节点，设置element为dirty，触发drawframe, drawframe会调用element的performRebuild()进行树重建</p>
-<h2 id="树的更新规则"><a href="#树的更新规则" class="headerlink" title="树的更新规则"></a>树的更新规则</h2><h2 id="Provider原理"><a href="#Provider原理" class="headerlink" title="Provider原理"></a>Provider原理</h2><p>Flutter与原生的交互是通过planfrom Channel实现的，我们可以使用库</p>
-<h2 id="runApp做的事情"><a href="#runApp做的事情" class="headerlink" title="runApp做的事情"></a>runApp做的事情</h2><p>1.初始化<br>WidgetsFlutterBinding.ensureInitialized<br>BindingBase初始化基类，规定了初始化的框架。<br>initInstances 中完成初始化，比如单例等<br>initServiceExtensions 完成服务注册初始化<br>GestureBinding初始化手势识别 和 手势追踪框架<br>SchedulerBinding初始化 帧调用任务<br>ServicesBinding初始化 插件通道、系统的插件。<br>PaintingBinding初始化 图片缓存<br>SemanticsBinding初始化 语义框架<br>RendererBinding初始化 渲染机制 和 根<br>RenderObjectWidgetsBinding初始化 Element 机制 和 Debug 显示机制</p>
-<h2 id="getx原理"><a href="#getx原理" class="headerlink" title="getx原理"></a>getx原理</h2><p>全局单利，依赖注入</p>
-<h2 id="flutter-Pigeon-兼容"><a href="#flutter-Pigeon-兼容" class="headerlink" title="flutter Pigeon 兼容"></a>flutter Pigeon 兼容</h2><p>通过Pigeon来管理Flutter的plugin库，只需要在dart侧维护一份协议即可，即使在多端协同开发的情况下，也能达到约束和规范的作用。<br>Platform Channel</p>
-<h2 id="理解flutter状态"><a href="#理解flutter状态" class="headerlink" title="理解flutter状态"></a>理解flutter状态</h2><p>通过serState来改变状态<br>通过inheritedWidget来实现父子状态传递<br>通过Provider来维护全局状态</p>
+          <p>现在有一个简单的想法，就是地图数据的制作<br>我们没有办法做像arcgis那样的数据，但是我们可以利用mapbox，制作非常简单的像室内图的数据<br>我们可以随便copy地图数据，然后把数据合并成新的图层，然后发布出来，或者制作成矢量瓦片，这不失为一个非常好的办法。<br>应用场景：<br>目前的制图工具非常考验开发者的制图功底，我们又没有那么多专业的人才。现在的生活又非常需要丰富的图形话来方便用户生活。<br>比如过<br>快递、外卖、核酸检测15分钟生活圈。室内地图。换乘站点查找等等。<br>我们可以非常简单的绘制出来。有一个非常重要的问题，这种东西是无法发布出去的，将会非常的麻烦</p>
+<p>室内图制作：<br>点（同所有的icon）<br>线 node、line<br>面 region</p>
+<p>先绘制面<br>    选择两点，生成面<br>    裁剪 （选点，然后切割，选择要切割掉的数据）<br>    弧线 （起点，弧点，终点）<br>    设置属性 （墙体，房间，等等）所有空间都是闭合的</p>
+<p>再绘制路线<br>    选点设置路线，一条一条路线的选择，一定是直线，<br>    （路线的相交、起终点处设置为node）</p>
+<p>再绘制poi点<br>    选点，然后设置属性名称</p>
+<p>技术点：<br>根据两个点生成面<br>根据面内的一个点，分割面<br>根据面边上的一个点，分割面<br>根据弧线分割面，起点和终点必须在面边上</p>
+<p>问题：<br>1.比较难实现选点<br>2.比较难设计UI<br>3.macos平台框架不是太熟悉</p>
+<p>geojson数据个够</p>
 
       
     </div>
@@ -882,7 +929,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -948,7 +995,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">390</span>
+          <span class="site-state-item-count">400</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

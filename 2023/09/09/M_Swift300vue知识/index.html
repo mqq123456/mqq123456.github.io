@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="nextTick是 Vue.js 提供的一个方法，用于在下次 DOM 更新循环结束之后执行延迟回调函数。它的主要作用是在 Vue 更新 DOM 后，对 DOM 进行操作或获取最新的 DOM 数据。从 Vue 3.0 开始，nextTick 方法已被废弃，取而代之的是 nextTick 函数返回的 Promise 对象。可以使用 await this.$nextTick() 来等待 DOM 更新完成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue知识">
+<meta property="og:url" content="http://example.com/2023/09/09/M_Swift300vue%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="Men的博客">
+<meta property="og:description" content="nextTick是 Vue.js 提供的一个方法，用于在下次 DOM 更新循环结束之后执行延迟回调函数。它的主要作用是在 Vue 更新 DOM 后，对 DOM 进行操作或获取最新的 DOM 数据。从 Vue 3.0 开始，nextTick 方法已被废弃，取而代之的是 nextTick 函数返回的 Promise 对象。可以使用 await this.$nextTick() 来等待 DOM 更新完成">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-09T15:03:03.674Z">
+<meta property="article:modified_time" content="2023-12-10T12:45:54.604Z">
+<meta property="article:author" content="门乾强">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/09/09/M_Swift300vue%E7%9F%A5%E8%AF%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Vue知识 | Men的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Men的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">欢迎光临！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/09/M_Swift300vue%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vue知识
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-09 23:03:03" itemprop="dateCreated datePublished" datetime="2023-09-09T23:03:03+08:00">2023-09-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-10 20:45:54" itemprop="dateModified" datetime="2023-12-10T20:45:54+08:00">2023-12-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="nextTick"><a href="#nextTick" class="headerlink" title="nextTick"></a>nextTick</h2><p>是 Vue.js 提供的一个方法，用于在下次 DOM 更新循环结束之后执行延迟回调函数。它的主要作用是在 Vue 更新 DOM 后，对 DOM 进行操作或获取最新的 DOM 数据。<br>从 Vue 3.0 开始，nextTick 方法已被废弃，取而代之的是 nextTick 函数返回的 Promise 对象。可以使用 await this.$nextTick() 来等待 DOM 更新完成。</p>
+<h2 id="Vue-过滤器（Filters）"><a href="#Vue-过滤器（Filters）" class="headerlink" title="Vue 过滤器（Filters）"></a>Vue 过滤器（Filters）</h2><p>是一种用于格式化文本输出的功能。它可以在模板中对数据进行处理，并将处理后的结果显示给用户。过滤器可以用于格式化日期、数字、文本等各种类型的数据。<br>可以通过在插值表达式或指令中使用 | 符号将数据和过滤器名称分隔开。<br>Vue 3.0 中的过滤器已被废弃，取而代之的是更强大的自定义函数和计算属性。因此，在使用 Vue 3.0 或更高版本时，推荐使用计算属性或方法来替代过滤器的功能。</p>
+<h2 id="Vue-自定义指令"><a href="#Vue-自定义指令" class="headerlink" title="Vue 自定义指令"></a>Vue 自定义指令</h2><p>（Custom Directives）是一种扩展 Vue.js 模板语法的方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Vue.directive(&#39;directiveName&#39;, &#123;</span><br><span class="line">  &#x2F;&#x2F; 钩子函数</span><br><span class="line">  bind: function(el, binding, vnode) &#123;</span><br><span class="line">    &#x2F;&#x2F; 指令绑定时的逻辑</span><br><span class="line">  &#125;,</span><br><span class="line">  inserted: function(el, binding, vnode) &#123;</span><br><span class="line">    &#x2F;&#x2F; 元素插入到父节点时的逻辑</span><br><span class="line">  &#125;,</span><br><span class="line">  &#x2F;&#x2F; 其他钩子函数...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>钩子函数：<br>自定义指令可以定义多个钩子函数，用于在不同的生命周期阶段执行相应的逻辑。常用的钩子函数包括：</p>
+<p>bind：指令第一次绑定到元素时调用，可以在这里进行初始化设置。<br>inserted：元素插入到父节点时调用，可以在这里进行 DOM 操作。<br>update：元素所在组件的 VNode 更新时调用，可以在这里对指令的参数进行更新。<br>componentUpdated：元素所在组件的 VNode 及其子 VNode 更新时调用。<br>unbind：指令与元素解绑时调用，可以在这里进行清理工作。</p>
+<p>钩子函数接收三个参数：</p>
+<p>el：指令所绑定的元素。<br>binding：一个对象，包含指令的信息，如指令的值、参数、修饰符等。<br>vnode：Vue 编译生成的虚拟节点。</p>
+<h2 id="vue组件和插件的具体区别"><a href="#vue组件和插件的具体区别" class="headerlink" title="vue组件和插件的具体区别"></a>vue组件和插件的具体区别</h2><p>组件（Component）：<br>组件是 Vue 中用于构建用户界面的基本单元。它是一个可复用的、自包含的模块，包含了 HTML 模板、CSS 样式和 JavaScript 逻辑。组件可以封装特定的功能和交互，并通过 props 和 events 进行数据传递和通信。<br>插件（Plugin）：<br>插件是一种扩展 Vue 功能的方式，用于添加全局功能或在多个组件中共享功能。插件可以添加全局方法、指令、过滤器、混入等，以及在 Vue 实例化之前对 Vue 进行全局配置。</p>
+<h2 id="跨域的几种方式"><a href="#跨域的几种方式" class="headerlink" title="跨域的几种方式"></a>跨域的几种方式</h2><p>JSONP（JSON with Padding）：<br>JSONP 是一种利用 <script> 标签进行跨域请求的方式。通过在请求 URL 中添加一个回调函数名，服务器返回的响应会被包裹在该函数调用中，从而实现跨域数据的获取。<br>注意：JSONP 只支持 GET 请求，且需要服务器端的支持。</p>
+<p>CORS（Cross-Origin Resource Sharing）：<br>CORS 是一种基于 HTTP 头部的机制，允许服务器声明哪些跨域请求是被允许的。通过在服务器端设置响应头部的 Access-Control-Allow-Origin 字段，可以允许指定的域名访问资源。</p>
+<p>代理服务器：<br>通过在同一域名下设置一个代理服务器，将跨域请求转发到目标服务器，然后再将响应返回给前端。前端代码发送请求时，实际上是向同一域名下的代理服务器发送请求，从而避免了跨域问题。</p>
+<p>WebSocket：<br>WebSocket 是一种全双工通信协议，可以在浏览器和服务器之间建立持久连接。由于 WebSocket 是在 HTTP 协议之上建立的，因此不受同源策略的限制。</p>
+<h2 id="Vue-SSR-如何实现"><a href="#Vue-SSR-如何实现" class="headerlink" title="Vue SSR 如何实现"></a>Vue SSR 如何实现</h2><p>Vue SSR（Server-Side Rendering，服务器端渲染）是一种将 Vue 组件在服务器端渲染成 HTML 字符串，然后将其发送到客户端的技术。Vue SSR 可以提供更好的首次加载性能和搜索引擎优化（SEO）。</p>
+<p>下面是实现 Vue SSR 的基本步骤：</p>
+<p>创建一个 Vue 项目：<br>首先，你需要创建一个 Vue 项目。你可以使用 Vue CLI 来快速搭建一个基本的 Vue 项目。</p>
+<p>配置服务器端入口：<br>在服务器端，你需要创建一个入口文件，用于处理客户端请求并渲染 Vue 组件。这个入口文件可以是一个 Node.js 服务器脚本。</p>
+<p>创建服务器端路由：<br>在服务器端，你需要创建一个路由系统，用于根据客户端请求的 URL 匹配对应的 Vue 组件。你可以使用 Vue Router 或其他路由库来实现。</p>
+<p>创建服务器端渲染函数：<br>在服务器端，你需要创建一个渲染函数，用于将匹配到的 Vue 组件渲染成 HTML 字符串。你可以使用 Vue Server Renderer 来实现这一步骤。</p>
+<p>在服务器端处理客户端请求：<br>在服务器端入口文件中，你需要根据客户端请求的 URL，调用渲染函数并将渲染结果返回给客户端。</p>
+<p>客户端激活：<br>在客户端，你需要将服务器端渲染的 HTML 字符串激活为可交互的 Vue 应用。你可以使用 createApp 函数来创建 Vue 应用，并将其挂载到客户端的 DOM 元素上。</p>
+<p>客户端路由处理：<br>在客户端，你需要处理页面的路由切换。你可以使用 Vue Router 或其他路由库来实现客户端路由。</p>
+<p>通过以上步骤，你可以实现 Vue SSR，使你的 Vue 应用在服务器端进行渲染，并在客户端进行激活和交互。这样可以提供更好的性能和 SEO。在实际开发中，你可能还需要处理数据预取、状态管理等方面的问题，以满足具体的需求。</p>
+<h2 id="SPA与MPA的区别"><a href="#SPA与MPA的区别" class="headerlink" title="SPA与MPA的区别"></a>SPA与MPA的区别</h2><p>SPA（Single-Page Application，单页面应用）和 MPA（Multi-Page Application，多页面应用）是两种不同的前端应用架构模式，它们在页面加载、路由管理和用户体验等方面有一些区别。</p>
+<p>SPA（Single-Page Application）：</p>
+<p>页面加载：SPA 在初始加载时只加载一个 HTML 页面，通常是一个空白的容器页面，然后通过 JavaScript 动态地加载数据和更新页面内容。在后续的页面切换过程中，只需要加载和更新部分页面内容，不需要重新加载整个页面。<br>路由管理：SPA 使用前端路由来管理页面的切换和导航。通过监听 URL 的变化，SPA 可以根据不同的 URL 加载不同的组件或页面内容，实现无刷新的页面切换。<br>用户体验：由于 SPA 只加载和更新部分页面内容，页面切换时不需要重新加载整个页面，因此可以提供更快的响应速度和更流畅的用户体验。同时，SPA 可以实现动态加载数据和局部更新，可以提供更好的交互性和实时性。<br>MPA（Multi-Page Application）：</p>
+<p>页面加载：MPA 在每次页面切换时都会重新加载整个 HTML 页面。每个页面都是一个独立的 HTML 文件，页面之间的切换需要通过服务器请求和加载新的页面。<br>路由管理：MPA 使用传统的后端路由来管理页面的切换和导航。每个页面都有自己的 URL，页面切换需要通过服务器请求和加载新的页面。<br>用户体验：由于 MPA 在每次页面切换时都需要重新加载整个页面，页面切换可能会有较长的加载时间，导致用户体验相对较差。同时，由于页面切换时需要重新加载整个页面，MPA 的交互性和实时性可能相对较差。<br>总结：<br>SPA 和 MPA 在页面加载、路由管理和用户体验等方面有一些区别。SPA 通过动态加载数据和更新页面内容，提供了更快的响应速度和更流畅的用户体验；而 MPA 在每次页面切换时都需要重新加载整个页面，导致页面加载时间较长，用户体验相对较差。选择使用哪种架构模式取决于具体的应用需求和开发团队的偏好。</p>
+<h2 id="SPA首屏加载-优化方案"><a href="#SPA首屏加载-优化方案" class="headerlink" title="SPA首屏加载 优化方案"></a>SPA首屏加载 优化方案</h2><p>对于 SPA 的首屏加载优化，以下是一些常用的方案：</p>
+<p>代码拆分（Code Splitting）：将应用的代码拆分成多个小块，按需加载。这样可以减少首次加载的文件大小，加快页面加载速度。常见的工具如Webpack提供了代码拆分的功能。</p>
+<p>路由懒加载（Route Lazy Loading）：将路由按需加载，只在需要时加载对应的组件和资源。这样可以减少初始加载时的资源数量，提高首屏加载速度。Vue Router和React Router等路由库都支持路由懒加载。</p>
+<p>预加载关键资源（Preloading Critical Resources）：对于首屏需要的关键资源（如CSS、JavaScript、字体等），可以使用<link rel="preload">标签在页面加载时提前加载这些资源，以减少后续请求的延迟。</p>
+<p>图片优化：对于图片资源，可以采用以下策略进行优化：</p>
+<p>压缩图片大小：使用工具如ImageOptim、TinyPNG等压缩图片大小，减少网络传输时间。<br>响应式图片：根据设备的屏幕大小，提供适应的图片尺寸，避免加载过大的图片。<br>图片懒加载：延迟加载页面中的图片，只在图片进入可视区域时再进行加载，减少初始加载时的资源数量。<br>缓存策略：合理利用浏览器缓存，将静态资源设置为长期缓存，减少重复加载的请求。可以通过设置HTTP响应头的Cache-Control和Expires字段来控制缓存策略。</p>
+<p>服务端渲染（Server-Side Rendering，SSR）：将部分页面在服务器端渲染成HTML，并在初始加载时返回给客户端，以提供更快的首屏加载速度和更好的SEO效果。一些框架如Next.js（基于React）和Nuxt.js（基于Vue）提供了方便的服务端渲染解决方案。</p>
+<p>骨架屏（Skeleton Screen）：在页面加载过程中，可以先展示一个简单的骨架屏，给用户一个加载的反馈，同时异步加载内容，提高用户体验。</p>
+<h2 id="JWT鉴权机制是什么？"><a href="#JWT鉴权机制是什么？" class="headerlink" title="JWT鉴权机制是什么？"></a>JWT鉴权机制是什么？</h2><p>JWT（JSON Web Token）鉴权机制是一种基于令牌的身份验证和授权机制。它使用 JSON 格式对信息进行安全传输，并使用数字签名验证其完整性。</p>
+<p>JWT 由三部分组成：头部（Header）、载荷（Payload）和签名（Signature）。</p>
+<p>头部包含描述令牌的元数据，通常包括令牌的类型（如JWT）、所使用的签名算法（如HMAC、RSA等）。</p>
+<p>载荷包含要传输的数据，可以包含用户的身份信息、权限等。载荷中的数据是经过 Base64 编码的，因此可以被解码查看，但不能被篡改，因为篡改后签名验证将失败。</p>
+<p>签名是对头部和载荷进行签名的结果，用于验证令牌的完整性和真实性。签名通常使用密钥进行加密，只有持有正确密钥的人才能生成有效的签名。</p>
+<p>JWT 的工作流程如下：</p>
+<p>用户通过提供有效的凭证（如用户名和密码）进行身份验证。<br>服务器验证凭证的有效性，并生成一个 JWT。<br>服务器将 JWT 发送给客户端，客户端将其保存（通常在本地存储或 Cookie 中）。<br>客户端在后续的请求中将 JWT 作为身份验证凭证发送给服务器。<br>服务器接收到 JWT 后，使用密钥验证其完整性和真实性，并根据其中的信息进行授权和身份验证。</p>
+<h2 id="Node的process"><a href="#Node的process" class="headerlink" title="Node的process"></a>Node的process</h2><p>process 是 Node.js 中的一个全局对象，提供了与当前 Node.js 进程相关的信息和控制能力。它是一个 EventEmitter 的实例，可以监听和触发事件。</p>
+<p>process 对象具有以下常用属性和方法：</p>
+<p>process.argv：一个包含命令行参数的数组。第一个元素是 Node.js 的可执行文件路径，第二个元素是当前执行的 JavaScript 文件路径，后续元素是传递给脚本的命令行参数。</p>
+<p>process.env：一个包含环境变量的对象。可以通过该对象访问和修改环境变量的值。</p>
+<p>process.cwd()：返回当前工作目录的路径。</p>
+<p>process.exit([code])：终止当前 Node.js 进程。可选的 code 参数指定退出码，默认为 0。</p>
+<p>process.on(event, listener)：监听指定事件。常见的事件包括 ‘exit’（进程退出时触发）、’uncaughtException’（未捕获的异常发生时触发）等。</p>
+<p>process.stdout：标准输出流，可以使用 process.stdout.write() 方法向标准输出打印内容。</p>
+<p>process.stderr：标准错误流，可以使用 process.stderr.write() 方法向标准错误输出打印内容。</p>
+<p>process.stdin：标准输入流，可以使用 process.stdin.on(‘data’, callback) 方法监听用户输入。</p>
+<p>process.nextTick(callback)：将回调函数推迟到下一个事件循环迭代中执行。</p>
+<p>process.version：返回当前 Node.js 的版本号。</p>
+<p>process.platform：返回当前操作系统平台的标识符，如 ‘win32’、’linux’ 等。</p>
+<p>这些只是 process 对象的一部分属性和方法，还有其他更多的功能可以通过 process 对象进行控制和访问。详细的文档可以在 Node.js 官方网站上找到。</p>
+<h2 id="Node的eventEmitter"><a href="#Node的eventEmitter" class="headerlink" title="Node的eventEmitter"></a>Node的eventEmitter</h2><p>EventEmitter 是 Node.js 中的一个核心模块，用于实现事件驱动的编程。它提供了一种机制，使对象可以触发事件并监听事件的发生。</p>
+<p>要使用 EventEmitter，首先需要创建一个 EventEmitter 的实例：</p>
+<p>const EventEmitter = require(‘events’);<br>const myEmitter = new EventEmitter();<br>然后，可以通过 on 方法监听事件，使用 emit 方法触发事件：</p>
+<p>// 监听事件<br>myEmitter.on(‘event’, () =&gt; {<br>  console.log(‘Event occurred’);<br>});</p>
+<p>// 触发事件<br>myEmitter.emit(‘event’);<br>EventEmitter 的常用方法包括：</p>
+<p>on(eventName, listener)：监听指定事件。当事件被触发时，注册的监听器函数将被调用。</p>
+<p>once(eventName, listener)：监听指定事件，但只触发一次。当事件被触发时，注册的监听器函数将被调用，然后被移除。</p>
+<p>emit(eventName, [args])：触发指定事件，并传递可选的参数给监听器函数。</p>
+<p>removeListener(eventName, listener)：移除指定事件的监听器。</p>
+<p>removeAllListeners([eventName])：移除所有事件的监听器，或者移除指定事件的所有监听器。</p>
+<p>EventEmitter 还提供了其他一些方法和属性，如 addListener、prependListener、prependOnceListener、setMaxListeners 等，用于更灵活地管理事件和监听器。</p>
+<p>通过使用 EventEmitter，可以实现模块之间的解耦和事件驱动的编程范式，使代码更具可读性和可维护性。</p>
+<h2 id="Node的中间件"><a href="#Node的中间件" class="headerlink" title="Node的中间件"></a>Node的中间件</h2><p>在 Node.js 中，中间件是一种用于处理 HTTP 请求的功能模块。它可以在请求到达服务器和发送响应之间执行一系列的操作，例如身份验证、日志记录、数据转换等。</p>
+<p>常见的 Node.js 中间件框架包括 Express、Koa、Connect 等。这些框架都提供了类似的中间件机制，可以通过使用 app.use() 方法将中间件函数添加到请求处理流程中。</p>
+<h2 id="Node的事件循环"><a href="#Node的事件循环" class="headerlink" title="Node的事件循环"></a>Node的事件循环</h2><p>Node.js 的事件循环是实现非阻塞 I/O 操作的关键机制。它基于事件驱动的编程模型，使得 Node.js 能够高效处理大量并发请求。</p>
+<p>Node.js 的事件循环由以下几个阶段组成：</p>
+<ol>
+<li><p><strong>Timers 阶段</strong>：处理定时器相关的回调函数。</p>
+</li>
+<li><p><strong>I/O callbacks 阶段</strong>：处理某些系统操作的回调函数，例如网络请求、文件 I/O 等。</p>
+</li>
+<li><p><strong>Idle, prepare 阶段</strong>：内部使用，一般不需要关注。</p>
+</li>
+<li><p><strong>Poll 阶段</strong>：等待新的 I/O 事件到达，如果没有其他任务需要处理，Node.js 将在此阶段阻塞等待。</p>
+</li>
+<li><p><strong>Check 阶段</strong>：执行 <code>setImmediate()</code> 注册的回调函数。</p>
+</li>
+<li><p><strong>Close callbacks 阶段</strong>：处理关闭的回调函数，例如 <code>socket.on(&#39;close&#39;, ...)</code>。</p>
+</li>
+</ol>
+<p>事件循环的执行顺序是从上述阶段依次循环，直到没有事件需要处理或达到某个退出条件。在每个阶段，Node.js 会执行相应的回调函数，并且在某些阶段之间允许插入用户定义的代码。</p>
+<p>需要注意的是，事件循环是单线程的，但通过利用非阻塞 I/O 和异步操作，Node.js 能够处理大量并发请求而不会阻塞主线程。当有 I/O 操作或异步任务完成时，会将相应的回调函数放入事件循环中，等待执行。</p>
+<p>这种事件驱动的编程模型使得 Node.js 在处理高并发、高吞吐量的场景下表现出色，并且能够有效利用系统资源。</p>
+<h2 id="Node的监控"><a href="#Node的监控" class="headerlink" title="Node的监控"></a>Node的监控</h2><p>在 Node.js 中，可以使用各种工具和技术来监控和调试应用程序的性能和行为。以下是一些常用的 Node.js 监控方法和工具：</p>
+<ol>
+<li><p><strong>日志记录</strong>：通过在应用程序中添加适当的日志语句，可以记录关键事件和错误信息。日志记录是一种简单而有效的监控方法，可以帮助你了解应用程序的运行情况和潜在问题。</p>
+</li>
+<li><p><strong>性能分析</strong>：使用性能分析工具可以帮助你找出应用程序中的性能瓶颈和慢速代码。一些常用的性能分析工具包括 Node.js 内置的 <code>profiler</code> 模块、<code>clinic</code> 工具套件、<code>ndb</code> 调试器等。</p>
+</li>
+<li><p><strong>指标监控</strong>：通过收集和监控关键指标，可以了解应用程序的运行状态和性能表现。一些常用的指标监控工具包括 Prometheus、StatsD、Grafana 等。</p>
+</li>
+<li><p><strong>错误监控</strong>：使用错误监控工具可以捕获和记录应用程序中的错误和异常。这些工具可以提供错误报告、堆栈跟踪和性能影响分析等功能。一些常用的错误监控工具包括 Sentry、Bugsnag、New Relic 等。</p>
+</li>
+<li><p><strong>内存泄漏检测</strong>：内存泄漏是常见的性能问题之一。使用内存泄漏检测工具可以帮助你发现和修复应用程序中的内存泄漏问题。一些常用的内存泄漏检测工具包括 Node.js 内置的 <code>heapdump</code> 模块、<code>memwatch-next</code> 模块、Chrome 开发者工具等。</p>
+</li>
+<li><p><strong>实时监控</strong>：实时监控工具可以提供即时的应用程序状态和性能数据。这些工具可以帮助你快速发现和解决问题。一些常用的实时监控工具包括 Node.js 内置的 <code>inspector</code> 模块、PM2、Keymetrics 等。</p>
+</li>
+</ol>
+<p>以上只是一些常见的 Node.js 监控方法和工具，具体选择和使用哪些工具取决于你的需求和应用程序的特点。在实际应用中，可以结合多种监控方法和工具来全面监控和调试 Node.js 应用程序。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/09/M_Swift297React%E9%9D%A2%E8%AF%95%E9%A2%98/" rel="prev" title="React面试题">
+      <i class="fa fa-chevron-left"></i> React面试题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/11/M_Swift298Vue%E6%89%8B%E5%86%99%E5%AE%9E%E7%8E%B0%20call%20%E6%96%B9%E6%B3%95/" rel="next" title="手写实现 call 方法">
+      手写实现 call 方法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#nextTick"><span class="nav-number">1.</span> <span class="nav-text">nextTick</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vue-%E8%BF%87%E6%BB%A4%E5%99%A8%EF%BC%88Filters%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">Vue 过滤器（Filters）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vue-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8C%87%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">Vue 自定义指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vue%E7%BB%84%E4%BB%B6%E5%92%8C%E6%8F%92%E4%BB%B6%E7%9A%84%E5%85%B7%E4%BD%93%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">vue组件和插件的具体区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%A8%E5%9F%9F%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">跨域的几种方式</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">门乾强</p>
+  <div class="site-description" itemprop="description">博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">门乾强</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

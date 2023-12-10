@@ -148,6 +148,415 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/" class="post-title-link" itemprop="url">开发杂谈</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:49" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>iOS路由实现原理：基于url，基于反射<br>Category+NSInvocation 方案的优点是便捷，因为 Category 的专用接口放在平台库，以后有除了 BKit 以外的其他调用方也可以直接调用，还有更多强大的功能。<br>组件之间的依赖除了显式的依赖，还存在很多隐式依赖，代码层面，除了普通的接口依赖，还有宏依赖、枚举依赖、全局变量依赖以及内联函数等的依赖。单仓 lint 进行编译链接完备性检查并不能解决依赖变动对其他二进制的影响。<br>因此需要借助源码层面的依赖分析，判断当前组件的变更对其他依赖当前组件的二进制是否有影响，在 CI 流程中及时发现并拦截。否则错误的二进制发版，会直接导致整个 CI 研发流程和本地研发都受到影响。<br>大型项目的组件化工作是一个系统性工程。涉及工程架构的改造、CI/CD 研发工具链的支撑、本地研发工具链的支撑，业务架构的设计优化，需要从各个方面综合考虑成本和收益。<br>没有最好的架构，只有更好的架构，在架构演进的过程中，我们需要充分考虑架构的改动对业务的影响以及能给业务带来的收益。好的架构一定是能帮助业务节省时间，保证质量的。与此同时，我们在架构改进的过程中，要保证不能影响业务的正常迭代，所以向前兼容且避免大面积冲突也是很重要的事情。<br>组件化里面处处都有惊喜，比如一个小小的 hmap 优化，可以很大程度的减少编译耗时，比如一个二进制的压缩和解压的优化，可以很大程度减少 pod install 的整体耗时。<br>当然这里面也会有很多很棘手的问题，需要通过一些特殊的方案解决，比如针对分布式开发，由于阻塞式发版必然会导致一些不同分支存在冲突的代码发版后影响主干的稳定性。<br>前端可视化探索总结：基于积木形式的拖拽界面，基于markdown形式的文档编辑界面<br>Venom：iOS工程集成，类似pod<br>Metabase：可以帮助你把数据库中的数据更好的呈现给更多人<br>Lerna js多包存储库管理工具<br>H5长列表渲染：<br>如果只渲染展示可见范围内的 dom ，原来的滚动条就没了，如何重现原有的滚动条？<br>滚动条的问题解决后，如何根据当前滚动位置来知道该渲染列表的哪部分？<br>ThreadPoolExecutor：类似iOS中的GCD<br>线程池运行的状态，并不是用户显式设置的，而是伴随着线程池的运行，由内部来维护。线程池内部使用一个变量维护两个值：运行状态(runState)和线程数量 (workerCount)。在具体实现中，线程池将运行状态(runState)、线程数量 (workerCount)两个关键参数的维护放在了一起<br>主要作用：任务调度、任务缓冲、线程回收<br>LruCache：采用的缓存算法为LRU(Least Recently Used)，即最近最少使用算法。这一算法的核心思想是当缓存数据达到预设上限后，会优先淘汰近期最少使用的缓存对象。LruCache内部维护一个双向链表和一个映射表。链表按照使用顺序存储缓存数据，越早使用的数据越靠近链表尾部，越晚使用的数据越靠近链表头部；映射表通过Key-Value结构，提供高效的查找操作，通过键值可以判断某一数据是否缓存，如果缓存直接获取缓存数据所属的链表节点，进一步获取缓存数据。LruCache结构图如下所示，上半部分是双向链表，下半部分是映射表（不一定有序）。双向链表中value_1所处位置为链表头部，value_N所处位置为链表尾部。<br>HashLruCache：引入某种哈希算法，将缓存数据分散到N个LruCache上。<br>冷启动解决方案：<br>    解决存量问题：优化当前性能瓶颈点，优化启动流程，缩短冷启动时间。<br>    管控增量问题：冷启动流程规范化，通过代码范式和文档指导后续冷启动过程代码的维护，控制时间增量。<br>    完善监控：完善冷启动性能指标监控，收集更详细的数据，及时发现性能问题。<br>iOS静态分析：Static Analyzer、Infer、OCLint<br>Js定时器：1.存放 callback 2.启动一个倒计时 3.倒计时结束，取出存好的 callback，RUN！<br>前端加密：我们也可以借助 webpack-subresource-integrity 轻易实现 integrity 的添加过程，保持对开发者透明。<br>开启 SRI，浏览器会对相关资源进行 CORS 校验，所以被加载的资源要么在同域下，要么得满足 CORS 机制（具体方式可查看 脚本错误量极致优化-监控上报与 Script error 中 跨源资源共享机制 ( CORS ) 章节）。<br>HTTPS 可以有效应对流量劫持的问题，SRI 在资源完整性再上一道屏障，CSP 也进行了其他方面的补充。“三驾马车” 为页面资源安全 “保驾护航”。当然这也绝非银弹，安全之路充满着荆棘与挑战，任重道远。<br>alloy-worker：Worker 的多线程能力有望成为复杂前端项目的标配, 在减少 UI 线程卡顿和压榨计算机性能上有收益. 但目前国内实践较少, 一方面是业务复杂程度未触及; 另一方面是社区缺少科普和实践分享.<br>聊天界面反向渲染，竟然实现了聊天信息始终在底部。。。。<br>html优化：压缩、减包、拆包、动态加载包及图片优化上<br>cdn 分发、dns 解析、http 缓存、数据预请求，数据缓存及首屏优化大杀器——直出等<br>大部分主流的页面会通过服务器进行渲染，吐出 html 文件到前端<br>通过离线包技术能够很好解决 html 文件本身加载需要时间的问题。离线包基本思路都是通过 webview 统一拦截 url，将资源映射到本地离线包，更新的时候对版本资源检测，下载和维护本地缓存目录中的资源。比如腾讯的 webso 和 Alloykit 的离线包方案。<br>前端内存优化：</p>
+<ol>
+<li>避免没有必要全局变量的使用<br>我们可以在 JS 文件的开头通过添加”use strict” 开启严格的解析模式，来避免一些意外创建的全局变量。</li>
+<li>及时解除引用</li>
+<li>减少对象的创建</li>
+<li>内存不是缓存</li>
+<li>避免复杂的递归调用；</li>
+<li>合理使用的 IndexedDB</li>
+</ol>
+<p>我们应该编写有类型系统的 JavaScript，而不是能编译成 JavaScript 的 Java/C#。任何一个 TypeScript 程序，在手动删去类型部分，将后缀改成 .js 后，都应能够正常运行。<br>基本类型<br>基本类型，也可以理解为原子类型。包括 number、boolean、string、null、undefined、function、array、字面量（true，false，1，2，‘a’）等。它们无法再细分。<br>页面可视化组建：html模版、配置字段、业务逻辑、布局样式、Json数据驱动</p>
+<p>AVAudioSession<br>AVAudioSessionMode<br>AVAudioSessionCategoryAmbient // 背景声音，可以与其他音乐混合，用于以非语音为主的应用<br>AVAudioSessionCategory<br>AVAudioSessionCategoryPlayback // 只用于播放<br>AVAudioSessionCategoryPlayAndRecord // 既可以录音也可以播放<br>AVAudioSessionInterruptionNotification // 电话打断等<br>媒体声音被抑制：<br>媒体声音在媒体音量下开启播放，播放途中因为连麦而切换到了通话音量，此时因为系统特性，媒体音量会被通话音量抑制而导致声音变小。<br>针对该问题，我们使用音视频 SDK 提供的混音、混流功能来规避。基本原理是播放媒体资源时，我们拿到资源的 pcm 音频数据，将数据抛给 RTC 的 audioUnit 进行混合，由 RTC 音频播放单元统一播放，如果此时 RTC 使用的是通话音量，则媒体资源也是使用的通话音量播放，反之亦然。以此来保证媒体资源与 RTC 始终保持统一的音量控制机制，而避免声音大小存在差异。<br>安装包优化<br>2.1、使用合适的资源压缩配置<br>    Pod 库和主工程的最低支持版本从 iOS 8.0 提升成 iOS 9.0<br>    开启 Pod 库和主工程 Xcode Build Settings 中的 ASSETCATALOG_COMPILER_OPTIMIZATION space 选项<br>     xcrun assetutil –info Assets.car 命令检查 Assets.car 中每张图片使用的编码压缩算法<br>2.2、使用 RGB with palette 压缩图片<br>Mach-O 文件优化<br>3.1、使用 -Oz 编译参数<br>Oz 的核心原理是对重复的连续机器指令外联成函数进行复用，和“内联函数”的原理正好相反。因此，开启 Oz，能减小二进制的大小，但同时理论上会带来执行效率的额外消耗。<br>3.2、使用链接时优化 LTO<br>Link-Time Optimization 链接时优化，是 Xcode 自带的一个编译/链接参数。根据 WWDC 2016 《What’s New in LLVM》[4]的介绍，LTO 对包大小和运行效率都有正向影响。今日头条在编译和链接中均开启 Incremental LTO 后，包体积减小 6.5MB。<br>如果我们用 @dynamic 修饰一个属性，不生成成员变量、get/set 方法，则一个属性可以由 224B 减少到 36B，即仅包含 property 部分的大小。<br>3.5、__TEXT 段迁移<br>在链接阶段使用 -rename_p 选项将 __TEXT,__text 迁移到 __BD_TEXT,__text，减少苹果对可执行文件的加密范围，提升可执行文件的压缩效率，从而减少 Download Size。<br>WebView 渲染需要经过下面几个步骤：<br>    解析 HTML 文件<br>    加载 JavaScript 和 CSS 文件<br>    解析并执行 JavaScript<br>    构建 DOM 结构<br>    加载图片等资源<br>    页面加载完毕<br>模板拆分<br>    把头条详情页的公共样式 CSS 和 逻辑 JS 都抽离出来，形成一个独立而完备的详情页模板，这样我们就可以把模板直接内置在客户端中。<br>模板优化<br>    WebView 需要在加载完主 HTML 之后再去加载 HTML 中的 JS 和 CSS，需要多次 IO 操作，于是我们将 JS 和 CSS 还有一些图片都内联到一个文件中，这样，加载模板时就只需要一次 IO 操作，也大大减少因为 IO 加载冲突导致模板加载失败问题<br>模板简化<br>    我们将部分非必须的脚本异步化拉取，精简不必要的样式和 JS 代码，将模板大小压缩了 20% 以上<br>    我们并不需要在用户进入页面的时候才去创建 WebView 以及加载模板，我们只需要在合适的时机在后台创建 WebView，并且提前预热加载模板，当用户点击进入页面的时候就能使用已经加载好模板的 WebView，直接将详情页的内容数据通过 JS 注入到页面中，前端收到数据后进行页面渲染即可。<br>    我们每次使用的时候都是同一个模板，所以我们使用完当前 WebView 之后，只需要在用户退出页面的时候把正文数据清空，这样进入下一个页面的时候就能够继续复用这个 WebView 重新注入数据即可。<br>网络优化<br>    CDN 加速<br>    我们将详情页内容数据分为静态和动态两部分，将正文内容、标题、作者栏等用户主要消费的又基本不变的内容托管到了 CDN 上，托管到 CDN 之后，全国各地的用户可以直接从最佳节点就获取到详情页数据，也大大节省了带宽成本。<br>    容灾<br>    为了防止某个 CDN 出现故障，导致服务雪崩，服务端会下发多个 CDN 链接，当用户访问当前 CDN 节点的出异常时，可以快速自动切换到下个 CDN 节点。<br>    2. 快速超时<br>    一般的超时策略，客户端在请求时，会遍历请求 CDN 1、2、3。如果这些 CDN 都请求失败，则整个网络请求算作失败。<br>    假设请求 CDN 的超时时间是 15s。如果 CDN 1 出现故障，则需要等待 15s 才能切换到 CDN 2上，这对于详情页的加载时间来说是不可接受，如果用户网络突然变差，则需要等待 45s 才能返回失败展示错误页。<br>    渲染优化<br>    为了提高用户的首屏效率，我们在服务端就会把所有的详情页正文的 HTML 数据组装好，通过将服务端直出内容注入到页面中时，可以直接给 WebView 进行渲染，对于其他动态下发的内容（比如相关搜索），前端再进行二次异步处理，提升用户效率。<br>    所以在详情页中，我们会将图片和视频等非文字内容通过原生组件的方式放在客户端进行渲染，既可以提高渲染效率，也可以减少不必要的流量消耗。<br>    当 WKWebView 上占用内存过大时，WKWebView 所在的 WebContent Process 会被系统 kill 掉，反映在用户体验上就是发生了白屏。<br>    WKWebView 提供的回调 webViewWebContentProcessDidTerminate 函数中通过 reload 方法重新加载当前页面恢复，但是这种情况只适用于通过 loadRequest 加载的请求，在详情页中，由于使用了模板化的 WebView 中，重新 reload 只能重新 reload 模板，并不能正常恢复整个详情页，需要客户端重新加载模板之后再重新注入数据。</p>
+<p> 遍历方式</p>
+<pre><code>for each或者iterator
+移动端适配mediaquery媒体查询
+@media screen and (max-width: 300px) &#123;
+    body &#123;
+        background-color:lightblue;
+    &#125;
+&#125;
+rem原理
+字体单位，跟px不同的是根据root element动态变化
+1ren=16px 浏览器默认字体大小
+
+
+Java注解
+@Override @Deprecated @Suppvisewarning
+Spring注解
+@Autowirte @Service @Repository
+MyBatis
+@InsertProvider @UpdateProvider @Options
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift212Dart%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Dart学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:55" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Future 异步、延迟等操作，跟js的Premis一致<br>Future 的所有API的返回值仍然是一个Future对象，所以可以很方便的进行链式调用”<br>Dart中的async/await 和JavaScript中的async/await功能和用法是一模一样的<br>async用来表示函数是异步的，定义的函数会返回一个Future对象，可以使用then方法添加回调函数。<br>await 后面是一个Future，表示等待该异步任务完成，异步完成后才会往下走；await必须出现在 async 函数内部。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift214Fultter%E5%B8%B8%E7%94%A8%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift214Fultter%E5%B8%B8%E7%94%A8%E5%BA%93/" class="post-title-link" itemprop="url">Flutter常用库</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-30 14:24:09" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-06 17:37:57" itemprop="dateModified" datetime="2022-04-06T17:37:57+08:00">2022-04-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>flutter pub add provider<br>flutter pub add http<br>flutter pub add shared_preferences<br>flutter pub add uuid<br>flutter pub add url_launcher<br>flutter pub add image_picker<br>flutter pub add flutter_bloc // mvvm数据跟ui隔离<br>flutter pub add geolocator // iOS的CLLocationManager<br>flutter pub add get // 非常全面的一个flutter库<br>flutter pub add animations<br>dart pub add dio // http请求库<br>flutter pub add jpush_flutter // 极光推送<br>flutter pub add hive // 键值数据库<br>flutter pub add sqflite // sql数据库<br>flutter pub add carousel_slider // 轮播图<br>flutter pub add flutter_swiper // 轮播图<br>flutter pub add share // 分享<br>flutter pub add permission_handler // 应用权限检查<br>flutter pub add animate_do // animate.css的flutter库<br>flutter pub add animated_text_kit // 文本动画<br>flutter pub add video_player  // 播放器<br>flutter pub add fluttertoast  // toast<br>flutter pub add fl_chart   // 图表<br>flutter pub add connectivity // 网络状态的监听<br>flutter pub add flutter_spinkit // 加载动画<br>flutter pub add flutter_svg // svg<br>flutter pub add webview_flutter<br>flutter pub add logger // 日志输出<br>flutter pub add convex_bottom_bar // 类似iOS TabBar<br>flutter pub add sliding_up_panel // 拖拽面板<br>flutter pub add flutter_staggered_grid_view // 瀑布流<br><a target="_blank" rel="noopener" href="http://lbsyun.baidu.com/index.php?title=flutter/loc">http://lbsyun.baidu.com/index.php?title=flutter/loc</a> // 百度地图flutter插件<br><a target="_blank" rel="noopener" href="https://lbs.amap.com/api/flutter/summary">https://lbs.amap.com/api/flutter/summary</a> // 高德地图flutter插件<br><a target="_blank" rel="noopener" href="https://github.com/peng8350/flutter_pulltorefresh/blob/master/README_CN.md">https://github.com/peng8350/flutter_pulltorefresh/blob/master/README_CN.md</a> // 下拉刷新组建<br>flutter pub add introduction_screen // 启动介绍页<br><a target="_blank" rel="noopener" href="https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md">https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md</a> // 屏幕适配<br>flutter pub add photo_view // 支持图片的缩放<br>flutter pub add flutter_secure_storage // iOS的 Keychain 实现<br>flutter pub add syncfusion_flutter_charts // 图表<br>flutter pub add timeline_tile // 时间轴<br>flutter pub add audioplayers<br>flutter pub add table_calendar // 日历<br>flutter pub add badges // 徽标<br>flutter pub add flutter_form_builder // 输入框库<br>flutter pub add responsive_framework // 屏幕适配<br>flutter pub add pdf<br>flutter pub add image_cropper // 图片裁剪<br>flutter pub add persistent_bottom_nav_bar // tab bar<br>flutter pub add flutter_typeahead // 分段导航栏<br>flutter pub add flutter_staggered_animations // 列表，网格动画<br>flutter pub add local_auth // 授权<br>flutter pub add flutter_rating_bar // 评星<br>flutter pub add extended_image // 图片加载库<br>flutter pub add smart_select // 选择器<br>flutter pub add expandable //折叠效果<br>flutter pub add getwidget // UI组建库<br>flutter pub add material_floating_search_bar // 搜索框<br>flutter pub add rflutter_alert // alert<br>flutter pub add flutter_icons<br>flutter pub add flutter_cache_manager // 缓存<br>flutter pub add flutter_login<br>flutter pub add page_transition // 转场动画<br>flutter pub add wakelock // 防止屏幕休眠<br>flutter pub add bot_toast<br>flutter pub add multi_image_picker<br>flutter pub add uni_links // url链接跳app<br>flutter pub add image<br>flutter pub add qr_code_scanner // 二维码<br>dart pub add sembast // 数据库<br>flutter pub add flutter_downloader // 下载任务<br>flutter pub add flutter_platform_widgets // iOS android 样式分别绘制<br>flutter pub add workmanager // 定期任务<br>flutter pub add background_fetch // 后台任务</p>
+<p>system_tray 桌面消息通知提醒<br>desktop_multi_window 多窗口<br>local_notifier<br>win_toast </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift213Docker%E6%8A%80%E6%9C%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift213Docker%E6%8A%80%E6%9C%AF/" class="post-title-link" itemprop="url">Docker了解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:22:01" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1、虚拟机<br>虚拟机理论上是一个真实的计算机操作系统的封装，它运行在物理设备之上，通过 Hypervisor 进行建立和运行虚拟机体系。<br>不同于虚拟机提供在物理硬件级别的操作系统隔离，容器技术提供的是操作系统级别的进程隔离，Docker 本身只是操作系统的一个进程，只是在容器技术下，进程之间网络、空间等等是隔离的，互不知道彼此。<br>二、Docker 的资源隔离：Namespace，Linux Namespace 是 Linux 提供的一种机制，可以实现不同资源的隔离。<br>三、Docker 的资源限制：cgroups<br>四、Docker 存储驱动：Union File Systems。AUFS 想象为一个可以 “栈式叠加” 的文件系统，AUFS 允许在一个基础的文件系统的上，“增量式” 的增加文件。<br>Docker 的镜像分层，正式通过 AUFS 通过分层结构、挂载等方式实现。在用户制作镜像的每一步，Docker 都会生成一个层，也就是增量 rootfs。<br>使用 Linux Namespace 进行网络、进程空间、命名空间等资源的隔离，使用 Cgroups 技术对资源的占用、使用量进行限制，使用 AUFS 等存储驱动来实现分层结构、增量更新等能力。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift215Fultter%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift215Fultter%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Flutter学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:47:03" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>widget的主要工作是提供一个build()方法来描述如何构建UI界面（通常是通过组合、拼装其它基础widget）<br>MaterialApp 是Material库中提供的Flutter APP框架，通过它可以设置应用的名称、主题、语言、首页及路由列表等。MaterialApp也是一个widget。<br>Stateful widget可以拥有状态，这些状态在widget生命周期中是可以变的，而Stateless widget是不可变的。<br>一个 State类； StatefulWidget类本身是不变的，但是State类中持有的状态在widget生命周期中可能会发生变化。<br>_MyHomePageState类是MyHomePage类对应的状态类<br>Scaffold 是 Material 库中提供的页面脚手架，它提供了默认的导航栏、标题和包含主屏幕widget树（后同“组件树”或“部件树”）的body属性，组件树可以很复杂。本书后面示例中，路由默认都是通过Scaffold创建。<br>body的组件树中包含了一个Center 组件，Center 可以将其子组件树对齐到屏幕中心。此例中， Center 子组件是一个Column 组件，Column的作用是将其所有子组件沿屏幕垂直方向依次排列； 此例中Column子组件是两个 Text，第一个Text 显示固定文本 “You have pushed the button this many times:”，第二个Text 显示_counter状态的数值。<br>为什么build()方法放在State（而不是StatefulWidget）中 ？这主要是为了提高开发的灵活性。如果将build()方法放在StatefulWidget中则会有两个问题：1.状态访问不便<br>//导航到新路由<br>          Navigator.push( context,<br>           MaterialPageRoute(builder: (context) {<br>              return NewRoute();<br>           }));<br>  TipRoute({<br>    Key key,<br>    @required this.text,  // 接收一个text参数<br>  }) : super(key: key);<br> // 打开<code>TipRoute</code>，并等待返回结果<br>          var result = await Navigator.push(<br>            context,<br>            MaterialPageRoute(<br>              builder: (context) {<br>                return TipRoute(<br>                  // 路由参数<br>                  text: “我是提示xxxx”,<br>                );<br>              },<br>            ),<br>          );<br>          //输出<code>TipRoute</code>路由返回结果<br>          print(“路由返回值: $result”);<br>//命名路由<br>要想使用命名路由，我们必须先提供并注册一个路由表（routing table），这样应用程序才知道哪个名字与哪个路由组件相对应。其实注册路由表就是给路由起名字，路由表的定义如下<br>Navigator.of(context).pushNamed(“new_page”, arguments: “hi”);<br>//获取路由参数<br>    var args=ModalRoute.of(context).settings.arguments;<br>图片加载<br>import ‘package:flutter/services.dart’ show rootBundle;<br>Future<String> loadAsset() async {<br>  return await rootBundle.loadString(‘assets/config.json’);<br>}<br>可以使用 AssetImage 类。例如，我们可以从上面的asset声明中加载背景图片<br>decoration: new BoxDecoration(<br>      image: new DecorationImage(<br>        image: new AssetImage(‘graphics/background.png’),<br>      ),<br>    ),<br>return Image.asset(‘graphics/background.png’);<br>依赖包中的资源图片<br>new AssetImage(‘icons/heart.png’, package: ‘my_icons’)</p>
+<p>Widget<br>构建const Widget({ this.key });<br>Widget类继承自DiagnosticableTree，DiagnosticableTree即“诊断树”，主要作用是提供调试信息。<br>Key: 这个key属性类似于React/Vue中的key，主要的作用是决定是否在下一次build时复用旧的widget，决定的条件在canUpdate()方法中。<br>createElement()：正如前文所述“一个Widget可以对应多个Element”；Flutter Framework在构建UI树时，会先调用此方法生成对应节点的Element对象。此方法是Flutter Framework隐式调用的，在我们开发过程中基本不会调用到。<br>canUpdate(…)是一个静态方法，它主要用于在Widget树重新build时复用旧的widget，其实具体来说，应该是：是否用新的Widget对象去更新旧UI树上所对应的Element对象的配置；通过其源码我们可以看到，只要newWidget与oldWidget的runtimeType和key同时相等时就会用newWidget去更新Element对象的配置，否则就会创建新的Element。<br>StatelessWidget<br>命名参数中的必要参数要添加@required标注，这样有利于静态代码分析器进行检查。另外，在继承widget时，第一个参数通常应该是Key，另外，如果Widget需要接收子Widget，那么child或children参数通常应被放在参数列表的最后。同样是按照惯例，Widget的属性应尽可能的被声明为final，防止被意外改变。<br>每一个widget都会对应一个context对象（因为每一个widget都是widget树上的一个节点）。实际上，context是当前widget在widget树中位置中执行”相关操作“的一个句柄，比如它提供了从当前widget开始向上遍历widget树以及按照widget类型查找父级widget的方法。<br>StatefulWidget<br>另外StatefulWidget类中添加了一个新的接口createState()。<br> 用于创建和Stateful widget相关的状态，它在Stateful widget的生命周期中可能会被多次调用。例如，当一个Stateful widget同时插入到widget树的多个位置时，Flutter framework就会调用该方法为每一个位置生成一个独立的State实例，其实，本质上就是一个StatefulElement对应一个State实例。<br>State生命周期</p>
+<p>Text ：该组件可让您创建一个带格式的文本。<br>Row 、 Column ： 这些具有弹性空间的布局类Widget可让您在水平（Row）和垂直（Column）方向上创建灵活的布局。其设计是基于Web开发中的Flexbox布局模型。<br>Stack ： 取代线性布局 (译者语：和Android中的FrameLayout相似)，Stack 允许子 widget 堆叠， 你可以使用 Positioned  来定位他们相对于Stack的上下左右四条边的位置。Stacks是基于Web开发中的绝对定位（absolute positioning )布局模型设计的<br>Container ： Container  可让您创建矩形视觉元素。container 可以装饰一个BoxDecoration , 如 background、一个边框、或者一个阴影。 Container  也可以具有边距（margins）、填充(padding)和应用于其大小的约束(constraints)。另外， Container 可以使用矩阵在三维空间中对其进行变换。<br>//导入material widget库<br>import ‘package:flutter/material.dart’;<br>//导入cupertino widget库<br>import ‘package:flutter/cupertino.dart’;</p>
+<p>如果状态是用户数据，如复选框的选中状态、滑块的位置，则该状态最好由父Widget管理。<br>如果状态是有关界面外观效果的，例如颜色、动画，那么状态最好由Widget本身来管理。<br>如果某一个状态是不同Widget共享的则最好由它们共同的父Widget管理。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift198%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/19/M_Swift198%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="post-title-link" itemprop="url">正则表达式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-19 11:35:48" itemprop="dateCreated datePublished" datetime="2021-04-19T11:35:48+08:00">2021-04-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-30 16:06:14" itemprop="dateModified" datetime="2021-04-30T16:06:14+08:00">2021-04-30</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>界定符： 表示正则表达式开始和结束</p>
+<ul>
+<li>号代表前面的字符必须至少出现一次</li>
+</ul>
+<ul>
+<li>号代表前面的字符可以不出现，也可以出现一次或者多次<br>? 问号代表前面的字符最多只可以出现一次<br>[]匹配 […] 中的所有字符<br>[^]  匹配除了 […] 中字符的所有字符,[^aeiou]匹配字符串 “google runoob taobao” 中除了 e o u a 字母的所有字母。<br>[A-Z] 表示一个区间，匹配所有大写字母，[a-z] 表示所有小写字母。<br>. 匹配除换行符（\n、\r）之外的任何单个字符，相等于 [^\n\r]。<br>[\s\S]匹配所有。\s 是匹配所有空白符，包括换行，\S 非空白符，不包括换行。<br>\w匹配字母、数字、下划线。等价于 [A-Za-z0-9_]<br>$匹配输入字符串的结尾位置。如果设置了 RegExp 对象的 Multiline 属性，则 $ 也匹配 ‘\n’ 或 ‘\r’。要匹配 $ 字符本身，请使用 $。<br>( )    标记一个子表达式的开始和结束位置。子表达式可以获取供以后使用。要匹配这些字符，请使用 ( 和 )。</li>
+<li>   匹配前面的子表达式零次或多次。要匹配 * 字符，请使用 *。<br>\b    匹配一个单词边界，即字与空格间的位置。<br>\d 表示一个数字<br>{} 出现次数<br>浮点数字： const re = /^\d{1,5}(?:.\d{1,2})?$/</li>
+</ul>
+<p>1.1 名词：代表是什么，用[]表示，如：[a]代表a字母，[ab]代表a或b字母，[0-9]代表0到9，还有一些简写形式，如：\w代表[a-zA-Z0-9_]字母数字或者下划线，\d代表[0-9]数字，\D代表[^0-9]非数字，\s代表[ \f\n\r\t\v]可见字符，.代表任意字符。</p>
+<p>1.2 量词：代表个数，{n}代表有n个，{n,m}代表有n到m个，{n,}代表&gt;=n个，{,m}代表&lt;=m个，还有一些简写形式，如：*代表{0,}任意个，+代表{1,}至少有一个，?代表{0,1}代表最多有一个。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift200CSS%E5%B8%B8%E7%94%A8%E6%8A%80%E5%B7%A7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -216,7 +625,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift203Python/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift199%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86NLP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -230,7 +639,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/19/M_Swift203Python/" class="post-title-link" itemprop="url">Python学习</a>
+            <a href="/2021/04/19/M_Swift199%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86NLP/" class="post-title-link" itemprop="url">自然语言处理 NLP</a>
         </h2>
 
         <div class="post-meta">
@@ -247,7 +656,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:18:17" itemprop="dateModified" datetime="2021-04-30T16:18:17+08:00">2021-04-30</time>
+                <time title="修改时间：2021-04-30 16:07:17" itemprop="dateModified" datetime="2021-04-30T16:07:17+08:00">2021-04-30</time>
               </span>
 
           
@@ -261,20 +670,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>编码格式# coding=utf-8<br>多个变量赋值a, b, c = 1, 2, “john”<br>数据类型：<br>Numbers（数字）<br>String（字符串）<br>List（列表）<br>Tuple（元组）<br>Dictionary（字典）<br>字符串取值区间</p>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>s = “123456789”<br>s[1:5]<br>‘2345’<br>字符串加 乘<br>乘 - 两个数相乘或是返回一个被重复若干次的字符串<br>s + “000000”<br>‘123456789000000’<br>s * 2<br>‘123456789123456789’<br>list同字符串<br>元组是另一个数据类型，类似于 List（列表）。<br>元组用 () 标识。内部元素用逗号隔开。但是元组不能二次赋值，相当于只读列表。</p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>函数<br>def<br>__init__构造函数<br><strong>del</strong>( self )析构方法, 删除一个对象</p>
-<p><strong>class</strong><br><strong>dict</strong> : 类的属性<br><strong>doc</strong> :类的文档字符串<br><strong>name</strong>: 类名<br><strong>module</strong>: 类定义所在的模块<br><strong>bases</strong> : 类的所有父类构成元素</p>
-<p>两个下划线开头，声明该方法为私有方法，不能在类的外部调用。<br><strong>foo</strong>: 定义的是特殊方法，一般是系统定义名字 ，类似 <strong>init</strong>() 之类的。<br>_foo: 以单下划线开头的表示的是 protected 类型的变量，即保护类型只能允许其本身与子类进行访问，不能用于 from module import *<br>__foo: 双下划线的表示的是私有类型(private)的变量, 只能是允许这个类本身进行访问了。</p>
-<p>python常用模块<br>zlib、randmon、time、datetime、sys、glob<br>#os模块就是对操作系统进行操作，使用该模块必须先导入模块<br>hashlib加密<br>logging模块简介，输出运行日志<br>Python2.4版本引入了subprocess模块用来替换os.system()、os.popen()、os.spawn*()等函数以及commands模块<br>json ,pickle模块<br>ElementTree是python的XML处理模块<br>configparser 简介是 Pyhton 标准库中用来解析配置文件的模块，并且内置方法和字典非常接近<br>shutil模块 归档和解包操作<br>paramiko：用于做远程控制的模块<br>requests：是使用 Apache2 Licensed 许可证的 基于Python开发的HTTP 库，其在Python内置模块的基础上进行了高度的封装<br>paramiko模块 ：ssh链接<br>Scrapy：爬虫工具常用的库。<br>Pillow：是PIL（Python图形库）的一个分支。适用于在图形领域工作的人。<br>matplotlib：绘制数据图的库。对于数据科学家或分析师非常有用。<br>OpenCV：图片识别常用的库，通常在练习人脸识别时会用到<br>pytesseract：图片文字识别，即OCR识别<br>wxPython：Python的一个GUI（图形用户界面）工具。<br>SymPy：SymPy可以做代数评测、差异化、扩展、复数等等<br>SQLAlchemy：数据库的库。<br>SciPy    Python的算法和数学工具库。     <br>Scapy    数据包探测和分析库。     <br>pywin32    提供和windows交互的方法和类的Python库。     <br>pyQT    Python的GUI工具。给Python脚本开发用户界面时次于wxPython的选择。     <br>pyGtk    也是Python GUI库。     <br>Pyglet    3D动画和游戏开发引擎。     <br>Pygame    开发2D游戏的时候使用会有很好的效果。     <br>NumPy    为Python提供了很多高级的数学方法。     <br>nose    Python的测试框架。     <br>nltk    自然语言工具包。     <br>IPython    Python的提示信息。包括完成信息、历史信息、shell功能，以及其他很多很多方面。     <br>BeautifulSoup    xml和html的解析库，对于新手非常有用。</p>
-<p>pip: python包管理工具</p>
-<p>pandas-profiling，一行代码生成超详细数据分析报告</p>
+          <p>numpy<br>:前面代表行，后面代表列<br>matplotlib<br>knn算法<br>收集数据<br>欧式距离计算<br>欧式距离也称欧几里得距离，是最常见的距离度量，衡量的是多维空间中两个点之间的绝对距离。<br>import numpy as np<br>x=np.random.random(10)<br>y=np.random.random(10)</p>
+<p>#方法一：根据公式求解<br>d1=np.sqrt(np.sum(np.square(x-y)))</p>
+<p>#方法二：根据scipy库求解<br>from scipy.spatial.distance import pdist<br>X=np.vstack([x,y])<br>d2=pdist(X)</p>
+<p>曼哈顿距离(Manhattan Distance<br>从名字就可以猜出这种距离的计算方法了。想象你在曼哈顿要从一个十字路口开车到另外一个十字路口，驾驶距离是两点间的直线距离吗？显然不是，除非你能穿越大楼。实际驾驶距离就是这个“曼哈顿距离”。而这也是曼哈顿距离名称的来源， 曼哈顿距离也称为城市街区距离(City Block distance)。<br>import numpy as np<br>x=np.random.random(10)<br>y=np.random.random(10)</p>
+<p>#方法一：根据公式求解<br>d1=np.sum(np.abs(x-y))</p>
+<p>#方法二：根据scipy库求解<br>from scipy.spatial.distance import pdist<br>X=np.vstack([x,y])<br>d2=pdist(X,’cityblock’)<br>3. 切比雪夫距离 ( Chebyshev Distance )<br>       国际象棋玩过么？国王走一步能够移动到相邻的8个方格中的任意一个。那么国王从格子(x1,y1)走到格子(x2,y2)最少需要多少步？自己走走试试。你会发现最少步数总是max( | x2-x1 | , | y2-y1 | ) 步 。有一种类似的一种距离度量方法叫切比雪夫距离。<br>5. 标准化欧氏距离 (Standardized Euclidean distance )<br>(1)标准欧氏距离的定义<br>　　标准化欧氏距离是针对简单欧氏距离的缺点而作的一种改进方案。标准欧氏距离的思路：既然数据各维分量的分布不一样，好吧！那我先将各个分量都“标准化”到均值、方差相等吧。均值和方差标准化到多少呢？这里先复习点统计学知识吧，假设样本集X的均值(mean)为m，标准差(standard deviation)为s，那么X的“标准化变量”表示为：<br>6. 马氏距离(Mahalanobis Distance)<br>（1）马氏距离定义<br>       有M个样本向量X1~Xm，协方差矩阵记为S，均值记为向量μ，则其中样本向量X到u的马氏距离表示为：</p>
 
       
     </div>
@@ -294,7 +695,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift206TypeScript/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift197%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -308,7 +709,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/19/M_Swift206TypeScript/" class="post-title-link" itemprop="url">TypeScript</a>
+            <a href="/2021/04/19/M_Swift197%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">机器学习相关算法</a>
         </h2>
 
         <div class="post-meta">
@@ -325,7 +726,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:18:32" itemprop="dateModified" datetime="2021-04-30T16:18:32+08:00">2021-04-30</time>
+                <time title="修改时间：2021-04-30 16:21:29" itemprop="dateModified" datetime="2021-04-30T16:21:29+08:00">2021-04-30</time>
               </span>
 
           
@@ -339,9 +740,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="字符串特性"><a href="#字符串特性" class="headerlink" title="字符串特性"></a>字符串特性</h2><p>多行字符串：就是使用  <code>  </code> 去声明字符串，也就是键盘1左边的键<br>var content = <code>aaa bbb</code>;<br>字符串模板:$符合加上{}括起来的表达式的名字<br>console.log(<code>hello $&#123;myname&#125;</code>);<br>自动拆分字符串:</p>
-<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>参数类型： void、string、number、<br>自定义类型：class<br>参数默认值：在参数后面有等号来指定默认值<br>可选参数：在参数后面加？<br>任意数量的参数：…args</p>
-<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>析构表达式:大括号括起来的数量要和对象里面一样<br>var {code,name} = getUser();<br>箭头表达式：用来生明匿名函数, 消除传统匿名函数this的引用问题=&gt; a + b;</p>
+          <h2 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h2><p>矩阵在计算机图形学中作用非常大，常见的作用有<br>1.矩阵的变换：地图中的平移、缩放、旋转等都是<br>2.矩阵的计算：两个矩阵的乘法，求数据的。<br>3.图像处理：其实图像看作是一个矩阵。每个像素点都需要一个一个值来描述<br>4.数据模型：特征值和特征向量<br>电影用户喜好模型：电影矩阵、用户喜好矩阵等<br>房价矩阵：位置、价格、等等</p>
+<h2 id="概率分析"><a href="#概率分析" class="headerlink" title="概率分析"></a>概率分析</h2><p>K-means算法 聚类算法<br>是一种迭代求解的聚类分析算法，其步骤是，预将数据分为K组，则随机选取K个对象作为初始的聚类中心，然后计算每个对象与各个种子聚类中心之间的距离，把每个对象分配给距离它最近的聚类中心。聚类中心以及分配给它们的对象就代表一个聚类。每分配一个样本，聚类的聚类中心会根据聚类中现有的对象被重新计算。这个过程将不断重复直到满足某个终止条件。终止条件可以是没有（或最小数目）对象被重新分配给不同的聚类，没有（或最小数目）聚类中心再发生变化，误差平方和局部最小。</p>
+<p>朴素贝叶斯和决策树<br>朴素贝叶斯算法在文字识别， 图像识别方向有着较为重要的作用。 可以将未知的一种文字或图像，根据其已有的分类规则来进行分类，最终达到分类的目的。</p>
+<p>梯度下降</p>
+<p>机器学习：<br>统计学<br>概率<br>神经网络</p>
+<p>al五子棋</p>
 
       
     </div>
@@ -361,7 +765,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift204SQL%E8%AF%AD%E5%8F%A5/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift202Promise/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -375,7 +779,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/19/M_Swift204SQL%E8%AF%AD%E5%8F%A5/" class="post-title-link" itemprop="url">SQL语句</a>
+            <a href="/2021/04/19/M_Swift202Promise/" class="post-title-link" itemprop="url">Promise</a>
         </h2>
 
         <div class="post-meta">
@@ -392,7 +796,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:18:23" itemprop="dateModified" datetime="2021-04-30T16:18:23+08:00">2021-04-30</time>
+                <time title="修改时间：2021-04-30 16:18:10" itemprop="dateModified" datetime="2021-04-30T16:18:10+08:00">2021-04-30</time>
               </span>
 
           
@@ -406,684 +810,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>join语句：内链接，全链接、左链接、右链接<br>INNER JOIN(也可以省略 INNER 使用 JOIN，效果一样)来连接以上两张表来读取runoob_tbl表中所有runoob_author字段在tcount_tbl表对应的runoob_count字段值：<br>MySQL LEFT JOIN 会读取左边数据表的全部数据，即便右边表无对应数据。<br>MySQL RIGHT JOIN 会读取右边数据表的全部数据，即便左边边表无对应数据。<br>行转列<br>行转列：把表中特定列（如本文中的：CNAME）的数据去重后做为列名（如查询结果行中的“Java，mysql”，处理后是做为列名输出）；<br>列转行：可以说是行转列的反转，把表中特定列（如本文处理结果中的列名“JAVA，mysql”）做为每一行数据对应列“CNAME”的值；<br>生成唯一序列号<br>如何删除重复数据</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/19/M_Swift171srs%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/19/M_Swift171srs%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">SRS安装</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-19 17:11:30" itemprop="dateCreated datePublished" datetime="2021-03-19T17:11:30+08:00">2021-03-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:10:51" itemprop="dateModified" datetime="2021-04-12T16:10:51+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Mac 环境下srs安装及使用<br>下载<br>git clone <a target="_blank" rel="noopener" href="https://gitee.com/winlinvip/srs.oschina.git">https://gitee.com/winlinvip/srs.oschina.git</a> srs &amp;&amp;<br>cd srs/trunk &amp;&amp; git remote set-url origin <a target="_blank" rel="noopener" href="https://github.com/ossrs/srs.git">https://github.com/ossrs/srs.git</a> &amp;&amp; git pull<br>编译<br>./configure –osx &amp;&amp; make<br>./configure –disable-all –with-ssl –with-hls –with-ffmpeg –with-transcode –with-dvr –with-ingest &amp;&amp; make<br>运行<br>./objs/srs -c conf/srs.conf<br>停止<br>./etc/init.d/srs stop</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/andyzsf/BigBlueButton">https://github.com/andyzsf/BigBlueButton</a><br><a target="_blank" rel="noopener" href="https://gitee.com/winlinvip/srs.oschina">https://gitee.com/winlinvip/srs.oschina</a><br><a target="_blank" rel="noopener" href="https://github.com/ossrs/srs/wiki/v3_CN_Home">https://github.com/ossrs/srs/wiki/v3_CN_Home</a><br>WebRTC<br>RTMP</p>
-<p>sudo rm -rf /usr/local/srs<br>sudo rm -rf /etc/init.d/srs</p>
-<p>常用的直播服务器</p>
-<p>1：nginx+rtmp+module+ffmpeg</p>
-<p>2：SRS</p>
-<p>3：FMS</p>
-<p>4：RED5</p>
-<p>5：Crtmpserver等等</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/dd73132ea5e2">https://www.jianshu.com/p/dd73132ea5e2</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAwMDU1MTE1OQ==&amp;mid=404230356&amp;idx=1&amp;sn=6b73f971c4cf1170adaf4d249480ed9a&amp;scene=1&amp;srcid=0301qrbBZPrLxORTiD5D5IO1&amp;key=b28b03434249256be5dfe068862f4c51d10c5e16b3659de35ce26bd4868f3a186366844bc7a8d3eaf48192b75536009b&amp;ascene=0&amp;uin=MTUwMTI2NjQ2MA==&amp;devicetype=iMac+MacBookPro11,2+OSX+OSX+10.11.4+build(15E65)&amp;version=11020201&amp;pass_ticket=TplbLKZJE2ZwCTACdAM6vZw/aJtVhaRrbn0An3uI6OAbctOQaAXHM9DZBdalM5Fi">https://mp.weixin.qq.com/s?__biz=MzAwMDU1MTE1OQ==&amp;mid=404230356&amp;idx=1&amp;sn=6b73f971c4cf1170adaf4d249480ed9a&amp;scene=1&amp;srcid=0301qrbBZPrLxORTiD5D5IO1&amp;key=b28b03434249256be5dfe068862f4c51d10c5e16b3659de35ce26bd4868f3a186366844bc7a8d3eaf48192b75536009b&amp;ascene=0&amp;uin=MTUwMTI2NjQ2MA%3D%3D&amp;devicetype=iMac+MacBookPro11%2C2+OSX+OSX+10.11.4+build(15E65)&amp;version=11020201&amp;pass_ticket=TplbLKZJE2ZwCTACdAM6vZw%2FaJtVhaRrbn0An3uI6OAbctOQaAXHM9DZBdalM5Fi</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/42162310">https://www.zhihu.com/question/42162310</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/anyrtcIO-Community/anyRTC-RTMPC-iOS">https://github.com/anyrtcIO-Community/anyRTC-RTMPC-iOS</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/Bilibili/ijkplayer">https://github.com/Bilibili/ijkplayer</a></p>
-<p><a target="_blank" rel="noopener" href="http://ffmpeg.org/">http://ffmpeg.org</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/jitsi/jitsi-meet">https://github.com/jitsi/jitsi-meet</a></p>
-<p><a target="_blank" rel="noopener" href="http://www.ctiforum.com/news/guonei/571785.html">http://www.ctiforum.com/news/guonei/571785.html</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/zvideo/1283868871146594304">https://www.zhihu.com/zvideo/1283868871146594304</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/zvideo/1287081304237232128">https://www.zhihu.com/zvideo/1287081304237232128</a></p>
-<p>obs</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/qdgx/WebRtcRoomIOS">https://github.com/qdgx/WebRtcRoomIOS</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/xialixin/srs_code_note/blob/master/doc/live_talk.md">https://github.com/xialixin/srs_code_note/blob/master/doc/live_talk.md</a></p>
-<p>3.1 主播端混流</p>
-<p>该实现思路要求主播分别把自己的视频数据与连麦粉丝的视频数据合成，然后把合成好的视频流、主播自己的的音频数据、连麦粉丝的音频数据推给CDN网络，并经由CDN分发给所有观众。故主播端手机负担的任务更重，对手机性能和网络性能要求也比普通直播时更高一些。主播与粉丝连麦，主播端混流部分的基本流程如下图所示：<br>3.2 服务器混流</p>
-<p>所有步骤和在推流端混流几乎一样，只不过工作环境不一样。所有的步骤都是服务端额外增加的工作量。服务端混流的工作内容和推流端混流不一样的地方在于：推流端解码是不管混流还是不混流都要做的事情，而服务端解码却是因为要混流才额外做的工作。混流是一个比较烧资源的事情，服务端是一个资源比较丰富的地方。</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/qingkouwei/oarplayer">https://github.com/qingkouwei/oarplayer</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/truth/srs-win32">https://github.com/truth/srs-win32</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/guozi058/srs-for-windows">https://github.com/guozi058/srs-for-windows</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/tenry18/live">https://github.com/tenry18/live</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/chatop2020/SRSManager">https://github.com/chatop2020/SRSManager</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/ddssingsong/webrtc_server_node">https://github.com/ddssingsong/webrtc_server_node</a></p>
-<p>JSWebrtc – 支持 SRS 的 Webrtc 播放器</p>
-<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f07f0be088d0">https://www.jianshu.com/p/f07f0be088d0</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wolf-song/p/7708364.html">https://www.cnblogs.com/wolf-song/p/7708364.html</a><br><a target="_blank" rel="noopener" href="http://www.voidcn.com/article/p-eoychcej-bpv.html">http://www.voidcn.com/article/p-eoychcej-bpv.html</a></p>
-<p>画中画<br>ffmpeg -ss 00:00:20 -i testvideo.mp4 -i testvideo1.mp4 -filter_complex “[1:v]scale=320:240[v1];[0:v][v1]overlay=10:10” -s 640x480  -c:v libx264 -preset ultrafast -r 20 -b:v 200k -t 1200 output.mp4</p>
-<p><a target="_blank" rel="noopener" href="http://www.iwangsen.com/2018/06/30/ffmpeg-use/">http://www.iwangsen.com/2018/06/30/ffmpeg-use/</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/machh/article/details/89319669">https://blog.csdn.net/machh/article/details/89319669</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/runner365/LiveVideoCoreSDK">https://github.com/runner365/LiveVideoCoreSDK</a></p>
-<p>流截图<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/lqq_419/article/details/108673936">https://blog.csdn.net/lqq_419/article/details/108673936</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/fengjihu/blog/414556">https://my.oschina.net/fengjihu/blog/414556</a><br><a target="_blank" rel="noopener" href="http://www.voidcn.com/article/p-ehtkhxoa-xt.html">http://www.voidcn.com/article/p-ehtkhxoa-xt.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_33769207/article/details/91542047">https://blog.csdn.net/weixin_33769207/article/details/91542047</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/02/M_Swift168vue%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/02/M_Swift168vue%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD/" class="post-title-link" itemprop="url">前端页面常见功能</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-02 16:18:56" itemprop="dateCreated datePublished" datetime="2021-03-02T16:18:56+08:00">2021-03-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 15:48:07" itemprop="dateModified" datetime="2021-04-12T15:48:07+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.echarts图标（柱状图、折线图、饼状图等）<br>参考echarts官网<br><a target="_blank" rel="noopener" href="https://echarts.apache.org/zh/index.html">https://echarts.apache.org/zh/index.html</a><br>2.echarts和百度地图结合展示（地图覆盖物等）<br>参考百度地图js api 及echarts地图组建<br><a target="_blank" rel="noopener" href="https://echarts.apache.org/examples/zh/index.html">https://echarts.apache.org/examples/zh/index.html</a><br>3.列表数据导出excel<br>后端实现，前端采用axios 支持excel格式导出<br>responseType: ‘blob’,<br>4.word编辑下载及转pdf预览<br>目前项目采用json格式存储word，前端解析json数据展示成word文档样式，编辑就是修改json数据，数据采用v-mode模式双向绑定输入框，实现动态修改。<br>导出采用docxtemplater前端定义word模版格式，将数据塞进word模版中<br>echarts采用前端生成，转成图片存放如前端word模版中<br>pdf预览采用将前端word模版发送给后端，后端通过aspose-words工具转成pdf存储进文件服务器<br>5.excel编辑、下载<br>参考el-table的编辑功能</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/02/M_Swift166vue%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E4%BB%8B%E7%BB%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/02/M_Swift166vue%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">前端vue介绍</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-02 16:18:56" itemprop="dateCreated datePublished" datetime="2021-03-02T16:18:56+08:00">2021-03-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 20:38:50" itemprop="dateModified" datetime="2021-04-12T20:38:50+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>参考：src/router/index.js<br><a target="_blank" rel="noopener" href="https://router.vuejs.org/zh/api/">https://router.vuejs.org/zh/api/</a></p>
-<h2 id="axios-请求"><a href="#axios-请求" class="headerlink" title="axios 请求"></a>axios 请求</h2><p>参考src/utils/request<br>对请求进行简单封装，axios/index.ts<br>import axios, { AxiosRequestConfig, AxiosResponse } from ‘axios’</p>
-<p>axios.defaults.baseURL = ‘<a target="_blank" rel="noopener" href="http://localhost:3001/&#39;">http://localhost:3001/&#39;</a></p>
-<p>axios.interceptors.request.use((config:AxiosRequestConfig) =&gt; {<br>    return config;<br>})</p>
-<p>axios.interceptors.response.use((response:AxiosResponse) =&gt; {<br>    if(response.data.err == 1){<br>        return Promise.reject(response.data.data);<br>    }<br>    return response.data.data;<br>},err =&gt; {<br>    return Promise.reject(err);<br>})</p>
-<p>export default axios</p>
-<h2 id="模版封装"><a href="#模版封装" class="headerlink" title="模版封装"></a>模版封装</h2><p>参考components<br>创建模版组建import 进来，然后使用-代替大写引入即可</p>
-<h2 id="Vue常用语法"><a href="#Vue常用语法" class="headerlink" title="Vue常用语法"></a>Vue常用语法</h2><pre><code>1.结构
-name: &#39;IceFill&#39; // vue名称
-components: &#123;MyStore&#125;, // 模版
-filters 过滤器
-&#123;&#123;item.deleteStatus | toStateChinese&#125;&#125;
-2.数据绑定
-v-text=“” 只能绑定纯文本
-v-html：可以识别msg文本中的DOM标签。
-v-bind可以绑定属性,可以直接简写为冒号‘:’。下面例子将title属性绑定在mytitle上
-&lt;input type=&quot;button&quot; value=&quot;按钮&quot; v-bind:title=&quot;mytitle&quot; &gt;
-v-model=“” 表单元素value 不可直接&#123;&#123;&#125;&#125;获取，需在vue初始化设置一下
-v-model永远指向表单元素的value值，
-注意除v-model外绑定变量前面要加: 如：:disabled=&quot;isDetail&quot; 
-3.事件绑定
-v-on:click=“” 或者 @click＝“”
-4.循环
-v-for=“item in list” 循环 item循环到的数组值
-v-for=“(item,key) in list” key循环到的下标index
-5.逻辑判断
-v-if 布尔值 为false 代表节点消失（有更高的渲染开销）
--if 与 v-else-if v-else 可以构成判断（必须要连着一块写）
-v-if和v-show的区别
-7.样式
-v-bind:style=“&#123; color: activeColor, fontSize: fontSize + ‘px’ &#125;”
-8.类名设置
-v-bind:class=“&#123;‘class-a’:isa,‘class-b’:isb&#125;”
-！important:能够覆盖样式原本的权重，增加指定的样式的权重
-9.路由使用
-https://router.vuejs.org/zh/api/
-this.$router.push(&#39;/add-snow&#39;)
-10.模版导入
-import &#123; getUserLineInfo, getUserInfo &#125; from &#39;@/api/user&#39;
-11.生命周期
-beforeCreate
-created
-beforeMount
-Mounted
-beforeUpdate
-Updated
-beforeDestroy
-destroyed
-方法
-methods、computed、data、watch、props
-其他常用方法
-数据合并
-Object.assign（a，b）
-异步安全
-new Promise((resolve, reject) =&gt; &#123;&#125;)
-Json
-JSON.parse、JSON.stringify
-异步：async、await
-事件传递
-this.$emit(&#39;clickRow&#39;, row)
-
-
-## 页面开发流程
-1.在src/views下面创建页面文件
-如src/views/ice-fault/ice-fault.vue
-包括html、js、css三个部分，可以参考其他页面，或者复制其它页面进行删减
-2.在路由中引入页面
-src/router/index.js
-  &#123;
-    path: &#39;/ice-fault&#39;,
-    name: &#39;IceFault&#39;,
-    component: () =&gt; import(&#39;@/views/ice-fault/ice-fault.vue&#39;),
-    meta: &#123;
-      title: &#39;冰害故障管理&#39;
-    &#125;
-  &#125;,
-在入口除采用router跳转到页面中
-3.编写页面布局
-页面所使用的组建全部在element-ui官网中
-框架样式修改，在chrome中打开调试工具，找到ui组建样式的class，然后根据情况自定义
-4.编写业务逻辑
-js部分数据写在data中、方法在methods中、比较常规
-5.网络请求
-在src/api下面建页面请求接口
-如：src/api/ice/fault/index.js
-import request from &#39;utils/request&#39;
-// 新增冰害故障
-export function iceFaultAdd(data) &#123;
-  return request(&#123;
-    url: `/icetroubledamage/record`,
-    method: &#39;post&#39;,
-    data
-  &#125;)
-&#125;
-import进入页面
-import &#123;
-  iceFaultDelete,
-  iceFaultSearch,
-&#125; from &#39;api/ice-fault&#39;
-6.组建引入
-a)import
-import BarChart from &#39;@/components/charts/ice-fault/barChart.vue&#39;
-b)components
- components: &#123;
-    BarChart,
-  &#125;,
-c)使用
-&lt;bar-chart :chart-data=&quot;areaArrCount&quot; :count=&quot;areaArrCount.total&quot; @bar-detail=&quot;openChartDetail&quot;&gt; &lt;/bar-chart&gt;
-传值在组建的props中定义
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/02/M_Swift167vue%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/02/M_Swift167vue%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">vue前端开发环境搭建</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-02 16:18:56" itemprop="dateCreated datePublished" datetime="2021-03-02T16:18:56+08:00">2021-03-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-21 14:34:08" itemprop="dateModified" datetime="2021-04-21T14:34:08+08:00">2021-04-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>安装如下框架<br>node、npm、nvm等<br>mac推荐使用homebrew安装</p>
-<h2 id="开发工具"><a href="#开发工具" class="headerlink" title="开发工具"></a>开发工具</h2><p>建议Visual Studio Code （vscode有很多插件，网上自行百度）</p>
-<h2 id="项目创建"><a href="#项目创建" class="headerlink" title="项目创建"></a>项目创建</h2><p>采用vue-cli创建项目，先全局安装vue-cli<br>Vue 3 npm install -g @vue/cli<br>Vue 2 npm install -g vue-cli<br>创建完成后输入vue -v 查看版本<br>Vue2创建项目 vue init webpack projectname<br>Vue3创建项目 vue create projectname<br>新项目建议使用vue3，创建流程参考如下地址<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/loveyaxin/p/10107550.html">https://www.cnblogs.com/loveyaxin/p/10107550.html</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/12a64b7bc665">https://www.jianshu.com/p/12a64b7bc665</a><br>建议安装依赖有：<br>Choose Vue version<br>Babel<br>TypeScript<br>Router<br>Vuex<br>CSS Pre-processors</p>
-<h2 id="浏览器"><a href="#浏览器" class="headerlink" title="浏览器"></a>浏览器</h2><p>Chrome<br>推荐安装vue调试插件</p>
-<h2 id="组建安装"><a href="#组建安装" class="headerlink" title="组建安装"></a>组建安装</h2><p>初级建议项目依赖安装vue ui安装<br>安装完vue-cli后，终端执行命令：vue-ui<br>常用组建推荐使用npm安装<br>npm install element-plus –save<br>采用vue-cli脚本安装<br>Vue add vue-router<br>Vue基础组建<br>“vue”: “^2.6.11”, // vue<br>“vue-router”: “^3.1.6”, // 路由<br>“vuex”: “^3.1.3” // 数据共享</p>
-<h2 id="常用UI组建"><a href="#常用UI组建" class="headerlink" title="常用UI组建"></a>常用UI组建</h2><p>pc端：ElementUI、 View UI<br>移动端：vant、Mint UI、Cube UI<br>管理系统框架：vue-vben-admin</p>
-<h2 id="常用CSS及预处理库"><a href="#常用CSS及预处理库" class="headerlink" title="常用CSS及预处理库"></a>常用CSS及预处理库</h2><p>“sass”: “^1.26.5”,<br>“sass-loader”: “^8.0.2”,<br>sass和less区别<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pink-chen/p/10727915.html">https://www.cnblogs.com/pink-chen/p/10727915.html</a><br>“animate.css”: “^3.7.2”, // 动画组建<br>“normalize.css”: “^8.0.1”,// css在不同浏览器中样式统一<br>lib-flexible 是网页做 html 的 font-size 适配用的<br>postcss-pxtorem 是在编译的时候对 px 单位转换为 rem 单位时使用</p>
-<h2 id="常用js库"><a href="#常用js库" class="headerlink" title="常用js库"></a>常用js库</h2><p>百度搜索即可，一般都有教程<br>“core-js”: “^3.6.5”,// 基础js<br>“axios”: “^0.19.2”, // 网络请求<br>“docxtemplater”: “^3.19.7”, // 前端word模版库<br>“echarts”: “^4.9.0”, // 图表库<br>“file-saver”: “^2.0.5”, // 文件保存库<br>“js-base64”: “^2.5.2”, // 加密<br>“js-cookie”: “^2.2.1”, // 存储<br>“js-md5”: “^0.7.3”, // 加密<br>“jszip-utils”: “^0.1.0”, // 压缩<br>“pizzip”: “^3.0.6”, // 压缩<br>“qs”: “^6.9.4”, // url编码<br>“screenfull”: “^5.0.2”, // 全屏功能<br>图片裁剪、压缩组件： vue-croppa<br>时间格式化库： date-fns<br>动画js库： Velocity.js<br>打印div组件： vue-print-nb<br>丰富文本编辑器：  vue-quill-editor</p>
-<h2 id="Webpack配置"><a href="#Webpack配置" class="headerlink" title="Webpack配置"></a>Webpack配置</h2><p>vue内部已经配置好了webpack，如果想扩展需要创建vue.config.js<br>vue.config.js<br><a target="_blank" rel="noopener" href="https://cli.vuejs.org/zh/config/#publicpath">https://cli.vuejs.org/zh/config/#publicpath</a></p>
-<h2 id="为什么npm打包的dist不能直接访问"><a href="#为什么npm打包的dist不能直接访问" class="headerlink" title="为什么npm打包的dist不能直接访问"></a>为什么npm打包的dist不能直接访问</h2><p>这是因为dist文件是需要放在服务器上运行的，资源默认放在根目录下。打开index.html可以发现，css和js文件的引用使用的是绝对路径，例如：，对本地磁盘来说，/指向磁盘根目录，所以找不到引用的文件。</p>
-<p>有以下解决方案：1. 使用http-server创建一个服务器来访问资源；2. 将index.html中资源引用的绝对路径改为相对路径；3.还可以手写一个简单的node服务器。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift175%E5%9C%B0%E5%9B%BE%E9%A1%B9%E7%9B%AE%E4%B8%AD%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift175%E5%9C%B0%E5%9B%BE%E9%A1%B9%E7%9B%AE%E4%B8%AD%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">地图项目中对象设计</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-31 10:37:09" itemprop="dateModified" datetime="2021-03-31T10:37:09+08:00">2021-03-31</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Feature、FeatureClass、FeatureLayer，这三者熟悉AO和AE的同仁，应该很清楚，这是三个必知必会的概念。Feature：单个地理要素，含有空间信息与属性信息：Feature=Geometry+Properties；FeatureClass：要素类或要素集合，同一类的要素集合，具有相同地理概化特征（空间图形类型相同），又具有相同的属性特征；FeatureLayer：FeatureClass的一个视图，就ArcGIS概念来类比，FeatureLayer  ≈ FeatureClass + Zoom Level + Filter + Renderer（Symbology）+ Label + …<br>注意：本文的Graphic更接近ArcGIS Engine的Graphic而非ArcGIS JS API的Graphic，以后会建立Feature类，Feature = Geometry + Properties （即空间+属性）。而目前的Graphic用以描述图形，一个Graphic对应一个Symbol（当然具体应用时可复用）；Feature则常用于，同一类要素组成FeatureClass，并通过设置Renderer来呈现为Feature-Layer</p>
-<h2 id="Symbol的理解"><a href="#Symbol的理解" class="headerlink" title="Symbol的理解"></a>Symbol的理解</h2><p> /**</p>
-<ul>
-<li>符号基类</li>
-<li>@remarks</li>
-<li>如按现实世界来抽取对象基类，下述属性不应放在基类</li>
-<li>但考虑到Canvas的上下文设定，才决定抽取到基类</li>
-<li>/</li>
-</ul>
-<h2 id="Feature的理解"><a href="#Feature的理解" class="headerlink" title="Feature的理解"></a>Feature的理解</h2><p>/**</p>
-<ul>
-<li>矢量要素</li>
-<li><p></li>
-<li>Graphic vs Feature：Graphic作为图形，可以一图形对应一渲染符号；而Feature作为矢量要素，常规应该根据图层设定的渲染方式Renderer来得到各个Feature的渲染符号，而非单一设置。<br/></li>
-<li>Graphic = Geometry + Symbol<br/></li>
-<li>Feature = Geometry + Properties<br/></li>
-<li>ArcGIS AO/AE: Feature = Geometry + Properties<br/></li>
-<li>ArcGIS JS API: Feature = Graphic = Geometry + Properties + Symbol<br/></li>
-<li></p></li>
-<li>/<h2 id="Layer的理解"><a href="#Layer的理解" class="headerlink" title="Layer的理解"></a>Layer的理解</h2>/**</li>
-<li>图层基类</li>
-<li>/<h2 id="Graphic的理解"><a href="#Graphic的理解" class="headerlink" title="Graphic的理解"></a>Graphic的理解</h2>/**</li>
-<li>图形要素</li>
-<li>区别与Feature，单纯的图形</li>
-<li>/</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift177%E8%8E%B7%E5%8F%96%E7%82%B9%E7%BA%BF%E9%9D%A2%E4%B8%AD%E5%BF%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift177%E8%8E%B7%E5%8F%96%E7%82%B9%E7%BA%BF%E9%9D%A2%E4%B8%AD%E5%BF%83/" class="post-title-link" itemprop="url">获取点线面中心</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:04:22" itemprop="dateModified" datetime="2021-04-12T16:04:22+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <pre><code>/**
- * 获取点中心点
- * @param &#123;CoordinateType&#125; type - 坐标类型
- * @param &#123;Projection&#125; projection - 坐标投影转换
- * @return &#123;number[]&#125; 中心点坐标
- */
-getCenter(type: CoordinateType = CoordinateType.Latlng, projection: Projection = new WebMercator()) &#123;
-    if (!this._projected) this.project(projection);
-    if (type === CoordinateType.Latlng) &#123;
-        return [this._lng, this._lat];
-    &#125; else &#123;
-        return [this._x, this._y];
-    &#125;
-&#125;
-/**
- * 获取线的中心点
- * @remarks
- * from Leaflet
- * @param &#123;CoordinateType&#125; type - 坐标类型
- * @param &#123;Projection&#125; projection - 坐标投影转换
- * @return &#123;number[]&#125; 中心点坐标
- */
-getCenter(type: CoordinateType = CoordinateType.Latlng, projection: Projection = new WebMercator()) &#123;
-    if (!this._projected) this.project(projection);
-    let i, halfDist, segDist, dist, p1, p2, ratio,
-        points = this._coordinates,
-        len = points.length;
-
-    if (!len) &#123; return null; &#125;
-
-    // polyline centroid algorithm; only uses the first ring if there are multiple
-
-    for (i = 0, halfDist = 0; i &lt; len - 1; i++) &#123;
-        halfDist += Math.sqrt((points[i + 1][0] - points[i][0]) * (points[i + 1][0] - points[i][0]) + (points[i + 1][1] - points[i][1]) * (points[i + 1][1] - points[i][1])) / 2;
-    &#125;
-
-    let center;
-    // The line is so small in the current view that all points are on the same pixel.
-    if (halfDist === 0) &#123;
-        center = points[0];
-    &#125;
-
-    for (i = 0, dist = 0; i &lt; len - 1; i++) &#123;
-        p1 = points[i];
-        p2 = points[i + 1];
-        segDist = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
-        dist += segDist;
-
-        if (dist &gt; halfDist) &#123;
-            ratio = (dist - halfDist) / segDist;
-            center = [
-                p2[0] - ratio * (p2[0] - p1[0]),
-                p2[1] - ratio * (p2[1] - p1[1])
-            ];
-        &#125;
-    &#125;
-
-    if (type === CoordinateType.Latlng) &#123;
-        return projection.unproject(center);
-    &#125; else &#123;
-        return center;
-    &#125;
-&#125;
-/**
- * 获取面的中心点
- * @remarks
- * from Leaflet
- * @param &#123;CoordinateType&#125; type - 坐标类型
- * @param &#123;Projection&#125; projection - 坐标投影转换
- * @return &#123;number[]&#125; 中心点坐标
- */
-getCenter(type: CoordinateType = CoordinateType.Latlng, projection: Projection = new WebMercator()) &#123;
-    if (!this._projected) this.project(projection);
-    let i, j, p1, p2, f, area, x, y, center,
-        points = this._coordinates[0],
-        len = points.length;
-
-    if (!len) &#123; return null; &#125;
-
-    // polygon centroid algorithm; only uses the first ring if there are multiple
-
-    area = x = y = 0;
-
-    for (i = 0, j = len - 1; i &lt; len; j = i++) &#123;
-        p1 = points[i];
-        p2 = points[j];
-
-        f = p1[1] * p2[0] - p2[1] * p1[0];
-        x += (p1[0] + p2[0]) * f;
-        y += (p1[1] + p2[1]) * f;
-        area += f * 3;
-    &#125;
-
-    if (area === 0) &#123;
-        // Polygon is so small that all points are on same pixel.
-        center = points[0];
-    &#125; else &#123;
-        center = [x / area, y / area];
-    &#125;
-
-    if (type === CoordinateType.Latlng) &#123;
-        return projection.unproject(center);
-    &#125; else &#123;
-        return center;
-    &#125;
-&#125;
-</code></pre>
+          <p>1、主要用于异步计算<br>2、可以将异步操作队列化，按照期望的顺序执行，返回符合预期的结果<br>3、可以在对象之间传递和操作promise，帮助我们处理队列</p>
+<p>promise是一个对象，对象和函数的区别就是对象可以保存状态，函数不可以（闭包除外）<br>并未剥夺函数return的能力，因此无需层层传递callback，进行回调获取数据<br>代码风格，容易理解，便于维护<br>多个异步等待合并便于解决<br>new Promise(<br>  function (resolve, reject) {<br>    // 一段耗时的异步操作<br>    resolve(‘成功’) // 数据处理完成<br>    // reject(‘失败’) // 数据处理出错<br>  }<br>).then(<br>  (res) =&gt; {console.log(res)},  // 成功<br>  (err) =&gt; {console.log(err)} // 失败<br>)<br>resolve作用是，将Promise对象的状态从“未完成”变为“成功”（即从 pending 变为 resolved），在异步操作成功时调用，并将异步操作的结果，作为参数传递出去；<br>reject作用是，将Promise对象的状态从“未完成”变为“失败”（即从 pending 变为 rejected），在异步操作失败时调用，并将异步操作报出的错误，作为参数传递出去。<br>promise有三个状态：<br>1、pending[待定]初始状态<br>2、fulfilled[实现]操作成功<br>3、rejected[被否决]操作失败<br>当promise状态发生改变，就会触发then()里的响应函数处理后续步骤；<br>promise状态一经改变，不会再变。<br>promise可以对应多个then，一个执行完，就会执行下一个</p>
+<p>Promise.all可以将多个Promise实例包装成一个新的Promise实例。同时，成功和失败的返回值是不同的，成功的时候返回的是一个结果数组，而失败的时候则返回最先被reject失败状态的值。<br>队列、遍历等实现</p>
 
       
     </div>
@@ -1102,7 +831,7 @@ getCenter(type: CoordinateType = CoordinateType.Latlng, projection: Projection =
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/39/">39</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/11/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/13/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1168,7 +897,7 @@ getCenter(type: CoordinateType = CoordinateType.Latlng, projection: Projection =
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">390</span>
+          <span class="site-state-item-count">400</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
