@@ -148,6 +148,76 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">geotools学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:29:47" itemprop="dateModified" datetime="2021-11-21T16:29:47+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>安装gdal<br>brew install gdal<br>安装tippecanoe<br>brew install gdal tippecanoe<br>安装mbutil<br>git clone <a target="_blank" rel="noopener" href="https://github.com/mapbox/mbutil.git">https://github.com/mapbox/mbutil.git</a><br>cd mbutil<br>sudo python setup.py install</p>
+<p>shpfile转geojson<br>ogr2ogr -f GeoJSON ne_10m_railroads.geojson ne_10m_railroads.shp</p>
+<p>geojson转mbtile<br>tippecanoe -o file.mbtiles file.json<br>使用tippecanoe 直接生成缓存目录的pbf：<br>tippecanoe us_states.json -e us_stats_tileset -zg<br>如果你不确定所使用数据的最大级别，可以使用 -zg 来根据数据密度自动估算一个级别。<br>tippecanoe -o outfile.mbtiles -Z8  -z20 infile.geojson<br> -Z 是切片的最小zoom, -z 切片的最大zoom<br>tippecanoe us_states.json -e us_stats_tileset -Z8  -z8<br>合并多个图层<br>tippecanoe -e us_stats_tileset -zg us_states.json us_states1.json<br>tippecanoe在制作切片进行了gzip压缩<br>tippecanoe -e lakepbf -pC -Z8 -z14 -f lake.geojson</p>
+<p>mbtile转pbf<br>mb-util –image_format=pbf opgrsp_gb.mbtiles ./opgrsp_gb_tileset<br>转换出来的是gzip格式的，需要解压缩一下<br>gzip -d -r -S .pbf *<br>解压缩后会丢失.pbf的后缀，可以直接在地址上不加后缀，或者调用如下<br>find . -type f -exec mv ‘{}’ ‘{}’.pbf ;</p>
+<p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a></p>
+<p>数据转换：<br>java开发，采用geotools工具集，将mif或shp文件转换成geojson</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift248mapbox%20api/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -209,76 +279,6 @@
 <p>样式服务：<br>地址 + 版本 + 样式名称 + token<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?token=123">https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?token=123</a></p>
 <p>图标（sprite）：<br>mapbox://sprites/mapbox/streets-v11<br>首先，对于索引文件和图像文件，它们将在高dpi设备上将@2x附加到URL。<br>其次，它们将附加文件扩展名:索引文件的扩展名是.json，图像文件的扩展名是.png。<br>例如，如果你在你的样式中指定了”sprite”: “<a href="https://example.com/sprite&quot;%EF%BC%8C%E6%B8%B2%E6%9F%93%E5%99%A8%E4%BC%9A%E5%8A%A0%E8%BD%BD">https://example.com/sprite&quot;，渲染器会加载</a>:<br><a href="https://example.com/sprite.json%E5%92%8Chttps://example.com/sprite.png%EF%BC%8C%E6%88%96%E8%80%85">https://example.com/sprite.json和https://example.com/sprite.png，或者</a><br><a href="https://example.com/sprite@2x.json%E5%92%8Chttps://example.com/sprite@2x.png%E3%80%82">https://example.com/sprite@2x.json和https://example.com/sprite@2x.png。</a></p>
 <p>字体（glyphs）：<br>mapbox://fonts/mapbox/{fontstack}/{range}.pbf</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/28/M_Swift247geotools%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">geotools学习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-21 16:29:47" itemprop="dateModified" datetime="2021-11-21T16:29:47+08:00">2021-11-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>安装gdal<br>brew install gdal<br>安装tippecanoe<br>brew install gdal tippecanoe<br>安装mbutil<br>git clone <a target="_blank" rel="noopener" href="https://github.com/mapbox/mbutil.git">https://github.com/mapbox/mbutil.git</a><br>cd mbutil<br>sudo python setup.py install</p>
-<p>shpfile转geojson<br>ogr2ogr -f GeoJSON ne_10m_railroads.geojson ne_10m_railroads.shp</p>
-<p>geojson转mbtile<br>tippecanoe -o file.mbtiles file.json<br>使用tippecanoe 直接生成缓存目录的pbf：<br>tippecanoe us_states.json -e us_stats_tileset -zg<br>如果你不确定所使用数据的最大级别，可以使用 -zg 来根据数据密度自动估算一个级别。<br>tippecanoe -o outfile.mbtiles -Z8  -z20 infile.geojson<br> -Z 是切片的最小zoom, -z 切片的最大zoom<br>tippecanoe us_states.json -e us_stats_tileset -Z8  -z8<br>合并多个图层<br>tippecanoe -e us_stats_tileset -zg us_states.json us_states1.json<br>tippecanoe在制作切片进行了gzip压缩<br>tippecanoe -e lakepbf -pC -Z8 -z14 -f lake.geojson</p>
-<p>mbtile转pbf<br>mb-util –image_format=pbf opgrsp_gb.mbtiles ./opgrsp_gb_tileset<br>转换出来的是gzip格式的，需要解压缩一下<br>gzip -d -r -S .pbf *<br>解压缩后会丢失.pbf的后缀，可以直接在地址上不加后缀，或者调用如下<br>find . -type f -exec mv ‘{}’ ‘{}’.pbf ;</p>
-<p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a></p>
-<p>数据转换：<br>java开发，采用geotools工具集，将mif或shp文件转换成geojson</p>
 
       
     </div>
@@ -429,6 +429,76 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift252mapbox%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift252mapbox%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" class="post-title-link" itemprop="url">mapbox开源项目</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:31:40" itemprop="dateModified" datetime="2021-11-21T16:31:40+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>mapbox-gl-native<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native">https://hub.fastgit.org/mapbox/mapbox-gl-native</a></p>
+<p>iOS SDK<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git">https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git</a>     ios-v5.9.0</p>
+<p>iOS例子<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/ios-sdk-examples">https://hub.fastgit.org/mapbox/ios-sdk-examples</a></p>
+<p>Android SDK<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-android/tree/android-v9.2.1">https://hub.fastgit.org/mapbox/mapbox-gl-native-android/tree/android-v9.2.1</a><br>Js</p>
+<p>Mvt数据服务等<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/openmaptiles">https://hub.fastgit.org/openmaptiles</a></p>
+<p>mvt数据转换流程<br><a target="_blank" rel="noopener" href="https://geovation.github.io/build-your-own-static-vector-tile-pipeline">https://geovation.github.io/build-your-own-static-vector-tile-pipeline</a><br><a target="_blank" rel="noopener" href="https://www.doc88.com/p-7844750681654.html">https://www.doc88.com/p-7844750681654.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift251mapbox%E5%88%86%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -485,6 +555,138 @@
 <p>1.数据服务<br>2.数据转换工具<br>3.优化sdk调用流程<br>4.opengl渲染</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/mapbox/tilelive">https://github.com/mapbox/tilelive</a></p>
 <p>“fill”:<br>带有可选描边边框的填充多边形。<br>“line”:<br>A stroked line.<br>“symbol”:<br>图标或文本标签<br>“circle”:<br>一个圆<br>“heatmap”:<br>一个热图<br>“fill-extrusion”:<br>一个挤压的(3D)多边形<br>“raster”:<br>栅格地图纹理，如卫星图像<br>“hillshade”:<br>基于DEM数据的客户端山体阴影可视化。<br>“background”:<br>地图的底色或图案<br>“sky”:<br>一个围绕着地图的球形圆顶，总是在所有其他层的后面渲染。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift255mapbox%E6%A0%B7%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift255mapbox%E6%A0%B7%E5%BC%8F/" class="post-title-link" itemprop="url">mapbox样式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:32:57" itemprop="dateModified" datetime="2021-11-21T16:32:57+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift256mapbox%E5%AD%97%E4%BD%93%E5%9B%BE%E6%A0%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/28/M_Swift256mapbox%E5%AD%97%E4%BD%93%E5%9B%BE%E6%A0%87/" class="post-title-link" itemprop="url">mapbox字体图标</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-21 16:33:17" itemprop="dateModified" datetime="2021-11-21T16:33:17+08:00">2021-11-21</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>字体：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/chuhanning9279/article/details/100970179">https://blog.csdn.net/chuhanning9279/article/details/100970179</a></p>
+<h1 id="图标转换"><a href="#图标转换" class="headerlink" title="图标转换"></a>图标转换</h1><p>nvm install 6.17.1<br>nvm use 6.17.1<br>npm install -g @mapbox/spritezero-cli</p>
+<p>spritezero basicv8 ./_svg</p>
 
       
     </div>
@@ -574,7 +776,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift252mapbox%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift257mvt%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -588,7 +790,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/06/28/M_Swift252mapbox%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" class="post-title-link" itemprop="url">mapbox开源项目</a>
+            <a href="/2021/06/28/M_Swift257mvt%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/" class="post-title-link" itemprop="url">mvt开发流程</a>
         </h2>
 
         <div class="post-meta">
@@ -605,7 +807,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-21 16:31:40" itemprop="dateModified" datetime="2021-11-21T16:31:40+08:00">2021-11-21</time>
+                <time title="修改时间：2021-11-21 16:33:38" itemprop="dateModified" datetime="2021-11-21T16:33:38+08:00">2021-11-21</time>
               </span>
 
           
@@ -619,214 +821,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>mapbox-gl-native<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native">https://hub.fastgit.org/mapbox/mapbox-gl-native</a></p>
-<p>iOS SDK<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git">https://hub.fastgit.org/mapbox/mapbox-gl-native-ios.git</a>     ios-v5.9.0</p>
-<p>iOS例子<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/ios-sdk-examples">https://hub.fastgit.org/mapbox/ios-sdk-examples</a></p>
-<p>Android SDK<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/mapbox/mapbox-gl-native-android/tree/android-v9.2.1">https://hub.fastgit.org/mapbox/mapbox-gl-native-android/tree/android-v9.2.1</a><br>Js</p>
-<p>Mvt数据服务等<br><a target="_blank" rel="noopener" href="https://hub.fastgit.org/openmaptiles">https://hub.fastgit.org/openmaptiles</a></p>
-<p>mvt数据转换流程<br><a target="_blank" rel="noopener" href="https://geovation.github.io/build-your-own-static-vector-tile-pipeline">https://geovation.github.io/build-your-own-static-vector-tile-pipeline</a><br><a target="_blank" rel="noopener" href="https://www.doc88.com/p-7844750681654.html">https://www.doc88.com/p-7844750681654.html</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift255mapbox%E6%A0%B7%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/28/M_Swift255mapbox%E6%A0%B7%E5%BC%8F/" class="post-title-link" itemprop="url">mapbox样式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-21 16:32:57" itemprop="dateModified" datetime="2021-11-21T16:32:57+08:00">2021-11-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>样式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/api/maps/styles/">https://docs.mapbox.com/api/maps/styles/</a><br>Mvt数据格式：<br><a target="_blank" rel="noopener" href="https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/">https://docs.mapbox.com/vector-tiles/reference/mapbox-streets-v8/</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift253mapbox%E8%AF%B7%E6%B1%82/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/28/M_Swift253mapbox%E8%AF%B7%E6%B1%82/" class="post-title-link" itemprop="url">mapbox请求</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-21 16:31:59" itemprop="dateModified" datetime="2021-11-21T16:31:59+08:00">2021-11-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>// <a target="_blank" rel="noopener" href="https://api.mapbox.com/">https://api.mapbox.com</a></p>
-<p>// 1.请求样式配置<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/styles/v1/mapbox/streets-v8?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">http://192.168.3.86:8080/styles/v1/mapbox/streets-v8?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
-<p>// 2.请求高程配置<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&amp;secure">http://192.168.3.86:8080/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ&amp;secure</a></p>
-<p>// 3.请求图片<br><a target="_blank" rel="noopener" href="http://192.168.3.86:8080/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">http://192.168.3.86:8080/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a><br>对比：<br><a target="_blank" rel="noopener" href="https://api.mapbox.com/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ">https://api.mapbox.com/styles/v1/mapbox/streets-v11/sprite@2x.json?access_token=pk.eyJ1IjoicWlhbnFpYW5nIiwiYSI6ImNrcjRwdGlhYzFkMGYzMHRjNnR2ZDZkNGoifQ.mRcBNO2j_D3URTnVK-g-WQ</a></p>
-<p>// 4.请求字体</p>
-<p>程序默认数据路径<br>normalizeSourceURL = baseURL + “/v4/{domain}.json?access_token=” + accessToken + “&amp;secure”;<br>normalizeStyleURL = baseURL + “/styles/v1{path}?access_token=” + accessToken;<br>normalizeSpriteURL = baseURL + “/styles/v1{directory}{filename}/sprite{extension}?access_token=” + accessToken;<br>normalizeGlyphsURL = baseURL + “/fonts/v1{path}?access_token=” + accessToken;<br>normalizeTileURL = baseURL + “/v4{path}?access_token=” + accessToken;</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/28/M_Swift256mapbox%E5%AD%97%E4%BD%93%E5%9B%BE%E6%A0%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/28/M_Swift256mapbox%E5%AD%97%E4%BD%93%E5%9B%BE%E6%A0%87/" class="post-title-link" itemprop="url">mapbox字体图标</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-28 16:35:43" itemprop="dateCreated datePublished" datetime="2021-06-28T16:35:43+08:00">2021-06-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-21 16:33:17" itemprop="dateModified" datetime="2021-11-21T16:33:17+08:00">2021-11-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>字体：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/chuhanning9279/article/details/100970179">https://blog.csdn.net/chuhanning9279/article/details/100970179</a></p>
-<h1 id="图标转换"><a href="#图标转换" class="headerlink" title="图标转换"></a>图标转换</h1><p>nvm install 6.17.1<br>nvm use 6.17.1<br>npm install -g @mapbox/spritezero-cli</p>
-<p>spritezero basicv8 ./_svg</p>
+          <p>数据制作流程：<br>1.整理文件名称分类如：water、road、poi等 （对应mvt样式的图层）<br>2.将shp文件抽稀拆分成n层分文件存放，数据字段转成mvt格式<br>3.将分层后的shp数据转geojson格式<br>4.将geojson转mvt</p>
+<p>SDK开发流程：<br>1.删掉不用的库<br>2.修改key鉴权机制，修改服务地址<br>3.修改接口<br>4.修改类名等</p>
+<p>样式文件设计流程：<br>1.设计图层样式<br>2.字体库打包<br>3.图标库打包</p>
 
       
     </div>

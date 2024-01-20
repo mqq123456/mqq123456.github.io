@@ -148,134 +148,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift207Vue%E6%9E%84%E5%BB%BA%E6%9D%83%E9%99%90%E9%A1%B5%E9%9D%A2/" class="post-title-link" itemprop="url">vue构建前端权限管理页面</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:38" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>前端开发完后需要实现权限管理，需要不同的地方有不同的权限，本来这个应该是后端的一个接口来控制的，但是，思来想去页面是前端的，<br>也得前端告诉后端有哪些地方需要权限啊，接下来就是权限设计的计划了<br>因为最终还是要后端来给前端的，交互方式普遍都是采用json，那么就思考怎么生成json吧，具体json设计如下<br>     array:[<br>      {<br>        key:”dashbord”,<br>        name:”总览权限控制”,<br>        value:[<br>          {<br>            key:”show”,<br>            name:’是否显示’,<br>            value: true<br>          },{<br>            key:”show_daily”,<br>            name:’是否显示工作日报’,<br>            value: true<br>          }<br>        ]<br>    }];<br>其实非常直接，就是哪些对方需要权限，然后按模块划分出来，这样就是一个数组的结构，然后每个数组就是一个模块<br>每个模块都有一个key来表示模块的唯一性，有name来描述模块，模块下面有很多权限，我们又设计成一个数组<br>每个权限都是key、name、value形式，分别表示唯一性，权限描述、是否具备权限。<br>json设计完了，那么我想我们如果有一个非常漂亮的展示页面就更直观了，我们使用elementui，开源的框架能够非常方便的构建ui<br>具体设计如下：<br> &lt;el-tabs tab-position=”left” @tab-click=”handleClick”&gt;<br>    <el-tab-pane :label="item.name" v-for="(item,index) of array" :key="index"><br>      <el-row :gutter="20" v-for="(subitem,subindex) of item.value" :key="subindex" style="padding:10px;"><br>        <el-col :span="8"><el-input v-model="subitem.name" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8"><el-input v-model="subitem.key" placeholder="请输入内容"></el-input></el-col><br>        <el-col :span="8" style="line-height:40px;"><el-switch v-model="subitem.value"></el-switch></el-col><br>      </el-row><br>      <el-row><br>        <el-col :span="20">&lt;el-button @click=”addChildClick”&gt;新增</el-button></el-col><br>      </el-row><br>    </el-tab-pane><br>  </el-tabs><br>代码非常简单，就是遍历json，把模块做成一个左侧的tab栏<br>然后再每个模块栏里面遍历value，用输入框和switch表示权限信息，我的想法是利用input的双向绑定，我们能够非常简单的修改编辑权限<br>当然，编辑的也就是我们的json数据了，我们再设计一个下载按钮就可以非常方便的下载数据了：<br>     var json = JSON.stringify(this.array,null,’\t’);<br>    const link = document.createElement(‘a’)<br>    link.style.display = ‘none’<br>    link.href = window.URL.createObjectURL(new Blob([json]))<br>    link.setAttribute(‘download’, ‘permissions.json’)<br>    document.body.appendChild(link)<br>    link.click()<br>    document.body.removeChild(link)<br>后面我们又设计了一个新增的按钮，然后也可以新增权限了，这里就不再赘述了，<br>最大的问题是我们修改完数据，我们不能动态的修改vue中json的代码，我想我们是不是应该把这个下载和json设计在一个位置，这样就可以实现数据修改了</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift209Vue%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift209Vue%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">vue2数据驱动原理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:45" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>首先通过 Object.defineProperty 遍历数据 data 劫持每个属性的 getter 和 setter 生成 Observer，通过一个 Depend 收集依赖，然后在数据发生变化时通知消息给 Watcher，触发相应监听回调，然后达到数据驱动视图的目的<br>// 第 1 步: 定义数据和视图<br>var model = {<br>  isShow: false<br>}<br>var view = document.querySelector(‘div’)</p>
-<p>// 第 2 步: 定义视图刷新方法<br>var updateView = function(value) {<br>  view.style.display = value ? ‘’ : ‘none’<br>}</p>
-<p>// 第 3 步: 设置初始视图表现<br>var directiveKey = view.getAttribute(‘v-show’)<br>updateView(model[directiveKey])</p>
-<p>// 第 4 步: 监听数据变化，然后刷新视图，达到数据驱动的目的<br>Object.defineProperty(model, ‘isShow’, {<br>  set: function(val) {<br>    updateView(val)<br>  }<br>})<br>vue3是采用数据劫持结合发布者-订阅者模式的方式，通过new Proxy()来劫持各个属性的setter，getter，在数据变动时发布消息给订阅者，触发相应的监听回调。<br>3.proxy比Object.defineProperty好在哪里？</p>
-<p>proxy优势：</p>
-<p>A.可以直接监听对象而非属性</p>
-<p>B.可以直接监听数组的变化</p>
-<p>C.Proxy有多达13种拦截方式，不限于apply、ownKeys、deleteProperty、has等等是Object.defineProperty不具备的</p>
-<p>D.Proxy返回的是一个新对象，可以只操作新的对象达到目的，而Object.defineProperty只能遍历对象属性直接修改</p>
-<p>Object.defineProperty的优势：</p>
-<p>A.兼容性好，支持IE9，而Proxy的存在浏览器兼容性问题，而且无法用polyfill磨平。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift208Vue%E6%8E%A5%E5%8F%A3%E6%A8%A1%E7%89%88%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -394,7 +266,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift214Fultter%E5%B8%B8%E7%94%A8%E5%BA%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift209Vue%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -408,7 +280,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/30/M_Swift214Fultter%E5%B8%B8%E7%94%A8%E5%BA%93/" class="post-title-link" itemprop="url">Flutter常用库</a>
+            <a href="/2021/04/30/M_Swift209Vue%E6%95%B0%E6%8D%AE%E9%A9%B1%E5%8A%A8%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">vue2数据驱动原理</a>
         </h2>
 
         <div class="post-meta">
@@ -417,16 +289,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-04-30 14:24:09" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:45" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-06 17:37:57" itemprop="dateModified" datetime="2022-04-06T17:37:57+08:00">2022-04-06</time>
-              </span>
 
           
 
@@ -439,8 +305,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>flutter pub add provider<br>flutter pub add http<br>flutter pub add shared_preferences<br>flutter pub add uuid<br>flutter pub add url_launcher<br>flutter pub add image_picker<br>flutter pub add flutter_bloc // mvvm数据跟ui隔离<br>flutter pub add geolocator // iOS的CLLocationManager<br>flutter pub add get // 非常全面的一个flutter库<br>flutter pub add animations<br>dart pub add dio // http请求库<br>flutter pub add jpush_flutter // 极光推送<br>flutter pub add hive // 键值数据库<br>flutter pub add sqflite // sql数据库<br>flutter pub add carousel_slider // 轮播图<br>flutter pub add flutter_swiper // 轮播图<br>flutter pub add share // 分享<br>flutter pub add permission_handler // 应用权限检查<br>flutter pub add animate_do // animate.css的flutter库<br>flutter pub add animated_text_kit // 文本动画<br>flutter pub add video_player  // 播放器<br>flutter pub add fluttertoast  // toast<br>flutter pub add fl_chart   // 图表<br>flutter pub add connectivity // 网络状态的监听<br>flutter pub add flutter_spinkit // 加载动画<br>flutter pub add flutter_svg // svg<br>flutter pub add webview_flutter<br>flutter pub add logger // 日志输出<br>flutter pub add convex_bottom_bar // 类似iOS TabBar<br>flutter pub add sliding_up_panel // 拖拽面板<br>flutter pub add flutter_staggered_grid_view // 瀑布流<br><a target="_blank" rel="noopener" href="http://lbsyun.baidu.com/index.php?title=flutter/loc">http://lbsyun.baidu.com/index.php?title=flutter/loc</a> // 百度地图flutter插件<br><a target="_blank" rel="noopener" href="https://lbs.amap.com/api/flutter/summary">https://lbs.amap.com/api/flutter/summary</a> // 高德地图flutter插件<br><a target="_blank" rel="noopener" href="https://github.com/peng8350/flutter_pulltorefresh/blob/master/README_CN.md">https://github.com/peng8350/flutter_pulltorefresh/blob/master/README_CN.md</a> // 下拉刷新组建<br>flutter pub add introduction_screen // 启动介绍页<br><a target="_blank" rel="noopener" href="https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md">https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md</a> // 屏幕适配<br>flutter pub add photo_view // 支持图片的缩放<br>flutter pub add flutter_secure_storage // iOS的 Keychain 实现<br>flutter pub add syncfusion_flutter_charts // 图表<br>flutter pub add timeline_tile // 时间轴<br>flutter pub add audioplayers<br>flutter pub add table_calendar // 日历<br>flutter pub add badges // 徽标<br>flutter pub add flutter_form_builder // 输入框库<br>flutter pub add responsive_framework // 屏幕适配<br>flutter pub add pdf<br>flutter pub add image_cropper // 图片裁剪<br>flutter pub add persistent_bottom_nav_bar // tab bar<br>flutter pub add flutter_typeahead // 分段导航栏<br>flutter pub add flutter_staggered_animations // 列表，网格动画<br>flutter pub add local_auth // 授权<br>flutter pub add flutter_rating_bar // 评星<br>flutter pub add extended_image // 图片加载库<br>flutter pub add smart_select // 选择器<br>flutter pub add expandable //折叠效果<br>flutter pub add getwidget // UI组建库<br>flutter pub add material_floating_search_bar // 搜索框<br>flutter pub add rflutter_alert // alert<br>flutter pub add flutter_icons<br>flutter pub add flutter_cache_manager // 缓存<br>flutter pub add flutter_login<br>flutter pub add page_transition // 转场动画<br>flutter pub add wakelock // 防止屏幕休眠<br>flutter pub add bot_toast<br>flutter pub add multi_image_picker<br>flutter pub add uni_links // url链接跳app<br>flutter pub add image<br>flutter pub add qr_code_scanner // 二维码<br>dart pub add sembast // 数据库<br>flutter pub add flutter_downloader // 下载任务<br>flutter pub add flutter_platform_widgets // iOS android 样式分别绘制<br>flutter pub add workmanager // 定期任务<br>flutter pub add background_fetch // 后台任务</p>
-<p>system_tray 桌面消息通知提醒<br>desktop_multi_window 多窗口<br>local_notifier<br>win_toast </p>
+          <p>首先通过 Object.defineProperty 遍历数据 data 劫持每个属性的 getter 和 setter 生成 Observer，通过一个 Depend 收集依赖，然后在数据发生变化时通知消息给 Watcher，触发相应监听回调，然后达到数据驱动视图的目的<br>// 第 1 步: 定义数据和视图<br>var model = {<br>  isShow: false<br>}<br>var view = document.querySelector(‘div’)</p>
+<p>// 第 2 步: 定义视图刷新方法<br>var updateView = function(value) {<br>  view.style.display = value ? ‘’ : ‘none’<br>}</p>
+<p>// 第 3 步: 设置初始视图表现<br>var directiveKey = view.getAttribute(‘v-show’)<br>updateView(model[directiveKey])</p>
+<p>// 第 4 步: 监听数据变化，然后刷新视图，达到数据驱动的目的<br>Object.defineProperty(model, ‘isShow’, {<br>  set: function(val) {<br>    updateView(val)<br>  }<br>})<br>vue3是采用数据劫持结合发布者-订阅者模式的方式，通过new Proxy()来劫持各个属性的setter，getter，在数据变动时发布消息给订阅者，触发相应的监听回调。<br>3.proxy比Object.defineProperty好在哪里？</p>
+<p>proxy优势：</p>
+<p>A.可以直接监听对象而非属性</p>
+<p>B.可以直接监听数组的变化</p>
+<p>C.Proxy有多达13种拦截方式，不限于apply、ownKeys、deleteProperty、has等等是Object.defineProperty不具备的</p>
+<p>D.Proxy返回的是一个新对象，可以只操作新的对象达到目的，而Object.defineProperty只能遍历对象属性直接修改</p>
+<p>Object.defineProperty的优势：</p>
+<p>A.兼容性好，支持IE9，而Proxy的存在浏览器兼容性问题，而且无法用polyfill磨平。</p>
 
       
     </div>
@@ -500,65 +375,6 @@
 
       
           <p>1、虚拟机<br>虚拟机理论上是一个真实的计算机操作系统的封装，它运行在物理设备之上，通过 Hypervisor 进行建立和运行虚拟机体系。<br>不同于虚拟机提供在物理硬件级别的操作系统隔离，容器技术提供的是操作系统级别的进程隔离，Docker 本身只是操作系统的一个进程，只是在容器技术下，进程之间网络、空间等等是隔离的，互不知道彼此。<br>二、Docker 的资源隔离：Namespace，Linux Namespace 是 Linux 提供的一种机制，可以实现不同资源的隔离。<br>三、Docker 的资源限制：cgroups<br>四、Docker 存储驱动：Union File Systems。AUFS 想象为一个可以 “栈式叠加” 的文件系统，AUFS 允许在一个基础的文件系统的上，“增量式” 的增加文件。<br>Docker 的镜像分层，正式通过 AUFS 通过分层结构、挂载等方式实现。在用户制作镜像的每一步，Docker 都会生成一个层，也就是增量 rootfs。<br>使用 Linux Namespace 进行网络、进程空间、命名空间等资源的隔离，使用 Cgroups 技术对资源的占用、使用量进行限制，使用 AUFS 等存储驱动来实现分层结构、增量更新等能力。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift211%E5%89%8D%E7%AB%AFIndexDB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/M_Swift211%E5%89%8D%E7%AB%AFIndexDB/" class="post-title-link" itemprop="url">IndexDB了解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:52" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>IndexedDB 是一种底层 API，用于在客户端存储大量的结构化数据（也包括文件/二进制大型对象（blobs））。该 API 使用索引实现对数据的高性能搜索。虽然 Web Storage 在存储较少量的数据很有用，但对于存储更大量的结构化数据来说力不从心。而 IndexedDB 提供了这种场景的解决方案。本页面 MDN IndexedDB 的主要引导页 - 这里，我们提供了完整的 API 参考和使用指南，浏览器支持细节，以及关键概念的一些解释的链接<br>IndexedDB 是一个基于 JavaScript 的面向对象数据库。IndexedDB 允许您存储和检索用键索引的对象；可以存储结构化克隆算法支持的任何对象。您只需要指定数据库模式，打开与数据库的连接，然后检索和更新一系列事务。<br>// 初始化数据库<br>window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;<br>if(!window.indexedDB)<br>{<br>    console.log(“你的浏览器不支持IndexedDB”);<br>}<br>var request = window.indexedDB.open(“testDB”, 2); // 打开数据库，parmas：数据库名称及版本号<br>往ObjectStore里新增对象<br>var transaction = db.transaction([“students”],”readwrite”);<br>transaction.oncomplete = function(event) {<br>    console.log(“Success”);<br>};<br>transaction.onerror = function(event) {<br>    console.log(“Error”);<br>};<br>var objectStore = transaction.objectStore(“students”);<br>objectStore.add({rollNo: rollNo, name: name});<br>删除对象<br>db.transaction([“students”],”readwrite”).objectStore(“students”).delete(rollNo);<br>通过key取出对象<br>var request = db.transaction([“students”],”readwrite”).objectStore(“students”).get(rollNo);<br>request.onsuccess = function(event){<br>    console.log(“Name : “+request.result.name);<br>};<br>更行对象<br>var transaction = db.transaction([“students”],”readwrite”);<br>var objectStore = transaction.objectStore(“students”);<br>var request = objectStore.get(rollNo);<br>request.onsuccess = function(event){<br>    console.log(“Updating : “+request.result.name + “ to “ + name);<br>    request.result.name = name;<br>    objectStore.put(request.result);<br>};</p>
 
       
     </div>
@@ -640,6 +456,290 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift214Fultter%E5%B8%B8%E7%94%A8%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift214Fultter%E5%B8%B8%E7%94%A8%E5%BA%93/" class="post-title-link" itemprop="url">Flutter常用库</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-30 14:24:09" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-06 17:37:57" itemprop="dateModified" datetime="2022-04-06T17:37:57+08:00">2022-04-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>flutter pub add provider<br>flutter pub add http<br>flutter pub add shared_preferences<br>flutter pub add uuid<br>flutter pub add url_launcher<br>flutter pub add image_picker<br>flutter pub add flutter_bloc // mvvm数据跟ui隔离<br>flutter pub add geolocator // iOS的CLLocationManager<br>flutter pub add get // 非常全面的一个flutter库<br>flutter pub add animations<br>dart pub add dio // http请求库<br>flutter pub add jpush_flutter // 极光推送<br>flutter pub add hive // 键值数据库<br>flutter pub add sqflite // sql数据库<br>flutter pub add carousel_slider // 轮播图<br>flutter pub add flutter_swiper // 轮播图<br>flutter pub add share // 分享<br>flutter pub add permission_handler // 应用权限检查<br>flutter pub add animate_do // animate.css的flutter库<br>flutter pub add animated_text_kit // 文本动画<br>flutter pub add video_player  // 播放器<br>flutter pub add fluttertoast  // toast<br>flutter pub add fl_chart   // 图表<br>flutter pub add connectivity // 网络状态的监听<br>flutter pub add flutter_spinkit // 加载动画<br>flutter pub add flutter_svg // svg<br>flutter pub add webview_flutter<br>flutter pub add logger // 日志输出<br>flutter pub add convex_bottom_bar // 类似iOS TabBar<br>flutter pub add sliding_up_panel // 拖拽面板<br>flutter pub add flutter_staggered_grid_view // 瀑布流<br><a target="_blank" rel="noopener" href="http://lbsyun.baidu.com/index.php?title=flutter/loc">http://lbsyun.baidu.com/index.php?title=flutter/loc</a> // 百度地图flutter插件<br><a target="_blank" rel="noopener" href="https://lbs.amap.com/api/flutter/summary">https://lbs.amap.com/api/flutter/summary</a> // 高德地图flutter插件<br><a target="_blank" rel="noopener" href="https://github.com/peng8350/flutter_pulltorefresh/blob/master/README_CN.md">https://github.com/peng8350/flutter_pulltorefresh/blob/master/README_CN.md</a> // 下拉刷新组建<br>flutter pub add introduction_screen // 启动介绍页<br><a target="_blank" rel="noopener" href="https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md">https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md</a> // 屏幕适配<br>flutter pub add photo_view // 支持图片的缩放<br>flutter pub add flutter_secure_storage // iOS的 Keychain 实现<br>flutter pub add syncfusion_flutter_charts // 图表<br>flutter pub add timeline_tile // 时间轴<br>flutter pub add audioplayers<br>flutter pub add table_calendar // 日历<br>flutter pub add badges // 徽标<br>flutter pub add flutter_form_builder // 输入框库<br>flutter pub add responsive_framework // 屏幕适配<br>flutter pub add pdf<br>flutter pub add image_cropper // 图片裁剪<br>flutter pub add persistent_bottom_nav_bar // tab bar<br>flutter pub add flutter_typeahead // 分段导航栏<br>flutter pub add flutter_staggered_animations // 列表，网格动画<br>flutter pub add local_auth // 授权<br>flutter pub add flutter_rating_bar // 评星<br>flutter pub add extended_image // 图片加载库<br>flutter pub add smart_select // 选择器<br>flutter pub add expandable //折叠效果<br>flutter pub add getwidget // UI组建库<br>flutter pub add material_floating_search_bar // 搜索框<br>flutter pub add rflutter_alert // alert<br>flutter pub add flutter_icons<br>flutter pub add flutter_cache_manager // 缓存<br>flutter pub add flutter_login<br>flutter pub add page_transition // 转场动画<br>flutter pub add wakelock // 防止屏幕休眠<br>flutter pub add bot_toast<br>flutter pub add multi_image_picker<br>flutter pub add uni_links // url链接跳app<br>flutter pub add image<br>flutter pub add qr_code_scanner // 二维码<br>dart pub add sembast // 数据库<br>flutter pub add flutter_downloader // 下载任务<br>flutter pub add flutter_platform_widgets // iOS android 样式分别绘制<br>flutter pub add workmanager // 定期任务<br>flutter pub add background_fetch // 后台任务</p>
+<p>system_tray 桌面消息通知提醒<br>desktop_multi_window 多窗口<br>local_notifier<br>win_toast </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift210%E5%BC%80%E5%8F%91%E6%9D%82%E8%B0%88/" class="post-title-link" itemprop="url">开发杂谈</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:49" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>iOS路由实现原理：基于url，基于反射<br>Category+NSInvocation 方案的优点是便捷，因为 Category 的专用接口放在平台库，以后有除了 BKit 以外的其他调用方也可以直接调用，还有更多强大的功能。<br>组件之间的依赖除了显式的依赖，还存在很多隐式依赖，代码层面，除了普通的接口依赖，还有宏依赖、枚举依赖、全局变量依赖以及内联函数等的依赖。单仓 lint 进行编译链接完备性检查并不能解决依赖变动对其他二进制的影响。<br>因此需要借助源码层面的依赖分析，判断当前组件的变更对其他依赖当前组件的二进制是否有影响，在 CI 流程中及时发现并拦截。否则错误的二进制发版，会直接导致整个 CI 研发流程和本地研发都受到影响。<br>大型项目的组件化工作是一个系统性工程。涉及工程架构的改造、CI/CD 研发工具链的支撑、本地研发工具链的支撑，业务架构的设计优化，需要从各个方面综合考虑成本和收益。<br>没有最好的架构，只有更好的架构，在架构演进的过程中，我们需要充分考虑架构的改动对业务的影响以及能给业务带来的收益。好的架构一定是能帮助业务节省时间，保证质量的。与此同时，我们在架构改进的过程中，要保证不能影响业务的正常迭代，所以向前兼容且避免大面积冲突也是很重要的事情。<br>组件化里面处处都有惊喜，比如一个小小的 hmap 优化，可以很大程度的减少编译耗时，比如一个二进制的压缩和解压的优化，可以很大程度减少 pod install 的整体耗时。<br>当然这里面也会有很多很棘手的问题，需要通过一些特殊的方案解决，比如针对分布式开发，由于阻塞式发版必然会导致一些不同分支存在冲突的代码发版后影响主干的稳定性。<br>前端可视化探索总结：基于积木形式的拖拽界面，基于markdown形式的文档编辑界面<br>Venom：iOS工程集成，类似pod<br>Metabase：可以帮助你把数据库中的数据更好的呈现给更多人<br>Lerna js多包存储库管理工具<br>H5长列表渲染：<br>如果只渲染展示可见范围内的 dom ，原来的滚动条就没了，如何重现原有的滚动条？<br>滚动条的问题解决后，如何根据当前滚动位置来知道该渲染列表的哪部分？<br>ThreadPoolExecutor：类似iOS中的GCD<br>线程池运行的状态，并不是用户显式设置的，而是伴随着线程池的运行，由内部来维护。线程池内部使用一个变量维护两个值：运行状态(runState)和线程数量 (workerCount)。在具体实现中，线程池将运行状态(runState)、线程数量 (workerCount)两个关键参数的维护放在了一起<br>主要作用：任务调度、任务缓冲、线程回收<br>LruCache：采用的缓存算法为LRU(Least Recently Used)，即最近最少使用算法。这一算法的核心思想是当缓存数据达到预设上限后，会优先淘汰近期最少使用的缓存对象。LruCache内部维护一个双向链表和一个映射表。链表按照使用顺序存储缓存数据，越早使用的数据越靠近链表尾部，越晚使用的数据越靠近链表头部；映射表通过Key-Value结构，提供高效的查找操作，通过键值可以判断某一数据是否缓存，如果缓存直接获取缓存数据所属的链表节点，进一步获取缓存数据。LruCache结构图如下所示，上半部分是双向链表，下半部分是映射表（不一定有序）。双向链表中value_1所处位置为链表头部，value_N所处位置为链表尾部。<br>HashLruCache：引入某种哈希算法，将缓存数据分散到N个LruCache上。<br>冷启动解决方案：<br>    解决存量问题：优化当前性能瓶颈点，优化启动流程，缩短冷启动时间。<br>    管控增量问题：冷启动流程规范化，通过代码范式和文档指导后续冷启动过程代码的维护，控制时间增量。<br>    完善监控：完善冷启动性能指标监控，收集更详细的数据，及时发现性能问题。<br>iOS静态分析：Static Analyzer、Infer、OCLint<br>Js定时器：1.存放 callback 2.启动一个倒计时 3.倒计时结束，取出存好的 callback，RUN！<br>前端加密：我们也可以借助 webpack-subresource-integrity 轻易实现 integrity 的添加过程，保持对开发者透明。<br>开启 SRI，浏览器会对相关资源进行 CORS 校验，所以被加载的资源要么在同域下，要么得满足 CORS 机制（具体方式可查看 脚本错误量极致优化-监控上报与 Script error 中 跨源资源共享机制 ( CORS ) 章节）。<br>HTTPS 可以有效应对流量劫持的问题，SRI 在资源完整性再上一道屏障，CSP 也进行了其他方面的补充。“三驾马车” 为页面资源安全 “保驾护航”。当然这也绝非银弹，安全之路充满着荆棘与挑战，任重道远。<br>alloy-worker：Worker 的多线程能力有望成为复杂前端项目的标配, 在减少 UI 线程卡顿和压榨计算机性能上有收益. 但目前国内实践较少, 一方面是业务复杂程度未触及; 另一方面是社区缺少科普和实践分享.<br>聊天界面反向渲染，竟然实现了聊天信息始终在底部。。。。<br>html优化：压缩、减包、拆包、动态加载包及图片优化上<br>cdn 分发、dns 解析、http 缓存、数据预请求，数据缓存及首屏优化大杀器——直出等<br>大部分主流的页面会通过服务器进行渲染，吐出 html 文件到前端<br>通过离线包技术能够很好解决 html 文件本身加载需要时间的问题。离线包基本思路都是通过 webview 统一拦截 url，将资源映射到本地离线包，更新的时候对版本资源检测，下载和维护本地缓存目录中的资源。比如腾讯的 webso 和 Alloykit 的离线包方案。<br>前端内存优化：</p>
+<ol>
+<li>避免没有必要全局变量的使用<br>我们可以在 JS 文件的开头通过添加”use strict” 开启严格的解析模式，来避免一些意外创建的全局变量。</li>
+<li>及时解除引用</li>
+<li>减少对象的创建</li>
+<li>内存不是缓存</li>
+<li>避免复杂的递归调用；</li>
+<li>合理使用的 IndexedDB</li>
+</ol>
+<p>我们应该编写有类型系统的 JavaScript，而不是能编译成 JavaScript 的 Java/C#。任何一个 TypeScript 程序，在手动删去类型部分，将后缀改成 .js 后，都应能够正常运行。<br>基本类型<br>基本类型，也可以理解为原子类型。包括 number、boolean、string、null、undefined、function、array、字面量（true，false，1，2，‘a’）等。它们无法再细分。<br>页面可视化组建：html模版、配置字段、业务逻辑、布局样式、Json数据驱动</p>
+<p>AVAudioSession<br>AVAudioSessionMode<br>AVAudioSessionCategoryAmbient // 背景声音，可以与其他音乐混合，用于以非语音为主的应用<br>AVAudioSessionCategory<br>AVAudioSessionCategoryPlayback // 只用于播放<br>AVAudioSessionCategoryPlayAndRecord // 既可以录音也可以播放<br>AVAudioSessionInterruptionNotification // 电话打断等<br>媒体声音被抑制：<br>媒体声音在媒体音量下开启播放，播放途中因为连麦而切换到了通话音量，此时因为系统特性，媒体音量会被通话音量抑制而导致声音变小。<br>针对该问题，我们使用音视频 SDK 提供的混音、混流功能来规避。基本原理是播放媒体资源时，我们拿到资源的 pcm 音频数据，将数据抛给 RTC 的 audioUnit 进行混合，由 RTC 音频播放单元统一播放，如果此时 RTC 使用的是通话音量，则媒体资源也是使用的通话音量播放，反之亦然。以此来保证媒体资源与 RTC 始终保持统一的音量控制机制，而避免声音大小存在差异。<br>安装包优化<br>2.1、使用合适的资源压缩配置<br>    Pod 库和主工程的最低支持版本从 iOS 8.0 提升成 iOS 9.0<br>    开启 Pod 库和主工程 Xcode Build Settings 中的 ASSETCATALOG_COMPILER_OPTIMIZATION space 选项<br>     xcrun assetutil –info Assets.car 命令检查 Assets.car 中每张图片使用的编码压缩算法<br>2.2、使用 RGB with palette 压缩图片<br>Mach-O 文件优化<br>3.1、使用 -Oz 编译参数<br>Oz 的核心原理是对重复的连续机器指令外联成函数进行复用，和“内联函数”的原理正好相反。因此，开启 Oz，能减小二进制的大小，但同时理论上会带来执行效率的额外消耗。<br>3.2、使用链接时优化 LTO<br>Link-Time Optimization 链接时优化，是 Xcode 自带的一个编译/链接参数。根据 WWDC 2016 《What’s New in LLVM》[4]的介绍，LTO 对包大小和运行效率都有正向影响。今日头条在编译和链接中均开启 Incremental LTO 后，包体积减小 6.5MB。<br>如果我们用 @dynamic 修饰一个属性，不生成成员变量、get/set 方法，则一个属性可以由 224B 减少到 36B，即仅包含 property 部分的大小。<br>3.5、__TEXT 段迁移<br>在链接阶段使用 -rename_p 选项将 __TEXT,__text 迁移到 __BD_TEXT,__text，减少苹果对可执行文件的加密范围，提升可执行文件的压缩效率，从而减少 Download Size。<br>WebView 渲染需要经过下面几个步骤：<br>    解析 HTML 文件<br>    加载 JavaScript 和 CSS 文件<br>    解析并执行 JavaScript<br>    构建 DOM 结构<br>    加载图片等资源<br>    页面加载完毕<br>模板拆分<br>    把头条详情页的公共样式 CSS 和 逻辑 JS 都抽离出来，形成一个独立而完备的详情页模板，这样我们就可以把模板直接内置在客户端中。<br>模板优化<br>    WebView 需要在加载完主 HTML 之后再去加载 HTML 中的 JS 和 CSS，需要多次 IO 操作，于是我们将 JS 和 CSS 还有一些图片都内联到一个文件中，这样，加载模板时就只需要一次 IO 操作，也大大减少因为 IO 加载冲突导致模板加载失败问题<br>模板简化<br>    我们将部分非必须的脚本异步化拉取，精简不必要的样式和 JS 代码，将模板大小压缩了 20% 以上<br>    我们并不需要在用户进入页面的时候才去创建 WebView 以及加载模板，我们只需要在合适的时机在后台创建 WebView，并且提前预热加载模板，当用户点击进入页面的时候就能使用已经加载好模板的 WebView，直接将详情页的内容数据通过 JS 注入到页面中，前端收到数据后进行页面渲染即可。<br>    我们每次使用的时候都是同一个模板，所以我们使用完当前 WebView 之后，只需要在用户退出页面的时候把正文数据清空，这样进入下一个页面的时候就能够继续复用这个 WebView 重新注入数据即可。<br>网络优化<br>    CDN 加速<br>    我们将详情页内容数据分为静态和动态两部分，将正文内容、标题、作者栏等用户主要消费的又基本不变的内容托管到了 CDN 上，托管到 CDN 之后，全国各地的用户可以直接从最佳节点就获取到详情页数据，也大大节省了带宽成本。<br>    容灾<br>    为了防止某个 CDN 出现故障，导致服务雪崩，服务端会下发多个 CDN 链接，当用户访问当前 CDN 节点的出异常时，可以快速自动切换到下个 CDN 节点。<br>    2. 快速超时<br>    一般的超时策略，客户端在请求时，会遍历请求 CDN 1、2、3。如果这些 CDN 都请求失败，则整个网络请求算作失败。<br>    假设请求 CDN 的超时时间是 15s。如果 CDN 1 出现故障，则需要等待 15s 才能切换到 CDN 2上，这对于详情页的加载时间来说是不可接受，如果用户网络突然变差，则需要等待 45s 才能返回失败展示错误页。<br>    渲染优化<br>    为了提高用户的首屏效率，我们在服务端就会把所有的详情页正文的 HTML 数据组装好，通过将服务端直出内容注入到页面中时，可以直接给 WebView 进行渲染，对于其他动态下发的内容（比如相关搜索），前端再进行二次异步处理，提升用户效率。<br>    所以在详情页中，我们会将图片和视频等非文字内容通过原生组件的方式放在客户端进行渲染，既可以提高渲染效率，也可以减少不必要的流量消耗。<br>    当 WKWebView 上占用内存过大时，WKWebView 所在的 WebContent Process 会被系统 kill 掉，反映在用户体验上就是发生了白屏。<br>    WKWebView 提供的回调 webViewWebContentProcessDidTerminate 函数中通过 reload 方法重新加载当前页面恢复，但是这种情况只适用于通过 loadRequest 加载的请求，在详情页中，由于使用了模板化的 WebView 中，重新 reload 只能重新 reload 模板，并不能正常恢复整个详情页，需要客户端重新加载模板之后再重新注入数据。</p>
+<p> 遍历方式</p>
+<pre><code>for each或者iterator
+移动端适配mediaquery媒体查询
+@media screen and (max-width: 300px) &#123;
+    body &#123;
+        background-color:lightblue;
+    &#125;
+&#125;
+rem原理
+字体单位，跟px不同的是根据root element动态变化
+1ren=16px 浏览器默认字体大小
+
+
+Java注解
+@Override @Deprecated @Suppvisewarning
+Spring注解
+@Autowirte @Service @Repository
+MyBatis
+@InsertProvider @UpdateProvider @Options
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/30/M_Swift211%E5%89%8D%E7%AB%AFIndexDB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/30/M_Swift211%E5%89%8D%E7%AB%AFIndexDB/" class="post-title-link" itemprop="url">IndexDB了解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-30 14:24:09 / 修改时间：16:46:52" itemprop="dateCreated datePublished" datetime="2021-04-30T14:24:09+08:00">2021-04-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>IndexedDB 是一种底层 API，用于在客户端存储大量的结构化数据（也包括文件/二进制大型对象（blobs））。该 API 使用索引实现对数据的高性能搜索。虽然 Web Storage 在存储较少量的数据很有用，但对于存储更大量的结构化数据来说力不从心。而 IndexedDB 提供了这种场景的解决方案。本页面 MDN IndexedDB 的主要引导页 - 这里，我们提供了完整的 API 参考和使用指南，浏览器支持细节，以及关键概念的一些解释的链接<br>IndexedDB 是一个基于 JavaScript 的面向对象数据库。IndexedDB 允许您存储和检索用键索引的对象；可以存储结构化克隆算法支持的任何对象。您只需要指定数据库模式，打开与数据库的连接，然后检索和更新一系列事务。<br>// 初始化数据库<br>window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;<br>if(!window.indexedDB)<br>{<br>    console.log(“你的浏览器不支持IndexedDB”);<br>}<br>var request = window.indexedDB.open(“testDB”, 2); // 打开数据库，parmas：数据库名称及版本号<br>往ObjectStore里新增对象<br>var transaction = db.transaction([“students”],”readwrite”);<br>transaction.oncomplete = function(event) {<br>    console.log(“Success”);<br>};<br>transaction.onerror = function(event) {<br>    console.log(“Error”);<br>};<br>var objectStore = transaction.objectStore(“students”);<br>objectStore.add({rollNo: rollNo, name: name});<br>删除对象<br>db.transaction([“students”],”readwrite”).objectStore(“students”).delete(rollNo);<br>通过key取出对象<br>var request = db.transaction([“students”],”readwrite”).objectStore(“students”).get(rollNo);<br>request.onsuccess = function(event){<br>    console.log(“Name : “+request.result.name);<br>};<br>更行对象<br>var transaction = db.transaction([“students”],”readwrite”);<br>var objectStore = transaction.objectStore(“students”);<br>var request = objectStore.get(rollNo);<br>request.onsuccess = function(event){<br>    console.log(“Updating : “+request.result.name + “ to “ + name);<br>    request.result.name = name;<br>    objectStore.put(request.result);<br>};</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift197%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/19/M_Swift197%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9B%B8%E5%85%B3/" class="post-title-link" itemprop="url">机器学习相关算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-19 11:35:48" itemprop="dateCreated datePublished" datetime="2021-04-19T11:35:48+08:00">2021-04-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-30 16:21:29" itemprop="dateModified" datetime="2021-04-30T16:21:29+08:00">2021-04-30</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h2><p>矩阵在计算机图形学中作用非常大，常见的作用有<br>1.矩阵的变换：地图中的平移、缩放、旋转等都是<br>2.矩阵的计算：两个矩阵的乘法，求数据的。<br>3.图像处理：其实图像看作是一个矩阵。每个像素点都需要一个一个值来描述<br>4.数据模型：特征值和特征向量<br>电影用户喜好模型：电影矩阵、用户喜好矩阵等<br>房价矩阵：位置、价格、等等</p>
+<h2 id="概率分析"><a href="#概率分析" class="headerlink" title="概率分析"></a>概率分析</h2><p>K-means算法 聚类算法<br>是一种迭代求解的聚类分析算法，其步骤是，预将数据分为K组，则随机选取K个对象作为初始的聚类中心，然后计算每个对象与各个种子聚类中心之间的距离，把每个对象分配给距离它最近的聚类中心。聚类中心以及分配给它们的对象就代表一个聚类。每分配一个样本，聚类的聚类中心会根据聚类中现有的对象被重新计算。这个过程将不断重复直到满足某个终止条件。终止条件可以是没有（或最小数目）对象被重新分配给不同的聚类，没有（或最小数目）聚类中心再发生变化，误差平方和局部最小。</p>
+<p>朴素贝叶斯和决策树<br>朴素贝叶斯算法在文字识别， 图像识别方向有着较为重要的作用。 可以将未知的一种文字或图像，根据其已有的分类规则来进行分类，最终达到分类的目的。</p>
+<p>梯度下降</p>
+<p>机器学习：<br>统计学<br>概率<br>神经网络</p>
+<p>al五子棋</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift199%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86NLP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -691,74 +791,6 @@
 <p>曼哈顿距离(Manhattan Distance<br>从名字就可以猜出这种距离的计算方法了。想象你在曼哈顿要从一个十字路口开车到另外一个十字路口，驾驶距离是两点间的直线距离吗？显然不是，除非你能穿越大楼。实际驾驶距离就是这个“曼哈顿距离”。而这也是曼哈顿距离名称的来源， 曼哈顿距离也称为城市街区距离(City Block distance)。<br>import numpy as np<br>x=np.random.random(10)<br>y=np.random.random(10)</p>
 <p>#方法一：根据公式求解<br>d1=np.sum(np.abs(x-y))</p>
 <p>#方法二：根据scipy库求解<br>from scipy.spatial.distance import pdist<br>X=np.vstack([x,y])<br>d2=pdist(X,’cityblock’)<br>3. 切比雪夫距离 ( Chebyshev Distance )<br>       国际象棋玩过么？国王走一步能够移动到相邻的8个方格中的任意一个。那么国王从格子(x1,y1)走到格子(x2,y2)最少需要多少步？自己走走试试。你会发现最少步数总是max( | x2-x1 | , | y2-y1 | ) 步 。有一种类似的一种距离度量方法叫切比雪夫距离。<br>5. 标准化欧氏距离 (Standardized Euclidean distance )<br>(1)标准欧氏距离的定义<br>　　标准化欧氏距离是针对简单欧氏距离的缺点而作的一种改进方案。标准欧氏距离的思路：既然数据各维分量的分布不一样，好吧！那我先将各个分量都“标准化”到均值、方差相等吧。均值和方差标准化到多少呢？这里先复习点统计学知识吧，假设样本集X的均值(mean)为m，标准差(standard deviation)为s，那么X的“标准化变量”表示为：<br>6. 马氏距离(Mahalanobis Distance)<br>（1）马氏距离定义<br>       有M个样本向量X1~Xm，协方差矩阵记为S，均值记为向量μ，则其中样本向量X到u的马氏距离表示为：</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/19/M_Swift200CSS%E5%B8%B8%E7%94%A8%E6%8A%80%E5%B7%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/19/M_Swift200CSS%E5%B8%B8%E7%94%A8%E6%8A%80%E5%B7%A7/" class="post-title-link" itemprop="url">CSS常用技巧</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-19 11:35:48" itemprop="dateCreated datePublished" datetime="2021-04-19T11:35:48+08:00">2021-04-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-30 16:08:08" itemprop="dateModified" datetime="2021-04-30T16:08:08+08:00">2021-04-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="水平居中设置-行内元素"><a href="#水平居中设置-行内元素" class="headerlink" title="水平居中设置-行内元素"></a>水平居中设置-行内元素</h2><p>如果被设置元素为文本、图片等行内元素时，水平居中是通过给父元素设置 text-align:center 来实现的。</p>
-<h2 id="水平居中设置-定宽块状元素"><a href="#水平居中设置-定宽块状元素" class="headerlink" title="水平居中设置-定宽块状元素"></a>水平居中设置-定宽块状元素</h2><p>margin:20px auto;/* margin-left 与 margin-right 设置为 auto */</p>
-<h2 id="已知宽高实现盒子水平垂直居中"><a href="#已知宽高实现盒子水平垂直居中" class="headerlink" title="已知宽高实现盒子水平垂直居中"></a>已知宽高实现盒子水平垂直居中</h2><p>1、利用父元素设置相对定位,子元素设置绝对定位,那么子元素就是相对于父元素定位的特性。<br>2、子元素设置上和左偏移的值都为50%，是元素的左上角在父元素中心点的位置。效果：<br>3、然后再用margin给上和左都给负的自身宽高的一半,就能达到垂直水平居中的效果。</p>
-<h2 id="宽高不定实现盒子水平垂直居中"><a href="#宽高不定实现盒子水平垂直居中" class="headerlink" title="宽高不定实现盒子水平垂直居中"></a>宽高不定实现盒子水平垂直居中</h2><p>1、利用父元素设置相对定位,子元素设置绝对定位,那么子元素就是相对于父元素定位的特性。<br>2、子元素设置上和左偏移的值都为50%。<br>3、然后再用css3属性translate位移,给上和左都位移-50%距离，就能达到垂直水平居中的效果。<br>top: 50%;<br>left: 50%;<br>transform: translate(-50%, -50%);</p>
 
       
     </div>
