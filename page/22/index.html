@@ -148,6 +148,592 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/11/M_Swift169%E5%9C%B0%E5%9B%BESDK%E4%B8%80%E4%BA%9B%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/11/M_Swift169%E5%9C%B0%E5%9B%BESDK%E4%B8%80%E4%BA%9B%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E/" class="post-title-link" itemprop="url">地图SDK调用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-11 15:53:26" itemprop="dateCreated datePublished" datetime="2020-06-11T15:53:26+08:00">2020-06-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 16:10:26" itemprop="dateModified" datetime="2021-04-12T16:10:26+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>import \ export</p>
+<p>编译<br>chunk.webpack.config.js<br>control.chunk.webpack.config.js</p>
+<p>地图init方法，创建地图initialize: function (container, options)<br>Conf.init();初始化<br>初始化openGl一些参数<br>创建不同的图层，地图、瓦片图层、label图层、layer图层、热力图层</p>
+<p>地图初始化加载MMMgr.getInstance().init();<br>icon图片。<br>样式（配置）<br>data</p>
+<p>地图事件管理<br>var manager = new Hammer.Manager(this.layerDiv);<br>拖拽、点击、双击、缩放、旋转</p>
+<p>定义layer，存储用户添加的图层<br>this.layers = [];<br>地图图层<br>SkInterLayer<br>initialize函数<br>init<br>创建缓存，存在自动删除逻辑，存储满了按照相应逻辑删除旧的<br>this.cache = new LRUMap(8192);</p>
+<p>当地图发生变化时_viewchange绘制地图（加载地图数据）<br>postInvalidate</p>
+<p>清除数据 每次绘制都清除全部数据 this.Render();<br>gl.clearDepth(1.0);</p>
+<p>地图数据处理绘制<br>this.BaseData();</p>
+<p>准备地图数据<br>prepareData<br>获取屏幕所有瓦片-》请求-〉生成一个个的SKTitle对象。</p>
+<p>获取瓦片范围<br>checkTileKey<br>获取当前图层所有切片号。<br>getTiles<br>从缓存中加载<br>var tile = this.cache.get(key);<br>加载瓦片<br>GetMapDat</p>
+<p>数据解析<br>parseDat</p>
+<p>加载完成，执行绘制，<br>this.map.postInvalidate();<br>有一个总的Render，map里面的Render。每一个图层里的Render值负责绘制，map里的Render负责清空。</p>
+<p>如何加载的opengl以及一些第三方资源的，有哪些资源文件，是如何工作的</p>
+<p>问题<br>1.开发说明，开发环境，注意事项等。如何加载的opengl，有哪些资源文件，项目是如何工作的，需要注意哪些，<br>three.js mailbox webjs<br>2.项目接口文档。<br>3.项目成功物生成说明及成功物。如何打包的<br>图片资源在common.less调整<br>@urls: ‘<a target="_blank" rel="noopener" href="http://61.189.20.113:8000/images/&#39;">http://61.189.20.113:8000/images/&#39;</a>;</p>
+<p>如何绘制地图<br>加载瓦片-》解析数据-〉创建点线面对象-》用opengl绘制 ,如何绘制的整个页面上所有的瓦片，地图缩放是如何重新绘制的逻辑<br>MapMM-&gt;GetMapDat<br>MapDataDeCode<br>SkTile.prototype.Render </p>
+<p>项目中类的特别说明</p>
+<p>坐标转换、像素、经纬度等如何实现<br>经纬度坐标、地图平面坐标，像素</p>
+<p>矩阵 mat4.js<br>var proj = map.GetCurProj();<br>var objProj = mat4.clone(proj);<br>求外接矩形，图形的坐标集合相对于外接矩形的左上角为0点计算新的坐标。<br>外接矩形相对于地图中心点的偏移：<br> var origin = map.axes.toMapAxes(this.env.startLon, this.env.endLat);<br> mat4.translate(objProj, objProj, [origin.x, origin.y, 0]);<br>gl.uniformMatrix4fv(bdProg.uniLocation, false, objProj);     </p>
+<p>事件、动画、扩展功能特别说明<br>手势L：hammer<br>demo功能使用介绍</p>
+<p>瓦片、墨卡托投影、相机、矩阵算法在工程中如何使用的。<br>SkLonLat2Mercator</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/08/M_Swift246%E6%95%B0%E6%8D%AE%E6%8A%BD%E7%A8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/08/M_Swift246%E6%95%B0%E6%8D%AE%E6%8A%BD%E7%A8%80/" class="post-title-link" itemprop="url">地图数据抽稀</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-08 14:21:16" itemprop="dateCreated datePublished" datetime="2020-06-08T14:21:16+08:00">2020-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-14 21:43:36" itemprop="dateModified" datetime="2022-03-14T21:43:36+08:00">2022-03-14</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>{<br>    “pline”: {<br>        “note”: “字段解释: 级别 / 名字/ 对应kind”,<br>        “dat”: {<br>            “1”: {<br>                “省界”: “132”<br>            },<br>            “2,3,4,5”: {<br>                “省界”: “132”<br>            },<br>            “6,7”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “单线水系”: “125”,<br>                “省界”: “132”<br>            },<br>            “8”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “单线水系”: “125”,<br>                “地市界”: “135”<br>            },<br>            “9”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “区县界”: “137”<br>            },<br>            “10”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “2”,<br>                “县道”: “2”,<br>                “城市二级道路”: “3”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “区县界”: “137”<br>            },<br>            “11”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “乡镇界”: “191”<br>            },<br>            “12”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “内部道路”: “5”,<br>                “小路”: “5”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “乡镇界”: “191”<br>            },<br>            “13,14,15,16,17,18”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “内部道路”: “5”,<br>                “小路”: “5”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “村界”: “192”<br>            }</p>
+<pre><code>    &#125;
+&#125;,
+&quot;linelabel&quot;: &#123;
+    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ 对应kind&quot;,
+    &quot;dat&quot;: &#123;
+        &quot;10&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1
+        &#125;,
+        &quot;11&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2
+        &#125;,
+        &quot;12&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2,
+            &quot;省道&quot;: 3,
+            &quot;县道&quot;: 3,
+            &quot;城市二级道路&quot;: 3
+        &#125;,
+        &quot;13&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2,
+            &quot;省道&quot;: 3,
+            &quot;县道&quot;: 3,
+            &quot;城市二级道路&quot;: 3,
+            &quot;乡道&quot;: 4,
+            &quot;辅路&quot;: 4,
+            &quot;城市三级道路&quot;: 4,
+            &quot;内部道路&quot;: 5,
+            &quot;小路&quot;: 5
+        &#125;,
+        &quot;14&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2,
+            &quot;省道&quot;: 3,
+            &quot;县道&quot;: 3,
+            &quot;城市二级道路&quot;: 3,
+            &quot;乡道&quot;: 4,
+            &quot;辅路&quot;: 4,
+            &quot;城市三级道路&quot;: 4,
+            &quot;内部道路&quot;: 5,
+            &quot;小路&quot;: 5
+        &#125;,
+        &quot;15,16,17,18,19,20,21&quot;: &#123;
+            &quot;高速公路&quot;: 1,
+            &quot;城市快速路&quot;: 1,
+            &quot;国道&quot;: 2,
+            &quot;城市一级道路&quot;: 2,
+            &quot;省道&quot;: 3,
+            &quot;县道&quot;: 3,
+            &quot;城市二级道路&quot;: 3,
+            &quot;乡道&quot;: 4,
+            &quot;辅路&quot;: 4,
+            &quot;城市三级道路&quot;: 4,
+            &quot;内部道路&quot;: 5,
+            &quot;小路&quot;: 5
+        &#125;
+    &#125;
+&#125;,
+&quot;region&quot;: &#123;
+    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ subtype:转换的kind&quot;,
+    &quot;dat&quot;: &#123;
+        &quot;7&quot;: &#123;
+            &quot;note&quot;: &quot;200m-7-11-20km&lt;包含&gt;-2km&lt;包含&gt;&quot;,
+            &quot;绿地&quot;: &#123;
+                &quot;152&quot;: &quot;14b&quot;
+            &#125;
+        &#125;,
+        &quot;9&quot;: &#123;
+            &quot;note&quot;: &quot;200m-9-11-5km&lt;包含&gt;-500m&lt;不包含&gt;&quot;,
+            &quot;湖泊、水库&quot;: &#123;
+                &quot;102&quot;: &quot;122&quot;,
+                &quot;103&quot;: &quot;122&quot;
+            &#125;,
+            &quot;面状水系&quot;: &#123;
+                &quot;199&quot;: &quot;123&quot;
+            &#125;
+        &#125;,
+        &quot;10&quot;: &#123;
+            &quot;note&quot;: &quot;200m-10-2km&lt;包含&gt;&quot;,
+            &quot;面状水系&quot;: &#123;
+                &quot;101&quot;: &quot;123&quot;
+            &#125;,
+            &quot;绿地&quot;: &#123;
+                &quot;100&quot;: &quot;141&quot;
+            &#125;
+        &#125;,
+        &quot;12&quot;: &#123;
+            &quot;note&quot;: &quot;200m-11-12-1km&lt;包含&gt;-500m&lt;不包含&gt;&quot;,
+            &quot;场景&quot;: &#123;
+                &quot;101&quot;: &quot;176&quot;,
+                &quot;102&quot;: &quot;163&quot;,
+                &quot;103&quot;: &quot;174&quot;,
+                &quot;104&quot;: &quot;175&quot;,
+                &quot;105&quot;: &quot;172&quot;,
+                &quot;106&quot;: &quot;17d&quot;,
+                &quot;107&quot;: &quot;164&quot;,
+                &quot;108&quot;: &quot;17e&quot;,
+                &quot;109&quot;: &quot;177&quot;,
+                &quot;110&quot;: &quot;178&quot;,
+                &quot;111&quot;: &quot;161&quot;,
+                &quot;194&quot;: &quot;166&quot;
+            &#125;,
+            &quot;居民地&quot;: &#123;
+                &quot;100&quot;: &quot;17f&quot;
+            &#125;,
+            &quot;绿地&quot;: &#123;
+                &quot;152&quot;: &quot;14b&quot;,
+                &quot;100&quot;: &quot;141&quot;
+            &#125;,
+            &quot;面状水系&quot;: &#123;
+                &quot;101&quot;: &quot;123&quot;
+            &#125;
+        &#125;,
+        &quot;13&quot;:&#123;
+            &quot;note&quot;: &quot;200m-12-14-500m&lt;包含&gt;-100m&lt;不包含&gt;&quot;,
+            &quot;湖泊、水库&quot;: &#123;
+                &quot;102&quot;: &quot;122&quot;,
+                &quot;103&quot;: &quot;122&quot;
+            &#125;,
+            &quot;面状水系&quot;: &#123;
+                &quot;199&quot;: &quot;123&quot;,
+                &quot;101&quot;: &quot;123&quot;
+            &#125;,
+            &quot;绿地&quot;: &#123;
+                &quot;152&quot;: &quot;14b&quot;,
+                &quot;100&quot;: &quot;141&quot;,
+                &quot;150&quot;: &quot;141&quot;,
+                &quot;151&quot;: &quot;141&quot;,
+                &quot;130&quot;: &quot;144&quot;
+            &#125;,
+            &quot;场景&quot;: &#123;
+                &quot;101&quot;: &quot;176&quot;,
+                &quot;102&quot;: &quot;163&quot;,
+                &quot;103&quot;: &quot;174&quot;,
+                &quot;104&quot;: &quot;175&quot;,
+                &quot;105&quot;: &quot;172&quot;,
+                &quot;106&quot;: &quot;17d&quot;,
+                &quot;107&quot;: &quot;164&quot;,
+                &quot;108&quot;: &quot;17e&quot;,
+                &quot;109&quot;: &quot;177&quot;,
+                &quot;110&quot;: &quot;178&quot;,
+                &quot;111&quot;: &quot;161&quot;,
+                &quot;194&quot;: &quot;166&quot;
+            &#125;,
+            &quot;居民地&quot;: &#123;
+                &quot;100&quot;: &quot;17f&quot;
+            &#125;
+        &#125;,
+        &quot;16&quot;: &#123;
+            &quot;note&quot;: &quot;200m-14-17-100m&lt;包含&gt;-10m&lt;包含&gt;&quot;,
+            &quot;场景&quot;: &#123;
+                &quot;101&quot;: &quot;176&quot;,
+                &quot;102&quot;: &quot;163&quot;,
+                &quot;103&quot;: &quot;174&quot;,
+                &quot;104&quot;: &quot;175&quot;,
+                &quot;105&quot;: &quot;172&quot;,
+                &quot;106&quot;: &quot;17d&quot;,
+                &quot;107&quot;: &quot;164&quot;,
+                &quot;108&quot;: &quot;17e&quot;,
+                &quot;109&quot;: &quot;177&quot;,
+                &quot;110&quot;: &quot;178&quot;,
+                &quot;111&quot;: &quot;161&quot;,
+                &quot;194&quot;: &quot;166&quot;
+            &#125;,
+            &quot;湖泊、水库&quot;: &#123;
+                &quot;102&quot;: &quot;122&quot;,
+                &quot;103&quot;: &quot;122&quot;
+            &#125;,
+            &quot;面状水系&quot;: &#123;
+                &quot;199&quot;: &quot;123&quot;,
+                &quot;101&quot;: &quot;123&quot;
+            &#125;,
+            &quot;居民地&quot;: &#123;
+                &quot;100&quot;: &quot;17f&quot;
+            &#125;,
+            &quot;绿地&quot;: &#123;
+                &quot;152&quot;: &quot;14b&quot;,
+                &quot;100&quot;: &quot;141&quot;,
+                &quot;150&quot;: &quot;141&quot;,
+                &quot;151&quot;: &quot;141&quot;,
+                &quot;130&quot;: &quot;144&quot;
+            &#125;
+        &#125;,
+        &quot;17&quot;: &#123;
+            &quot;note&quot;: &quot;200m-13-17&quot;,
+            &quot;功能面&quot;: &#123;
+                &quot;104&quot;: &quot;17c&quot;,
+                &quot;105&quot;: &quot;141&quot;,
+                &quot;194&quot;: &quot;165&quot;
+            &#125;
+        &#125;
+    &#125;
+&#125;,
+&quot;bd&quot;: &#123;
+    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ subtype:转换的kind&quot;,
+    &quot;dat&quot;: &#123;
+        &quot;16&quot;: &#123;
+            &quot;建筑物区域00&quot;: &#123;
+            &#125;
+        &#125;,
+        &quot;21&quot;: &#123;
+            &quot;建筑物区域00&quot;: &#123;
+            &#125;
+        &#125;
+    &#125;
+&#125;,
+&quot;poi&quot;: &#123;
+    &quot;note&quot;: &quot;字段解释: type / subtype / [types] |级别 / 名字 / 名字num&quot;,
+    &quot;level&quot;: [&quot;7&quot;,&quot;9&quot;,&quot;10&quot;,&quot;11&quot;,&quot;12&quot;,&quot;13&quot;,&quot;14&quot;,&quot;15&quot;,&quot;16&quot;,&quot;17&quot;,&quot;18&quot;,&quot;19&quot;],
+    &quot;config&quot;:&#123;
+        &quot;10&quot;: &#123;
+            &quot;1&quot;: [&quot;100101&quot;,&quot;100102&quot;,&quot;100103&quot;],
+            &quot;2&quot;: [&quot;100201&quot;,&quot;100202&quot;,&quot;100203&quot;,&quot;100204&quot;,&quot;100205&quot;,&quot;100206&quot;,&quot;100207&quot;,&quot;100208&quot;,&quot;100209&quot;,&quot;100210&quot;,&quot;100211&quot;,&quot;100212&quot;],
+            &quot;3&quot;: [&quot;100301&quot;,&quot;100302&quot;,&quot;100303&quot;,&quot;100304&quot;,&quot;100305&quot;,&quot;100306&quot;,&quot;100307&quot;],
+            &quot;4&quot;: [&quot;100400&quot;,&quot;100401&quot;,&quot;100402&quot;,&quot;100403&quot;,&quot;100404&quot;,&quot;100405&quot;,&quot;100406&quot;,&quot;100407&quot;,&quot;100408&quot;,&quot;100409&quot;,&quot;100410&quot;,&quot;100411&quot;,&quot;100412&quot;,&quot;100413&quot;,&quot;100414&quot;,&quot;100415&quot;,&quot;100416&quot;,&quot;100417&quot;,&quot;100418&quot;,&quot;100419&quot;,&quot;100420&quot;,&quot;100421&quot;],
+            &quot;5&quot;: [&quot;100500&quot;,&quot;100501&quot;,&quot;100502&quot;],
+            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;]
+        &#125;,
+        &quot;11&quot;: &#123;
+            &quot;1&quot;: [&quot;110100&quot;,&quot;110101&quot;],
+            &quot;2&quot;: [&quot;110201&quot;,&quot;110202&quot;],
+            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;]
+        &#125;,
+        &quot;12&quot;: &#123;
+            &quot;1&quot;: [&quot;120101&quot;,&quot;120102&quot;,&quot;120103&quot;,&quot;120104&quot;,&quot;120105&quot;,&quot;120106&quot;,&quot;120107&quot;,&quot;120108&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;13&quot;: &#123;
+            &quot;1&quot;: [&quot;130101&quot;,&quot;130102&quot;,&quot;130103&quot;,&quot;130104&quot;,&quot;130105&quot;,&quot;130106&quot;,&quot;130107&quot;],
+            &quot;2&quot;: [&quot;130200&quot;,&quot;130201&quot;,&quot;130202&quot;],
+            &quot;3&quot;: [&quot;130301&quot;,&quot;130302&quot;,&quot;130303&quot;,&quot;130304&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;14&quot;: &#123;
+            &quot;1&quot;: [&quot;140100&quot;],
+            &quot;2&quot;: [&quot;140201&quot;,&quot;140202&quot;,&quot;140203&quot;,&quot;140204&quot;,&quot;140205&quot;,&quot;140206&quot;,&quot;140207&quot;,&quot;140208&quot;,&quot;140209&quot;,&quot;140210&quot;,&quot;140212&quot;,&quot;140213&quot;],
+            &quot;3&quot;: [&quot;140301&quot;,&quot;140302&quot;,&quot;140303&quot;,&quot;140304&quot;,&quot;140305&quot;,&quot;140306&quot;,&quot;140307&quot;,&quot;140308&quot;,&quot;140309&quot;,&quot;140310&quot;,&quot;140311&quot;,&quot;140312&quot;],
+            &quot;4&quot;: [&quot;140400&quot;],
+            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;,&quot;3333:270103&quot;]
+        &#125;,
+        &quot;15&quot;: &#123;
+            &quot;1&quot;: [&quot;150101&quot;,&quot;150102&quot;,&quot;150103&quot;],
+            &quot;2&quot;: [&quot;150200&quot;]
+        &#125;,
+        &quot;16&quot;: &#123;
+            &quot;1&quot;: [&quot;160101&quot;,&quot;160102&quot;,&quot;160103&quot;,&quot;160104&quot;,&quot;160105&quot;,&quot;160106&quot;,&quot;160107&quot;,&quot;160109&quot;],
+            &quot;2&quot;: [&quot;160200&quot;],
+            &quot;3&quot;: [&quot;160301&quot;,&quot;160302&quot;,&quot;160303&quot;,&quot;160304&quot;,&quot;160305&quot;,&quot;160306&quot;,&quot;160307&quot;,&quot;160308&quot;,&quot;160309&quot;],
+            &quot;4&quot;: [&quot;160401&quot;,&quot;160402&quot;,&quot;160403&quot;,&quot;160404&quot;,&quot;160405&quot;,&quot;160406&quot;,&quot;160407&quot;],
+            &quot;5&quot;: [&quot;160500&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;17&quot;: &#123;
+            &quot;1&quot;: [&quot;170101&quot;,&quot;170102&quot;,&quot;170103&quot;,&quot;170104&quot;,&quot;170105&quot;,&quot;170106&quot;,&quot;170107&quot;,&quot;170108&quot;,&quot;170109&quot;],
+            &quot;2&quot;: [&quot;170201&quot;,&quot;170202&quot;],
+            &quot;3&quot;: [&quot;170300&quot;],
+            &quot;999&quot;: [&quot;3333:270103&quot;]
+        &#125;,
+        &quot;18&quot;: &#123;
+            &quot;1&quot;: [&quot;180101&quot;,&quot;180102&quot;,&quot;180103&quot;,&quot;180104&quot;,&quot;180105&quot;,&quot;180106&quot;,&quot;180107&quot;,&quot;180108&quot;,&quot;180109&quot;],
+            &quot;2&quot;: [&quot;180201&quot;,&quot;180202&quot;,&quot;180203&quot;,&quot;180204&quot;,&quot;180205&quot;,&quot;180206&quot;,&quot;180207&quot;],
+            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;,&quot;3333:270103&quot;]
+        &#125;,
+        &quot;19&quot;: &#123;
+            &quot;1&quot;: [&quot;190101&quot;,&quot;190102&quot;,&quot;190103&quot;,&quot;190104&quot;,&quot;190105&quot;,&quot;190106&quot;,&quot;190107&quot;],
+            &quot;2&quot;: [&quot;190201&quot;,&quot;190202&quot;,&quot;190203&quot;,&quot;190204&quot;,&quot;190205&quot;,&quot;190206&quot;],
+            &quot;3&quot;: [&quot;190301&quot;,&quot;190302&quot;,&quot;190303&quot;],
+            &quot;4&quot;: [&quot;190401&quot;,&quot;190402&quot;,&quot;190403&quot;,&quot;190404&quot;,&quot;190405&quot;],
+            &quot;5&quot;: [&quot;190500&quot;],
+            &quot;999&quot;: [&quot;3333:270103&quot;]
+        &#125;,
+        &quot;20&quot;: &#123;
+            &quot;1&quot;: [&quot;200100&quot;,&quot;200101&quot;,&quot;200102&quot;,&quot;200103&quot;,&quot;200104&quot;,&quot;200105&quot;,&quot;200106&quot;,&quot;200107&quot;,&quot;200108&quot;,&quot;200109&quot;,&quot;200110&quot;,&quot;200111&quot;,&quot;200112&quot;,&quot;200113&quot;,&quot;200114&quot;,&quot;200115&quot;,&quot;200116&quot;,&quot;200117&quot;,&quot;200118&quot;],
+            &quot;2&quot;: [&quot;200201&quot;,&quot;200202&quot;,&quot;200203&quot;,&quot;200204&quot;,&quot;200205&quot;,&quot;200206&quot;]
+        &#125;,
+        &quot;21&quot;: &#123;
+            &quot;1&quot;: [&quot;210101&quot;,&quot;210102&quot;,&quot;210103&quot;],
+            &quot;2&quot;: [&quot;210201&quot;,&quot;210202&quot;,&quot;210203&quot;,&quot;210204&quot;,&quot;210205&quot;,&quot;210206&quot;],
+            &quot;3&quot;: [&quot;210300&quot;]
+        &#125;,
+        &quot;22&quot;: &#123;
+            &quot;1&quot;: [&quot;220101&quot;,&quot;220102&quot;,&quot;220103&quot;,&quot;220104&quot;,&quot;220105&quot;,&quot;220106&quot;,&quot;220107&quot;,&quot;220108&quot;],
+            &quot;2&quot;: [&quot;220201&quot;,&quot;220202&quot;]
+        &#125;,
+        &quot;23&quot;: &#123;
+            &quot;1&quot;: [&quot;230101&quot;,&quot;230102&quot;,&quot;230103&quot;,&quot;230104&quot;,&quot;230105&quot;,&quot;230106&quot;,&quot;230107&quot;],
+            &quot;2&quot;: [&quot;230201&quot;,&quot;230202&quot;,&quot;230203&quot;,&quot;230204&quot;,&quot;230205&quot;,&quot;230206&quot;],
+            &quot;3&quot;: [&quot;230301&quot;,&quot;230302&quot;,&quot;230303&quot;,&quot;230304&quot;,&quot;230305&quot;,&quot;230306&quot;,&quot;230307&quot;,&quot;230308&quot;,&quot;230309&quot;,&quot;230310&quot;,&quot;230311&quot;,&quot;230312&quot;],
+            &quot;4&quot;: [&quot;230401&quot;,&quot;230402&quot;,&quot;230403&quot;,&quot;230404&quot;,&quot;230405&quot;,&quot;230406&quot;,&quot;230407&quot;,&quot;230408&quot;],
+            &quot;5&quot;: [&quot;230501&quot;,&quot;230502&quot;,&quot;230503&quot;],
+            &quot;6&quot;: [&quot;230600&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;,&quot;3333:270103&quot;]
+        &#125;,
+        &quot;24&quot;: &#123;
+            &quot;1&quot;: [&quot;240101&quot;,&quot;240102&quot;,&quot;240103&quot;,&quot;240104&quot;],
+            &quot;2&quot;: [&quot;240201&quot;,&quot;240202&quot;,&quot;240203&quot;,&quot;240204&quot;,&quot;240205&quot;],
+            &quot;3&quot;: [&quot;240301&quot;,&quot;240302&quot;],
+            &quot;4&quot;: [&quot;240401&quot;,&quot;240402&quot;,&quot;240403&quot;,&quot;240404&quot;,&quot;240405&quot;],
+            &quot;5&quot;: [&quot;240501&quot;,&quot;240502&quot;,&quot;240503&quot;,&quot;240504&quot;],
+            &quot;6&quot;: [&quot;240600&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;25&quot;: &#123;
+            &quot;1&quot;: [&quot;250101&quot;,&quot;250102&quot;,&quot;250103&quot;,&quot;250104&quot;],
+            &quot;2&quot;: [&quot;250201&quot;,&quot;250202&quot;,&quot;250203&quot;,&quot;250204&quot;,&quot;250205&quot;,&quot;250206&quot;,&quot;250207&quot;],
+            &quot;3&quot;: [&quot;250301&quot;,&quot;250302&quot;,&quot;250303&quot;,&quot;250304&quot;,&quot;250305&quot;],
+            &quot;4&quot;: [&quot;250400&quot;],
+            &quot;999&quot;: [&quot;2222:270102&quot;]
+        &#125;,
+        &quot;26&quot;: &#123;
+            &quot;1&quot;: [&quot;260100&quot;,&quot;260199&quot;],
+            &quot;2&quot;: [&quot;260200&quot;]
+        &#125;,
+        &quot;50&quot;: &#123;
+            &quot;1&quot;: [&quot;3:280101&quot;,&quot;4:280102&quot;]
+        &#125;,
+        &quot;100&quot;: &#123;
+            &quot;1&quot;: [&quot;100:290101&quot;]
+       &#125;
+    &#125;,        
+    &quot;dat&quot;: &#123;
+        &quot;7&quot;: &#123;
+            &quot;县市区&quot;: &quot;&quot;
+        &#125;,
+        &quot;9&quot;: &#123;
+            &quot;乡镇村屯SP合并_&quot;: &quot;1,2,3,4,5&quot;
+        &#125;,
+        &quot;10&quot;: &#123;
+            &quot;KEEP&quot;: &quot;&quot;
+        &#125;,
+        &quot;11&quot;: &#123;
+            &quot;L11&quot;: &quot;&quot;
+        &#125;,
+        &quot;12&quot;: &#123;
+            &quot;L12&quot;: &quot;&quot;            
+        &#125;,
+        &quot;13&quot;: &#123;
+            &quot;L13&quot;: &quot;&quot;,
+            &quot;桥&quot;: &quot;&quot;,
+            &quot;山sp合并&quot;: &quot;&quot;,
+            &quot;L13移动学院&quot;: &quot;&quot;
+        &#125;,
+        &quot;14&quot;: &#123;
+            &quot;L14&quot;: &quot;&quot;
+        &#125;,
+        &quot;15&quot;: &#123;
+            &quot;L15_&quot;: &quot;1,2&quot;
+        &#125;,
+        &quot;16&quot;: &#123;
+            &quot;L16_&quot;: &quot;1,2&quot;,
+            &quot;不抽稀点POI&quot;: &quot;&quot;,
+            &quot;L16中国移动学院其他点&quot;: &quot;&quot;
+        &#125;,
+        &quot;17&quot;: &#123;
+            &quot;L17_&quot;: &quot;1,2,3,4&quot;,
+            &quot;出入口&quot;: &quot;&quot;,
+            &quot;带门类&quot;: &quot;&quot;
+        &#125;,
+        &quot;18&quot;: &#123;
+            &quot;L18_&quot;: &quot;1,2,3,4,5,6,7&quot;
+        &#125;,
+         &quot;19&quot;: &#123;
+            &quot;L19_&quot;: &quot;1,2,3,4,5,6,7,8,9,10&quot;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<p>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/05/12/M_Swift122%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/12/M_Swift122%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-12 17:02:20" itemprop="dateCreated datePublished" datetime="2020-05-12T17:02:20+08:00">2020-05-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>很久没有写博客了，有一年多的时间了吧，这中间风风雨雨，我想是不是忘记了自己的初衷了，今天好像一天都没有工作，我想写点东西吧，纪念一下自己的30岁，不知道30岁以后的人生是什么样，我想是时候y需要规划一下了。<br>总之很多问题，我好像随波逐流的在这一年里干了很多事情，也好像什么也没干<br>孩子出生了，我也没回家看过几次。。。<br>房子买了，真的是满纸荒唐言，一把心酸泪，很扯，但愿以后的结果让我们很满意吧。<br>这段时间我觉得最大的成功就是写了公交规划这个项目吧，我觉得对我来说确实挺爽的，这个项目我觉得还是挺有收获的，因为是我一个人独立完成的，而且是用java，总之，还是挺有意义的。效率不能算是非常的好，但是我觉得代码很简洁，还是有一点能力的，自夸一下吧。算是对自己信心上的一个提高<br>现在在说地图数据编译，其实代码都是已经写好的，我只不过是用这编译罢了，没有多少技术含量，但是每次编译的时候都需要熬夜似的编译，让我确实很疲惫，不知道以后会不会好点。<br>总之对地图数据这方面我也算是有了一点点的收获，还是挺高兴的。<br>下面的事情我想我也不知道怎么办了，卖完房子，现金方面就不是太充足了，还借了一些钱，希望也是尽快能还上<br>明天也不知道是什么情况，公司搬到海淀这个地方对我h来说还是挺难受的，我每天早上要6点40左右就要醒来，然后赶将近两个小时的时间的公交和地铁去上班，下班也是，这样一天天的让我身心很疲惫，每到周末想好好的放松一下的时候，我又上了打游戏的瘾，天天打游戏到深夜，也还是疲惫。总之这种状态不是很好<br>这个疫情让我在家里呆了很长很长一段时间，导致我都有点胖了，真的不是个好现象。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2019/09/29/M_Swift174%E5%AF%BC%E8%88%AA%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E7%AE%97%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -788,203 +1374,10 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2019/06/07/M_Swift152GLSL-%E5%8F%98%E9%87%8F%E5%92%8C%E7%B1%BB%E5%9E%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/06/07/M_Swift152GLSL-%E5%8F%98%E9%87%8F%E5%92%8C%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-06-07 02:24:40" itemprop="dateCreated datePublished" datetime="2019-06-07T02:24:40+08:00">2019-06-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:08:49" itemprop="dateModified" datetime="2021-04-12T16:08:49+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <hr>
-<h2 id="title-OpenGL-变量和类型"><a href="#title-OpenGL-变量和类型" class="headerlink" title="title :OpenGL 变量和类型"></a>title :OpenGL 变量和类型</h2><p>1、变量类型<br>变量种类            变量类型                                描述<br>空                       void                                       用于无返回值的函数或者参数为空的函数<br>标量                   float, int, bool                        浮点型，整型，布尔型的标量数据类型<br>浮点型向量        vec2, vec3, vec4                   包含2，3，4个元素的浮点型向量<br>整数型向量        ivec2, ivec3, ivec4                 包含2，3，4个元素的整型向量<br>布尔型向量        bvec2, bvec3, bvec4             包含1，2，3，4个元素的布尔型向量<br>矩阵                   mat2, mat3, mat4                  尺寸为2x2，3x3，4x4的浮点型矩阵<br>纹理句柄            sampler2D, samplerCube     分别表示操作2D和cube的句柄<br>备注：GLSL中没有指针类型，大小写敏感的<br>对于变量类型，GLSL有着非常严格的规则，进行赋值，加减乘除运算必须类型一直，否则会出现语法错误。如果不一致则必须进行强制类型转换<br>float myFloat = 1.0;<br>bool myBool = true;<br>float result = myFloat + myBool(myBool);</p>
-<p>2、Structures 结构体<br>GLSL支持结构体，把一些系统定义的类型聚到一起，组成自定义的类型，也可以包括事先声明的结构体，但是不能定义嵌套结构体。例如：<br>struct myStruct<br>{<br>    float f1;<br>    bool f2;<br>    vec3 v3;<br>}<br>声明结构体变量<br>myStruct lightVar2;<br>struct myStruct2<br>{<br>    float f1;<br>    myStruct st1;   //合法<br>    struct str2{        // 不合法<br>        bool b1;<br>        float f2;<br>    }<br>}<br>3、Arrays 数组<br>GLSL中的数组和C的数组很类似，支持最基本类型，也支持结构体的数组。例如：</p>
-<p>float frequencies[3];<br>uniform vec4 lightPosition[4];<br>const int numLights = 2;<br>light lights[numLights];<br>备注 GLSL的数组无法在声明的时候初始化。</p>
-<p>4、存储限定符<br>const           常量，或者是函数的只读参数<br>attribute       只能在顶点着色器中定义，只读属性，由应用程序赋值初始化<br>uniform        只能定义为全局变量，只读属性，可以由应用程序和opengl 初始化<br>varying         提供顶点着色器和片段着色器的连接点，只能是float, vec2, vec3, vec4, mat2, mat3, and mat4类型的变量<br>5、vector变量操作方式<br>向量的元素有固定的名字去访问，分别有三组{x,y,z,w}、{r,g,b,a}、{s,t,p,q}，访问时下表对应长度不能超过l向量的长度<br>vec2 v = vec2(3.0);<br>v.x //正确<br>v.z // 错误<br>向量的元素可以放在一起<br>vec4 v = vec4(1,2,3,4);<br>v.zy    // 等于 vec2(3,2)<br>vec3 v3 = v.xyz // 等于vec3(1,2,3)<br>v.rgba  // 此种方式不正确，下表同时只能使用一个集合中的名称<br>v.yx = vec2(3,0)    // 将y和x的位置互换并给他们的赋值为新的值，将变成 vec4(3,0,3,4);<br>6、矩阵元素的操作方式<br>用[]访问元素<br>mat4 m;<br>m[1] = vec4(2.0);   // sets the 4th element of the third column to 2.0<br>m[0][0] = 1.0;  // sets the upper left element to 1.0<br>m[2][3] = 2.0;  // sets the second column to all 2.0<br>7、向量和矩阵的操作<br>vec3 v, u; float f;<br>v = u + f;<br>等价于<br>v.x = u.x + f;<br>v.y = u.y + f;<br>v.z = u.z + f;</p>
-<p>vec3 v, u, w;<br>w = v + u;<br>等价于<br>w.x = v.x + u.x;<br>w.y = v.y + u.y;<br>w.z = v.z + u.z;</p>
-<p>vec3 v, u;<br>mat3 m;<br>u = v * m;<br>等价于<br>u.x = dot(v, m[0]);<br>u.y = dot(v, m[1]);<br>u.z = dot(v, m[2]);</p>
-<p>u = m * v;<br>等价于<br>u.x = m[0].x * v.x + m[1].x * v.y + m[2].x * v.z; u.y = m[0].y * v.x + m[1].y * v.y + m[2].y * v.z; u.z = m[0].z * v.x + m[1].z * v.y + m[2].z * v.z;</p>
-<p>mat m, n, r;<br>r = m * n;<br>等价于<br>r[0].x = m[0].x * n[0].x + m[1].x * n[0].y + m[2].x * n[0].z;<br>r[1].x = m[0].x * n[1].x + m[1].x * n[0].y + m[2].y * n[0].z;<br>r[2].x = m[0].x * n[2].x + m[1].x * n[0].y + m[2].z * n[0].z;</p>
-<p>r[0].y = m[0].y * n[0].x + m[1].y * n[1].y + m[2].x * n[1].z;<br>r[1].y = m[0].y * n[1].x + m[1].y * n[1].y + m[2].y * n[1].z;<br>r[2].y = m[0].y * n[2].x + m[1].y * n[1].y + m[2].z * n[1].z;</p>
-<p>r[0].z = m[0].z * n[0].x + m[1].z * n[2].y + m[2].x * n[2].z;<br>r[1].z = m[0].z * n[1].x + m[1].z * n[2].y + m[2].y * n[2].z;<br>r[2].z = m[0].z * n[2].x + m[1].z * n[2].y + m[2].z * n[2].z;</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/13/M_Swift119%E5%92%8C%E7%BA%A6%E8%BD%A6%E7%AE%80%E4%BB%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/13/M_Swift119%E5%92%8C%E7%BA%A6%E8%BD%A6%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">和约车简介</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-13 11:57:07" itemprop="dateCreated datePublished" datetime="2018-12-13T11:57:07+08:00">2018-12-13</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>经过两个多星期的奋战，和约车差不多成型了总感觉缺少点什么，但是无所谓了，服务的事情能解决应该就不要客户端去调整了。<br>这两天写了一下开发申请单，也完善了一下功能模块。<br>在写申请单的时候，也对工程有了一个规划，模块分的也更详细了<br>从工程角度来讲，我觉得是有收获的，以后再开发一个东西的时候，我们会更方便的了解这个东西，也能更全面的去分析项目，也能更全面的把握项目，不至于手忙脚乱，不至于代码写的一团糟。<br>和约车功能模块<br>    工程配置<br>    网络服务<br>    第三方SDK<br>    资源文件<br>    app业务模块<br>和地图APP模块名称<br>    主页<br>        主页面<br>    添加路线<br>        添加路线页面<br>    消息<br>        我的消息页面<br>        聊天页面<br>    我的<br>        个人中心页面<br>        历史订单页面<br>        历史评价页面<br>        个人信息页面<br>        修改昵称页面<br>        设置页面<br>        关于页面<br>        上下班设置页面<br>    车主认证<br>        车主认证页面<br>        车型选择页面<br>    发单<br>        发单页面<br>    订单<br>        等待接单页面<br>        订单详情页面<br>        订单支付页面<br>    登录<br>        验证码登录页面<br>        密码登录页面<br>        密码修改页面<br>        服务协议页面<br>    选点<br>        地图选点搜索页面</p>
-<p>资源文件<br>        统一登录SDK<br>        极光推送SDK<br>        高德搜索SDK<br>        地图SDK<br>Libs<br>        网络请求<br>        列表空试图显示<br>        日志输出<br>        Toast<br>images<br>        图片资源</p>
-<p>工程描述<br>    数据存储<br>        因为项目不是特别的大，所以数据存储这方面我全部使用了NSUserdefult，专门写了一个类，用户所有数据存储，提供接口，外面调用<br>    常量<br>        项目中不免会用到一些配置的东西，我都是写在这里，一些sdk的key，版本号，通用的颜色，通知名称，屏幕宽高等等<br>        此外还包括了一些常用的类，方便头文件中写太多。<br>    单例<br>        在开发中不免使用到单例，我想和约车选择起点和终点用单例是再好不过了，因为我们不用考虑那么多了，在进程生命周期内也会一直存在。<br>    时间处理<br>        这个有点坑，说实话，我到现在也有点晕，很多时候获取的时间老是不准。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2018/12/13/M_Swift118%E6%96%B0%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/12/13/M_Swift118%E6%96%B0%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">新项目总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-12-13 11:56:41" itemprop="dateCreated datePublished" datetime="2018-12-13T11:56:41+08:00">2018-12-13</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>今天可能需要休息一下，并没有那么忙碌了。<br>临时的话，手里的工作没有那么多了，所以想写点东西<br>前段时间写了一个ios的app，感觉重新写iOS的感觉就是爽。<br>很快就写完了，可能并没有那么复杂吧，但是我觉得很爽，虽然加了很多的班，但是感觉是值得的。<br>突然就想说，一个iOS开发者，一个安卓开发者，一个前端的综合开发者，应该具备什么样的能力，也许我能力还浅，但是我很想说一下，很想在说的同时对自己也有提高吧。<br>感觉其实，经常在写东西，但是只是熟悉，真的是收获很少。<br>有的时候，感觉学不到。<br>不过写起来还是挺爽的，我基本上坚持了使用代码去写，很少的使用xib，我知道xib使用多了，就一定会发生卡顿，所以，我想我的坚持是对的，xib那种东西其实没有太多的技术含量，我觉得不能用太多，特别是一个控制器里的多个view，我们如果用多了，真的不好。<br>再说说开发吧，我觉得iOS开发还是要快捷很多，无论是连手机测试，还是打端点编译，都非常的快捷便利，android真的是让人头疼，我每次运行android一段时间以后我一定要关一下电脑，不关的话真的是卡的要命，电脑嗡嗡的响的时候，编译一直过不去的时候，真的是脑袋都炸掉了。<br>再看一下现在互联网行业吧，真的是让人头疼，感觉现在给钱的都是大公司，小公司真的是扣的要命，一分钱都要分好几份话的样子。<br>有的时候一直在想，我应该怎么办，有的时候一直在想，我能有什么样的后路，这真的是让人头疼的问题。<br>回家吧幸福，回家看一看父母。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/21/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/23/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/21/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><span class="page-number current">22</span><a class="page-number" href="/page/23/">23</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/23/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1050,7 +1443,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-count">403</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1078,7 +1471,7 @@ BASE64编码和解码    BASE64Encoder、BASE64Decoder
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

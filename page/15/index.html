@@ -148,7 +148,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift187js%20%E4%B8%AD%20map%20,%20foreach%20%EF%BC%8Cfilter,%20reduce%20%E7%9A%84%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift183bound%E6%98%AF%E5%90%A6%E4%BA%A4%E5%8F%89%E5%8F%A0%E7%9B%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -162,7 +162,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/25/M_Swift187js%20%E4%B8%AD%20map%20,%20foreach%20%EF%BC%8Cfilter,%20reduce%20%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">js 中 map , foreach ，filter, reduce 的区别</a>
+            <a href="/2021/02/25/M_Swift183bound%E6%98%AF%E5%90%A6%E4%BA%A4%E5%8F%89%E5%8F%A0%E7%9B%96/" class="post-title-link" itemprop="url">bound是否交叉叠盖</a>
         </h2>
 
         <div class="post-meta">
@@ -179,7 +179,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:06:35" itemprop="dateModified" datetime="2021-04-12T16:06:35+08:00">2021-04-12</time>
+                <time title="修改时间：2021-04-12 16:05:55" itemprop="dateModified" datetime="2021-04-12T16:05:55+08:00">2021-04-12</time>
               </span>
 
           
@@ -193,12 +193,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <pre><code>foreach:遍历数组，让数组的每一项做事情
-map：让数组通过某种运算产生新的数组
-filter：筛选数组中符合条件的选项组成新的数组
-reduce：让数组前项和后项做运算，并累计最终值
-every：检测数据中每一项是否符合条件，全部满足才返回true
-some：有一项符合条件即返回true
+          <pre><code>/**
+ * 是否交叉叠盖
+ * @param &#123;Bound&#125; bound - 交叉叠盖检测对象
+ * @return &#123;boolean&#125; 是否交叉叠盖
+ */
+intersect(bound: Bound) &#123;
+    return (bound.xmax &gt;= this._xmin) &amp;&amp; (bound.xmin &lt;= this._xmax) &amp;&amp; (bound.ymax &gt;= this._ymin) &amp;&amp; (bound.ymin &lt;= this._ymax);
+&#125;
+</code></pre>
+<h1 id="bound的缩放"><a href="#bound的缩放" class="headerlink" title="bound的缩放"></a>bound的缩放</h1><pre><code>/**
+ * 缩放整个边界
+ * @param &#123;number&#125; s - 缩放倍数
+ */
+scale(s: number) &#123;
+    this._xmin = this._xmin - (s - 1) * (this._xmax - this._xmin)/2;
+    this._xmax = this._xmax + (s - 1) * (this._xmax - this._xmin)/2;
+    this._ymin = this._ymin - (s - 1) * (this._ymax - this._ymin)/2;
+    this._ymax = this._ymax + (s - 1) * (this._ymax - this._ymin)/2;
+&#125;
 </code></pre>
 
       
@@ -219,7 +232,7 @@ some：有一项符合条件即返回true
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift188js%20gis%E5%AD%A6%E4%B9%A0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift185canvas%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -233,7 +246,7 @@ some：有一项符合条件即返回true
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/25/M_Swift188js%20gis%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">js gis学习</a>
+            <a href="/2021/02/25/M_Swift185canvas%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">canvas学习总结</a>
         </h2>
 
         <div class="post-meta">
@@ -250,7 +263,7 @@ some：有一项符合条件即返回true
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:06:53" itemprop="dateModified" datetime="2021-04-12T16:06:53+08:00">2021-04-12</time>
+                <time title="修改时间：2021-04-12 16:06:09" itemprop="dateModified" datetime="2021-04-12T16:06:09+08:00">2021-04-12</time>
               </span>
 
           
@@ -264,10 +277,12 @@ some：有一项符合条件即返回true
     <div class="post-body" itemprop="articleBody">
 
       
-          <pre><code>目前从git上拉了一个代码，讲convas gis的，我感觉比较基础，也比较符合地图方向的，可以学习一下，我建议是跟着敲一下代码，总结一下学习经验。其实地图方向上的一些东西我们手里有很多资源，问题的关键是如何学好这些东西。如何将这些东西发挥比较大的用处，这个很关键。目前的话我们虽然有这些东西，但是我们基础不牢固，所以很难发挥我们长处，这个东西需要日积月累，时间长了我们总能获得收获。
-</code></pre>
-<p>cavans api<br>save()<br>保存画布(canvas)的所有状态<br>restore()<br>save 和 restore 方法是用来保存和恢复 canvas 状态的，都没有参数。Canvas 的状态就是当前画面应用的所有样式和变形的一个快照。<br>总之很多方法，需要自己去了解或者参考，其实跟opengl有点类似</p>
-
+          <p>前端如果想做比较好的特效的话，或者是地图相关的应用的话，学习canvas是非常有必要的，我个人感觉canvas跟OpenGL很相似，都是状态管理的机制<br>常见的接口有</p>
+<h2 id="样式"><a href="#样式" class="headerlink" title="样式"></a>样式</h2><p>ctx.strokeStyle = “red”; //线的颜色<br>ctx.fillStyle = “blue”; //准备填充的颜色</p>
+<h2 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h2><p>ctx.beginPath();     //声明要开始绘制路径<br>ctx.closePath();     //闭合路径（自动补全）<br>ctx.moveTo(100,100); //移动到绘制点，将“画笔”移动到100,100的位置<br>ctx.lineTo(250,250); //划线<br>ctx.arc(圆心x, 圆心y, 半径, 开始的弧度, 结束的弧度, 是否逆时针);<br>ctx.drawImage(image, 100, 100); //表示x和y坐标<br>ctx.drawImage(img图片对象,画布X,画布Y);<br>ctx.drawImage(img,切片X,切片Y,切片W,切片H,画布X,画布Y,图片W,图片H);</p>
+<h2 id="显示填充"><a href="#显示填充" class="headerlink" title="显示填充"></a>显示填充</h2><p>ctx.stroke();        //显示线（绘制线），可以绘制的路径显示出来<br>ctx.fill();          //填充颜色<br>ctx.fillRect(x,y,w,h);    //绘制填充矩形<br>ctx.strokeRect(x,y,w,h);   //绘制路径矩形</p>
+<h2 id="画布的变形"><a href="#画布的变形" class="headerlink" title="画布的变形"></a>画布的变形</h2><p>translate()移动画布，<br>rotate()旋转画布<br>transfrom()<br>ctx.save()表示保存上下文的物理性质，<br>ctx.restore()表示恢复最近一次的保存</p>
+<h2 id="渐变"><a href="#渐变" class="headerlink" title="渐变"></a>渐变</h2><h2 id="文字"><a href="#文字" class="headerlink" title="文字"></a>文字</h2><h2 id="阴影"><a href="#阴影" class="headerlink" title="阴影"></a>阴影</h2><h2 id=""><a href="#" class="headerlink" title=""></a></h2>
       
     </div>
 
@@ -286,7 +301,7 @@ some：有一项符合条件即返回true
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift191srs%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift186css%20%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -300,7 +315,7 @@ some：有一项符合条件即返回true
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/25/M_Swift191srs%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">srs学习总结</a>
+            <a href="/2021/02/25/M_Swift186css%20%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">css学习总结</a>
         </h2>
 
         <div class="post-meta">
@@ -317,7 +332,7 @@ some：有一项符合条件即返回true
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:07:26" itemprop="dateModified" datetime="2021-04-12T16:07:26+08:00">2021-04-12</time>
+                <time title="修改时间：2021-04-12 16:06:23" itemprop="dateModified" datetime="2021-04-12T16:06:23+08:00">2021-04-12</time>
               </span>
 
           
@@ -331,145 +346,25 @@ some：有一项符合条件即返回true
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>1.开发直播应用，达到效果如下<br>    可以实现回放功能<br>    可以调用srs api实现当前app有多少个房间<br>    可以支持api回调视频功能，达到播放视频效果<br>    目前已经在那台电脑上跑起来本地的docker服务了<br>    然后是录制，目前测试已经可以录制了<br>    接下来就是访问了，目前的想法是访问那台电脑的地址<br>    目前直播的一些探索感觉对我还是受益匪浅的，特别是docker和srs的学习了解，算是知道了srs的一些功能，一级docker的一些使用语法，这让我很兴奋，我也在iOS和android段采用开源的代码构建了一个类似facetime的页面，能够时间两个人的交互对话，这对以后在直播及会议上可能会有很大的帮助，还有一个问题是，我如果想只是音频的对话能不能实现。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift192webpack%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift192webpack%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">webpack学习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:07:36" itemprop="dateModified" datetime="2021-04-12T16:07:36+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>webpack.config.js<br>const path = require(‘path’);<br>module.exports = {<br>    mode: ‘production’,<br>    // 入口文件配置<br>    entry: ‘./js/test.js’,<br>    // 输出配置<br>    output: {<br>        // 出口文件<br>        filename: ‘bundle.js’,<br>        // 设置全路径<br>        path: path.resolve(__dirname, ‘dist’)<br>    },<br>    module: {<br>        // 规则数组, 里面的每一个对象都是在描述一个loader<br>        rules: [<br>            {<br>                //css文件加载，正则表达式css文件的路径<br>                test: /.css$/,<br>                use: [<br>                    ‘style-loader’,<br>                    ‘css-loader’<br>                ]<br>            },<br>            {<br>                ////图片文件加载<br>                test: /.(png|jpg|gif)$/,<br>                use: [<br>                    {<br>                        loader: ‘file-loader’,<br>                        query: {<br>                            name: ‘img/[name]-[hash:5].[ext]’<br>                        }<br>                    },<br>                ],<br>            },<br>        ]<br>    },<br>    devServer:{<br>        contentBase: ‘./dist’<br>    }<br>};</p>
-<p>package.json</p>
-<p>{<br>  “name”: “state-snow”, // 项目名称<br>  “version”: “0.1.0”, // 版本<br>  “private”: true,<br>  “scripts”: { // 运行脚本<br>    “serve”: “vue-cli-service serve”,<br>    “build”: “vue-cli-service build”,<br>    “docker”: “docker build -t fdrb-web . &amp;&amp; docker save -o fdrb-web.tar fdrb-web”<br>  },<br>  “dependencies”: { // 项目依赖<br>  }<br>  “devDependencies”: { // 开发依赖<br>  }<br>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift193%E5%9C%B0%E5%9B%BE%E7%9F%A9%E9%98%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift193%E5%9C%B0%E5%9B%BE%E7%9F%A9%E9%98%B5/" class="post-title-link" itemprop="url">矩阵在地图中使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-24 10:48:20" itemprop="dateModified" datetime="2021-03-24T10:48:20+08:00">2021-03-24</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>一直在学习一些 地图思想，代码上始终看不懂一些矩阵的代码，今天有幸获取别人讲解的canvans矩阵的知识，算是总结一下吧</p>
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><p>transform(a,b, c,d,e,f)<br>a 水平方向的缩放 （scale X）<br>B 水平方向的倾斜偏移<br>C 竖直方向的倾斜偏移<br>D 竖直方向的缩放 （scale Y）<br>E 水平方向的移动 （translate X）<br>F 竖直方向的移动 （translate Y）<br>标准矩阵    简化矩阵    单位矩阵<br>a c e    a 0 e    1 0 0<br>B d f    0 d f    0 1 0<br>0 0 1    0 0 1    0 0 1</p>
-<h2 id="矩阵映射-x1-y1-–-gt-x2-y2"><a href="#矩阵映射-x1-y1-–-gt-x2-y2" class="headerlink" title="矩阵映射 (x1,y1) –&gt; (x2,y2)"></a>矩阵映射 (x1,y1) –&gt; (x2,y2)</h2><p>X2 = x1 * a + e<br>Y2 = y1 * d + f<br>矩阵变换<br>a1 0 e1         a 0 e           a2 0 e2<br>0 d1 f1    X   0 d f     =     0  d2 f2<br>0   0  1          0 0 1           0   0   1<br>得出公式：<br>a2 = a1 * a<br>d2 = d1 * d<br>e2 = a1 * e + e1<br>f2 = d1 * f + f1</p>
-<h2 id="矩阵api"><a href="#矩阵api" class="headerlink" title="矩阵api"></a>矩阵api</h2><p>transform(a,b, c,d,e,f) 屏幕坐标—&gt; 屏幕坐标<br>setTransform(a,b,c,d,e,f) 地理坐标—&gt;屏幕坐标<br>如下两个函数scale、translate都屏幕坐标—&gt; 屏幕坐标转化，是transform函数简化<br>scale(x,y) 对变量a、d的变化<br>translate(x,y) 对变量e、f的变化<br>举个例子<br>假设变换前矩阵m1<br>变换矩阵m<br>变换后矩阵m2<br>变换操作维transform、scale、translate<br>transform ： m1 * m = m2<br>scale : m = (x,0,0,y0,0)<br>translate : m = (1,0,0,1,x,y)</p>
-<h2 id="地理坐标–-gt-屏幕坐标"><a href="#地理坐标–-gt-屏幕坐标" class="headerlink" title="地理坐标–&gt;屏幕坐标"></a>地理坐标–&gt;屏幕坐标</h2><p>webMercator 平面坐标 单位：米<br>canvas 屏幕坐标 单位：pixel<br>//设置视图级别及视图中心<br>   setView(center: number[] = [0,0], zoom: number = 3) {<br>       this._center = center;<br>       this._zoom = Math.max(3, Math.min(20, zoom));<br>       //center为经纬度，转化为平面坐标<br>       const origin = this._projection.project(center as any);<br>       const bound: Bound = this._projection.bound;<br>       //已知：matrix 转换前 坐标origin，转换后坐标 即canvas的中心 [this._canvas.width / 2, this._canvas.height / 2]<br>       //求：转换矩阵<br>       //解法如下：<br>       const a = 256 * Math.pow(2, this._zoom) / (bound.xmax - bound.xmin) * bound.xscale;<br>       const d = 256 * Math.pow(2, this._zoom) / (bound.ymax - bound.ymin) * bound.yscale;<br>       const e = this._canvas.width / 2 - a * origin[0];<br>       const f = this._canvas.height / 2 - d * origin[1];<br>       this._ctx.setTransform(a , 0, 0, d, e, f);<br>       this.redraw();<br>   }</p>
-<h2 id="屏幕坐标–-gt-屏幕坐标"><a href="#屏幕坐标–-gt-屏幕坐标" class="headerlink" title="屏幕坐标–&gt;屏幕坐标"></a>屏幕坐标–&gt;屏幕坐标</h2><p>   交互表现为鼠标当前位置屏幕坐标不变，进行缩放，即x2 = x1， y2 = y1<br>   其他设定：变换前矩阵（a1,0,0,d1,e1,f1）变换矩阵（a,0,0,d,e,f）,变换后矩阵（a2,0,0,d2,e2,f2）<br>   scale通过滚轮变化计算得到，且 a= d = scale,求e，f<br>   1.将原屏幕坐标x1转成地理坐标 x0 = （x1 - e1） / a1<br>   2.地理坐标x0转成屏幕坐标x2 a2 *x0 + e2 = x2 , e2 = x2 - a2 * x0代入1式e2 = x2 - a2 * (x1 - e1) / a1<br>   3.已知scale = a2 / a1 故 e2 = x2 - scale * ( x1 - e1)<br>   4.另矩阵变换a1 *e + e1 = e2<br>   5.联立3和4 求得 e = （x2 - scale * (x1 - e1) - e1） / a1</p>
-<p>_onWheel(event) {<br>    event.preventDefault();<br>    let scale = 1;<br>    const sensitivity = 100;<br>    const delta = event.deltaY / sensitivity;<br>    if (delta &lt; 0) {<br>       if (this._zoom &gt;= 20) return;<br>       // 放大<br>       scale *= delta * -2;<br>    }<br>    else {<br>       // 缩小<br>       if (this._zoom &lt;= 3) return;<br>       scale /= delta * 2;<br>    }<br>    const zoom = Math.round(Math.log(scale));<br>    scale = Math.pow(2, zoom);<br>    this._zoom += zoom;<br>    //交互表现为 鼠标当前位置 屏幕坐标不变 进行缩放 即x2 = x1<br>    //第一种方案，坐标系不变，变坐标值<br>    //1.将原屏幕坐标 x1 转成 初始坐标 x0 = (x1 - e1) / a1  初始矩阵 (1,0,0,1,0,0)<br>    //2.初始坐标x0 转成 现屏幕坐标x2  a2 * x0 + e2 = x2    e2 = x2 - a2 * x0  代入1式 e2 = x2 - a2 * (x1 - e1) / a1<br>    //3.已知scale = a2 / a1  故 e2 = x2 - scale * (x1 - e1)<br>    //4.另矩阵变换 a1 * e + e1 = e2<br>    //5.联立3和4  求得 e = (x2 - scale * (x1 - e1) - e1) / a1<br>    const matrix = (this._ctx as any).getTransform();<br>    const a1 = matrix.a, e1 = matrix.e, x1 = event.x, x2 = x1; //放大到中心点 x2 = this._canvas.width / 2<br>    const e = (x2 - scale * (x1 - e1) - e1) / a1;<br>    const d1 = matrix.d, f1 = matrix.f, y1 = event.y, y2 = y1; //放大到中心点 y2 = this._canvas.height / 2<br>    const f = (y2 - scale * (y1 - f1) - f1) / d1;<br>    this._ctx.transform( scale, 0, 0, scale, e, f );<br>    this.redraw();<br>    }</p>
+          <p>平时开发web应用是做页面布局时候写css总是要百度一番，比如如何居中、如何滚动，等等，闲着没事，学习一下css总是好的。</p>
+<h2 id="Gradients-渐变"><a href="#Gradients-渐变" class="headerlink" title="Gradients 渐变"></a>Gradients 渐变</h2><h3 id="线性渐变（Linear-Gradients）-向下-向上-向左-向右-对角方向"><a href="#线性渐变（Linear-Gradients）-向下-向上-向左-向右-对角方向" class="headerlink" title="线性渐变（Linear Gradients）- 向下/向上/向左/向右/对角方向"></a>线性渐变（Linear Gradients）- 向下/向上/向左/向右/对角方向</h3><p>.demo{<br>    background: linear-gradient(direction|angle, color-stop1, color-stop2, …);<br>}<br>directio | angle    线性渐变的方向，例如： to right ， to left， to bottom right，也可以是一个角度。<br>color-stop#    线性渐变的颜色，至少需要两个颜色。也就是说需要至少有 color-stop1, color-stop2。</p>
+<h3 id="径向渐变（Radial-Gradients）-由它们的中心定义"><a href="#径向渐变（Radial-Gradients）-由它们的中心定义" class="headerlink" title="径向渐变（Radial Gradients）- 由它们的中心定义"></a>径向渐变（Radial Gradients）- 由它们的中心定义</h3><p>.demo{<br>    background-image: radial-gradient(shape size at position, start-color, …, last-color);<br>}<br>shape    径向渐变颜色区域的形状 circle（圆形）或 ellipse（椭圆）<br>size    参数定义了渐变的大小 closest-side farthest-side closest-corner farthest-corner<br>at    固定搭配 shape size 来表示在一个位置 position<br>position    径向渐变的起点位置<br>start-color    径向渐变的颜色至少需要两个颜色</p>
+<h2 id="flex-弹性盒子布局介绍"><a href="#flex-弹性盒子布局介绍" class="headerlink" title="flex 弹性盒子布局介绍"></a>flex 弹性盒子布局介绍</h2><p>flex 布局也叫弹性布局，它的特点是可以实现子元素的自适应屏幕大小，可以自由的分配每个 box 需要占用的空间比例。我们把父元素称作为：容器。子元素称作为：项目。容器默认存在两个轴：水平主轴（mian axis）、垂直交叉轴（cross axis）。左侧是主轴的开始点，右侧是主轴的结束点，垂直方向上顶部是交叉轴的开始位置，底部是交叉轴的结束位置。</p>
+<h3 id="flex-direction-排列方向-column-、-row"><a href="#flex-direction-排列方向-column-、-row" class="headerlink" title="flex-direction 排列方向 column 、 row"></a>flex-direction 排列方向 column 、 row</h3><h3 id="justify-content-轴内-对齐方式"><a href="#justify-content-轴内-对齐方式" class="headerlink" title="justify-content (轴内)对齐方式"></a>justify-content (轴内)对齐方式</h3><p>flex-start    默认值。项目位于容器的开头。<br>flex-end    项目位于容器的结尾。<br>center    项目位于容器的中心。<br>space-between    项目位于各行之间留有空白的容器内。<br>space-around    项目位于各行之前、之间、之后都留有空白的容器内。<br>initial    设置该属性为它的默认值。请参阅 initial。<br>inherit    从父元素继承该属性。请参阅 inherit。</p>
+<h3 id="align-items-竖直方向对齐方式"><a href="#align-items-竖直方向对齐方式" class="headerlink" title="align-items 竖直方向对齐方式"></a>align-items 竖直方向对齐方式</h3><p>stretch    默认值。元素被拉伸以适应容器。<br>center    元素位于容器的中心。<br>flex-start    元素位于容器的开头。<br>flex-end    元素位于容器的结尾。<br>baseline    元素位于容器的基线上。<br>initial    设置该属性为它的默认值。请参阅 initial。<br>inherit    从父元素继承该属性。请参阅 inherit。</p>
+<h3 id="align-content-多轴对齐"><a href="#align-content-多轴对齐" class="headerlink" title="align-content 多轴对齐"></a>align-content 多轴对齐</h3><h2 id="Grid"><a href="#Grid" class="headerlink" title="Grid"></a>Grid</h2><p>通过设置 display: grid; 可以定义一个 CSS 网格。然后使用 grid-template-rows 和 grid-template-columns 属性来定义网格的 columns 和 rows。</p>
+<h2 id="calc-计算属性"><a href="#calc-计算属性" class="headerlink" title="calc 计算属性"></a>calc 计算属性</h2><h2 id="float"><a href="#float" class="headerlink" title="float"></a>float</h2><p>浮动的框可以向左或向右移动，直到它的外边缘碰到包含框或另一个浮动框的边框为止。</p>
+<h2 id="position"><a href="#position" class="headerlink" title="position"></a>position</h2><h3 id="relative"><a href="#relative" class="headerlink" title="relative"></a>relative</h3><p>相对定位是一个非常容易掌握的概念。如果对一个元素进行相对定位，它将出现在它所在的位置上。然后，可以通过设置垂直或水平位置，让这个元素“相对于”它的起点进行移动。</p>
+<h3 id="absoult"><a href="#absoult" class="headerlink" title="absoult"></a>absoult</h3><p>绝对定位的元素的位置相对于最近的已定位祖先元素，如果元素没有已定位的祖先元素，那么它的位置相对于最初的包含块。</p>
+<h2 id="overflow"><a href="#overflow" class="headerlink" title="overflow"></a>overflow</h2><p>属性指定如果内容溢出一个元素的框，会发生什么。</p>
+<h3 id="overflow-y"><a href="#overflow-y" class="headerlink" title="overflow-y:"></a>overflow-y:</h3><h3 id="overflow-x"><a href="#overflow-x" class="headerlink" title="overflow-x"></a>overflow-x</h3><p>visible    不裁剪内容，可能会显示在内容框之外。<br>hidden    裁剪内容 - 不提供滚动机制。<br>scroll    裁剪内容 - 提供滚动机制。<br>auto    如果溢出框，则应该提供滚动机制。<br>no-display    如果内容不适合内容框，则删除整个框。<br>no-content    如果内容不适合内容框，则隐藏整个内容。</p>
+<h2 id="align-items-justify-content-align-content-区别"><a href="#align-items-justify-content-align-content-区别" class="headerlink" title="align-items justify-content align-content 区别"></a>align-items justify-content align-content 区别</h2><p>align-content ：设置同一列子元素在Y轴的对齐方式<br>justify-content： 设置同一行子元素在X轴的对齐方式<br>align-items：设置同一行子元素在Y轴的对齐方式<br>align-self：与align-items相同，其中align-items属性用于弹性容器，而align-self用于弹性项目</p>
+<h2 id="子绝父相"><a href="#子绝父相" class="headerlink" title="子绝父相"></a>子绝父相</h2><p>相对定位（relative）：相对定位是相对于自身位置进行偏移。当设了相对的偏移量之后，这个DIV原来所占据的位置（文档流）不   会被下面的DIV块挤占，而是空在那里；当偏移后向下或者向右的内容会被隐藏，而 这一点区别于绝对定                                          位，绝对定位会出现滚动条。</p>
+<p>绝对定位（absolute）：绝对定位是相对于父容器中含有定位属性的元素进行定位（直接父容器没有他会一层一层往上找，没有的话就相对body）。一个DIV块的位置被定义为绝对定位的时候，也就意味着它失去了文档流的位置，后面的文档流会紧跟着补上来接替它的位置。</p>
+<p>固定定位（fixed）：固定定位是相对于浏览器的位置进行偏移。当设了相对的偏移量之后，这个DIV原来所占据的位置（文档流）不   会被下面的DIV块挤占。</p>
+<p> </p>
+<p>子绝父相：子元素绝对定位，父元素相对定位。让子元素 以其父元素为标准来定位。（如果不这么做，子元素就会相对body或浏览器定位产生不好的效果。）</p>
+<h2 id="z-index-属性指定一个元素的堆叠顺序。"><a href="#z-index-属性指定一个元素的堆叠顺序。" class="headerlink" title="z-index 属性指定一个元素的堆叠顺序。"></a>z-index 属性指定一个元素的堆叠顺序。</h2><p>拥有更高堆叠顺序的元素总是会处于堆叠顺序较低的元素的前面。</p>
 
       
     </div>
@@ -562,7 +457,7 @@ some：有一项符合条件即返回true
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift194Spring%20boot%E6%B3%A8%E8%A7%A3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift191srs%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -576,7 +471,7 @@ some：有一项符合条件即返回true
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/25/M_Swift194Spring%20boot%E6%B3%A8%E8%A7%A3/" class="post-title-link" itemprop="url">Spring 注解</a>
+            <a href="/2021/02/25/M_Swift191srs%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">srs学习总结</a>
         </h2>
 
         <div class="post-meta">
@@ -593,7 +488,7 @@ some：有一项符合条件即返回true
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-14 10:34:32" itemprop="dateModified" datetime="2021-04-14T10:34:32+08:00">2021-04-14</time>
+                <time title="修改时间：2021-04-12 16:07:26" itemprop="dateModified" datetime="2021-04-12T16:07:26+08:00">2021-04-12</time>
               </span>
 
           
@@ -607,28 +502,7 @@ some：有一项符合条件即返回true
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>@Component：泛指组件，当组件不好归类的时候，我们可以使用这个注解进行标注。<br>@Controller: 标注一个控制器组件类<br>@Service: 标注一个业务逻辑组件类<br>@Repository: 标注一个DAO组件类<br>@PostMapping：post请求<br>@RequestBody： 请求体</p>
-<p>平时很少学习后端的东西，spring在后端占有着主导地位，需要学习一下，以便应付一些能力<br>@SpringBootApplication：申明让spring boot自动给程序进行必要的配置，这个配置等同于：<br>@Configuration ，@EnableAutoConfiguration 和 @ComponentScan 三个配置。<br>@ResponseBody：表示该方法的返回结果直接写入HTTP response body中，一般在异步获取数据时使用，用于构建RESTful的api。在使用@RequestMapping后，返回值通常解析为跳转路径，加上@esponsebody后返回结果不会被解析为跳转路径，而是直接写入HTTP response body中。比如异步获取json数据，加上@Responsebody后，会直接返回json数据。该注解一般会配合@RequestMapping一起使用。<br>@Controller：用于定义控制器类，在spring项目中由控制器负责将用户发来的URL请求转发到对应的服务接口（service层），一般这个注解在类中，通常方法需要配合注解@RequestMapping。<br>@RestController：用于标注控制层组件(如struts中的action)，@ResponseBody和@Controller的合集。<br>@RequestMapping：提供路由信息，负责URL到Controller中的具体函数的映射。<br>@EnableAutoConfiguration：SpringBoot自动配置（auto-configuration）：尝试根据你添加的jar依赖自动配置你的Spring应用。例如，如果你的classpath下存在HSQLDB，并且你没有手动配置任何数据库连接beans，那么我们将自动配置一个内存型（in-memory）数据库”。你可以将@EnableAutoConfiguration或者@SpringBootApplication注解添加到一个@Configuration类上来选择自动配置。如果发现应用了你不想要的特定自动配置类，你可以使用@EnableAutoConfiguration注解的排除属性来禁用它们。</p>
-<p>@ComponentScan：表示将该类自动发现扫描组件。个人理解相当于，如果扫描到有@Component、@Controller、@Service等这些注解的类，并注册为Bean，可以自动收集所有的Spring组件，包括@Configuration类。我们经常使用@ComponentScan注解搜索beans，并结合@Autowired注解导入。可以自动收集所有的Spring组件，包括@Configuration类。我们经常使用@ComponentScan注解搜索beans，并结合@Autowired注解导入。如果没有配置的话，Spring Boot会扫描启动类所在包下以及子包下的使用了@Service,@Repository等注解的类<br>@Configuration：相当于传统的xml配置文件，如果有些第三方库需要用到xml文件，建议仍然通过@Configuration类作为项目的配置主类——可以使用@ImportResource注解加载xml配置文件。<br>@Import：用来导入其他配置类。</p>
-<p>@ImportResource：用来加载xml配置文件。</p>
-<p>@Autowired：自动导入依赖的bean</p>
-<p>@Service：一般用于修饰service层的组件<br>@Repository：使用@Repository注解可以确保DAO或者repositories提供异常转译，这个注解修饰的DAO或者repositories类会被ComponetScan发现并配置，同时也不需要为它们提供XML配置项。<br>@Bean：用@Bean标注方法等价于XML中配置的bean。<br>@Value：注入Spring boot application.properties配置的属性的值。示例代码：</p>
-<p>@Inject：等价于默认的@Autowired，只是没有required属性；</p>
-<p>@Bean:相当于XML中的,放在方法的上面，而不是类，意思是产生一个bean,并交给spring管理。</p>
-<p>@AutoWired：自动导入依赖的bean。byType方式。把配置好的Bean拿来用，完成属性、方法的组装，它可以对类成员变量、方法及构造函数进行标注，完成自动装配的工作。当加上（required=false）时，就算找不到bean也不报错。</p>
-<p>@Qualifier：当有多个同一类型的Bean时，可以用@Qualifier(“name”)来指定。与@Autowired配合使用。@Qualifier限定描述符除了能根据名字进行注入，但能进行更细粒度的控制如何选择候选者，具体使用方式如下：</p>
-<p>@Resource(name=”name”,type=”type”)：没有括号内内容的话，默认byName。与@Autowired干类似的事。</p>
-<p>三、JPA注解</p>
-<p>@Entity：@Table(name=”“)：表明这是一个实体类。一般用于jpa这两个注解一般一块使用，但是如果表名和实体类名相同的话，@Table可以省略</p>
-<p>@MappedSuperClass:用在确定是父类的entity上。父类的属性子类可以继承。</p>
-<p>@NoRepositoryBean:一般用作父类的repository，有这个注解，spring不会去实例化该repository。</p>
-<p>@Column：如果字段名与列名相同，则可以省略。</p>
-<p>@Id：表示该属性为主键。</p>
-<p>@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = “repair_seq”)：表示主键生成策略是sequence（可以为Auto、IDENTITY、native等，Auto表示可在多个数据库间切换），指定sequence的名字是repair_seq。</p>
-<p>@SequenceGeneretor(name = “repair_seq”, sequenceName = “seq_repair”, allocationSize = 1)：name为sequence的名称，以便使用，sequenceName为数据库的sequence名称，两个名称可以一致。</p>
-<p>@Transient：表示该属性并非一个到数据库表的字段的映射,ORM框架将忽略该属性。如果一个属性并非数据库表的字段映射,就务必将其标示为@Transient,否则,ORM框架默认其注解为@Basic。@Basic(fetch=FetchType.LAZY)：标记可以指定实体属性的加载方式</p>
-<p>@JsonIgnore：作用是json序列化时将Java bean中的一些属性忽略掉,序列化和反序列化都受影响。<br>@JoinColumn（name=”loginId”）:一对一：本表中指向另一个表的外键。一对多：另一个表指向本表的外键。</p>
-<p>@OneToOne、@OneToMany、@ManyToOne：对应hibernate配置文件中的一对一，一对多，多对一。</p>
+          <p>1.开发直播应用，达到效果如下<br>    可以实现回放功能<br>    可以调用srs api实现当前app有多少个房间<br>    可以支持api回调视频功能，达到播放视频效果<br>    目前已经在那台电脑上跑起来本地的docker服务了<br>    然后是录制，目前测试已经可以录制了<br>    接下来就是访问了，目前的想法是访问那台电脑的地址<br>    目前直播的一些探索感觉对我还是受益匪浅的，特别是docker和srs的学习了解，算是知道了srs的一些功能，一级docker的一些使用语法，这让我很兴奋，我也在iOS和android段采用开源的代码构建了一个类似facetime的页面，能够时间两个人的交互对话，这对以后在直播及会议上可能会有很大的帮助，还有一个问题是，我如果想只是音频的对话能不能实现。</p>
 
       
     </div>
@@ -648,7 +522,7 @@ some：有一项符合条件即返回true
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift196%20Vue3%20TypeScript%E5%AE%9E%E8%B7%B5/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift187js%20%E4%B8%AD%20map%20,%20foreach%20%EF%BC%8Cfilter,%20reduce%20%E7%9A%84%E5%8C%BA%E5%88%AB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -662,7 +536,7 @@ some：有一项符合条件即返回true
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/25/M_Swift196%20Vue3%20TypeScript%E5%AE%9E%E8%B7%B5/" class="post-title-link" itemprop="url">Vue3 TypeScript实践</a>
+            <a href="/2021/02/25/M_Swift187js%20%E4%B8%AD%20map%20,%20foreach%20%EF%BC%8Cfilter,%20reduce%20%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">js 中 map , foreach ，filter, reduce 的区别</a>
         </h2>
 
         <div class="post-meta">
@@ -679,7 +553,7 @@ some：有一项符合条件即返回true
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-16 17:21:49" itemprop="dateModified" datetime="2021-04-16T17:21:49+08:00">2021-04-16</time>
+                <time title="修改时间：2021-04-12 16:06:35" itemprop="dateModified" datetime="2021-04-12T16:06:35+08:00">2021-04-12</time>
               </span>
 
           
@@ -693,9 +567,218 @@ some：有一项符合条件即返回true
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Vue3现在已经出来了，感觉用的还是不多，但是我们却是需要拥抱这种变化，特别是TypeScript得到了非常大的使用的情况下，未来可以想象TypeScript在前端将会出现越来越多的使用，现在就让我们走进Vue3，走进TypeScript吧<br>之前也是研究了一段时间的Vue3的变化，感觉却是跟vue2变化非常明显，如果要是一个vue2的项目转换成vue3，我感觉我劝你还是重写吧，特别是组合式api的引入，这让之前的vue的js写法直接废弃了，当然特别是ref、reactive的出现，让我感觉反而比之前的代码还要麻烦了，还要return出去，还要考虑解包。这让我感觉很不方便。<br>今天我又创建了一个vue的项目，准备来仔细研磨一下vue和typeScript，好吧，一上来就让我懵了，原来的defineComponent不负存在，变成了一个继承Vue的一个类，还有就是出现了@Options这种东西，让我好不适应。<br>更让我感到奇怪的是，我尝试写setup函数，竟然没有任何作用，我想vue3的这些特性呢？？？？真是见鬼了。当我百度半天后我才明白，vue3的特性js部分变化其实在对象这方面经过封装后是没有多少变化的，原来是什么样子还是什么样子的，这让我有点喜欢了，我们可以直接用看待java对象的形式，看待一个vue3的TypeScript代码。<br>你定义变量，其实就有ref、reactive类型<br>如：<br>data: any = {<br>    title : “title”,<br>    left : “left”,<br>  }<br>  console.log(isReactive(this.data),this.data);<br>  // true Proxy {title: “title”, left: “left”}<br>  但是ref让我很纠结，打印出来的始终是false<br>  public test = ref(2);<br>  console.log(isRef(this.test),this.test);<br>  // false 2<br>  生命周期方法，这个比较简单，跟所有面向对象，android、ios都比较相似，生命周期如下<br>     created() {<br>       const helloword = shallowRef&lt;ComponentPublicInstance<typeof HelloWorld>&gt;()<br>       console.log(“created”,helloword);<br>     }<br>     mounted() {<br>       console.log(“mounted”);<br>     }<br>     beforeCreate() {<br>       console.log(“mounted”);<br>     }<br>     beforeMount?(): void {<br>       console.log(“beforeMount”);<br>     }<br>     beforeUnmount?(): void {<br>       console.log(“beforeUnmount”);<br>     }<br>     unmounted?(): void {<br>       console.log(“unmounted”);<br>     }<br>     beforeUpdate?(): void {<br>       console.log(“beforeUpdate”);<br>     }<br>     updated?(): void {<br>       console.log(“updated”);<br>     }<br>     activated?(): void {<br>       console.log(“activated”);<br>     }<br>     deactivated?(): void {<br>       console.log(“deactivated”);<br>     }<br>     render?(){<br>       console.log(“render”);<br>     }</p>
-<p>@Options<br>这个东西让我也是比较的难受，其实里面的代码跟vue2的代码一摸一样，我不知道为什么要这样分开设计，感觉还是比较难受的，主要是包含三个部分，组建定义、属性定义、事件监听<br>@Options({<br>  components: { // 组建<br>    HelloWorld,<br>  },<br>  props: { // 属性<br>     msg: String!<br>  },<br>  watch: {// 事件监听<br>    age: {<br>      handler: function(newval,oldval) {<br>        console.log(“watch”,newval);<br>        //this.gotoAbourt();<br>      },<br>    }<br>  }<br>})<br>get方法，同vue中的 computed<br>public get age(): number {<br>  console.log(“get age”, this.mAge);<br>  return this.mAge;<br>}</p>
-<p>总体感觉是TypeScript的vue没有vue3那些弯弯绕绕，还是比较直接的，我想以后的发展应该也会越来越好，我感觉新项目的话值得尝试。</p>
+          <pre><code>foreach:遍历数组，让数组的每一项做事情
+map：让数组通过某种运算产生新的数组
+filter：筛选数组中符合条件的选项组成新的数组
+reduce：让数组前项和后项做运算，并累计最终值
+every：检测数据中每一项是否符合条件，全部满足才返回true
+some：有一项符合条件即返回true
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift192webpack%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift192webpack%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">webpack学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 16:07:36" itemprop="dateModified" datetime="2021-04-12T16:07:36+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>webpack.config.js<br>const path = require(‘path’);<br>module.exports = {<br>    mode: ‘production’,<br>    // 入口文件配置<br>    entry: ‘./js/test.js’,<br>    // 输出配置<br>    output: {<br>        // 出口文件<br>        filename: ‘bundle.js’,<br>        // 设置全路径<br>        path: path.resolve(__dirname, ‘dist’)<br>    },<br>    module: {<br>        // 规则数组, 里面的每一个对象都是在描述一个loader<br>        rules: [<br>            {<br>                //css文件加载，正则表达式css文件的路径<br>                test: /.css$/,<br>                use: [<br>                    ‘style-loader’,<br>                    ‘css-loader’<br>                ]<br>            },<br>            {<br>                ////图片文件加载<br>                test: /.(png|jpg|gif)$/,<br>                use: [<br>                    {<br>                        loader: ‘file-loader’,<br>                        query: {<br>                            name: ‘img/[name]-[hash:5].[ext]’<br>                        }<br>                    },<br>                ],<br>            },<br>        ]<br>    },<br>    devServer:{<br>        contentBase: ‘./dist’<br>    }<br>};</p>
+<p>package.json</p>
+<p>{<br>  “name”: “state-snow”, // 项目名称<br>  “version”: “0.1.0”, // 版本<br>  “private”: true,<br>  “scripts”: { // 运行脚本<br>    “serve”: “vue-cli-service serve”,<br>    “build”: “vue-cli-service build”,<br>    “docker”: “docker build -t fdrb-web . &amp;&amp; docker save -o fdrb-web.tar fdrb-web”<br>  },<br>  “dependencies”: { // 项目依赖<br>  }<br>  “devDependencies”: { // 开发依赖<br>  }<br>}</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift188js%20gis%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift188js%20gis%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">js gis学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-12 16:06:53" itemprop="dateModified" datetime="2021-04-12T16:06:53+08:00">2021-04-12</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <pre><code>目前从git上拉了一个代码，讲convas gis的，我感觉比较基础，也比较符合地图方向的，可以学习一下，我建议是跟着敲一下代码，总结一下学习经验。其实地图方向上的一些东西我们手里有很多资源，问题的关键是如何学好这些东西。如何将这些东西发挥比较大的用处，这个很关键。目前的话我们虽然有这些东西，但是我们基础不牢固，所以很难发挥我们长处，这个东西需要日积月累，时间长了我们总能获得收获。
+</code></pre>
+<p>cavans api<br>save()<br>保存画布(canvas)的所有状态<br>restore()<br>save 和 restore 方法是用来保存和恢复 canvas 状态的，都没有参数。Canvas 的状态就是当前画面应用的所有样式和变形的一个快照。<br>总之很多方法，需要自己去了解或者参考，其实跟opengl有点类似</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift193%E5%9C%B0%E5%9B%BE%E7%9F%A9%E9%98%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/25/M_Swift193%E5%9C%B0%E5%9B%BE%E7%9F%A9%E9%98%B5/" class="post-title-link" itemprop="url">矩阵在地图中使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-24 10:48:20" itemprop="dateModified" datetime="2021-03-24T10:48:20+08:00">2021-03-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>一直在学习一些 地图思想，代码上始终看不懂一些矩阵的代码，今天有幸获取别人讲解的canvans矩阵的知识，算是总结一下吧</p>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><p>transform(a,b, c,d,e,f)<br>a 水平方向的缩放 （scale X）<br>B 水平方向的倾斜偏移<br>C 竖直方向的倾斜偏移<br>D 竖直方向的缩放 （scale Y）<br>E 水平方向的移动 （translate X）<br>F 竖直方向的移动 （translate Y）<br>标准矩阵    简化矩阵    单位矩阵<br>a c e    a 0 e    1 0 0<br>B d f    0 d f    0 1 0<br>0 0 1    0 0 1    0 0 1</p>
+<h2 id="矩阵映射-x1-y1-–-gt-x2-y2"><a href="#矩阵映射-x1-y1-–-gt-x2-y2" class="headerlink" title="矩阵映射 (x1,y1) –&gt; (x2,y2)"></a>矩阵映射 (x1,y1) –&gt; (x2,y2)</h2><p>X2 = x1 * a + e<br>Y2 = y1 * d + f<br>矩阵变换<br>a1 0 e1         a 0 e           a2 0 e2<br>0 d1 f1    X   0 d f     =     0  d2 f2<br>0   0  1          0 0 1           0   0   1<br>得出公式：<br>a2 = a1 * a<br>d2 = d1 * d<br>e2 = a1 * e + e1<br>f2 = d1 * f + f1</p>
+<h2 id="矩阵api"><a href="#矩阵api" class="headerlink" title="矩阵api"></a>矩阵api</h2><p>transform(a,b, c,d,e,f) 屏幕坐标—&gt; 屏幕坐标<br>setTransform(a,b,c,d,e,f) 地理坐标—&gt;屏幕坐标<br>如下两个函数scale、translate都屏幕坐标—&gt; 屏幕坐标转化，是transform函数简化<br>scale(x,y) 对变量a、d的变化<br>translate(x,y) 对变量e、f的变化<br>举个例子<br>假设变换前矩阵m1<br>变换矩阵m<br>变换后矩阵m2<br>变换操作维transform、scale、translate<br>transform ： m1 * m = m2<br>scale : m = (x,0,0,y0,0)<br>translate : m = (1,0,0,1,x,y)</p>
+<h2 id="地理坐标–-gt-屏幕坐标"><a href="#地理坐标–-gt-屏幕坐标" class="headerlink" title="地理坐标–&gt;屏幕坐标"></a>地理坐标–&gt;屏幕坐标</h2><p>webMercator 平面坐标 单位：米<br>canvas 屏幕坐标 单位：pixel<br>//设置视图级别及视图中心<br>   setView(center: number[] = [0,0], zoom: number = 3) {<br>       this._center = center;<br>       this._zoom = Math.max(3, Math.min(20, zoom));<br>       //center为经纬度，转化为平面坐标<br>       const origin = this._projection.project(center as any);<br>       const bound: Bound = this._projection.bound;<br>       //已知：matrix 转换前 坐标origin，转换后坐标 即canvas的中心 [this._canvas.width / 2, this._canvas.height / 2]<br>       //求：转换矩阵<br>       //解法如下：<br>       const a = 256 * Math.pow(2, this._zoom) / (bound.xmax - bound.xmin) * bound.xscale;<br>       const d = 256 * Math.pow(2, this._zoom) / (bound.ymax - bound.ymin) * bound.yscale;<br>       const e = this._canvas.width / 2 - a * origin[0];<br>       const f = this._canvas.height / 2 - d * origin[1];<br>       this._ctx.setTransform(a , 0, 0, d, e, f);<br>       this.redraw();<br>   }</p>
+<h2 id="屏幕坐标–-gt-屏幕坐标"><a href="#屏幕坐标–-gt-屏幕坐标" class="headerlink" title="屏幕坐标–&gt;屏幕坐标"></a>屏幕坐标–&gt;屏幕坐标</h2><p>   交互表现为鼠标当前位置屏幕坐标不变，进行缩放，即x2 = x1， y2 = y1<br>   其他设定：变换前矩阵（a1,0,0,d1,e1,f1）变换矩阵（a,0,0,d,e,f）,变换后矩阵（a2,0,0,d2,e2,f2）<br>   scale通过滚轮变化计算得到，且 a= d = scale,求e，f<br>   1.将原屏幕坐标x1转成地理坐标 x0 = （x1 - e1） / a1<br>   2.地理坐标x0转成屏幕坐标x2 a2 *x0 + e2 = x2 , e2 = x2 - a2 * x0代入1式e2 = x2 - a2 * (x1 - e1) / a1<br>   3.已知scale = a2 / a1 故 e2 = x2 - scale * ( x1 - e1)<br>   4.另矩阵变换a1 *e + e1 = e2<br>   5.联立3和4 求得 e = （x2 - scale * (x1 - e1) - e1） / a1</p>
+<p>_onWheel(event) {<br>    event.preventDefault();<br>    let scale = 1;<br>    const sensitivity = 100;<br>    const delta = event.deltaY / sensitivity;<br>    if (delta &lt; 0) {<br>       if (this._zoom &gt;= 20) return;<br>       // 放大<br>       scale *= delta * -2;<br>    }<br>    else {<br>       // 缩小<br>       if (this._zoom &lt;= 3) return;<br>       scale /= delta * 2;<br>    }<br>    const zoom = Math.round(Math.log(scale));<br>    scale = Math.pow(2, zoom);<br>    this._zoom += zoom;<br>    //交互表现为 鼠标当前位置 屏幕坐标不变 进行缩放 即x2 = x1<br>    //第一种方案，坐标系不变，变坐标值<br>    //1.将原屏幕坐标 x1 转成 初始坐标 x0 = (x1 - e1) / a1  初始矩阵 (1,0,0,1,0,0)<br>    //2.初始坐标x0 转成 现屏幕坐标x2  a2 * x0 + e2 = x2    e2 = x2 - a2 * x0  代入1式 e2 = x2 - a2 * (x1 - e1) / a1<br>    //3.已知scale = a2 / a1  故 e2 = x2 - scale * (x1 - e1)<br>    //4.另矩阵变换 a1 * e + e1 = e2<br>    //5.联立3和4  求得 e = (x2 - scale * (x1 - e1) - e1) / a1<br>    const matrix = (this._ctx as any).getTransform();<br>    const a1 = matrix.a, e1 = matrix.e, x1 = event.x, x2 = x1; //放大到中心点 x2 = this._canvas.width / 2<br>    const e = (x2 - scale * (x1 - e1) - e1) / a1;<br>    const d1 = matrix.d, f1 = matrix.f, y1 = event.y, y2 = y1; //放大到中心点 y2 = this._canvas.height / 2<br>    const f = (y2 - scale * (y1 - f1) - f1) / d1;<br>    this._ctx.transform( scale, 0, 0, scale, e, f );<br>    this.redraw();<br>    }</p>
 
       
     </div>
@@ -780,80 +863,10 @@ some：有一项符合条件即返回true
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/M_Swift236%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/25/M_Swift236%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4/" class="post-title-link" itemprop="url">常见的汇编指令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-25 16:39:39" itemprop="dateCreated datePublished" datetime="2021-02-25T16:39:39+08:00">2021-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-28 14:56:36" itemprop="dateModified" datetime="2021-09-28T14:56:36+08:00">2021-09-28</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>AT&amp;T<br>寄存器名称    %rax<br>操作数顺序    movq %rax %rdx<br>常数、立即数    movq $3 %rax<br>内存赋值    movq $0xa, 0x1ff7(%rip)<br>取内存地址    leaq -0x18(%rbp),%rax<br>jmp指令 jmp 0x4000102<br>call指令 call *%rdx<br>操作长度 movl %eax %edx<br>B = byte 8<br>S = short 16<br>W = word 16<br>L = long 32<br>Q = quad 64<br>T = ten bytes 80</p>
-<p>常见的寄存器：<br>rax 、rbx、rcx、rdx、rsx、rdi、rbp、rsp<br>r8、r9、r10、r11、r12、r13、r14、r15<br>寄存器的具体用途：<br>rax、rdx常作为函数返回值使用<br>rdi、rsi、rdx、rcx、r8、r9等寄存器常用于存放函数参数<br>rsp、rdp用于栈操作<br>rip 作为指令指针</p>
-<p>规律：<br>内存地址格式为： 0x4bdc(%rip), 一般是全局变量，全局区（数据段）<br>内存地址格式为：-0x78(%rbp), 一般是局部变量，栈空间<br>内存地址格式为：0x10(%rax), 一般是堆空间</p>
-<p>guard语句最大的优势就是在解包(Optional)时候, 比用 if 语句解包更优雅, 避免在大量串行解包的时候出现金字塔.<br>// guard let 保证变量／常量一定有值，没有值则返回。<br>var a: String? = “ddd”<br>guard let b = a else { print(“a is nil”) }<br>print(b) //注意解包之后b的作用域仍然有效</p>
-<p>//if<br>var a: String? = “ddd”<br> if let b = a {<br>     print(b) //解包之后b的只有在 { … } 内才有作用域<br> }</p>
-<p>ArrayList、LinkedList</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/14/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/16/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/14/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/16/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -919,7 +932,7 @@ some：有一项符合条件即返回true
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-count">403</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -947,7 +960,7 @@ some：有一项符合条件即返回true
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -148,6 +148,595 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/11/M_Swift298Vue%E6%89%8B%E5%86%99%E5%AE%9E%E7%8E%B0%20call%20%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/09/11/M_Swift298Vue%E6%89%8B%E5%86%99%E5%AE%9E%E7%8E%B0%20call%20%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">手写实现 call 方法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-09-11 23:01:17 / 修改时间：23:29:26" itemprop="dateCreated datePublished" datetime="2023-09-11T23:01:17+08:00">2023-09-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="手写实现-JavaScript-中的-call-方法"><a href="#手写实现-JavaScript-中的-call-方法" class="headerlink" title="手写实现 JavaScript 中的 call 方法"></a>手写实现 JavaScript 中的 call 方法</h2><p>步骤：</p>
+<p>创建一个新的函数对象，作为 call 方法的实现。</p>
+<p>在新的函数对象中，将传入的第一个参数作为要调用的函数，将其保存在一个变量中。</p>
+<p>使用 arguments 对象获取传入的参数列表，并将其转换为数组。</p>
+<p>使用 apply 方法调用保存的函数，并传入第一个参数作为上下文对象（即函数中的 this 值），以及转换后的参数数组。</p>
+<p>返回调用结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">Function.prototype.myCall &#x3D; function (context, ...args) &#123;</span><br><span class="line">  &#x2F;&#x2F; 判断是否传入了上下文对象，如果没有，则使用全局对象（浏览器中为 window）</span><br><span class="line">  context &#x3D; context || window;</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; 将当前函数保存在变量中</span><br><span class="line">  const fn &#x3D; Symbol(&#39;fn&#39;);</span><br><span class="line">  context[fn] &#x3D; this;</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; 使用 apply 方法调用函数，并传入上下文对象和参数数组</span><br><span class="line">  const result &#x3D; context[fn](...args);</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; 删除临时保存的函数</span><br><span class="line">  delete context[fn];</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; 返回调用结果</span><br><span class="line">  return result;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 示例用法</span><br><span class="line">const person &#x3D; &#123;</span><br><span class="line">  name: &#39;John&#39;,</span><br><span class="line">  greet: function(message) &#123;</span><br><span class="line">    console.log(&#96;$&#123;message&#125;, $&#123;this.name&#125;!&#96;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">const otherPerson &#x3D; &#123;</span><br><span class="line">  name: &#39;Jane&#39;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">person.greet.myCall(otherPerson, &#39;Hello&#39;);</span><br><span class="line">&#x2F;&#x2F; 输出：Hello, Jane!</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在 JavaScript 中，Symbol 是一种特殊的数据类型，用于创建唯一的标识符。它可以用于优化对象属性的访问和避免命名冲突。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/09/M_Swift300vue%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/09/09/M_Swift300vue%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">Vue知识</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-09 23:03:03" itemprop="dateCreated datePublished" datetime="2023-09-09T23:03:03+08:00">2023-09-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-10 20:45:54" itemprop="dateModified" datetime="2023-12-10T20:45:54+08:00">2023-12-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="nextTick"><a href="#nextTick" class="headerlink" title="nextTick"></a>nextTick</h2><p>是 Vue.js 提供的一个方法，用于在下次 DOM 更新循环结束之后执行延迟回调函数。它的主要作用是在 Vue 更新 DOM 后，对 DOM 进行操作或获取最新的 DOM 数据。<br>从 Vue 3.0 开始，nextTick 方法已被废弃，取而代之的是 nextTick 函数返回的 Promise 对象。可以使用 await this.$nextTick() 来等待 DOM 更新完成。</p>
+<h2 id="Vue-过滤器（Filters）"><a href="#Vue-过滤器（Filters）" class="headerlink" title="Vue 过滤器（Filters）"></a>Vue 过滤器（Filters）</h2><p>是一种用于格式化文本输出的功能。它可以在模板中对数据进行处理，并将处理后的结果显示给用户。过滤器可以用于格式化日期、数字、文本等各种类型的数据。<br>可以通过在插值表达式或指令中使用 | 符号将数据和过滤器名称分隔开。<br>Vue 3.0 中的过滤器已被废弃，取而代之的是更强大的自定义函数和计算属性。因此，在使用 Vue 3.0 或更高版本时，推荐使用计算属性或方法来替代过滤器的功能。</p>
+<h2 id="Vue-自定义指令"><a href="#Vue-自定义指令" class="headerlink" title="Vue 自定义指令"></a>Vue 自定义指令</h2><p>（Custom Directives）是一种扩展 Vue.js 模板语法的方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Vue.directive(&#39;directiveName&#39;, &#123;</span><br><span class="line">  &#x2F;&#x2F; 钩子函数</span><br><span class="line">  bind: function(el, binding, vnode) &#123;</span><br><span class="line">    &#x2F;&#x2F; 指令绑定时的逻辑</span><br><span class="line">  &#125;,</span><br><span class="line">  inserted: function(el, binding, vnode) &#123;</span><br><span class="line">    &#x2F;&#x2F; 元素插入到父节点时的逻辑</span><br><span class="line">  &#125;,</span><br><span class="line">  &#x2F;&#x2F; 其他钩子函数...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>钩子函数：<br>自定义指令可以定义多个钩子函数，用于在不同的生命周期阶段执行相应的逻辑。常用的钩子函数包括：</p>
+<p>bind：指令第一次绑定到元素时调用，可以在这里进行初始化设置。<br>inserted：元素插入到父节点时调用，可以在这里进行 DOM 操作。<br>update：元素所在组件的 VNode 更新时调用，可以在这里对指令的参数进行更新。<br>componentUpdated：元素所在组件的 VNode 及其子 VNode 更新时调用。<br>unbind：指令与元素解绑时调用，可以在这里进行清理工作。</p>
+<p>钩子函数接收三个参数：</p>
+<p>el：指令所绑定的元素。<br>binding：一个对象，包含指令的信息，如指令的值、参数、修饰符等。<br>vnode：Vue 编译生成的虚拟节点。</p>
+<h2 id="vue组件和插件的具体区别"><a href="#vue组件和插件的具体区别" class="headerlink" title="vue组件和插件的具体区别"></a>vue组件和插件的具体区别</h2><p>组件（Component）：<br>组件是 Vue 中用于构建用户界面的基本单元。它是一个可复用的、自包含的模块，包含了 HTML 模板、CSS 样式和 JavaScript 逻辑。组件可以封装特定的功能和交互，并通过 props 和 events 进行数据传递和通信。<br>插件（Plugin）：<br>插件是一种扩展 Vue 功能的方式，用于添加全局功能或在多个组件中共享功能。插件可以添加全局方法、指令、过滤器、混入等，以及在 Vue 实例化之前对 Vue 进行全局配置。</p>
+<h2 id="跨域的几种方式"><a href="#跨域的几种方式" class="headerlink" title="跨域的几种方式"></a>跨域的几种方式</h2><p>JSONP（JSON with Padding）：<br>JSONP 是一种利用 <script> 标签进行跨域请求的方式。通过在请求 URL 中添加一个回调函数名，服务器返回的响应会被包裹在该函数调用中，从而实现跨域数据的获取。<br>注意：JSONP 只支持 GET 请求，且需要服务器端的支持。</p>
+<p>CORS（Cross-Origin Resource Sharing）：<br>CORS 是一种基于 HTTP 头部的机制，允许服务器声明哪些跨域请求是被允许的。通过在服务器端设置响应头部的 Access-Control-Allow-Origin 字段，可以允许指定的域名访问资源。</p>
+<p>代理服务器：<br>通过在同一域名下设置一个代理服务器，将跨域请求转发到目标服务器，然后再将响应返回给前端。前端代码发送请求时，实际上是向同一域名下的代理服务器发送请求，从而避免了跨域问题。</p>
+<p>WebSocket：<br>WebSocket 是一种全双工通信协议，可以在浏览器和服务器之间建立持久连接。由于 WebSocket 是在 HTTP 协议之上建立的，因此不受同源策略的限制。</p>
+<h2 id="Vue-SSR-如何实现"><a href="#Vue-SSR-如何实现" class="headerlink" title="Vue SSR 如何实现"></a>Vue SSR 如何实现</h2><p>Vue SSR（Server-Side Rendering，服务器端渲染）是一种将 Vue 组件在服务器端渲染成 HTML 字符串，然后将其发送到客户端的技术。Vue SSR 可以提供更好的首次加载性能和搜索引擎优化（SEO）。</p>
+<p>下面是实现 Vue SSR 的基本步骤：</p>
+<p>创建一个 Vue 项目：<br>首先，你需要创建一个 Vue 项目。你可以使用 Vue CLI 来快速搭建一个基本的 Vue 项目。</p>
+<p>配置服务器端入口：<br>在服务器端，你需要创建一个入口文件，用于处理客户端请求并渲染 Vue 组件。这个入口文件可以是一个 Node.js 服务器脚本。</p>
+<p>创建服务器端路由：<br>在服务器端，你需要创建一个路由系统，用于根据客户端请求的 URL 匹配对应的 Vue 组件。你可以使用 Vue Router 或其他路由库来实现。</p>
+<p>创建服务器端渲染函数：<br>在服务器端，你需要创建一个渲染函数，用于将匹配到的 Vue 组件渲染成 HTML 字符串。你可以使用 Vue Server Renderer 来实现这一步骤。</p>
+<p>在服务器端处理客户端请求：<br>在服务器端入口文件中，你需要根据客户端请求的 URL，调用渲染函数并将渲染结果返回给客户端。</p>
+<p>客户端激活：<br>在客户端，你需要将服务器端渲染的 HTML 字符串激活为可交互的 Vue 应用。你可以使用 createApp 函数来创建 Vue 应用，并将其挂载到客户端的 DOM 元素上。</p>
+<p>客户端路由处理：<br>在客户端，你需要处理页面的路由切换。你可以使用 Vue Router 或其他路由库来实现客户端路由。</p>
+<p>通过以上步骤，你可以实现 Vue SSR，使你的 Vue 应用在服务器端进行渲染，并在客户端进行激活和交互。这样可以提供更好的性能和 SEO。在实际开发中，你可能还需要处理数据预取、状态管理等方面的问题，以满足具体的需求。</p>
+<h2 id="SPA与MPA的区别"><a href="#SPA与MPA的区别" class="headerlink" title="SPA与MPA的区别"></a>SPA与MPA的区别</h2><p>SPA（Single-Page Application，单页面应用）和 MPA（Multi-Page Application，多页面应用）是两种不同的前端应用架构模式，它们在页面加载、路由管理和用户体验等方面有一些区别。</p>
+<p>SPA（Single-Page Application）：</p>
+<p>页面加载：SPA 在初始加载时只加载一个 HTML 页面，通常是一个空白的容器页面，然后通过 JavaScript 动态地加载数据和更新页面内容。在后续的页面切换过程中，只需要加载和更新部分页面内容，不需要重新加载整个页面。<br>路由管理：SPA 使用前端路由来管理页面的切换和导航。通过监听 URL 的变化，SPA 可以根据不同的 URL 加载不同的组件或页面内容，实现无刷新的页面切换。<br>用户体验：由于 SPA 只加载和更新部分页面内容，页面切换时不需要重新加载整个页面，因此可以提供更快的响应速度和更流畅的用户体验。同时，SPA 可以实现动态加载数据和局部更新，可以提供更好的交互性和实时性。<br>MPA（Multi-Page Application）：</p>
+<p>页面加载：MPA 在每次页面切换时都会重新加载整个 HTML 页面。每个页面都是一个独立的 HTML 文件，页面之间的切换需要通过服务器请求和加载新的页面。<br>路由管理：MPA 使用传统的后端路由来管理页面的切换和导航。每个页面都有自己的 URL，页面切换需要通过服务器请求和加载新的页面。<br>用户体验：由于 MPA 在每次页面切换时都需要重新加载整个页面，页面切换可能会有较长的加载时间，导致用户体验相对较差。同时，由于页面切换时需要重新加载整个页面，MPA 的交互性和实时性可能相对较差。<br>总结：<br>SPA 和 MPA 在页面加载、路由管理和用户体验等方面有一些区别。SPA 通过动态加载数据和更新页面内容，提供了更快的响应速度和更流畅的用户体验；而 MPA 在每次页面切换时都需要重新加载整个页面，导致页面加载时间较长，用户体验相对较差。选择使用哪种架构模式取决于具体的应用需求和开发团队的偏好。</p>
+<h2 id="SPA首屏加载-优化方案"><a href="#SPA首屏加载-优化方案" class="headerlink" title="SPA首屏加载 优化方案"></a>SPA首屏加载 优化方案</h2><p>对于 SPA 的首屏加载优化，以下是一些常用的方案：</p>
+<p>代码拆分（Code Splitting）：将应用的代码拆分成多个小块，按需加载。这样可以减少首次加载的文件大小，加快页面加载速度。常见的工具如Webpack提供了代码拆分的功能。</p>
+<p>路由懒加载（Route Lazy Loading）：将路由按需加载，只在需要时加载对应的组件和资源。这样可以减少初始加载时的资源数量，提高首屏加载速度。Vue Router和React Router等路由库都支持路由懒加载。</p>
+<p>预加载关键资源（Preloading Critical Resources）：对于首屏需要的关键资源（如CSS、JavaScript、字体等），可以使用<link rel="preload">标签在页面加载时提前加载这些资源，以减少后续请求的延迟。</p>
+<p>图片优化：对于图片资源，可以采用以下策略进行优化：</p>
+<p>压缩图片大小：使用工具如ImageOptim、TinyPNG等压缩图片大小，减少网络传输时间。<br>响应式图片：根据设备的屏幕大小，提供适应的图片尺寸，避免加载过大的图片。<br>图片懒加载：延迟加载页面中的图片，只在图片进入可视区域时再进行加载，减少初始加载时的资源数量。<br>缓存策略：合理利用浏览器缓存，将静态资源设置为长期缓存，减少重复加载的请求。可以通过设置HTTP响应头的Cache-Control和Expires字段来控制缓存策略。</p>
+<p>服务端渲染（Server-Side Rendering，SSR）：将部分页面在服务器端渲染成HTML，并在初始加载时返回给客户端，以提供更快的首屏加载速度和更好的SEO效果。一些框架如Next.js（基于React）和Nuxt.js（基于Vue）提供了方便的服务端渲染解决方案。</p>
+<p>骨架屏（Skeleton Screen）：在页面加载过程中，可以先展示一个简单的骨架屏，给用户一个加载的反馈，同时异步加载内容，提高用户体验。</p>
+<h2 id="JWT鉴权机制是什么？"><a href="#JWT鉴权机制是什么？" class="headerlink" title="JWT鉴权机制是什么？"></a>JWT鉴权机制是什么？</h2><p>JWT（JSON Web Token）鉴权机制是一种基于令牌的身份验证和授权机制。它使用 JSON 格式对信息进行安全传输，并使用数字签名验证其完整性。</p>
+<p>JWT 由三部分组成：头部（Header）、载荷（Payload）和签名（Signature）。</p>
+<p>头部包含描述令牌的元数据，通常包括令牌的类型（如JWT）、所使用的签名算法（如HMAC、RSA等）。</p>
+<p>载荷包含要传输的数据，可以包含用户的身份信息、权限等。载荷中的数据是经过 Base64 编码的，因此可以被解码查看，但不能被篡改，因为篡改后签名验证将失败。</p>
+<p>签名是对头部和载荷进行签名的结果，用于验证令牌的完整性和真实性。签名通常使用密钥进行加密，只有持有正确密钥的人才能生成有效的签名。</p>
+<p>JWT 的工作流程如下：</p>
+<p>用户通过提供有效的凭证（如用户名和密码）进行身份验证。<br>服务器验证凭证的有效性，并生成一个 JWT。<br>服务器将 JWT 发送给客户端，客户端将其保存（通常在本地存储或 Cookie 中）。<br>客户端在后续的请求中将 JWT 作为身份验证凭证发送给服务器。<br>服务器接收到 JWT 后，使用密钥验证其完整性和真实性，并根据其中的信息进行授权和身份验证。</p>
+<h2 id="Node的process"><a href="#Node的process" class="headerlink" title="Node的process"></a>Node的process</h2><p>process 是 Node.js 中的一个全局对象，提供了与当前 Node.js 进程相关的信息和控制能力。它是一个 EventEmitter 的实例，可以监听和触发事件。</p>
+<p>process 对象具有以下常用属性和方法：</p>
+<p>process.argv：一个包含命令行参数的数组。第一个元素是 Node.js 的可执行文件路径，第二个元素是当前执行的 JavaScript 文件路径，后续元素是传递给脚本的命令行参数。</p>
+<p>process.env：一个包含环境变量的对象。可以通过该对象访问和修改环境变量的值。</p>
+<p>process.cwd()：返回当前工作目录的路径。</p>
+<p>process.exit([code])：终止当前 Node.js 进程。可选的 code 参数指定退出码，默认为 0。</p>
+<p>process.on(event, listener)：监听指定事件。常见的事件包括 ‘exit’（进程退出时触发）、’uncaughtException’（未捕获的异常发生时触发）等。</p>
+<p>process.stdout：标准输出流，可以使用 process.stdout.write() 方法向标准输出打印内容。</p>
+<p>process.stderr：标准错误流，可以使用 process.stderr.write() 方法向标准错误输出打印内容。</p>
+<p>process.stdin：标准输入流，可以使用 process.stdin.on(‘data’, callback) 方法监听用户输入。</p>
+<p>process.nextTick(callback)：将回调函数推迟到下一个事件循环迭代中执行。</p>
+<p>process.version：返回当前 Node.js 的版本号。</p>
+<p>process.platform：返回当前操作系统平台的标识符，如 ‘win32’、’linux’ 等。</p>
+<p>这些只是 process 对象的一部分属性和方法，还有其他更多的功能可以通过 process 对象进行控制和访问。详细的文档可以在 Node.js 官方网站上找到。</p>
+<h2 id="Node的eventEmitter"><a href="#Node的eventEmitter" class="headerlink" title="Node的eventEmitter"></a>Node的eventEmitter</h2><p>EventEmitter 是 Node.js 中的一个核心模块，用于实现事件驱动的编程。它提供了一种机制，使对象可以触发事件并监听事件的发生。</p>
+<p>要使用 EventEmitter，首先需要创建一个 EventEmitter 的实例：</p>
+<p>const EventEmitter = require(‘events’);<br>const myEmitter = new EventEmitter();<br>然后，可以通过 on 方法监听事件，使用 emit 方法触发事件：</p>
+<p>// 监听事件<br>myEmitter.on(‘event’, () =&gt; {<br>  console.log(‘Event occurred’);<br>});</p>
+<p>// 触发事件<br>myEmitter.emit(‘event’);<br>EventEmitter 的常用方法包括：</p>
+<p>on(eventName, listener)：监听指定事件。当事件被触发时，注册的监听器函数将被调用。</p>
+<p>once(eventName, listener)：监听指定事件，但只触发一次。当事件被触发时，注册的监听器函数将被调用，然后被移除。</p>
+<p>emit(eventName, [args])：触发指定事件，并传递可选的参数给监听器函数。</p>
+<p>removeListener(eventName, listener)：移除指定事件的监听器。</p>
+<p>removeAllListeners([eventName])：移除所有事件的监听器，或者移除指定事件的所有监听器。</p>
+<p>EventEmitter 还提供了其他一些方法和属性，如 addListener、prependListener、prependOnceListener、setMaxListeners 等，用于更灵活地管理事件和监听器。</p>
+<p>通过使用 EventEmitter，可以实现模块之间的解耦和事件驱动的编程范式，使代码更具可读性和可维护性。</p>
+<h2 id="Node的中间件"><a href="#Node的中间件" class="headerlink" title="Node的中间件"></a>Node的中间件</h2><p>在 Node.js 中，中间件是一种用于处理 HTTP 请求的功能模块。它可以在请求到达服务器和发送响应之间执行一系列的操作，例如身份验证、日志记录、数据转换等。</p>
+<p>常见的 Node.js 中间件框架包括 Express、Koa、Connect 等。这些框架都提供了类似的中间件机制，可以通过使用 app.use() 方法将中间件函数添加到请求处理流程中。</p>
+<h2 id="Node的事件循环"><a href="#Node的事件循环" class="headerlink" title="Node的事件循环"></a>Node的事件循环</h2><p>Node.js 的事件循环是实现非阻塞 I/O 操作的关键机制。它基于事件驱动的编程模型，使得 Node.js 能够高效处理大量并发请求。</p>
+<p>Node.js 的事件循环由以下几个阶段组成：</p>
+<ol>
+<li><p><strong>Timers 阶段</strong>：处理定时器相关的回调函数。</p>
+</li>
+<li><p><strong>I/O callbacks 阶段</strong>：处理某些系统操作的回调函数，例如网络请求、文件 I/O 等。</p>
+</li>
+<li><p><strong>Idle, prepare 阶段</strong>：内部使用，一般不需要关注。</p>
+</li>
+<li><p><strong>Poll 阶段</strong>：等待新的 I/O 事件到达，如果没有其他任务需要处理，Node.js 将在此阶段阻塞等待。</p>
+</li>
+<li><p><strong>Check 阶段</strong>：执行 <code>setImmediate()</code> 注册的回调函数。</p>
+</li>
+<li><p><strong>Close callbacks 阶段</strong>：处理关闭的回调函数，例如 <code>socket.on(&#39;close&#39;, ...)</code>。</p>
+</li>
+</ol>
+<p>事件循环的执行顺序是从上述阶段依次循环，直到没有事件需要处理或达到某个退出条件。在每个阶段，Node.js 会执行相应的回调函数，并且在某些阶段之间允许插入用户定义的代码。</p>
+<p>需要注意的是，事件循环是单线程的，但通过利用非阻塞 I/O 和异步操作，Node.js 能够处理大量并发请求而不会阻塞主线程。当有 I/O 操作或异步任务完成时，会将相应的回调函数放入事件循环中，等待执行。</p>
+<p>这种事件驱动的编程模型使得 Node.js 在处理高并发、高吞吐量的场景下表现出色，并且能够有效利用系统资源。</p>
+<h2 id="Node的监控"><a href="#Node的监控" class="headerlink" title="Node的监控"></a>Node的监控</h2><p>在 Node.js 中，可以使用各种工具和技术来监控和调试应用程序的性能和行为。以下是一些常用的 Node.js 监控方法和工具：</p>
+<ol>
+<li><p><strong>日志记录</strong>：通过在应用程序中添加适当的日志语句，可以记录关键事件和错误信息。日志记录是一种简单而有效的监控方法，可以帮助你了解应用程序的运行情况和潜在问题。</p>
+</li>
+<li><p><strong>性能分析</strong>：使用性能分析工具可以帮助你找出应用程序中的性能瓶颈和慢速代码。一些常用的性能分析工具包括 Node.js 内置的 <code>profiler</code> 模块、<code>clinic</code> 工具套件、<code>ndb</code> 调试器等。</p>
+</li>
+<li><p><strong>指标监控</strong>：通过收集和监控关键指标，可以了解应用程序的运行状态和性能表现。一些常用的指标监控工具包括 Prometheus、StatsD、Grafana 等。</p>
+</li>
+<li><p><strong>错误监控</strong>：使用错误监控工具可以捕获和记录应用程序中的错误和异常。这些工具可以提供错误报告、堆栈跟踪和性能影响分析等功能。一些常用的错误监控工具包括 Sentry、Bugsnag、New Relic 等。</p>
+</li>
+<li><p><strong>内存泄漏检测</strong>：内存泄漏是常见的性能问题之一。使用内存泄漏检测工具可以帮助你发现和修复应用程序中的内存泄漏问题。一些常用的内存泄漏检测工具包括 Node.js 内置的 <code>heapdump</code> 模块、<code>memwatch-next</code> 模块、Chrome 开发者工具等。</p>
+</li>
+<li><p><strong>实时监控</strong>：实时监控工具可以提供即时的应用程序状态和性能数据。这些工具可以帮助你快速发现和解决问题。一些常用的实时监控工具包括 Node.js 内置的 <code>inspector</code> 模块、PM2、Keymetrics 等。</p>
+</li>
+</ol>
+<p>以上只是一些常见的 Node.js 监控方法和工具，具体选择和使用哪些工具取决于你的需求和应用程序的特点。在实际应用中，可以结合多种监控方法和工具来全面监控和调试 Node.js 应用程序。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/09/M_Swift297React%E9%9D%A2%E8%AF%95%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/09/09/M_Swift297React%E9%9D%A2%E8%AF%95%E9%A2%98/" class="post-title-link" itemprop="url">React面试题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-09 15:47:39" itemprop="dateCreated datePublished" datetime="2023-09-09T15:47:39+08:00">2023-09-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-10 20:52:07" itemprop="dateModified" datetime="2023-12-10T20:52:07+08:00">2023-12-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1-说说对React的理解？有哪些特性？"><a href="#1-说说对React的理解？有哪些特性？" class="headerlink" title="1.说说对React的理解？有哪些特性？"></a>1.说说对React的理解？有哪些特性？</h2><p>React是一个用于构建用户界面的JavaScript库。它被广泛应用于Web应用程序的开发，特别是单页面应用（SPA）。以下是对React的理解和一些主要特性的介绍：</p>
+<ol>
+<li><p>组件化：React将用户界面划分为独立的组件，每个组件都有自己的状态（state）和属性（props）。组件可以嵌套和组合，使得界面的开发和维护更加模块化和可复用。</p>
+</li>
+<li><p>虚拟DOM：React使用虚拟DOM（Virtual DOM）来提高性能。它通过在内存中构建一个轻量级的DOM副本，然后与实际DOM进行比较，只更新需要变化的部分，从而减少了对实际DOM的操作次数，提高了渲染效率。</p>
+</li>
+<li><p>单向数据流：React采用了单向数据流的数据管理模式。数据从父组件通过props传递给子组件，子组件通过回调函数将数据的变化通知给父组件。这种数据流的设计使得应用程序的数据流动更加可控和可预测，降低了出现数据混乱和难以追踪的可能性。</p>
+</li>
+<li><p>JSX语法：React使用JSX语法，它是一种将HTML和JavaScript结合的语法扩展。JSX允许开发者在JavaScript代码中直接编写类似HTML的结构，使得界面的编写更加直观和易于理解。</p>
+</li>
+<li><p>生命周期方法：React组件具有一系列的生命周期方法，用于在组件的不同阶段执行特定的操作。例如，组件的挂载、更新和卸载等阶段都有相应的生命周期方法，开发者可以在这些方法中处理数据的初始化、网络请求、事件绑定等操作。</p>
+</li>
+<li><p>强大的社区支持：React拥有庞大而活跃的开发者社区，提供了丰富的第三方库和工具，以及大量的教程和文档资源。这使得学习和使用React变得更加容易，并且可以快速解决问题。</p>
+</li>
+</ol>
+<p>总的来说，React是一个高效、灵活且可扩展的前端开发库，它通过组件化、虚拟DOM和单向数据流等特性，使得开发者能够更加高效地构建交互性强、可维护性好的用户界面。</p>
+<h2 id="2、super（）和super（props）有什么区别？"><a href="#2、super（）和super（props）有什么区别？" class="headerlink" title="2、super（）和super（props）有什么区别？"></a>2、super（）和super（props）有什么区别？</h2><p>在React中，<code>super()</code>和<code>super(props)</code>都是在子类的构造函数中调用父类的构造函数。</p>
+<p><code>super()</code>是在子类的构造函数中调用父类的构造函数，而不传递任何参数。这种情况下，父类的构造函数会被调用，但不会传递任何参数给父类的构造函数。这在子类不需要访问父类的props时使用。</p>
+<p>示例代码如下：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChildComponent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>(); <span class="comment">// 调用父类的构造函数</span></span><br><span class="line">    <span class="comment">// 子类的其他初始化操作</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>super(props)</code>是在子类的构造函数中调用父类的构造函数，并传递<code>props</code>参数给父类的构造函数。这种情况下，父类的构造函数会接收到<code>props</code>参数，可以在父类中进行相关的初始化操作。这在子类需要访问父类的props时使用。</p>
+<p>示例代码如下：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ChildComponent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>(props); <span class="comment">// 调用父类的构造函数，并传递props参数</span></span><br><span class="line">    <span class="comment">// 子类的其他初始化操作</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，如果子类的构造函数中使用了<code>super(props)</code>，那么在构造函数中访问<code>this.props</code>时，<code>this.props</code>将会是父类的props，而不是子类的props。如果需要在子类的构造函数中访问子类的props，可以在调用<code>super(props)</code>之后将<code>props</code>保存到子类的实例中。</p>
+<p>综上所述，<code>super()</code>和<code>super(props)</code>的区别在于是否传递<code>props</code>参数给父类的构造函数，根据具体的需求选择使用哪种形式。</p>
+<h2 id="3、说说对受控组件和非受控组件的理解？应用场景？"><a href="#3、说说对受控组件和非受控组件的理解？应用场景？" class="headerlink" title="3、说说对受控组件和非受控组件的理解？应用场景？"></a>3、说说对受控组件和非受控组件的理解？应用场景？</h2><p>在React中，受控组件（Controlled Components）和非受控组件（Uncontrolled Components）是两种处理表单元素的方式。</p>
+<p>受控组件是指表单元素的值受React组件的状态（state）控制的组件。在受控组件中，表单元素的值由组件的状态管理，每当表单元素的值发生变化时，都会触发组件的状态更新。通过使用受控组件，可以将表单元素的值与组件的状态保持同步，使得React能够掌控表单数据的变化。</p>
+<p>非受控组件是指表单元素的值由DOM自身管理的组件。在非受控组件中，表单元素的值不受React组件的状态控制，而是通过ref属性从DOM中获取。非受控组件适用于简单的表单场景，不需要频繁地更新组件状态。</p>
+<h2 id="4、说说React的事件机制"><a href="#4、说说React的事件机制" class="headerlink" title="4、说说React的事件机制"></a>4、说说React的事件机制</h2><p>React使用了一种合成事件（SyntheticEvent）的机制来处理事件。合成事件是React封装的一种跨浏览器兼容的事件系统，它提供了一致的事件接口，使得事件处理在不同浏览器和平台上表现一致。</p>
+<p>React的事件机制有以下几个关键点：</p>
+<ol>
+<li><p>事件绑定：在React中，可以通过将事件处理函数绑定到组件的事件属性上来处理事件。例如，使用<code>onClick</code>属性来处理点击事件，使用<code>onChange</code>属性来处理输入框的值变化事件。</p>
+</li>
+<li><p>合成事件对象：当事件被触发时，React会创建一个合成事件对象，该对象包含了与原生事件对象相似的属性和方法，但是它是跨浏览器兼容的。通过访问合成事件对象，可以获取事件的相关信息，如事件类型、目标元素、键盘状态等。</p>
+</li>
+<li><p>事件处理函数：事件处理函数是一个普通的JavaScript函数，它接收一个合成事件对象作为参数。在事件处理函数中，可以通过访问合成事件对象来获取事件的相关信息，并根据需要进行相应的处理逻辑。</p>
+</li>
+<li><p>事件委托：React使用了事件委托的机制来处理事件。事件委托是指将事件处理函数绑定到父元素上，而不是直接绑定到每个子元素上。当事件被触发时，React会根据事件冒泡的机制将事件传递到正确的组件上进行处理。这种方式可以减少事件处理函数的数量，提高性能。</p>
+</li>
+<li><p>阻止默认行为：在事件处理函数中，可以通过调用<code>event.preventDefault()</code>方法来阻止事件的默认行为。例如，在点击链接时可以阻止浏览器进行页面跳转。</p>
+</li>
+</ol>
+<p>需要注意的是，由于React使用了合成事件机制，事件处理函数中的<code>this</code>关键字指向的是组件实例，而不是触发事件的DOM元素。如果需要在事件处理函数中使用组件实例的方法或访问组件的状态，需要使用箭头函数或显式地绑定函数的<code>this</code>。</p>
+<p>总结起来，React的事件机制通过合成事件对象、事件绑定和事件委托来处理事件，并提供了一致的跨浏览器兼容性和灵活的事件处理方式。</p>
+<h2 id="5、React事件绑定的方式有哪些？区别？"><a href="#5、React事件绑定的方式有哪些？区别？" class="headerlink" title="5、React事件绑定的方式有哪些？区别？"></a>5、React事件绑定的方式有哪些？区别？</h2><p>React中事件绑定的方式有以下几种：</p>
+<ol>
+<li><p>直接在JSX中绑定事件处理函数：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onClick=&#123;handleClick&#125;&gt;Click me&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+<p>这种方式将事件处理函数直接绑定到组件的事件属性上，例如<code>onClick</code>、<code>onChange</code>等。事件处理函数可以是组件中定义的方法，也可以是内联的匿名函数。</p>
+</li>
+<li><p>使用箭头函数绑定事件处理函数：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onClick=&#123;<span class="function">() =&gt;</span> handleClick()&#125;&gt;Click me&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+<p>这种方式使用了箭头函数来包装事件处理函数，可以在函数内部访问组件的<code>this</code>，无需显式地绑定函数的<code>this</code>。</p>
+</li>
+<li><p>使用<code>bind</code>方法绑定事件处理函数：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onClick=&#123;handleClick.bind(<span class="built_in">this</span>)&#125;&gt;Click me&lt;/button&gt;</span><br></pre></td></tr></table></figure>
+<p>这种方式使用了<code>bind</code>方法来绑定事件处理函数的<code>this</code>，确保在事件处理函数中可以访问组件的实例。</p>
+</li>
+</ol>
+<p>这些方式在功能上是等效的，它们都可以用来绑定事件处理函数。它们的区别在于对事件处理函数中的<code>this</code>的处理方式：</p>
+<ul>
+<li>直接在JSX中绑定事件处理函数的方式，事件处理函数中的<code>this</code>指向组件实例。</li>
+<li>使用箭头函数绑定事件处理函数的方式，事件处理函数中的<code>this</code>也指向组件实例，无需显式地绑定函数的<code>this</code>。</li>
+<li>使用<code>bind</code>方法绑定事件处理函数的方式，可以显式地将函数的<code>this</code>绑定为指定的值，通常用于在事件处理函数中访问组件实例的方法或状态。</li>
+</ul>
+<p>需要根据具体的需求和场景选择合适的事件绑定方式。一般来说，如果事件处理函数中需要访问组件实例的方法或状态，推荐使用箭头函数或<code>bind</code>方法来绑定事件处理函数。如果事件处理函数不需要访问组件实例，可以直接在JSX中绑定事件处理函数。</p>
+<h2 id="6、React构建组件的方式有哪些？区别？"><a href="#6、React构建组件的方式有哪些？区别？" class="headerlink" title="6、React构建组件的方式有哪些？区别？"></a>6、React构建组件的方式有哪些？区别？</h2><p>在React中，构建组件的方式主要有以下几种：</p>
+<ol>
+<li><p>函数组件（Function Components）：<br>函数组件是一种简单的组件构建方式，它是一个纯粹的JavaScript函数，接收一个props对象作为参数，并返回一个React元素。函数组件没有自己的状态（state），只依赖于传入的props进行渲染。函数组件使用函数声明的方式定义，例如：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyComponent</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>Hello, &#123;props.name&#125;!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数组件的优点是简洁、易于理解和测试，适用于无状态的展示型组件。</p>
+</li>
+<li><p>类组件（Class Components）：<br>类组件是使用ES6的类语法来定义的组件，它继承自React.Component类，并可以拥有自己的状态和生命周期方法。类组件使用类声明的方式定义，例如：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>Hello, &#123;this.props.name&#125;!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>类组件可以通过继承React.Component类来获得更多的功能，如生命周期方法、状态管理等。类组件适用于有状态的组件和需要进行复杂逻辑处理的组件。</p>
+</li>
+<li><p>高阶组件（Higher-Order Components）：<br>高阶组件是一种函数，接收一个组件作为参数，并返回一个新的组件。高阶组件可以用于封装通用的逻辑，例如处理数据获取、权限控制等。通过使用高阶组件，可以实现组件的复用和逻辑的抽象。例如：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">withLogger</span>(<span class="params">WrappedComponent</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">componentDidMount</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&quot;Component mounted&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>高阶组件可以通过包装其他组件来添加额外的功能或行为。</p>
+</li>
+</ol>
+<p>这些组件构建方式在功能上是等效的，它们都可以用来构建React组件。它们的区别在于语法和特性：</p>
+<ul>
+<li>函数组件是一种简单的函数声明，没有自己的状态和生命周期方法，适用于无状态的展示型组件。</li>
+<li>类组件是使用类声明的方式定义的组件，可以拥有自己的状态和生命周期方法，适用于有状态的组件和复杂逻辑处理。</li>
+<li>高阶组件是一种函数，用于封装通用的逻辑，可以通过包装其他组件来添加额外的功能或行为。</li>
+</ul>
+<p>选择合适的组件构建方式取决于具体的需求和场景。一般来说，如果组件只需要展示数据，没有自己的状态和生命周期方法，可以使用函数组件。如果组件需要管理自己的状态或进行复杂逻辑处理，可以使用类组件。如果需要封装通用的逻辑或添加额外的功能，可以使用高阶组件。</p>
+<h2 id="7、说说React中引入css的方式有哪几种？区别？"><a href="#7、说说React中引入css的方式有哪几种？区别？" class="headerlink" title="7、说说React中引入css的方式有哪几种？区别？"></a>7、说说React中引入css的方式有哪几种？区别？</h2><p>在React中，引入CSS的方式有以下几种：</p>
+<ol>
+<li><p>内联样式（Inline Styles）：<br>内联样式是将CSS样式直接写在组件的JSX代码中，使用JavaScript对象的形式表示样式。例如：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> styles = &#123;</span><br><span class="line">    color: <span class="string">&#x27;red&#x27;</span>,</span><br><span class="line">    fontSize: <span class="string">&#x27;16px&#x27;</span>,</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&#123;styles&#125;</span>&gt;</span>Hello, world!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>内联样式的优点是可以直接在组件中定义样式，样式与组件紧密关联，方便维护和调试。但是对于复杂的样式，内联样式可能会显得冗长和不易维护。</p>
+</li>
+<li><p>模块化CSS（CSS Modules）：<br>CSS Modules是一种将CSS样式文件与组件关联起来的方式。在使用CSS Modules时，每个CSS文件都被视为一个独立的模块，其中的类名会被自动转换为唯一的标识符。在组件中引入CSS文件，并使用生成的标识符来应用样式。例如：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> styles <span class="keyword">from</span> <span class="string">&#x27;./MyComponent.module.css&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span>Hello, world!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>CSS Modules的优点是可以实现样式的模块化，避免样式冲突，并且可以在开发过程中进行静态类型检查。每个组件都有自己的样式作用域，提高了样式的可维护性。</p>
+</li>
+<li><p>CSS-in-JS：<br>CSS-in-JS是一种将CSS样式直接写在JavaScript代码中的方式，通过使用特定的库或工具，可以在组件中定义和应用样式。常见的CSS-in-JS库包括Styled Components、Emotion等。例如使用Styled Components：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> styled <span class="keyword">from</span> <span class="string">&#x27;styled-components&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Container = styled.div<span class="string">`</span></span><br><span class="line"><span class="string">  color: red;</span></span><br><span class="line"><span class="string">  font-size: 16px;</span></span><br><span class="line"><span class="string">`</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Container</span>&gt;</span>Hello, world!<span class="tag">&lt;/<span class="name">Container</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>CSS-in-JS的优点是可以将样式与组件紧密集成，提供了更灵活和动态的样式定义和应用方式。它还支持使用JavaScript的特性，如条件渲染、动态样式等。</p>
+</li>
+</ol>
+<p>这些引入CSS的方式在功能上是等效的，它们都可以用来引入和应用CSS样式。它们的区别在于语法和特性：</p>
+<ul>
+<li>内联样式直接将样式写在组件的JSX代码中，使用JavaScript对象表示样式，样式与组件紧密关联。</li>
+<li>CSS Modules将CSS样式文件与组件关联起来，实现样式的模块化，避免样式冲突。</li>
+<li>CSS-in-JS将CSS样式直接写在JavaScript代码中，提供了更灵活和动态的样式定义和应用方式。</li>
+</ul>
+<p>选择合适的引入CSS的方式取决于具体的需求和个人偏好。如果样式较简单且与组件紧密关联，可以使用内联样式。如果需要实现样式的模块化和避免样式冲突，可以使用CSS Modules。如果需要更灵活和动态的样式定义和应用方式，可以使用CSS-in-JS。</p>
+<h2 id="8、说说React生命周期有哪些不同阶段？每个阶段对应的方法是？"><a href="#8、说说React生命周期有哪些不同阶段？每个阶段对应的方法是？" class="headerlink" title="8、说说React生命周期有哪些不同阶段？每个阶段对应的方法是？"></a>8、说说React生命周期有哪些不同阶段？每个阶段对应的方法是？</h2><p>在早期版本的React中，组件生命周期由一系列生命周期方法组成，用于在组件的不同阶段执行特定的操作。然而，随着React的发展，一些生命周期方法已被标记为过时，并在新版本中被替代或移除。下面是React中常用的组件生命周期阶段及其对应的方法：</p>
+<ol>
+<li><p>挂载阶段（Mounting Phase）：</p>
+<ul>
+<li>constructor：组件实例化时调用，用于初始化状态和绑定方法。</li>
+<li>static getDerivedStateFromProps：在组件实例化和更新阶段调用，用于根据props更新状态。</li>
+<li>render：根据当前的props和state渲染组件的UI。</li>
+<li>componentDidMount：组件挂载到DOM后调用，可以进行异步操作、数据获取等。</li>
+</ul>
+</li>
+<li><p>更新阶段（Updating Phase）：</p>
+<ul>
+<li>static getDerivedStateFromProps：在更新阶段调用，用于根据props更新状态。</li>
+<li>shouldComponentUpdate：在更新阶段调用，用于决定是否重新渲染组件。</li>
+<li>render：根据当前的props和state渲染组件的UI。</li>
+<li>componentDidUpdate：组件更新后调用，可以进行DOM操作、数据更新等。</li>
+</ul>
+</li>
+<li><p>卸载阶段（Unmounting Phase）：</p>
+<ul>
+<li>componentWillUnmount：组件从DOM中移除前调用，用于清理定时器、取消订阅等。</li>
+</ul>
+</li>
+<li><p>错误处理阶段（Error Handling Phase）：</p>
+<ul>
+<li>static getDerivedStateFromError：在子组件发生错误时调用，用于更新错误状态。</li>
+<li>componentDidCatch：在子组件发生错误后调用，用于记录错误信息、发送错误报告等。</li>
+</ul>
+</li>
+</ol>
+<p>需要注意的是，随着React版本的更新，一些生命周期方法已被废弃或替代。例如，React 16.3版本引入了新的生命周期方法：</p>
+<ul>
+<li>static getDerivedStateFromProps 替代了 componentWillReceiveProps</li>
+<li>getSnapshotBeforeUpdate 替代了 componentWillUpdate</li>
+</ul>
+<p>此外，React 17版本中还有一些生命周期方法被标记为过时，包括 componentWillMount、componentWillUpdate 和 componentWillReceiveProps。在新的React版本中，推荐使用其他替代方法来执行相应的操作。</p>
+<p>请注意，React 16.8版本引入了Hooks，它提供了一种新的方式来处理组件的状态和副作用，可以替代部分生命周期方法的使用。</p>
+<p>总结起来，React中常用的组件生命周期阶段包括挂载阶段、更新阶段、卸载阶段和错误处理阶段，每个阶段对应的方法有所不同。具体使用哪些方法取决于React的版本和具体的需求。</p>
+<h2 id="9、React中组件之间如何通信？"><a href="#9、React中组件之间如何通信？" class="headerlink" title="9、React中组件之间如何通信？"></a>9、React中组件之间如何通信？</h2><p>在React中，组件之间可以通过以下几种方式进行通信：</p>
+<ol>
+<li><p>Props（属性）：<br>组件之间最常用的通信方式是通过props（属性）传递数据。父组件可以将数据作为props传递给子组件，在子组件中通过props来访问这些数据。这种单向数据流的方式使得组件之间的通信清晰可控。父组件可以通过props向子组件传递数据和回调函数，子组件可以通过调用回调函数来与父组件进行通信。</p>
+</li>
+<li><p>Context（上下文）：<br>Context提供了一种在组件树中共享数据的方式，避免了通过props层层传递数据的繁琐。通过创建一个Context对象，并在组件树中的某个位置提供该Context的值，子组件可以通过在组件中使用Context.Consumer来访问该值。Context可以在跨层级的组件之间进行通信，但在使用时需要注意避免滥用，以免导致组件之间的耦合性增加。</p>
+</li>
+<li><p>Redux（状态管理库）：<br>Redux是一个流行的状态管理库，它可以帮助组件之间共享和管理状态。通过Redux，可以将应用的状态存储在一个全局的store中，组件可以通过连接（connect）到store来获取和更新状态。Redux使用了一个单一的状态树和纯函数来管理状态的变化，使得状态的管理更加可预测和可维护。</p>
+</li>
+<li><p>其他第三方库：<br>除了Redux，还有其他一些第三方库可以用于组件之间的通信，如MobX、React Context API的第三方实现（如Recoil、Zustand等）等。这些库提供了不同的方式来管理和共享状态，可以根据具体的需求选择合适的库。</p>
+</li>
+</ol>
+<p>需要根据具体的场景和需求选择合适的通信方式。如果组件之间的通信较简单，可以使用props进行数据传递；如果组件层级较深或需要在多个组件之间共享数据，可以考虑使用Context；如果应用的状态较为复杂，可以选择使用状态管理库（如Redux）来管理状态。</p>
+<h2 id="10、说说对高阶组件的理解？应用场景"><a href="#10、说说对高阶组件的理解？应用场景" class="headerlink" title="10、说说对高阶组件的理解？应用场景"></a>10、说说对高阶组件的理解？应用场景</h2><p>高阶组件（Higher-Order Component，HOC）是一种在React中用于复用组件逻辑的模式。它本质上是一个函数，接受一个组件作为参数，并返回一个新的增强组件。</p>
+<p>通过使用高阶组件，可以将通用的逻辑从组件中提取出来，并将其应用于多个组件中，实现代码的复用和逻辑的解耦。高阶组件可以在不修改原始组件的情况下，为其添加额外的功能或修改其行为。</p>
+<p>高阶组件的应用场景包括：</p>
+<ol>
+<li><p>代码复用：通过将通用的逻辑抽象为高阶组件，可以在多个组件中共享该逻辑，避免代码重复。</p>
+</li>
+<li><p>条件渲染：高阶组件可以根据特定的条件来决定是否渲染原始组件，从而实现条件渲染的功能。</p>
+</li>
+<li><p>认证和授权：高阶组件可以用于处理用户认证和授权的逻辑，例如检查用户是否登录并根据权限控制组件的渲染。</p>
+</li>
+<li><p>数据获取和处理：高阶组件可以用于处理数据获取和处理的逻辑，例如从API获取数据并将其传递给原始组件。</p>
+</li>
+<li><p>动画和过渡效果：高阶组件可以用于添加动画和过渡效果的逻辑，例如在组件进入或离开时应用动画效果。</p>
+</li>
+<li><p>性能优化：高阶组件可以用于对组件进行性能优化，例如通过对组件进行记忆化或懒加载等操作来提高性能。</p>
+</li>
+</ol>
+<p>需要注意的是，高阶组件并不是React的官方概念，而是一种模式和约定。在实际使用中，可以根据具体的需求和场景来定义和使用高阶组件。同时，React Hooks的引入也提供了一种替代高阶组件的方式，可以根据具体情况选择使用高阶组件或Hooks来实现相应的功能。</p>
+<h2 id="11、在React中组件间过渡动画如何实现？"><a href="#11、在React中组件间过渡动画如何实现？" class="headerlink" title="11、在React中组件间过渡动画如何实现？"></a>11、在React中组件间过渡动画如何实现？</h2><p>在React中实现组件间的过渡动画可以使用多种方式，以下是其中几种常见的方法：</p>
+<ol>
+<li><p>CSS Transition和CSS Animation：<br>可以使用CSS Transition和CSS Animation来实现组件间的过渡动画。通过在组件的CSS样式中定义过渡效果或动画效果，并在组件的状态变化时添加相应的CSS类名，可以触发过渡或动画效果。例如，在组件进入或离开时，通过添加或移除CSS类名来实现淡入淡出、滑动等过渡效果。</p>
+</li>
+<li><p>React Transition Group：<br>React Transition Group是一个第三方库，提供了一组用于实现过渡动画的组件。它基于React的生命周期和动画事件，可以在组件的进入、离开和状态变化时触发动画效果。通过使用React Transition Group的组件（如Transition、CSSTransition等），可以方便地定义和控制组件间的过渡动画。</p>
+</li>
+<li><p>React Spring：<br>React Spring是另一个流行的第三方库，用于实现动态的、物理引擎驱动的过渡动画。它提供了一组用于创建和控制动画的Hooks和组件，可以实现更复杂和流畅的过渡效果。React Spring使用物理引擎来模拟真实的物理效果，例如弹簧、摩擦等，可以创建更具交互性和真实感的过渡动画。</p>
+</li>
+<li><p>使用其他动画库：<br>除了React Transition Group和React Spring，还有其他一些第三方动画库可以用于实现组件间的过渡动画，如GreenSock Animation Platform（GSAP）、Anime.js等。这些库提供了更多的动画效果和控制选项，可以根据具体需求选择合适的库。</p>
+</li>
+</ol>
+<p>需要根据具体的需求和场景选择合适的方法来实现组件间的过渡动画。无论选择哪种方式，都需要注意动画的性能和流畅度，避免过多的计算和重绘导致性能问题。</p>
+<h2 id="12、说说你在React项目是如何捕获错误的？"><a href="#12、说说你在React项目是如何捕获错误的？" class="headerlink" title="12、说说你在React项目是如何捕获错误的？"></a>12、说说你在React项目是如何捕获错误的？</h2><p>在React项目中，可以使用以下几种方式来捕获和处理错误：</p>
+<ol>
+<li><p>错误边界（Error Boundaries）：<br>错误边界是一种React组件，用于捕获并处理其子组件中抛出的错误。通过在组件树中的特定位置包裹错误边界组件，可以将错误限定在边界内，并提供自定义的错误处理逻辑。当子组件抛出错误时，错误边界会触发其<code>componentDidCatch</code>生命周期方法，并可以在该方法中记录错误信息、展示备用UI或发送错误报告等。</p>
+</li>
+<li><p>try-catch语句：<br>在函数组件中，可以使用try-catch语句来捕获和处理同步代码中的错误。将可能抛出错误的代码放在try块中，然后在catch块中处理错误，例如记录错误信息或展示错误提示。</p>
+</li>
+<li><p>错误处理钩子（Error Handling Hooks）：<br>自定义钩子可以用于处理特定场景下的错误。通过创建自定义钩子，可以在其中使用try-catch语句来捕获和处理错误，并提供相应的错误处理逻辑。这种方式可以将错误处理逻辑与组件逻辑分离，提高代码的可维护性和复用性。</p>
+</li>
+<li><p>全局错误处理：<br>在React应用的根组件或应用入口处，可以通过监听全局错误事件（如<code>window.onerror</code>或<code>window.addEventListener(&#39;error&#39;)</code>）来捕获未被任何组件处理的错误。在全局错误处理函数中，可以记录错误信息、展示错误提示或发送错误报告等。</p>
+</li>
+</ol>
+<p>需要注意的是，无论使用哪种方式捕获错误，都应该遵循适当的错误处理原则，包括记录错误信息、提供友好的错误提示、恢复应用的正常状态或向开发团队报告错误等。同时，为了更好地调试和定位错误，建议在开发环境中启用React的错误边界和错误信息显示功能。</p>
+<h2 id="13、说说对React-refs的理解？应用场景？"><a href="#13、说说对React-refs的理解？应用场景？" class="headerlink" title="13、说说对React refs的理解？应用场景？"></a>13、说说对React refs的理解？应用场景？</h2><p>在React中，ref是一种用于访问组件或DOM元素的引用的机制。通过使用ref，我们可以在函数组件或类组件中获取对组件实例或DOM节点的引用，并直接操作它们。</p>
+<p>理解React refs的关键点如下：</p>
+<ol>
+<li><p>创建和使用ref：<br>在函数组件中，可以使用<code>useRef</code>钩子来创建ref。在类组件中，可以通过创建实例属性并赋值为<code>React.createRef()</code>来创建ref。然后，可以将ref传递给组件或DOM元素的<code>ref</code>属性，从而获取对它们的引用。</p>
+</li>
+<li><p>访问引用的值：<br>通过访问ref的<code>current</code>属性，可以获取对组件实例或DOM节点的引用。例如，<code>ref.current</code>可以是一个组件实例、一个DOM节点对象或null（如果ref未关联到任何内容）。</p>
+</li>
+<li><p>应用场景：</p>
+<ul>
+<li>访问DOM元素：通过ref可以获取到DOM节点的引用，从而可以直接操作DOM，例如改变样式、获取尺寸、添加事件监听等。</li>
+<li>获取子组件的引用：可以在父组件中使用ref获取对子组件实例的引用，从而可以调用子组件的方法或访问其属性。</li>
+<li>焦点管理：可以使用ref在组件挂载后自动设置焦点到特定的输入框或元素上。</li>
+<li>动画和过渡：一些动画库或过渡库可能需要使用ref来获取组件或DOM节点的引用，以便进行动画效果的操作和控制。</li>
+</ul>
+</li>
+</ol>
+<p>需要注意的是，在使用ref时应遵循React的设计原则，尽量避免直接操作DOM，而是优先使用React的声明式方式来管理组件状态和行为。在大多数情况下，应该通过props和状态来传递数据和控制组件，而不是直接依赖ref。只有在必要的情况下，才应使用ref来访问组件实例或DOM节点。</p>
+<h2 id="14、说说React中的setState执行机制"><a href="#14、说说React中的setState执行机制" class="headerlink" title="14、说说React中的setState执行机制"></a>14、说说React中的setState执行机制</h2><p>在React中，<code>setState</code>是用于更新组件状态的方法。当调用<code>setState</code>时，React会执行以下步骤来处理状态更新：</p>
+<ol>
+<li><p>合并更新对象：<br>当调用<code>setState</code>时，可以传递一个更新对象或一个更新函数。如果传递的是更新对象，React会将该对象与当前状态进行浅合并，生成新的状态。如果传递的是更新函数，React会调用该函数，并将当前状态作为参数传递给它，然后使用函数返回的对象作为新的状态。</p>
+</li>
+<li><p>批量更新：<br>React会将多个<code>setState</code>调用合并为单个更新，以提高性能。在同一个事件循环中，多个<code>setState</code>调用会被放入一个队列中，然后一次性进行更新。这样可以避免不必要的组件重新渲染。</p>
+</li>
+<li><p>异步更新：<br>React会将状态更新视为异步操作，即使在<code>setState</code>之后立即访问状态，也不能保证立即得到更新后的状态。React会将状态更新推迟到合适的时机进行，以提高性能和优化渲染。</p>
+</li>
+<li><p>执行更新：<br>在合适的时机，React会开始执行状态更新。它会比较新的状态与旧的状态，确定哪些组件需要重新渲染。然后，React会触发组件的更新过程，包括调用生命周期方法、执行<code>render</code>方法生成新的虚拟DOM，并将新的虚拟DOM与旧的虚拟DOM进行对比，最终更新实际的DOM。</p>
+</li>
+</ol>
+<p>需要注意的是，由于<code>setState</code>是异步的，不能直接依赖当前状态的值来计算新的状态。如果需要基于当前状态计算新的状态，应该使用更新函数的形式来调用<code>setState</code>，以确保获取到最新的状态值。</p>
+<p>另外，React还提供了<code>setState</code>的第二个参数，用于在状态更新完成后执行回调函数。这个回调函数可以用于在状态更新完成后执行一些额外的操作，例如获取更新后的DOM节点或执行其他逻辑。</p>
+<h2 id="15、说说React-render-方法的原理？在什么时候会被触发？"><a href="#15、说说React-render-方法的原理？在什么时候会被触发？" class="headerlink" title="15、说说React render 方法的原理？在什么时候会被触发？"></a>15、说说React render 方法的原理？在什么时候会被触发？</h2><p>在React中，<code>render</code>方法是类组件中的一个生命周期方法，用于生成组件的虚拟DOM（Virtual DOM）。它定义了组件的外观和结构，并返回一个描述组件如何渲染的React元素。</p>
+<p><code>render</code>方法的原理如下：</p>
+<ol>
+<li><p>虚拟DOM生成：<br>当组件需要进行渲染时，React会调用组件的<code>render</code>方法。在<code>render</code>方法中，可以使用JSX语法或React.createElement函数来描述组件的结构和内容。<code>render</code>方法会返回一个React元素，它是一个轻量级的JavaScript对象，描述了组件的结构和属性。</p>
+</li>
+<li><p>虚拟DOM对比：<br>生成的虚拟DOM会与上一次渲染时生成的虚拟DOM进行对比。React使用一种称为”协调”（Reconciliation）的算法来比较两个虚拟DOM树的差异，并找出需要更新的部分。</p>
+</li>
+<li><p>更新实际DOM：<br>根据对比的结果，React会确定需要更新的部分，并将这些变化应用到实际的DOM上。React使用高效的算法来最小化DOM操作，以提高性能。</p>
+</li>
+</ol>
+<p><code>render</code>方法会在以下情况下被触发：</p>
+<ul>
+<li><p>组件首次渲染：当组件首次被挂载到DOM树上时，会调用组件的<code>render</code>方法生成初始的虚拟DOM，并将其转换为实际的DOM，呈现在页面上。</p>
+</li>
+<li><p>组件状态更新：当组件的状态通过<code>setState</code>方法进行更新时，React会重新调用组件的<code>render</code>方法，生成新的虚拟DOM，并与之前的虚拟DOM进行对比，最终更新实际的DOM。</p>
+</li>
+<li><p>父组件重新渲染：如果组件的父组件发生重新渲染，那么子组件的<code>render</code>方法也会被调用，以生成新的虚拟DOM。</p>
+</li>
+</ul>
+<p>需要注意的是，虽然<code>render</code>方法是必须的，但是它不应该直接修改组件的状态或执行其他副作用操作。<code>render</code>方法应该是一个纯函数，只负责根据输入的属性和状态生成虚拟DOM。副作用操作应该放在其他生命周期方法中或使用钩子函数来处理。</p>
+<h2 id="16、说说Real-DOM和-Virtual-DOM-的区别？优缺点？"><a href="#16、说说Real-DOM和-Virtual-DOM-的区别？优缺点？" class="headerlink" title="16、说说Real DOM和 Virtual DOM 的区别？优缺点？"></a>16、说说Real DOM和 Virtual DOM 的区别？优缺点？</h2><p>Real DOM（真实DOM）和 Virtual DOM（虚拟DOM）是两种不同的概念，用于描述浏览器中的DOM操作方式。</p>
+<p><strong>Real DOM（真实DOM）</strong>是浏览器中实际存在的DOM树结构，它由浏览器解析HTML文档时创建。当页面中的元素发生变化时，Real DOM会进行重新渲染和布局，这是一种比较昂贵的操作。因为每次更新都会导致整个DOM树的重新构建和页面的重绘，这对于复杂的应用程序或频繁的DOM操作会影响性能。</p>
+<p><strong>Virtual DOM（虚拟DOM）</strong>是React等一些JavaScript库和框架引入的概念。它是一个轻量级的JavaScript对象，用于描述真实DOM的结构和属性。Virtual DOM可以在内存中进行操作，而不需要直接操作真实的DOM。当组件的状态发生变化时，React会通过对比新旧两个虚拟DOM树的差异，找出需要更新的部分，并将这些变化批量应用到真实DOM上。这样可以减少对真实DOM的直接操作，提高性能。</p>
+<p>虚拟DOM的优点包括：</p>
+<ol>
+<li><p>性能优化：通过批量更新和最小化DOM操作，减少了对真实DOM的访问和操作，提高了性能。</p>
+</li>
+<li><p>跨平台：虚拟DOM是与平台无关的，可以在浏览器环境和其他环境（如服务器端渲染）中使用。</p>
+</li>
+<li><p>方便的抽象层：虚拟DOM提供了一种方便的抽象层，可以通过JavaScript对象来描述和操作DOM，简化了DOM操作的复杂性。</p>
+</li>
+</ol>
+<p>虚拟DOM的缺点包括：</p>
+<ol>
+<li><p>内存消耗：虚拟DOM需要在内存中维护一份DOM树的副本，对于大型应用程序或复杂的组件结构，可能会占用较多的内存。</p>
+</li>
+<li><p>学习成本：使用虚拟DOM需要学习和理解其工作原理和使用方式，对于新手来说可能需要一定的学习成本。</p>
+</li>
+</ol>
+<p>总结起来，虚拟DOM通过在内存中操作轻量级的JavaScript对象，减少了对真实DOM的直接操作，提高了性能。虽然它也有一些缺点，但在大多数情况下，虚拟DOM的优势远远超过了其缺点，使得开发者能够更高效地构建复杂的用户界面。</p>
+<h2 id="17、说说React-Jsx-转换成真实-DOM-过程？"><a href="#17、说说React-Jsx-转换成真实-DOM-过程？" class="headerlink" title="17、说说React Jsx 转换成真实 DOM 过程？"></a>17、说说React Jsx 转换成真实 DOM 过程？</h2><p>在React中，JSX是一种类似于HTML的语法扩展，用于描述组件的结构和内容。当使用JSX编写组件时，React会将JSX代码转换为真实的DOM元素。</p>
+<p>JSX转换成真实DOM的过程如下：</p>
+<ol>
+<li><p>JSX编写：<br>开发者使用JSX语法编写组件的结构和内容，类似于HTML的写法。例如：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> element = <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&quot;my-class&quot;</span>&gt;</span>Hello, React!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li><p>Babel编译：<br>JSX代码无法直接被浏览器解析，所以需要通过工具进行转换。通常使用Babel这样的工具将JSX代码转换为普通的JavaScript代码。转换后的代码类似于以下形式：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> element = React.createElement(<span class="string">&quot;div&quot;</span>, &#123; <span class="attr">className</span>: <span class="string">&quot;my-class&quot;</span> &#125;, <span class="string">&quot;Hello, React!&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+<li><p>创建虚拟DOM：<br>转换后的代码中，React会调用<code>React.createElement</code>函数来创建一个虚拟DOM元素。这个虚拟DOM元素是一个JavaScript对象，包含了元素的类型、属性和子元素等信息。</p>
+</li>
+<li><p>虚拟DOM转换为真实DOM：<br>通过虚拟DOM，React可以了解组件的结构和内容。在组件需要渲染到页面上时，React会根据虚拟DOM的信息，创建真实的DOM元素，并将其添加到页面的相应位置。</p>
+</li>
+<li><p>更新和重渲染：<br>当组件的状态发生变化时，React会重新执行上述过程，生成新的虚拟DOM，并通过对比新旧虚拟DOM的差异，最小化DOM操作，只更新需要变化的部分，从而提高性能。</p>
+</li>
+</ol>
+<p>总结起来，JSX代码经过编译和转换后，会生成虚拟DOM，然后通过对比虚拟DOM的差异，将变化的部分更新到真实的DOM上，实现组件的渲染和更新。这种方式可以提高性能，避免了频繁的直接DOM操作。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/09/N_13Java%E9%9D%A2%E8%AF%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -533,7 +1122,7 @@
 </ul>
 <p>应用从肩动到onCreate的过程<br>Aictivity=金周期的網居篇姐奶如<br>何选行的<br>Activity兰城过挫训羽分折<br>i setCoatentViewn死数据阳核心概含<br>ViewRootiinpl的绘制笆厦<br>1刷新率（家豆）<br>屏巴给利恒论 什 阿速率：(GPU<br>•利新率5防率不同所带来的问题<br>VSYNC位号的本后豆义<br>Choreographer管理抗炎<br>Surfacefinger对记号的返回本质<br>Choreographerw何似到航逐拉别行松可同多<br>SurfaceFilnger提供的surfare<br>西億钠生成过程 4 SurtaceFiinger进行的锁含成<br>EunloekCarNaSAndPOst兵佳作了什么<br>Layautinflater加我布局源低分析<br>xml概盔鰇析<br>Layoutinflater 茄居填充器源門分折<br>妒何获坝监听布屖誶忻过释<br>¢中实战应用 ， 拦截XML控件实例过種，打造网易云饰联痤架<br>，Layoutinilater加n我布尽分析<br>向网窈据件化谈肤<br>4Android冠源的加载饥制<br>Resource AssetManager<br>王科头行U飛粒宁L形<br>三件分发机乳详锦—五件兰死原唱涡松<br>大中 卖战应用 •手豆克件分发红制<br>VSYNC科新机南<br>ObjectAnimator gValue Animator系陨讲解<br>Android广件动匠;准巨器与估省器</p>
 <p>Lavoutinflatar加砹布厩分析<br>•网务指州化顿联＋Androld资源的加载𢖯制<br>L Resource gAssetManager<br>五华扒花U龙料气L形链<br>严件分发机剂计靜。<br>乎件挫武厊唱惕秘<br>*。 实收亚用 …不号雨件分发们兴<br>VSYNC乱斯机制<br>ObjectAnimatorgValueAnimator原码讲解<br>Antiroid馬性动瓦;开佑器亏佑伯照<br>香中 卖战应用。丰号Android-性动画恇平<br>源碀分析<br>布厉需夏器1ayoutManAger經<br>1RecycleViev劑析<br>Webview剂析。<br>逶即路换北原項<br>RecycleView剂析<br>•＋ 实花西用 一 子气实现ReCycleViaw<br>W<br>ebviaw居咀分行<br>妒河与I5进行交百<br>WebVigw性锅优化</p>
-<p>Liftcvele a Llerycle澡国解5<br>1Lifecvcle在高阶应用<br>ViewModel - vlewodel源讲解<br>1 viewModel的应用技巧与安践<br>LiveDsta源码矮析<br>LiveData<br>手写宝项liveData以及格<br><em>中 安战成用“LiveData丁出成手件分发框架<br>Navioation d Naviglatton深人源研分析<br>食中 实战应用 • APT技术实现自足义Fragment导航諝<br>Room澡入液硒分析<br>Room+LiveData监听故潘价敬<br>Room 一我安要侧新质们無邦分術<br><a href="mailto:&#65;&#x72;&#x63;&#104;&#105;&#116;&#x65;&#99;&#x74;&#x75;&#x72;&#x65;&#x69;&#64;&#x69;&#x74;&#x2e;&#115;&#105;&#101;">&#65;&#x72;&#x63;&#104;&#105;&#116;&#x65;&#99;&#x74;&#x75;&#x72;&#x65;&#x69;&#64;&#x69;&#x74;&#x2e;&#115;&#105;&#101;</a><br>基干Room封装APP望我绍存机型<br>•</em>一实战应用 •<br>Historage<br>WorkManaaer内核爆秘<br>Paaginq实巩原現与设计無規</p>
+<p>Liftcvele a Llerycle澡国解5<br>1Lifecvcle在高阶应用<br>ViewModel - vlewodel源讲解<br>1 viewModel的应用技巧与安践<br>LiveDsta源码矮析<br>LiveData<br>手写宝项liveData以及格<br><em>中 安战成用“LiveData丁出成手件分发框架<br>Navioation d Naviglatton深人源研分析<br>食中 实战应用 • APT技术实现自足义Fragment导航諝<br>Room澡入液硒分析<br>Room+LiveData监听故潘价敬<br>Room 一我安要侧新质们無邦分術<br><a href="mailto:&#65;&#x72;&#99;&#104;&#105;&#x74;&#x65;&#x63;&#x74;&#117;&#x72;&#101;&#105;&#x40;&#x69;&#x74;&#x2e;&#x73;&#x69;&#101;">&#65;&#x72;&#99;&#104;&#105;&#x74;&#x65;&#x63;&#x74;&#117;&#x72;&#101;&#105;&#x40;&#x69;&#x74;&#x2e;&#x73;&#x69;&#101;</a><br>基干Room封装APP望我绍存机型<br>•</em>一实战应用 •<br>Historage<br>WorkManaaer内核爆秘<br>Paaginq实巩原現与设计無規</p>
 <p>•1.面试问启动优化到底应该怎么回答？<br>•2.图论？DAG拓扑排序？启动任务管理<br>•3,JUC中闭锁是什么？如何在启动中应用？<br>•4.App启动流程对启动优化的意义<br>•5.手写淘宝APP中的启动框架</p>
 <p>1.MVP基础框架搭建<br>-2根除Activity内存泄漏<br>—3.Base类常用设计模式模板与适配器应用<br>—4.一线大厂MVP技术整体解决方案<br>-5.Jetpack新技术Lifecycle的融入<br>—6.Lifecycle源码分析<br>-7.Lifecycle核心设计恩想</p>
 <p>移动端注入神器Dagger2与Hit实现原理<br>主要内容：<br>1.dagger2基本使用<br>2.局部单例技术是如何实现的<br>3.dependencies依赖关系<br>4.深入理解scope 让dagger2的使用更轻松<br>5.hilt对象注入与接口注入<br>6.hilt实现原理分析</p>
@@ -647,219 +1236,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/11/N_5ESC%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/11/N_5ESC%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="post-title-link" itemprop="url">esc 云服务器了解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-11 18:24:39" itemprop="dateCreated datePublished" datetime="2023-04-11T18:24:39+08:00">2023-04-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-09 12:24:52" itemprop="dateModified" datetime="2023-09-09T12:24:52+08:00">2023-09-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>ecs云服务器是一种简单高效、安全可靠、处理能力可弹性伸缩的计算服务；可帮助用户快速构建更稳定、安全的应用，提升运维效率，降低IT成本，使用户更专注于核心业务创新。云服务器仅仅是云计算服务体系中的一项主机产品，该产品有效的解决了传统物理主机与VPS服务中，存在的管理难度大，业务扩展性弱的缺陷。<br>负载均衡<br>负载均衡（Load Balance）其意思就是分摊到多个操作单元上进行执行，例如Web服务器、FTP服务器、企业关键应用服务器和其它关键任务服务器等，从而共同完成工作任务。<br>宝塔</p>
-<p>首先先确定端口号是否开放</p>
-<p>实例、镜像.块存储.安全组.快照.网络<br>实例:等同于一台虚拟服务器，内含CPU、内存、操作系统、网络配置、磁实例盘等基础的计算组件。<br>提供实例的操作系统、初始化应用数据及预装的软件。操作系统支持多种Linux发行版本和不同的Windows版本。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_10Flutter%20riverpod/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/03/N_10Flutter%20riverpod/" class="post-title-link" itemprop="url">Flitter Riverpod</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-09 12:29:04" itemprop="dateModified" datetime="2023-09-09T12:29:04+08:00">2023-09-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>下面是一个示例，它展示了当异步API准备好时，作用域如何允许您覆盖一个虚拟提供者。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; We don&#39;t have an actual instance of SharedPreferences, and we can&#39;t get one except asynchronously</span><br><span class="line">final sharedPreferencesProvider &#x3D;</span><br><span class="line">    Provider&lt;SharedPreferences&gt;((ref) &#x3D;&gt; throw UnimplementedError());</span><br><span class="line"></span><br><span class="line">Future&lt;void&gt; main() async &#123;</span><br><span class="line">  &#x2F;&#x2F; Show a loading indicator before running the full app (optional)</span><br><span class="line">  &#x2F;&#x2F; The platform&#39;s loading screen will be used while awaiting if you omit this.</span><br><span class="line">  runApp(const LoadingScreen());</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; Get the instance of shared preferences</span><br><span class="line">  final prefs &#x3D; await SharedPreferences.getInstance();</span><br><span class="line">  return runApp(</span><br><span class="line">    ProviderScope(</span><br><span class="line">      overrides: [</span><br><span class="line">        &#x2F;&#x2F; Override the unimplemented provider with the value gotten from the plugin</span><br><span class="line">        sharedPreferencesProvider.overrideWithValue(prefs),</span><br><span class="line">      ],</span><br><span class="line">      child: const MyApp(),</span><br><span class="line">    ),</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Riverpod允许你创建一个ProviderScope，它可以访问父作用域中所有提供者的状态。<br>                    return ProviderScope(<br>                      parent: ProviderScope.containerOf(context),<br>                      child: const AlertDialog(<br>                        content: CounterDisplay(),<br>                      ),<br>                    );</p>
-<p><a target="_blank" rel="noopener" href="https://github.com/SinaSys/flutter_office_furniture_store_app/tree/riverpod">https://github.com/SinaSys/flutter_office_furniture_store_app/tree/riverpod</a></p>
-<p>今日工作安排：<br>把riverpod再深度学习一下，能够熟练运用<br>构建项目，</p>
-<p>今日重点是总结了一些UI布局，希望在后面能有很大的用处。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">when migrating following provider</span><br><span class="line"></span><br><span class="line">final currentWebView2Provider &#x3D; StateProvider&lt;InAppWebViewController?&gt;((ref) &#x3D;&gt; null,);</span><br><span class="line"></span><br><span class="line">to a riverpod_generator generated provider that looks like this</span><br><span class="line"></span><br><span class="line">@riverpod</span><br><span class="line">class CurrentWebView extends _$CurrentWebView &#123;</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  InAppWebViewController? build() &#123;</span><br><span class="line">    return null;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">The generators enabled autoDispose by default. That&#39;s most likely your issue</span><br><span class="line"></span><br><span class="line">You can try disabling it with @Riverpod(keepAlive: true)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_11idea/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/03/N_11idea/" class="post-title-link" itemprop="url">idea</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-09 12:46:49" itemprop="dateModified" datetime="2023-09-09T12:46:49+08:00">2023-09-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>想法：我们常用的Office软件，那么我们怎么存储Office 模版，或者我们如何快速的使用一个模版，这个如果我们有一款软件能够<br>帮助我们快速的创建模版，保存模版</p>
-<p>桌面管理器<br>我们乱糟糟的桌面如何管理，我们用什么软件来管理呢。我们可以建立一个桌面管理器<br>桌面海报，一定是一个非常重要的功能</p>
-<p>三维场景<br>1.现实的三维场景，主要采用three和sketch-threejs样例，直接展示<br>2.三维模型<br>3.三维球体</p>
-<p>项目采用纯html方式，采用boostrip布局</p>
-<p>项目总结；<br>目前已经是在新公司工作一个月了，不知道说什么，总是在徘徊和彷徨，不知道自己的路到底走的对不对，今天的我会成为未来什么样的我。这让我很迷茫。<br>我不知道钱到底是多少，我也不知道我能做什么，我想我只能是努力的为自己奋斗一下了，在家里，我现在已经是完全的消失了，无论是孩子还是其它的，我想我不是一个好丈夫，不是一个好父亲，以我目前的心智和思想我真的是做不到，也许有一天我能看清这一切，但是我现在真的是无能为力。我很挣扎。<br>我看很多人说人生是无意义的，我一直不明白，现在我好像懂了，老天给我们肉体和灵魂，让我们在这个，世界上走一遭，终归是尘归尘，土归土。我们没有多大的成就，我们也不必为眼前的好坏兴奋，也许我们成长了，就再也没有青春那种冲动和热情了。<br>我看人家说的很对，当你年轻的时候什么都不怕，义无反顾的时候，那是最美好的，现在的我们已经没有了那种激情了。<br>我现在只想是多读点书，能够有更大的长进，我不知道我的路究竟能怎么样，我也不知道互联网这个路能走到何方，我只想我能在北京这个孤独的生活中为自己保存好最后的一丝丝成长。<br>7年了，弹指一瞬间，我想可能我的前7年浪费了很多，从新公司开始，我想用这最后的时光来捕捉自己的将来路，我总有一天是要回归老家的，不知道是在什么时候，我想我努力的走着，终究是能看到好的一面，也许我能成长，看清这一切，也需心理也就不会再悲伤难过了。<br>我读了一句顶一万句，我觉得作者写的很好，是一个很细腻的人，<br>我重读了余华的兄弟和活着，再次感同深受，那个年代的苦难我们没有办法经历了，但是我们确实能从书中获取苦难，让我们更加的明白当下的不容易。我们不去比较<br>我快速的读了心理抚养，试图寻找一些答案，试图寻找自己以及周围事物一些现象的解答。<br>我读了南怀瑾金刚经说什么，想从佛经中寻找一些道理，寻找一些答案，也想找一些解脱吧。<br>我现在在读莫言的丰乳肥臀，文章写的很长，我不懂的欣赏那些文字的优美和表达方式，也许很美，但是让我读起来不是太容易，我想还是我的能力太低，不懂的如何欣赏，我在努力的克服自己，让自己沉醉在里面，希望读完这本小说能让我有一个更高层次的提升吧。<br>还是努力的阅读吧，让自己成为一个智慧的人，让解脱</p>
-<p>Flutter 开发总结<br>上周写了一些UI，总体上说是在进步了，我其实没有开发过Flutter项目，但是我想我的水平在哪里这是一个问题，<br>我看了一下朋友们写的代码，我觉得我的水平还是要有长足进步的机会，我应该学会写的更好一些，<br>我将UI以插件的形式写，我想是对的，我封装的水平还是不是太好，特别是一些颜色、字体文字之内的东西，我想我是不是能有更好的办法去实现。这个问题暂时先放在这里，我想后面我再去多考虑一下。<br>我看了下朋友的开发，确实UI写的很快，我想我的技术功底确实需要长进，我理解我现在写的少，写的慢是有原因的，我去百度等确实影响了开发的进度。也希望我后面能有一个好的进步，特别是在UI设计这一块上，我能有一个比较全面的发展。<br>我一直在思考Flutter应该怎么开发，需要慢慢的成长吧，还是从简单到复杂，从具体到抽象的一个过程，我想还是先做一些简单的东西然后再思考如何做好的问题。<br>对于颜色的处理是一个问题，特别是在不同的模式下颜色显示，我觉得最好是能做一个单独的类出来<br>所以我建议还是选择一个比较靠谱的样式管理组件，能够对各种样式进行动态的管理，（比如能动态的调整黑暗模式和白天模式）<br>对于字体，也是考虑能动态的调整，如放大缩小字体<br>所以我的想法是还是要找准开发的节奏，比如GetX如何用好，以及一些插件如何用好，我现在的节奏还不能跟上别人，所以我需要给自己一个开发的方式，我也不能盲目的去进行开发，直接拷贝别人的代码进行开发可能能很快就出来结果，但是后面出现bug后，将是很头疼的问题，特别是现在业务逻辑还不是太清晰的时候，盲目的去进行业务设计，可能导致后面的问题会比较多，所以我现在还是谨慎点比较好<br>我这边的原则还是由简到繁，由片面到全面的一个方式。</p>
-<p>首先解决的几个问题：<br>1.圈子导航栏,<br>2.解决我的图片列表及上部的tabbar问题<br>3.设置hive数据存储<br>4.城市选择、职业选择等页面开发。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -925,7 +1305,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-count">403</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -953,7 +1333,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -148,6 +148,296 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_7Swift_mj/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/09/M_7Swift_mj/" class="post-title-link" itemprop="url">Swift MJ</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-09 09:43:23" itemprop="dateCreated datePublished" datetime="2017-03-09T09:43:23+08:00">2017-03-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1.swift界面编写规范，代理和UI分别放在extension中<br>2.类的属性，可以使用setvauleforkeywithDict：，但是必须重写父类的方法forundifne<br>3.swift闭包写法，block()-&gt;(){<br>}<br>4.swift闭包的声明 ：block(()-&gt;())();<br>5.swift闭包避免循环引用：<br>block(［weak self］)-&gt;(){<br>}<br>5.自定义构造函数<br>6.swift定义log<br>buying seeing 里面找 swift flag，添加标记<br>func FDLog<T>(message: T, file: String = #file, funcName: String = #function,lineNum: Int = #line) {<br>        #if DEBUG<br>            let fileName = (file as NSString).lastPathComponent<br>            print(“(fileName):((lineNum))-(message)”);<br>        #endif<br>}</p>
+<p>7.swift字符串转类<br>命名空间<br> //获取命名空间<br>        guard let name =   NSBundle.mainBundle().infoDictionary![“CFBundleName”] as? String else {<br>                DDLog(“获取BundleName失败”)<br>                return;<br>            }<br>        //拼接命名空间<br>        let clas :AnyClass?  = NSClassFromString(name + “.” + childControllerString)<br>        //将命名空间转化为UITableViewController类型<br>        guard let childControllerClas   = clas as? UITableViewController.Type else {<br>               DDLog(“转换类型失败”)<br>               return<br>            }</p>
+<p>swift异常处理<br>如果在调用系统某个方法时，该方法最后有一个throws，说明该方法会剖出异常，如果一个方法会剖出异常，那么需要对该异常进行处理<br>在swift中提供三种处理异常的方式<br>1.try方式：程序员手动捕捉异常<br>do｛<br>try a<br>｝ cash ｛<br>／／异常对象的处理<br>｝<br>2.try？方式（常用）系统帮助我们处理异常，如果该方法出现异常，则该方法返回nil，若果没有异常，则返回对应的对象<br>guard let a ＝ try？b else｛<br>return<br>｝<br>方式三：try！方法（不建议使用，非常危险），直接告诉系统，该方法没有异常，注意：如果该方法有异常，那么程序会直接报错，奔溃<br>let a ＝ try！b</p>
+<p>swift中类方法就是以class开头的方法<br>扩展系统的类，就是扩展系统init方法，构造函数</p>
+<p>// convenience : 便利,使用convenience修饰的构造函数叫做便利构造函数<br>// 遍历构造函数通常用在对系统的类进行构造函数的扩充时使用<br>/*<br> 遍历构造函数的特点<br> 1.遍历构造函数通常都是写在extension里面<br> 2.遍历构造函数init前面需要加载convenience<br> 3.在遍历构造函数中需要明确的调用self.init()<br> */<br>convenience init (imageName : String, bgImageName : String) {<br>    self.init()</p>
+<pre><code>事件监听
+事件监听的本质发送消息，但是发送消息是OC的特性
+将方法包装成@SEL－－》类中查找方法列表－－》根据@SEL找到imp指针（函数指针）－－》执行函数
+如果swift中将一个函数声明称private，那么该函数不会被添加到方法列表中
+@objc private func loginBtnClick() ｛｝
+我们通常在swfit中添加@objc，标示这是一个OC的方法。
+如果在private前面加上@objc，那么该方法依然后被添加到方法列表中
+
+
+创建动画。设置动画的属性
+// 1.创建动画
+let rotationAnim = CABasicAnimation(keyPath: &quot;transform.rotation.z&quot;)
+
+// 2.设置动画的属性
+rotationAnim.fromValue = 0
+rotationAnim.toValue = M_PI * 2
+rotationAnim.repeatCount = MAXFLOAT
+rotationAnim.duration = 5
+rotationAnim.removedOnCompletion = false
+
+// 3.将动画添加到layer中
+rotationView.layer.addAnimation(rotationAnim, forKey: nil)
+removedOnCompletion：默认为YES，代表动画执行完毕后就从图层上移除，图形会恢复到动画执行前的状态。如果想让图层保持显示动画执行后的状态，那就设置为NO，不过还要设置fillMode为kCAFillModeForwards .
+// MARK:- 重写init函数
+override init(frame: CGRect) &#123;
+    super.init(frame : frame)
+    
+    setImage(UIImage(named: &quot;navigationbar_arrow_down&quot;), forState: .Normal)
+    setImage(UIImage(named: &quot;navigationbar_arrow_up&quot;), forState: .Selected)
+    setTitleColor(UIColor.blackColor(), forState: .Normal)
+    sizeToFit()
+&#125;
+
+// swift中规定:重写控件的init(frame方法)或者init()方法,必须重写init?(coder aDecoder: NSCoder)
+required init?(coder aDecoder: NSCoder) &#123;
+    fatalError(&quot;init(coder:) has not been implemented&quot;)
+&#125;
+
+swift中可以直接修改控件的x，y，with，height值
+
+设置modal样式
+// 1.创建弹出的控制器
+let popoverVc = PopoverViewController()
+
+// 2.设置控制器的modal样式
+popoverVc.modalPresentationStyle = .Custom
+
+// 3.设置转场的代理
+popoverVc.transitioningDelegate = popoverAnimator
+popoverAnimator.presentedFrame = CGRect(x: 100, y: 100, width: 180, height: 250)
+
+
+
+// MARK:- 自定义构造函数
+// 注意:如果自定义了一个构造函数,但是没有对默认构造函数init()进行重写,那么自定义的构造函数会覆盖默认的init()构造函数
+init(callBack : (presented : Bool) -&gt; ()) &#123;
+    self.callBack = callBack
+&#125;
+
+注意：在闭包中如果使用当前对象的属性或者调用方法也需要加self
+／／两个地方的self使用：
+1.如果在一个函数中出现奇异的地方
+2.在闭包中使用当前对象的属性和方法也要添加self，注意循环引用的解决
+private lazy var popoverAnimator : PopoverAnimator = PopoverAnimator &#123;[weak self] (presented) -&gt; () in
+    self?.titleBtn.selected = presented
+&#125;
+
+swift使用pods
+注意：要大开user_frameworks!的注释部分
+
+swift中计算属性的使用
+很多情况下我们可以给一个变量一个计算属性，，当使用这个变量的时候，初始化这个变量的时候就可以获得计算后的值
+
+// ?? : 如果??前面的可选类型有值,那么将前面的可选类型进行解包并且赋值
+// 如果??前面的可选类型为nil,那么直接使用??后面的值
+let url = NSURL(string: profileURLString ?? &quot;&quot;)
+iconView.sd_setImageWithURL(url, placeholderImage: UIImage(named: “avatar_default_big&quot;))
+                                                           
+                                                           textVIew属性hasText()的使用
+                                                           
+                                                           
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/09/M_1Swift%E5%92%8COC%E7%9A%84%E5%8C%BA%E5%88%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/09/M_1Swift%E5%92%8COC%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">Swift和OC的区别</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-09 09:38:32" itemprop="dateCreated datePublished" datetime="2017-03-09T09:38:32+08:00">2017-03-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>初始化</p>
+</blockquote>
+<p>let myTableView: UITableView = UITableView(frame: CGRectZero, style: .Grouped)</p>
+<blockquote>
+<p>可失败初始化</p>
+</blockquote>
+<p>if let image = UIImage(contentsOfFile: “MyImage.png”) {<br>// loaded the image successfully<br>} else {<br>// could not load the image<br>}</p>
+<blockquote>
+<p>访问属性方法</p>
+</blockquote>
+<p>在 Swift 中访问和设置 Objective-C 对象的属性时，使用点语法</p>
+<blockquote>
+<p>id 兼容性（id Compatibility）</p>
+</blockquote>
+<p>Swift 包含一个叫做AnyObject的协议类型，表示任意类型的对象，就像 Objective-C 中的id一样。AnyObject协议允许你编写类型安全的 Swift 代码同时维持无类型对象的灵活性。因为AnyObject协议保证了这种安全，Swift 将id对象导入为AnyObject。<br>对于 Swift 中的强制类型转换，从AnyObject类型的对象转换成明确的类型并不会保证成功，所以它会返回一个可选的值。而你需通过检查该值的类型来确认转换是否成功。<br>//Swift<br>let userDefaults = NSUserDefaults.standardUserDefaults()<br>let lastRefreshDate: AnyObject? = userDefaults.objectForKey(“LastRefreshDate”)<br>if let date = lastRefreshDate as? NSDate {<br>println(“(date.timeIntervalSinceReferenceDate)”)<br>}<br>当然，如果你能确定这个对象的类型（并且确定不是nil），你可以添加as操作符强制调用。</p>
+<p>let myDate = lastRefreshDate as NSDate<br>let timeInterval = myDate.timeIntervalSinceReferenceDate</p>
+<blockquote>
+<p>扩展（Extensions）</p>
+</blockquote>
+<p>你也可以使用扩展来增加属性（包括类的属性与静态属性）。然而，这些属性必须是通过计算才能获取的，扩展不会为类，结构体，枚举添加存储属性。下面这个例子为CGRect类增加了一个叫area的属性。<br>//Swift<br>extension CGRect {<br>var area: CGFloat {<br>return width * height<br>}<br>}<br>let rect = CGRect(x: 0.0, y: 0.0, width: 10.0, height: 50.0)<br>let area = rect.area<br>// area: CGFloat = 500.0</p>
+<blockquote>
+<p>比较对象</p>
+</blockquote>
+<p>当比较两个 Swift 中的对象时，可以使用两种方式。第一种，使用（==），判断两个对象内容是否相同。第二种，使用(===)，判断常量或者变量是否为同一个对象的实例。</p>
+<p>Swift 与 Objective-C 一般使用 == 与 === 操作符来做比较。Swift 的 == 操作符为源自 NSObject 的对象提供了默认的实现。在实现 == 操作符时，Swift 调用 NSObject 定义的 isEqual: 方法。<br>Swift 类型兼容性<br>当你在 Swift 中创建了一个继承自 Objective-C 类的子类时，该类以及该类的成员-属性，方法，下标和构造器，便会在 Objective-C 中自动可用。在某些情况下，你需要更细粒度的控制如何将 Swift API 暴漏给 Objective-C。如果你的 Swift 类没有继承自 Objective-C 的类，又或者你想更改暴漏给 Objective-C 代码的接口符号名称，你便可以使用@objc属性。如果你正在使用如键值观察的 API 来动态替换方法的实现，也可以通过使用dynamic修饰符来获得对 Objective-C 运行时被自动派发的成员的访问。</p>
+<p>轻量级泛型<br>使用轻量级泛型参数的 Objective-C 声明类型，如NSArray，NSSet以及NSDictionary，在被导入到 Swift 时会附带上他们内容保存的类型。</p>
+<p>例如，考虑下面的 Objective-C 属性声明：</p>
+<p>@property NSArray&lt;NSDate <em>&gt;</em> dates;<br>@property NSSet&lt;NSString <em>&gt;</em> words;<br>@property NSDictionary&lt;KeyType: NSURL <em>, NSData *&gt;</em> cachedData;<br>下面是 Swift 导入后：</p>
+<p>var dates: [NSDate]<br>var words: Set<String><br>var cachedData: [NSURL: NSData]</p>
+<p>参考资料<br><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note">http://www.jianshu.com/p/4a1978845eac?utm_campaign=hugo&amp;utm_medium=reader_share&amp;utm_content=note</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2017/03/08/M_18Swift%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/03/08/M_18Swift%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">微信小程序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-08 18:56:45" itemprop="dateCreated datePublished" datetime="2017-03-08T18:56:45+08:00">2017-03-08</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前几天微信小程序终于发布了，历时一年，风风火火的宣传之后，终于低调的面世了<br>刚接触小程序的时候，我真的觉得这个东西真的是很牛逼，能够做到原生应用的体验，真的为微信开发团队点赞，这是一次很了不起的实践，为什么说是实践尼？真的，他还没有火起来，我们也不知道这个东西会不会火起来<br>为什么这样说尼，作为一个ios开发者，我能深刻认识到苹果在ios中起到的作用，如果苹果不让一个东西出来的话，那么真的也就不会出现，至少现在还没有人能够撼动苹果的地位，微信更是如此<br>但是还是被微信简单的开发模式震撼了，微信固定的声明用户只能在pages里面写页面，然后很清晰的用文件来表明各自作用<br>    js：代表逻辑层<br>    json：代表数据层<br>    wxml：代表html文档<br>    wxss：代表文档样式<br>非常简单的设计，其实我觉得很大程度上能够简化程序猿的工作，思想，框架结构都给我们定义好了，我们只需要改改就好了，这就是小程序，震撼之处却是非常大<br>也许有一天，你不会互联网知识，你真的也可以进行小程序开发，真的不需要懂那么多。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2016/09/19/M_13Lat_Lng/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -255,7 +545,7 @@
 <h4 id="Blockquotes"><a href="#Blockquotes" class="headerlink" title="Blockquotes"></a>Blockquotes</h4><blockquote>
 <p>Right angle brackets &gt; are used for block quotes.</p>
 </blockquote>
-<h4 id="Links-and-Email"><a href="#Links-and-Email" class="headerlink" title="Links and Email"></a>Links and Email</h4><p>An email <a href="mailto:&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#x65;&#x40;&#x65;&#120;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#x63;&#111;&#x6d;">&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#x65;&#x40;&#x65;&#120;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#x63;&#111;&#x6d;</a> link.</p>
+<h4 id="Links-and-Email"><a href="#Links-and-Email" class="headerlink" title="Links and Email"></a>Links and Email</h4><p>An email <a href="mailto:&#101;&#x78;&#x61;&#x6d;&#112;&#108;&#101;&#64;&#101;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;">&#101;&#x78;&#x61;&#x6d;&#112;&#108;&#101;&#64;&#101;&#x78;&#97;&#109;&#x70;&#x6c;&#x65;&#46;&#x63;&#x6f;&#109;</a> link.</p>
 <p>Simple inline link <a target="_blank" rel="noopener" href="http://chenluois.com/">http://chenluois.com</a>, another inline link <a target="_blank" rel="noopener" href="http://25.io/smaller/">Smaller</a>, one more inline link with title <a target="_blank" rel="noopener" href="http://resizesafari.com/" title="a Safari extension">Resize</a>.</p>
 <p>A <a target="_blank" rel="noopener" href="http://25.io/mou/" title="Markdown editor on Mac OS X">reference style</a> link. Input id, then anywhere in the doc, define the link with corresponding id:</p>
 <p>Titles ( or called tool tips ) in the links are optional.</p>
@@ -1006,279 +1296,10 @@ content
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_5Swift%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E7%9A%84%E8%BD%AC%E6%8D%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/08/03/M_5Swift%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E7%9A%84%E8%BD%AC%E6%8D%A2/" class="post-title-link" itemprop="url">Swfit编程思想的转换</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-08-03 19:18:50" itemprop="dateCreated datePublished" datetime="2016-08-03T19:18:50+08:00">2016-08-03</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>原来的代码+原来的思想+Swift. 哪里出错了呢?<br>最理想的情况当然就是从一个100%的Swift项目开始.如果你能做到,很好.但是多数情况下,我们有着已存在的代码,却很想开始使用Swift语言,那我们应该从哪里开始呢?</p>
-<p>为什么?<br>回过来说一下:你为什么想用Swift写程序呢?原因有很多:Swift语言是编程语言的新星;有着更棒的语法;Swift是苹果向我们推荐的iOS开发语言.<br>在将来,Swift的关注度会继续增加,并且Swift将成为开发OSX和iOS程序最适合,最受支持,最简便的编程语言.</p>
-<p>SwiftAwesomeness</p>
-<p>正如上图,这就是未来Swfit的趋势,那你又能做什么来从Swift方式开始呢?</p>
-<p>Swift方式<br>有许多方面需要考虑,但我们先讨论下两大内容: 安全性和值语义.</p>
-<p>安全性<br>Nil是Objective-C中很棒的存在:你可以发消息给nil,系统运行时会不会Crash,继续保持响应.</p>
-<p>然而Swift中的nil是很不一样的,通常其类型机制会阻止你试图使用nil调用方法或者访问一个内容为nil的属性.虽然你可以避开这个类型机制,但这样做就如同在C语言中使用指向null的指针一样糟糕:你将容易在运行时掉入陷阱,使你的应用Crash.</p>
-<p>在Swift中,所有都是类型安全的.一个String类型的字符串就是字符串,且不会为nil.理解上类似于C++的引用而不是C中的指针,因为它们永远不会为nil.</p>
-<p>可选变量<br>在可选变量中,nil是可以使用的.一个可选类型的字符串变量可以是一个字符串,也可以为nil.你每次都要检查是什么.不然你可以强制解包这个可选变量,或者改变它成一个隐式解包的可选变量,这意味着成为一个可选类型但表现跟一个真正的值一样,一旦它是nil,这个app就会Crash</p>
-<p>unwarp<br>Cocoa里充满了可选类型的变量,这代表着每次你所持有的数据,都不得不检查内部真正的内容</p>
-<p>这在想法上是一个巨大的提升,你要明白不应该有机会向nil发送消息.在一个强类型语言机制里,要么它是nil,要么就是某个值.如果它在程序运行时未知的,就需要检查,不要试着强制解包它</p>
-<p>将可选变量想做一个箱子:箱子里可以什么都没有(为nill),也可以有个值.但你在解包或者拆箱这个可选变量之前总是需要检查它,就像你会问在这个可选变量内部到底是什么?</p>
-<p>box<br>在Swift已经有大量的其他例子显示了Swift语言的安全性:初始化方法,更少未定义的行为,内存安全.Nil安全是Swift语言面世以来相当常见的对语言安全性的体现.</p>
-<p>值类型<br>值类型在Swift随处可见.显而易见,Obejctvie-C有着像NSInteger的基本数据类型,和像CGRect结构体.但是许多像NSString,NSArray等等都是类,为引用类型.</p>
-<p>在Swfit中,一个完全不同的地方就在于它的标准库都有超过80个结构体,只有4个类,可以通过浏览头文件看到.</p>
-<p>字符串,数字,集合这些类型在Swift都是值类型.这就意味着如果你有一个可变的Swfit字符串,把它传入一个函数,你将得到的是字符串的拷贝.再次说明下,这可不是一件糟糕的事:我们在一直使用Objective-C中,有copy和mutableCopy.这对于多数普遍类型的新默认行为是一个巨大的提升.</p>
-<p>桥接<br>Swift被设计出来当然要能与Objective-C很好协同工作,由于Cocoa是为Objective-C建立的,所以这是很有必要的.所有这些Cocoa APIs 几乎都能被Swfit调用,这意味着你自定义的Objective-C类也能很好桥接到Swift类</p>
-<p>这里就有问题出现了:以Swift开始,添加Objective-C,如何正像期望一样调用从Objective-C桥接到Swfit方法</p>
-<p>Swift 到 Objective-C<br>Swiftz中有许多特性比如原生的结构体,加强的枚举等等,不能完全地桥接到Objective-C,这就意味着你使用Swift最新特性来写最新和最好的Swift框架,许多框架你就不能在Objective-C上使用.</p>
-<p>即使你限制自己只用Swift一些能兼容的特性写程序,你也不能让Swift的类继承自Objective-C的类.你可以借鉴table views或collection views的模式,使用代理和布局对象来解决这个问题,但你要始终记得如果你Swfit的API需要继承,默认在Objective-C不可见的.</p>
-<p>如果你用@objc<br>标记了你的类和协议,那么他们在Obejctive-C在就是可用的.dynamic<br>修饰符也显示使用了@objc<br>使得在Objective-C语言上可用,但它也使得你所限定的属性或者方法使用了Objective-C动态分发.</p>
-<p>Swift 到 Objective-C</p>
-<p>如果你想要使用swizzle或者其他动态特性,你将需要使用dynamic<br>标识符,仅仅@objc<br>不能保证它是使用objc_msgSend()<br>方法使得可能方法仍是编译过的或者内联的.<br>再一次强调:只有具有兼容性的特性才能工作.如果你在Swfit枚举对象中实现一个方法,它不会桥接过去,如果你的枚举存储不是int而是其他类型,它也不会桥接过去.</p>
-<p>Objective-C 到 Swift: Nullability<br>Objective-C转向Swift有许多好的方面来优化.你给在Objective-C中属性,参数,和返回值的类型添加标注.<br>_Null_unspecified(default)</p>
-<p>桥接为一个在Swift显示解包的可选值<br>_Nonnull</p>
-<p>变量值不会为nil;桥接为一个常规的引用<br>_Nullable</p>
-<p>变量值可以为nil;桥接为一个可选变量<br>如果你标注了你Obejctive-C代码, 在Swift中将会有很好的类型转变.即使你没有接触过Swfit,当你写Objective-C时这些标注会在你代码完成后出现.并且如果你声明一个方法参数为_Nonnull<br>而你传入了nil,你就会得到一个编译警告.<br>这是很好的练习来开始添加这些标注.在你使用已存在的API时会有所有帮助,让你更容易地开始使用Swfit.</p>
-<p>Objective-C 到 Swift: Lightweight Generics<br>轻量泛型是Swfit2新出来的特性.那些NSArray,NSDictionary,NSSet能存储任何原来的NSObject对象的集合类型需要大量的转换.在Objective-C中不会出现这样的问题,但记得在Swfit的所有都安全相关,正确的转换需要大量的类型检查.你应该先检测类型,而不是强制转换.<br>现在有了泛型,这意味着你写的Objective-C代码会是这样的:<br>NSArray&lt;NSString *&gt; * _Nonnull<br>这是一个将存储NSString对象的NSArray.有着Nullability标注,你会明白这数组本身不能为nil;你将总能得到一个数组.如果你之前写过Java或C++你应该会熟悉这样的泛型写法.</p>
-<p>而这个桥接到Swfit后会是这个样子的:[String]<br>一个简洁的Swfit的存储String的数组.</p>
-<p>小小的提醒: 轻量泛型只对基础集合的array, dictionary, sets 起作用</p>
-<p>需要跨的坑<br>我简易完全用Swfit开始新项目,如果你需要第三方库,这不会影响你用Swfit还是Obejctive-C,你都能调用.如果你已经有了存在的项目代码,想开始引入Swfit代码,尝试Obejctive-C向Swfit方法的保证桥接.例如已经实例化的视图控制器,视图在Swfit工作正常;它们都起源于NSObject,所以需要的话你能访问它们通过Objective-C.</p>
-<p>Bridge</p>
-<p>还有其他方面:Swfit泛型,枚举的存储不仅仅是整型,内嵌类型,结构体等等,这些需要等到你完全入门100%Swift,不要灰心,那天会比你所想的提前到来.</p>
-<p>在那之前,继续友好地使用Obejctive-C,做好使用Swfit的准备.下面资源可以帮助你完成这一转变.</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_6Swift%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%B1%BB%EF%BC%9F%20%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/08/03/M_6Swift%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%B1%BB%EF%BC%9F%20%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E4%BD%93%EF%BC%9F/" class="post-title-link" itemprop="url">Swift什么时候使用类？ 什么时候使用结构体？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-08-03 19:13:32" itemprop="dateCreated datePublished" datetime="2016-08-03T19:13:32+08:00">2016-08-03</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在Swfit中,什么时候用结构体，什么时候用类？</p>
-<p>到底是用类的做法优于用结构体，还是用结构体的做法优于类。函数式编程倾向于值类型，面向对象编程更喜欢类。<br>在Swift 中，类和结构体有许多不同的特性。下面是两者不同的总结：</p>
-<p>类支持继承，结构体不支持。<br>类是引用类型，结构体是值类型<br>并没有通用的规则决定结构体和类哪一个更好用。一般的建议是使用最小的工具来完成你的目标，但是有一个好的经验是多使用结构体，除非你用了继承和引用语义。想要了解更多，点击这里。</p>
-<p>注意：在运行时，结构体的在性能方面更优于类，原因是结构体的方法调用是静态绑定，而类的方法调用是动态实现的。这就是尽可能得使用结构体代替类的又一个好的原因。</p>
-<p>class 与 struct 的主要区别：类是引用类型，而结构体是值类型。</p>
-<p>class 引用类型<br>//类 - 引用类型</p>
-<p>class 未成型人类 {<br>var 身高 = 168<br>init() { }</p>
-<p>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
-<p>let 小华 = 未成型人类()</p>
-<p>let 大明 = 未成型人类(身高: 200)<br>let 黑仔 = 大明<br>let 高佬 = 大明<br>高佬.身高 += 10<br>print(大明.身高) // = 210</p>
-<p>let 小高 = 高佬<br>小高.身高 += 10<br>print(大明.身高) // = 220</p>
-<p>struct 值类型<br>//结构体 - 值类型</p>
-<p>struct 克隆人 {<br>var 身高 = 180<br>init() { }<br>init(身高: Int) {<br>self.身高 = 身高<br>}<br>}</p>
-<p>var 小A = 克隆人()<br>小A.身高 = 122<br>let cokeA = 小A<br>print(cokeA.身高) // = 122<br>print(小A.身高) // = 122</p>
-<p>let 小B = 克隆人()<br>print(小A.身高) // = 180<br>什么时候使用类？ 什么时候使用结构体？<br>注意：虽说赋值时候值类型表面上经常要执行拷贝现象，但 Swift 在管理所有的值拷贝会确保性能最优化，所以我们没有必要去回避赋值来确保性能最优化。<br>/* 什么时候使用类？ 什么时候使用结构体？<br>一般情况下，可以：<br>1⃣ 把类看成是物体<br>如： 人、车、动物、商店等..一般跟生物沾边多<br>比如一个人有少属性，虽有不同人种，但是他们很多属性都是一样的，使用类的继承关系，很好描述人这一类东东…</p>
-<p>2⃣ 把结构体看作值<br>如：位置（经纬度）、坐标、温度等..一般跟物理沾边多<br>结构体比类更加 “轻量级”，因为结构体的内存空间是开在系统的栈中，而类则开在系统的堆中。当然对于小程序来说，可以忽略不计。</p>
-<p>还有什么时候使用也不是绝对的，因为他们都有很多类似的地方，也看个人习惯思维爱好之类。何况现在 Swift</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/08/03/M_5Swift_initializer/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/08/03/M_5Swift_initializer/" class="post-title-link" itemprop="url">initializer</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-08-03 15:17:31" itemprop="dateCreated datePublished" datetime="2016-08-03T15:17:31+08:00">2016-08-03</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>designated initializer<br>convenience initializer<br>required 关键字<br>protocol中的initializer<br>Designated Initializer</p>
-<blockquote>
-<p>当我们创建一个class的时候，如果这个class拥有未初始化的非Optional属性，则必须提供一个构造器(称为designated initializer)。这句话有两个重点：<br>1.未初始化；2.非Optional属性。<br>比较一下下面几种写法：</p>
-</blockquote>
-<p>//A<br>class Person {<br>let name : String = “”<br>}<br>//B<br>class Person {<br>let name : String<br>}<br>//C<br>class Person {<br>var name : String?<br>}<br>//D<br>class Person {<br>let name : String?<br>}<br>A,C都可以正常编译，B,D会报错(error: class ‘Person’ has no initializers)。因为Swift不允许非Optional变量在没有初始化的情况下使用或者访问，这样会造成潜在的风险，于是Swift编译器对构造器做了严格的限制:类必须提供一个designated initializer，并且初始化所有未初始化的非Optional属性</p>
-<p>A,B两种写法中，let换成var结果是一样的。但是D比较特殊，在Swift中，常量在访问和使用之前必须初始化(哪怕是Optional)</p>
-<p>var p : String?<br>print(p)<br>//正常编译<br>let p : String?<br>print(p)<br>//报错：error: constant ‘p’ used before being initialized<br>由此可见我们上面的描述并不准确，应当是未初始化的非Optional属性或Optinal常量。不过一般我们不会声明一个Optional常量，另外这么说也是在太过拗口，所以就简单称之为未初始化的非Optional属性吧(下文也会这样表述)。</p>
-<p>同样，在子类初始化过程中，Swift也做了严格的限制</p>
-<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}<br>首先，Engineer必须调用super.init，如果你这样写：</p>
-<p>init(name: String, title: String) {<br>self.title = title<br>self.name = name<br>}<br>不好意思，self.name是常量，不可修改。即便我们将let name : String改为var name : String，仍会报错，而且是两个：</p>
-<p>error: super.init isn’t called on all paths before returning from initializer<br>error: use of ‘self’ in property access ‘name’ before super.init initializes self<br>从这两个错误信息可以看出，在子类的构造器中，父类的成员变量必须通过父类的designated initializer进行初始化。也就是说，我们必须调用super.init（第一个error），而且在调用super.init之前不能使用和访问任何父类的成员变量（第二个error）。</p>
-<p>其次,super.init必须在子类所有未初始化的非Optional属性初始化之后调用。</p>
-<p>这跟我们以前所了解的不同，例如在JAVA的构造器中我们会先调用super.init。Swift之所以这样做，同样是为了安全性。<br>假设我们要求在初始化一个Person之后，立刻输出一些信息用来debug：</p>
-<p>class Person {<br>var name : String<br>init(name : String){<br>self.name = name<br>printDescription()<br>}</p>
-<p>func printDescription() -&gt; () {<br>print(“name=(name)”)<br>}<br>}<br>class Engineer: Person {<br>var title : String<br>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
-<p>override func printDescription() -&gt; () {<br>print(“name=(name), title=(title)”)<br>}<br>}<br>如果在Engineer的init中，我们首先调用super.init，那么我们就会在初始化title之前执行子类的printDescription方法，这是Swift所不允许的。</p>
-<p>Convenience Initializer<br>一个类可以提供多个designated initializer，但是designated initializer不可以调用designated initializer。<br>如果需要提供一个依赖designated initializer的构造器，需要添加关键字convenience，称为convenience initializer。<br>在上面的例子中，假设我们从文件中读取人的信息，读取到的是“名字;职位;联系方式”格式的字符串。我们需要写一个构造器方法从这串文字中解析出相应的信息。</p>
-<p>class Person {<br>let name : String<br>init(name : String){<br>self.name = name<br>}</p>
-<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}<br>因为新的构造器调用了self.init，因此需要添加关键字convenience，否则会报错：error: designated initializer for ‘Person’ cannot delegate (with ‘self.init’); did you mean this to be a convenience initializer?</p>
-<p>一个类可以拥有多个convenience initializer，而且convenience initializer可以调用其他convenience initializer。<br>convenience initializer有以下约束：</p>
-<p>必须调用当前类的designated initializer，调用父类的designated initializer是不行的。<br>只有当前类可以使用（子类也可以使用，不过需要特殊处理。见下文）。<br>Required 关键字<br>如果父类中的构造器需要在子类中重写，可以使用required关键字。子类必须重写父类中标记为required的构造器方法(不管是designated initializer还是convenience initializer)。<br>上面的例子中，init(convertFromLiteral value : String)并不适合子类，所以我们加上required关键字，编译器会提示我们Engineer没有实现required initializer。</p>
-<p>class Engineer: Person {<br>var title : String</p>
-<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}</p>
-<p>required convenience init(convertFromLiteral value : String){<br>var name = “”<br>var title = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>}else if(title.characters.count == 0){<br>title = component<br>break<br>}<br>}<br>self.init(name: name, title: title)<br>}<br>}<br>上文提到了convenience initializer只有当前类才能使用，Swift不允许子类通过父类构造器进行初始化是显而易见的。convenience initializer实际上更像一个方法，如果我们将某个convenience initializer所依赖的designated initializer标记为required，就相当于告诉了编译器我们的子类一定重写了这个designated initializer。也就是说，如果我们的子类通过这个convenience initializer进行初始化，最终会执行子类中重写的designated initializer。</p>
-<p>说这么一大堆，用代码看的更清楚：</p>
-<p>class Person {<br>let name : String<br>required init(name : String){<br>self.name = name<br>}</p>
-<p>convenience init(convertFromLiteral value : String){<br>var name = “”<br>let components = value.componentsSeparatedByString(“;”)<br>for component in components{<br>if(name.characters.count == 0){<br>name = component<br>break<br>}<br>}<br>self.init(name: name)<br>}<br>}</p>
-<p>class Engineer: Person {<br>var title : String</p>
-<p>required init(name: String) {<br>self.title = “unknow”<br>super.init(name: name)<br>}</p>
-<p>init(name: String, title: String) {<br>self.title = title<br>super.init(name: name)<br>}<br>}</p>
-<p>let peter = Person.init(convertFromLiteral: “peter;”)<br>print(peter.name)<br>let tom = Engineer.init(convertFromLiteral: “tom;”)<br>print(tom.name + “, “ + tom.title)<br>将父类中convenience initializer所依赖的designated initializer标记为required，我们就可以通过该convenience initializer初始化子类了。</p>
-<p>Protocol中的Initializer<br>Swift提供了很多包涵构造器的protocol，如StringLiteralConvertible，DictionaryLiteralConvertible，ArrayLiteralConvertible等。</p>
-<p>如果我们想通过如下方式初始化，我们就需要用到StringLiteralConvertible</p>
-<p>let peter : Person = “Peter”<br>代码如下：</p>
-<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
-<p>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
-<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
-<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
-<p>let peter : Person = “Peter”<br>是不是很cool？</p>
-<p>需要注意的是，Swfit很好的控制了构造器的作用域（默认情况下，convenience initializer是子类不可见的），但是protocol中的方法是子类可见的。所以protocol中的构造器方法都必须声明为required。<br>如果实现protocol的是一个final类，那么则没必要再是required，因为它不会有子类。<br>等一下，如果Person是第三方库中的类呢？<br>你可能会说没问题啊，我们可以通过extension实现StringLiteralConvertible</p>
-<p>class Person: StringLiteralConvertible{<br>let name: String<br>init(name value: String) {<br>self.name = value<br>}</p>
-<p>}</p>
-<p>extension Person: StringLiteralConvertible{<br>required convenience init(stringLiteral value: String) {<br>self.init(name: value)<br>}</p>
-<p>required convenience init(extendedGraphemeClusterLiteral value: String) {<br>self.init(name: value)<br>}</p>
-<p>required convenience init(unicodeScalarLiteral value: String) {<br>self.init(name: value)<br>}<br>}</p>
-<p>let peter : Person = “Peter”<br>真是这样吗？Sorry!!!</p>
-<p>首先，required initializer必须在类中声明。所以上面的required关键字要不得<br>其次，protocol中的构造器方法必须声明为required，除非Person是final的。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/34/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><span class="page-number current">35</span><a class="page-number" href="/page/36/">36</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/36/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/34/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><span class="page-number current">35</span><a class="page-number" href="/page/36/">36</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/36/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1344,7 +1365,7 @@ content
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-count">403</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1372,7 +1393,7 @@ content
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

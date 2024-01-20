@@ -148,6 +148,2405 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift144%E4%BA%8C%E5%8F%89%E6%A0%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/06/M_Swift144%E4%BA%8C%E5%8F%89%E6%A0%91/" class="post-title-link" itemprop="url">二叉树</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:26" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:26+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="二叉树的前中后序遍历"><a href="#二叉树的前中后序遍历" class="headerlink" title="二叉树的前中后序遍历"></a>二叉树的前中后序遍历</h2><pre><code>void traverse(TreeNode root) &#123;
+    // 前序遍历
+    traverse(root.left)
+    // 中序遍历
+    traverse(root.right)
+    // 后序遍历
+&#125;
+非递归前序遍历
+void preorder(TreeNode *root, vector&lt;int&gt;&amp; res)
+&#123;
+    stack&lt; pair&lt;TreeNode*, bool&gt; &gt; s;
+    s.push(make_pair(root, false));
+    bool visited;
+    while(!s.empty()) &#123;
+        root = s.top().first;
+        visited = s.top().second;
+        s.pop();
+        if(root == NULL) &#123;
+            continue;
+        &#125;
+        if(visited) &#123;
+            res.push_back(root-&gt;val);
+        &#125; else &#123;
+            // 后序遍历
+            s.push(make_pair(root-&gt;right, false));
+            // 中序遍历
+            s.push(make_pair(root-&gt;left, false));
+            // 前序遍历
+            s.push(make_pair(root, true));
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="二叉树的广度优先搜索-（从上到下打印二叉树）"><a href="#二叉树的广度优先搜索-（从上到下打印二叉树）" class="headerlink" title="二叉树的广度优先搜索 （从上到下打印二叉树）"></a>二叉树的广度优先搜索 （从上到下打印二叉树）</h2><pre><code>本质上是前序遍历，用一个队列存储二叉树的（先入先出）
+public int[] levelOrder(TreeNode root) &#123;
+    if(root == null) return new int[0];
+    Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;()&#123;&#123; add(root); &#125;&#125;;
+    ArrayList&lt;Integer&gt; ans = new ArrayList&lt;&gt;();
+    while(!queue.isEmpty()) &#123;
+        TreeNode node = queue.poll();
+        ans.add(node.val);
+        if(node.left != null) queue.add(node.left);
+        if(node.right != null) queue.add(node.right);
+    &#125;
+    int[] res = new int[ans.size()];
+    for(int i = 0; i &lt; ans.size(); i++)
+        res[i] = ans.get(i);
+    return res;
+&#125;
+</code></pre>
+<h2 id="二叉树的深度优先搜索"><a href="#二叉树的深度优先搜索" class="headerlink" title="二叉树的深度优先搜索"></a>二叉树的深度优先搜索</h2><pre><code>本质上是二叉树的后续遍历，用栈存储（先入后出）
+public class Solution &#123;
+public ArrayList&lt;Integer&gt; PrintFromTopToBottom(TreeNode root) &#123;
+    ArrayList&lt;Integer&gt; lists=new ArrayList&lt;Integer&gt;();
+    if(root==null)
+        return lists;
+    Stack&lt;TreeNode&gt; stack=new Stack&lt;TreeNode&gt;();
+    stack.push(root);
+    while(!stack.isEmpty())&#123;
+        TreeNode tree=stack.pop();
+　　　 //先往栈中压入右节点，再压左节点，这样出栈就是先左节点后右节点了。
+            if(tree.right!=null)
+                stack.push(tree.right);
+            if(tree.left!=null)
+                stack.push(tree.left);
+            lists.add(tree.val);
+        &#125;
+        return lists;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="树的子结构-（判断B是不是A的子结构。）"><a href="#树的子结构-（判断B是不是A的子结构。）" class="headerlink" title="树的子结构 （判断B是不是A的子结构。）"></a>树的子结构 （判断B是不是A的子结构。）</h2><pre><code>本质是二叉树的递归遍历（递归判断左右子树是不是相同）
+代码步骤：A和B不能是Null，A和B相同、A的左边和B相同、A的右边和B相同
+public boolean isSubStructure(TreeNode A, TreeNode B) &#123;
+      return (A != null &amp;&amp; B != null) &amp;&amp; (recur(A, B) || isSubStructure(A.left, B) || isSubStructure(A.right, B));
+    &#125;
+    boolean recur(TreeNode A, TreeNode B) &#123;
+        if(B == null) return true;
+        if(A == null || A.val != B.val) return false;
+        return recur(A.left, B.left) &amp;&amp; recur(A.right, B.right);
+    &#125;
+</code></pre>
+<h2 id="二叉树的镜像"><a href="#二叉树的镜像" class="headerlink" title="二叉树的镜像"></a>二叉树的镜像</h2><pre><code>本质是二叉树的递归遍历 （交换left和right）
+代码步骤：判断是否是空、交换左右的遍历结果
+public TreeNode mirrorTree(TreeNode root) &#123;
+        if(root == null) return null;
+        TreeNode tmp = root.left;
+        root.left = mirrorTree(root.right);
+        root.right = mirrorTree(tmp);
+        return root;
+    &#125;
+方法二：辅助栈（或队列）
+利用栈（或队列）遍历树的所有节点 node ，并交换每个 node 的左 / 右子节点。
+ public TreeNode mirrorTree(TreeNode root) &#123;
+        if(root == null) return null;
+        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;() &#123;&#123; add(root); &#125;&#125;;
+        while(!stack.isEmpty()) &#123;
+            TreeNode node = stack.pop();
+            if(node.left != null) stack.add(node.left);
+            if(node.right != null) stack.add(node.right);
+            TreeNode tmp = node.left;
+            node.left = node.right;
+            node.right = tmp;
+        &#125;
+        return root;
+    &#125;
+</code></pre>
+<h2 id="对称二叉树"><a href="#对称二叉树" class="headerlink" title="对称二叉树"></a>对称二叉树</h2><pre><code>根据以上规律，考虑从顶至底递归，判断每对节点是否对称，从而判断树是否为对称二叉树
+二叉树的先序遍历
+// 判断左右两个数的左边和右边是不是一样，递归调用前序遍历
+public boolean isSymmetric(TreeNode root) &#123;
+        //方法调用
+        return isSymmetric(root,root);
+    &#125;
+
+public boolean isSymmetric(TreeNode root1,TreeNode root2)&#123;
+    if(root1 == null &amp;&amp; root2 == null)&#123;
+        return true;
+    &#125;
+
+    //某结点只有一个子结点，故不对称，所以返回false
+    if(root1 == null || root2 == null)&#123;
+        return false;
+    &#125;
+
+    //对称结点存在，但是值不相同
+    if(root1.val != root2.val)&#123;
+        return false;
+    &#125;
+
+    //递归调用左子节点和右子节点
+    return isSymmetric(root1.left, root2.right) &amp;&amp; isSymmetric(root1.right,root2.left);
+&#125;
+</code></pre>
+<h2 id="从上到下打印二叉树-同一层的节点按从左到右的顺序打印"><a href="#从上到下打印二叉树-同一层的节点按从左到右的顺序打印" class="headerlink" title="从上到下打印二叉树 同一层的节点按从左到右的顺序打印"></a>从上到下打印二叉树 同一层的节点按从左到右的顺序打印</h2><pre><code>前序遍历，用队列存储每一层的值
+将每一层数据存放到队列中
+class Solution &#123;
+    public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) &#123;
+        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();
+        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+        if(root != null) queue.add(root);
+        while(!queue.isEmpty()) &#123;
+            List&lt;Integer&gt; tmp = new ArrayList&lt;&gt;();
+            for(int i = queue.size(); i &gt; 0; i--) &#123;
+                TreeNode node = queue.poll();
+                tmp.add(node.val);
+                if(node.left != null) queue.add(node.left);
+                if(node.right != null) queue.add(node.right);
+            &#125;
+            res.add(tmp);
+        &#125;
+        return res;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="从上到下打印二叉树-之字形顺序打印二叉树"><a href="#从上到下打印二叉树-之字形顺序打印二叉树" class="headerlink" title="从上到下打印二叉树 之字形顺序打印二叉树"></a>从上到下打印二叉树 之字形顺序打印二叉树</h2><pre><code>请实现一个函数按照之字形顺序打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右到左的顺序打印，第三行再按照从左到右的顺序打印，其他行以此类推。
+方法一：层序遍历 + 双端队列
+利用双端队列的两端皆可添加元素的特性，设打印列表（双端队列），奇数层 则添加至 尾部，偶数层添加至头部
+ public List&lt;List&lt;Integer&gt;&gt; levelOrder(TreeNode root) &#123;
+        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();
+        List&lt;List&lt;Integer&gt;&gt; res = new ArrayList&lt;&gt;();
+        if(root != null) queue.add(root);
+        while(!queue.isEmpty()) &#123;
+            LinkedList&lt;Integer&gt; tmp = new LinkedList&lt;&gt;();
+            for(int i = queue.size(); i &gt; 0; i--) &#123;
+                TreeNode node = queue.poll();
+                if(res.size() % 2 == 0) tmp.addLast(node.val); // 偶数层 -&gt; 队列头部
+                else tmp.addFirst(node.val); // 奇数层 -&gt; 队列尾部
+                if(node.left != null) queue.add(node.left);
+                if(node.right != null) queue.add(node.right);
+            &#125;
+            res.add(tmp);
+        &#125;
+        return res;
+    &#125;
+</code></pre>
+<h2 id="二叉搜索树的后序"><a href="#二叉搜索树的后序" class="headerlink" title="二叉搜索树的后序"></a>二叉搜索树的后序</h2><pre><code>输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。
+每一层判断左右子树和根节点的大小关系，如果满足则继续向下判断；否则直接返回失败
+递归分治 / 单调栈， 遍历顺序为 “左、右、根” 
+    二叉搜索树定义： 左子树中所有节点的值 &lt; 根节点的值；右子树中所有节点的值 &gt; 根节点的值；其左、右子树也分别为二叉搜索树。
+    public boolean verifyPostorder(int[] postorder) &#123;
+        return recur(postorder, 0, postorder.length - 1);
+    &#125;
+    boolean recur(int[] postorder, int i, int j) &#123;
+        if(i &gt;= j) return true;
+        int p = i;
+        while(postorder[p] &lt; postorder[j]) p++;
+        int m = p;
+        while(postorder[p] &gt; postorder[j]) p++;
+        return p == j &amp;&amp; recur(postorder, i, m - 1) &amp;&amp; recur(postorder, m, j - 1);
+    &#125;
+</code></pre>
+<h2 id="二叉树中和为某一值的路径"><a href="#二叉树中和为某一值的路径" class="headerlink" title="二叉树中和为某一值的路径"></a>二叉树中和为某一值的路径</h2><pre><code>输入一棵二叉树和一个整数，打印出二叉树中节点值的和为输入整数的所有路径。
+前序遍历：从树的根节点开始往下一直到叶节点所经过的节点形成一条路径。
+ LinkedList&lt;List&lt;Integer&gt;&gt; res = new LinkedList&lt;&gt;();
+    LinkedList&lt;Integer&gt; path = new LinkedList&lt;&gt;(); 
+    public List&lt;List&lt;Integer&gt;&gt; pathSum(TreeNode root, int sum) &#123;
+        recur(root, sum);
+        return res;
+    &#125;
+    void recur(TreeNode root, int tar) &#123;
+        if(root == null) return;
+        path.add(root.val);
+        tar -= root.val;
+        if(tar == 0 &amp;&amp; root.left == null &amp;&amp; root.right == null)
+            res.add(new LinkedList(path));
+        recur(root.left, tar);
+        recur(root.right, tar);
+        path.removeLast();
+    &#125;
+</code></pre>
+<h2 id="二叉搜索树与双向链表"><a href="#二叉搜索树与双向链表" class="headerlink" title="二叉搜索树与双向链表"></a>二叉搜索树与双向链表</h2><pre><code>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。
+本文解法基于性质：二叉搜索树的中序遍历为 递增序列 。排序链表，双向链表。循环链表\
+并在访问每个节点时构建 
+cur 和前驱节点   pre 的引用指向；中序遍历完成后，最后构建头节点和尾节点的引用指向即可
+中序遍历完成后，head 指向头节点， pre 指向尾节点，因此修改 
+head 和  pre 的双向节点引用即可。
+Node pre, head;
+    public Node treeToDoublyList(Node root) &#123;
+        if(root == null) return null;
+        dfs(root);
+        head.left = pre;
+        pre.right = head;
+        return head;
+    &#125;
+    void dfs(Node cur) &#123;
+        if(cur == null) return;
+        dfs(cur.left);
+        if(pre != null) pre.right = cur;
+        else head = cur;
+        cur.left = pre;
+        pre = cur;
+        dfs(cur.right);
+    &#125;
+</code></pre>
+<h2 id="序列化二叉树-层序遍历-BFS"><a href="#序列化二叉树-层序遍历-BFS" class="headerlink" title="序列化二叉树  层序遍历 BFS"></a>序列化二叉树  层序遍历 BFS</h2><pre><code>定义 StringBuilder 前序遍历拼接，删除最后一个逗号
+ public String serialize(TreeNode root) &#123;
+        if(root == null) return &quot;[]&quot;;
+        StringBuilder res = new StringBuilder(&quot;[&quot;);
+        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;() &#123;&#123; add(root); &#125;&#125;;
+        while(!queue.isEmpty()) &#123;
+            TreeNode node = queue.poll();
+            if(node != null) &#123;
+                res.append(node.val + &quot;,&quot;);
+                queue.add(node.left);
+                queue.add(node.right);
+            &#125;
+            else res.append(&quot;null,&quot;);
+        &#125;
+        res.deleteCharAt(res.length() - 1);
+        res.append(&quot;]&quot;);
+        return res.toString();
+    &#125;
+
+public TreeNode deserialize(String data) &#123;
+    if(data.equals(&quot;[]&quot;)) return null;
+    String[] vals = data.substring(1, data.length() - 1).split(&quot;,&quot;);
+    TreeNode root = new TreeNode(Integer.parseInt(vals[0]));
+    Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;() &#123;&#123; add(root); &#125;&#125;;
+    int i = 1;
+    while(!queue.isEmpty()) &#123;
+        TreeNode node = queue.poll();
+        if(!vals[i].equals(&quot;null&quot;)) &#123;
+            node.left = new TreeNode(Integer.parseInt(vals[i]));
+            queue.add(node.left);
+        &#125;
+        i++;
+        if(!vals[i].equals(&quot;null&quot;)) &#123;
+            node.right = new TreeNode(Integer.parseInt(vals[i]));
+            queue.add(node.right);
+        &#125;
+        i++;
+    &#125;
+    return root;
+&#125;
+</code></pre>
+<h2 id="二叉搜索树的第k大节点"><a href="#二叉搜索树的第k大节点" class="headerlink" title="二叉搜索树的第k大节点"></a>二叉搜索树的第k大节点</h2><pre><code>第k小的话，我觉得可以反过来遍历
+class Solution &#123;
+    int res, k;
+    public int kthLargest(TreeNode root, int k) &#123;
+        this.k = k;
+        dfs(root);
+        return res;
+    &#125;
+    void dfs(TreeNode root) &#123;
+        if(root == null) return;
+        dfs(root.right);
+        if(k == 0) return;
+        if(--k == 0) res = root.val;
+        dfs(root.left);
+    &#125;
+&#125;
+</code></pre>
+<h2 id="二叉搜索树中第K小的元素"><a href="#二叉搜索树中第K小的元素" class="headerlink" title="二叉搜索树中第K小的元素"></a>二叉搜索树中第K小的元素</h2><pre><code>BST 的特性：BST 的中序遍历是升序序列。
+通过构造 BST 的中序遍历序列，则第 k-1 个元素就是第 k 小的元素
+方法一：递归
+class Solution &#123;
+  public ArrayList&lt;Integer&gt; inorder(TreeNode root, ArrayList&lt;Integer&gt; arr) &#123;
+    if (root == null) return arr;
+    inorder(root.left, arr);
+    arr.add(root.val);
+    inorder(root.right, arr);
+    return arr;
+  &#125;
+
+  public int kthSmallest(TreeNode root, int k) &#123;
+    ArrayList&lt;Integer&gt; nums = inorder(root, new ArrayList&lt;Integer&gt;());
+    return nums.get(k - 1);
+  &#125;
+&#125;
+</code></pre>
+<h2 id="二叉树的深度（后序遍历）"><a href="#二叉树的深度（后序遍历）" class="headerlink" title="二叉树的深度（后序遍历）"></a>二叉树的深度（后序遍历）</h2><pre><code>输入一棵二叉树的根节点，求该树的深度。从根节点到叶节点依次经过的节点（含根、叶节点）形成树的一条路径，最长路径的长度为树的深度。
+方法一：后序遍历（DFS）
+  public int maxDepth(TreeNode root) &#123;
+        if(root == null) return 0;
+        return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
+    &#125;
+
+方法二：层序遍历（BFS）
+class Solution &#123;
+    public int maxDepth(TreeNode root) &#123;
+        if(root == null) return 0;
+        List&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;() &#123;&#123; add(root); &#125;&#125;, tmp;
+        int res = 0;
+        while(!queue.isEmpty()) &#123;
+            tmp = new LinkedList&lt;&gt;();
+            for(TreeNode node : queue) &#123;
+                if(node.left != null) tmp.add(node.left);
+                if(node.right != null) tmp.add(node.right);
+            &#125;
+            queue = tmp;
+            res++;
+        &#125;
+        return res;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="二叉树的最小深度"><a href="#二叉树的最小深度" class="headerlink" title="二叉树的最小深度"></a>二叉树的最小深度</h2><pre><code>递归，0.1，
+class Solution &#123;
+  public int minDepth(TreeNode root) &#123;
+    if (root == null) &#123;
+      return 0;
+    &#125;
+
+    if ((root.left == null) &amp;&amp; (root.right == null)) &#123;
+      return 1;
+    &#125;
+
+    int min_depth = Integer.MAX_VALUE;
+    if (root.left != null) &#123;
+      min_depth = Math.min(minDepth(root.left), min_depth);
+    &#125;
+    if (root.right != null) &#123;
+      min_depth = Math.min(minDepth(root.right), min_depth);
+    &#125;
+
+    return min_depth + 1;
+  &#125;
+&#125;
+方法2:广度优先搜索迭代
+class Solution &#123;
+  public int minDepth(TreeNode root) &#123;
+    LinkedList&lt;Pair&lt;TreeNode, Integer&gt;&gt; stack = new LinkedList&lt;&gt;();
+    if (root == null) &#123;
+      return 0;
+    &#125;
+    else &#123;
+      stack.add(new Pair(root, 1));
+    &#125;
+
+    int current_depth = 0;
+    while (!stack.isEmpty()) &#123;
+      Pair&lt;TreeNode, Integer&gt; current = stack.poll();
+      root = current.getKey();
+      current_depth = current.getValue();
+      if ((root.left == null) &amp;&amp; (root.right == null)) &#123;
+        break;
+      &#125;
+      if (root.left != null) &#123;
+        stack.add(new Pair(root.left, current_depth + 1));
+      &#125;
+      if (root.right != null) &#123;
+        stack.add(new Pair(root.right, current_depth + 1));
+      &#125;
+    &#125;
+    return current_depth;
+  &#125;
+&#125;
+</code></pre>
+<h2 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h2><pre><code>输入一棵二叉树的根节点，判断该树是不是平衡二叉树。如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树。
+方法一：后序遍历 + 剪枝 （从底至顶）
+class Solution &#123;
+    public boolean isBalanced(TreeNode root) &#123;
+        return recur(root) != -1;
+    &#125;
+
+private int recur(TreeNode root) &#123;
+    if (root == null) return 0;
+    int left = recur(root.left);
+    if(left == -1) return -1;
+    int right = recur(root.right);
+    if(right == -1) return -1;
+    return Math.abs(left - right) &lt; 2 ? Math.max(left, right) + 1 : -1;
+&#125;
+&#125;
+方法二：先序遍历 + 判断深度 （从顶至底）
+class Solution &#123;
+    public boolean isBalanced(TreeNode root) &#123;
+        if (root == null) return true;
+        return Math.abs(depth(root.left) - depth(root.right)) &lt;= 1 &amp;&amp; isBalanced(root.left) &amp;&amp; isBalanced(root.right);
+    &#125;
+
+    private int depth(TreeNode root) &#123;
+        if (root == null) return 0;
+        return Math.max(depth(root.left), depth(root.right)) + 1;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="二叉搜索树的最近公共祖先"><a href="#二叉搜索树的最近公共祖先" class="headerlink" title="二叉搜索树的最近公共祖先"></a>二叉搜索树的最近公共祖先</h2><pre><code>用集合遍历根树，保存Hashmap
+用set保存一个二叉树在集合中的结果
+遍历另一个二叉树，看set中是否有，有则为最近公共祖先
+方法一：迭代
+class Solution &#123;
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) &#123;
+        if(p.val &gt; q.val) &#123; // 保证 p.val &lt; q.val
+            TreeNode tmp = p;
+            p = q;
+            q = tmp;
+        &#125;
+        while(root != null) &#123;
+            if(root.val &lt; p.val) // p,q 都在 root 的右子树中
+                root = root.right; // 遍历至右子节点
+            else if(root.val &gt; q.val) // p,q 都在 root 的左子树中
+                root = root.left; // 遍历至左子节点
+            else break;
+        &#125;
+        return root;
+    &#125;
+&#125;
+方法二：递归
+class Solution &#123;
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) &#123;
+        if(root.val &lt; p.val &amp;&amp; root.val &lt; q.val)
+            return lowestCommonAncestor(root.right, p, q);
+        if(root.val &gt; p.val &amp;&amp; root.val &gt; q.val)
+            return lowestCommonAncestor(root.left, p, q);
+        return root;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="二叉树的最大宽度"><a href="#二叉树的最大宽度" class="headerlink" title="二叉树的最大宽度"></a>二叉树的最大宽度</h2><h2 id="最小高度树"><a href="#最小高度树" class="headerlink" title="最小高度树"></a>最小高度树</h2><pre><code>给定一个有序整数数组，元素各不相同且按升序排列，编写一个算法，创建一棵高度最小的二叉搜索树。
+二分，拿到中间元素，然后递归创建左右子树
+class Solution &#123;
+public:
+    TreeNode* sortedArrayToBST(vector&lt;int&gt;&amp; nums) &#123;
+        int n = nums.size();
+        return createTree(nums, 0, n - 1);
+    &#125;
+    TreeNode* createTree(vector&lt;int&gt;&amp; nums, int start, int end) &#123;
+        if (start &gt; end) return nullptr;
+        int mid = (start + end) &gt;&gt; 1;
+        TreeNode* root = new TreeNode(nums[mid]);
+        root-&gt;left = createTree(nums, start, mid - 1);
+        root-&gt;right = createTree(nums, mid + 1, end);
+        return root;
+    &#125;
+&#125;;
+</code></pre>
+<h2 id="合法二叉搜索树"><a href="#合法二叉搜索树" class="headerlink" title="合法二叉搜索树"></a>合法二叉搜索树</h2><pre><code>实现一个函数，检查一棵二叉树是否为二叉搜索树。
+双百，递归遍历树，分别检查左右根节点的大小
+    public boolean isValidBST(TreeNode root) &#123;
+        if(root==null) return true;
+        return isValidBSThelp(root.left,Long.MIN_VALUE,root.val)&amp;&amp;isValidBSThelp(root.right,root.val,Long.MAX_VALUE);
+    &#125;
+    private boolean isValidBSThelp(TreeNode root,long min,long max)&#123;
+        if(root==null) return true;
+        if(root.val&lt;=min||root.val&gt;=max) return false;
+        boolean left = isValidBSThelp(root.left,min,root.val);
+        boolean right = isValidBSThelp(root.right,root.val,max);
+        return left &amp;&amp; right;
+    &#125;
+</code></pre>
+<h2 id="二叉树中最大路径和"><a href="#二叉树中最大路径和" class="headerlink" title="二叉树中最大路径和"></a>二叉树中最大路径和</h2><pre><code>给定一个非空二叉树，返回其最大路径和。
+递归计算，更新max，（递归中返回较大的）
+class Solution &#123;
+    int maxSum = Integer.MIN_VALUE;
+
+public int maxPathSum(TreeNode root) &#123;
+    maxGain(root);
+    return maxSum;
+&#125;
+
+public int maxGain(TreeNode node) &#123;
+    if (node == null) &#123;
+        return 0;
+    &#125;
+    
+    // 递归计算左右子节点的最大贡献值
+    // 只有在最大贡献值大于 0 时，才会选取对应子节点
+    int leftGain = Math.max(maxGain(node.left), 0);
+    int rightGain = Math.max(maxGain(node.right), 0);
+
+    // 节点的最大路径和取决于该节点的值与该节点的左右子节点的最大贡献值
+    int priceNewpath = node.val + leftGain + rightGain;
+
+    // 更新答案
+    maxSum = Math.max(maxSum, priceNewpath);
+
+    // 返回节点的最大贡献值
+    return node.val + Math.max(leftGain, rightGain);
+&#125;
+&#125;
+</code></pre>
+<h2 id="合并二叉树"><a href="#合并二叉树" class="headerlink" title="合并二叉树"></a>合并二叉树</h2><pre><code>给定两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。
+你需要将他们合并为一个新的二叉树。合并的规则是如果两个节点重叠，那么将他们的值相加作为节点合并后的新值，否则不为 NULL 的节点将直接作为新二叉树的节点。
+输入: 
+    Tree 1                     Tree 2                  
+          1                         2                             
+         / \                       / \                            
+        3   2                     1   3                        
+       /                           \   \                      
+      5                             4   7                  
+输出: 
+合并后的树:
+         3
+        / \
+       4   5
+      / \   \ 
+     5   4   7
+public class Solution &#123;
+    public TreeNode mergeTrees(TreeNode t1, TreeNode t2) &#123;
+        if (t1 == null)
+            return t2;
+        if (t2 == null)
+            return t1;
+        t1.val += t2.val;
+        t1.left = mergeTrees(t1.left, t2.left);
+        t1.right = mergeTrees(t1.right, t2.right);
+        return t1;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="翻转二叉树"><a href="#翻转二叉树" class="headerlink" title="翻转二叉树"></a>翻转二叉树</h2><pre><code>public TreeNode invertTree(TreeNode root) &#123;
+    if (root == null) &#123;
+        return null;
+    &#125;
+    TreeNode right = invertTree(root.right);
+    TreeNode left = invertTree(root.left);
+    root.left = right;
+    root.right = left;
+    return root;
+&#125;
+</code></pre>
+<h2 id="监控二叉树"><a href="#监控二叉树" class="headerlink" title="监控二叉树"></a>监控二叉树</h2><pre><code>给定一个二叉树，我们在树的节点上安装摄像头。
+节点上的每个摄影头都可以监视其父对象、自身及其直接子对象。
+计算监控树的所有节点所需的最小摄像头数量。
+根据每个节点的左右子节点来判断当前节点的状态，因此左右根后续遍历
+class Solution &#123;
+public:
+    //记录需要放置摄像头的数量
+    int res = 0;
+    int minCameraCover(TreeNode* root) 
+    &#123;
+        //后序遍历，从下自上遍历。
+        //若遍历至最上面，root标志为0，则多加一个摄像头
+        if(dfs(root) == 0)
+        &#123;
+            res++;  
+        &#125;
+        return res;
+    &#125;
+    int dfs(TreeNode* root)
+    &#123;
+
+    //0：未被覆盖(当前节点未被照到)
+    //1：已被覆盖(摄像头已经照到这个节点)
+    //2：需放置摄像头
+
+    //到根节点，
+    if(root == NULL) return 1;
+    //遍历左节点
+    int left = dfs(root-&gt;left);
+    //遍历右节点
+    int right = dfs(root-&gt;right);
+    //一个节点左右确定后，判断左右节点情况
+    //所有情况00,01,02,11,12,22
+    //左右孩子中有一个未被覆盖，则当前节点需要放置摄像头，当前节点标志为2
+    if(left ==0 || right==0)
+    &#123;
+        res++;
+        return 2;
+    &#125;
+    //左右孩子均为已覆盖状态,则当前节点未被覆盖，标志为0
+    if(left == 1 &amp;&amp; right == 1)
+    &#123;
+        return 0;
+    &#125;
+    //若左右孩子为一个覆盖一个放置了摄像头，则当前节点为已被覆盖，标志为1
+    if(left+right &gt;= 3)
+    &#123;
+        return 1;
+    &#125;
+    //此时已经组合完了根节点所有情况，随便返回一个整数即可
+    return 0;
+&#125;
+&#125;;
+</code></pre>
+<h2 id="验证二叉树"><a href="#验证二叉树" class="headerlink" title="验证二叉树"></a>验证二叉树</h2><pre><code>如果一棵树是一个二叉树的话 必定除了根节点 每个非空节点的入度都为1
+样例还给了某一个节点被两个&quot;父节点&quot;引用的例子 那这个节点的入度就为2了 也就不能构成二叉树
+
+public boolean validateBinaryTreeNodes(int n, int[] leftChild, int[] rightChild) &#123;
+    int[] in = new int[n];
+    for (int i = 0; i &lt; n; i++) &#123;
+        if (leftChild[i] != -1) in[leftChild[i]]++;
+        if (rightChild[i] != -1) in[rightChild[i]]++;
+    &#125;
+
+    int count0 = 0;
+    int countOther = 0;
+    for (int temp : in) &#123;
+        if (temp == 0) count0++;
+        if (temp &gt; 1) countOther++;
+    &#125;
+    return count0 == 1 &amp;&amp; countOther == 0;
+&#125;
+</code></pre>
+<h2 id="最大二叉树"><a href="#最大二叉树" class="headerlink" title="最大二叉树"></a>最大二叉树</h2><pre><code>给定一个不含重复元素的整数数组。一个以此数组构建的最大二叉树定义如下：
+二叉树的根是数组中的最大元素。
+左子树是通过数组中最大值左边部分构造出的最大二叉树。
+右子树是通过数组中最大值右边部分构造出的最大二叉树。
+public class Solution &#123;
+    public TreeNode constructMaximumBinaryTree(int[] nums) &#123;
+        return construct(nums, 0, nums.length);
+    &#125;
+    public TreeNode construct(int[] nums, int l, int r) &#123;
+        if (l == r)
+            return null;
+        int max_i = max(nums, l, r);
+        TreeNode root = new TreeNode(nums[max_i]);
+        root.left = construct(nums, l, max_i);
+        root.right = construct(nums, max_i + 1, r);
+        return root;
+    &#125;
+    public int max(int[] nums, int l, int r) &#123;
+        int max_i = l;
+        for (int i = l; i &lt; r; i++) &#123;
+            if (nums[max_i] &lt; nums[i])
+                max_i = i;
+        &#125;
+        return max_i;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="验证二叉搜索树"><a href="#验证二叉搜索树" class="headerlink" title="验证二叉搜索树"></a>验证二叉搜索树</h2><pre><code>给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+假设一个二叉搜索树具有如下特征：
+节点的左子树只包含小于当前节点的数。
+节点的右子树只包含大于当前节点的数。
+所有左子树和右子树自身必须也是二叉搜索树。
+如果该二叉树的左子树不为空，则左子树上所有节点的值均小于它的根节点的值； 若它的右子树不空，则右子树上所有节点的值均大于它的根节点的值；它的左右子树也为二叉搜索树。
+class Solution &#123;
+  public boolean helper(TreeNode node, Integer lower, Integer upper) &#123;
+    if (node == null) return true;
+    int val = node.val;
+    if (lower != null &amp;&amp; val &lt;= lower) return false;
+    if (upper != null &amp;&amp; val &gt;= upper) return false;
+
+    if (! helper(node.right, val, upper)) return false;
+    if (! helper(node.left, lower, val)) return false;
+    return true;
+&#125;
+
+public boolean isValidBST(TreeNode root) &#123;
+    return helper(root, null, null);
+  &#125;
+&#125;
+</code></pre>
+<h2 id="单值二叉树"><a href="#单值二叉树" class="headerlink" title="单值二叉树"></a>单值二叉树</h2><pre><code>如果二叉树每个节点都具有相同的值，那么该二叉树就是单值二叉树。
+我们先进行一次深度优先搜索，获取这颗树中的所有节点的值。然后，就可以判断所有节点的值是不是都相等了。
+class Solution &#123;
+    List&lt;Integer&gt; vals;
+    public boolean isUnivalTree(TreeNode root) &#123;
+        vals = new ArrayList();
+        dfs(root);
+        for (int v: vals)
+            if (v != vals.get(0))
+                return false;
+        return true;
+    &#125;
+
+public void dfs(TreeNode node) &#123;
+    if (node != null) &#123;
+        vals.add(node.val);
+        dfs(node.left);
+        dfs(node.right);
+    &#125;
+&#125;
+&#125;
+方法二：递归
+思路与算法
+一颗树是单值的，当且仅当根节点的子节点所在的子树也是单值的，同时根节点的值与子节点的值相同。
+class Solution &#123;
+    public boolean isUnivalTree(TreeNode root) &#123;
+        boolean left_correct = (root.left == null ||
+                (root.val == root.left.val &amp;&amp; isUnivalTree(root.left)));
+        boolean right_correct = (root.right == null ||
+                (root.val == root.right.val &amp;&amp; isUnivalTree(root.right)));
+        return left_correct &amp;&amp; right_correct;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="二叉树的直径"><a href="#二叉树的直径" class="headerlink" title="二叉树的直径"></a>二叉树的直径</h2><pre><code>给定一棵二叉树，你需要计算它的直径长度。一棵二叉树的直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。
+示例 :
+给定二叉树
+
+          1
+         / \
+        2   3
+       / \     
+      4   5    
+返回 3, 它的长度是路径 [4,2,1,3] 或者 [5,2,1,3]。
+方法：深度优先搜索
+首先我们知道一条路径的长度为该路径经过的节点数减一，所以求直径（即求路径长度的最大值）等效于求路径经过节点数的最大值减一。
+而任意一条路径均可以被看作由某个节点为起点，从其左儿子和右儿子向下遍历的路径拼接得到。
+class Solution &#123;
+    int ans;
+    public int diameterOfBinaryTree(TreeNode root) &#123;
+        ans = 1;
+        depth(root);
+        return ans - 1;
+    &#125;
+    public int depth(TreeNode node) &#123;
+        if (node == null) return 0; // 访问到空节点了，返回0
+        int L = depth(node.left); // 左儿子为根的子树的深度
+        int R = depth(node.right); // 右儿子为根的子树的深度
+        ans = Math.max(ans, L+R+1); // 计算d_node即L+R+1 并更新ans
+        return Math.max(L, R) + 1; // 返回该节点为根的子树的深度
+    &#125;
+&#125;
+</code></pre>
+<h2 id="二叉树的坡度"><a href="#二叉树的坡度" class="headerlink" title="二叉树的坡度"></a>二叉树的坡度</h2><pre><code>一个树的节点的坡度定义即为，该节点左子树的结点之和和右子树结点之和的差的绝对值。空结点的的坡度是0。
+整个树的坡度就是其所有节点的坡度之和。
+输入：
+         1
+       /   \
+      2     3
+输出：1
+解释：
+结点 2 的坡度: 0
+结点 3 的坡度: 0
+结点 1 的坡度: |2-3| = 1
+树的坡度 : 0 + 0 + 1 = 1
+方法：递归
+我们需要求出该结点的左子树上所有结点和以及其右子树上全部结点和的差值。
+在任何结点调用该函数，都会返回当前结点下面（包括其自身）的结点和。借助于任何结点的左右子结点的这一和值，我们可以直接获得该结点所对应的坡度。
+public class Solution &#123;
+    int tilt=0;
+    public int findTilt(TreeNode root) &#123;
+        traverse(root);
+        return tilt;
+    &#125;
+    public int traverse(TreeNode root)
+    &#123;
+        if(root==null )
+            return 0;
+        int left=traverse(root.left);
+        int right=traverse(root.right);
+        tilt+=Math.abs(left-right);
+        return left+right+root.val;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="恢复一棵-BST"><a href="#恢复一棵-BST" class="headerlink" title="恢复一棵 BST"></a>恢复一棵 BST</h2><pre><code>二叉搜索树中的两个节点被错误地交换。
+请在不改变其结构的情况下，恢复这棵树。
+方法一：对数组进行排序
+我们直到 BST 的中序遍历是升序序列。下面展示了如何计算中序遍历。
+这里被交换了两个节点，因此中序遍历是一个几乎排好序的数组，其中有两个元素被交换。识别排序数组中两个交换元素是可以在线性时间内解决的经典问题。
+public int[] findTwoSwapped(List&lt;Integer&gt; nums) &#123;
+  int n = nums.size();
+  int x = -1, y = -1;
+  for(int i = 0; i &lt; n - 1; ++i) &#123;
+    if (nums.get(i + 1) &lt; nums.get(i)) &#123;
+      y = nums.get(i + 1);
+      // first swap occurence
+      if (x == -1) x = nums.get(i);
+      // second swap occurence
+      else break;
+    &#125;
+  &#125;
+  return new int[]&#123;x, y&#125;;
+&#125;
+方法二：递归中序遍历
+class Solution &#123;
+  TreeNode x = null, y = null, pred = null;
+
+  public void swap(TreeNode a, TreeNode b) &#123;
+    int tmp = a.val;
+    a.val = b.val;
+    b.val = tmp;
+  &#125;
+
+  public void findTwoSwapped(TreeNode root) &#123;
+    if (root == null) return;
+    findTwoSwapped(root.left);
+    if (pred != null &amp;&amp; root.val &lt; pred.val) &#123;
+      y = root;
+      if (x == null) x = pred;
+      else return;
+    &#125;
+    pred = root;
+    findTwoSwapped(root.right);
+  &#125;
+
+  public void recoverTree(TreeNode root) &#123;
+    findTwoSwapped(root);
+    swap(x, y);
+  &#125;
+&#125;
+</code></pre>
+<h2 id="求二叉树中叶子节点的个数"><a href="#求二叉树中叶子节点的个数" class="headerlink" title="求二叉树中叶子节点的个数"></a>求二叉树中叶子节点的个数</h2><pre><code>class Solution &#123;
+    public int getLeafCount(TreeNode root) &#123;
+        if (root == null) &#123;
+            return 0;
+        &#125;
+        if (root.left == null &amp;&amp; root.right == null) &#123;
+            // 输出叶子节点
+            System.out.println(&quot;leaf nodes:&quot; + root.val);
+            return 1;
+        &#125;
+        return getLeafCount(root.left) + getLeafCount(root.right);
+    &#125;
+&#125;
+</code></pre>
+<h2 id="求二叉树第K层的节点个数"><a href="#求二叉树第K层的节点个数" class="headerlink" title="求二叉树第K层的节点个数"></a>求二叉树第K层的节点个数</h2><pre><code>  if (level == k)
+    &#123;
+        ++num;
+        return num;
+    &#125;
+    _FindKLevel(root-&gt;_left, k, level + 1);
+    _FindKLevel(root-&gt;_right, k, level + 1);
+</code></pre>
+<h2 id="求二叉树中最远的两个节点的距离"><a href="#求二叉树中最远的两个节点的距离" class="headerlink" title="求二叉树中最远的两个节点的距离"></a>求二叉树中最远的两个节点的距离</h2><pre><code>（1）如果具有最远距离的两个节点经过了根节点，那么最远的距离就是左边最深的深度加上右边最深的深度之和。
+（2）如果具有最远距离的两个节点之间的路径不经过根节点，那么最远的距离就在根节点的其中一个子树上的两个叶子结点。
+
+ int _Height(Node* root, int&amp; distance)
+       &#123;
+              if (root == NULL)
+              &#123;
+                     return 0;
+              &#125;
+              int leftH = _Height(root-&gt;_left);
+              int rightH = _Height(root-&gt;_right);
+              if (leftH+rightH &gt; distance)
+              &#123;
+                     distance = leftH + rightH;
+              &#125;
+              return leftH &gt; rightH ? leftH+1 : rightH+1;
+</code></pre>
+<h2 id="二叉搜索树中的众数"><a href="#二叉搜索树中的众数" class="headerlink" title="二叉搜索树中的众数"></a>二叉搜索树中的众数</h2><pre><code>给定一个有相同值的二叉搜索树（BST），找出 BST 中的所有众数（出现频率最高的元素）。
+class Solution &#123;
+    private TreeNode pre = null;
+    private int[] ret;
+    private int retCount = 0;
+    private int maxCount = 0;
+    private int currCount = 0;
+
+public int[] findMode(TreeNode root) &#123;
+    inOrder(root);
+    pre = null;
+    ret = new int[retCount];
+    retCount = 0;
+    currCount = 0;
+    inOrder(root);
+    return ret;
+&#125;
+
+private void inOrder(TreeNode root) &#123;
+    if (root == null)
+        return;
+    inOrder(root.left);
+    if (pre != null &amp;&amp; pre.val == root.val)
+        currCount++;
+    else
+        currCount = 1;
+    if (currCount &gt; maxCount) &#123;
+        maxCount = currCount;
+        retCount = 1;
+    &#125;
+    else if (currCount == maxCount) &#123;
+        if (ret != null)
+            ret[retCount] = root.val;
+        retCount++;
+    &#125;
+    pre = root;
+    inOrder(root.right);
+&#125;
+&#125;
+</code></pre>
+<h2 id="还原一棵二叉树"><a href="#还原一棵二叉树" class="headerlink" title="还原一棵二叉树"></a>还原一棵二叉树</h2><pre><code>根据前序遍历和中序遍历的结果还原一棵二叉树
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+
+前序遍历的第一个节点是根节点，只要找到根节点在中序遍历中的位置，在根节点之前被访
+问的节点都位于左子树，在根节点之后被访问的节点都位于右子树，由此可知左子树和右子树分别有多少个节点。
+不要看这个函数的参数很多，只是为了控制数组索引而已，本质上该算法也就是一个前序遍历。
+class Solution &#123;
+    public TreeNode buildTree(int[] preorder, int[] inorder) &#123;
+        if (preorder == null || preorder.length == 0) &#123;
+            return null;
+        &#125;
+        Map&lt;Integer, Integer&gt; indexMap = new HashMap&lt;Integer, Integer&gt;(); // 存储位置
+        int length = preorder.length;
+        for (int i = 0; i &lt; length; i++) &#123;
+            indexMap.put(inorder[i], i);
+        &#125;
+        TreeNode root = buildTree(preorder, 0, length - 1, inorder, 0, length - 1, indexMap);
+        return root;
+    &#125;
+
+public TreeNode buildTree(int[] preorder, int preorderStart, int preorderEnd, int[] inorder, int inorderStart, int inorderEnd, Map&lt;Integer, Integer&gt; indexMap) &#123;
+    if (preorderStart &gt; preorderEnd) &#123;
+        return null;
+    &#125;
+    int rootVal = preorder[preorderStart];
+    TreeNode root = new TreeNode(rootVal);
+    if (preorderStart == preorderEnd) &#123;
+        return root;
+    &#125; else &#123;
+        int rootIndex = indexMap.get(rootVal);
+        int leftNodes = rootIndex - inorderStart, rightNodes = inorderEnd - rootIndex;
+        TreeNode leftSubtree = buildTree(preorder, preorderStart + 1, preorderStart + leftNodes, inorder, inorderStart, rootIndex - 1, indexMap);
+        TreeNode rightSubtree = buildTree(preorder, preorderEnd - rightNodes + 1, preorderEnd, inorder, rootIndex + 1, inorderEnd, indexMap);
+        root.left = leftSubtree;
+        root.right = rightSubtree;
+        return root;
+    &#125;
+&#125;
+&#125;
+</code></pre>
+<h2 id="二叉搜索树序列"><a href="#二叉搜索树序列" class="headerlink" title="二叉搜索树序列"></a>二叉搜索树序列</h2><pre><code>从左向右遍历一个数组，通过不断将其中的元素插入树中可以逐步地生成一棵二叉搜索树。给定一个由不同节点组成的二叉搜索树，输出所有可能生成此树的数组。
+给定如下二叉树
+
+        2
+       / \
+      1   3
+返回：
+
+[
+   [2,1,3],
+   [2,3,1]
+]
+class Solution &#123;
+public:
+    vector&lt;vector&lt;int&gt;&gt; res;
+    vector&lt;vector&lt;int&gt;&gt; BSTSequences(TreeNode* root) &#123;
+    
+    if(root == nullptr) return &#123;&#123;&#125;&#125;;
+
+    // queue 数据结构 并不是一个好的选项 
+    // queue&lt;TreeNode*&gt; q;  // q 用于保存 前后顺序不影响最终BST结果的 节点
+    deque&lt;TreeNode*&gt; q;
+    vector&lt;int&gt; path;
+    q.push_back(root);
+
+    dfs(q, path);
+    return res;
+&#125;
+
+void dfs(deque&lt;TreeNode*&gt;&amp; q, vector&lt;int&gt;&amp; path)&#123;
+    // cout &lt;&lt; &quot;size of path:&quot; &lt;&lt; path.size() &lt;&lt;endl;
+    if(q.empty()) &#123;
+        res.push_back(path);
+        return;
+    &#125;
+
+    int size = q.size();
+    cout &lt;&lt; &quot;***&quot; &lt;&lt; q.size() &lt;&lt; endl;
+    for(int i = 0; i &lt; size; i++)&#123;
+        auto curr = q.front();
+        q.pop_front();
+
+        path.push_back(curr-&gt;val);
+        if(curr &amp;&amp; curr-&gt;left) q.push_back(curr-&gt;left);
+        if(curr &amp;&amp; curr-&gt;right) q.push_back(curr-&gt;right);
+        
+        dfs(q, path);
+
+        // 回溯要保证 状态还原
+        if(curr &amp;&amp; curr-&gt;left) q.pop_back();
+        if(curr &amp;&amp; curr-&gt;right) q.pop_back();
+        q.push_back(curr);
+        
+        path.pop_back();
+    &#125;
+&#125;
+&#125;;
+</code></pre>
+<h2 id="二叉搜索树总结"><a href="#二叉搜索树总结" class="headerlink" title="二叉搜索树总结"></a>二叉搜索树总结</h2><pre><code>void BST(TreeNode root,int target) &#123;
+    if(root.val == target) 
+        //找到目标，做点什么
+    if(root.val &lt; target) 
+        BST(root.right, target);
+    if(root.val &gt; target) 
+        BST(root.left, target);
+&#125;
+</code></pre>
+<h2 id="在BST中插入一个元素，在BST删除一个元素"><a href="#在BST中插入一个元素，在BST删除一个元素" class="headerlink" title="在BST中插入一个元素，在BST删除一个元素"></a>在BST中插入一个元素，在BST删除一个元素</h2><h2 id="快速计算完全二叉树的节点"><a href="#快速计算完全二叉树的节点" class="headerlink" title="快速计算完全二叉树的节点"></a>快速计算完全二叉树的节点</h2><h2 id="单调栈、单调队列的作用"><a href="#单调栈、单调队列的作用" class="headerlink" title="单调栈、单调队列的作用"></a>单调栈、单调队列的作用</h2><h2 id="双指针的使用技巧"><a href="#双指针的使用技巧" class="headerlink" title="双指针的使用技巧"></a>双指针的使用技巧</h2><pre><code>快慢指针：判断是否有环、环的起始位置、链表的中心点、链表的倒数第k的元素、去除有序数组的重复元素
+左右指针：二分查找、翻转数组、
+滑动窗口
+</code></pre>
+<h2 id="位运算相关"><a href="#位运算相关" class="headerlink" title="位运算相关"></a>位运算相关</h2><p>前缀和<br>字符串乘法<br>贪心：跳跃游戏<br>k个一组翻转链表<br>深度优先<br>1、全排列问题<br>2、一个环由个圈组成，把自然数1，2，…，N分别放在每一个圆内，数字的在两个相邻圈之和应该是一个素数。 注意：第一圈数应始终为1。<br>3、油田问题<br>4、棋盘问题</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift143%E6%95%B0%E7%BB%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/06/M_Swift143%E6%95%B0%E7%BB%84/" class="post-title-link" itemprop="url">数组</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:21" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:21+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="旋转数组"><a href="#旋转数组" class="headerlink" title="旋转数组"></a>旋转数组</h2><pre><code>本题的难点在于如何处理数组，一个是开辟另一个数组进行处理，另一个是多次旋转数组实现
+方法 1：暴力
+最简单的方法是旋转 k 次，每次将数组旋转 1 个元素。
+public class Solution &#123;
+    public void rotate(int[] nums, int k) &#123;
+        int temp, previous;
+        for (int i = 0; i &lt; k; i++) &#123;
+            previous = nums[nums.length - 1];
+            for (int j = 0; j &lt; nums.length; j++) &#123;
+                temp = nums[j];
+                nums[j] = previous;
+                previous = temp;
+            &#125;
+        &#125;
+    &#125;
+&#125;
+方法 2：使用额外的数组
+public class Solution &#123;
+    public void rotate(int[] nums, int k) &#123;
+        int[] a = new int[nums.length];
+        for (int i = 0; i &lt; nums.length; i++) &#123;
+            a[(i + k) % nums.length] = nums[i];
+        &#125;
+        for (int i = 0; i &lt; nums.length; i++) &#123;
+            nums[i] = a[i];
+        &#125;
+    &#125;
+&#125;
+方法 3：使用环状替换
+public class Solution &#123;
+    public void rotate(int[] nums, int k) &#123;
+        k = k % nums.length;
+        int count = 0;
+        for (int start = 0; count &lt; nums.length; start++) &#123;
+            int current = start;
+            int prev = nums[start];
+            do &#123;
+                int next = (current + k) % nums.length;
+                int temp = nums[next];
+                nums[next] = prev;
+                prev = temp;
+                current = next;
+                count++;
+            &#125; while (start != current);
+        &#125;
+    &#125;
+&#125;
+方法 4：使用反转
+原始数组                  : 1 2 3 4 5 6 7
+反转所有数字后             : 7 6 5 4 3 2 1
+反转前 k 个数字后          : 5 6 7 4 3 2 1
+反转后 n-k 个数字后        : 5 6 7 1 2 3 4 --&gt; 结果
+
+public class Solution &#123;
+    public void rotate(int[] nums, int k) &#123;
+        k %= nums.length;
+        reverse(nums, 0, nums.length - 1);
+        reverse(nums, 0, k - 1);
+        reverse(nums, k, nums.length - 1);
+    &#125;
+    public void reverse(int[] nums, int start, int end) &#123;
+        while (start &lt; end) &#123;
+            int temp = nums[start];
+            nums[start] = nums[end];
+            nums[end] = temp;
+            start++;
+            end--;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="数组迭代"><a href="#数组迭代" class="headerlink" title="数组迭代"></a>数组迭代</h2><pre><code>给你一个嵌套的整型列表。请你设计一个迭代器，使其能够遍历这个整型列表中的所有整数。
+列表中的每一项或者为一个整数，或者是另一个列表。其中列表的元素也可能是整数或是其他列表。
+输入: [[1,1],2,[1,1]]
+输出: [1,1,2,1,1]
+解释: 通过重复调用 next 直到 hasNext 返回 false，next 返回的元素的顺序应该是: [1,1,2,1,1]。
+
+public class NestedIterator implements Iterator&lt;Integer&gt; &#123;
+Queue&lt;Integer&gt; res = new LinkedList&lt;&gt;();
+
+public NestedIterator(List&lt;NestedInteger&gt; nestedList) &#123;
+    for(NestedInteger temp : nestedList)
+        DFS(temp);
+&#125;
+
+@Override
+public Integer next() &#123;
+    return res.poll();
+&#125;
+
+@Override
+public boolean hasNext() &#123;
+    if(res.isEmpty())
+        return false;
+    return true;
+    
+&#125;
+public void DFS(NestedInteger Node)&#123;
+    /* 深度遍历 */
+    if(Node.isInteger())
+        res.offer(Node.getInteger());
+    for(NestedInteger temp :Node.getList())
+        DFS(temp);
+&#125;
+&#125;
+</code></pre>
+<h2 id="调整数组顺序使奇数位于偶数前面"><a href="#调整数组顺序使奇数位于偶数前面" class="headerlink" title="调整数组顺序使奇数位于偶数前面"></a>调整数组顺序使奇数位于偶数前面</h2><pre><code>本题的难点在入如何交换数据，采用i，j双指针，直到都不为奇偶才交换
+public int[] exchange(int[] nums) &#123;
+       if(nums.length == 0) return nums;
+       int i = 0,j = nums.length-1;
+       while(i != j)&#123;
+           while(nums[i] %2 != 0 &amp;&amp; i&lt;j )&#123;
+               i++;
+           &#125;
+           while(nums[j] %2 == 0 &amp;&amp; i&lt;j )&#123;
+               j--;
+           &#125;
+           if(i&lt;j)&#123;
+               int temp = nums[i];
+               nums[i] = nums[j];
+               nums[j] = temp;
+           &#125;
+       &#125;
+       return nums;
+   &#125;
+</code></pre>
+<h2 id="数组中出现次数超过一半的数字"><a href="#数组中出现次数超过一半的数字" class="headerlink" title="数组中出现次数超过一半的数字"></a>数组中出现次数超过一半的数字</h2><pre><code>   哈希表统计法，用 HashMap 统计各数字的数量
+   数组排序法：由于众数的数量超过数组长度一半，
+   因此 数组中点的元素 一定为众数
+   摩尔投票法：核心理念为 “正负抵消” 
+   当 n=x ： 抵消的所有数字中，有一半是众数    
+   n不等x ： 抵消的所有数字中，少于或等于一半是众数 x
+   利用此特性，每轮假设都可以 缩小剩余数组区间 。当遍历完成时，最后一轮假
+   设的数字即为众数（由于众数超过一半，最后一轮的票数和必为正数）
+
+   public int majorityElement(int[] nums) &#123;
+       int x = 0, votes = 0;
+       for(int num : nums)&#123;
+           if(votes == 0) x = num;
+           votes += num == x ? 1 : -1;
+       &#125;
+       return x;
+   &#125;
+</code></pre>
+<h2 id="连续子数组的最大和"><a href="#连续子数组的最大和" class="headerlink" title="连续子数组的最大和"></a>连续子数组的最大和</h2><pre><code>    这种最适合动态规划了，慢慢的变化，将前面的结构给到nums[i]
+       输入一个整型数组，数组里有正数也有负数。数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值。
+   class Solution &#123;
+       public int maxSubArray(int[] nums) &#123;
+           int res = nums[0];
+           for(int i = 1; i &lt; nums.length; i++) &#123;
+               nums[i] += Math.max(nums[i - 1], 0);
+               res = Math.max(res, nums[i]);
+           &#125;
+           return res;
+       &#125;
+   &#125;
+</code></pre>
+<h2 id="1～n整数中1出现的次数"><a href="#1～n整数中1出现的次数" class="headerlink" title="1～n整数中1出现的次数"></a>1～n整数中1出现的次数</h2><pre><code>从个位到最高位的变量递推公式为
+# 当 high 和 cur 同时为 0 时，说明已经越过最高位，因此跳出
+# 将 cur 加入 low ，组成下轮 low
+# 下轮 cur 是本轮 high 的最低位
+# 将本轮 high 最低位删除，得到下轮 high
+# 位因子每轮 × 10
+   class Solution &#123;
+       public int countDigitOne(int n) &#123;
+           int digit = 1, res = 0;
+           int high = n / 10, cur = n % 10, low = 0;
+           while(high != 0 || cur != 0) &#123;
+               if(cur == 0) res += high * digit;
+               else if(cur == 1) res += high * digit + low + 1;
+               else res += (high + 1) * digit;
+               low += cur * digit;
+               cur = high % 10;
+               high /= 10;
+               digit *= 10;
+           &#125;
+           return res;
+       &#125;
+   &#125;
+</code></pre>
+<h2 id="数字序列中某一位的数字"><a href="#数字序列中某一位的数字" class="headerlink" title="数字序列中某一位的数字"></a>数字序列中某一位的数字</h2><pre><code>   数字以0123456789101112131415…的格式序列化到一个字符序列中
+   迭代 + 求整 / 求余
+       count=9×start×digit，num = start + (n - 1)
+
+       class Solution &#123;
+       public int findNthDigit(int n) &#123;
+           int digit = 1;
+           long start = 1;
+           long count = 9;
+           while (n &gt; count) &#123; // 1.
+               n -= count;
+               digit += 1;
+               start *= 10;
+               count = digit * start * 9;
+           &#125;
+           long num = start + (n - 1) / digit; // 2.
+           return Long.toString(num).charAt((n - 1) % digit) - &#39;0&#39;; // 3.
+       &#125;
+   &#125;
+</code></pre>
+<h2 id="和为s的两个数字"><a href="#和为s的两个数字" class="headerlink" title="和为s的两个数字"></a>和为s的两个数字</h2><pre><code>        双指针法，分别指向数组的两端，如果两个数的和大于target则j--如果小于target则i++，直至相等 
+class Solution &#123;
+    public int[] twoSum(int[] nums, int target) &#123;
+        int i = 0, j = nums.length - 1;
+        while(i &lt; j) &#123;
+            int s = nums[i] + nums[j];
+            if(s &lt; target) i++;
+            else if(s &gt; target) j--;
+            else return new int[] &#123; nums[i], nums[j] &#125;;
+        &#125;
+        return new int[0];
+    &#125;
+&#125;
+</code></pre>
+<h2 id="给定两个数组，编写一个函数来计算它们的交集。"><a href="#给定两个数组，编写一个函数来计算它们的交集。" class="headerlink" title="给定两个数组，编写一个函数来计算它们的交集。"></a>给定两个数组，编写一个函数来计算它们的交集。</h2><pre><code>方法一：哈希表
+首先遍历第一个数组，并在哈希表中记录第一个数组中的每个数字以及对应出现的次数，然后遍历第二个数组，对于第二个数组中的每个数字，如果在哈希表中存在这个数字，则将该数字添加到答案，并减少哈希表中该数字出现的次数。
+为了降低空间复杂度，首先遍历较短的数组并在哈希表中记录每个数字以及对应出现的次数，然后遍历较长的数组得到交集。
+class Solution &#123;
+    public int[] intersect(int[] nums1, int[] nums2) &#123;
+        if (nums1.length &gt; nums2.length) &#123;
+            return intersect(nums2, nums1);
+        &#125;
+        Map&lt;Integer, Integer&gt; map = new HashMap&lt;Integer, Integer&gt;();
+        for (int num : nums1) &#123;
+            int count = map.getOrDefault(num, 0) + 1;
+            map.put(num, count);
+        &#125;
+        int[] intersection = new int[nums1.length];
+        int index = 0;
+        for (int num : nums2) &#123;
+            int count = map.getOrDefault(num, 0);
+            if (count &gt; 0) &#123;
+                intersection[index++] = num;
+                count--;
+                if (count &gt; 0) &#123;
+                    map.put(num, count);
+                &#125; else &#123;
+                    map.remove(num);
+                &#125;
+            &#125;
+        &#125;
+        return Arrays.copyOfRange(intersection, 0, index);
+    &#125;
+&#125;
+方法二：排序
+如果两个数组是有序的，则可以便捷地计算两个数组的交集。
+class Solution &#123;
+    public int[] intersect(int[] nums1, int[] nums2) &#123;
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        int length1 = nums1.length, length2 = nums2.length;
+        int[] intersection = new int[Math.min(length1, length2)];
+        int index1 = 0, index2 = 0, index = 0;
+        while (index1 &lt; length1 &amp;&amp; index2 &lt; length2) &#123;
+            if (nums1[index1] &lt; nums2[index2]) &#123;
+                index1++;
+            &#125; else if (nums1[index1] &gt; nums2[index2]) &#123;
+                index2++;
+            &#125; else &#123;
+                intersection[index] = nums1[index1];
+                index1++;
+                index2++;
+                index++;
+            &#125;
+        &#125;
+        return Arrays.copyOfRange(intersection, 0, index);
+    &#125;
+&#125;
+</code></pre>
+<h2 id="给定一个未排序的数组，判断这个数组中是否存在长度为-3-的递增子序列。"><a href="#给定一个未排序的数组，判断这个数组中是否存在长度为-3-的递增子序列。" class="headerlink" title="给定一个未排序的数组，判断这个数组中是否存在长度为 3 的递增子序列。"></a>给定一个未排序的数组，判断这个数组中是否存在长度为 3 的递增子序列。</h2><pre><code>class Solution &#123;
+public:
+    bool increasingTriplet(vector&lt;int&gt;&amp; nums) &#123;
+        int first = INT_MAX, sec = INT_MAX;     
+        for(int n : nums)                       //
+        &#123;
+            if(n &lt;= first)  first = n;          
+            else
+            &#123;
+                if(n &lt;= sec )   sec = n;        
+                else   return true;
+            &#125;
+        &#125;
+        return false;
+
+    &#125;
+&#125;;
+</code></pre>
+<h2 id="逆波兰表达式"><a href="#逆波兰表达式" class="headerlink" title="逆波兰表达式"></a>逆波兰表达式</h2><pre><code>是一种后缀表达式，所谓后缀就是指算符写在后面。
+平常使用的算式则是一种中缀表达式，如 ( 1 + 2 ) * ( 3 + 4 ) 。
+该算式的逆波兰表达式写法为 ( ( 1 2 + ) ( 3 4 + ) * ) 。
+class Solution &#123;
+    //纯数组模拟栈实现(推荐)   3 ms    36 MB
+    public static int evalRPN(String[] tokens) &#123;
+        int[] numStack = new int[tokens.length / 2 + 1];
+        int index = 0;
+        for (String s : tokens) &#123;
+            switch (s) &#123;
+            case &quot;+&quot;:
+                numStack[index - 2] += numStack[--index];
+                break;
+            case &quot;-&quot;:
+                numStack[index - 2] -= numStack[--index];
+                break;
+            case &quot;*&quot;:
+                numStack[index - 2] *= numStack[--index];
+                break;
+            case &quot;/&quot;:
+                numStack[index - 2] /= numStack[--index];
+                break;
+            default:
+                // numStack[index++] = Integer.valueOf(s);
+                //valueOf改为parseInt，减少自动拆箱装箱操作
+                numStack[index++] = Integer.parseInt(s);
+                break;
+            &#125;
+        &#125;
+        return numStack[0];
+    &#125;
+&#125;
+class Solution &#123;
+    // 栈实现   8 ms    36.7 MB    
+    public static int evalRPN(String[] tokens) &#123;
+        Stack&lt;Integer&gt; numStack = new Stack&lt;&gt;();
+        Integer op1, op2;
+        for (String s : tokens) &#123;
+            switch (s) &#123;
+            case &quot;+&quot;:
+                op2 = numStack.pop();
+                op1 = numStack.pop();
+                numStack.push(op1 + op2);
+                break;
+            case &quot;-&quot;:
+                op2 = numStack.pop();
+                op1 = numStack.pop();
+                numStack.push(op1 - op2);
+                break;
+            case &quot;*&quot;:
+                op2 = numStack.pop();
+                op1 = numStack.pop();
+                numStack.push(op1 * op2);
+                break;
+            case &quot;/&quot;:
+                op2 = numStack.pop();
+                op1 = numStack.pop();
+                numStack.push(op1 / op2);
+                break;
+            default:
+                numStack.push(Integer.valueOf(s));
+                break;
+            &#125;
+        &#125;
+        return numStack.pop();
+    &#125;
+&#125;
+</code></pre>
+<h2 id="除自身以外数组的乘积"><a href="#除自身以外数组的乘积" class="headerlink" title="除自身以外数组的乘积"></a>除自身以外数组的乘积</h2><pre><code>输入: [1,2,3,4]
+输出: [24,12,8,6]
+方法一：左右乘积列表
+我们不必将所有数字的乘积除以给定索引处的数字得到相应的答案，而是利用索引左侧所有数字的乘积和右侧所有数字的乘积（即前缀与后缀）相乘得到答案。
+class Solution &#123;
+    public int[] productExceptSelf(int[] nums) &#123;
+        int length = nums.length;
+
+    // L 和 R 分别表示左右两侧的乘积列表
+    int[] L = new int[length];
+    int[] R = new int[length];
+
+    int[] answer = new int[length];
+
+    // L[i] 为索引 i 左侧所有元素的乘积
+    // 对于索引为 &#39;0&#39; 的元素，因为左侧没有元素，所以 L[0] = 1
+    L[0] = 1;
+    for (int i = 1; i &lt; length; i++) &#123;
+        L[i] = nums[i - 1] * L[i - 1];
+    &#125;
+
+    // R[i] 为索引 i 右侧所有元素的乘积
+    // 对于索引为 &#39;length-1&#39; 的元素，因为右侧没有元素，所以 R[length-1] = 1
+    R[length - 1] = 1;
+    for (int i = length - 2; i &gt;= 0; i--) &#123;
+        R[i] = nums[i + 1] * R[i + 1];
+    &#125;
+
+    // 对于索引 i，除 nums[i] 之外其余各元素的乘积就是左侧所有元素的乘积乘以右侧所有元素的乘积
+    for (int i = 0; i &lt; length; i++) &#123;
+        answer[i] = L[i] * R[i];
+    &#125;
+
+    return answer;
+&#125;
+&#125;
+方法二：空间复杂度 
+第一个循环应该是表示下三角中自上而下对每一行做连乘，而第二个循环是对上三角自下而上的连乘
+class Solution &#123;
+    public int[] productExceptSelf(int[] nums) &#123;
+        int length = nums.length;
+        int[] answer = new int[length];
+
+    // answer[i] 表示索引 i 左侧所有元素的乘积
+    // 因为索引为 &#39;0&#39; 的元素左侧没有元素， 所以 answer[0] = 1
+    answer[0] = 1;
+    for (int i = 1; i &lt; length; i++) &#123;
+        answer[i] = nums[i - 1] * answer[i - 1];
+    &#125;
+
+    // R 为右侧所有元素的乘积
+    // 刚开始右边没有元素，所以 R = 1
+    int R = 1;
+    for (int i = length - 1; i &gt;= 0; i--) &#123;
+        // 对于索引 i，左边的乘积为 answer[i]，右边的乘积为 R
+        answer[i] = answer[i] * R;
+        // R 需要包含右边所有的乘积，所以计算下一个结果时需要将当前值乘到 R 上
+        R *= nums[i];
+    &#125;
+    return answer;
+&#125;
+&#125;
+</code></pre>
+<h2 id="和为s的连续正数序列-（滑动窗口）"><a href="#和为s的连续正数序列-（滑动窗口）" class="headerlink" title="和为s的连续正数序列  （滑动窗口）"></a>和为s的连续正数序列  （滑动窗口）</h2><pre><code>    窗口的左边界和右边界永远只能向右移动
+    当窗口的和小于 target 的时候，窗口的和需要增加，所以要扩大窗口，窗口的右边界向右移动
+    当窗口的和大于 target 的时候，窗口的和需要减少，所以要缩小窗口，窗口的左边界向右移动
+输入一个正整数 target ，输出所有和为 target 的连续正整数序列（至少含有两个数）。
+序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
+什么是滑动窗口
+滑动窗口可以看成数组中框起来的一个部分。在一些数组类题目中，我们可以用滑动窗口来观察可能的候选结果。当滑动窗口从数组的左边滑到了右边，我们就可以从所有的候选结果中找到最优的结果。
+窗口的左边界和右边界永远只能向右移动
+第一个问题，窗口何时扩大，何时缩小？
+第二个问题，滑动窗口能找到全部的解吗？
+当窗口的和小于 target 的时候，窗口的和需要增加，所以要扩大窗口，窗口的右边界向右移动
+当窗口的和大于 target 的时候，窗口的和需要减少，所以要缩小窗口，窗口的左边界向右移动
+public int[][] findContinuousSequence(int target) &#123;
+    int i = 1; // 滑动窗口的左边界
+    int j = 1; // 滑动窗口的右边界
+    int sum = 0; // 滑动窗口中数字的和
+    List&lt;int[]&gt; res = new ArrayList&lt;&gt;();
+
+while (i &lt;= target / 2) &#123;
+    if (sum &lt; target) &#123;
+        // 右边界向右移动
+        sum += j;
+        j++;
+    &#125; else if (sum &gt; target) &#123;
+        // 左边界向右移动
+        sum -= i;
+        i++;
+    &#125; else &#123;
+        // 记录结果
+        int[] arr = new int[j-i];
+        for (int k = i; k &lt; j; k++) &#123;
+            arr[k-i] = k;
+        &#125;
+        res.add(arr);
+        // 左边界向右移动
+        sum -= i;
+        i++;
+    &#125;
+&#125;
+
+return res.toArray(new int[res.size()][]);
+</code></pre>
+<p>}</p>
+<h2 id="滑动窗口的最大值"><a href="#滑动窗口的最大值" class="headerlink" title="滑动窗口的最大值"></a>滑动窗口的最大值</h2><pre><code>给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+单调队列
+我们先看什么是单调的双向队列，双向队列大家都知道，既能在头部进行插入、删除操作，也能在尾部进行插入删除操作，而所谓的单调，就是我们人为规定从队列的头部到尾部，所存储的元素是依次递减（或依次递增）的。如下所示：
+
+也就是说，我们维护一个单调的双向队列，窗口在每次滑动的时候，我就从队列头部取当前窗口中的最大值，每次窗口新进来一个元素的时候，我就将它与队列中的元素进行大小比较：
+
+如果刚刚进来的元素比队列的尾部元素大，那么先将队列尾部的元素弹出，然后把刚刚进来的元素添到队列的尾部；
+如果刚刚进来的元素比队列的尾部元素小，那么把刚刚进来的元素直接添到队列的尾部即可。
+
+class Solution &#123;
+    public int[] maxSlidingWindow(int[] nums, int k) &#123;
+        if (nums == null || k &lt; 1 || nums.length &lt; k) &#123;
+            return new int[0];
+        &#125;
+
+    int index = 0;
+    int[] res = new int[nums.length - k + 1];
+    LinkedList&lt;Integer&gt; queue = new LinkedList&lt;&gt;();
+
+    for (int i = 0; i &lt; nums.length; i++) &#123;
+        // 在队列不为空的情况下，如果队列尾部的元素要比当前的元素小，或等于当前的元素
+        // 那么为了维持从大到小的原则，我必须让尾部元素弹出
+        while (!queue.isEmpty() &amp;&amp; nums[queue.peekLast()] &lt;= nums[i]) &#123;
+            queue.pollLast();
+        &#125;
+        // 不走 while 的话，说明我们正常在队列尾部添加元素
+        queue.addLast(i);
+        // 如果滑动窗口已经略过了队列中头部的元素，则将头部元素弹出
+        if (queue.peekFirst() == (i - k)) &#123;
+            queue.pollFirst();
+        &#125;
+        // 看看窗口有没有形成，只有形成了大小为 k 的窗口，我才能收集窗口内的最大值
+        if (i &gt;= (k - 1)) &#123;
+            res[index++] = nums[queue.peekFirst()];
+        &#125;
+    &#125;
+    return res;
+&#125;
+</code></pre>
+<p>}</p>
+<h2 id="将数组中所有-0-移动到数组末尾。"><a href="#将数组中所有-0-移动到数组末尾。" class="headerlink" title="将数组中所有 0 移动到数组末尾。"></a>将数组中所有 0 移动到数组末尾。</h2><pre><code>方法一：空间局部优化
+class Solution &#123;
+    public void moveZeroes(int[] nums) &#123;
+        if(nums==null) &#123;
+            return;
+        &#125;
+        //第一次遍历的时候，j指针记录非0的个数，只要是非0的统统都赋给nums[j]
+        int j = 0;
+        for(int i=0;i&lt;nums.length;++i) &#123;
+            if(nums[i]!=0) &#123;
+                nums[j++] = nums[i];
+            &#125;
+        &#125;
+        //非0元素统计完了，剩下的都是0了
+        //所以第二次遍历把末尾的元素都赋为0即可
+        for(int i=j;i&lt;nums.length;++i) &#123;
+            nums[i] = 0;
+        &#125;
+    &#125;
+&#125;    
+方法二：空间最优，操作局部优化（双指针）
+class Solution &#123;
+    public void moveZeroes(int[] nums) &#123;
+        if(nums==null) &#123;
+            return;
+        &#125;
+        //两个指针i和j
+        int j = 0;
+        for(int i=0;i&lt;nums.length;i++) &#123;
+            //当前元素!=0，就把其交换到左边，等于0的交换到右边
+            if(nums[i]!=0) &#123;
+                int tmp = nums[i];
+                nums[i] = nums[j];
+                nums[j++] = tmp;
+            &#125;
+        &#125;
+    &#125;
+&#125;    
+</code></pre>
+<h2 id="打乱数组"><a href="#打乱数组" class="headerlink" title="打乱数组"></a>打乱数组</h2><pre><code>方法一： 暴力 【通过】
+暴力算法简单的来说就是把每个数放在一个 ”帽子“ 里面，每次从 ”帽子“ 里面随机摸一个数出来
+class Solution &#123;
+    private int[] array;
+    private int[] original;
+
+private Random rand = new Random();
+
+private List&lt;Integer&gt; getArrayCopy() &#123;
+    List&lt;Integer&gt; asList = new ArrayList&lt;Integer&gt;();
+    for (int i = 0; i &lt; array.length; i++) &#123;
+        asList.add(array[i]);
+    &#125;
+    return asList;
+&#125;
+
+public Solution(int[] nums) &#123;
+    array = nums;
+    original = nums.clone();
+&#125;
+
+public int[] reset() &#123;
+    array = original;
+    original = original.clone();
+    return array;
+&#125;
+
+public int[] shuffle() &#123;
+    List&lt;Integer&gt; aux = getArrayCopy();
+
+    for (int i = 0; i &lt; array.length; i++) &#123;
+        int removeIdx = rand.nextInt(aux.size());
+        array[i] = aux.get(removeIdx);
+        aux.remove(removeIdx);
+    &#125;
+
+    return array;
+&#125;
+</code></pre>
+<p>}<br>    方法二： Fisher-Yates 洗牌算法 【通过】<br>    Fisher-Yates 洗牌算法跟暴力算法很像。在每次迭代中，生成一个范围在当前下标到数组末尾元素下标之间的随机整数。接下来，将当前元素和随机选出的下标所指的元素互相交换 - 这一步模拟了每次从 “帽子” 里面摸一个元素的过程，其中选取下标范围的依据在于每个被摸出的元素都不可能再被摸出来了。</p>
+<pre><code>class Solution &#123;
+    private int[] array;
+    private int[] original;
+
+Random rand = new Random();
+
+private int randRange(int min, int max) &#123;
+    return rand.nextInt(max - min) + min;
+&#125;
+
+private void swapAt(int i, int j) &#123;
+    int temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+&#125;
+
+public Solution(int[] nums) &#123;
+    array = nums;
+    original = nums.clone();
+&#125;
+
+public int[] reset() &#123;
+    array = original;
+    original = original.clone();
+    return original;
+&#125;
+
+public int[] shuffle() &#123;
+    for (int i = 0; i &lt; array.length; i++) &#123;
+        swapAt(i, randRange(i, array.length));
+    &#125;
+    return array;
+&#125;
+&#125;
+</code></pre>
+<h2 id="数组中的逆序对"><a href="#数组中的逆序对" class="headerlink" title="数组中的逆序对"></a>数组中的逆序对</h2><pre><code>public class Solution &#123;
+
+public int reversePairs(int[] nums) &#123;
+    int len = nums.length;
+
+    if (len &lt; 2) &#123;
+        return 0;
+    &#125;
+
+    int[] copy = new int[len];
+    for (int i = 0; i &lt; len; i++) &#123;
+        copy[i] = nums[i];
+    &#125;
+
+    int[] temp = new int[len];
+    return reversePairs(copy, 0, len - 1, temp);
+&#125;
+
+/**
+ * nums[left..right] 计算逆序对个数并且排序
+ *
+ * @param nums
+ * @param left
+ * @param right
+ * @param temp
+ * @return
+ */
+private int reversePairs(int[] nums, int left, int right, int[] temp) &#123;
+    if (left == right) &#123;
+        return 0;
+    &#125;
+
+    int mid = left + (right - left) / 2;
+    int leftPairs = reversePairs(nums, left, mid, temp);
+    int rightPairs = reversePairs(nums, mid + 1, right, temp);
+
+    if (nums[mid] &lt;= nums[mid + 1]) &#123;
+        return leftPairs + rightPairs;
+    &#125;
+
+    int crossPairs = mergeAndCount(nums, left, mid, right, temp);
+    return leftPairs + rightPairs + crossPairs;
+&#125;
+
+/**
+ * nums[left..mid] 有序，nums[mid + 1..right] 有序
+ *
+ * @param nums
+ * @param left
+ * @param mid
+ * @param right
+ * @param temp
+ * @return
+ */
+private int mergeAndCount(int[] nums, int left, int mid, int right, int[] temp) &#123;
+    for (int i = left; i &lt;= right; i++) &#123;
+        temp[i] = nums[i];
+    &#125;
+
+    int i = left;
+    int j = mid + 1;
+
+    int count = 0;
+    for (int k = left; k &lt;= right; k++) &#123;
+
+        if (i == mid + 1) &#123;
+            nums[k] = temp[j];
+            j++;
+        &#125; else if (j == right + 1) &#123;
+            nums[k] = temp[i];
+            i++;
+        &#125; else if (temp[i] &lt;= temp[j]) &#123;
+            nums[k] = temp[i];
+            i++;
+        &#125; else &#123;
+            nums[k] = temp[j];
+            j++;
+            count += (mid - i + 1);
+        &#125;
+    &#125;
+    return count;
+&#125;
+&#125;
+</code></pre>
+<h2 id="最小的k个数"><a href="#最小的k个数" class="headerlink" title="最小的k个数"></a>最小的k个数</h2><pre><code>    用快排最最最高效解决 TopK 问题：
+    大根堆(前 K 小) / 小根堆（前 K 大),Java中有现成的 PriorityQueue，实现起来最简单：
+    二叉搜索树也可以 解决 TopK 问题哦
+    数据范围有限时直接计数排序就行了：
+class Solution &#123;
+    public int[] getLeastNumbers(int[] arr, int k) &#123;
+        if (k == 0 || arr.length == 0) &#123;
+            return new int[0];
+        &#125;
+        // 最后一个参数表示我们要找的是下标为k-1的数
+        return quickSearch(arr, 0, arr.length - 1, k - 1);
+    &#125;
+
+private int[] quickSearch(int[] nums, int lo, int hi, int k) &#123;
+    // 每快排切分1次，找到排序后下标为j的元素，如果j恰好等于k就返回j以及j左边所有的数；
+    int j = partition(nums, lo, hi);
+    if (j == k) &#123;
+        return Arrays.copyOf(nums, j + 1);
+    &#125;
+    // 否则根据下标j与k的大小关系来决定继续切分左段还是右段。
+    return j &gt; k? quickSearch(nums, lo, j - 1, k): quickSearch(nums, j + 1, hi, k);
+&#125;
+
+// 快排切分，返回下标j，使得比nums[j]小的数都在j的左边，比nums[j]大的数都在j的右边。
+private int partition(int[] nums, int lo, int hi) &#123;
+    int v = nums[lo];
+    int i = lo, j = hi + 1;
+    while (true) &#123;
+        while (++i &lt;= hi &amp;&amp; nums[i] &lt; v);
+        while (--j &gt;= lo &amp;&amp; nums[j] &gt; v);
+        if (i &gt;= j) &#123;
+            break;
+        &#125;
+        int t = nums[j];
+        nums[j] = nums[i];
+        nums[i] = t;
+    &#125;
+    nums[lo] = nums[j];
+    nums[j] = v;
+    return j;
+&#125;
+&#125;
+我们用一个大根堆实时维护数组的前 k 小值。首先将前 k 个数插入大根堆中，随后从第 k+1 个数开始遍历，如果当前遍历到的数比大根堆的堆顶的数要小，就把堆顶的数弹出，再插入当前遍历到的数。最后将大根堆里的数存入数组返回即可。
+// 保持堆的大小为K，然后遍历数组中的数字，遍历的时候做如下判断：
+// 1. 若目前堆的大小小于K，将当前数字放入堆中。
+// 2. 否则判断当前数字与大根堆堆顶元素的大小关系，如果当前数字比大根堆堆顶还大，这个数就直接跳过；
+//    反之如果当前数字比大根堆堆顶小，先poll掉堆顶，再将该数字放入堆中。
+class Solution &#123;
+    public int[] getLeastNumbers(int[] arr, int k) &#123;
+        if (k == 0 || arr.length == 0) &#123;
+            return new int[0];
+        &#125;
+        // 默认是小根堆，实现大根堆需要重写一下比较器。
+        Queue&lt;Integer&gt; pq = new PriorityQueue&lt;&gt;((v1, v2) -&gt; v2 - v1);
+        for (int num: arr) &#123;
+            if (pq.size() &lt; k) &#123;
+                pq.offer(num);
+            &#125; else if (num &lt; pq.peek()) &#123;
+                pq.poll();
+                pq.offer(num);
+            &#125;
+        &#125;
+        
+        // 返回堆中的元素
+        int[] res = new int[pq.size()];
+        int idx = 0;
+        for(int num: pq) &#123;
+            res[idx++] = num;
+        &#125;
+        return res;
+    &#125;
+&#125;
+二叉搜索树也可以 O(NlogK)解决 TopK 问题哦
+与前两种方法相比，BST 有一个好处是求得的前K大的数字是有序的。
+class Solution &#123;
+public int[] getLeastNumbers(int[] arr, int k) &#123;
+    if (k == 0 || arr.length == 0) &#123;
+        return new int[0];
+    &#125;
+    // TreeMap的key是数字, value是该数字的个数。
+    // cnt表示当前map总共存了多少个数字。
+    TreeMap&lt;Integer, Integer&gt; map = new TreeMap&lt;&gt;();
+    int cnt = 0;
+    for (int num: arr) &#123;
+        // 1. 遍历数组，若当前map中的数字个数小于k，则map中当前数字对应个数+1
+        if (cnt &lt; k) &#123;
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            cnt++;
+            continue;
+        &#125; 
+        // 2. 否则，取出map中最大的Key（即最大的数字), 判断当前数字与map中最大数字的大小关系：
+        //    若当前数字比map中最大的数字还大，就直接忽略；
+        //    若当前数字比map中最大的数字小，则将当前数字加入map中，并将map中的最大数字的个数-1。
+        Map.Entry&lt;Integer, Integer&gt; entry = map.lastEntry();
+        if (entry.getKey() &gt; num) &#123;
+            map.put(num, map.getOrDefault(num, 0) + 1);
+            if (entry.getValue() == 1) &#123;
+                map.pollLastEntry();
+            &#125; else &#123;
+                map.put(entry.getKey(), entry.getValue() - 1);
+            &#125;
+        &#125;
+    
+&#125;
+
+    // 最后返回map中的元素
+    int[] res = new int[k];
+    int idx = 0;
+    for (Map.Entry&lt;Integer, Integer&gt; entry: map.entrySet()) &#123;
+        int freq = entry.getValue();
+        while (freq-- &gt; 0) &#123;
+            res[idx++] = entry.getKey();
+        &#125;
+    &#125;
+    return res;
+&#125;
+&#125;
+四、数据范围有限时直接计数排序就行了：
+class Solution &#123;
+    public int[] getLeastNumbers(int[] arr, int k) &#123;
+        if (k == 0 || arr.length == 0) &#123;
+            return new int[0];
+        &#125;
+        // 统计每个数字出现的次数
+        int[] counter = new int[10001];
+        for (int num: arr) &#123;
+            counter[num]++;
+        &#125;
+        // 根据counter数组从头找出k个数作为返回结果
+        int[] res = new int[k];
+        int idx = 0;
+        for (int num = 0; num &lt; counter.length; num++) &#123;
+            while (counter[num]-- &gt; 0 &amp;&amp; idx &lt; k) &#123;
+                res[idx++] = num;
+            &#125;
+            if (idx == k) &#123;
+                break;
+            &#125;
+        &#125;
+        return res;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="把数组排成最小的数"><a href="#把数组排成最小的数" class="headerlink" title="把数组排成最小的数"></a>把数组排成最小的数</h2><pre><code>输入一个非负整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。
+    输入: [10,2]
+    输出: &quot;102&quot;
+    此题求拼接起来的 “最小数字” ，本质上是一个排序问题。
+class Solution &#123;
+    public String minNumber(int[] nums) &#123;
+        String[] strs = new String[nums.length];
+        for(int i = 0; i &lt; nums.length; i++)
+            strs[i] = String.valueOf(nums[i]);
+        fastSort(strs, 0, strs.length - 1);
+        StringBuilder res = new StringBuilder();
+        for(String s : strs)
+            res.append(s);
+        return res.toString();
+    &#125;
+    void fastSort(String[] strs, int l, int r) &#123;
+        if(l &gt;= r) return;
+        int i = l, j = r;
+        String tmp = strs[i];
+        while(i &lt; j) &#123;
+            while((strs[j] + strs[l]).compareTo(strs[l] + strs[j]) &gt;= 0 &amp;&amp; i &lt; j) j--;
+            while((strs[i] + strs[l]).compareTo(strs[l] + strs[i]) &lt;= 0 &amp;&amp; i &lt; j) i++;
+            tmp = strs[i];
+            strs[i] = strs[j];
+            strs[j] = tmp;
+        &#125;
+        strs[i] = strs[l];
+        strs[l] = tmp;
+        fastSort(strs, l, i - 1);
+        fastSort(strs, i + 1, r);
+    &#125;
+&#125;
+方法二：内置函数
+public String minNumber(int[] nums) &#123;
+        String[] strs = new String[nums.length];
+        for(int i = 0; i &lt; nums.length; i++) 
+            strs[i] = String.valueOf(nums[i]);
+        Arrays.sort(strs, (x, y) -&gt; (x + y).compareTo(y + x));
+        StringBuilder res = new StringBuilder();
+        for(String s : strs)
+            res.append(s);
+        return res.toString();
+    &#125;
+</code></pre>
+<h1 id="二维数组"><a href="#二维数组" class="headerlink" title="二维数组"></a>二维数组</h1><h2 id="二维数组中的查找"><a href="#二维数组中的查找" class="headerlink" title="二维数组中的查找"></a>二维数组中的查找</h2><pre><code>在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
+    由于给定的二维数组具备每行从左到右递增以及每列从上到下递增的特点，当访问到一个元素时，可以排除数组中的部分元素。
+
+从二维数组的右上角开始查找。如果当前元素等于目标值，则返回 true。如果当前元素大于目标值，则移到左边一列。如果当前元素小于目标值，则移到下边一行。
+
+可以证明这种方法不会错过目标值。如果当前元素大于目标值，说明当前元素的下边的所有元素都一定大于目标值，因此往下查找不可能找到目标值，往左查找可能找到目标值。如果当前元素小于目标值，说明当前元素的左边的所有元素都一定小于目标值，因此往左查找不可能找到目标值，往下查找可能
+
+class Solution &#123;
+    public boolean findNumberIn2DArray(int[][] matrix, int target) &#123;
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) &#123;
+            return false;
+        &#125;
+        int rows = matrix.length, columns = matrix[0].length;
+        int row = 0, column = columns - 1;
+        while (row &lt; rows &amp;&amp; column &gt;= 0) &#123;
+            int num = matrix[row][column];
+            if (num == target) &#123;
+                return true;
+            &#125; else if (num &gt; target) &#123;
+                column--;
+            &#125; else &#123;
+                row++;
+            &#125;
+        &#125;
+        return false;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="矩阵中的路径"><a href="#矩阵中的路径" class="headerlink" title="矩阵中的路径"></a>矩阵中的路径</h2><pre><code>请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一格开始，每一步可以在矩阵中向左、右、上、下移动一格。如果一条路径经过了矩阵的某一格，那么该路径不能再次进入该格子。例如，在下面的3×4的矩阵中包含一条字符串“bfce”的路径（路径中的字母用加粗标出）。
+[[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;e&quot;],
+[&quot;s&quot;,&quot;f&quot;,&quot;c&quot;,&quot;s&quot;],
+[&quot;a&quot;,&quot;d&quot;,&quot;e&quot;,&quot;e&quot;]]
+    算法原理：
+    深度优先搜索
+class Solution &#123;
+    public boolean exist(char[][] board, String word) &#123;
+        char[] words = word.toCharArray();
+        for(int i = 0; i &lt; board.length; i++) &#123;
+            for(int j = 0; j &lt; board[0].length; j++) &#123;
+                if(dfs(board, words, i, j, 0)) return true;
+            &#125;
+        &#125;
+        return false;
+    &#125;
+    boolean dfs(char[][] board, char[] word, int i, int j, int k) &#123;
+        if(i &gt;= board.length || i &lt; 0 || j &gt;= board[0].length || j &lt; 0 || board[i][j] != word[k]) return false;
+        if(k == word.length - 1) return true;
+        char tmp = board[i][j];
+        board[i][j] = &#39;/&#39;;
+        boolean res = dfs(board, word, i + 1, j, k + 1) || dfs(board, word, i - 1, j, k + 1) || 
+                      dfs(board, word, i, j + 1, k + 1) || dfs(board, word, i , j - 1, k + 1);
+        board[i][j] = tmp;
+        return res;
+    &#125;
+&#125;
+</code></pre>
+<h2 id="机器人的运动范围"><a href="#机器人的运动范围" class="headerlink" title="机器人的运动范围"></a>机器人的运动范围</h2><pre><code>地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。一个机器人从坐标 [0, 0] 的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），也不能进入行坐标和列坐标的数位之和大于k的格子。例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。但它不能进入方格 [35, 38]，因为3+5+3+8=19。请问该机器人能够到达多少个格子？
+    本文选择使用广度优先搜索的方法来讲解。
+    public int movingCount(int m, int n, int k) &#123;
+        boolean[][] visited = new boolean[m][n];
+        return dfs(0, 0, m, n, k, visited);
+    &#125;
+    public int dfs(int i, int j, int m, int n, int k, boolean[][] visited) &#123;
+        if(i &gt;= m || j &gt;= n || k &lt; getSum(i) + getSum(j) || visited[i][j]) &#123;
+            return 0;
+        &#125;
+        visited[i][j] = true;
+        return 1 + dfs(i + 1, j, m, n, k, visited) + dfs(i, j + 1, m, n, k, visited);
+    &#125;
+
+private int getSum(int a) &#123;
+    int sum = a % 10;
+    int tmp = a / 10;
+    while(tmp &gt; 0) &#123;
+        sum += tmp % 10;
+        tmp /= 10;
+    &#125;
+    return sum;
+&#125;
+    
+</code></pre>
+<h2 id="顺时针打印矩阵"><a href="#顺时针打印矩阵" class="headerlink" title="顺时针打印矩阵"></a>顺时针打印矩阵</h2><pre><code>输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+输出：[1,2,3,6,9,8,7,4,5]
+可以模拟打印矩阵的路径。初始位置是矩阵的左上角，初始方向是向右，当路径超出界限或者进入之前访问过的位置时，则顺时针旋转，进入下一个方向。
+判断路径是否进入之前访问过的位置需要使用一个与输入矩阵大小相同的辅助矩阵 visited，其中的每个元素
+表示该位置是否被访问过。当一个元素被访问时，将 visited 中的对应位置的元素设为已访问。
+如何判断路径是否结束？由于矩阵中的每个元素都被访问一次，因此路径的长度即为矩阵中的元素数
+量，当路径的长度达到矩阵中的元素数量时即为完整路径，将该路径返回。
+ public int[] spiralOrder(int[][] matrix) &#123;
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) &#123;
+            return new int[0];
+        &#125;
+        int rows = matrix.length, columns = matrix[0].length;
+        boolean[][] visited = new boolean[rows][columns];
+        int total = rows * columns;
+        int[] order = new int[total];
+        int row = 0, column = 0;
+        int[][] directions = &#123;&#123;0, 1&#125;, &#123;1, 0&#125;, &#123;0, -1&#125;, &#123;-1, 0&#125;&#125;;
+        int directionIndex = 0;
+        for (int i = 0; i &lt; total; i++) &#123;
+            order[i] = matrix[row][column];
+            visited[row][column] = true;
+            int nextRow = row + directions[directionIndex][0], nextColumn = column + directions[directionIndex][1];
+            if (nextRow &lt; 0 || nextRow &gt;= rows || nextColumn &lt; 0 || nextColumn &gt;= columns || visited[nextRow][nextColumn]) &#123;
+                directionIndex = (directionIndex + 1) % 4;
+            &#125;
+            row += directions[directionIndex][0];
+            column += directions[directionIndex][1];
+        &#125;
+        return order;
+    &#125;
+</code></pre>
+<h2 id="给定一个-n-x-n-矩阵，其中每行和每列元素均按升序排序，找到矩阵中第-k-小的元素。"><a href="#给定一个-n-x-n-矩阵，其中每行和每列元素均按升序排序，找到矩阵中第-k-小的元素。" class="headerlink" title="给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。"></a>给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。</h2><pre><code>请注意，它是排序后的第 k 小元素，而不是第 k 个不同的元素。
+matrix = [
+   [ 1,  5,  9],
+   [10, 11, 13],
+   [12, 13, 15]
+],
+k = 8,
+
+返回 13。
+最直接的做法是将这个二维数组另存为为一维数组，并对该一维数组进行排序。最后这个一维数组中的第 k个数即为答案。
+class Solution &#123;
+    public int kthSmallest(int[][] matrix, int k) &#123;
+        int rows = matrix.length, columns = matrix[0].length;
+        int[] sorted = new int[rows * columns];
+        int index = 0;
+        for (int[] row : matrix) &#123;
+            for (int num : row) &#123;
+                sorted[index++] = num;
+            &#125;
+        &#125;
+        Arrays.sort(sorted);
+        return sorted[k - 1];
+    &#125;
+&#125;
+方法二：归并排序
+这个矩阵的每一行均为一个有序数组。问题即转化为从这 n 个有序数组中找第 
+k 大的数，可以想到利用归并排序的做法，归并到第 k 个数即可停止。
+
+class Solution &#123;
+    public int kthSmallest(int[][] matrix, int k) &#123;
+        PriorityQueue&lt;int[]&gt; pq = new PriorityQueue&lt;int[]&gt;(new Comparator&lt;int[]&gt;() &#123;
+            public int compare(int[] a, int[] b) &#123;
+                return a[0] - b[0];
+            &#125;
+        &#125;);
+        int n = matrix.length;
+        for (int i = 0; i &lt; n; i++) &#123;
+            pq.offer(new int[]&#123;matrix[i][0], i, 0&#125;);
+        &#125;
+        for (int i = 0; i &lt; k - 1; i++) &#123;
+            int[] now = pq.poll();
+            if (now[2] != n - 1) &#123;
+                pq.offer(new int[]&#123;matrix[now[1]][now[2] + 1], now[1], now[2] + 1&#125;);
+            &#125;
+        &#125;
+        return pq.poll()[0];
+    &#125;
+&#125;
+方法三：二分查找
+那么矩阵中不大于 mid 的数，肯定全部分布在矩阵的左上角。
+class Solution &#123;
+    public int kthSmallest(int[][] matrix, int k) &#123;
+        int n = matrix.length;
+        int left = matrix[0][0];
+        int right = matrix[n - 1][n - 1];
+        while (left &lt; right) &#123;
+            int mid = left + ((right - left) &gt;&gt; 1);
+            if (check(matrix, mid, k, n)) &#123;
+                right = mid;
+            &#125; else &#123;
+                left = mid + 1;
+            &#125;
+        &#125;
+        return left;
+    &#125;
+
+    public boolean check(int[][] matrix, int mid, int k, int n) &#123;
+        int i = n - 1;
+        int j = 0;
+        int num = 0;
+        while (i &gt;= 0 &amp;&amp; j &lt; n) &#123;
+            if (matrix[i][j] &lt;= mid) &#123;
+                num += i + 1;
+                j++;
+            &#125; else &#123;
+                i--;
+            &#125;
+        &#125;
+        return num &gt;= k;
+    &#125;
+&#125;
+
+可以将矩阵看成若干层，首先打印最外层的元素，其次打印次外层的元素，直到打印最内层的元素。
+定义4个顶点的坐标位置left、right、top、bottom
+1.从左到右遍历上侧元素， 当到达右顶点时停止
+2.从上到下遍历右侧元素，当到达下右顶点时停止
+3.从右向左侧遍历
+4.从下向上遍历
+遍历完毕后，四个顶点位置进行内缩
+left和top分别加一
+right和bottom分别减一，然后再遍历，直到遍历完所有元素为止。
+ public int[] spiralOrder(int[][] matrix) &#123;
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) &#123;
+            return new int[0];
+        &#125;
+        int rows = matrix.length, columns = matrix[0].length;
+        int[] order = new int[rows * columns];
+        int index = 0;
+        int left = 0, right = columns - 1, top = 0, bottom = rows - 1;
+        while (left &lt;= right &amp;&amp; top &lt;= bottom) &#123;
+            for (int column = left; column &lt;= right; column++) &#123;
+                order[index++] = matrix[top][column];
+            &#125;
+            for (int row = top + 1; row &lt;= bottom; row++) &#123;
+                order[index++] = matrix[row][right];
+            &#125;
+            if (left &lt; right &amp;&amp; top &lt; bottom) &#123;
+                for (int column = right - 1; column &gt; left; column--) &#123;
+                    order[index++] = matrix[bottom][column];
+                &#125;
+                for (int row = bottom; row &gt; top; row--) &#123;
+                    order[index++] = matrix[row][left];
+                &#125;
+            &#125;
+            left++;
+            right--;
+            top++;
+            bottom--;
+        &#125;
+        return order;
+    &#125;
+</code></pre>
+<h2 id="编写一个高效的算法来搜索-m-x-n-矩阵-matrix-中的一个目标值-target。"><a href="#编写一个高效的算法来搜索-m-x-n-矩阵-matrix-中的一个目标值-target。" class="headerlink" title="编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target。"></a>编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target。</h2><pre><code>该矩阵具有以下特性：
+
+每行的元素从左到右升序排列。
+每列的元素从上到下升序排列。
+方法一：暴力法
+方法二：二分法搜索
+class Solution &#123;
+    private boolean binarySearch(int[][] matrix, int target, int start, boolean vertical) &#123;
+        int lo = start;
+        int hi = vertical ? matrix[0].length-1 : matrix.length-1;
+
+    while (hi &gt;= lo) &#123;
+        int mid = (lo + hi)/2;
+        if (vertical) &#123; // searching a column
+            if (matrix[start][mid] &lt; target) &#123;
+                lo = mid + 1;
+            &#125; else if (matrix[start][mid] &gt; target) &#123;
+                hi = mid - 1;
+            &#125; else &#123;
+                return true;
+            &#125;
+        &#125; else &#123; // searching a row
+            if (matrix[mid][start] &lt; target) &#123;
+                lo = mid + 1;
+            &#125; else if (matrix[mid][start] &gt; target) &#123;
+                hi = mid - 1;
+            &#125; else &#123;
+                return true;
+            &#125;
+        &#125;
+    &#125;
+
+    return false;
+&#125;
+
+public boolean searchMatrix(int[][] matrix, int target) &#123;
+    // an empty matrix obviously does not contain `target`
+    if (matrix == null || matrix.length == 0) &#123;
+        return false;
+    &#125;
+
+    // iterate over matrix diagonals
+    int shorterDim = Math.min(matrix.length, matrix[0].length);
+    for (int i = 0; i &lt; shorterDim; i++) &#123;
+        boolean verticalFound = binarySearch(matrix, target, i, true);
+        boolean horizontalFound = binarySearch(matrix, target, i, false);
+        if (verticalFound || horizontalFound) &#123;
+            return true;
+        &#125;
+    &#125;
+    
+    return false; 
+&#125;
+&#125;
+方法三修剪矩阵
+首先，我们初始化一个指向矩阵左下角的 
+(row，col) 指针。然后，直到找到目标并返回 true（或者指针指向矩阵维度之外的 
+(row，col) 为止，我们执行以下操作：如果当前指向的值大于目标值，则可以 “向上” 移动一行。 否则，如果当前指向的值小于目标值，则可以移动一列。不难理解为什么这样做永远不会删减正确的答案；因为行是从左到右排序的，所以我们知道当前值右侧的每个值都较大。 因此，如果当前值已经大于目标值，我们知道它右边的每个值会比较大。也可以对列进行非常类似的论证，因此这种搜索方式将始终在矩阵中找到目标（如果存在）。
+class Solution &#123;
+    public boolean searchMatrix(int[][] matrix, int target) &#123;
+        // start our &quot;pointer&quot; in the bottom-left
+        int row = matrix.length-1;
+        int col = 0;
+
+    while (row &gt;= 0 &amp;&amp; col &lt; matrix[0].length) &#123;
+        if (matrix[row][col] &gt; target) &#123;
+            row--;
+        &#125; else if (matrix[row][col] &lt; target) &#123;
+            col++;
+        &#125; else &#123; // found it
+            return true;
+        &#125;
+    &#125;
+
+    return false;
+&#125;
+&#125;
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift127NSObject%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/06/M_Swift127NSObject%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">NSObject数据结构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:30:19" itemprop="dateCreated datePublished" datetime="2020-09-06T17:30:19+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="object-class"><a href="#object-class" class="headerlink" title="object_class"></a>object_class</h2><p>继承:objc_object<br>内部：<br>Class superClass; 父类<br>cache_t cache;  缓存<br>class_data_bits_t bits  数据</p>
+<p>isa指针关系<br>实例对象其指针指向类对象<br>类对象其指针指向元类对象</p>
+<p>cache_t<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/45d409e77806">https://www.jianshu.com/p/45d409e77806</a><br>用散列表(哈希表)来缓存曾经调用过的方法，可以提高方法的查找速度，底层结构如下：<br>用于快速查找方法执行函数<br>是可增量扩展的哈希表结构<br>是局部性原理的最佳应用<br>cache 本质是一个 Hash表。存储bucket_t<br>bucket_t存储<br>cache_key_t _key;//@selector()<br>IMP _imp;//函数地址<br>哈希查找：发现当发生碰撞的时候，索引会+1，查找下一个。<br>槽位如果不够，_mask 会变换，变为原来的2倍，并且扩展槽位的时候，会清空数组里原有的缓存内容<br>子类没有实现方法会调用父类的方法，会将父类方法加入到子类自己的cache 里。<br>为什么要创建新的新的buckets来替换原有的buckets并抹掉原有的buckets的方案，而不是在在原有buckets的基础上进行扩容？<br>减少对方法快速查找流程的影响：调用objc_msgSend时会触发方法快速查找，如果进行扩容需要做一些读写操作，对快速查找影响比较大。<br>对性能要求比较高：开辟新的buckets空间并抹掉原有buckets的消耗比在原有buckets上进行扩展更加高效<br>当扩容后，会把新mask设置为newCapacity长度减一，然后清空缓存。<br>所有散列表(哈希表)的原理都是一样的，都是通过一个函数，这个函数传入一个key，通过这个key算出一个索引，如果索引冲突了就加一或者减一，直至不冲突为止，不同的就是算法不一样。</p>
+<p>struct class_rw_t {<br>    uint32_t flags;<br>    uint32_t version;</p>
+<pre><code>const class_ro_t *ro;
+
+method_array_t methods;
+property_array_t properties; //属性，和变量的区别，属性是名称，变量是值
+protocol_array_t protocols;
+
+Class firstSubclass;
+Class nextSiblingClass;
+</code></pre>
+<p>};<br>class_rw_t结构体内有一个指向class_ro_t结构体的指针。</p>
+<p>细看两个结构体的成员变量会发现很多相同的地方，他们都存放着当前类的属性、实例变量、方法、协议等等。区别在于：class_ro_t存放的是编译期间就确定的；而class_rw_t是在runtime时才确定，它会先将class_ro_t的内容拷贝过去，然后再将当前类的分类的这些属性、方法等拷贝到其中。所以可以说class_rw_t是class_ro_t的超集，当然实际访问类的方法、属性等也都是访问的class_rw_t中的内容</p>
+<p>哈希碰撞<br>开放地址法<br>链地址法</p>
+<p>struct method_t {<br>    SEL name; //函数名<br>    const char *types; //编码（返回值类型、参数类型）<br>    IMP imp;//指向函数的指针（函数地址）<br>};</p>
+<p>instance对象的isa指向class对象<br>class对象的isa指向meta-class对象<br>meta-class对象的isa指向基类的meta-class对象</p>
+<p>发消息的步骤<br>检查target是不是nil    ObjC的特性允许对一个nil对象发消息而不会崩溃<br>通过isa，<br>对象方法查找类对象（类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找类对象的方法列表中遍历class_rw_t，从后向前的遍历<br>查找父类的类对象—-同上，直至nsobjcect<br>类方法查找元类对象（元类对象及继承链上找方法）<br>方法缓存列表，hashMap的结构，查找速度快<br>方法缓存找不到就查找元类对象的方法列表中遍历class_rw_t，从后向前的遍历</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift143%E9%93%BE%E8%A1%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2941,803 +5340,10 @@ cocoaPods的实现思路，为什么没有使用cocoaPods管理自己的SDK
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift137%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/06/M_Swift137%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">其他问题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-06 17:29:42" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:42+08:00">2020-09-06</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36747738/article/details/106537874">https://blog.csdn.net/qq_36747738/article/details/106537874</a></p>
-<h2 id="共用体方法查找"><a href="#共用体方法查找" class="headerlink" title="共用体方法查找"></a>共用体方法查找</h2><pre><code>公用体
-位运算，|，&amp;
-encding :编码
-方法缓存（散列表）
-key IMP
-seleter &amp;  _mask 就是数据在索引中位置   或者求%
-如果找到相同的key不同，就是i - 1或者+1
-</code></pre>
-<h2 id="msgSend如何查找"><a href="#msgSend如何查找" class="headerlink" title="msgSend如何查找"></a>msgSend如何查找</h2><pre><code>SEL  key;       //方法名称
-IMP imp;       //方法的实现，imp是一个函数指针类型
-msgSend
-// objc_msgSend(person, sel_registerName(&quot;test&quot;));
-search_method_list // 排序的（二分查找），线性的、填充缓存
-lookUpImpOrForward
-cache_getImp
-getMethodNoSuper_nolock
-cache_fill
-</code></pre>
-<h2 id="msgSend参数都有哪些；"><a href="#msgSend参数都有哪些；" class="headerlink" title="msgSend参数都有哪些；"></a>msgSend参数都有哪些；</h2><pre><code>第一个参数：消息接受的对象实例
-第二个参数：执行的方法
-</code></pre>
-<h2 id="class方法相关"><a href="#class方法相关" class="headerlink" title="class方法相关"></a>class方法相关</h2><pre><code>class在nsobject中实现，谁调用返回的就是谁
-isKaidof[NSObect class] 无论谁调用都分会yes
-print能调用成功是应为通过对象找到的就是 isa
-</code></pre>
-<h1 id="UI相关"><a href="#UI相关" class="headerlink" title="UI相关"></a>UI相关</h1><h2 id="tableViewCell的自适应如何实现，如何保证性能"><a href="#tableViewCell的自适应如何实现，如何保证性能" class="headerlink" title="tableViewCell的自适应如何实现，如何保证性能"></a>tableViewCell的自适应如何实现，如何保证性能</h2><pre><code>提前计算好每个cell的高度，保存在一个frameModel中，每次从frameModel中取
-</code></pre>
-<h2 id="转场动画相关操作"><a href="#转场动画相关操作" class="headerlink" title="转场动画相关操作"></a>转场动画相关操作</h2><pre><code>前面提到转场的本质是下一个场景的视图替换当前场景的视图，从当前场景过渡下一个场景。下面称即将消失的
-场景的视图为 fromView，对应的视图控制器为 fromVC，即将出现的视图为 toView，对应的视图控制器称之为 toVC。
-交互控制器(Interaction Controller)
-转场环境(Transition Context)
-转场协调器(Transition Coordinator)
-</code></pre>
-<h2 id="绘图相关知识-coreGraphics框架的使用"><a href="#绘图相关知识-coreGraphics框架的使用" class="headerlink" title="绘图相关知识(coreGraphics框架的使用)"></a>绘图相关知识(coreGraphics框架的使用)</h2><pre><code>绘图周期
-iOS在运行循环中会整合所有的绘图请求，并一次将它们绘制出来
-不能在子线程中绘制，也不能进行复杂的操作，否则会造成主线程卡顿
-视图绘制
-调用UIView的drawRect:方法进行绘制。如果调用一个视图的setNeedsDisplay方法
-，那么该视图就被标记为重新绘制，并且会在下一次绘制周期中重新绘制，自动调用drawRect:方法。
-视图布局
-调用UIView的layoutSubviews方法。如果调用一个视图的setNeedsLayout方法，
-那么该视图就被标记为需要重新布局，UIKit会自动调用layoutSubviews
-方法及其子视图的layoutSubviews方法。
-在绘图时，我们应该尽量多使用布局，少使用绘制，是因为布局使用的是GPU，而
-绘制使用的是CPU。GPU对于图形处理有优势，而CPU要处理的事情较多，且不擅长
-处理图形，所以尽量使用GPU来处理图形。
-
-绘图原理
-context：imageContext：图片上下文，
-CGPathRef / UIBezierPath图形的绘制需要绘制一个路径
-</code></pre>
-<h2 id="view的生命周期"><a href="#view的生命周期" class="headerlink" title="view的生命周期"></a>view的生命周期</h2><pre><code>1).initWithCoder
-2).awakeFromNib: 此时frameh还没有完成。
-2.手写代码：
-1.initWithCoder
-initWithFrame
-view采用懒加载的方式，只有用到view时才会被创建，即才会被调用
-loadView-&gt;viewDidLoad这一系列函数，控制器的View
-是延迟加载的: 创建控制器并不一定会创建控制器的view,等用到时再加载。
-</code></pre>
-<h2 id="系统UIView更新机制的思想"><a href="#系统UIView更新机制的思想" class="headerlink" title="系统UIView更新机制的思想"></a>系统UIView更新机制的思想</h2><pre><code>UIView提供了layoutSubViews方法来处理。
-需要注意的时layoutSubViews方法由系统来调用，不能程序员来调用。
-可以调用setNeedsLayout方法进行标记,以保证在UI下个刷屏系统中会调用layoutSubviews。
-或者layoutIfNedded直接请求系统调用layoutIfNeeded直接请求系统调用layoutSubviews。
-layoutSubViews的被调用时机:
-1.addSubView会触发layoutSubviews,比如ivewA add ViewB，
-第一次添加A和B的layoutSubviews都会被调用，而第二次( viewA 已经有了viewB)只调用viewB的。
-2.view的frame改变会触发layoutSubViews。
-3.滚动一个UIScrollView会触发layoutSubviews。
-4.旋转Screen会触发UIView的layoutSubviews。
-5.改变transform属性时，当然frame也会变。
-6.处于key window的UIView才会被调用( 程序同一时间只有一个window为keyWindow，
-可以简单理解为显示在最前面的window的keywindow)
-</code></pre>
-<h2 id="drawRect常用作用"><a href="#drawRect常用作用" class="headerlink" title="drawRect常用作用"></a>drawRect常用作用</h2><pre><code>实际需求：1、在当前画板上画图像，曲线、虚线、几何图形、写字等等。
-
-2、UITextView添加自定义placeholder的需求中，将holder的label添加在写drawRect内，设置holder字符串时调用setNeedsDisplay重绘UITextView。
-</code></pre>
-<h2 id="layoutSubView和drawRect的调用时机；"><a href="#layoutSubView和drawRect的调用时机；" class="headerlink" title="layoutSubView和drawRect的调用时机；"></a>layoutSubView和drawRect的调用时机；</h2><h2 id="用UIView实现Scrollview。"><a href="#用UIView实现Scrollview。" class="headerlink" title="用UIView实现Scrollview。"></a>用UIView实现Scrollview。</h2><pre><code>而子视图的frame正是基于父视图的坐标系，当我们更改父视图bounds中origin的
-时候子视图的位置就发生了变化，这就是实现scrollView的关键点！！！
-通过contentSize限制scrollView的内部空间，实现代码如下
-</code></pre>
-<h2 id="轮播图的实现"><a href="#轮播图的实现" class="headerlink" title="轮播图的实现"></a>轮播图的实现</h2><pre><code>基于collectionView进行的封装（推荐）
-基于scrollView的无限轮播（首尾各多创建一个展示图片的ImageView）
-同样是基于scrollView的无限轮播（总共就创建三个ImageView）
-（答定时器，标志位判断，代理方法）
-</code></pre>
-<h2 id="CGSize-intrinsicContentSize-是干什么用的？"><a href="#CGSize-intrinsicContentSize-是干什么用的？" class="headerlink" title="-(CGSize)intrinsicContentSize:是干什么用的？"></a>-(CGSize)intrinsicContentSize:是干什么用的？</h2><pre><code>属性来获取内置大小
-答：固有大小。顾名思义，在AutoLayout中，它作为UIView的属性（不是语法上的属性），
-意思就是说我知道自己的大小，如果你没有为我指定大小，我就按照这个大小来。
-</code></pre>
-<h2 id="渲染UI为什么要在主线程？"><a href="#渲染UI为什么要在主线程？" class="headerlink" title="渲染UI为什么要在主线程？"></a>渲染UI为什么要在主线程？</h2><pre><code>因为UIKit框架不是线程安全的，所以涉及多个线程同时对UI进行操作会造成什么影响、
-问题、错误，这里就不再赘述。那么，就有人会问为什么不把UIKit框架设置为线程安全呢？
-因为线程安全需要加锁，我们都知道加锁就会消耗性能，影响处理速度，影响渲染速度，
-我们通常自己在写@property时都会写nonatomic来追求高性能高效率。
-而UI又是最追求速度流畅，体验无顿挫感的，给UI加锁是不可能的，这辈子都不可能的，
-想要UI极度流畅，但线程安全又得不到保障，怎么办呢？
-</code></pre>
-<h2 id="如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？"><a href="#如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？" class="headerlink" title="如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？"></a>如果有一个controller请求了网络数据，但数据还没返回之前就pop出去了，问，数据会怎么样？</h2><pre><code>（答一般block里面回调的话，数据还是会回来的。但是，如果控制器销毁了的话，self置为nil，对nil的操作一般也是安全的，就是浪费了流量。）；
-</code></pre>
-<h2 id="scrollview与消息响应链冲突？"><a href="#scrollview与消息响应链冲突？" class="headerlink" title="scrollview与消息响应链冲突？"></a>scrollview与消息响应链冲突？</h2><pre><code>1、设置是否延时传递给内部组件
-self.delaysContentTouches = NO;
-设置返回值为YES
--(BOOL)touchesShouldCancelInContentView:(UIView *)view
-&#123;
-    [super touchesShouldCancelInContentView:view];
-    return YES;
-&#125;
-同时识别多个手势
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-自定义手势
-</code></pre>
-<h2 id="Core-Graphics的更底层的是什么；"><a href="#Core-Graphics的更底层的是什么；" class="headerlink" title="Core Graphics的更底层的是什么；"></a>Core Graphics的更底层的是什么；</h2><pre><code>　1）获取上下文
-　2）绘制路径
-　3）添加路径到上下文
-　4）修改图形状态参数
-　5）渲染上下文
-　CGContextRef、CGPathRef、UIBezierPath
-</code></pre>
-<h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><h2 id="指针和引用的区别"><a href="#指针和引用的区别" class="headerlink" title="指针和引用的区别"></a>指针和引用的区别</h2><pre><code>指针指对象的地址，引用是对象的引用计数
-指针调用和函数调用
-原因：调用函数的时候，由于runtime机制，通过方法objc_msgSend() 把函数的调用对象和方法名发送出去
-根据对象名找到对象类存储的函数函数列表MethordList,再根据方法名找到MethordList 中的函数指针method_imp，再根据函数指针调用响应函数
-</code></pre>
-<h2 id="内存泄漏的原因"><a href="#内存泄漏的原因" class="headerlink" title="内存泄漏的原因"></a>内存泄漏的原因</h2><pre><code>内存泄漏（memory leak）：是指申请的内存空间使用完毕之后未回收。
-一次内存泄露危害可以忽略，但若一直泄漏，无论有多少内存，迟早都会被占用光，
-最终导致程序crash。（因此，开发中我们要尽量避免内存泄漏的出现）
-内存溢出（out of memory）：是指程序在申请内存时，没有足够的内存空间供其使用。
-通俗理解就是内存不够用了，通常在运行大型应用或游戏时，应用或游戏所需要
-的内存远远超出了你主机内安装的内存所承受大小，就叫内存溢出。最终导致机器重启或者程序crash。
-第一种：静态分析方法（Analyze）
-第二种：动态分析方法（Instrument工具库里的Leaks）。一般推荐使用第二种。
-</code></pre>
-<h2 id="什么是虚拟内存、共享内存、物理内存"><a href="#什么是虚拟内存、共享内存、物理内存" class="headerlink" title="什么是虚拟内存、共享内存、物理内存"></a>什么是虚拟内存、共享内存、物理内存</h2><pre><code>物理内存就是实打实的存放数据的硬件，
-虚拟内存是在物理内存上的一层与具体硬件无关的抽象
-共享内存：进程在运行过程中，会加载许多操作系统的动态库，比如 libc.so、libld.so等。
-这些库对于每个进程而言都是公用的，它们在内存中实际只会加载一份，这部分称为共享内存。
-</code></pre>
-<h2 id="举例一些I-O操作的例子"><a href="#举例一些I-O操作的例子" class="headerlink" title="举例一些I/O操作的例子"></a>举例一些I/O操作的例子</h2><pre><code>1）阻塞IO
-2）非阻塞IO
-3）IO复用（select和poll）
-4）信号驱动IO（sigio）
-5）异步IO（aio_）
-</code></pre>
-<h2 id="如何开辟一块内存；"><a href="#如何开辟一块内存；" class="headerlink" title="如何开辟一块内存；"></a>如何开辟一块内存；</h2><pre><code>其实结论就是 实际分配内存是按照16字节对齐的 内存大小都是16 的倍数。
-</code></pre>
-<h2 id="什么时候深复制，什么时候浅复制；"><a href="#什么时候深复制，什么时候浅复制；" class="headerlink" title="什么时候深复制，什么时候浅复制；"></a>什么时候深复制，什么时候浅复制；</h2><pre><code>string 是拷贝的（指针）
-copy是内容的复制。
-不可变对象用浅复制。
-可变对象用深复制
-自定义对象的copy我们要实现NSCoding协议
-</code></pre>
-<h2 id="怎么控制内存和优化内存；如果是你考虑怎么优化内存-从什么地方着手"><a href="#怎么控制内存和优化内存；如果是你考虑怎么优化内存-从什么地方着手" class="headerlink" title="怎么控制内存和优化内存；如果是你考虑怎么优化内存,从什么地方着手"></a>怎么控制内存和优化内存；如果是你考虑怎么优化内存,从什么地方着手</h2><pre><code>（答 检查是否有野指针,检查是否有循环引用,优化数组存取等）；
-复用机制
-少使用xib
-不要阻塞线程
-图片优化
-合理使用数组字典优化查找速度
-懒加载
-缓存
-一些objects的初始化很慢，比如NSDateFormatter和NSCalendar。可以用单例来处理，避免日期格式转换
-选择正确的数据格式，json、xml、二进制数据流
-少使用webView
-优化tableView
-选择正确的数据持久化
-</code></pre>
-<h2 id="问堆和栈的区别。"><a href="#问堆和栈的区别。" class="headerlink" title="问堆和栈的区别。"></a>问堆和栈的区别。</h2><pre><code>（答对于栈来讲，是由编译器自动管理，无需我们手工控制；对于堆来说，释放工作由程序员控制，容易产生memory leak。）
-</code></pre>
-<h2 id="Block的创建，何时被释放。"><a href="#Block的创建，何时被释放。" class="headerlink" title="Block的创建，何时被释放。"></a>Block的创建，何时被释放。</h2><pre><code>（答Block在栈区创建，用copy从栈区拷贝到堆区保证安全，由系统回收，何时回收）；
-如果没有其他对象强引用，block执行完毕就会被释
-</code></pre>
-<h2 id="dynamic的应用场景？"><a href="#dynamic的应用场景？" class="headerlink" title="@dynamic的应用场景？"></a>@dynamic的应用场景？</h2><pre><code>@dynamic 就是要来告诉编译器，代码中用@dynamic修饰的属性，其getter和setter方法会
-在程序运行的时候或者用其他方式动态绑定，以便让编译器通过编译。其主要的作用就是
-用在NSManageObject对象的属性声明上，由于此类对象的属性一般是从Core Data
-的属性中生成的，Core Data框架会在程序运行的时候为此类属性生成getter和Setter方法。
-</code></pre>
-<h2 id="问题：-property-copy-NSMutableArray-array"><a href="#问题：-property-copy-NSMutableArray-array" class="headerlink" title="问题：@property (copy) NSMutableArray *array;"></a>问题：@property (copy) NSMutableArray *array;</h2><pre><code>答1、添加,删除,修改数组内的元素的时候,程序会因为找不到对应的方法而崩
-溃.因为copy就是复制一个不可变NSArray的对象；
-2、使用了atomic属性会影响性能。
-</code></pre>
-<h1 id="OC语言相关"><a href="#OC语言相关" class="headerlink" title="OC语言相关"></a>OC语言相关</h1><h2 id="blcok，NSNotification，delegate，Observer比较"><a href="#blcok，NSNotification，delegate，Observer比较" class="headerlink" title="blcok，NSNotification，delegate，Observer比较"></a>blcok，NSNotification，delegate，Observer比较</h2><pre><code>代理是一种回调机制，且是一对一的关系，通知是一对多的关系，一个对向所有的观察者提供变更通知；
-效率：Delegate比NSNOtification高；
-Delegate和Block一般是一对一的通信；
-Delegate需要定义协议方法，代理对象实现协议方法，并且需要建立代理关系才可以实现通信；
-Block：Block更加简洁，不需要定义繁琐的协议方法，但通信事件比较多的话，建议使用Delegate；
-</code></pre>
-<h2 id="const-extern-static-用法区别"><a href="#const-extern-static-用法区别" class="headerlink" title="const extern static 用法区别"></a>const extern static 用法区别</h2><pre><code>只要使用static修改局部变量之后, 当执行到定义局部变量的代码就会
-分配存储空间, 但是只有程序结束才会释放该存储空间
-extern：此变量/函数是在别处定义的，要在此处引用
-</code></pre>
-<h2 id="写一个宏定义函数，实现返回三个数中最大的"><a href="#写一个宏定义函数，实现返回三个数中最大的" class="headerlink" title="写一个宏定义函数，实现返回三个数中最大的"></a>写一个宏定义函数，实现返回三个数中最大的</h2><pre><code>#define MAX(a,b,c) (a&gt;b?(a&gt;c?a:c):(b&gt;c?b:c))
-</code></pre>
-<h2 id="static和extern的访问范围，用extern的情况下什么时候程序会报错"><a href="#static和extern的访问范围，用extern的情况下什么时候程序会报错" class="headerlink" title="static和extern的访问范围，用extern的情况下什么时候程序会报错"></a>static和extern的访问范围，用extern的情况下什么时候程序会报错</h2><pre><code>静态变量用static修饰，其目的是声明一个变量只能被此文件里的函数享有。因而它的主要工作就是防止变量被外部函数使用
-extern存储类型的目的却是允许几个源文件可以共享同一个变量
-编译器当然不会答应他俩修饰同一个变量。
-</code></pre>
-<h2 id="inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？"><a href="#inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？" class="headerlink" title="inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？"></a>inline知道吗？说说它的作用。inline在什么时候展开、编译还是运行？</h2><pre><code>避免了频繁调用函数对栈内存重复开辟所带来的消耗
-inline函数仅仅是一个对编译器的建议，所以最后能否真正内联，看编译器的意思，
-它如果认为函数不复杂，能在调用点展开，就会真正内联，并不是说声明了内联就会内联，声明内联只是一个建议而已。
-</code></pre>
-<h2 id="OC里的基本数据类型如数组字典等的数据结构是怎样的；"><a href="#OC里的基本数据类型如数组字典等的数据结构是怎样的；" class="headerlink" title="OC里的基本数据类型如数组字典等的数据结构是怎样的；"></a>OC里的基本数据类型如数组字典等的数据结构是怎样的；</h2><pre><code>数组字典都是使用工厂方法创建的，根据不同数据，生成类不同
-字典本质上是一个hash表，根据字典的key进行哈希取位置
-开放定址法的结构通常允许在通列表的数量达到了某个阈值，通常是通列表长度的80%使用量
-时，对通列表进行一次扩充grow，然后重新计算数据的keyHash放入新桶中
-但是不断扩容的空间就是其弊端，因此开放地址法最好存储的是临时需要，尽快释放的资源
-例如字典参数和associated object，拉链法就保证了资源的可控性，像这种@synchronized
-锁就可以根据地址拉链出一条对应的使用线程即可，随时使用。
-正如你会猜测的，__NSArrayM 用了环形缓冲区 (circular buffer)。这个数据结构相当简单，
-只是比常规数组或缓冲区复杂点。环形缓冲区的内容能在到达任意一端时绕向另一端。
-环形缓冲区有一些非常酷的属性。尤其是，除非缓冲区满了，否则在任意一端插入
-或删除均不会要求移动任何内存。我们来分析这个类如何充分利用环形缓冲区来使得自身比 C
-数组强大得多。在任意一端插入或者删除，只是修改offset参数，不需要移动内存，我们访问的时
-候只是不和普通的数组一样index多少就是多少，这里会计算加上offset之后处理的值取数据，而不
-是插入头和尾巴的时候，环形结构会根据最少移动内存指针的方式插入，例如要在A和B之间插入，按照
-C的数组，我们需要把B到E的元素移动内存，但是环形缓冲区的设计，我们只要把A的值向前移动一
-个单位内存，即可，同时修改offset偏移量，就能保证最小的移动单元来完成中间插入
-可以看到插入头尾只是修改offset指针而已，如果插入数据到达阀值，一样需要扩容。
-往中部插入对象有非常相似的结果。合理的解释就是，__NSArrayM 试着去最
-小化内存的移动，因此会移动最少的一边元素。
-</code></pre>
-<h2 id="sychronized实现原理"><a href="#sychronized实现原理" class="headerlink" title="sychronized实现原理"></a>sychronized实现原理</h2><pre><code>你调用 sychronized 的每个对象，Objective-C runtime 都会为其分配一个递归锁并存储在哈希表中。
-如果在 sychronized 内部对象被释放或被设为 nil 看起来都 OK。不过这没在文档中说明，所以我不会再生产代码中依赖这条。
-注意不要向你的 sychronized block 传入 nil！这将会从代码中移走线程安全。
-你可以通过在 objc_sync_nil 上加断点来查看是否发生了这样的事情。
-</code></pre>
-<h2 id="问NSTimer的底层实现原理"><a href="#问NSTimer的底层实现原理" class="headerlink" title="问NSTimer的底层实现原理"></a>问NSTimer的底层实现原理</h2><pre><code>NSTimer可以选择是否重复执行，为了保证NSTimer调用的方法中传递的
-对象生命周期，NSTimer会对外界传递的对象进行一次retain。
-进行invalidate，NSTimer才会消失，这时Object对象也就会释放了
-NSTimer会默认为我们添加到Runloop的NSDefaultRunLoopMode中，而
-且由于是在主线程中，所以Runloop是开启的，不需要我们手动打开
-</code></pre>
-<h2 id="block中为什么要用Strong类型的引用来保持self；"><a href="#block中为什么要用Strong类型的引用来保持self；" class="headerlink" title="block中为什么要用Strong类型的引用来保持self；"></a>block中为什么要用Strong类型的引用来保持self；</h2><pre><code>确保strongSelf在block中不会被释放。
-</code></pre>
-<h2 id="问-ifdef-cplusplus-extern-“C-“"><a href="#问-ifdef-cplusplus-extern-“C-“" class="headerlink" title="问#ifdef __cplusplus extern “C “"></a>问#ifdef __cplusplus extern “C “</h2><pre><code>&#123; #endif………… …………#ifdef __cplusplus &#125; #endif这段代码为什么总是会出现
-答：编译器判断是否支持c++，涉及到c++命名问题，如果是c++编译器，要加上extern &quot;C&quot;
-</code></pre>
-<h2 id="说下ASCII和unicode的区别utf-8的优势"><a href="#说下ASCII和unicode的区别utf-8的优势" class="headerlink" title="说下ASCII和unicode的区别utf-8的优势"></a>说下ASCII和unicode的区别utf-8的优势</h2><pre><code>ASCII 码一共规定了128个字符的编码
-Unicode 当然是一个很大的集合，现在的规模可以容纳100多万个符号
-UTF-8 最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节
-表示一个符号，根据不同的符号而变化字节长度。
-</code></pre>
-<h2 id="iOS-launchwith-options-返回no有什么作用；"><a href="#iOS-launchwith-options-返回no有什么作用；" class="headerlink" title="iOS launchwith options 返回no有什么作用；"></a>iOS launchwith options 返回no有什么作用；</h2><pre><code> application:openURL:options: 方法是否执行
- 当 return YES 时执行，return NO 时不执行
-</code></pre>
-<h1 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h1><h2 id="CommonMode的特性"><a href="#CommonMode的特性" class="headerlink" title="CommonMode的特性"></a>CommonMode的特性</h2><pre><code>1. 首先runloop对象到自己的common modes里面拿出被标记的运行模式commonModes.
-2. 匹配commonModes和modes-&gt;model-&gt;name.
-3. 匹配成功的模式，将timer加入到对应model-&gt;timers里面.
-4. source, observer同timer.
-</code></pre>
-<h2 id="runloop与autoreleasepool的关系"><a href="#runloop与autoreleasepool的关系" class="headerlink" title="runloop与autoreleasepool的关系"></a>runloop与autoreleasepool的关系</h2><pre><code>(AutoreleasePool并没有单独的结构，而是由若干个AutoreleasePoolPage以双向链表的形式组成)
-AutoreleasePoolPage每个对象会开辟4096字节内存（也就是虚拟内存一页的大小），
-除了上面的实例变量所占空间，剩下的空间全部用来储存autorelease对象的地址
-iOS里的TaggedPointer不适用autorelesepool
-AutoreleasePool 在 runloop 在开始时被push，在runloop休眠时(beforewaiting状态)pop
-</code></pre>
-<h2 id="GCD-在Runloop中的使用"><a href="#GCD-在Runloop中的使用" class="headerlink" title="GCD 在Runloop中的使用"></a>GCD 在Runloop中的使用</h2><pre><code>GCD由 子线程 返回到 主线程,只有在这种情况下才会触发 RunLoop。会触发 RunLoop 的 Source 1 事件。
-</code></pre>
-<h2 id="GCD-Global队列创建线程进行耗时操作的风险"><a href="#GCD-Global队列创建线程进行耗时操作的风险" class="headerlink" title="GCD Global队列创建线程进行耗时操作的风险"></a>GCD Global队列创建线程进行耗时操作的风险</h2><pre><code>dispatch_async 函数分发到全局队列不一定会新建线程执行任务，全局队列底层有一个的线程池，如果线程池满了，
-那么后续的任务会被 block 住，等待前面的任务执行完成，才会继续执行。如果线程池中的线程
-长时间不结束，后续堆积的任务会越来越多，此时就会存在 APP crash的风险。
-避免使用 GCD Global 队列创建 Runloop 常驻线程
-</code></pre>
-<h2 id="CADispalyTimer和Timer哪个更精确"><a href="#CADispalyTimer和Timer哪个更精确" class="headerlink" title="CADispalyTimer和Timer哪个更精确"></a>CADispalyTimer和Timer哪个更精确</h2><pre><code>CADisplayLink 更精确
-iOS设备的屏幕刷新频率是固定的，CADisplayLink在正常情况下会在每次刷新结束都被调用，精确度相当高。
-CADisplayLink使用场合相对专一，适合做UI的不停重绘，比如自定义动画引擎或者视
-频播放的渲染。NSTimer的使用范围要广泛的多，各种需要单次或者循环定时处理的任务都可
-以使用。在UI相关的动画或者显示内容使用 CADisplayLink比起用NSTimer的
-好处就是我们不需要在格外关心屏幕的刷新
-频率了，因为它本身就是跟屏幕刷新同步的。
-</code></pre>
-<h2 id="怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作"><a href="#怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作" class="headerlink" title="怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作"></a>怎样保证子线程数据回来更新UI的时候不打断用户的滑动操作</h2><pre><code>我们就可以将更新UI事件放在主线程的NSDefaultRunLoopMode上执行即可，这样
-就会等用户不再滑动页面，主线程RunLoop由UITrackingRunLoopMode切
-换到NSDefaultRunLoopMode时再去更新UI
-</code></pre>
-<h2 id="分析线程同步串行、同步并行、异步串行、异步并行问题"><a href="#分析线程同步串行、同步并行、异步串行、异步并行问题" class="headerlink" title="分析线程同步串行、同步并行、异步串行、异步并行问题"></a>分析线程同步串行、同步并行、异步串行、异步并行问题</h2><h2 id="GCD执行原理、问题分析"><a href="#GCD执行原理、问题分析" class="headerlink" title="GCD执行原理、问题分析"></a>GCD执行原理、问题分析</h2><pre><code>GCD底层有一个线程池，这个线程池存放的是一个个的线程，这个线程池中
-的线程可以重用，当一段时间这个线程没有被调用就会被销毁，
-开辟多少线程不是由同步异步决定的而是底层线程池决定的，线程池是系统维护，
-</code></pre>
-<h2 id="dispatch-once如何实现一次性代码"><a href="#dispatch-once如何实现一次性代码" class="headerlink" title="dispatch_once如何实现一次性代码"></a>dispatch_once如何实现一次性代码</h2><pre><code>定义一个dispatch_once_t(其实也就是整型)静态变量，
-意义：作为标识下面dispatch_once的block是否已执行过。
- static修饰会默认将其初始化为0，当值为0时才会执行block。
- 当block执行完成，底层会将onceToken设置为1，这也就是为什
- 么要传onceToken的地址（static修饰的变量可以通过地址修改
- onceToken的值），同时底层会加锁来保证这个方法是线程安全的
-</code></pre>
-<h2 id="NSOperation数据结构"><a href="#NSOperation数据结构" class="headerlink" title="NSOperation数据结构"></a>NSOperation数据结构</h2><pre><code>addDependency操作依赖性
-KVO 兼容属性
-cancelAllOperations 响应取消命令
-start;执行操作
-NSBlockOperation：用于管理一个或多个block的并发执行。
-NSInvocationOperation：NSInvocationOperation类是NSOperation的一个具体
-子类，用于开启一个操作，该操作包括在指定对象上调用一个selector。
-</code></pre>
-<h2 id="重写NSOperation需要注意的点"><a href="#重写NSOperation需要注意的点" class="headerlink" title="重写NSOperation需要注意的点"></a>重写NSOperation需要注意的点</h2><pre><code>1、如果需要自定义并发执行的 Operation，必须重写start、main、isExecuting、isFinished、isAsynchronous方法。
-2、在 operation 的 main 方法里面，必须提供 autorelease pool,因为你的 operation 完成后需要销毁。
-3、一旦你的 operation 开始了，必须通过 KVO，告诉所有的监听者，现在该operation的执行状态。
-4、调用时，如果需要并发执行 Operation，必须调用performOperation:方法，当然，也可以改为自定义其他方法或者直接在start方法添加多线程调用。
-5、对于自定义的 Operation 类，如果不需要并发执行，可以直接调用start
-</code></pre>
-<h2 id="进程中的哪些空间是线程所共有的？"><a href="#进程中的哪些空间是线程所共有的？" class="headerlink" title="进程中的哪些空间是线程所共有的？"></a>进程中的哪些空间是线程所共有的？</h2><pre><code>一个进程中的所有线程共享该进程的地址空间，但它们有各自独立的（/私有的）栈(stack)
-</code></pre>
-<h2 id="使用GCD需要注意什么；"><a href="#使用GCD需要注意什么；" class="headerlink" title="使用GCD需要注意什么；"></a>使用GCD需要注意什么；</h2><pre><code>dispatch_sync同步死锁（循环等待）
-重复的获取互斥资源引发的等待（加锁）
-开启过多线程
-线程和RunLoop，子线程不会开启runloop
-</code></pre>
-<h2 id="runloop跟runtime有没有关联"><a href="#runloop跟runtime有没有关联" class="headerlink" title="runloop跟runtime有没有关联"></a>runloop跟runtime有没有关联</h2><pre><code>个人想到的是autoreleasepool、其他的不好找
-runloop中事件源都是由运行时runtime触发
-</code></pre>
-<h2 id="CPU和GPU怎么相互合作的"><a href="#CPU和GPU怎么相互合作的" class="headerlink" title="CPU和GPU怎么相互合作的"></a>CPU和GPU怎么相互合作的</h2><pre><code>命令缓冲区包含了一个命令队列，由CPU向其中添加命令，而由GPU从中读取命令
-，添加和读取的过程是互相独立的。命令缓冲区使得CPU和GPU可以互相独立工作
-。当CPU需要渲染一些对象时，它可以向命令缓冲区中添加命令，而当GPU完成了上
-一次的渲染任务后，它就可以从命令队列中再取出一个命令并执行它。
-</code></pre>
-<h1 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h1><h2 id="HTTP请求头都有哪些内容"><a href="#HTTP请求头都有哪些内容" class="headerlink" title="HTTP请求头都有哪些内容"></a>HTTP请求头都有哪些内容</h2><pre><code>Accept: */*(客户端能接收的资源类型) 
-Accept-Language: en-us(客户端接收的语言类型) 
-Connection: Keep-Alive(维护客户端和服务端的连接关系) 
-Host: localhost:8080(连接的目标主机和端口号) 
-Referer: http://localhost/links.asp(告诉服务器我来自于哪里) 
-User-Agent: Mozilla/4.0(客户端版本号的名字) 
-Accept-Encoding: gzip, deflate(客户端能接收的压缩数据的类型) 
-If-Modified-Since: Tue, 11 Jul 2000 18:23:51 GMT(缓存时间)  
-Cookie(客户端暂存服务端的信息) 
-Date: Tue, 11 Jul 2000 18:23:51 GMT(客户端请求服务端的时间
-响应(服务端-&gt;客户端[response])
-HTTP/1.1(响应采用的协议和版本号) 200(状态码) OK(描述信息)
-Location: http://www.baidu.com(服务端需要客户端访问的页面路径) 
-Server:apache tomcat(服务端的Web服务端名)
-Content-Encoding: gzip(服务端能够发送压缩编码类型) 
-Content-Length: 80(服务端发送的压缩数据的长度) 
-Content-Language: zh-cn(服务端发送的语言类型) 
-Content-Type: text/html; charset=GB2312(服务端发送的类型及采用的编码方式)
-Last-Modified: Tue, 11 Jul 2000 18:23:51 GMT(服务端对该资源最后修改的时间)
-Refresh: 1;url=http://www.it315.org(服务端要求客户端1秒钟后，刷新，然后访问指定的页面路径)
-Content-Disposition: attachment; filename=aaa.zip(服务端要求客户端以下载文件的方式打开该文件)
-Transfer-Encoding: chunked(分块传递数据到客户端）  
-Set-Cookie:SS=Q0=5Lb_nQ; path=/search(服务端发送到客户端的暂存数据)
-Expires: -1//3种(服务端禁止客户端缓存页面数据)
-Cache-Control: no-cache(服务端禁止客户端缓存页面数据)  
-Pragma: no-cache(服务端禁止客户端缓存页面数据)   
-Connection: close(1.0)/(1.1)Keep-Alive(维护客户端和服务端的连接关系)  
-Date: Tue, 11 Jul 2000 18:23:51 GMT(服务端响应客户端的时间)
-</code></pre>
-<h2 id="哪些加密算法"><a href="#哪些加密算法" class="headerlink" title="哪些加密算法"></a>哪些加密算法</h2><pre><code>MD5加密算法
-RSA加密算法
-AES加密算法
-Base64加密算法
-</code></pre>
-<h2 id="TCP和UDP各自使用场景"><a href="#TCP和UDP各自使用场景" class="headerlink" title="TCP和UDP各自使用场景"></a>TCP和UDP各自使用场景</h2><pre><code>TCP应用场景：
-效率要求相对低，但对准确性要求相对高的场景。因为传输中需要对数据确认
-、重发、排序等操作，相比之下效率没有UDP高。举几个例子：文件传输
-（准确高要求高、但是速度可以相对慢）、接受邮件、远程登录。
-UDP应用场景：
-效率要求相对高，对准确性要求相对低的场景。举几个例子：QQ聊天、
-在线视频、网络语音电话（即时通讯，速度要求高，但是出现偶尔断续不是太大问题
-，并且此处完全不可以使用重发机制）、广播通信（广播、多播）。
-</code></pre>
-<h2 id="http为什么底层是tcp不是udp"><a href="#http为什么底层是tcp不是udp" class="headerlink" title="http为什么底层是tcp不是udp ?"></a>http为什么底层是tcp不是udp ?</h2><pre><code>tcp协议比udp更安全（结合tcp的特点讲）
-</code></pre>
-<h2 id="socket异常断开时，设计一个合理的重连机制。"><a href="#socket异常断开时，设计一个合理的重连机制。" class="headerlink" title="socket异常断开时，设计一个合理的重连机制。"></a>socket异常断开时，设计一个合理的重连机制。</h2><pre><code>当与服务器断开连接或网络出错时，先不要处理当前正在连接的socket，可能回应下当前UI的数据显示问题；
-可以另起一个socket服务，与服务器尝试连接，当连接成功时，通知当前Socket进行重新连接
-每六秒连接一次如果30秒仍未连接上则通知UI掉线，之后仍然继续连接，知道连接上为止
-</code></pre>
-<h2 id="有了mac地址为什么要有ip地址"><a href="#有了mac地址为什么要有ip地址" class="headerlink" title="有了mac地址为什么要有ip地址"></a>有了mac地址为什么要有ip地址</h2><pre><code>mac地址与我们的设备进行绑定，就能确定我们身份。其实MAC地址，并不能算是地址，更应该算是一个身份证，用来表明身份。
-只拥有MAC地址的话，只有在同一网络区域内，才能进行数据传输，不能跨网络区域。
-如果想跨网络区域进行数据传递，最现实的方法就是借助ISP提供的网络区域。
-ISP能提供全球互联的网络——因特网，借助因特网可以传输数据给连接因特网上的机器。
-</code></pre>
-<h2 id="断点续传怎么实现"><a href="#断点续传怎么实现" class="headerlink" title="断点续传怎么实现;"></a>断点续传怎么实现;</h2><pre><code>续传的文件就好说了，只要给一个续传的标识位置，和对应的字节流就可以了，代码如下:
-filePath:生成的文件,用来续传用
-content:将要写入的字节
-position:续传的字节位置
-</code></pre>
-<h2 id="大型文件怎么下载并保存到本地；"><a href="#大型文件怎么下载并保存到本地；" class="headerlink" title="大型文件怎么下载并保存到本地；"></a>大型文件怎么下载并保存到本地；</h2><pre><code>大型文件压缩、分割成小份文件
-</code></pre>
-<h2 id="xml和json的区别"><a href="#xml和json的区别" class="headerlink" title="xml和json的区别"></a>xml和json的区别</h2><pre><code>1，xml是重量级的，json是轻量级的。
-2，xml在传输过程中比较占带宽，json占带宽少，易于压缩。
-3，xml和json都用在项目交互下，xml多用于做配置文件，json用于数据交互。
-4，json可用jackson，gson等方法解析，xml可用dom，sax，demo4j等方式解析。
-</code></pre>
-<h2 id="加密解密的技术讲解。"><a href="#加密解密的技术讲解。" class="headerlink" title="加密解密的技术讲解。"></a>加密解密的技术讲解。</h2><pre><code>（密解密就是是base64加密、POST加密、MD5加密、时间戳密码等等）
-</code></pre>
-<h2 id="reachability如何检测到网络状态变化？"><a href="#reachability如何检测到网络状态变化？" class="headerlink" title="reachability如何检测到网络状态变化？"></a>reachability如何检测到网络状态变化？</h2><pre><code>Reachability 是苹果官方提供的示例源码，它是对 SystemConfiguration.framework 
-模块中的 SCNetworkReachability.h 头文件里提供的一系列网络连接状态相关的 C 函数进行简单封装
-Reachability 中提供了三个快速初始化方法，分别为
-reachabilityWithHostName:、reachabilityWithAddress: 和 reachabilityForInternetConnection。
-通过上述初始化方法获得一个 Reachability 对象后，可调用 startNotifier 方法开始进行网络状态变化的监听
-</code></pre>
-<h2 id="IP-地址用-int-保存和读取转化"><a href="#IP-地址用-int-保存和读取转化" class="headerlink" title="IP 地址用 int 保存和读取转化"></a>IP 地址用 int 保存和读取转化</h2><pre><code>/**
-     * 根据位运算把 byte[] -&gt; int
-     * @param bytes
-     * @return int
-     */
-    public static int bytesToInt(byte[] bytes) &#123;
-        int addr = bytes[3] &amp; 0xFF;
-        addr |= ((bytes[2] &lt;&lt; 8) &amp; 0xFF00);
-        addr |= ((bytes[1] &lt;&lt; 16) &amp; 0xFF0000);
-        addr |= ((bytes[0] &lt;&lt; 24) &amp; 0xFF000000);
-        return addr;
-    &#125;
-</code></pre>
-<h1 id="开发相关"><a href="#开发相关" class="headerlink" title="开发相关"></a>开发相关</h1><h2 id="instruments它为什么能检测内存泄漏"><a href="#instruments它为什么能检测内存泄漏" class="headerlink" title="instruments它为什么能检测内存泄漏"></a>instruments它为什么能检测内存泄漏</h2><pre><code>Activity Monitor（活动监视器）：监控进程的CPU,内存,磁盘，网络使用情况 是程序在手机运行真正占用的内存大小
-Cocoa Layout 观察NSLayoutConstraint对象的改变，帮助我们判断什么时间什么地点的constraint是否合理
-Energy Log  耗电量监控
-Leaks（泄漏）：一般的措施内存使用情况，检查泄漏的内存，并提供了所有活动的分
-配和泄漏模块的类对象分配统计信息以及内存地址历史记录；
-Core Animation（图形性能）这个模块显示程序显卡性能以及CPU使用情况
-Network 用链接工具分析你的程序如何使用TCP/IP和UDP/IP链接
-</code></pre>
-<h2 id="推送的原理"><a href="#推送的原理" class="headerlink" title="推送的原理"></a>推送的原理</h2><pre><code>1.由App向iOS设备发送一个注册通知，用户需要同意系统发送推送。
-2.iOS向APNs远程推送服务器发送App的Bundle Id和设备的UDID。
-3.APNs根据设备的UDID和App的Bundle Id生成deviceToken再发回给App。
-4.App再将deviceToken发送给远程推送服务器(自己的服务器), 由服务器保存在数据库中。
-5.当自己的服务器想发送推送时, 在远程推送服务器中输入要发送的消息并选择发给哪些用户的deviceToken，由远程推送服务器发送给APNs。
-6.APNs根据deviceToken发送给对应的用户。
-</code></pre>
-<h2 id="项目上线被拒原因"><a href="#项目上线被拒原因" class="headerlink" title="项目上线被拒原因"></a>项目上线被拒原因</h2><pre><code>设计类型的问题，图标、UI等
-app类型设置不准确
-第三方资源用到广告等资源
-</code></pre>
-<h2 id="项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线"><a href="#项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线" class="headerlink" title="项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线"></a>项目中遇到的问题，项目的框架搭建，模块分布，设计类图，开发，自测，上线</h2><pre><code>加载大图，内存崩溃
-时间戳问题
-复杂页面的设计
-页面之间交互
-</code></pre>
-<h2 id="iPhone自带的AssistiveTouch你如何实现"><a href="#iPhone自带的AssistiveTouch你如何实现" class="headerlink" title="iPhone自带的AssistiveTouch你如何实现"></a>iPhone自带的AssistiveTouch你如何实现</h2><pre><code>UIWindow进行实现；
-层级UIWindowLevelAlert + 1
-</code></pre>
-<h2 id="有了解过代码如何编译的嘛"><a href="#有了解过代码如何编译的嘛" class="headerlink" title="有了解过代码如何编译的嘛"></a>有了解过代码如何编译的嘛</h2><pre><code>LLVM编译一个源文件的过程：预处理 -&gt; 词法分析 -&gt; Token -&gt; 语法分析 -&gt; 
-AST -&gt; 代码生成 -&gt; LLVM IR -&gt; 优化 -&gt; 生成汇编代码 -&gt; Link -&gt; 目标文件
-</code></pre>
-<h2 id="编译好的目标文件有data-和text段他们两者有啥区别"><a href="#编译好的目标文件有data-和text段他们两者有啥区别" class="headerlink" title="编译好的目标文件有data 和text段他们两者有啥区别"></a>编译好的目标文件有data 和text段他们两者有啥区别</h2><pre><code>text段: 用于存放程序代码的区域， 编译时确定， 只读。
-data段 :用于存放在编译阶段(而非运行时)就能确定的数据，可读可写。也是通常
-所说的静态存储区，赋了初值的全局变量、常量和静态变量都存放在这个域。
-</code></pre>
-<h2 id="appstore上架流程"><a href="#appstore上架流程" class="headerlink" title="appstore上架流程"></a>appstore上架流程</h2><pre><code>1.申请开发者账号
-2.创建开发者证书
-3.创建项目app id
-4.添加测试设备
-5.生成描述文件
-6.itnues connect创建项目
-7.上传app
-8.提交以供审核
-</code></pre>
-<h2 id="一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ"><a href="#一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ" class="headerlink" title="一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ;"></a>一个APP如何检测手机中另一个APP的存在？解释原理？例如QQ;</h2><pre><code>微信自己添加应用白名单，自己app通过k能否打开微信定义的url来判断用户是否安装
-</code></pre>
-<h2 id="针对线上版本的崩溃处理；"><a href="#针对线上版本的崩溃处理；" class="headerlink" title="针对线上版本的崩溃处理；"></a>针对线上版本的崩溃处理；</h2><pre><code>UIKit不是线程安全的，执行UIKit操作如果不在主线程很可能造成程序Crash
-KVO
-避免 Foundation 类Carsh
-容器越界（NSArray， NSDictionary,...）
-unrecognized selector crash (这个很多时候是由于class使用错误导致)
-第三方工具：友盟
-dSYMTools分析
-</code></pre>
-<h2 id="Xcode构建过程；"><a href="#Xcode构建过程；" class="headerlink" title="Xcode构建过程；"></a>Xcode构建过程；</h2><pre><code>解析项目文件，获取你项目中的所有文件、target 及其依赖关系、build settings，最后把它变成一个树形结构(有向图)。
-增量构建。
-</code></pre>
-<h2 id="js和Oc交互以及区别；"><a href="#js和Oc交互以及区别；" class="headerlink" title="js和Oc交互以及区别；"></a>js和Oc交互以及区别；</h2><pre><code>js调用oc、oc调用js、通过javaSpritCore实现，JavascriptBridge
-</code></pre>
-<h2 id="pod-install和pod-update有什么区别？"><a href="#pod-install和pod-update有什么区别？" class="headerlink" title="pod install和pod update有什么区别？"></a>pod install和pod update有什么区别？</h2><pre><code>pod install:执行该命令时，如果Podfile.lock文件存在, 则
-直接从此文件中读取框架信息并且它会只下载Podfile.lock
-文件中指定的版本安装。对于不在Podfile.lock文件中的pod库，pod
-install命令会搜索这个pod库在Podfile文件中指定的版本来安装
-pod update:只有当你想要更新pod库的版本时才使用pod update；它
-不管Podfile.lock是否存在, 都会读取Podfile文件的的框架信息去下载安装
-，下载好之后, 再根据下载好的框架信息, 生成Podfile.lock文件
-</code></pre>
-<h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><h2 id="为什么要做组件化"><a href="#为什么要做组件化" class="headerlink" title="为什么要做组件化"></a>为什么要做组件化</h2><pre><code>随着app业务发展过程中体积越来越大，堆叠大量的业务逻辑，不同业务之间相互调用，相互嵌套
-代码之间的耦合性越来越高，不方便维护
-</code></pre>
-<h2 id="你认为组件化的一些收益"><a href="#你认为组件化的一些收益" class="headerlink" title="你认为组件化的一些收益"></a>你认为组件化的一些收益</h2><pre><code>解耦合
-分工更加明确，提高开发效率
-复用性更好，能迅速的组成更多的App
-</code></pre>
-<h2 id="redux-单向数据流是怎么产生的-描述下"><a href="#redux-单向数据流是怎么产生的-描述下" class="headerlink" title="redux 单向数据流是怎么产生的 描述下"></a>redux 单向数据流是怎么产生的 描述下</h2><h2 id="Charts框架底层实现；"><a href="#Charts框架底层实现；" class="headerlink" title="Charts框架底层实现；"></a>Charts框架底层实现；</h2><pre><code>通过CoreGraphics绘制的，数据模型。不如js方便美观
-</code></pre>
-<h2 id="画出项目的结构图。"><a href="#画出项目的结构图。" class="headerlink" title="画出项目的结构图。"></a>画出项目的结构图。</h2><pre><code>Fundation 基础资源（配置信息、基础分类、宏、工具集合）
-Map 地图资源（地图单例对象）
-Navi 导航资源 （导航页面控制器相关全部）
-Net 网络资源 （业务层对应的网络、测试网、线网、版本）
-Lib 图片、第三方资源 
-App 业务层 （主页、我的、poi、路线规划）
-</code></pre>
-<h2 id="yyModel的逻辑"><a href="#yyModel的逻辑" class="headerlink" title="yyModel的逻辑"></a>yyModel的逻辑</h2><pre><code>（YYModel的核心是通过runtime获取结构体中得Ivars的值，
-将此值定义为key,然后给key赋value值，所以我们需要自己遍历容器
-（NSArray，NSSet，NSDictionary），获取每一个值，然后KVC进行处理）。
-</code></pre>
-<h2 id="解耦的方式"><a href="#解耦的方式" class="headerlink" title="解耦的方式"></a>解耦的方式</h2><pre><code>1、组件化
-2、结合MVVM架构和数据驱动UI模式对原有MVC架构进行了兼容性优化
-3、通过AOP技术对部分业务进行拆分解耦
-4、优化事件传递方式
-</code></pre>
-<h2 id="项目中用的技术以及实现；"><a href="#项目中用的技术以及实现；" class="headerlink" title="项目中用的技术以及实现；"></a>项目中用的技术以及实现；</h2><pre><code>1.复杂cell提前缓存行高和UI的frame
-2.网络请求库的封装
-3.组建化简单实现
-4.tableView嵌套滑动
-5.地图对象的单例封装
-6.用View代替ViewController的实现
-7.定时器使用
-</code></pre>
-<h2 id="就是项目中遇到的问题以及解决方式；"><a href="#就是项目中遇到的问题以及解决方式；" class="headerlink" title="就是项目中遇到的问题以及解决方式；"></a>就是项目中遇到的问题以及解决方式；</h2><h2 id="缓存机制是怎么清除数据的？"><a href="#缓存机制是怎么清除数据的？" class="headerlink" title="缓存机制是怎么清除数据的？"></a>缓存机制是怎么清除数据的？</h2><pre><code>沙盒：iOS系统为每一个应用程序创建一个文件目录,是一个的独立,封闭,安全的空间, 一个沙盒就是一个文件目录。沙盒规定了一个程序只能在自身的沙盒中进行操作,不能去访问其他应用程序的沙盒(iOS8已经部分开放访问)
-沙盒的作用: 用来存放非代码文件(图片, 音频, 视频, 属性列表(plist), sqlite数据库, 文本文件, 其他等等)
-</code></pre>
-<h2 id="如何进行安全测试；"><a href="#如何进行安全测试；" class="headerlink" title="如何进行安全测试；"></a>如何进行安全测试；</h2><pre><code>ipa包加壳（苹果）
-敏感信息存储位置
-通讯网络安全
-代码混淆
-</code></pre>
-<h2 id="涂鸦怎么实现；"><a href="#涂鸦怎么实现；" class="headerlink" title="涂鸦怎么实现；"></a>涂鸦怎么实现；</h2><pre><code>- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-最终我们决定放弃 drawRect 而选用图层 CAShapeLayer。CAShapeLayer 不仅在功能上满足了我们的需求，对比之下 CAShapeLayer 在性能方面表现也非常出色。
-</code></pre>
-<h2 id="实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；"><a href="#实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；" class="headerlink" title="实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；"></a>实现一个项目的设计方案，比如数据库的设计，字段的设计，接口的设计；</h2><h2 id="说下生产者-消费者模型，其中的同步机制是怎么样的"><a href="#说下生产者-消费者模型，其中的同步机制是怎么样的" class="headerlink" title="说下生产者-消费者模型，其中的同步机制是怎么样的"></a>说下生产者-消费者模型，其中的同步机制是怎么样的</h2><pre><code>产生数据的模块，就形象地称为生产者；而处理数据的模块，就称为消费者。
-在生产者与消费者之间在加个缓冲区，我们形象的称之为仓库，生产
-者负责往仓库了进商品，而消费者负责从仓库里拿商品，这就构成了生产者消费者模式。
-//生产者消费者
-   dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
-   self.array = [[NSMutableArray alloc] init];
-   dispatch_queue_t queue = dispatch_queue_create(&quot;cn.chutong.www&quot;, DISPATCH_QUEUE_CONCURRENT);
-  //生产
-   dispatch_async(queue, ^&#123;
-       while (YES) &#123;
-           int count = random()%10;
-           sleep(1);
-           dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-           [self.array addObject:[NSString stringWithFormat:@&quot;%d&quot;,count]];
-           dispatch_semaphore_signal(semaphore);
-           NSLog(@&quot;生产了%d&quot;,count);
-       &#125;
-   &#125;);
-   //消费
-   dispatch_async(queue, ^&#123;
-       while (YES) &#123;
-       if (self.array.count&gt;0) &#123;
-           NSLog(@&quot;消费了%@&quot;,self.array.lastObject);
-           dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-           [self.array removeLastObject];
-           dispatch_semaphore_signal(semaphore);
-       &#125;
-           
-       &#125;
-   &#125;);
-</code></pre>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift136%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/06/M_Swift136%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">内存管理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-06 17:29:38" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:38+08:00">2020-09-06</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a target="_blank" rel="noopener" href="https://www.jishudog.com/8744/html">https://www.jishudog.com/8744/html</a><br>Tagged Pointer<br>所以我们可以将一个对象的指针拆成两部分，一部分直接保存数据，另一部分作为特殊标记，表示这是一个特别的指针，不指向任何一个地址。<br>所有类都继承自NSObject，因此每个对象都有一个isa指针指向它所属的类。在《ARM64 and You》文章中指出：在32位环境下，对象的引用计数都保存在一个外部的表中，<br>而对引用计数的增减操作都要先锁定这个表，操作完成后才解锁。这个效率是非常慢的。<br>而在64位环境下，isa也是64位，实际作为指针部分只用到的其中33位,剩余的部分会运用到Tagged Pointer的概念，其中19位将保存对象的引用计数，这样对引用计数的操作只需要原子的修改这个指针即可，<br>如果引用计数超出19位，才会将引用计数保存到外部表，而这种情况往往是很少的，因此效率将会大大提高。</p>
-<p>1.Tagged Pointer专门用来存储小的对象，例如NSNumber和NSDate<br>2.Tagged Pointer指针的值不再是地址了，而是真正的值。<br>    实际上它不再是一个对象了，它只是一个披着对象皮的普通变量而已。<br>    它的内存并不存储在堆中，也不需要malloc和free。<br>3.在内存读取上有着3倍的效率，创建时比以前快106倍。<br>4.它不单单是一个指针，还包括了其值+类型</p>
-<p>dispatch_queue_t queue = dispatch_queue_create(“queue”, DISPATCH_QUEUE_CONCURRENT);<br>   for (int i = 0; i &lt; 1000; i ++) {<br>       dispatch_async(queue, ^{<br>           self.name = [NSString stringWithFormat:@”abcdefghijklmn”];<br>       });<br>   }<br>运行结果：崩溃（坏内存访问）<br>因为setter方法中，对strong修饰的属性会有一个retain和release的操作。在并发多线程的赋值操作中，都是对_name指针进行的操作，可能在_name刚刚被release后进行赋值操作，这个时候_name指向的内存地址是已经被释放了，所以造成了坏内存访问崩溃<br>解决办法：<br>1.异步改同步<br>2.将属性改成原子性<br>3.加锁</p>
-<p>dispatch_queue_t queue = dispatch_queue_create(“queue”, DISPATCH_QUEUE_CONCURRENT);<br>for (int i = 0; i &lt; 1000; i ++) {<br>    dispatch_async(queue, ^{<br>        self.name = [NSString stringWithFormat:@”a”];<br>    });<br>}<br>为什么不崩溃了？因为没有用到引用计数的内存管理方法，使用的是TaggedPointer<br>从64bit开始，iOS引入了Tagged Pointer技术，用于优化NSNumber、NSDate、NSString等小对象存储</p>
-<p>NONPOINTER_ISA<br> NONPOINTER_ISA在64位机上，对象的isa区域不再只是一个指向另一块存储空间的指针。还包含了更多信息，比如引用计数，析构状态，被其他weak 变量引用情况等。如果引用计数超过了当前指针所能表示的范围，Runtime 会使用一张散列表来管理用计数。<br>(union)，利用联合体可以用相同的存储空间存储不同型别的数据类型，从而节省内存空间<br> ARC：由LLVM和Runtime共同协作来进行自动引用计数的。<br>   uintptr_t nonpointer : 1;</p>
-<p>         uintptr_t has_assoc : 1; // </p>
-<p>         uintptr_t has_cxx_dtor : 1;</p>
-<p>         uintptr_t shiftcls : 33; // MACH_VM_MAX_ADDRESS 0x1000000000</p>
-<p>         uintptr_t magic : 6;</p>
-<p>         uintptr_t weakly_referenced : 1;</p>
-<p>         uintptr_t deallocating : 1;</p>
-<p>         uintptr_t has_sidetable_rc : 1;</p>
-<p>         uintptr_t extra_rc : 19;</p>
-<p> SideTables包括了多个SideTable，在不同系统架构中SideTable的个数是不同的；SideTables是哈希表，可以通过一个对象的指针来找到具体的引用计数表或弱引用表在哪一个具体的SideTable中。</p>
-<p> 为什么用多个SideTable？ 如果只有一个table，意味着内存中分配的所有对象都要在一个表中操作，因为多个线程可能同时操作这个表，所以就要对这个表加锁，如果并发操作这个表的线程有成千上万个，就会产生效率问题。所以系统引入了分离锁这样一个技术方案，把大表拆成多个小表来进行操作，分别对小表加锁，从而提升效率。</p>
-<p> 自旋锁：<br>                       自旋锁：是“忙等”的锁。由于自旋时不释放CPU，因而持有自旋锁的线程应该尽快释放自旋锁，否则其他等待该自旋锁的线程会一直自旋，从而浪费CPU时间。</p>
-<p>                        自旋锁适用于那些仅需要阻塞很短时间的场景。</p>
-<p>dealloc -&gt; weak_clear_no_lock(从弱引用表中取出所有该对象的weak_entry_t对象，weak_entry_t里存放了weak_referrer_t数组，就是所有的弱引用，全部设为nil，然后再移除weak_entry_t对象)</p>
-<p>Autoreleasepool的实现原理:</p>
-<p>以栈为结点，由双向链表的形式合成的数据结构。<br>与线程一一对应。</p>
-<p>Main函数自动添加了@autoreleasepool{}; 很多次循环的内部最好自己添加@autoreleasepool{},以及时释放其内部的临时对象。<br> 在当次runloop将要结束的时候调用AutoreleasePoolPage::pop()。<br>autoreleasePoolPage 数据结构<br>可在源码中查看<br>    id *next;<br>    pthread_t const thread;<br>    AutoreleasePoolPage * const parent;<br>    AutoreleasePoolPage *child;<br>    uint32_t const depth;</p>
-<p>                        多层嵌套就是多次插入哨兵对象。</p>
-<p>                        在for循环中alloc图片数据等内存消耗较大的场景手动插入autoreleasePool。<br>AutoreleasePool 为何可以嵌套使用</p>
-<p>多层嵌套就是多次插入哨兵对象<br>,每次创建一个AutoreleasePool，@AutoreleasePool，其实系统就是为我们创建了一个哨兵对象,其实就是创建page，若果当前page没有满，其实就是创建一个哨兵，所以可以嵌套使用<br>中间用nil作为分割</p>
-<p>子线程默认不会开启 Runloop，那出现 Autorelease 对象如何处理？不手动处理会内存泄漏吗？<br>在子线程你创建了 Pool 的话，产生的 Autorelease 对象就会交给 pool 去管理。如果你没有创建 Pool ，但是产生了 Autorelease 对象，就会调用 autoreleaseNoPage 方法。在这个方法中，会自动帮你创建一个 hotpage（hotPage 可以理解为当前正在使用的 AutoreleasePoolPage，如果你还是不理解，可以先看看 Autoreleasepool 的源代码，再来看这个问题 ），并调用 page-&gt;add(obj)将对象添加到 AutoreleasePoolPage 的栈中，也就是说你不进行手动的内存管理，也不会内存泄漏啦！</p>
-<p>将对象放入自动释放池不会引起引用计数+1</p>
-<p>在for循环大量使用imageNamed:之类的方法生成UIImage对象可能是个更要命的事情，内存随时可能因为占用过多被系统杀掉。<br>这种情况下利用Autoreleasepool可以大幅度降低程序的内存占用。</p>
-<p>AutoreleasePool并没有单独的结构，而是由若干个AutoreleasePoolPage以双向链表的形式组合而成（分别对应结构中的parent指针和child指针）<br>AutoreleasePool是按线程一一对应的（结构中的thread指针指向当前线程）<br>AutoreleasePoolPage每个对象会开辟4096字节内存（也就是虚拟内存一页的大小），除了上面的实例变量所占空间，剩下的空间全部用来储存autorelease对象的地址<br>上面的id *next指针作为游标指向栈顶最新add进来的autorelease对象的下一个位置<br>一个AutoreleasePoolPage的空间被占满时，会新建一个AutoreleasePoolPage对象，连接链表，后来的autorelease对象在新的page加入</p>
-<p>1.根据传入的哨兵对象地址找到哨兵对象所处的page<br>2.在当前page中，将晚于哨兵对象插入的所有autorelease对象都发送一次- release消息，并向回移动next指针到正确位置<br>补充2：从最新加入的对象一直向前清理，可以向前跨越若干个page，直到哨兵所在的page</p>
-<p>黑魔法之Thread Local Storage</p>
-<p>Thread Local Storage（TLS）线程局部存储，目的很简单，将一块内存作为某个线程专有的存储，以key-value的形式进行读写，比如在非arm架构下，使用pthread提供的方法实现：</p>
-<p>一 、dealloc 调用流程</p>
-<p>1.首先调用 _objc_rootDealloc()</p>
-<p>2.接下来调用 rootDealloc() </p>
-<p>3. isTaggedPointer   是否是标记指针 是直接 return ;</p>
-<p>  接下来会判断是否可以被直接快速释放，判断的依据主要有 5 个，判断是否有以下五种情况</p>
-<p>nonpointer              是否优化过isa指针</p>
-<p> weakly_reference  是否存在弱引用指向</p>
-<p> has_assoc              是否设置过关联对象</p>
-<p> has_cxx_dtor         是否有cpp的析构函数（.cxx_destruct）</p>
-<p> has_sidetable_rc   引用计数器是否过大无法存储在isa中</p>
-<p>二、object_dispose() 调用流程。</p>
-<p>1.直接调用 objc_destructInstance()。</p>
-<p>2.之后调用C的 free() 函数。</p>
-<p>3.objc_destructInstance() 调用流程</p>
-<p>1&gt;.先判断 hasCxxDtor，是否有析构函数（析构器），要调用 object_cxxDestruct() ，释放（清除成员变量）。</p>
-<p>2&gt;.再判断hasAssocitatedObjects，如果有的话，要调用object_remove_associations()， 移除当前对象的关联对象。</p>
-<p>3&gt;.然后调用 clearDeallocating()。 </p>
-<p>4&gt;.执行完毕。</p>
-<p>4.clearDeallocating() 调用流程<br>0&gt;. 判断isa是否优化过，从arm64架构开始，对isa进行了优化，变成了一个共用体（union）结构，所以结果一般是优化过了。</p>
-<p>判断是否有弱引用或者引用计数</p>
-<p>1&gt;.执行 clearDeallocating_slow()。</p>
-<p>2&gt;.再执行 weak_clear_no_lock,在这一步骤中，会将指向该对象的弱引用指针置为 nil。</p>
-<p>3&gt;.接下来执行 table.refcnts.eraser()，从引用计数表中擦除该对象的引用计数。</p>
-<p>4&gt;.至此为止，Dealloc 的执行流程结束。</p>
-<p>如何破除循环引用</p>
-<p>方式1:－－打断引用链条         方式2:－－使用__weak<br>NSTimer破除循环引用<br>weak指针：<br>既然是强引用导致循环引用，那么用__weak修饰self就好了，想法是对的，但是做法是无效的。<br>中间类，block<br>及时销毁<br>创建一个继承NSProxy的子类WeakProxy，并实现消息转发的相关方法<br>多次调用对象的autorelease方法会导致什么问题?<br>答：多次将地址存到自动释放池中,导致野指针异常<br>图片加载占用内存对比</p>
-<p>使用 imageName: 加载图片：<br>加载到内存当中后，占据内存空间较大<br>相同的图片，图片不会重复加载<br>加载内存当中之后，会一直停留在内存当中，不会随着对象销毁而销毁<br>加载进去图片之后，占用的内存归系统管理，我们无法管理<br>使用 imageWithContentsOfFile: 加载图片<br>加载到内存当中后,占据内存空间较小<br>相同的图片会被重复加载内存当中<br>对象销毁的时候,加载到内存中图片会随着一起销毁<br>结论:<br>图片较小，并且使用频繁，使用 imageName: 来加载(按钮图标/主页里面图片)<br>图片较大，并且使用较少，使用 imageWithContentsOfFile: 来加载(版本新特性/相册)</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift135%E6%88%AA%E5%9B%BE%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/09/06/M_Swift135%E6%88%AA%E5%9B%BE%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">截图</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-06 17:29:33" itemprop="dateCreated datePublished" datetime="2020-09-06T17:29:33+08:00">2020-09-06</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>class = objc_class -&gt;继承 objc_object<br>objc_class 内部：superClass ; cache; clss_data_bits_t bits</p>
-<p>class_rw_t<br>    class_ro_t<br>    protocols  —&gt; lsit_array_tt 二维数组类型<br>    properties<br>    methods</p>
-<p>method_t<br>    名称 SEL<br>    返回值、参数体 const char *types;<br>    函数体 IMP<br>const char *types; type encoding<br>返回值 参数1.参数2，参数3</p>
-<p>isa指向<br>class -》 subclass -〉subclass meta<br>继承关系<br>class-&gt;superclass-&gt;nsobject<br>subclass meta -&gt; root  class meta - &gt;nsobject</p>
-<p>消息传递<br>开始-缓存是否有-当前类方法列表中是否有 - 逐级父类方法列表<br>消息转发<br>动态添加-转发类给别的类-生成方法签名-处理方法-抛出异常</p>
-<p>@dynamic<br>    动态运行时语言将函数决议推迟到运行时<br>    编译时语言在编译期进行函数决议</p>
-<p>hash查找<br>给定值时对象内存地址，目标值是数组索引<br>f(ptr) = (untntptr_t) ptr % array.count;</p>
-<p>retain实现<br>获取sidetable。<br>获取对象的引用计数<br>引用计数加一</p>
-<p>retainCount实现 （默认是1的原理）<br>获取sideTable，默认count =1；<br>获取引用计数，与上SIDE_TABLE_RC_SHIFT</p>
-<p>delloc<br>开始-》objc_root_dealloc-&gt;root_dealloc<br>判断是否能够释放<br>    是否isa优化-〉是否有弱引用-是否有关联对象-是否有c++晰构器-是否有引用计数表<br>清除c++ object_cXXDestruct<br>清除关联对象 bobject_remove_assocations()</p>
-<p>清除引用计数<br>    清除弱引用 weak_clear_no_lock<br>    清除引用计数 table.refcnts.erase<br>添加weak<br>    objc_initWeak-storeWeak-weak_register_no_lock</p>
-<p>CFRunLoop<br>    pthread<br>    currentMode<br>    modes<br>    commonModes - &gt;集合<br>    cmomonModeItems<br>CFRunLoopMode<br>    name<br>    sources0 需要手动唤醒<br>    sources1 具备自动唤醒能力<br>    observers<br>    timers</p>
-<p>runLoop - n个 model - n个 sources、timer、observer<br>三次握手<br>1.syn——–》<br>2.《——–syn，ack<br>3.ack———》<br>四次挥手<br>1.fin———〉<br>2.〈——–ack<br>3.《——–fin、ack<br>4.———ack<br>https<br>tls版本号，加密算法随机数 ——-》<br>《——商定加密算法、随机数、证书<br>客户端：验证证书<br>客户端：组装会话密钥<br>通过公钥对预主密钥进行加密—-》<br>服务端：通过私钥得到预主密钥<br>服务端：组装会话密钥<br>加密的握手消息————–〉<br>〈—————-加密的握手消息<br>UDP解析<br>12字节伪首部<br>8字节UDp首部<br>7字节数据<br>UDP复用分用<br>UDP首部有8个字节，由4个字段构成，每个字段都是两个字节，<br>1.源端口： 源端口号，需要对方回信时选用，不需要时全部置0.<br>2.目的端口：目的端口号，在终点交付报文的时候需要用到。<br>3.长度：UDP的数据报的长度（包括首部和数据）其最小值为8（只有首部）<br>4.校验和：检测UDP数据报在传输中是否有错，有错则丢弃。<br>TCP<br>无差错、不丢失、不重复、安序到达<br>超时重传、确认迟到、确认丢失<br>面向字节流<br>滑动窗口<br>发送窗口：发送缓存（最后被确认的字节-最后发送的字节）<br>接受窗口：接收缓存（下一个期望收到的字节）<br>拥塞窗口<br>慢开始-拥塞避免-拥塞堵塞（乘法减少）-慢开始—-<br>解决DNS劫持<br>httpDNS  server<br>    使用DNS协议向DNS服务器的53端口进行请求<br>    使用HTTP协议向DNS服务器的80端口进行请求<br>长连接<br>    client -长连接通道 - 长连接server — API server</p>
-<p>session<br>发送信息 ———-》 记录用户状态，生成sessionid<br>《——————返回cookie 中携带sessid<br>发送信息，携带cookie，内容是sessid—》通过识别sessid<br>图片缓存框架<br>manager<br>    内存、磁盘、网络<br>    图片解码、图片压缩、解压缩<br>淘汰策略：以队列形式，先进先出的方式淘汰<br>如果缓存文件超过 maxCacheAge 中指定的时长，就会被删除掉。<br> maxCacheSize 控制 SDImageCache 所允许的最大缓存空间<br>RN数据流思想：多叉树<br>    自顶向下遍历更新<br>    自底向上反馈<br>    包含dispatcher、stores、views、actions<br>依赖注入<br>中间层（业务A、业务B。。。。<br>AsyncDisplayKit<br>    Layout：文本计算，试图布局计算<br>    Rendering：文本渲染、图片解码、图形绘制<br>    UIKit Object：对象创建、对象调整、对象销毁</p>
-<p>AsyncDisplayKit原理<br>ASNode<br>    view<br>    node</p>
-<p>block的copy<br>在arc环境下，编译器会根据情况自动将栈上的block复制到堆上<br>如果block copy到堆上，会调用_Block_objcet_assign<br>如果block移除内部会调用dispose函数，内部会调用_Block_objcet_disponse<br>设计模式<br>创建型模式：单例、 工厂方法<br>结构模式：代理、适配器、组合、装饰<br>行为模式：命令模式、观察者模式、责任链模式<br>通知：Notification_Map<br>key:notificationName value:observer<br>浅拷贝就是内存地址的copy，让目标对象指针和源对象指向同一片内存<br>可变对象的copy和mutablecopy都是深拷贝<br>不可变对象的copy是浅c拷贝，nutableCopy是浅拷贝<br>copy方法返回的s都是不可变对象</p>
-<p>试图绘制<br>setNeedsDisplay<br>display<br>displayLayer<br>other works<br>    CGBitmapContext<br>    CoreGraphic API<br>    CGBitmapContext<br>setContents</p>
-<p>layer has delegate<br> yes：drawRect<br> no：drawInContext<br> calayer uploads backing store to GPU</p>
-<p> source0<br>    触摸事件<br>    performSelector onThread<br>source1<br>    基于port的线程间通信<br>    系统事件捕捉<br>timers<br>    nstimer<br>    performselector withObject anterDelay<br>Observers<br>    用于监听RunLoop的状态<br>    UI刷新（beforeWaiting）</p>
-<p>耗电量优化<br>    尽量减少CPU、GPU功耗<br>    少用定时器<br>    优化IO操作<br>    网络优化<br>    减少压缩网络数据</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/18/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/20/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/18/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/20/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -3803,7 +5409,7 @@ App 业务层 （主页、我的、poi、路线规划）
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-count">403</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -3831,7 +5437,7 @@ App 业务层 （主页、我的、poi、路线规划）
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

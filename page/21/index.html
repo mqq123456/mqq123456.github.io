@@ -148,6 +148,511 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/06/M_Swift126UI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/06/M_Swift126UI/" class="post-title-link" itemprop="url">UI</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-06 17:26:04" itemprop="dateCreated datePublished" datetime="2020-09-06T17:26:04+08:00">2020-09-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>程序绘制流程<br>[UIView setNeedsDisplay];<br>[view.layer setNeedsDisplay];<br>[CALayer display];<br>[layer.delegate respondsTo:@selector(displayLayer:)];<br>yes-&gt; 异步绘制入口<br>no-&gt; 系统绘制流程<br>绘制是CPU和GPU共同协作的<br>通过CoreGraphics、CoreImage由CPU预处理，最终通过OpenGL ES将数据传送到屏幕<br>1、CoreAnimation提交会话，包括自己和子树（view hierarchy）的layout状态等；<br>2、RenderServer解析提交的子树状态，生成绘制指令；<br>3、GPU执行绘制指令；<br>4、显示渲染后的数据；<br>调用-setNeedsDisplay的时候，仅会设置图层为dirty。当渲染系统准备就绪，调用视图的-display方法，同时装配像素存储空间，建立一个CoreGraphics上下文（CGContextRef），将上下文push进上下文堆栈，绘图程序进入对应的内存存储空间。<br>渲染时机</p>
+<p>上面已经提到过：Core Animation 在 RunLoop 中注册了一个 Observer 监听 BeforeWaiting(即将进入休眠) 和 Exit (即将退出Loop) 事件 。当在操作 UI 时，比如改变了 Frame、更新了 UIView/CALayer 的层次时，或者手动调用了 UIView/CALayer 的 setNeedsLayout/setNeedsDisplay方法后，这个 UIView/CALayer 就被标记为待处理，并被提交到一个全局的容器去。当Oberver监听的事件到来时，回调执行函数中会遍历所有待处理的UIView/CAlayer 以执行实际的绘制和调整，并更新 UI 界面。<br>打包layers并发送到渲染server；递归提交子树的layers；<br>如果子树太复杂，会消耗很大，对性能造成影响；</p>
+<p>事件响应流程<br>点击屏幕-》UIApplication-〉UIWindow-》hitTest：withEvent：-〉pointInside：withEvent：<br>-》subviews-〉UIView-》倒序遍历-〉hitTest：withEvent：<br>hitTest：withEvent内部实现</p>
+<p>GPU<br>顶点着色<br>图元装配<br>光栅化<br>片着色<br>片段处理</p>
+<p>UI卡顿掉帧原理<br>Display 16.7ms<br>GPU<br>CPU<br>在 VSync 信号到来后，系统图形服务会通过 CADisplayLink 等机制通知 App，App 主线程开始在 CPU 中计算显示内容，比如视图的创建、布局计算、图片解码、文本绘制等。随后 CPU 会将计算好的内容提交到 GPU 去，由 GPU 进行变换、合成、渲染。随后 GPU 会把渲染结果提交到帧缓冲区去，等待下一次 VSync 信号到来时显示到屏幕上。由于垂直同步的机制，如果在一个 VSync 时间内，CPU 或者 GPU 没有完成内容提交，则那一帧就会被丢弃，等待下一次机会再显示，而这时显示屏会保留之前的内容不变。这就是界面卡顿的原因。</p>
+<p>滑动优化方案<br>CPU<br>对象创建，调整，销毁<br>预排版（布局计算、文字计算）<br>预渲染（文字等异步绘制l、图片解码等）<br>GPU<br>纹理渲染<br>试图混合</p>
+<p>离屏渲染<br>GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作<br>何时会触发<br>圆角（当和maskToBounds一起使用时）<br>图层蒙版<br>阴影<br>光栅化</p>
+<p>问题：<br>UI事件的传递机制<br>使tableView滚动流畅的方案和思路<br>什么是离屏渲染<br>UIView和CALayer的关系</p>
+<p>.dSYM文件</p>
+<h2 id="CALayer"><a href="#CALayer" class="headerlink" title="CALayer"></a>CALayer</h2><p>layer给view提供了基础设施，使得绘制内容和呈现更高效动画更容易、更低耗<br>layer不参与view的事件处理、不参与响应链<br>layer的内容生成一个位图(bitmap)<br>,触发动画的时候，是把这个动画和状态信息传递给图形硬件，<br>图形硬件使用这两个数据就可以构造动画了。处理位图对于图形硬件更快。</p>
+<p>阴影是根据layer的alpha值来生成的。模拟一下生成的过程：分配一块同样大小的shadowlayer,在原layer的alpha不为0的地方，shadowlayer填上shadowColor，就跟现实里的影子生成原理一样，不透明的部分才生成阴影。然后把这个shadowlayer做一个偏移(shadowOffset)加到原layer下面。<br>也就是阴影层是根据内容即时计算出来的，而且会触发离屏渲染，所以消耗巨大。</p>
+<p>mask是一个layer层，并且作为背景层和组成层之间的一个遮罩层通道，默认是nil。并且如果要创建新的layer赋给mask，那么新的layer必须没有superlayer，也不支持含有子mask。</p>
+<p>mask作用的也不只是当前layer的内容，而是layer和它所有子layer的合成内容。这个也是可以测试的，设置viewA的layer的mask,然后不管在viewA上加多少个视图都是会被mask作用到。</p>
+<p>我们都知道控件view有一个alpha属性用来设置透明度，默认alpha＝1，只有当alpha不为0是我们才能正常的看到View的样子，alpha其实改变的是mask和background layer的透明度，来实现透明效果。而mask是控件view上的一层layer，mask也有一个alpha，要想看到view，只有当mask的透明度不为0时，我们才能看到mask后面的view的样子，view自带的masklayer是不透明的。新创建的masklayer的是透明的，因此，我们只需要给新创建的masklayer一个颜色，使他不透明就能看见蒙板后的View了，而蒙板外是透明的，这样就能实现蒙板效果了。原理大概是这样了。</p>
+<p>如何高性能给UIImageView加圆角</p>
+<p>如何使用核心动画？</p>
+<p>创建<br>设置相关属性<br>添加到 CALayer 上，会自动执行动画</p>
+<p>修改View的响应范围<br>重写View的</p>
+<ul>
+<li>(BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event;<br>hitTest：withEvent内部实现<br>首先调用当前视图的pointInside:withEvent:方法判断触摸点是否在当前视图内；<br>若返回NO,则hitTest:withEvent:返回nil;<br>若返回YES,则向当前视图的所有子视图(subviews)发送hitTest:withEvent:消息，所有子视图的遍历顺序是从top到bottom，即从subviews数组的末尾向前遍历,直到有子视图返回非空对象或者全部子视图遍历完毕；<br>若第一次有子视图返回非空对象,则hitTest:withEvent:方法返回此对象，处理结束；<br>如所有子视图都返回非，则hitTest:withEvent:方法返回自身(self)。<br>渲染具体步骤</li>
+</ul>
+<p>动画和屏幕上组合的图层实际上被一个单独的进程管理，即所谓的渲染服务。<br>当运行一段动画时，这个过程会被四个分离的阶段打破：</p>
+<p>布局–准备视图的层级关系，设置图层属性<br>显示–图层的寄宿图片被绘制的阶段。涉及到-drawRect和-drawLayer:inContext：等方法<br>准备–准备发送动画数据给渲染服务的阶段。比如图片解码<br>提交–打包所有图层和动画属性，通过IPC发送到渲染服务<br>渲染服务拿到数据后，反序列化成一个叫做渲染树的图层树，使用这个树状结构，渲染服务队动画的每一帧做如下工作：</p>
+<p>对所有的图层属性计算中间值，设置OpenGL几何形状（纹理化三角形）来执行渲染<br>在屏幕上渲染可见的三角形<br>所以一共六个阶段：最后两个阶段在动画过程中不停地重复，前五个阶段都在软件层面处理（通过CPU），只有最后一个被GPU执行。而且，你真正只能控制前两个阶段：布局和显示。剩下的在CoreAnimation内部处理。</p>
+<p>1、帧率一般在多少？</p>
+<p>60帧每秒；（TimeProfiler）<br>2、是否存在CPU和GPU瓶颈？ （查看占有率）</p>
+<p>更少的使用CPU和GPU可以有效的保存电量；<br>3、额外的使用CPU来进行渲染？</p>
+<p>重写了drawRect会导致CPU渲染；在CPU进行渲染时，GPU大多数情况是处于等待状态；<br>4、是否存在过多离屏渲染？</p>
+<p>越少越好；离屏渲染会导致上下文切换，GPU产生idle；<br>5、是否渲染过多视图？</p>
+<p>视图越少越好；透明度为1的视图更受欢迎；<br>6、使用奇怪的图片格式和大小？</p>
+<p>避免格式转换和调整图片大小；一个图片如果不被GPU支持，那么需要CPU来转换。（Xcode有对PNG图片进行特殊的算法优化）<br>7、使用昂贵的特效？</p>
+<p>理解特效的消耗，同时调整合适的大小；例如前面提到的UIBlurEffect；</p>
+<p>8、视图树上不必要的元素？</p>
+<p>理解视图树上所有点的必要性，去掉不必要的元素；忘记remove视图是很常见的事情，特别是当View的类比较大的时候。</p>
+<p>性能优化实例<br>1、阴影<br>2、圆角<br>不要使用不必要的mask，可以预处理图片为圆形；或者添加中间为圆形透明的白色背景视图。即使添加额外的视图，会导致额外的计算；但仍然会快一点，因为相对于切换上下文，GPU更擅长渲染。<br>离屏渲染会导致GPU利用率不到100%，帧率却很低。（切换上下文会产生idle time）</p>
+<p>3、工具</p>
+<p>使用instruments的CoreAnimation工具来检查离屏渲染，黄色是我们不希望看到的颜色。</p>
+<p>layoutSubviews<br>继承于UIView的子类重写，进行布局更新，刷新视图。如果某个视图自身的bounds或者子视图的bounds发生改变，那么这个方法会在当前runloop结束的时候被调用。为什么不是立即调用呢？因为渲染毕竟比较消耗性能，特别是视图层级复杂的时候。这种机制下任何UI控件布局上的变动不会立即生效，而是每次间隔一个周期，所有UI控件在布局上的变动统一生效并且在视图上更新，苹果通过这种高性能的机制保障了视图渲染的流畅性。<br>setNeedsLayout<br>标记为需要重新布局，异步调用layoutIfNeeded刷新布局，不立即刷新，在下一轮runloop结束前刷新，对于这一轮runloop之内的所有布局和UI上的更新只会刷新一次，layoutSubviews一定会被调用。<br>layoutIfNeeded<br>如果有需要刷新的标记，立即调用layoutSubviews进行布局（如果没有标记，不会调用layoutSubviews）</p>
+<p>如果想在当前runloop中立即刷新，调用顺序应该是<br>[self setNeedsLayout];<br>[self layoutIfNeeded];</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/02/M_Swift111%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/02/M_Swift111%E7%BD%91%E7%BB%9C/" class="post-title-link" itemprop="url">网络</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-02 17:41:21" itemprop="dateCreated datePublished" datetime="2020-07-02T17:41:21+08:00">2020-07-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Http三次握手"><a href="#Http三次握手" class="headerlink" title="Http三次握手"></a>Http三次握手</h2><pre><code>在TCP/IP协议中，TCP协议提供可靠的连接服务，采用三次握手建立一个连接。  
+第一次握手：建立连接时，客户端发送syn包(syn=j)到服务器，并进入
+SYN_SEND状态，等待服务器确认； 
+第二次握手：服务器收到syn包，必须确认客户的SYN（ack=j+1），同时自己
+也发送一个SYN包（syn=k），即SYN+ACK包，此时服务器进入SYN_RECV状态；
+第三次握手：客户端收到服务器的SYN＋ACK包，向服务器发送确认包
+ACK(ack=k+1)，此包发送完毕，客户端和服务器进入ESTABLISHED状态，完
+成三次握手。完成三次握手，客户端与服务器开始传送数据.
+</code></pre>
+<h2 id="HTTPS-SSL"><a href="#HTTPS-SSL" class="headerlink" title="HTTPS SSL"></a>HTTPS SSL</h2><pre><code>客户端请求建立SSL连接，发送支持的加密方式以及一个随机数client 
+random给服务器；
+服务器选择其中的一种加密方式，并且再加上另外一个随机数server 
+random，和数字证书（其中有公钥），发送给客户端；
+客户端确认这个数字证书是有效的，并且再生成一个新的随机数，将这个随机数
+用服务器发送给它的数字证书中的公钥进行加密发送给服务器；
+服务器收到客户端的回复，利用自己的私钥进行解密，获得这个随机数，然后通
+过将前面这三个随机数以及他们协商的加密方式，计算生成一个对称密钥。
+释放连接时，被动方服务器，突然收到主动方客户端释放连接的请求时并不能立即释放连接，
+因为还有必要的数据需要处理，所以服务器先返回ACK确认收到报文，经过CLOSE-WAIT阶段准备好释放连接之后，才能返回FIN释放连接报文。
+所以，客户端要经历时长为2SML的TIME-WAIT阶段；这也是为什么客户端比服务器端晚进入CLOSED阶段的原因
+</code></pre>
+<h2 id="iOS-如何做才安全"><a href="#iOS-如何做才安全" class="headerlink" title="iOS 如何做才安全:"></a>iOS 如何做才安全:</h2><pre><code>1、ipa包加壳
+2、敏感信息存储位置
+3、设备安全(越狱，丢失)
+4、APP反编译(逆向工程)
+5、代码内容加密(对称加密/非对称加密)
+6、安全密钥更新周期
+7、代码混淆
+8、接口安全(双向加密)
+9、通讯安全，第三方库漏洞
+10、敏感信息安全加密
+11、通讯网络安全
+12、代码调试信息安全管理
+</code></pre>
+<h2 id="OSI七层协议中每层分别有哪些协议"><a href="#OSI七层协议中每层分别有哪些协议" class="headerlink" title="OSI七层协议中每层分别有哪些协议"></a>OSI七层协议中每层分别有哪些协议</h2><pre><code>1.物理层：主要定义物理设备标准，如网线的接口类型、光纤的接口类型、各种
+传输介质的传输速率等。它的主要作用是传输比特流（就是由1、0转化为电流强
+弱来进行传输,到达目的地后在转化为1、0，也就是我们常说的数模转换与模数
+转换）。这一层的数据叫做比特。
+2.数据链路层：定义了如何让格式化数据以进行传输，以及如何让控制对物理介
+质的访问。这一层通常还提供错误检测和纠正，以确保数据的可靠传输。
+3.网络层：在位于不同地理位置的网络中的两个主机系统之间提供连接和路径选
+择。Internet的发展使得从世界各站点访问信息的用户数大大增加，而网络层
+正是管理这种连接的层。
+4.传输层：定义了一些传输数据的协议和端口号（WWW端口80等），如：
+TCP（传输控制协议，传输效率低，可靠性强，用于传输可靠性要求高，数据量
+大的数据），UDP（用户数据报协议，与TCP特性恰恰相反，用于传输可靠性要
+求不高，数据量小的数据，如QQ聊天数据就是通过这种方式传输的）。 主要是
+将从下层接收的数据进行分段和传输，到达目的地址后再进行重组。常常把这一
+层数据叫做段。
+5.会话层：通过传输层（端口号：传输端口与接收端口）建立数据传输的通路。
+主要在你的系统之间发起会话或者接受会话请求（设备之间需要互相认识可以是
+IP也可以是MAC或者是主机名）
+6.表示层：可确保一个系统的应用层所发送的信息可以被另一个系统的应用层读
+取。例如，PC程序与另一台计算机进行通信，其中一台计算机使用扩展二一十进
+制交换码（EBCDIC），而另一台则使用美国信息交换标准码（ASCII）来表示
+相同的字符。如有必要，表示层会通过使用一种通格式来实现多种数据格式之间
+的转换。
+7.应用层： 是最靠近用户的OSI层。这一层为用户的应用程序（例如电子邮
+件、文件传输和终端仿真）提供网络服务。
+</code></pre>
+<h2 id="对称加密和非对称加密"><a href="#对称加密和非对称加密" class="headerlink" title="对称加密和非对称加密"></a>对称加密和非对称加密</h2><pre><code>对称加密采用了对称密码编码技术，它的特点是文件加密和解密使用相同的密钥
+加密
+也就是密钥也可以用作解密密钥，这种方法在密码学中叫做对称加密算法，对称
+加密算法使用起来简单快捷，密钥较短，且破译困难，除了数据加密标准
+（DES），另一个对称密钥加密系统是国际数据加密算法（IDEA），它比DES的
+加密性好，而且对计算机功能要求也没有那么高
+常见的对称加密算法有DES、3DES、Blowfish、IDEA、RC4、RC5、RC6和
+AES 
+非对称加密算法需要两个密钥：公开密钥（publickey）和私有密钥
+（privatekey）。
+公开密钥与私有密钥是一对，如果用公开密钥对数据进行加密，只有用对应的私
+有密钥才能解密；如果用私有密钥对数据进行加密，那么只有用对应的公开密钥
+才能解密。因为加密和解密使用的是两个不同的密钥，所以这种算法叫作非对称
+加密算法。
+非对称加密算法实现机密信息交换的基本过程是：甲方生成一对密钥并将其中的
+一把作为公用密钥向其它方公开；得到该公用密钥的乙方使用该密钥对机密信息
+进行加密后再发送给甲方；甲方再用自己保存的另一把专用密钥对加密后的信息
+进行解密。甲方只能用其专用密钥解密由其公用密钥加密后的任何信息。
+非对称加密的典型应用是数字签名。
+常见的非对称加密算法有：RSA、ECC（移动设备用）、Diffie-Hellman、
+El Gamal、DSA（数字签名用）
+Hash算法（摘要算法）
+Hash算法特别的地方在于它是一种单向算法，用户可以通过hash算法对目标信
+息生成一段特定长度的唯一hash值，却不能通过这个hash值重新获得目标信
+息。因此Hash算法常用在不可还原的密码存储、信息完整性校验等。
+常见的Hash算法有MD2、MD4、MD5、HAVAL、SHA
+</code></pre>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/02/M_Swift113OC%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/02/M_Swift113OC%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">OC常见问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-02 17:29:42" itemprop="dateCreated datePublished" datetime="2020-07-02T17:29:42+08:00">2020-07-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="函数式编程和响应式编程"><a href="#函数式编程和响应式编程" class="headerlink" title="函数式编程和响应式编程"></a>函数式编程和响应式编程</h2><pre><code>https://blog.csdn.net/johnwcheung/article/details/73136476
+函数式编程是一系列被不公平对待的编程思想的保护伞，它的核心思想是，它是
+一种将程序看成是数学方法的求值、不会改变状态、不会产生副作用（后面我们
+马上会谈到）的编程方式。
+响应式实际上是观察者模式加上事件源的完成通知能力、错误传播能力和监听者
+同事件源通信的能力。
+</code></pre>
+<h2 id="TMCache"><a href="#TMCache" class="headerlink" title="TMCache"></a>TMCache</h2><pre><code>https://www.jianshu.com/p/a8a45c12d2d2
+</code></pre>
+<h2 id="NSProxy"><a href="#NSProxy" class="headerlink" title="NSProxy"></a>NSProxy</h2><pre><code>https://www.jianshu.com/p/32c63dbc1b05
+负责将消息转发到真正的target的代理类
+NSProxy是和NSObject同级的一个类,可以说它是一个虚拟类,它只是实现了
+&lt;NSObject&gt;的协议.它的作用有点类似于一个复制类,有人曾经笑谈它是卡卡
+西的复制忍术,想想其实也挺贴切的,其实原理确实如此.
+用一个继承于NSProxy的子类,在它内部实现一些方法,暴露一个公开方法
+transform,这个方法是使它变身的关键.然后它变身之后可以对那些对象发送
+消息,并且可以在内部拦截消息的内容并修改.
+可以说,几乎可以变身成为任何对象.
+</code></pre>
+<h2 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h2><pre><code>原有的单工程架构就不足以满足架构需求了
+业务模块间划分不清晰，模块之间耦合度很大，非常难维护。
+所有模块代码都编写在一个项目中，测试某个模块或功能，需要编译运行整个项目。
+组件化优点：
+业务划分更佳清晰，新人接手更佳容易，可以按组件分配开发任务。
+项目可维护性更强，提高开发效率。
+更好排查问题，某个组件出现问题，直接对组件进行处理。
+开发测试过程中，可以只编译自己那部分代码，不需要编译整个项目代码。
+实现：
+MGJRouter是一个单例对象，在其内部维护着一个“URL -&gt; block”格式的注
+册表，通过这个注册表来保存服务方注册的block，以及使调用方可以通过URL
+映射出block，并通过MGJRouter对服务方发起调用。
+在服务方组件中都对外提供一个接口类，在接口类内部实现block的注册工作，
+以及block对外提供服务的代码实现。每一个block都对应着一个URL，调用方
+可以通过URL对block发起调用。
+在程序开始运行时，需要将所有服务方的接口类实例化，以完成这个注册工作，
+使MGJRouter中所有服务方的block可以正常提供服务。在这个服务注册完成
+后，就可以被调用方调起并提供服务。
+Protocol方案的中间件
+为了解决MGJRouter方案中URL硬编码，以及字典参数类型不明确等问题，蘑
+菇街在原有组件化方案的基础上推出了Protocol方案。Protocol方案由两部
+分组成，进行组件间通信的ModuleManager类以及
+MGJComponentProtocol协议类。
+通过中间件ModuleManager进行消息的调用转发，在ModuleManager内部维
+护一张映射表，映射表由之前的&quot;URL -&gt; block&quot;变成&quot;Protocol -&gt; 
+Class&quot;。
+在中间件中创建MGJComponentProtocol文件，服务方组件将可以用来调用
+的方法都定义在Protocol中，将所有服务方的Protocol都分别定义到
+MGJComponentProtocol文件中，如果协议比较多也可以分开几个文件定
+义。这样所有调用方依然是只依赖中间件，不需要依赖除中间件之外的其他组
+件。
+Protocol方案中每个组件也需要一个“接口类”，此类负责实现当前组件对应的
+协议方法，也就是对外提供服务的实现。在程序开始运行时将自身的Class注册
+到ModuleManager中，并将Protocol反射出字符串当做key。这个注册过程
+和MGJRouter是类似的，都需要提前注册服务。
+蘑菇街是OpenURL和Protocol混用的方式，两种实现的调用方式不同，但大体
+调用逻辑和实现思路类似，所以下面的调用流程二者差不多。在OpenURL不能
+满足需求或调用不方便时，就可以通过Protocol的方式调用。
+整体调用流程
+在进入程序后，先使用MGJRouter对服务方组件进行注册。每个URL对应一个
+block的实现，block中的代码就是服务方对外提供的服务，调用方可以通过
+URL调用这个服务。
+调用方通过MGJRouter调用openURL:方法，并将被调用代码对应的URL传
+入，MGJRouter会根据URL查找对应的block实现，从而调用服务方组件的代
+码进行通信。
+调用和注册block时，block有一个字典用来传递参数。这样的优势就是参数类
+型和数量理论上是不受限制的，但是需要很多硬编码的key名在项目中。
+内存管理
+蘑菇街组件化方案有两种，Protocol和MGJRouter的方式，但都需要进行
+register操作。Protocol注册的是Class，MGJRouter注册的是Block，
+注册表是一个NSMutableDictionary类型的字典，而字典的拥有者又是一个
+单例对象，这样会造成内存的常驻。
+下面是对两种实现方式内存消耗的分析：
+首先说一下block实现方式可能导致的内存问题，block如果使用不当，很容易
+造成循环引用的问题。
+经过暴力测试，证明并不会导致内存问题。被保存在字典中是一个block对象，
+而block对象本身并不会占用多少内存。在调用block后会对block体中的方法
+进行执行，执行完成后block体中的对象释放。
+而block自身的实现只是一个结构体，也就相当于字典中存放的是很多结构体，
+所以内存的占用并不是很大。
+对于协议这种实现方式，和block内存常驻方式差不多。只是将存储的block对
+象换成Class对象，如果不是已经实例化的对象，内存占用还是比较小的。
+</code></pre>
+<h2 id="RAC"><a href="#RAC" class="headerlink" title="RAC"></a>RAC</h2><pre><code>https://www.jianshu.com/p/addad51569a1
+</code></pre>
+<h2 id="JSPathch"><a href="#JSPathch" class="headerlink" title="JSPathch"></a>JSPathch</h2><pre><code>能做到通过JS调用和改写OC方法最根本的原因是 Objective-C 是动态语
+言，OC上所有方法的调用/类的生成都通过 Objective-C Runtime 在运行
+时进行，我们可以通过类名/方法名反射得到相应的类和方法：
+对于 Objective-C 对象模型和动态消息发送的原理已有很多文章阐述得很详
+细，例如这篇，这里就不详细阐述了。理论上你可以在运行时通过类名/方法名
+调用到任何OC方法，替换任何类的实现以及新增任意类。所以 JSPatch 的原
+理就是：JS传递字符串给OC，OC通过 Runtime 接口调用和替换OC方法。这
+是最基础的原理，实际实现过程还有很多怪要打，接下来看看具体是怎样实现
+的。
+</code></pre>
+<h2 id="NSMutableArray的实现，包括系统提供的常用API的实现"><a href="#NSMutableArray的实现，包括系统提供的常用API的实现" class="headerlink" title="NSMutableArray的实现，包括系统提供的常用API的实现"></a>NSMutableArray的实现，包括系统提供的常用API的实现</h2><pre><code>用链表，每十个放在一段连续的存储空间里
+https://www.jianshu.com/p/3c77756a86ab    
+</code></pre>
+<h2 id="NSUserDefaults存储对象"><a href="#NSUserDefaults存储对象" class="headerlink" title="NSUserDefaults存储对象"></a>NSUserDefaults存储对象</h2><pre><code>NSUserDefaults支持的数据类型有：NSNumber（NSInteger、float、
+double），NSString，NSDate，NSArray，NSDictionary，BOOL.
+NSUserDefaults 存储的对象全是不可变的（这一点非常关键，弄错的话程序
+会出bug），例如，如果我想要存储一个NSMutableArray 对象，我必须先创
+建一个不可变数组（NSArray）再将它存入NSUserDefaults中去
+使用 NSUserDefaults 存储自定义对象
+第一步、将自定义类型转换为NSData类型，利用归档
+NSData*data = 
+[NSKeyedArchiverarchivedDataWithRootObject:student];
+</code></pre>
+<h2 id="纯函数"><a href="#纯函数" class="headerlink" title="纯函数"></a>纯函数</h2><pre><code>纯函数 我们应该还记得初中的一些数学知识，函数f的概念就是，对于输入x产
+生一个输出y=f（x），这就是普通的纯函数。它的定义是 相同的输入，结果总
+会得到相同的输出，而且没有任何可观察的副作用，也不依赖外部环境的状态。
+</code></pre>
+<h2 id="沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪"><a href="#沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪" class="headerlink" title="沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪"></a>沙盒存储的路径是NSDocument还是NSLibrary，mainbuneld在哪</h2><pre><code>沙盒根目录里有三个文件夹：
+Documents，一般应该把应用程序的数据文件存到这个文件夹里，用于存储用
+户数据或其他应该定期备份的信息。因为应用的沙盒机制，应用只能在几个目录
+下读写文件。苹果建议将程序中建立的或在程序中浏览到的文件数据保存在该目
+录下，iTunes备份和恢复的时候会包括此目录。
+Library，存储程序的默认设置或其它状态信息，其下有两个文件夹：Caches
+存储应用程序再次启动所需的信息，存放缓存文件，iTunes不会备份此目录，
+此目录下文件不会在应用退出删除；Preferences包含应用程序偏好设置文
+件，不过不要在这里修改偏好设置。
+tmp，提供一个即时创建临时文件的地方，即应用程序再次启动不需要的文件。
+通常来说，这个 mainbundle 就是 当前的可执行app 的在根目录下的绝对
+路径，
+</code></pre>
+<h2 id="反射方法"><a href="#反射方法" class="headerlink" title="反射方法"></a>反射方法</h2><pre><code>系统Foundation框架为我们提供了一些方法反射的API，我们可以通过这些
+API执行将字符串转为SEL等操作。由于OC语言的动态性，这些操作都是发生在
+运行时的。
+通过这些方法，我们可以在运行时选择创建那个实例，并动态选择调用哪个方
+法。这些操作甚至可以由服务器传回来的参数来控制，我们可以将服务器传回来
+的类名和方法名，实例为我们的对象。
+Class class = NSClassFromString(@&quot;ViewController&quot;);
+ViewController *vc = [[class alloc] init];
+SEL selector = NSSelectorFromString(@&quot;getDataList&quot;);
+[vc performSelector:selector];
+判断方法
+在NSObject类中为我们提供了一些基础方法，用来做一些判断操作，这些方法都是发生在运行时动态判断的
+// 当前对象是否这个类或其子类的实例
+- (BOOL)isKindOfClass:(Class)aClass;
+// 当前对象是否是这个类的实例
+- (BOOL)isMemberOfClass:(Class)aClass;
+// 当前对象是否遵守这个协议
+- (BOOL)conformsToProtocol:(Protocol *)aProtocol;
+// 当前对象是否实现这个方法
+- (BOOL)respondsToSelector:(SEL)aSelector;    
+</code></pre>
+<h2 id="链表与数组的区别"><a href="#链表与数组的区别" class="headerlink" title="链表与数组的区别"></a>链表与数组的区别</h2><pre><code>链表的特性是在中间任意位置添加删除元素的都非常的快，不需要移动其它的元
+素。通常链表每一个元素都要保存一个指向下一个元素的指针（单链表）。双链
+表的话每个元素即要保存到下一个元素的指针，还要保存一个上一个元素的指
+针。循环链表则把最后一个元素中保存下一个元素指针指向第一个元素。   
+数组是一组具有相同类型和名称的变量的集合。这些变量称为数组的元素,每个
+数组元素都有一个编号,这个编号叫做下标,我们可以通过下标来区别这些元素。
+数组元素的个数有时也称之为数组的长度。  
+数组是将元素在内存中连续存放，由于每个元素占用内存相同，所以你可以通过
+下标迅速访问数组中任何元素。但是如果你要在数组中增加一个元素，你需要移
+动大量元素，在内存中空出一个元素的空间，然后将要增加的元素放在其中。同
+样的道理，如果你想删除一个元素，你同样需要移动大量元素去填掉被移动的元
+素。 
+链表恰好相反，链表中的元素在内存中不是顺序存储的，而是通过存在元素中的
+指针联系到一起。比如：上一个元素有个指针指到下一个元素，以此类推，直到
+最后一个元素。如果你要访问链表中一个元素，你需要从第一个元素开始，一直
+找到你需要的元素位置。但是增加和删除一个元素对于链表数据结构就非常简单
+了， 只要修改元素中的指针就可以了。
+</code></pre>
+<h2 id="设置了成员变量—str，属性里面也设置了-synchronized-property（）str，两种写法有什么区别"><a href="#设置了成员变量—str，属性里面也设置了-synchronized-property（）str，两种写法有什么区别" class="headerlink" title="设置了成员变量—str，属性里面也设置了@synchronized @property（）str，两种写法有什么区别"></a>设置了成员变量—str，属性里面也设置了@synchronized @property（）str，两种写法有什么区别</h2><pre><code>1)在.h头文件中:
+@property在头文件中应用于声明:
+@property NSInteger age;
+编译器会自动在.h头文件中声明了2个方法:(setter,getter方法)
+- (NSInteger)age;      - (void)setAge:(NSInteger)age;
+2)在.m实现文件中:
+@sythesize在.m实现文件中应用于实现:
+例如:
+@synthesize age = _age; 
+编译器会自动在.m文件中实现2个方法:(setter,getter方法)
+- (void)setAge:(NSInteger)age
+&#123;
+_age  =  age;
+&#125;
+- (NSInteger)age
+&#123;
+return   _age;
+&#125;
+</code></pre>
+<h2 id="组件化路由的实现方式（有url，meditor，自己的组件路由）"><a href="#组件化路由的实现方式（有url，meditor，自己的组件路由）" class="headerlink" title="组件化路由的实现方式（有url，meditor，自己的组件路由）"></a>组件化路由的实现方式（有url，meditor，自己的组件路由）</h2><h2 id="Masonry-update-remake区别"><a href="#Masonry-update-remake区别" class="headerlink" title="Masonry update remake区别"></a>Masonry update remake区别</h2><pre><code>mas_makeConstraints 只负责新增约束 Autolayout不能同时存在两条针
+对于同一对象的约束 否则会报错
+mas_updateConstraints 针对上面的情况 会更新在block中出现的约
+束 不会导致出现两个相同约束的情况
+mas_remakeConstraints 则会清除之前的所有约束 仅保留最新的约束
+</code></pre>
+<h2 id="常见动画"><a href="#常见动画" class="headerlink" title="常见动画"></a>常见动画</h2><pre><code>https://www.jianshu.com/p/9aead7675221
+</code></pre>
+<h2 id="分类和原来的类都有某个方法，如何保证安全性和规范性"><a href="#分类和原来的类都有某个方法，如何保证安全性和规范性" class="headerlink" title="分类和原来的类都有某个方法，如何保证安全性和规范性"></a>分类和原来的类都有某个方法，如何保证安全性和规范性</h2><pre><code>1.添加警告
+2.分类中方法执行完再执行原类方法
+</code></pre>
+<h2 id="设备唯一码怎么获取"><a href="#设备唯一码怎么获取" class="headerlink" title="设备唯一码怎么获取"></a>设备唯一码怎么获取</h2><pre><code>当我们从真机上卸载这个软件重新安装的时候，UUID变了(模拟器每次都变)，
+对，确实变了
+keychain的使用
+keychain的使用确实帮我们解决了这个问题，我们可以在第一次生成我们需要
+的UUID的时候，保存他，然后就用keychain里保存的值来代替他的UUID，这
+样卸载之后，生成新的UUID，但是keychain里的数据是不会消失的，这样就
+实现了唯一识别码的目的。
+</code></pre>
+<h2 id="GCD在什么场景下会死锁，代码怎么写"><a href="#GCD在什么场景下会死锁，代码怎么写" class="headerlink" title="GCD在什么场景下会死锁，代码怎么写"></a>GCD在什么场景下会死锁，代码怎么写</h2><pre><code>http://ios.jobbole.com/82622/
+</code></pre>
+<h2 id="GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整"><a href="#GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整" class="headerlink" title="GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整"></a>GCD和NSOperationQueue都可以调整队列执行顺序吗？如何调整</h2><h2 id="链表的单个节点的删除"><a href="#链表的单个节点的删除" class="headerlink" title="链表的单个节点的删除"></a>链表的单个节点的删除</h2><pre><code>实现一个算法，删除单向链表中间的某个结点，假定你只能访问该结点。 
+给定带删除的节点，请执行删除操作，若该节点为尾节点，返回false，否则返回true 
+算法思路： 
+利用该节点可以访问其下一个节点，可以将下一个节点的值复制给该节点，将下一个节点删除。
+</code></pre>
+<h2 id="如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）"><a href="#如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）" class="headerlink" title="如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）"></a>如何去让一部分对象调原来的类的方法，一部分对象调分类里的方法？（方法列表有反射机制，可以用runtime）</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/07/02/M_Swift108%E9%80%9A%E7%9F%A5%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -932,596 +1437,10 @@ return -1.000;
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/11/M_Swift169%E5%9C%B0%E5%9B%BESDK%E4%B8%80%E4%BA%9B%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/11/M_Swift169%E5%9C%B0%E5%9B%BESDK%E4%B8%80%E4%BA%9B%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E/" class="post-title-link" itemprop="url">地图SDK调用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-11 15:53:26" itemprop="dateCreated datePublished" datetime="2020-06-11T15:53:26+08:00">2020-06-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-12 16:10:26" itemprop="dateModified" datetime="2021-04-12T16:10:26+08:00">2021-04-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>import \ export</p>
-<p>编译<br>chunk.webpack.config.js<br>control.chunk.webpack.config.js</p>
-<p>地图init方法，创建地图initialize: function (container, options)<br>Conf.init();初始化<br>初始化openGl一些参数<br>创建不同的图层，地图、瓦片图层、label图层、layer图层、热力图层</p>
-<p>地图初始化加载MMMgr.getInstance().init();<br>icon图片。<br>样式（配置）<br>data</p>
-<p>地图事件管理<br>var manager = new Hammer.Manager(this.layerDiv);<br>拖拽、点击、双击、缩放、旋转</p>
-<p>定义layer，存储用户添加的图层<br>this.layers = [];<br>地图图层<br>SkInterLayer<br>initialize函数<br>init<br>创建缓存，存在自动删除逻辑，存储满了按照相应逻辑删除旧的<br>this.cache = new LRUMap(8192);</p>
-<p>当地图发生变化时_viewchange绘制地图（加载地图数据）<br>postInvalidate</p>
-<p>清除数据 每次绘制都清除全部数据 this.Render();<br>gl.clearDepth(1.0);</p>
-<p>地图数据处理绘制<br>this.BaseData();</p>
-<p>准备地图数据<br>prepareData<br>获取屏幕所有瓦片-》请求-〉生成一个个的SKTitle对象。</p>
-<p>获取瓦片范围<br>checkTileKey<br>获取当前图层所有切片号。<br>getTiles<br>从缓存中加载<br>var tile = this.cache.get(key);<br>加载瓦片<br>GetMapDat</p>
-<p>数据解析<br>parseDat</p>
-<p>加载完成，执行绘制，<br>this.map.postInvalidate();<br>有一个总的Render，map里面的Render。每一个图层里的Render值负责绘制，map里的Render负责清空。</p>
-<p>如何加载的opengl以及一些第三方资源的，有哪些资源文件，是如何工作的</p>
-<p>问题<br>1.开发说明，开发环境，注意事项等。如何加载的opengl，有哪些资源文件，项目是如何工作的，需要注意哪些，<br>three.js mailbox webjs<br>2.项目接口文档。<br>3.项目成功物生成说明及成功物。如何打包的<br>图片资源在common.less调整<br>@urls: ‘<a target="_blank" rel="noopener" href="http://61.189.20.113:8000/images/&#39;">http://61.189.20.113:8000/images/&#39;</a>;</p>
-<p>如何绘制地图<br>加载瓦片-》解析数据-〉创建点线面对象-》用opengl绘制 ,如何绘制的整个页面上所有的瓦片，地图缩放是如何重新绘制的逻辑<br>MapMM-&gt;GetMapDat<br>MapDataDeCode<br>SkTile.prototype.Render </p>
-<p>项目中类的特别说明</p>
-<p>坐标转换、像素、经纬度等如何实现<br>经纬度坐标、地图平面坐标，像素</p>
-<p>矩阵 mat4.js<br>var proj = map.GetCurProj();<br>var objProj = mat4.clone(proj);<br>求外接矩形，图形的坐标集合相对于外接矩形的左上角为0点计算新的坐标。<br>外接矩形相对于地图中心点的偏移：<br> var origin = map.axes.toMapAxes(this.env.startLon, this.env.endLat);<br> mat4.translate(objProj, objProj, [origin.x, origin.y, 0]);<br>gl.uniformMatrix4fv(bdProg.uniLocation, false, objProj);     </p>
-<p>事件、动画、扩展功能特别说明<br>手势L：hammer<br>demo功能使用介绍</p>
-<p>瓦片、墨卡托投影、相机、矩阵算法在工程中如何使用的。<br>SkLonLat2Mercator</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/08/M_Swift246%E6%95%B0%E6%8D%AE%E6%8A%BD%E7%A8%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/08/M_Swift246%E6%95%B0%E6%8D%AE%E6%8A%BD%E7%A8%80/" class="post-title-link" itemprop="url">地图数据抽稀</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-08 14:21:16" itemprop="dateCreated datePublished" datetime="2020-06-08T14:21:16+08:00">2020-06-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-14 21:43:36" itemprop="dateModified" datetime="2022-03-14T21:43:36+08:00">2022-03-14</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>{<br>    “pline”: {<br>        “note”: “字段解释: 级别 / 名字/ 对应kind”,<br>        “dat”: {<br>            “1”: {<br>                “省界”: “132”<br>            },<br>            “2,3,4,5”: {<br>                “省界”: “132”<br>            },<br>            “6,7”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “单线水系”: “125”,<br>                “省界”: “132”<br>            },<br>            “8”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “单线水系”: “125”,<br>                “地市界”: “135”<br>            },<br>            “9”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “区县界”: “137”<br>            },<br>            “10”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “2”,<br>                “县道”: “2”,<br>                “城市二级道路”: “3”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “区县界”: “137”<br>            },<br>            “11”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “乡镇界”: “191”<br>            },<br>            “12”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “内部道路”: “5”,<br>                “小路”: “5”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “乡镇界”: “191”<br>            },<br>            “13,14,15,16,17,18”: {<br>                “高速公路”: “1”,<br>                “城市快速路”: “1”,<br>                “国道”: “2”,<br>                “城市一级道路”: “2”,<br>                “省道”: “3”,<br>                “县道”: “3”,<br>                “城市二级道路”: “3”,<br>                “乡道”: “4”,<br>                “辅路”: “4”,<br>                “城市三级道路”: “4”,<br>                “内部道路”: “5”,<br>                “小路”: “5”,<br>                “铁路”: “241”,<br>                “单线水系”: “125”,<br>                “村界”: “192”<br>            }</p>
-<pre><code>    &#125;
-&#125;,
-&quot;linelabel&quot;: &#123;
-    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ 对应kind&quot;,
-    &quot;dat&quot;: &#123;
-        &quot;10&quot;: &#123;
-            &quot;高速公路&quot;: 1,
-            &quot;城市快速路&quot;: 1
-        &#125;,
-        &quot;11&quot;: &#123;
-            &quot;高速公路&quot;: 1,
-            &quot;城市快速路&quot;: 1,
-            &quot;国道&quot;: 2,
-            &quot;城市一级道路&quot;: 2
-        &#125;,
-        &quot;12&quot;: &#123;
-            &quot;高速公路&quot;: 1,
-            &quot;城市快速路&quot;: 1,
-            &quot;国道&quot;: 2,
-            &quot;城市一级道路&quot;: 2,
-            &quot;省道&quot;: 3,
-            &quot;县道&quot;: 3,
-            &quot;城市二级道路&quot;: 3
-        &#125;,
-        &quot;13&quot;: &#123;
-            &quot;高速公路&quot;: 1,
-            &quot;城市快速路&quot;: 1,
-            &quot;国道&quot;: 2,
-            &quot;城市一级道路&quot;: 2,
-            &quot;省道&quot;: 3,
-            &quot;县道&quot;: 3,
-            &quot;城市二级道路&quot;: 3,
-            &quot;乡道&quot;: 4,
-            &quot;辅路&quot;: 4,
-            &quot;城市三级道路&quot;: 4,
-            &quot;内部道路&quot;: 5,
-            &quot;小路&quot;: 5
-        &#125;,
-        &quot;14&quot;: &#123;
-            &quot;高速公路&quot;: 1,
-            &quot;城市快速路&quot;: 1,
-            &quot;国道&quot;: 2,
-            &quot;城市一级道路&quot;: 2,
-            &quot;省道&quot;: 3,
-            &quot;县道&quot;: 3,
-            &quot;城市二级道路&quot;: 3,
-            &quot;乡道&quot;: 4,
-            &quot;辅路&quot;: 4,
-            &quot;城市三级道路&quot;: 4,
-            &quot;内部道路&quot;: 5,
-            &quot;小路&quot;: 5
-        &#125;,
-        &quot;15,16,17,18,19,20,21&quot;: &#123;
-            &quot;高速公路&quot;: 1,
-            &quot;城市快速路&quot;: 1,
-            &quot;国道&quot;: 2,
-            &quot;城市一级道路&quot;: 2,
-            &quot;省道&quot;: 3,
-            &quot;县道&quot;: 3,
-            &quot;城市二级道路&quot;: 3,
-            &quot;乡道&quot;: 4,
-            &quot;辅路&quot;: 4,
-            &quot;城市三级道路&quot;: 4,
-            &quot;内部道路&quot;: 5,
-            &quot;小路&quot;: 5
-        &#125;
-    &#125;
-&#125;,
-&quot;region&quot;: &#123;
-    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ subtype:转换的kind&quot;,
-    &quot;dat&quot;: &#123;
-        &quot;7&quot;: &#123;
-            &quot;note&quot;: &quot;200m-7-11-20km&lt;包含&gt;-2km&lt;包含&gt;&quot;,
-            &quot;绿地&quot;: &#123;
-                &quot;152&quot;: &quot;14b&quot;
-            &#125;
-        &#125;,
-        &quot;9&quot;: &#123;
-            &quot;note&quot;: &quot;200m-9-11-5km&lt;包含&gt;-500m&lt;不包含&gt;&quot;,
-            &quot;湖泊、水库&quot;: &#123;
-                &quot;102&quot;: &quot;122&quot;,
-                &quot;103&quot;: &quot;122&quot;
-            &#125;,
-            &quot;面状水系&quot;: &#123;
-                &quot;199&quot;: &quot;123&quot;
-            &#125;
-        &#125;,
-        &quot;10&quot;: &#123;
-            &quot;note&quot;: &quot;200m-10-2km&lt;包含&gt;&quot;,
-            &quot;面状水系&quot;: &#123;
-                &quot;101&quot;: &quot;123&quot;
-            &#125;,
-            &quot;绿地&quot;: &#123;
-                &quot;100&quot;: &quot;141&quot;
-            &#125;
-        &#125;,
-        &quot;12&quot;: &#123;
-            &quot;note&quot;: &quot;200m-11-12-1km&lt;包含&gt;-500m&lt;不包含&gt;&quot;,
-            &quot;场景&quot;: &#123;
-                &quot;101&quot;: &quot;176&quot;,
-                &quot;102&quot;: &quot;163&quot;,
-                &quot;103&quot;: &quot;174&quot;,
-                &quot;104&quot;: &quot;175&quot;,
-                &quot;105&quot;: &quot;172&quot;,
-                &quot;106&quot;: &quot;17d&quot;,
-                &quot;107&quot;: &quot;164&quot;,
-                &quot;108&quot;: &quot;17e&quot;,
-                &quot;109&quot;: &quot;177&quot;,
-                &quot;110&quot;: &quot;178&quot;,
-                &quot;111&quot;: &quot;161&quot;,
-                &quot;194&quot;: &quot;166&quot;
-            &#125;,
-            &quot;居民地&quot;: &#123;
-                &quot;100&quot;: &quot;17f&quot;
-            &#125;,
-            &quot;绿地&quot;: &#123;
-                &quot;152&quot;: &quot;14b&quot;,
-                &quot;100&quot;: &quot;141&quot;
-            &#125;,
-            &quot;面状水系&quot;: &#123;
-                &quot;101&quot;: &quot;123&quot;
-            &#125;
-        &#125;,
-        &quot;13&quot;:&#123;
-            &quot;note&quot;: &quot;200m-12-14-500m&lt;包含&gt;-100m&lt;不包含&gt;&quot;,
-            &quot;湖泊、水库&quot;: &#123;
-                &quot;102&quot;: &quot;122&quot;,
-                &quot;103&quot;: &quot;122&quot;
-            &#125;,
-            &quot;面状水系&quot;: &#123;
-                &quot;199&quot;: &quot;123&quot;,
-                &quot;101&quot;: &quot;123&quot;
-            &#125;,
-            &quot;绿地&quot;: &#123;
-                &quot;152&quot;: &quot;14b&quot;,
-                &quot;100&quot;: &quot;141&quot;,
-                &quot;150&quot;: &quot;141&quot;,
-                &quot;151&quot;: &quot;141&quot;,
-                &quot;130&quot;: &quot;144&quot;
-            &#125;,
-            &quot;场景&quot;: &#123;
-                &quot;101&quot;: &quot;176&quot;,
-                &quot;102&quot;: &quot;163&quot;,
-                &quot;103&quot;: &quot;174&quot;,
-                &quot;104&quot;: &quot;175&quot;,
-                &quot;105&quot;: &quot;172&quot;,
-                &quot;106&quot;: &quot;17d&quot;,
-                &quot;107&quot;: &quot;164&quot;,
-                &quot;108&quot;: &quot;17e&quot;,
-                &quot;109&quot;: &quot;177&quot;,
-                &quot;110&quot;: &quot;178&quot;,
-                &quot;111&quot;: &quot;161&quot;,
-                &quot;194&quot;: &quot;166&quot;
-            &#125;,
-            &quot;居民地&quot;: &#123;
-                &quot;100&quot;: &quot;17f&quot;
-            &#125;
-        &#125;,
-        &quot;16&quot;: &#123;
-            &quot;note&quot;: &quot;200m-14-17-100m&lt;包含&gt;-10m&lt;包含&gt;&quot;,
-            &quot;场景&quot;: &#123;
-                &quot;101&quot;: &quot;176&quot;,
-                &quot;102&quot;: &quot;163&quot;,
-                &quot;103&quot;: &quot;174&quot;,
-                &quot;104&quot;: &quot;175&quot;,
-                &quot;105&quot;: &quot;172&quot;,
-                &quot;106&quot;: &quot;17d&quot;,
-                &quot;107&quot;: &quot;164&quot;,
-                &quot;108&quot;: &quot;17e&quot;,
-                &quot;109&quot;: &quot;177&quot;,
-                &quot;110&quot;: &quot;178&quot;,
-                &quot;111&quot;: &quot;161&quot;,
-                &quot;194&quot;: &quot;166&quot;
-            &#125;,
-            &quot;湖泊、水库&quot;: &#123;
-                &quot;102&quot;: &quot;122&quot;,
-                &quot;103&quot;: &quot;122&quot;
-            &#125;,
-            &quot;面状水系&quot;: &#123;
-                &quot;199&quot;: &quot;123&quot;,
-                &quot;101&quot;: &quot;123&quot;
-            &#125;,
-            &quot;居民地&quot;: &#123;
-                &quot;100&quot;: &quot;17f&quot;
-            &#125;,
-            &quot;绿地&quot;: &#123;
-                &quot;152&quot;: &quot;14b&quot;,
-                &quot;100&quot;: &quot;141&quot;,
-                &quot;150&quot;: &quot;141&quot;,
-                &quot;151&quot;: &quot;141&quot;,
-                &quot;130&quot;: &quot;144&quot;
-            &#125;
-        &#125;,
-        &quot;17&quot;: &#123;
-            &quot;note&quot;: &quot;200m-13-17&quot;,
-            &quot;功能面&quot;: &#123;
-                &quot;104&quot;: &quot;17c&quot;,
-                &quot;105&quot;: &quot;141&quot;,
-                &quot;194&quot;: &quot;165&quot;
-            &#125;
-        &#125;
-    &#125;
-&#125;,
-&quot;bd&quot;: &#123;
-    &quot;note&quot;: &quot;字段解释: 级别 / 名字/ subtype:转换的kind&quot;,
-    &quot;dat&quot;: &#123;
-        &quot;16&quot;: &#123;
-            &quot;建筑物区域00&quot;: &#123;
-            &#125;
-        &#125;,
-        &quot;21&quot;: &#123;
-            &quot;建筑物区域00&quot;: &#123;
-            &#125;
-        &#125;
-    &#125;
-&#125;,
-&quot;poi&quot;: &#123;
-    &quot;note&quot;: &quot;字段解释: type / subtype / [types] |级别 / 名字 / 名字num&quot;,
-    &quot;level&quot;: [&quot;7&quot;,&quot;9&quot;,&quot;10&quot;,&quot;11&quot;,&quot;12&quot;,&quot;13&quot;,&quot;14&quot;,&quot;15&quot;,&quot;16&quot;,&quot;17&quot;,&quot;18&quot;,&quot;19&quot;],
-    &quot;config&quot;:&#123;
-        &quot;10&quot;: &#123;
-            &quot;1&quot;: [&quot;100101&quot;,&quot;100102&quot;,&quot;100103&quot;],
-            &quot;2&quot;: [&quot;100201&quot;,&quot;100202&quot;,&quot;100203&quot;,&quot;100204&quot;,&quot;100205&quot;,&quot;100206&quot;,&quot;100207&quot;,&quot;100208&quot;,&quot;100209&quot;,&quot;100210&quot;,&quot;100211&quot;,&quot;100212&quot;],
-            &quot;3&quot;: [&quot;100301&quot;,&quot;100302&quot;,&quot;100303&quot;,&quot;100304&quot;,&quot;100305&quot;,&quot;100306&quot;,&quot;100307&quot;],
-            &quot;4&quot;: [&quot;100400&quot;,&quot;100401&quot;,&quot;100402&quot;,&quot;100403&quot;,&quot;100404&quot;,&quot;100405&quot;,&quot;100406&quot;,&quot;100407&quot;,&quot;100408&quot;,&quot;100409&quot;,&quot;100410&quot;,&quot;100411&quot;,&quot;100412&quot;,&quot;100413&quot;,&quot;100414&quot;,&quot;100415&quot;,&quot;100416&quot;,&quot;100417&quot;,&quot;100418&quot;,&quot;100419&quot;,&quot;100420&quot;,&quot;100421&quot;],
-            &quot;5&quot;: [&quot;100500&quot;,&quot;100501&quot;,&quot;100502&quot;],
-            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;]
-        &#125;,
-        &quot;11&quot;: &#123;
-            &quot;1&quot;: [&quot;110100&quot;,&quot;110101&quot;],
-            &quot;2&quot;: [&quot;110201&quot;,&quot;110202&quot;],
-            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;]
-        &#125;,
-        &quot;12&quot;: &#123;
-            &quot;1&quot;: [&quot;120101&quot;,&quot;120102&quot;,&quot;120103&quot;,&quot;120104&quot;,&quot;120105&quot;,&quot;120106&quot;,&quot;120107&quot;,&quot;120108&quot;],
-            &quot;999&quot;: [&quot;2222:270102&quot;]
-        &#125;,
-        &quot;13&quot;: &#123;
-            &quot;1&quot;: [&quot;130101&quot;,&quot;130102&quot;,&quot;130103&quot;,&quot;130104&quot;,&quot;130105&quot;,&quot;130106&quot;,&quot;130107&quot;],
-            &quot;2&quot;: [&quot;130200&quot;,&quot;130201&quot;,&quot;130202&quot;],
-            &quot;3&quot;: [&quot;130301&quot;,&quot;130302&quot;,&quot;130303&quot;,&quot;130304&quot;],
-            &quot;999&quot;: [&quot;2222:270102&quot;]
-        &#125;,
-        &quot;14&quot;: &#123;
-            &quot;1&quot;: [&quot;140100&quot;],
-            &quot;2&quot;: [&quot;140201&quot;,&quot;140202&quot;,&quot;140203&quot;,&quot;140204&quot;,&quot;140205&quot;,&quot;140206&quot;,&quot;140207&quot;,&quot;140208&quot;,&quot;140209&quot;,&quot;140210&quot;,&quot;140212&quot;,&quot;140213&quot;],
-            &quot;3&quot;: [&quot;140301&quot;,&quot;140302&quot;,&quot;140303&quot;,&quot;140304&quot;,&quot;140305&quot;,&quot;140306&quot;,&quot;140307&quot;,&quot;140308&quot;,&quot;140309&quot;,&quot;140310&quot;,&quot;140311&quot;,&quot;140312&quot;],
-            &quot;4&quot;: [&quot;140400&quot;],
-            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;,&quot;3333:270103&quot;]
-        &#125;,
-        &quot;15&quot;: &#123;
-            &quot;1&quot;: [&quot;150101&quot;,&quot;150102&quot;,&quot;150103&quot;],
-            &quot;2&quot;: [&quot;150200&quot;]
-        &#125;,
-        &quot;16&quot;: &#123;
-            &quot;1&quot;: [&quot;160101&quot;,&quot;160102&quot;,&quot;160103&quot;,&quot;160104&quot;,&quot;160105&quot;,&quot;160106&quot;,&quot;160107&quot;,&quot;160109&quot;],
-            &quot;2&quot;: [&quot;160200&quot;],
-            &quot;3&quot;: [&quot;160301&quot;,&quot;160302&quot;,&quot;160303&quot;,&quot;160304&quot;,&quot;160305&quot;,&quot;160306&quot;,&quot;160307&quot;,&quot;160308&quot;,&quot;160309&quot;],
-            &quot;4&quot;: [&quot;160401&quot;,&quot;160402&quot;,&quot;160403&quot;,&quot;160404&quot;,&quot;160405&quot;,&quot;160406&quot;,&quot;160407&quot;],
-            &quot;5&quot;: [&quot;160500&quot;],
-            &quot;999&quot;: [&quot;2222:270102&quot;]
-        &#125;,
-        &quot;17&quot;: &#123;
-            &quot;1&quot;: [&quot;170101&quot;,&quot;170102&quot;,&quot;170103&quot;,&quot;170104&quot;,&quot;170105&quot;,&quot;170106&quot;,&quot;170107&quot;,&quot;170108&quot;,&quot;170109&quot;],
-            &quot;2&quot;: [&quot;170201&quot;,&quot;170202&quot;],
-            &quot;3&quot;: [&quot;170300&quot;],
-            &quot;999&quot;: [&quot;3333:270103&quot;]
-        &#125;,
-        &quot;18&quot;: &#123;
-            &quot;1&quot;: [&quot;180101&quot;,&quot;180102&quot;,&quot;180103&quot;,&quot;180104&quot;,&quot;180105&quot;,&quot;180106&quot;,&quot;180107&quot;,&quot;180108&quot;,&quot;180109&quot;],
-            &quot;2&quot;: [&quot;180201&quot;,&quot;180202&quot;,&quot;180203&quot;,&quot;180204&quot;,&quot;180205&quot;,&quot;180206&quot;,&quot;180207&quot;],
-            &quot;999&quot;: [&quot;1111:270101&quot;,&quot;2222:270102&quot;,&quot;3333:270103&quot;]
-        &#125;,
-        &quot;19&quot;: &#123;
-            &quot;1&quot;: [&quot;190101&quot;,&quot;190102&quot;,&quot;190103&quot;,&quot;190104&quot;,&quot;190105&quot;,&quot;190106&quot;,&quot;190107&quot;],
-            &quot;2&quot;: [&quot;190201&quot;,&quot;190202&quot;,&quot;190203&quot;,&quot;190204&quot;,&quot;190205&quot;,&quot;190206&quot;],
-            &quot;3&quot;: [&quot;190301&quot;,&quot;190302&quot;,&quot;190303&quot;],
-            &quot;4&quot;: [&quot;190401&quot;,&quot;190402&quot;,&quot;190403&quot;,&quot;190404&quot;,&quot;190405&quot;],
-            &quot;5&quot;: [&quot;190500&quot;],
-            &quot;999&quot;: [&quot;3333:270103&quot;]
-        &#125;,
-        &quot;20&quot;: &#123;
-            &quot;1&quot;: [&quot;200100&quot;,&quot;200101&quot;,&quot;200102&quot;,&quot;200103&quot;,&quot;200104&quot;,&quot;200105&quot;,&quot;200106&quot;,&quot;200107&quot;,&quot;200108&quot;,&quot;200109&quot;,&quot;200110&quot;,&quot;200111&quot;,&quot;200112&quot;,&quot;200113&quot;,&quot;200114&quot;,&quot;200115&quot;,&quot;200116&quot;,&quot;200117&quot;,&quot;200118&quot;],
-            &quot;2&quot;: [&quot;200201&quot;,&quot;200202&quot;,&quot;200203&quot;,&quot;200204&quot;,&quot;200205&quot;,&quot;200206&quot;]
-        &#125;,
-        &quot;21&quot;: &#123;
-            &quot;1&quot;: [&quot;210101&quot;,&quot;210102&quot;,&quot;210103&quot;],
-            &quot;2&quot;: [&quot;210201&quot;,&quot;210202&quot;,&quot;210203&quot;,&quot;210204&quot;,&quot;210205&quot;,&quot;210206&quot;],
-            &quot;3&quot;: [&quot;210300&quot;]
-        &#125;,
-        &quot;22&quot;: &#123;
-            &quot;1&quot;: [&quot;220101&quot;,&quot;220102&quot;,&quot;220103&quot;,&quot;220104&quot;,&quot;220105&quot;,&quot;220106&quot;,&quot;220107&quot;,&quot;220108&quot;],
-            &quot;2&quot;: [&quot;220201&quot;,&quot;220202&quot;]
-        &#125;,
-        &quot;23&quot;: &#123;
-            &quot;1&quot;: [&quot;230101&quot;,&quot;230102&quot;,&quot;230103&quot;,&quot;230104&quot;,&quot;230105&quot;,&quot;230106&quot;,&quot;230107&quot;],
-            &quot;2&quot;: [&quot;230201&quot;,&quot;230202&quot;,&quot;230203&quot;,&quot;230204&quot;,&quot;230205&quot;,&quot;230206&quot;],
-            &quot;3&quot;: [&quot;230301&quot;,&quot;230302&quot;,&quot;230303&quot;,&quot;230304&quot;,&quot;230305&quot;,&quot;230306&quot;,&quot;230307&quot;,&quot;230308&quot;,&quot;230309&quot;,&quot;230310&quot;,&quot;230311&quot;,&quot;230312&quot;],
-            &quot;4&quot;: [&quot;230401&quot;,&quot;230402&quot;,&quot;230403&quot;,&quot;230404&quot;,&quot;230405&quot;,&quot;230406&quot;,&quot;230407&quot;,&quot;230408&quot;],
-            &quot;5&quot;: [&quot;230501&quot;,&quot;230502&quot;,&quot;230503&quot;],
-            &quot;6&quot;: [&quot;230600&quot;],
-            &quot;999&quot;: [&quot;2222:270102&quot;,&quot;3333:270103&quot;]
-        &#125;,
-        &quot;24&quot;: &#123;
-            &quot;1&quot;: [&quot;240101&quot;,&quot;240102&quot;,&quot;240103&quot;,&quot;240104&quot;],
-            &quot;2&quot;: [&quot;240201&quot;,&quot;240202&quot;,&quot;240203&quot;,&quot;240204&quot;,&quot;240205&quot;],
-            &quot;3&quot;: [&quot;240301&quot;,&quot;240302&quot;],
-            &quot;4&quot;: [&quot;240401&quot;,&quot;240402&quot;,&quot;240403&quot;,&quot;240404&quot;,&quot;240405&quot;],
-            &quot;5&quot;: [&quot;240501&quot;,&quot;240502&quot;,&quot;240503&quot;,&quot;240504&quot;],
-            &quot;6&quot;: [&quot;240600&quot;],
-            &quot;999&quot;: [&quot;2222:270102&quot;]
-        &#125;,
-        &quot;25&quot;: &#123;
-            &quot;1&quot;: [&quot;250101&quot;,&quot;250102&quot;,&quot;250103&quot;,&quot;250104&quot;],
-            &quot;2&quot;: [&quot;250201&quot;,&quot;250202&quot;,&quot;250203&quot;,&quot;250204&quot;,&quot;250205&quot;,&quot;250206&quot;,&quot;250207&quot;],
-            &quot;3&quot;: [&quot;250301&quot;,&quot;250302&quot;,&quot;250303&quot;,&quot;250304&quot;,&quot;250305&quot;],
-            &quot;4&quot;: [&quot;250400&quot;],
-            &quot;999&quot;: [&quot;2222:270102&quot;]
-        &#125;,
-        &quot;26&quot;: &#123;
-            &quot;1&quot;: [&quot;260100&quot;,&quot;260199&quot;],
-            &quot;2&quot;: [&quot;260200&quot;]
-        &#125;,
-        &quot;50&quot;: &#123;
-            &quot;1&quot;: [&quot;3:280101&quot;,&quot;4:280102&quot;]
-        &#125;,
-        &quot;100&quot;: &#123;
-            &quot;1&quot;: [&quot;100:290101&quot;]
-       &#125;
-    &#125;,        
-    &quot;dat&quot;: &#123;
-        &quot;7&quot;: &#123;
-            &quot;县市区&quot;: &quot;&quot;
-        &#125;,
-        &quot;9&quot;: &#123;
-            &quot;乡镇村屯SP合并_&quot;: &quot;1,2,3,4,5&quot;
-        &#125;,
-        &quot;10&quot;: &#123;
-            &quot;KEEP&quot;: &quot;&quot;
-        &#125;,
-        &quot;11&quot;: &#123;
-            &quot;L11&quot;: &quot;&quot;
-        &#125;,
-        &quot;12&quot;: &#123;
-            &quot;L12&quot;: &quot;&quot;            
-        &#125;,
-        &quot;13&quot;: &#123;
-            &quot;L13&quot;: &quot;&quot;,
-            &quot;桥&quot;: &quot;&quot;,
-            &quot;山sp合并&quot;: &quot;&quot;,
-            &quot;L13移动学院&quot;: &quot;&quot;
-        &#125;,
-        &quot;14&quot;: &#123;
-            &quot;L14&quot;: &quot;&quot;
-        &#125;,
-        &quot;15&quot;: &#123;
-            &quot;L15_&quot;: &quot;1,2&quot;
-        &#125;,
-        &quot;16&quot;: &#123;
-            &quot;L16_&quot;: &quot;1,2&quot;,
-            &quot;不抽稀点POI&quot;: &quot;&quot;,
-            &quot;L16中国移动学院其他点&quot;: &quot;&quot;
-        &#125;,
-        &quot;17&quot;: &#123;
-            &quot;L17_&quot;: &quot;1,2,3,4&quot;,
-            &quot;出入口&quot;: &quot;&quot;,
-            &quot;带门类&quot;: &quot;&quot;
-        &#125;,
-        &quot;18&quot;: &#123;
-            &quot;L18_&quot;: &quot;1,2,3,4,5,6,7&quot;
-        &#125;,
-         &quot;19&quot;: &#123;
-            &quot;L19_&quot;: &quot;1,2,3,4,5,6,7,8,9,10&quot;
-        &#125;
-    &#125;
-&#125;
-</code></pre>
-<p>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/05/12/M_Swift122%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/12/M_Swift122%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-12 17:02:20" itemprop="dateCreated datePublished" datetime="2020-05-12T17:02:20+08:00">2020-05-12</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>很久没有写博客了，有一年多的时间了吧，这中间风风雨雨，我想是不是忘记了自己的初衷了，今天好像一天都没有工作，我想写点东西吧，纪念一下自己的30岁，不知道30岁以后的人生是什么样，我想是时候y需要规划一下了。<br>总之很多问题，我好像随波逐流的在这一年里干了很多事情，也好像什么也没干<br>孩子出生了，我也没回家看过几次。。。<br>房子买了，真的是满纸荒唐言，一把心酸泪，很扯，但愿以后的结果让我们很满意吧。<br>这段时间我觉得最大的成功就是写了公交规划这个项目吧，我觉得对我来说确实挺爽的，这个项目我觉得还是挺有收获的，因为是我一个人独立完成的，而且是用java，总之，还是挺有意义的。效率不能算是非常的好，但是我觉得代码很简洁，还是有一点能力的，自夸一下吧。算是对自己信心上的一个提高<br>现在在说地图数据编译，其实代码都是已经写好的，我只不过是用这编译罢了，没有多少技术含量，但是每次编译的时候都需要熬夜似的编译，让我确实很疲惫，不知道以后会不会好点。<br>总之对地图数据这方面我也算是有了一点点的收获，还是挺高兴的。<br>下面的事情我想我也不知道怎么办了，卖完房子，现金方面就不是太充足了，还借了一些钱，希望也是尽快能还上<br>明天也不知道是什么情况，公司搬到海淀这个地方对我h来说还是挺难受的，我每天早上要6点40左右就要醒来，然后赶将近两个小时的时间的公交和地铁去上班，下班也是，这样一天天的让我身心很疲惫，每到周末想好好的放松一下的时候，我又上了打游戏的瘾，天天打游戏到深夜，也还是疲惫。总之这种状态不是很好<br>这个疫情让我在家里呆了很长很长一段时间，导致我都有点胖了，真的不是个好现象。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/20/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><span class="page-number current">21</span><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/22/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/20/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><span class="page-number current">21</span><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/22/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1587,7 +1506,7 @@ return -1.000;
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-count">403</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1615,7 +1534,7 @@ return -1.000;
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

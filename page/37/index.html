@@ -148,6 +148,206 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net15%E5%8A%A0%E9%80%9F%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net15%E5%8A%A0%E9%80%9F%E8%AE%A1/" class="post-title-link" itemprop="url">加速计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 20:52:05" itemprop="dateCreated datePublished" datetime="2016-07-31T20:52:05+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>● 加速计的作用<br>● 用于检测设备的运动(比如摇晃)<br>● 加速计的经典应用场景 ● 摇一摇<br>● 计步器<br>加速计的原理<br>● 检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用,哪个方向运动了) ● 根据加速度数值,就可以判断出在各个方向上的作用力度<br>加速计程序的开发<br>● 加速计程序的开发<br>● 在iOS4以前:使用UIAccelerometer,用法非常简单(到了iOS5就已经过<br>期)<br>● 从iOS4开始:CoreMotion.framework<br>● 虽然UIAccelerometer已经过期,但由于其用法极其简单,很多程序里面都 还有残留<br>UIAccelerometer的使用步骤<br>● 获得单例对象<br>UIAccelerometer *accelerometer = [UIAccelerometer sharedAccelerometer];<br>● 设置代理 accelerometer.delegate = self;<br>● 设置采样间隔<br>accelerometer.updateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 实现代理方法</p>
+<ul>
+<li>(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:<br>(UIAcceleration *)acceleration<br>// acceleration中的x、y、z三个属性分别代表每个轴上的加速度<br>Core Motion<br>● 在iOS4之前,加速度计由UIAccelerometer类来负责采集数据<br>● 随着iPhone4的推出<br>● 加速度计全面升级,并引入了陀螺仪<br>● 与Motion(运动)相关的编程成为重头戏<br>● 苹果特地在iOS4中增加了专门处理Motion的框架-CoreMotion.framework<br>● Core Motion不仅能够提供实时的加速度值和旋转速度值,更重要的是,苹果 在其中集成了很多牛逼的算法<br>Core Motion获取数据的两种方式<br>● push<br>● 实时采集所有数据(采集频率高)<br>● pull<br>● 在有需要的时候,再主动去采集数据<br>Core Motion的使用步骤(push)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) {<br>// 加速计可用 }<br>● 设置采样间隔<br>mgr.accelerometerUpdateInterval = 1.0/30.0; // 1秒钟采样30次<br>● 开始采样(采样到数据就会调用handler,handler会在queue中执行)</li>
+<li>(void)startAccelerometerUpdatesToQueue:(NSOperationQueue *)queue<br>withHandler:(CMAccelerometerHandler)handler;<br>Core Motion的使用步骤(pull)<br>● 创建运动管理者对象<br>CMMotionManager *mgr = [[CMMotionManager alloc] init];<br>● 判断加速计是否可用(最好判断)<br>if (mgr.isAccelerometerAvailable) { // 加速计可用 }<br>● 开始采样</li>
+<li>(void)startAccelerometerUpdates;<br>● 在需要的时候采集加速度数据<br>CMAcceleration acc = mgr.accelerometerData.acceleration; NSLog(@”%f, %f, %f”, acc.x, acc.y, acc.z);<br>Core Motion框架结构示意图<br>摇一摇<br>● 监控摇一摇的方法<br>● 方法1:通过分析加速计数据来判断是否进行了摇一摇操作(比较复杂) ● 方法2:iOS自带的Shake监控API(非常简单)<br>● 判断摇一摇的步骤:实现3个摇一摇监听方法<br>● - (void)motionBegan:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /*</em> 检测到摇动 <em>/<br>● - (void)motionCancelled:(UIEventSubtype)motion<br>withEvent:(UIEvent <em>)event /</em></em> 摇动取消(被中断) <em>/<br>● - (void)motionEnded:(UIEventSubtype)motion withEvent:<br>(UIEvent <em>)event /</em></em> 摇动结束 */<br>更多的设备信息<br>● 如果想获得更多的设备信息,比如<br>● 设备型号、CPU情况、内存使用情况、硬盘使用情况<br>● 是否越狱、装了哪些传感器、当前运行的进程<br>● … …<br>● 有2种方法获取更多的设备信息<br>● 导入底层的C语言库,通过底层的C语言函数获取(较复杂,需要很多时间去<br>研究)<br>● 使用第三方库(用OC封装了底层的C函数)<br>• <a target="_blank" rel="noopener" href="https://github.com/Shmoopi/iOS-System-Services">https://github.com/Shmoopi/iOS-System-Services</a><br>• <a target="_blank" rel="noopener" href="https://github.com/erica/uidevice-extension">https://github.com/erica/uidevice-extension</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net14%E4%BC%A0%E6%84%9F%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net14%E4%BC%A0%E6%84%9F%E5%99%A8/" class="post-title-link" itemprop="url">传感器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:23:36" itemprop="dateCreated datePublished" datetime="2016-07-31T18:23:36+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>iPhone5中内置的传感器有<br>● 运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 环境光传感器(Ambient Light Sensor)<br>● 距离传感器(Proximity Sensor)<br>● 磁力计传感器(Magnetometer Sensor)<br>● 内部温度传感器(Internal Temperature Sensor)<br>● 湿度传感器(Moisture Sensor)<br>● 陀螺仪(Gyroscope)<br>● … …<br>环境光传感器(Ambient Light Sensor)<br>● 是iOS、Mac设备中最为古老的传感器成员<br>● 它能够让你在使用 Mac、iPhone、iPad时,眼睛更为舒适<br>● 从一个明亮的室外走入相对黑暗的室内后,iOS设备会自动调低亮度,让屏幕显得不再那 么光亮刺眼<br>● 当你使用iPhone拍照时,闪光灯会在一定条件下自动开启<br>● 几乎所有的Mac 都带有背光键盘,当周围光线弱到一定条件时,会自动开启键盘背光<br> 距离传感器(Proximity Sensor)<br>● 用于检测是否有其他物体靠近设备屏幕<br>● 当你打电话或接电话时将电话屏幕贴近耳边,iPhone会自动关闭屏幕 ,好处是<br>● 节省电量<br>● 防止耳朵或面部不小心触摸屏幕而引发一些不想要的意外操作<br>● 题外话:利用距离传感器,能找出很多电视剧的穿帮镜头<br>磁力计传感器(Magnetometer Sensor)<br>● 可以感应地球磁场, 获得方向信息, 使位置服务数据更精准 ● 可以用于电子罗盘和导航应用<br>● iPad的Smart Cover盒盖睡眠操作就是基于磁力计传感器<br>内部温度传感器(Internal Temperature Sensor)<br>● 从 iPad一代开始,iOS设备都加入了一个内部温度传感器,用于检测内部组件 温度,当温度超过系统设定的阈值时,会出现以下提示<br>● 内部温度传感器,对于提升iOS设备自身安全性与稳定性有很大的帮助<br>湿度传感器(Moisture Sensor)<br>● 湿度传感器跟其他基于微电子的传感器不同,是一个简单的物理传感器 ● 简单来说,湿度传感器就是一张遇水变红的试纸<br>● Apple的维修人员就是通过检测试纸是否变红,来判断设备是否进水 (设备进水不在保修范围之内)<br>陀螺仪(Gyroscope)<br>● 陀螺仪是随着iPhone4的上市首次出现在iOS设备上的传感器 ● 陀螺仪可以用于检测设备的持握方式<br>● 陀螺仪的原理是检测设备在X、Y、Z轴上所旋转的角速度<br>● 陀螺仪在赛车类游戏中有重大作用: ● 模拟汽车驾驶时方向盘旋转的动作<br>● 使得这类游戏的操控体验更为真实<br>运动传感器\加速度传感器\加速计(Motion/Accelerometer Sensor)<br>● 最早出现在iOS设备上的传感器之一<br>● 加速计用于检测设备在X、Y、Z轴上的加速度 (哪个方向有力的作用)<br>● 加速计可以用于检测设备的摇晃,经典应用场景 ● 摇一摇<br>● 计步器</p>
+<blockquote>
+<p>传感器总结</p>
+</blockquote>
+<p>传感器类型<br>作用<br>环境光传感器<br>感应周边环境光线的强弱(自动调节屏幕亮度)<br>距离传感器<br>感应是否有其他物体靠近设备屏幕(打电话自动锁屏)<br>磁力计传感器<br>感应周边的磁场(合盖锁屏)<br>内部温度传感器<br>感应设备内部的温度(提醒用户降温,防止损伤设备)<br>湿度传感器<br>感应设备是否进水(方便维修人员)<br>陀螺仪<br>感应设备的持握方式(赛车类游戏)<br>加速计<br>感应设备的运动(摇一摇、计步器)</p>
+<blockquote>
+<p>距离传感器的使用</p>
+</blockquote>
+<p>// 开启距离感应功能<br>[UIDevice currentDevice].proximityMonitoringEnabled = YES; // 监听距离感应的通知<br>[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(proximityChange:) name:UIDeviceProximityStateDidChangeNotification object:nil];</p>
+<ul>
+<li>(void)proximityChange:(NSNotificationCenter *)notification { if ([UIDevice currentDevice].proximityState == YES) { NSLog(@”某个物体靠近了设备屏幕”); // 屏幕会自动锁住<br>} else {<br>NSLog(@”某个物体远离了设备屏幕”); // 屏幕会自动解锁<br>} }</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net13%E5%88%86%E4%BA%AB%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/07/31/D_Net13%E5%88%86%E4%BA%AB%E5%AD%A6%E4%B9%A0%E7%BD%91%E7%AB%99/" class="post-title-link" itemprop="url">分享学习网站</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-31 18:20:35" itemprop="dateCreated datePublished" datetime="2016-07-31T18:20:35+08:00">2016-07-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>游戏开发相关：</p>
+<p><a target="_blank" rel="noopener" href="http://www.gameres.com/">http://www.gameres.com/</a>    想学游戏的这个网站绝对不能错过，个人感觉挺不错的<br><a target="_blank" rel="noopener" href="http://xyq.baike.163.com/ziliao/">http://xyq.baike.163.com/ziliao/</a>      SLG 游戏系统策划<br><a target="_blank" rel="noopener" href="http://www.gamedev.net/page/index.html">http://www.gamedev.net/page/index.html</a>  国外<br><a target="_blank" rel="noopener" href="http://ns.codingnow.com/">http://ns.codingnow.com/</a>     网易梦幻西游后端主程序  大神</p>
+<p>安全相关：<br><a target="_blank" rel="noopener" href="http://bbs.pediy.com/">http://bbs.pediy.com/</a> 看雪学院  国内重量级</p>
+<p>iOS相关：</p>
+<p><a target="_blank" rel="noopener" href="http://blog.devtang.com/">http://blog.devtang.com/</a>   网易iOS </p>
+<p><a target="_blank" rel="noopener" href="http://beyondvincent.com/blog/archives/">http://beyondvincent.com/blog/archives/</a><br><a target="_blank" rel="noopener" href="http://github.ibireme.com/github/list/ios/">http://github.ibireme.com/github/list/ios/</a>      收集git 上各种优秀项目</p>
+<p>Swift学习:<br><a target="_blank" rel="noopener" href="https://github.com/CocoaChina-editors/Welcome-to-Swift">https://github.com/CocoaChina-editors/Welcome-to-Swift</a><br><a target="_blank" rel="noopener" href="https://github.com/numbbbbb/the-swift-programming-language-in-chinese">https://github.com/numbbbbb/the-swift-programming-language-in-chinese</a>  </p>
+<p>热门IT社区<br><a target="_blank" rel="noopener" href="http://www.csdn.net/">www.csdn.net</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/">www.cnblogs.com</a><br><a target="_blank" rel="noopener" href="http://www.51cto.com/">www.51cto.com</a><br><a target="_blank" rel="noopener" href="http://www.oschina.net/">http://www.oschina.net/</a> </p>
+<p><a target="_blank" rel="noopener" href="http://tool.oschina.net/apidocs/#J">http://tool.oschina.net/apidocs/#J</a>    在线API 各种技术文档 </p>
+<p><a target="_blank" rel="noopener" href="http://www.juming.com/Csdn/#jieguo">http://www.juming.com/Csdn/#jieguo</a>  免CSDN下载器</p>
+<p><a target="_blank" rel="noopener" href="http://www.cnpaf.net/class/rfcall/">http://www.cnpaf.net/class/rfcall/</a>       网络协议详解大全</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net12Autolayout/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -782,272 +982,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net5KVC%E5%92%8CKVO/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net5KVC%E5%92%8CKVO/" class="post-title-link" itemprop="url">KVC和KVO</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:17:42" itemprop="dateCreated datePublished" datetime="2016-07-31T00:17:42+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p> 什么是KVC?<br>//  Key Value Coding的简写, 称为键值编码<br>//  作用: 访问对象中属性的一种方式, 通过字符串为关键字访问属性</p>
-</blockquote>
-<blockquote>
-<p>KVC的基本使用<br>//  问题: setValue:forUndefinedKey:</p>
-</blockquote>
-<blockquote>
-<p>KeyPath的使用</p>
-</blockquote>
-<p>// 4.常用方法<br>//  setValuesForKeysWithDictionary:</p>
-<p>//总结: 开发中常用<br>//1. setValuesForKeysWithDictionary方法<br>//2. 当对象没有对应属性出现错误怎么解决</p>
-<p>//KVC常用用途把网络上字典转化为model<br>NSDictionary *dict = @{@”speed”:@(100),@”temp”:@”test”};<br>for(NSString *key in dict)<br>{<br>[car setValue:dict[key] forKey:key];<br>}</p>
-<p>//设置car中engine对象的power属性<br>[car setValue:@(100) forKeyPath:@”engine.power”];</p>
-<p>//把字典中各个属性的值赋给对象对应的属性或实例变量<br>[car setValuesForKeysWithDictionary:dict2];</p>
-<blockquote>
-<p>什么是KVO</p>
-</blockquote>
-<p>//  Key Value Observing的简写, 键值监听<br>//  作用: 需要监视一个属性的变化, 变化了之后做出处理</p>
-<blockquote>
-<p>KVO的基本使用</p>
-</blockquote>
-<p>// 常用<br>//  项目监听一个属性的变化, 并在界面上显示, 使用KVO<br>//  实例: 监听和显示下载进度<br>//KVO<br>//效果: 当speed有了变化之后执行self中observeValueForKeyPath方法<br>[car addObserver:self forKeyPath:@”speed” options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];<br>监听的实现<br>-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context<br>{<br>double newSpeed = [[object valueForKeyPath:keyPath] doubleValue];</p>
-<p>NSLog(@”newSpeed = %f”,newSpeed);<br>}<br>程序完成的时候要移除监听<br>-(void)dealloc<br>{<br>//移除监听<br>//[car removeObserver:self forKeyPath:@”speed”];<br>}</p>
-<p>KVC 与 KVO 是 Objective C 的关键概念，个人认为必须理解的东西，下面是实例讲解。<br>Key-Value Coding (KVC)<br>KVC，即是指 NSKeyValueCoding，一个非正式的 Protocol，提供一种机制来间接访问对象的属性。KVO 就是基于 KVC 实现的关键技术之一。<br>一个对象拥有某些属性。比如说，一个 Person 对象有一个 name 和一个 address 属性。以 KVC 说法，Person 对象分别有一个 value 对应他的 name 和 address 的 key。 key 只是一个字符串，它对应的值可以是任意类型的对象。从最基础的层次上看，KVC 有两个方法：一个是设置 key 的值，另一个是获取 key 的值。如下面的例子：</p>
-<p>KVO这种编码方式使用起来很简单，很适用与datamodel修改后，引发的UIVIew的变化这种情况，就像上边的例子那样，当更改属性的值后，监听对象会立即得到通知。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net3GCD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net3GCD/" class="post-title-link" itemprop="url">GCD</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:14:53" itemprop="dateCreated datePublished" datetime="2016-07-31T00:14:53+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>什么是GCD</p>
-</blockquote>
-<p>Grand Central Dispach–<br>好用：1.简单<br>基于block c函数接口<br>功能强大：支持多核心编程<br>支持高级编程功能</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</p>
-<blockquote>
-<p>创建和使用</p>
-</blockquote>
-<p>//开启一个新的线程<br>//queue<br>//三种：main——queue主线程队列<br>//globle——queue全局队列。异步任务加载这里<br>//自定义的<br>dispatch_queue_t queue=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”A=%d”,i);<br>}<br>});<br>dispatch_async(queue, ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>NSLog(@”B=%d”,i);<br>}<br>});</p>
-<blockquote>
-<p>模拟网络数据下载</p>
-</blockquote>
-<p>[self simulaterNetworkDataDownload];</p>
-<blockquote>
-<p>延迟执行，延时5s执行</p>
-</blockquote>
-<p>[self delayRunCode];</p>
-<blockquote>
-<p>有的代码指向执行一次</p>
-</blockquote>
-<p>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];<br>[self runOneCode];</p>
-<blockquote>
-<p>多个任务同时执行，等待所有任务结束</p>
-</blockquote>
-<p>//    模拟迅雷多路下载后关机<br>[self simulaterThreadDownload];</p>
-<p>}<br>-(void)simulaterThreadDownload<br>{<br>dispatch_group_t group=dispatch_group_create();</p>
-<p>//任务添加<br>dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;30; i++)<br>{<br>NSLog(@” B=%d”,i);<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>});<br>//先是所有任务执行完成<br>dispatch_group_notify(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>NSLog(@”所有的任务执行完成”);<br>});<br>}<br>-(void)runOneCode<br>{<br>static dispatch_once_t onceToken;<br>dispatch_once(&amp;onceToken, ^{<br>NSLog(@”这句话我只说一次”);<br>});<br>}<br>-(void)delayRunCode<br>{<br>dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{<br>NSLog(@”我是一只小小小小鸟,永远永远也飞不高”);<br>});</p>
-<p>}<br>-(void)simulaterNetworkDataDownload<br>{<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(10, 100, 300, 20)];<br>[self.view addSubview:_progressView];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{<br>for (int i=0; i&lt;100; i++)<br>{<br>注意：不要再主线程里更新UI<br>//            _progressView.progress+=0.01;</p>
-<p>dispatch_async(dispatch_get_main_queue(), ^{<br>_progressView.progress+=0.01;<br>});<br>[NSThread sleepForTimeInterval:0.1];<br>}<br>NSLog(@”下载完成”);<br>});</p>
-<p>}</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2016/07/31/D_Net4AVAudioPlayer/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2016/07/31/D_Net4AVAudioPlayer/" class="post-title-link" itemprop="url">AVAudioPlayer</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-31 00:14:33" itemprop="dateCreated datePublished" datetime="2016-07-31T00:14:33+08:00">2016-07-31</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>创建播放器对象</p>
-</blockquote>
-<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”lalala.mp3” ofType:nil];<br>_player =[[AVAudioPlayer alloc]initWithContentsOfURL:[NSURL fileURLWithPath:path] error:nil];<br>//预加准备<br>[_player prepareToPlay];</p>
-<p>//添加一个按钮：开始播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>[_player play];<br>}];</p>
-<p>//添加一个按钮：停止播放<br>[self.view addSystemButtonWithFrame:CGRectMake(100, 150, 100, 30) title:@”暂停” action:^(UIButton *button) {<br>[_player pause];<br>}];<br>//滑块控件<br>_slider=[[UISlider alloc]initWithFrame:CGRectMake(100, 200, 100, 30)];<br>[self.view addSubview:_slider];<br>[_slider addTarget:self action:@selector(dealSlider:) forControlEvents:UIControlEventValueChanged];<br>_slider.value=1;<br>进度条<br>_progressView=[[UIProgressView alloc]initWithFrame:CGRectMake(50, 50, 200, 20)];<br>[self.view addSubview:_progressView];<br>[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(dealTimer:) userInfo:nil repeats:YES];</p>
-<p>}</p>
-<p>-(void)dealTimer:(NSTimer *)t<br>{<br>_progressView.progress=_player.currentTime / _player.duration;<br>}<br>-(void)dealSlider:(UISlider *)s<br>{<br>_player.volume=s.value;<br>}</p>
-<blockquote>
-<p>网络音乐的播放</p>
-</blockquote>
-<p>1.使用AudioStreamer.h开源库<br>配置开源库<br>创建对象<br>{<br>AudioStreamer *_streamer;<br>}</p>
-<p>NSString *urlString=@”<a target="_blank" rel="noopener" href="http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061&quot;">http://music.baidu.com/data/music/file?link=http://yinyueshiting.baidu.com/data2/music/134378654/2191061104400128.mp3?xcode=ffd5ff02dfd6ef1a480aa81e262460cd6e2eede49a06f7cb&amp;song_id=2191061&quot;</a>;<br>//    如果是self调用时的警告可以<br>//    __weak UIViewController *vc=self;</p>
-<p>__block typeof (_streamer) t=_streamer;</p>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {<br>t =[[AudioStreamer alloc]initWithURL:[NSURL URLWithString:urlString]];<br>[t start];<br>}];</p>
-<blockquote>
-<p>播放本地视频文件</p>
-</blockquote>
-<p>//1、配置<br>//添加mediaPlayer<br>//如何播放在线视频文件</p>
-<p>#import “ViewController.h”</p>
-<p>#import &lt;MediaPlayer/MediaPlayer.h&gt;</p>
-<p>#import “UIView+ZJQuickControl.h”</p>
-<ul>
-<li>(void)viewDidLoad<br>{<br>[super viewDidLoad];</li>
-</ul>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放” action:^(UIButton *button) {</p>
-<p>NSString *path=[[NSBundle mainBundle]pathForResource:@”dzs.mp4” ofType:nil];<br>MPMoviePlayerViewController *mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL fileURLWithPath:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
-<blockquote>
-<p>播放在线视频</p>
-</blockquote>
-<p>//<a target="_blank" rel="noopener" href="http://quiet.local/baoman.mp4">http://quiet.local/baoman.mp4</a></p>
-<p>[self.view addSystemButtonWithFrame:CGRectMake(100, 100, 100, 30) title:@”播放网络mp4” action:^(UIButton *button) {</p>
-<p>NSString *path=@”<a target="_blank" rel="noopener" href="http://quiet.local/baoman.mp4&quot;">http://quiet.local/baoman.mp4&quot;</a>;<br>MPMoviePlayerViewController *mpvc=[[MPMoviePlayerViewController alloc]initWithContentURL:[NSURL URLWithString:path]];<br>[self presentViewController:mpvc animated:YES completion:nil];<br>}];</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/36/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><span class="page-number current">37</span><a class="page-number" href="/page/38/">38</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/38/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/36/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><span class="page-number current">37</span><a class="page-number" href="/page/38/">38</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/38/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1113,7 +1051,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-count">403</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1141,7 +1079,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

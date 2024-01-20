@@ -148,6 +148,218 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_18react/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/03/N_18react/" class="post-title-link" itemprop="url">React学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-09 12:58:48" itemprop="dateModified" datetime="2023-09-09T12:58:48+08:00">2023-09-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>关于虚拟DOM：<br>            1.本质是Object类型的对象（一般对象）<br>            2.虚拟DOM比较“轻”，真实DOM比较“重”，因为虚拟DOM是React内部在用，无需真实DOM上那么多的属性。<br>            3.虚拟DOM最终会被React转化为真实DOM，呈现在页面上。<br>jsx语法规则：<br>    1.定义虚拟DOM时，不要写引号。<br>    2.标签中混入JS表达式时要用{}。<br>    3.样式的类名指定不要用class，要用className。<br>    4.内联样式，要用style=key:value的形式去写。<br>    5.只有一个根标签<br>    6.标签必须闭合<br>    7.标签首字母<br>        (1).若小写字母开头，则将该标签转为html中同名元素，若html中无该标签对应的同名元素，则报错。<br>        (2).若大写字母开头，react就去渲染对应的组件，若组件没有定义，则报错。<br>2.1.2 组件的定义<br>函数式组件(适用于简单组件)<br>类式组件（适用于复杂组件）<br>注意：<br>组件名必须首字母大写<br>虚拟DOM元素只能有一个根元素<br>虚拟DOM元素必须有结束标签</p>
+<p>state<br>state是组件对象最重要的属性, 值是对象(可以包含多个key-value的组合)<br>组件被称为”状态机”,通过更新组件的state来更新对应的页面显示(重新渲染组件)</p>
+<p>props<br>每个组件对象都会有props(properties的简写)属性<br>组件标签的所有属性都保存在props中</p>
+<p>2.4 组件的三大核心属性3：refs与事件处理</p>
+<p>高阶函数：如果一个函数符合下面2个规范中的任何一个，那该函数就是高阶函数。<br>                1.若A函数，接收的参数是一个函数，那么A就可以称之为高阶函数。<br>                2.若A函数，调用的返回值依然是一个函数，那么A就可以称之为高阶函数。<br>                常见的高阶函数有：Promise、setTimeout、arr.map()等等<br>—<br>函数的柯里化：通过函数调用继续返回函数的方式，实现多次接收参数最后统一处理的函数编码形式。<br>它是指将一个函数从可调用的 f(a, b, c) 转换为可调用的 f(a)(b)(c)或者f(a, b)(c)或者f(a)(b, c)<br>应用：<br>参数复用：即如果函数有重复使用到的参数，可以利用柯里化，将复用的参数存储起来，不需要每次都传相同的参数<br>延迟执行：传入参数个数没有满足原函数入参个数，都不会立即返回结果，而是返回一个函数。（bind方法就是柯里化的一个示例）<br>函数式编程中，作为compose, functor, monad 等实现的基础</p>
+<p>重要的勾子<br>render：初始化渲染或更新渲染调用<br>    render() 函数应该为纯函数，这意味着在不修改组件 state 的情况下，每次调用时都返回相同的结果，并且它不会直接与浏览器交互。</p>
+<pre><code>如需与浏览器进行交互，请在 componentDidMount() 或其他生命周期方法中执行你的操作。保持 render() 为纯函数，可以使组件更容易使用、维护。
+</code></pre>
+<p>componentDidMount：开启监听, 发送ajax请求<br>    componentDidMount() 会在组件挂载后（插入 DOM 树中）立即调用。依赖于 DOM 节点的初始化应该放在这里。<br>    componentDidMount 是一个会阻塞渲染的生命周期，我们在这里面最好不要去执行一些非常耗时的逻辑，这样会让我们的首屏出现的更慢。<br>componentWillUnmount：做一些收尾工作, 如: 清理定时器</p>
+<p>虚拟DOM中key的作用：<br>    1). 简单的说: key是虚拟DOM对象的标识, 在更新显示时key起着极其重要的作用。</p>
+<pre><code>2). 详细的说: 当状态中的数据发生变化时，react会根据【新数据】生成【新的虚拟DOM】,随后React进行【新虚拟DOM】与【旧虚拟DOM】的diff比较，比较规则如下：
+
+    a. 旧虚拟DOM中找到了与新虚拟DOM相同的key：
+        (1).若虚拟DOM中内容没变, 直接使用之前的真实DOM
+        (2).若虚拟DOM中内容变了, 则生成新的真实DOM，随后替换掉页面中之前的真实DOM
+
+    b. 旧虚拟DOM中未找到与新虚拟DOM相同的key:
+        根据数据创建新的真实DOM，随后渲染到到页面
+</code></pre>
+<ol start="2">
+<li><p>用index作为key可能会引发的问题：</p>
+<pre><code> 1. 若对数据进行：逆序添加、逆序删除等破坏顺序操作:
+                 会产生没有必要的真实DOM更新 ==&gt; 界面效果没问题, 但效率低。
+
+ 2. 如果结构中还包含输入类的DOM：
+                 会产生错误DOM更新 ==&gt; 界面有问题。
+                 
+ 3. 注意！如果不存在对数据的逆序添加、逆序删除等破坏顺序操作，
+     仅用于渲染列表用于展示，使用index作为key是没有问题的。
+</code></pre>
+</li>
+<li><p>开发中如何选择key?:</p>
+<pre><code> 1.最好使用每条数据的唯一标识作为key, 比如id、手机号、身份证号、学号等唯一值。
+ 2.如果确定只是简单的展示数据，用index也是可以的。处链接及本声明。
+</code></pre>
+</li>
+</ol>
+<p>(1). State Hook让函数组件也可以有state状态, 并进行状态数据的读写操作<br>useState()说明:<br>        参数: 第一次初始化指定的值在内部作缓存<br>        返回值: 包含2个元素的数组, 第1个为内部当前状态值, 第2个为更新状态值的函数<br>(4). setXxx()2种写法:<br>        setXxx(newValue): 参数为非函数值, 直接指定新的状态值, 内部用其覆盖原来的状态值<br>        setXxx(value =&gt; newValue): 参数为函数, 接收原本的状态值, 返回新的状态值, 内部用其覆盖原来的状态值</p>
+<p>(1). Effect Hook 可以让你在函数组件中执行副作用操作(用于模拟类组件中的生命周期钩子)<br>3). 语法和说明:<br>        useEffect(() =&gt; {<br>          // 在此可以执行任何带副作用操作<br>          return () =&gt; { // 在组件卸载前执行<br>            // 在此做一些收尾工作, 比如清除定时器/取消订阅等<br>          }<br>        }, [stateValue]) // 如果指定的是[], 回调函数只会在第一次render()后执行</p>
+<p>(4). 可以把 useEffect Hook 看做如下三个函数的组合<br>        componentDidMount()<br>        componentDidUpdate()<br>        componentWillUnmount() </p>
+<p>(1). Ref Hook可以在函数组件中存储/查找组件内的标签或任意其它数据</p>
+<p>1.props：<br>        (1).children props<br>        (2).render props<br>    2.消息订阅-发布：<br>        pubs-sub、event等等<br>    3.集中式管理：<br>        redux、dva等等<br>    4.conText:<br>        生产者-消费者模式</p>
+<p>Props/state改变 –&gt; render函数重新执行 –&gt; 产生新的DOM树–&gt;新旧DOM树进行diff –&gt;计算出差异进行更新–&gt;更新到真实的DOM上</p>
+<p>–Router中包含了对路径的改变的监听,并且将会相应的路径传递给子组件<br>–BrowserRouter使用history模式<br>–HashRouter使用hash模式<br>(2) Link和NavLink<br>–通常路径的跳转是使用Link组件,最终会被渲染成a 元素<br>–NavLink是在Link基础之上增加了一些样式属性<br>–to属性:LInk最重要的属性,用于设置跳转到的路径<br>(3) Route:<br>–Route用于路径的匹配<br>–path属性:用于设置匹配到的路径<br>–component属性:设置匹配到路径后,渲染组件<br>–exact:精准匹配,只有精准匹配到完全一致的路径,才会渲染对应的组件</p>
+<p>  Object.assign() 方法用于将所有可枚举属性的值从一个或多个源对象复制到目标对象。它将返回目标对象。</p>
+<p>useEffect使用技巧<br>1、不传递<br>useEffect不传递第二个参数会导致每次渲染都会运行useEffect。然后，当它运行时，它获取数据并更新状态。然后，一旦状态更新，组件将重新呈现，这将再次触发useEffect，这就是问题所在。</p>
+<p>2.传递空数组（仅在挂载和卸载的时候执行）<br>useEffect(()=&gt;{undefined<br>console.log(props)<br>},[]) //仅在挂载和卸载的时候执行</p>
+<p>3.传递一个值（对应值更新时回调）</p>
+<p>useEffect(()=&gt;{undefined<br>console.log(count)<br>},[count]) //count更新时执行</p>
+<p>4.传递多个</p>
+<p>const Asynchronous : React.FC=({number})=&gt;{undefined<br>const [number2,setNumber2] = useState(number);<br>useEffect(()=&gt;{undefined<br>console.log(number)<br>setNumber2(number)<br>},[number,setNumber2]) //监听props对象number的更改<br>//setNumber2是useState返回的setter，所以不会在每次渲染时重新创建它，因此effect只会运行一次<br>}</p>
+<p>5.return 方法</p>
+<p>const timer = setInterval(() =&gt; {undefined<br>setCount(count + 1)<br>}, 1000)<br>// useEffect方法的第一个参数是一个函数，函数可以return一个方法，这个方法就是在组件销毁的时候会被调用<br>useEffect(() =&gt; {undefined<br>return () =&gt; {undefined<br>clearInterval(timer)<br>}<br>}, [])</p>
+<p>在vue组件通信中，跨组件通信的手段极其丰富且灵活，常用的通信方案有父子组件通信、ref通信、事件总线、provide/inject、parent/children、listeners/attrs、slot插槽通信等。除此之外，在vue中还可以使用vuex 或 mobx 来实现跨组件通信。总体上来讲，vue的组件通信极其灵活，自上而下、自下而上都是容易实现的；也正是因为过于灵活，这会“诱惑”开发者容易滥用通信手段，导致vue项目呈现出“易开发、难维护”的现状。在react中数据是单向数据流，在组件树中数据只能自上而下地分发和传递。state是组件自有的状态数据，props是父级组件传递过来的数据。在react中最最基本的通信方案是状态提升，还有React上下文也可以实现自上而下的数据流。鉴于react这种数据流的特性，即使集成了Redux仍然会呈现出单向数据流的特征，因此React数据流更容易被管理，配合Redux一起更适合做中大型的项目开发。<br>一个简单版本的vue，需要实现Compiler类（用于模板编译）、Watcher类（用于更新视图）、Dep类（用于依赖收集）、Observer类（用于数据劫持）、Vue类（构造函数）等。<br>React采用了最新的Fiber（双向链表）的数据结构，作为“协调”（Diff）运算的基础数据。如果要手写一个简易版本的React，其核心要实现以下功能，createElement（用于创建元素）、createDOM/updateDOM（用于创建和更新DOM）、render/workLoop（用于生成Fiber和协调运算）、commitWork（用于提交）等，如果还有支持Hooks，还得封闭Hooks相关的方法。</p>
+<p>React Hooks： 就是用函数的形式代替原来的继承类的形式，并且使用预函数的形式管理state，有Hooks可以不再使用类的形式定义组件了。</p>
+<p>为什么React要求hook的调用顺序不能改变（不能在条件语句中使用hook） —— 每次render时都是从一条固定顺序的链表中获取hook对应数据的。</p>
+<p>hooks保存在currentlyRenderingFiber.memoizedState中保存一条hook对应数据的单向链表。<br>例：<br>const hookA = {<br>  // hook保存的数据<br>  memoizedState: null,<br>  // 指向下一个hook<br>  next: hookB<br>  // …省略其他字段<br>};</p>
+<p>hookB.next = hookC;</p>
+<p>currentlyRenderingFiber.memoizedState = hookA;</p>
+<p>useState返回值数组第二个参数为改变state的方法。在源码中，他被称为dispatchAction。<br>多次调用dispatchAction会形成一条环状链表。这条链表显然属于该useState hook。<br>update3 –next–&gt; update1<br>  ^                 |<br>  |               update2<br>  |<strong><strong><strong>next</strong></strong></strong>_|<br>hooks useState数据<br>const hook = {<br>  // hook保存的数据<br>  memoizedState: null,<br>  // 指向下一个hook<br>  next: hookForB<br>  // 本次更新以baseState为基础计算新的state<br>  baseState: null,<br>  // 本次更新开始时已有的update队列<br>  baseQueue: null,<br>  // 本次更新需要增加的update队列<br>  queue: null,<br>};</p>
+<p>react：<br>解决CPU瓶颈的关键是实现时间切片，而时间切片的关键是：将同步的更新变为可中断的异步更新。</p>
+<p>Scheduler（调度器）—— 调度任务的优先级，高优任务优先进入Reconciler<br>Reconciler（协调器）—— 负责找出变化的组件<br>Renderer（渲染器）—— 负责将变化的组件渲染到页面上</p>
+<p>代数效应是函数式编程中的一个概念，用于将副作用从函数调用中分离。</p>
+<p>Fiber并不是计算机术语中的新名词，他的中文翻译叫做纤程，与进程（Process）、线程（Thread）、协程（Coroutine）同为程序执行过程。<br>在很多文章中将纤程理解为协程的一种实现。在JS中，协程的实现便是Generator。</p>
+<p>所以，我们可以将纤程(Fiber)、协程(Generator)理解为代数效应思想在JS中的体现。<br>React Fiber可以理解为：<br>React内部实现的一套状态更新机制。支持任务不同优先级，可中断与恢复，并且恢复后可以复用之前的中间状态。</p>
+<p>什么是“双缓存”<br>我们可以在内存中绘制当前帧动画，绘制完毕后直接用当前帧替换上一帧画面，由于省去了两帧替换间的计算时间，不会出现从白屏到出现画面的闪烁情况。<br>React使用“双缓存”来完成Fiber树的构建与替换——对应着DOM树的创建与更新。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">title&#x3D;&#123;&#96;回放-$&#123;videoList[itemIndex].createdTime&#125; $&#123;videoList[itemIndex].airplaneCode&#125; $&#123;videoList[itemIndex].videoName&#125;&#96;&#125;&gt;</span><br><span class="line">       &lt;div className&#x3D;&#123;styles.historyVideo&#125;&gt;</span><br><span class="line">         &lt;ReactFlvPlayer</span><br><span class="line">           &#x2F;&#x2F; url&#x3D;&quot;http:&#x2F;&#x2F;153.0.195.137:1985&#x2F;live&#x2F;FJ001.flv&quot;</span><br><span class="line">           url&#x3D;&#123;videoList[itemIndex].fileUrl&#125;</span><br><span class="line">           heigh&#x3D;&quot;450px&quot;</span><br><span class="line">           width&#x3D;&quot;800px&quot;</span><br><span class="line">           isMuted&#x3D;&#123;true&#125;</span><br><span class="line">         &#x2F;&gt;</span><br><span class="line">         &lt;ul&gt;</span><br><span class="line">           &#123;lis&#125;</span><br><span class="line">         &lt;&#x2F;ul&gt;</span><br><span class="line">       &lt;&#x2F;div&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_25Vue%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/03/N_25Vue%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">Vue总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-09 12:51:02" itemprop="dateModified" datetime="2023-09-09T12:51:02+08:00">2023-09-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Vue</p>
+<p>插槽开发</p>
+<p>组件内使用<br><view><slot name="content"></slot></view><br>外部自定义<br><template v-slot:content><br></template><br>计算属性<br>样式可以采用数据形式<br>:class=”[‘btn’,{‘btn-no’:!hasSeleted}]”</p>
+<p>小程序分包<br>（包之间不能互相引用）<br>“pages”: [<br>        //pages数组中第一项表示应用启动页，参考：<a target="_blank" rel="noopener" href="https://uniapp.dcloud.io/collocation/pages">https://uniapp.dcloud.io/collocation/pages</a><br>        {<br>            “path”: “pages/index/index”,<br>            “style”: {<br>                “navigationStyle”: “custom”,<br>                “backgroundColor”: “#F4F5F7”<br>            }<br>        }<br>    ],<br>    “subPackages”: [{<br>            “root”: “page_main”,<br>            “pages”: [{<br>                // 首页<br>                “path”: “index”,<br>                “style”: {<br>                    “navigationStyle”: “custom”,<br>                    “backgroundColor”: “#F4F5F7”<br>                }<br>            },{<br>                // 首页<br>                “path”: “monitor”,<br>                “style”: {<br>                    “navigationStyle”: “custom”,<br>                    “backgroundColor”: “#F4F5F7”<br>                }<br>            }]<br>        },<br>    。。。。。。。<br>css定位<br>relative<br>    相对定位，即相对于元素的正常位置进行定位，您可以通过 top、right、bottom、left 这 4 个属性来设置元素相对于正常位置的偏移量，在此过程中不会对其它元素造成影响。<br>absolute<br>    绝对定位，相对于第一个非 static 定位的父级元素进行定位，可以通过 top、right、bottom、left 这 4 个属性来设置元素相对于父级元素位置的偏移量。如果没有满足条件的父级元素，则会相对于浏览器窗口来进行定位。使用绝对定位的元素不会对其它元素造成影响。<br>fixed<br>    固定定位，相对于浏览器的创建进行定位，可以使用 top、right、bottom、left 这 4 个属性来定义元素相对于浏览器窗口的位置。使用固定定位的元素无论如何滚动浏览器窗口元素的位置都是固定不变的。<br>sticky    粘性定位，它是 relative 和 fixed 的结合体，能够实线类似吸附的效果，当滚动页面时它的效果与 relative 相同，当要滚动到屏幕之外时则会自动变成 fixed 的效果。<br>display: flex;<br>display:flex 是一种布局方式。它即可以应用于容器中，也可以应用于行内元素。是W3C提出的一种新的方案，可以简便、完整、响应式地实现各种页面布局。目前，它已经得到了所有浏览器的支持。<br>意为”弹性布局”，用来为盒状模型提供最大的灵活性。设为Flex布局以后，子元素的float、clear和vertical-align属性将失效。<br>flex-direction 容器内元素的排列方向(默认横向排列)<br>flex-wrap 容器内元素的换行(默认不换行)<br>justify-content 元素在主轴（页面）上的排列<br>1：justify-content : center;元素在主轴（页面）上居中排列<br>2：justify-content : flex-start;元素在主轴（页面）上由左或者上开始排列<br>3：justify-content : flex-end;元素在主轴（页面）上由右或者下开始排列<br>4：justify-content : space-between;元素在主轴（页面）上左右两端或者上下两端开始排列<br>5：justify-content : space-around;每个元素两侧的间隔相等。所以，元素之间的间隔比元素与边框的间隔大一倍。<br>align-items 元素在主轴（页面）当前行的横轴（纵轴）方向上的对齐方式<br>1：align-items : flex-start; 弹性盒子元素的侧轴（纵轴）起始位置的边界紧靠住该行的侧轴起始边界（靠上对齐）。<br>2：align-items : flex-end; 弹性盒子元素的侧轴（纵轴）起始位置的边界紧靠住该行的侧轴结束边界。（靠下对齐）<br>3：align-items : center; 弹性盒子元素在该行的侧轴（纵轴）上居中放置。（居中对齐）<br>align-content 在弹性容器内的元素没有占用交叉轴上所有可用的空间时对齐容器内的各项（垂直）<br>3:align-content: stretch; 元素位于容器的中心。各行向弹性盒容器的中间位置堆叠。<br>4:align-content: center; 默认值。元素被拉伸以适应容器。各行将会伸展以占用剩余的空间。如果剩余的空间是负数，该值等效于’flex-start’<br>5:align-content: space-between;元素位于各行之间留有空白的容器内。各行在弹性盒容器中平均分布。<br>1.Flex布局以后，子元素的float、clear和vertical-align属性将失效。<br>2.justify-content：水平排列<br>3.align-content:垂直排列<br>4.align-items 水平居中基准线<br>5.flex可以用于块级元素，也可用于行内元素</p>
+<p>小程序canvas绘制<br>实现了两个人头像的合并</p>
+<p>Echarts在小程序中的应用</p>
+<p>Node</p>
+<p>Python常用脚本</p>
+<p>谷歌地图切片服务<br>图片、视频优化器<br>PDF 转图片<br>拼写修正</p>
+<p>Php</p>
+<p>Swift</p>
+<p>OC</p>
+<p>React</p>
+<p>MySQL</p>
+<p>多端开发的探索<br>目前前端的开发越来越繁杂，这让我们非常的头疼，我们如何来做这些东西呢<br>1.考虑到dart的生成功能，我想我们可以考虑从后端的角度出发，打造一款生成器，当后端人员开发完接口后，能同时生成前端多端的接口调用模版，这让我们非常的兴奋，那我们应该怎么做呢</p>
+<p>2.首先从最简单的vue开始<br>我们首先需要生成一个api接口。然后再生成一个用户信息</p>
+<p>openapi-generator generate -i /Users/mqq/Desktop/mytest/user.yml -g ruby -o /Users/mqq/Desktop/mytest/gen</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_6Flutter%20%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -243,72 +455,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_4%E9%87%8D%E6%96%B0%E7%90%86%E8%A7%A3%E8%AF%AD%E8%A8%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/03/N_4%E9%87%8D%E6%96%B0%E7%90%86%E8%A7%A3%E8%AF%AD%E8%A8%80/" class="post-title-link" itemprop="url">重新理解语言</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-09 12:25:18" itemprop="dateModified" datetime="2023-09-09T12:25:18+08:00">2023-09-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>javascript——解释型语言——混合型语言——编译型语言——汇编<br>编译型和解释型语言<br>翻译的方式有两种，一个是编译，一个是解释。两种方式只是翻译的时间不同<br>java很特殊，java程序也需要编译，但是没有直接编译称为机器语言，而是编译称为字节码，然后用解释方式执行字节码。<br>脚本语言一般都有相应的脚本引擎来解释执行。他们一般需要解释器才能运行，脚本语言是一种解释性的语言</p>
-<p>library是单纯的可复用的代码或功能块，它是被调用的<br>framework是制定了一套约束或规范，依赖它，你不仅仅是调用它的API，更重要的是按照它的规范或约束编写代码，</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_7Flutter%20Hooks/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -356,8 +502,140 @@
       
           <p>需要继承HookWidget<br>useMemoized<br>useRef useCallback 通过内部使用useMemoized 只调用一次<br>useEffect</p>
 <p>学习计划：<br>1.学习了解go语言<br>2.重新复习leecode学习下算法<br>3.深入了解一下后端，学习一些数据库<br>4.学习linux、nginx、docker、负载均衡、云服务配置等</p>
-<p>Ssh<br>查看git的ssh<br>ssh -T <a href="mailto:&#x67;&#x69;&#116;&#64;&#x67;&#105;&#116;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#x6d;">&#x67;&#x69;&#116;&#64;&#x67;&#105;&#116;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#x6d;</a><br>Hi mqq123456! You’ve successfully authenticated, but GitHub does not provide shell access.</p>
+<p>Ssh<br>查看git的ssh<br>ssh -T <a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#x6d;">&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#117;&#98;&#x2e;&#99;&#x6f;&#x6d;</a><br>Hi mqq123456! You’ve successfully authenticated, but GitHub does not provide shell access.</p>
 <p>// copy ssh<br>cat ~/.ssh/id_rsa.pub | pbcopy . </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_22Vue%E5%89%8D%E7%AB%AF%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/03/N_22Vue%E5%89%8D%E7%AB%AF%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">论前端代码的整洁性</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-09 12:59:08" itemprop="dateModified" datetime="2023-09-09T12:59:08+08:00">2023-09-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>论前端代码的整洁性。<br>从移动端过度到前端，很多代码是从copy别人的代码开始的，有的时候代码越写越乱，总是不能很好的去重构项目，当然，很多时候公司的项目也不允许你去重构，这导致的问题特别的复杂。<br>所幸最近接手了一个前端的项目，是用vue2写的，代码写的非常的工整，让人赏心悦目，也不是说代码的技术水平有多么的高，但是，从代码的整洁性上确实能看出原来的开发者是有一定的代码洁癖的，但是也让我感觉到原来代码也可以写的这样的优美，特别是前端的代码，我总是写的非常的随意，代码的结构也比较乱，其实很多时候前端的代码逻辑性不是太复杂，没有那么多的类、继承、协议等特性，代码的调用逻辑也不用很多文件之间来回的调用，所以我写前端的时候经常是写的非常的随意，很大一部分原因也是因为我不是从专业的前端出身吧，但是这不能影响我的代码质量，我想优美的代码是每个人都想看到的。<br>回到这个项目来说吧，本来是想让我帮忙写一点页面，我拿到项目立马感觉到了代码的优美，当然我的任务肯定是帮人家开发页面了。真的我想这种项目，包括甲方可能也没有很多的要求，所以功能设计上极尽简约，极尽常态化，这是很难想象的，我们很多时候接收到项目之后，我们随时开发，甲方可能随时修改需求，也有的甲方不懂技术，总是让我们去实现一些飞常态化的功能，最后总是将项目弄的一团糟，我们其实非常不愿意看到那种情况，但是我们也没有办法，我们总是想尽可能的去将代码写的优美健壮，但是很多时候往往会事与愿违。<br>好了，不多说了，都是泪啊。<br>说了这么半天，我们开始讲讲这个项目的优点，和我们能从中学到什么东西吧，首先这应该算是一个很常规的vue2的项目了，但是从项目的整洁性上，我们能看到开发者应该是一个非常专业的前端软件工程师。在一些技术的使用上，我们能看到代码会写的非常的简约和整洁，<br>比如说在打包的环境上，开发者设计了很多的运行和打包命令，配置的非常的清晰<br>在路由上，开发者设计的非常的合理，如何显示，如何隐藏，如何配置参数非常的清晰，代码结构非常的合理<br>在组件的封装上也非常的简单<br>在网络请求方面，开发者直接把api绑定到view上了，在页面上会非常的方便调用，也不用import，我想也不失为一个好的方式<br>在css上面，开发者极尽的简约，基本上很少编写css，这也是我非常的希望的事情<br>在表格显示上开发者采用混入的方式，将一些功能混入到页面中，减少了页面重复代码的编写<br>在每个页面上基本上是请求列表，展示，就是这么简单的一个展示，<br>所以从代码上我们也能看出开发者极深的代码功底，才能将代码写的如此的轻松写意，所以我们往往自己不知道的功能从这里拷贝从那里百度，出来的结果粘贴到那里，我们把功能看似实现了，实际上我们代码写的非常的乱，这也是我们今后需要注意的问题：</p>
+<p>举例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;div class&#x3D;&quot;main-body&quot;&gt;</span><br><span class="line">		&lt;el-table :data&#x3D;&quot;tableData&quot; v-loading&#x3D;&quot;loading&quot;&gt;</span><br><span class="line">			&lt;NoInfo slot&#x3D;&quot;empty&quot;&gt;&lt;&#x2F;NoInfo&gt;</span><br><span class="line">			&lt;el-table-column label&#x3D;&quot;规则编号&quot; prop&#x3D;&quot;id&quot;&gt;&lt;&#x2F;el-table-column&gt;</span><br><span class="line">			&lt;el-table-column label&#x3D;&quot;触发条件&quot; prop&#x3D;&quot;triggerDesc&quot;&gt;&lt;&#x2F;el-table-column&gt;</span><br><span class="line">			&lt;el-table-column label&#x3D;&quot;积分数&quot; prop&#x3D;&quot;integral&quot;&gt;&lt;&#x2F;el-table-column&gt;</span><br><span class="line">			&lt;el-table-column label&#x3D;&quot;适用范围&quot; prop&#x3D;&quot;rang&quot;&gt;&lt;&#x2F;el-table-column&gt;</span><br><span class="line">			&lt;el-table-column label&#x3D;&quot;生效状态&quot; prop&#x3D;&quot;forbiddenStr&quot;&gt;&lt;&#x2F;el-table-column&gt;</span><br><span class="line">			&lt;el-table-column label&#x3D;&quot;操作&quot;&gt;</span><br><span class="line">				&lt;template slot-scope&#x3D;&quot;scope&quot;&gt;</span><br><span class="line">					&lt;el-button type&#x3D;&quot;text&quot; @click&#x3D;&quot;clickHandler_close(scope.row)&quot;&gt;&#123;&#123;scope.row.forbidden ? &#39;允许&#39; : &#39;禁用&#39;&#125;&#125;&lt;&#x2F;el-button&gt;</span><br><span class="line">					&lt;el-button type&#x3D;&quot;text&quot; @click&#x3D;&quot;clickHandler_detail(scope.row)&quot;&gt;详情&lt;&#x2F;el-button&gt;</span><br><span class="line">				&lt;&#x2F;template&gt;</span><br><span class="line">			&lt;&#x2F;el-table-column&gt;</span><br><span class="line">		&lt;&#x2F;el-table&gt;</span><br><span class="line">	&lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">	data() &#123;</span><br><span class="line">		return &#123;</span><br><span class="line">			loading: false,</span><br><span class="line">			tableData: []</span><br><span class="line">		&#125;;</span><br><span class="line">	&#125;,</span><br><span class="line">	mounted() &#123;</span><br><span class="line">		this.fetchList();</span><br><span class="line">	&#125;,</span><br><span class="line">	methods: &#123;</span><br><span class="line">		async clickHandler_close(row) &#123;</span><br><span class="line">			this.loading &#x3D; true;</span><br><span class="line">			const params &#x3D; &#123;</span><br><span class="line">				forbidden: !row.forbidden,</span><br><span class="line">				id: row.id</span><br><span class="line">			&#125;</span><br><span class="line">			let [result] &#x3D; await this.$api.integralApi.operate_switchRule(params);</span><br><span class="line">			this.loading &#x3D; false;</span><br><span class="line">			if (result &#x3D;&#x3D;&#x3D; true) &#123;</span><br><span class="line">				this.$message.success(&#39;操作成功&#39;);</span><br><span class="line">				this.fetchList();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;,</span><br><span class="line">		clickHandler_detail(row) &#123;</span><br><span class="line">			var id &#x3D; row.id;</span><br><span class="line">			this.toUrl(&#39;rule&#x2F;detail&#39;, &#123; id &#125;);</span><br><span class="line">		&#125;,</span><br><span class="line">		&#x2F;&#x2F; 请求数据</span><br><span class="line">		async fetchList() &#123;</span><br><span class="line">			&#x2F;&#x2F; 请求</span><br><span class="line">			this.loading &#x3D; true;</span><br><span class="line">			let [result] &#x3D; await this.$api.integralApi.operate_rule();</span><br><span class="line">			this.loading &#x3D; false;</span><br><span class="line">			this.tableData &#x3D; result.map(item &#x3D;&gt; &#123;</span><br><span class="line">				item.forbiddenStr &#x3D; item.forbidden ? &#39;禁止&#39; : &#39;允许&#39;;</span><br><span class="line">				return item;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;style lang&#x3D;&quot;scss&quot;&gt;&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/N_4%E9%87%8D%E6%96%B0%E7%90%86%E8%A7%A3%E8%AF%AD%E8%A8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="门乾强">
+      <meta itemprop="description" content="博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Men的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/08/03/N_4%E9%87%8D%E6%96%B0%E7%90%86%E8%A7%A3%E8%AF%AD%E8%A8%80/" class="post-title-link" itemprop="url">重新理解语言</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-03 17:00:27" itemprop="dateCreated datePublished" datetime="2022-08-03T17:00:27+08:00">2022-08-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-09 12:25:18" itemprop="dateModified" datetime="2023-09-09T12:25:18+08:00">2023-09-09</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>javascript——解释型语言——混合型语言——编译型语言——汇编<br>编译型和解释型语言<br>翻译的方式有两种，一个是编译，一个是解释。两种方式只是翻译的时间不同<br>java很特殊，java程序也需要编译，但是没有直接编译称为机器语言，而是编译称为字节码，然后用解释方式执行字节码。<br>脚本语言一般都有相应的脚本引擎来解释执行。他们一般需要解释器才能运行，脚本语言是一种解释性的语言</p>
+<p>library是单纯的可复用的代码或功能块，它是被调用的<br>framework是制定了一套约束或规范，依赖它，你不仅仅是调用它的API，更重要的是按照它的规范或约束编写代码，</p>
 
       
     </div>
@@ -681,216 +959,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/04/11/M_Swift267%E5%8D%9A%E5%AE%A2%E5%B7%A5%E4%BD%9C%E5%8F%B0%E7%A8%8B%E5%BA%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/11/M_Swift267%E5%8D%9A%E5%AE%A2%E5%B7%A5%E4%BD%9C%E5%8F%B0%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-11 22:02:24" itemprop="dateCreated datePublished" datetime="2022-04-11T22:02:24+08:00">2022-04-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近学习flutter，想尝试怎么样才能写好flutter，特别的flutter在桌面端的发展，我想是时候试试flutter了，因为自己经常写博客，并且用Hexo的方式发布到github上，所以就有了想尝试写一个软件来实现的想法。</p>
-<h2 id="markdown支持"><a href="#markdown支持" class="headerlink" title="markdown支持"></a>markdown支持</h2><p>首先想到的一点就是要支持markdow，这点很重要，怎么来实现呢？首先我参考了一下国内博客写作的一些平台，发现采用markdown比较常见，所以感觉markdown来写博客比较有效</p>
-<h2 id="如何设计"><a href="#如何设计" class="headerlink" title="如何设计"></a>如何设计</h2><p>参考了掘金的写作页面，我将写作和markdown展示区分在两个屏幕中，顶部实现markdown的快捷键按钮，这样一个初级的展示页面就显示出来了。</p>
-<h2 id="如何实现"><a href="#如何实现" class="headerlink" title="如何实现"></a>如何实现</h2><p>首先我创建的了工程，然后添加了一些常用的插件，首先是要实现一个输入框和一个按钮组合来快捷生成markdown标记，我首先想到的就是先处理一个页面出来，然后再根据页面去布局，说干就干，我很顺利的绘制了一组按钮，但是当我想实现按钮对应文本框功能变化的时候，让我头疼的问题来了，如何去动态的 给输入框插入markdown的标记呢？最后我还是采用pub的搜索，找到了一个开源的插件markdown_text_input，这个插件是有问题的，当你从后面往前选择文本时候，插件中判断选择的起点位置和终点位置就会出问题，因为起点位置大于终点位置，再进行插入文本时候就会出现越界的情况，我修改了源码，之后采用了修改后的源码。并且调整了一些UI。</p>
-<h2 id="实现博客查看"><a href="#实现博客查看" class="headerlink" title="实现博客查看"></a>实现博客查看</h2><p>能写博客了，当然也要能查看博客啊，所以我写了一个博客查看的页面，左侧是列表，右侧是显示博客，这就很完美了。</p>
-<h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><p>这个博客工作台最大的问题就是文本输入框了，这个输入框存在非常大的问题，我不知道是不是flutter的问题，当我在输入中文，拼音还没输入完成的时候，我点击删除键删除拼音的时候实际上是没有生效的，这非常的不利于输入，对于一个博客这样的文本输入的软件来讲，这是致命的，我不清楚有没有更好的办法，希望有人也能给点建议吧。还有就是输入联想，按左右键选择后面的文本也是不行的。我不知道是不是对mac的键盘支持不好，还是对所有键盘都不行。总之从开始设计到完成，总共3天的时间，应该来说flutter开发效率是挺快的，但是我查询了下桌面快捷键也是不能实现，必须要原生实现。还是会存在一些问题的，但是如果不是一个功能性应用，我觉得fultter是一个不错的选择</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/01/10/M_Swift259%20C++%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">c++</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-01-10 16:24:01" itemprop="dateCreated datePublished" datetime="2022-01-10T16:24:01+08:00">2022-01-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-11 16:35:21" itemprop="dateModified" datetime="2022-01-11T16:35:21+08:00">2022-01-11</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="virtual"><a href="#virtual" class="headerlink" title="virtual"></a>virtual</h2><p>只有在子函数中的虚函数与父函数一模一样的时候（包括限定符）才会被认为是真正的虚函数<br>虚函数后面跟 const = 0；表示这个函数是纯虚函数，只有接口，由它的继承类具体定义它的行为，一个类里如果包含 ＝0 的纯虚函数，那么这个类就是一个抽象类，它不能具体实例化</p>
-<h2 id="final"><a href="#final" class="headerlink" title="final"></a>final</h2><p>c++ 11提供了防止继承发生的方法，及在类后面跟一个关键字finnal:<br>const final  也可指定函数，如果定义为final了， 则之后任何覆盖该函数的操作都将引起错误<br>override：<br>用来说明派生类中虚函数。</p>
-<h2 id="const"><a href="#const" class="headerlink" title="const"></a>const</h2><p>只有被声明为const的成员函数才能被一个const类对象调用。<br>const 修饰类成员函数，其目的是防止成员函数修改被调用对象的值</p>
-<h2 id="std-optional"><a href="#std-optional" class="headerlink" title="std::optional"></a>std::optional</h2><p>对象只是包含对象的内部内存加上一个布尔标志。因此，大小通常比包含的对象大一个字节。<br>对于某些包含的类型，甚至可能根本没有大小开销，前提是附加信息可以放在包含的对象中。<br>没有分配堆内存。对象使用与所包含类型相同的对齐方式。<br>std::nullopt_t类型的nullopt是一种没有值的对象</p>
-<h2 id="std-move"><a href="#std-move" class="headerlink" title="std::move"></a>std::move</h2><p>std::move函数可以以非常简单的方式将左值引用转换为右值引用<br>std::move是将对象的状态或者所有权从一个对象转移到另一个对象，只是转移，没有内存的搬迁或者内存拷贝所以可以提高利用效率,改善性能.。<br>对指针类型的标准库对象并不需要这么做.</p>
-<h2 id="shared-ptr"><a href="#shared-ptr" class="headerlink" title="shared_ptr"></a>shared_ptr</h2><p>以模板类的方式实现的。每个 shared_ptr 对象在内部指向两个内存位置：<br>1、指向对象的指针。<br>2、用于控制引用计数数据的指针。<br>工作原理：<br>1、当新的 shared_ptr 对象与指针关联时，则在其构造函数中，将与此指针关联的引用计数增加1。<br>2、当任何 shared_ptr 对象超出作用域时，则在其析构函数中，它将关联指针的引用计数减1。<br>如果引用计数变为0，则表示没有其他 shared_ptr 对象与此内存关联，在这种情况下，它使用delete函数删除该内存。</p>
-<p>创建 shared_ptr 对象<br>std::shared_ptr<int> p1(new int());<br>检查 shared_ptr 对象的引用计数<br>p1.use_count();<br>创建空的 shared_ptr 对象<br>std::shared_ptr<int> p1 = std::make_shared<int>();<br>std::make_shared 一次性为int对象和用于引用计数的数据都分配了内存，而new操作符只是为int分配了内存。<br>分离关联的原始指针<br>p1.reset();<br>p1.reset(new int(34));在这种情况下，它将在内部指向新指针，因此其引用计数将再次变为1。<br>使用nullptr重置：<br>p1 = nullptr;<br>数组，自定义删除器<br>std::shared_ptr<Sample> p3(new Sample[3], deleter);<br>// Lambda表达式作为删除器<br>std::shared_ptr<Sample> p4(new Sample[3], [](Sample * x){<br>    delete[] x;<br>});<br>shared_ptr 相对于普通指针的优缺点：<br>缺少 ++, – – 和 [] 运算符</p>
-<p>不要使用同一个原始指针构造 shared_ptr<br>int *num = new int(23);<br>std::shared_ptr<int> p1(num);<br>std::shared_ptr<int> p2(p1);  // 正确使用方法<br>std::shared_ptr<int> p3(num); // 不推荐<br>不要用栈中的指针构造 shared_ptr 对象<br>int x = 12;<br>std::shared_ptr<int> ptr(&amp;x);// 不正确<br>std::shared_ptr<int> ptr_1 = make_shared<int>(); // 正确</p>
-<h2 id="weak-ptr"><a href="#weak-ptr" class="headerlink" title="weak_ptr"></a>weak_ptr</h2><p>解决shared_ptr循环引用的问题<br>weak_ptr虽然是一个模板类，但是不能用来直接定义指向原始指针的对象。<br>weak_ptr接受shared_ptr类型的变量赋值，但是反过来是行不通的，需要使用lock函数。<br>weak_ptr设计之初就是为了服务于shared_ptr的，所以不增加引用计数就是它的核心功能。<br>由于不知道什么之后weak_ptr所指向的对象就会被析构掉，所以使用之前请先使用expired函数检测一下</p>
-<h2 id="unique-ptr"><a href="#unique-ptr" class="headerlink" title="unique_ptr"></a>unique_ptr</h2><p>独享所有权<br>unique_ptr对象始终是关联的原始指针的唯一所有者。我们无法复制unique_ptr对象，它只能移动。<br>由于每个unique_ptr对象都是原始指针的唯一所有者，因此在其析构函数中它直接删除关联的指针，不需要任何参考计数。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/10/M_Swift260%20C++%E6%8C%87%E9%92%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="门乾强">
-      <meta itemprop="description" content="博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Men的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/01/10/M_Swift260%20C++%E6%8C%87%E9%92%88/" class="post-title-link" itemprop="url">c++指针复习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-01-10 16:24:01" itemprop="dateCreated datePublished" datetime="2022-01-10T16:24:01+08:00">2022-01-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-02-20 15:57:33" itemprop="dateModified" datetime="2022-02-20T15:57:33+08:00">2022-02-20</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>指针也就是内存地址，指针变量是用来存放内存地址的变量，<br>指针描述了数据在内存中的位置，标示了一个占据存储空间的实体，在这一段空间起始位置的相对距离值<br>指针相对于一个内存单元来说，指的是单元的地址，该单元的内容里面存放的是数据。在 C 语言中，允许用指针变量来存放指针，因此，一个指针变量的值就是某个内存单元的地址或称为某内存单元的指针。 [<br>形参：<br>实参：<br>形参的本质是一个名字，不占用内存空间。实参的本质是一个变量，已经占用内存空间。</p>
-<p>数组：数组是用于储存多个相同类型数据的集合。<br>指针：指针相当于一个变量，但是它和不同变量不一样，它存放的是其它变量在内存中的地址。</p>
-<p>（1）一维数组：<br>int* arr = new int[n];//创建一维数组<br>delete[] arr;//销毁<br>（2）二维数组：<br>int** arr = new int*[row];//这样相当于创建了数组有多少行<br>for(int i=0;i&lt;row;i++)<br>{<br>arr[i] = new int[col];//到这里才算创建好了<br>}<br>//释放<br>for(int i=0;i&lt;row;i++)<br>{<br>delete[] arr[i];<br>}<br>delete[] arr;</p>
-<p>//（1）指向对象的指针：（()里面的值是初始化值）<br>int <em>p=new int(0) ;    delete p;<br>//（2）指向数组的指针：(n表示数组的大小，值不必再编译时确定，可以在运行时确定)<br>int <em>p=new int[n];    delete[] p;<br>//（3）指向类的指针：(若构造函数有参数，则new Class后面有参数，否则调用默认构造函数，delete调用析构函数)<br>Class <em>p=new Class;  delete p;<br>//（4）指针的指针：（二级指针）<br>int <em><em>pp=new (int</em>)[1];<br>pp[0]=new int[6];<br>delete[] pp[0];<br>指针数组：它实际上是一个数组，数组的每个元素存放的是一个指针类型的元素<br>int</em> arr[8];<br>//优先级问题：[]的优先级比</em>高<br>//说明arr是一个数组，而int</em>是数组里面的内容<br>//这句话的意思就是：arr是一个含有8和int</em>的数组</p>
-<p>数组指针：它实际上是一个指针，该指针指向一个数组。<br>int (<em>arr)[8];<br>//由于[]的优先级比</em>高，因此在写数组指针的时候必须将<em>arr用括号括起来<br>//arr先和</em>结合，说明p是一个指针变量<br>//这句话的意思就是：指针arr指向一个大小为8个整型的数组。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -956,7 +1028,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">400</span>
+          <span class="site-state-item-count">403</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -984,7 +1056,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
